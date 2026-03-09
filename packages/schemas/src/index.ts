@@ -406,12 +406,17 @@ export {
   resolveCardsWithOverrides,
   inferInteractionType,
   INTERACTION_TYPES,
+  TYPOLOGY_DATA_SCHEMAS,
+  resolveTypologyDataSchema,
+  getRequiredFieldsForTypology,
 } from "./card-registry";
 
 export type {
   InteractionType,
   StateCardMapping,
   InteractionCardSet,
+  TypologyDataField,
+  TypologyDataSchema,
 } from "./card-registry";
 
 // ── Orchestrator Action (LLM ↔ Orchestrator contract) ──
@@ -462,6 +467,7 @@ export {
   TYPOLOGY_CONSENT_FRAMING,
   TYPOLOGY_ESCALATION_CONFIG,
   TYPOLOGY_PROACTIVITY_CONFIG,
+  TYPOLOGY_POLICY_RULES,
   INTERACTION_TYPE_TITLES,
   getAllTerminalStateIds,
   generateMilestonesForType,
@@ -471,6 +477,7 @@ export {
   resolveConsentFraming,
   resolveEscalationConfig,
   resolveProactivityConfig,
+  resolveTypologyPolicies,
 } from "./state-instruction-templates";
 
 export type {
@@ -480,6 +487,8 @@ export type {
   ConsentFraming,
   EscalationConfig,
   ProactivityConfig,
+  TypologyPolicyRule,
+  TypologyPolicySet,
   MilestoneDefinition,
   ServiceMilestoneConfig,
 } from "./state-instruction-templates";

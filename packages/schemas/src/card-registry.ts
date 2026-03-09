@@ -944,6 +944,143 @@ const CARD_REGISTRY: InteractionCardSet[] = [
   },
 ];
 
+// ── Proposal G: Canonical Data Schemas per Typology ──
+
+/**
+ * Each typology has characteristic data needs. These canonical schemas define
+ * the fields that services of a given type typically require. They can be used
+ * to auto-populate card fields, pre-fill forms, and validate completeness.
+ */
+
+export interface TypologyDataField {
+  key: string;
+  label: string;
+  type: CardFieldDef["type"];
+  category: string;
+  required: boolean;
+  /** Description of why this field is needed for this typology */
+  rationale: string;
+  prefillFrom?: string;
+}
+
+export interface TypologyDataSchema {
+  typology: string;
+  description: string;
+  fields: TypologyDataField[];
+}
+
+export const TYPOLOGY_DATA_SCHEMAS: Record<string, TypologyDataSchema> = {
+  benefit: {
+    typology: "benefit",
+    description: "Benefits require income, housing, and household data to assess entitlement and calculate payments.",
+    fields: [
+      { key: "employment_status", label: "Employment status", type: "radio", category: "employment", required: true, rationale: "Determines benefit rate and work-related requirements" },
+      { key: "monthly_income", label: "Monthly income (£)", type: "currency", category: "financial", required: true, rationale: "Income-tested benefits need gross income for assessment" },
+      { key: "savings_amount", label: "Total savings (£)", type: "currency", category: "financial", required: true, rationale: "Capital threshold affects eligibility (e.g. £16k for UC)" },
+      { key: "housing_costs", label: "Monthly housing costs (£)", type: "currency", category: "housing", required: true, rationale: "Housing element calculation" },
+      { key: "tenure_type", label: "Housing tenure", type: "radio", category: "housing", required: true, rationale: "Determines housing element eligibility" },
+      { key: "dependants", label: "Number of dependants", type: "number", category: "household", required: true, rationale: "Child element and childcare costs calculation" },
+      { key: "bank_sort_code", label: "Sort code", type: "sort-code", category: "financial", required: true, rationale: "Payment delivery", prefillFrom: "financials.sortCode" },
+      { key: "bank_account_number", label: "Account number", type: "account-number", category: "financial", required: true, rationale: "Payment delivery", prefillFrom: "financials.accountNumber" },
+    ],
+  },
+  entitlement: {
+    typology: "entitlement",
+    description: "Entitlements require employer and earnings verification to confirm statutory rights.",
+    fields: [
+      { key: "employer_name", label: "Employer name", type: "text", category: "employment", required: true, rationale: "Employer verification for statutory pay/leave" },
+      { key: "employer_address", label: "Employer address", type: "text", category: "employment", required: true, rationale: "Employer contact for verification" },
+      { key: "employment_start_date", label: "Employment start date", type: "date", category: "employment", required: true, rationale: "Qualifying period calculation" },
+      { key: "weekly_earnings", label: "Average weekly earnings (£)", type: "currency", category: "financial", required: true, rationale: "Lower earnings limit check and payment calculation" },
+      { key: "qualifying_event_date", label: "Date of qualifying event", type: "date", category: "entitlement", required: true, rationale: "Start date for entitlement period (e.g. baby due date, adoption date)" },
+    ],
+  },
+  obligation: {
+    typology: "obligation",
+    description: "Obligations require deadline dates, reference numbers, and amount calculations.",
+    fields: [
+      { key: "reference_number", label: "Reference number", type: "text", category: "obligation", required: true, rationale: "Identifies the specific obligation (e.g. tax reference, vehicle registration)" },
+      { key: "deadline_date", label: "Deadline date", type: "date", category: "obligation", required: true, rationale: "Compliance deadline for the obligation" },
+      { key: "amount_due", label: "Amount due (£)", type: "currency", category: "payment", required: false, rationale: "Payment amount if obligation involves a fee" },
+      { key: "payment_method", label: "Payment method", type: "radio", category: "payment", required: false, rationale: "How the citizen wishes to pay" },
+    ],
+  },
+  registration: {
+    typology: "registration",
+    description: "Registrations require event details, dates, and participant information.",
+    fields: [
+      { key: "event_date", label: "Date of event", type: "date", category: "registration", required: true, rationale: "The date of the event being registered (birth, death, marriage)" },
+      { key: "event_location", label: "Location of event", type: "text", category: "registration", required: true, rationale: "Where the event took place (hospital, venue, address)" },
+      { key: "participant_name", label: "Full name of person involved", type: "text", category: "registration", required: true, rationale: "Primary person for the registration record" },
+      { key: "informant_name", label: "Name of informant", type: "text", category: "registration", required: true, rationale: "Person reporting/registering the event", prefillFrom: "primaryContact.firstName" },
+      { key: "registration_district", label: "Registration district", type: "text", category: "registration", required: true, rationale: "Local register office jurisdiction" },
+    ],
+  },
+  application: {
+    typology: "application",
+    description: "Applications require identity confirmation, eligibility details, and supporting documents.",
+    fields: [
+      { key: "full_name", label: "Full name", type: "text", category: "identity", required: true, rationale: "Identity confirmation for application", prefillFrom: "primaryContact.firstName" },
+      { key: "date_of_birth", label: "Date of birth", type: "date", category: "identity", required: true, rationale: "Identity and eligibility verification", prefillFrom: "primaryContact.dateOfBirth" },
+      { key: "address_line1", label: "Address", type: "text", category: "address", required: true, rationale: "Contact and delivery address", prefillFrom: "address.line1" },
+      { key: "postcode", label: "Postcode", type: "text", category: "address", required: true, rationale: "Address verification", prefillFrom: "address.postcode" },
+      { key: "supporting_document", label: "Supporting document", type: "file", category: "documents", required: false, rationale: "Photo ID, proof of address, or other evidence" },
+    ],
+  },
+  document: {
+    typology: "document",
+    description: "Document services require identity verification and delivery preferences.",
+    fields: [
+      { key: "document_type", label: "Document required", type: "select", category: "document", required: true, rationale: "Identifies which certificate or document is needed" },
+      { key: "full_name", label: "Full name (as it should appear)", type: "text", category: "identity", required: true, rationale: "Name for the document", prefillFrom: "primaryContact.firstName" },
+      { key: "delivery_address", label: "Delivery address", type: "text", category: "address", required: true, rationale: "Where to send the physical document", prefillFrom: "address.line1" },
+      { key: "delivery_preference", label: "Delivery speed", type: "radio", category: "delivery", required: true, rationale: "Standard vs priority delivery" },
+    ],
+  },
+  legal_process: {
+    typology: "legal_process",
+    description: "Legal processes require detailed personal information, legal representation details, and witness attestations.",
+    fields: [
+      { key: "full_name", label: "Full legal name", type: "text", category: "identity", required: true, rationale: "Legal name for court/registry documents", prefillFrom: "primaryContact.firstName" },
+      { key: "date_of_birth", label: "Date of birth", type: "date", category: "identity", required: true, rationale: "Identity verification for legal proceedings", prefillFrom: "primaryContact.dateOfBirth" },
+      { key: "has_solicitor", label: "Do you have legal representation?", type: "radio", category: "legal", required: true, rationale: "Determines whether solicitor details are needed" },
+      { key: "solicitor_name", label: "Solicitor or firm name", type: "text", category: "legal", required: false, rationale: "Legal representative contact details" },
+      { key: "witness_name", label: "Witness / certificate provider name", type: "text", category: "legal", required: false, rationale: "Required for attestation on many legal documents" },
+      { key: "court_or_registry", label: "Court or registry", type: "text", category: "legal", required: false, rationale: "Jurisdiction for the legal process" },
+    ],
+  },
+  grant: {
+    typology: "grant",
+    description: "Grants require project details, cost estimates, and acceptance of funding conditions.",
+    fields: [
+      { key: "project_description", label: "Project description", type: "text", category: "grant", required: true, rationale: "What the funding will be used for" },
+      { key: "estimated_cost", label: "Estimated cost (£)", type: "currency", category: "financial", required: true, rationale: "Total cost of the project or works" },
+      { key: "funding_requested", label: "Funding amount requested (£)", type: "currency", category: "financial", required: true, rationale: "How much grant funding is being sought" },
+      { key: "property_address", label: "Property address (if applicable)", type: "text", category: "address", required: false, rationale: "Location of works for property-related grants", prefillFrom: "address.line1" },
+      { key: "accept_conditions", label: "Accept grant conditions", type: "checkbox", category: "grant", required: true, rationale: "Formal acceptance of funding terms" },
+    ],
+  },
+};
+
+/**
+ * Resolve the canonical data schema for a given service typology (serviceType).
+ * Returns null if no schema is defined for the type.
+ */
+export function resolveTypologyDataSchema(serviceType: string | null | undefined): TypologyDataSchema | null {
+  if (!serviceType) return null;
+  return TYPOLOGY_DATA_SCHEMAS[serviceType.toLowerCase()] || null;
+}
+
+/**
+ * Get the canonical field keys that a typology expects, useful for checking
+ * data completeness against a citizen's profile.
+ */
+export function getRequiredFieldsForTypology(serviceType: string): string[] {
+  const schema = TYPOLOGY_DATA_SCHEMAS[serviceType.toLowerCase()];
+  if (!schema) return [];
+  return schema.fields.filter((f) => f.required).map((f) => f.key);
+}
+
 // ── Resolver ──
 
 /** Look up cards from a registry array */

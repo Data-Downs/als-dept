@@ -1123,6 +1123,236 @@ export function resolveProactivityConfig(interactionType?: string | null): Proac
   return TYPOLOGY_PROACTIVITY_CONFIG[interactionType as InteractionType] || DEFAULT_PROACTIVITY_CONFIG;
 }
 
+// ── Proposal H: Typology-Level Policy Rules ──
+
+/**
+ * Policy rules that apply to ALL services of a given typology. These are
+ * inherited by every service of that type and can be overridden at the
+ * service level. This avoids duplicating rules like "all benefits require
+ * income verification" across 22 separate service policy files.
+ */
+
+export interface TypologyPolicyRule {
+  id: string;
+  description: string;
+  condition: {
+    field: string;
+    operator: ">=" | "<=" | "==" | "!=" | "exists" | "not-exists" | "in";
+    value?: unknown;
+  };
+  reason_if_failed: string;
+  /** If true, this rule can be overridden by a service-specific rule with the same id */
+  overridable: boolean;
+}
+
+export interface TypologyPolicySet {
+  typology: string;
+  description: string;
+  rules: TypologyPolicyRule[];
+}
+
+export const TYPOLOGY_POLICY_RULES: Record<string, TypologyPolicySet> = {
+  benefit: {
+    typology: "benefit",
+    description: "Common eligibility rules for all benefit services",
+    rules: [
+      {
+        id: "typo-benefit-uk-resident",
+        description: "All benefit claimants must be UK residents",
+        condition: { field: "jurisdiction", operator: "in", value: ["England", "Wales", "Scotland", "Northern Ireland"] },
+        reason_if_failed: "You must be living in the UK to claim this benefit",
+        overridable: false,
+      },
+      {
+        id: "typo-benefit-age-minimum",
+        description: "Most benefits require claimant to be 16+",
+        condition: { field: "age", operator: ">=", value: 16 },
+        reason_if_failed: "You must be at least 16 years old",
+        overridable: true,
+      },
+      {
+        id: "typo-benefit-income-declared",
+        description: "Benefits require income declaration",
+        condition: { field: "income_declared", operator: "exists" },
+        reason_if_failed: "You must declare your income to proceed with a benefit claim",
+        overridable: true,
+      },
+      {
+        id: "typo-benefit-bank-account",
+        description: "Benefits require a bank account for payment",
+        condition: { field: "bank_account", operator: "exists" },
+        reason_if_failed: "You need a bank account to receive benefit payments",
+        overridable: true,
+      },
+    ],
+  },
+  entitlement: {
+    typology: "entitlement",
+    description: "Common rules for statutory entitlement services",
+    rules: [
+      {
+        id: "typo-entitlement-employed",
+        description: "Most entitlements require current or recent employment",
+        condition: { field: "employment_status", operator: "exists" },
+        reason_if_failed: "Your employment status must be confirmed to check statutory entitlement",
+        overridable: true,
+      },
+      {
+        id: "typo-entitlement-earnings-threshold",
+        description: "Statutory entitlements require minimum earnings",
+        condition: { field: "weekly_earnings", operator: ">=", value: 123 },
+        reason_if_failed: "Your average weekly earnings must meet the lower earnings limit (currently £123/week)",
+        overridable: true,
+      },
+      {
+        id: "typo-entitlement-qualifying-period",
+        description: "Most entitlements require a qualifying period of employment",
+        condition: { field: "qualifying_weeks", operator: ">=", value: 26 },
+        reason_if_failed: "You must have been employed for at least 26 weeks to qualify",
+        overridable: true,
+      },
+    ],
+  },
+  obligation: {
+    typology: "obligation",
+    description: "Common rules for obligation/compliance services",
+    rules: [
+      {
+        id: "typo-obligation-reference",
+        description: "Obligations require a reference number",
+        condition: { field: "reference_number", operator: "exists" },
+        reason_if_failed: "You need your reference number to proceed",
+        overridable: true,
+      },
+      {
+        id: "typo-obligation-not-overdue",
+        description: "Check whether the obligation is overdue",
+        condition: { field: "days_until_deadline", operator: ">=", value: 0 },
+        reason_if_failed: "This obligation is overdue — late penalties may apply",
+        overridable: true,
+      },
+    ],
+  },
+  registration: {
+    typology: "registration",
+    description: "Common rules for registration services",
+    rules: [
+      {
+        id: "typo-registration-event-date",
+        description: "Registrations require an event date",
+        condition: { field: "event_date", operator: "exists" },
+        reason_if_failed: "You must provide the date of the event you wish to register",
+        overridable: true,
+      },
+      {
+        id: "typo-registration-within-deadline",
+        description: "Most registrations must be completed within a statutory deadline",
+        condition: { field: "days_since_event", operator: "<=", value: 42 },
+        reason_if_failed: "The registration deadline may have passed — contact the register office for guidance",
+        overridable: true,
+      },
+    ],
+  },
+  application: {
+    typology: "application",
+    description: "Common rules for application services",
+    rules: [
+      {
+        id: "typo-application-identity",
+        description: "Applications require identity verification",
+        condition: { field: "identity_verified", operator: "==", value: true },
+        reason_if_failed: "Your identity must be verified before submitting an application",
+        overridable: false,
+      },
+    ],
+  },
+  document: {
+    typology: "document",
+    description: "Common rules for document/certificate services",
+    rules: [
+      {
+        id: "typo-document-identity",
+        description: "Document requests require identity verification",
+        condition: { field: "identity_verified", operator: "==", value: true },
+        reason_if_failed: "Your identity must be verified to request official documents",
+        overridable: false,
+      },
+      {
+        id: "typo-document-delivery-address",
+        description: "Physical documents require a delivery address",
+        condition: { field: "delivery_address", operator: "exists" },
+        reason_if_failed: "You must provide an address for document delivery",
+        overridable: true,
+      },
+    ],
+  },
+  legal_process: {
+    typology: "legal_process",
+    description: "Common rules for legal process services",
+    rules: [
+      {
+        id: "typo-legal-identity",
+        description: "Legal processes require verified identity",
+        condition: { field: "identity_verified", operator: "==", value: true },
+        reason_if_failed: "Your identity must be verified for legal proceedings",
+        overridable: false,
+      },
+      {
+        id: "typo-legal-age-minimum",
+        description: "Legal capacity requires being 18+",
+        condition: { field: "age", operator: ">=", value: 18 },
+        reason_if_failed: "You must be at least 18 to initiate this legal process",
+        overridable: true,
+      },
+    ],
+  },
+  grant: {
+    typology: "grant",
+    description: "Common rules for grant/funding services",
+    rules: [
+      {
+        id: "typo-grant-uk-resident",
+        description: "Grants are typically available to UK residents only",
+        condition: { field: "jurisdiction", operator: "in", value: ["England", "Wales", "Scotland", "Northern Ireland"] },
+        reason_if_failed: "This grant is only available to UK residents",
+        overridable: true,
+      },
+      {
+        id: "typo-grant-not-duplicate",
+        description: "Cannot claim the same grant twice",
+        condition: { field: "previous_grant_claim", operator: "not-exists" },
+        reason_if_failed: "Records show a previous claim for this grant — duplicate claims are not permitted",
+        overridable: true,
+      },
+    ],
+  },
+};
+
+/**
+ * Resolve typology-level policy rules for a given service type.
+ * Returns the shared rules for that typology, excluding any whose IDs
+ * appear in the service-specific override list.
+ */
+export function resolveTypologyPolicies(
+  serviceType: string | null | undefined,
+  serviceRuleIds?: string[],
+): TypologyPolicyRule[] {
+  if (!serviceType) return [];
+  const policySet = TYPOLOGY_POLICY_RULES[serviceType.toLowerCase()];
+  if (!policySet) return [];
+
+  // If service has its own rules, filter out overridable typology rules
+  // that the service explicitly overrides
+  if (serviceRuleIds && serviceRuleIds.length > 0) {
+    const overrideSet = new Set(serviceRuleIds);
+    return policySet.rules.filter(
+      (rule) => !rule.overridable || !overrideSet.has(rule.id),
+    );
+  }
+
+  return policySet.rules;
+}
+
 /**
  * Compute the union of all terminal state IDs from STATE_MODEL_TEMPLATES.
  * Also includes any state in TERMINAL_STATE_CONFIG for belt-and-braces coverage.

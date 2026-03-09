@@ -23,6 +23,128 @@ interface Service {
   interactionType?: string;
 }
 
+// ── Typology configuration ──
+
+const TYPOLOGY_CONFIG: Record<string, { label: string; color: string; bgColor: string; borderColor: string; icon: string }> = {
+  benefit: { label: "Benefit", color: "text-green-800", bgColor: "bg-green-50", borderColor: "border-green-200", icon: "£" },
+  entitlement: { label: "Entitlement", color: "text-emerald-800", bgColor: "bg-emerald-50", borderColor: "border-emerald-200", icon: "✓" },
+  obligation: { label: "Obligation", color: "text-red-800", bgColor: "bg-red-50", borderColor: "border-red-200", icon: "!" },
+  registration: { label: "Registration", color: "text-blue-800", bgColor: "bg-blue-50", borderColor: "border-blue-200", icon: "R" },
+  application: { label: "Application", color: "text-indigo-800", bgColor: "bg-indigo-50", borderColor: "border-indigo-200", icon: "A" },
+  document: { label: "Document", color: "text-amber-800", bgColor: "bg-amber-50", borderColor: "border-amber-200", icon: "D" },
+  legal_process: { label: "Legal Process", color: "text-purple-800", bgColor: "bg-purple-50", borderColor: "border-purple-200", icon: "§" },
+  grant: { label: "Grant", color: "text-teal-800", bgColor: "bg-teal-50", borderColor: "border-teal-200", icon: "G" },
+};
+
+interface TypologySummary {
+  type: string;
+  config: typeof TYPOLOGY_CONFIG[string];
+  count: number;
+  fullCount: number;
+  graphCount: number;
+  withPolicy: number;
+  withStateModel: number;
+  withConsent: number;
+}
+
+function TypologyDashboard({ services, onSelectType }: { services: Service[]; onSelectType: (type: string) => void }) {
+  const summaries = useMemo(() => {
+    const grouped: Record<string, Service[]> = {};
+    for (const s of services) {
+      const type = s.serviceType || "unknown";
+      if (!grouped[type]) grouped[type] = [];
+      grouped[type].push(s);
+    }
+
+    const result: TypologySummary[] = [];
+    for (const [type, config] of Object.entries(TYPOLOGY_CONFIG)) {
+      const group = grouped[type] || [];
+      result.push({
+        type,
+        config,
+        count: group.length,
+        fullCount: group.filter((s) => (s.source || "full") === "full").length,
+        graphCount: group.filter((s) => s.source === "graph").length,
+        withPolicy: group.filter((s) => s.hasPolicy).length,
+        withStateModel: group.filter((s) => s.hasStateModel).length,
+        withConsent: group.filter((s) => s.hasConsent).length,
+      });
+    }
+
+    // Add "unknown" if there are services without a serviceType
+    const unknownGroup = services.filter((s) => !s.serviceType || !TYPOLOGY_CONFIG[s.serviceType]);
+    if (unknownGroup.length > 0) {
+      result.push({
+        type: "unknown",
+        config: { label: "Uncategorised", color: "text-gray-800", bgColor: "bg-gray-50", borderColor: "border-gray-200", icon: "?" },
+        count: unknownGroup.length,
+        fullCount: unknownGroup.filter((s) => (s.source || "full") === "full").length,
+        graphCount: unknownGroup.filter((s) => s.source === "graph").length,
+        withPolicy: unknownGroup.filter((s) => s.hasPolicy).length,
+        withStateModel: unknownGroup.filter((s) => s.hasStateModel).length,
+        withConsent: unknownGroup.filter((s) => s.hasConsent).length,
+      });
+    }
+
+    return result.sort((a, b) => b.count - a.count);
+  }, [services]);
+
+  const totalServices = services.length;
+
+  return (
+    <div className="border border-studio-border rounded-xl bg-white p-6 mb-8">
+      <div className="flex justify-between items-start mb-4">
+        <div>
+          <h2 className="text-lg font-bold mb-1">Service Typologies</h2>
+          <p className="text-sm text-gray-500">
+            {totalServices} services across {summaries.filter((s) => s.count > 0).length} typologies. Click a typology to filter.
+          </p>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        {summaries.filter((s) => s.count > 0).map((s) => {
+          const completeness = s.count > 0
+            ? Math.round(((s.withPolicy + s.withStateModel + s.withConsent) / (s.count * 3)) * 100)
+            : 0;
+
+          return (
+            <button
+              key={s.type}
+              onClick={() => onSelectType(s.type)}
+              className={`${s.config.bgColor} ${s.config.borderColor} border rounded-xl p-4 text-left hover:shadow-md transition-shadow group`}
+            >
+              <div className="flex items-center gap-2 mb-2">
+                <span className={`text-lg font-bold ${s.config.color}`}>{s.config.icon}</span>
+                <span className={`text-sm font-bold ${s.config.color}`}>{s.config.label}</span>
+              </div>
+              <div className="text-2xl font-light tracking-tight mb-1">{s.count}</div>
+              <div className="text-xs text-gray-500 space-y-0.5">
+                <div className="flex justify-between">
+                  <span>Full: {s.fullCount}</span>
+                  <span>Graph: {s.graphCount}</span>
+                </div>
+                <div className="flex items-center gap-1.5 mt-1.5">
+                  <div className="flex-1 h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-govuk-green rounded-full transition-all"
+                      style={{ width: `${completeness}%` }}
+                    />
+                  </div>
+                  <span className="text-[10px] font-medium">{completeness}%</span>
+                </div>
+                <div className="text-[10px] text-gray-400">
+                  artefact completeness
+                </div>
+              </div>
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 interface LifeEventFilter {
   id: string;
   name: string;
@@ -165,6 +287,7 @@ export default function ServicesPage() {
   const [togglingId, setTogglingId] = useState<string | null>(null);
   const [sourceFilter, setSourceFilter] = useState<"all" | "full" | "graph">("all");
   const [deptFilter, setDeptFilter] = useState<string>("all");
+  const [typologyFilter, setTypologyFilter] = useState<string>("all");
   const [lifeEventFilter, setLifeEventFilter] = useState<string>("all");
   const [lifeEvents, setLifeEvents] = useState<LifeEventFilter[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
@@ -199,6 +322,13 @@ export default function ServicesPage() {
     if (deptFilter !== "all") {
       filtered = filtered.filter((s) => s.department === deptFilter);
     }
+    if (typologyFilter !== "all") {
+      if (typologyFilter === "unknown") {
+        filtered = filtered.filter((s) => !s.serviceType || !TYPOLOGY_CONFIG[s.serviceType]);
+      } else {
+        filtered = filtered.filter((s) => s.serviceType === typologyFilter);
+      }
+    }
     if (lifeEventFilter !== "all") {
       const le = lifeEvents.find((e) => e.id === lifeEventFilter);
       if (le) {
@@ -216,7 +346,7 @@ export default function ServicesPage() {
       );
     }
     return filtered;
-  }, [services, sourceFilter, deptFilter, lifeEventFilter, lifeEvents, searchQuery]);
+  }, [services, sourceFilter, deptFilter, typologyFilter, lifeEventFilter, lifeEvents, searchQuery]);
 
   const agentServices = useMemo(() => filteredServices.filter((s) => s.department === "Agent"), [filteredServices]);
   const govServices = useMemo(() => filteredServices.filter((s) => s.department !== "Agent"), [filteredServices]);
@@ -337,6 +467,12 @@ export default function ServicesPage() {
         </div>
       )}
 
+      {/* Typology Dashboard (Proposal F) */}
+      <TypologyDashboard
+        services={services}
+        onSelectType={(type) => setTypologyFilter((prev) => (prev === type ? "all" : type))}
+      />
+
       {/* Filters */}
       <div className="flex flex-wrap gap-3 mb-6">
         {/* Source filter */}
@@ -356,6 +492,21 @@ export default function ServicesPage() {
             </button>
           ))}
         </div>
+
+        {/* Typology filter */}
+        <select
+          value={typologyFilter}
+          onChange={(e) => setTypologyFilter(e.target.value)}
+          className={`text-sm border rounded-lg px-2.5 py-1 ${
+            typologyFilter !== "all" ? "border-govuk-blue bg-blue-50 font-medium" : "border-gray-300"
+          }`}
+        >
+          <option value="all">All typologies</option>
+          {Object.entries(TYPOLOGY_CONFIG).map(([key, cfg]) => (
+            <option key={key} value={key}>{cfg.icon} {cfg.label}</option>
+          ))}
+          <option value="unknown">? Uncategorised</option>
+        </select>
 
         {/* Department filter */}
         <select
@@ -391,6 +542,16 @@ export default function ServicesPage() {
           onChange={(e) => setSearchQuery(e.target.value)}
           className="text-sm border border-gray-300 rounded-lg px-3 py-1 flex-1 min-w-[200px]"
         />
+
+        {/* Active filter indicator */}
+        {typologyFilter !== "all" && (
+          <button
+            onClick={() => setTypologyFilter("all")}
+            className="text-xs text-govuk-blue hover:underline flex items-center gap-1"
+          >
+            ✕ Clear typology filter
+          </button>
+        )}
       </div>
 
       {/* All-services dashboard */}
@@ -474,7 +635,12 @@ export default function ServicesPage() {
                         Generated
                       </span>
                     )}
-                    {service.serviceType && !service.interactionType && (
+                    {service.serviceType && TYPOLOGY_CONFIG[service.serviceType] && (
+                      <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${TYPOLOGY_CONFIG[service.serviceType].bgColor} ${TYPOLOGY_CONFIG[service.serviceType].color}`}>
+                        {TYPOLOGY_CONFIG[service.serviceType].icon} {TYPOLOGY_CONFIG[service.serviceType].label}
+                      </span>
+                    )}
+                    {service.serviceType && !service.interactionType && !TYPOLOGY_CONFIG[service.serviceType] && (
                       <span className="text-[10px] font-medium text-gray-500 uppercase">{service.serviceType}</span>
                     )}
                   </div>
