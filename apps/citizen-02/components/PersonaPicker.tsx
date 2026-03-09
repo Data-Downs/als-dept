@@ -1,20 +1,30 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { useAppStore } from "@/lib/store";
-import { PERSONA_NAMES, PERSONA_COLORS } from "@/lib/types";
+import { PERSONA_LIST } from "@/lib/service-data";
 
-const personas = [
-  { id: "emma-parker", initials: "EP", desc: "Young couple expecting their first baby" },
-  { id: "rajesh-patel", initials: "RP", desc: "Self-employed IT consultant, two children" },
-  { id: "margaret-thompson", initials: "MT", desc: "Retired, managing health conditions" },
-  { id: "david-evans", initials: "DE", desc: "Recently redundant, looking for work" },
-  { id: "priya-sharma", initials: "PS", desc: "Recently redundant, applying for Universal Credit" },
-  { id: "mary-summers", initials: "MS", desc: "Affluent couple, retirement planning & power of attorney" },
-];
+interface PersonaItem {
+  id: string;
+  name: string;
+  initials: string;
+  color: string;
+  desc: string;
+}
 
 export function PersonaPicker() {
   const setPersona = useAppStore((s) => s.setPersona);
   const openBottomSheet = useAppStore((s) => s.openBottomSheet);
+  const [personas, setPersonas] = useState<PersonaItem[]>(PERSONA_LIST);
+
+  useEffect(() => {
+    fetch("/api/personas")
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.personas?.length) setPersonas(data.personas);
+      })
+      .catch(() => {});
+  }, []);
 
   return (
     <div className="max-w-md mx-auto pt-8">
@@ -47,13 +57,13 @@ export function PersonaPicker() {
           >
             <div
               className="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-sm shrink-0"
-              style={{ backgroundColor: PERSONA_COLORS[p.id] }}
+              style={{ backgroundColor: p.color }}
             >
               {p.initials}
             </div>
             <div className="flex-1 min-w-0">
               <strong className="block text-govuk-black">
-                {PERSONA_NAMES[p.id]}
+                {p.name}
               </strong>
               <span className="text-sm text-govuk-dark-grey">{p.desc}</span>
             </div>

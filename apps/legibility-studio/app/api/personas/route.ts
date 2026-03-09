@@ -12,6 +12,7 @@ export async function GET() {
         name: u.name as string,
         personaName: (u.personaName as string) ?? u.name,
         description: (u.description as string) ?? "",
+        color: (u.color as string) ?? "#505a5f",
         age: u.age as number,
         address: { city: address?.city as string, postcode: address?.postcode as string },
         employment_status: u.employment_status as string,
