@@ -250,13 +250,14 @@ export function Dashboard() {
   };
 
   useEffect(() => {
-    fetch("/api/life-events")
+    const url = persona ? `/api/life-events?persona=${persona}` : "/api/life-events";
+    fetch(url)
       .then((r) => r.json())
       .then((resp) => {
         if (resp.lifeEvents) setLifeEvents(resp.lifeEvents);
       })
       .catch(() => {});
-  }, []);
+  }, [persona]);
 
   useEffect(() => {
     if (persona) setActivePlans(getActivePlans(persona));
@@ -482,28 +483,47 @@ export function Dashboard() {
                   </button>
                 )}
                 <div className="flex flex-col gap-2">
-                  {le.services.slice(0, 5).map((svc) => (
-                    <button
-                      key={svc.id}
-                      onClick={() => {
-                        startNewConversation(svc.id as ServiceType, svc.name);
-                        navigateTo("chat", svc.id as ServiceType, svc.name);
-                      }}
-                      className="w-full text-left p-3 rounded-lg border border-govuk-mid-grey hover:border-govuk-blue hover:shadow-sm transition-all"
-                    >
-                      <div className="flex items-center justify-between">
-                        <div className="min-w-0 flex-1">
-                          <strong className="block text-sm text-govuk-black">{svc.name}</strong>
-                          <span className="text-xs text-govuk-dark-grey">{svc.dept}</span>
-                        </div>
-                        <span className={`text-[10px] font-bold uppercase px-1.5 py-0.5 rounded ml-2 shrink-0 ${
-                          svc.serviceType === "benefit" ? "bg-green-100 text-green-800" :
-                          svc.serviceType === "obligation" ? "bg-amber-100 text-amber-800" :
-                          "bg-blue-100 text-blue-800"
-                        }`}>{svc.serviceType}</span>
-                      </div>
-                    </button>
-                  ))}
+                  {[...le.services]
+                    .sort((a, b) => (a.proactivity?.priority ?? 50) - (b.proactivity?.priority ?? 50))
+                    .slice(0, 8)
+                    .map((svc) => {
+                      const mode = svc.proactivity?.mode ?? "inform";
+                      const accentColor = svc.proactivity?.accentColor ?? "#1d70b8";
+                      const framingPrefix = svc.proactivity?.framingPrefix;
+                      return (
+                        <button
+                          key={svc.id}
+                          onClick={() => {
+                            startNewConversation(svc.id as ServiceType, svc.name);
+                            navigateTo("chat", svc.id as ServiceType, svc.name);
+                          }}
+                          className="w-full text-left p-3 rounded-lg border hover:shadow-sm transition-all"
+                          style={{ borderColor: mode === "warn" ? "#d4351c" : "#b1b4b6" }}
+                        >
+                          <div className="flex items-center justify-between">
+                            <div className="min-w-0 flex-1">
+                              <strong className="block text-sm text-govuk-black">{svc.name}</strong>
+                              {framingPrefix ? (
+                                <span className="text-xs" style={{ color: accentColor }}>
+                                  {mode === "warn" ? "⚠ " : mode === "suggest" ? "→ " : ""}{framingPrefix} {svc.name.toLowerCase()}
+                                </span>
+                              ) : (
+                                <span className="text-xs text-govuk-dark-grey">{svc.dept}</span>
+                              )}
+                            </div>
+                            <span
+                              className="text-[10px] font-bold uppercase px-1.5 py-0.5 rounded ml-2 shrink-0"
+                              style={{
+                                backgroundColor: mode === "warn" ? "#fce4e4" : mode === "suggest" ? "#e6f3ec" : "#e8f1f8",
+                                color: accentColor,
+                              }}
+                            >
+                              {svc.serviceType}
+                            </span>
+                          </div>
+                        </button>
+                      );
+                    })}
                 </div>
               </div>
             );

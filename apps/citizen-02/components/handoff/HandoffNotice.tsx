@@ -1,5 +1,7 @@
 "use client";
 
+import { resolveEscalationConfig } from "@als/schemas";
+
 interface HandoffNoticeProps {
   urgency: "routine" | "priority" | "urgent" | "safeguarding";
   reason: string;
@@ -7,6 +9,7 @@ interface HandoffNoticeProps {
   phone?: string;
   hours?: string;
   onDismiss?: () => void;
+  interactionType?: string;
 }
 
 const urgencyStyles: Record<string, { bg: string; border: string; label: string }> = {
@@ -23,13 +26,17 @@ export default function HandoffNotice({
   phone,
   hours,
   onDismiss,
+  interactionType,
 }: HandoffNoticeProps) {
+  const escalation = resolveEscalationConfig(interactionType);
   const style = urgencyStyles[urgency] || urgencyStyles.routine;
+  // Use type-specific label for routine handoffs; keep urgency labels for priority/safeguarding
+  const label = urgency === "routine" ? escalation.noticeLabel : style.label;
 
   return (
     <div className={`${style.bg} border-l-4 ${style.border} rounded p-4`}>
       <div className="flex justify-between items-start">
-        <h4 className="font-bold text-sm">{style.label}</h4>
+        <h4 className="font-bold text-sm">{label}</h4>
         {onDismiss && (
           <button onClick={onDismiss} className="text-gray-400 hover:text-gray-600">
             &#10005;
@@ -53,10 +60,22 @@ export default function HandoffNotice({
         )}
       </div>
 
+      {/* Type-specific citizen guidance */}
       <p className="text-xs text-gray-500 mt-3">
-        A summary of your conversation and any information you have shared will
-        be available to the human agent to avoid you having to repeat yourself.
+        {escalation.citizenGuidance}
       </p>
+
+      {/* Type-specific resources (Proposal D) */}
+      {escalation.resources.length > 0 && (
+        <div className="mt-3 space-y-1.5">
+          <p className="text-xs font-bold text-gray-600">Useful contacts:</p>
+          {escalation.resources.map((r) => (
+            <div key={r.label} className="text-xs text-gray-500">
+              <strong>{r.label}</strong> — {r.detail}
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

@@ -2,13 +2,13 @@
 
 import { useEffect, useRef } from "react";
 import { useAppStore } from "@/lib/store";
-import { TERMINAL_STATE_CONFIG } from "@als/schemas";
-import type { TerminalStateConfig } from "@als/schemas";
+import { resolveTerminalConfig } from "@als/schemas";
 
 interface JourneyCompleteCardProps {
   state: string;
   serviceName?: string;
   serviceId?: string;
+  interactionType?: string;
 }
 
 /** Generate a deterministic reference number from a conversation ID */
@@ -24,16 +24,14 @@ function generateReference(conversationId: string | null): string {
   return `GOV-${upper}-${lower}`;
 }
 
-const FALLBACK_CONFIG: TerminalStateConfig = TERMINAL_STATE_CONFIG["completed"];
-
-export function JourneyCompleteCard({ state, serviceName, serviceId }: JourneyCompleteCardProps) {
+export function JourneyCompleteCard({ state, serviceName, serviceId, interactionType }: JourneyCompleteCardProps) {
   const navigateTo = useAppStore((s) => s.navigateTo);
   const startNewConversation = useAppStore((s) => s.startNewConversation);
   const activeConversationId = useAppStore((s) => s.activeConversationId);
   const activePlan = useAppStore((s) => s.activePlan);
   const markServiceCompleted = useAppStore((s) => s.markServiceCompleted);
 
-  const config = TERMINAL_STATE_CONFIG[state] || FALLBACK_CONFIG;
+  const config = resolveTerminalConfig(state, interactionType);
   const reference = generateReference(activeConversationId);
 
   // Auto-complete service in active plan on success terminal

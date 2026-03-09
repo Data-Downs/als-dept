@@ -113,9 +113,15 @@ const APPLICATION_TEMPLATE: StateInstructionTemplate = {
     "eligibility-checked": SHARED.eligibilityChecked,
     "consent-given": `Consent has been granted and personal details have been confirmed from records.
 Thank the citizen for granting consent. Confirm you have their personal details on file (name, DOB, NI number, address — list them briefly).
-Explain that you now need to collect the details required for their {serviceName} application.
-An interactive form will appear below for them to fill in.
-Do NOT include any tasks in the JSON block — the system provides the form automatically.`,
+Explain that you now need them to upload a supporting document (such as a P45, photo ID, or utility bill) for their {serviceName} application.
+A document upload card will appear below automatically for them to use.
+Set "stateTransition" to "upload-document" in the JSON block.
+Do NOT include any tasks in the JSON block — the system provides the upload card automatically.`,
+    "document-submitted": `A supporting document has been uploaded and its details extracted automatically.
+Acknowledge the upload and explain that the key information has been read from their document.
+The extracted fields are shown below for the citizen to review and confirm.
+Once they confirm, explain that you will move on to collect any remaining details for their {serviceName} application.
+Do NOT include any tasks in the JSON block.`,
     "details-submitted": `Details have been submitted.
 Acknowledge the information the citizen provided. Summarise the key details back to them.
 Explain that {department} will now assess their application.
@@ -152,9 +158,9 @@ Do NOT include any tasks in the JSON block.`,
       pattern: "I have reviewed all consent|consent.*granted|granted.*consent|please proceed|I consent|go ahead|yes.*proceed|agree|done|let's go|ready|start|apply",
     },
     {
-      fromState: "consent-given",
+      fromState: "document-submitted",
       trigger: "submit-details",
-      pattern: "everything.*correct|looks correct|details.*correct|yes.*correct|confirm|that's right|all correct",
+      pattern: "everything.*correct|looks correct|details.*correct|yes.*correct|confirm|that's right|all correct|details are correct",
     },
   ],
 };
@@ -168,9 +174,14 @@ const LICENSE_TEMPLATE: StateInstructionTemplate = {
     "identity-verified": SHARED.identityVerified,
     "eligibility-checked": SHARED.eligibilityChecked,
     "consent-given": `Consent has been granted. Confirm you have their personal details on file.
-Explain that you need to confirm the details for their {serviceName} licence.
-Present their details from records for confirmation.
-Ask "Does everything look correct?"
+Explain that you need them to upload a supporting document (such as photo ID or a utility bill) for their {serviceName} licence application.
+A document upload card will appear below automatically for them to use.
+Set "stateTransition" to "upload-document" in the JSON block.
+Do NOT include any tasks in the JSON block.`,
+    "document-submitted": `A supporting document has been uploaded and its details extracted automatically.
+Acknowledge the upload and explain that the key information has been read from their document.
+The extracted fields are shown below for the citizen to review and confirm.
+Once they confirm, explain that you will move on to confirm the remaining details for their {serviceName} licence.
 Do NOT include any tasks in the JSON block.`,
     "details-confirmed": `Details have been confirmed.
 Explain that payment is needed to complete the {serviceName} application.
@@ -203,9 +214,9 @@ Do NOT include any tasks in the JSON block.`,
       pattern: "I have reviewed all consent|consent.*granted|granted.*consent|please proceed|I consent|go ahead|yes.*proceed|agree|done|let's go|ready",
     },
     {
-      fromState: "consent-given",
+      fromState: "document-submitted",
       trigger: "confirm-details",
-      pattern: "everything.*correct|looks correct|details.*correct|yes.*correct|confirm|that's right|all correct",
+      pattern: "everything.*correct|looks correct|details.*correct|yes.*correct|confirm|that's right|all correct|details are correct",
     },
   ],
 };
@@ -634,6 +645,43 @@ export const TERMINAL_STATE_CONFIG: Record<string, TerminalStateConfig> = {
     titleClass: "text-red-700",
     isSuccess: false,
   },
+  // ── Typology-specific terminals (Phase 1) ──
+  "benefit-active": {
+    icon: "M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z",
+    title: "Benefit active",
+    description: "Your benefit claim is now active and payments will begin.",
+    nextSteps: "The department will confirm your payment amounts and schedule. Report any changes in circumstances promptly.",
+    borderColor: "#00703c",
+    borderClass: "border-green-200",
+    shadowStyle: "0 2px 8px rgba(0,112,60,0.08)",
+    iconBgClass: "bg-green-100",
+    titleClass: "text-green-700",
+    isSuccess: true,
+  },
+  "confirmed": {
+    icon: "M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z",
+    title: "Entitlement confirmed",
+    description: "Your statutory entitlement has been confirmed.",
+    nextSteps: "Official confirmation will be sent to you and your employer where applicable.",
+    borderColor: "#00703c",
+    borderClass: "border-green-200",
+    shadowStyle: "0 2px 8px rgba(0,112,60,0.08)",
+    iconBgClass: "bg-green-100",
+    titleClass: "text-green-700",
+    isSuccess: true,
+  },
+  "approved": {
+    icon: "M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z",
+    title: "Grant approved",
+    description: "Your grant application has been approved.",
+    nextSteps: "The department will confirm the grant amount and disbursement schedule. The conditions you accepted remain in effect.",
+    borderColor: "#00703c",
+    borderClass: "border-green-200",
+    shadowStyle: "0 2px 8px rgba(0,112,60,0.08)",
+    iconBgClass: "bg-green-100",
+    titleClass: "text-green-700",
+    isSuccess: true,
+  },
   // ── Handoff terminal ──
   "handed-off": {
     icon: "M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z",
@@ -648,6 +696,432 @@ export const TERMINAL_STATE_CONFIG: Record<string, TerminalStateConfig> = {
     isSuccess: false,
   },
 };
+
+// ── Proposal B: Type-Specific Terminal Config Overrides ──
+
+/**
+ * Per-interaction-type overrides for terminal state rendering.
+ * When an interaction type has an override for a terminal state,
+ * it replaces the generic config from TERMINAL_STATE_CONFIG.
+ */
+export const TERMINAL_CONFIG_OVERRIDES: Partial<Record<InteractionType, Partial<Record<string, Partial<TerminalStateConfig>>>>> = {
+  benefit: {
+    "benefit-active": {
+      title: "Benefit active",
+      description: "Your benefit claim is now active and payments will begin shortly.",
+      nextSteps: "The department will confirm your exact payment amounts and schedule. Remember to report any changes in circumstances promptly — this protects your payments.",
+    },
+    "rejected": {
+      title: "Claim unsuccessful",
+      description: "Unfortunately your benefit claim was not successful at this time.",
+      nextSteps: "You have the right to request a mandatory reconsideration within one month. If still unhappy, you can appeal to an independent tribunal. Contact your local Citizens Advice for free support.",
+    },
+    "handed-off": {
+      title: "Referred to caseworker",
+      description: "Your case has been referred to a dedicated caseworker who will support you personally.",
+      nextSteps: "A caseworker will contact you — this is a real person, not a bot. Have your National Insurance number ready. You can also contact the department directly.",
+    },
+  },
+  entitlement: {
+    "confirmed": {
+      title: "Entitlement confirmed",
+      description: "Your statutory entitlement has been verified and confirmed.",
+      nextSteps: "Official confirmation will be sent to you. Your employer will be notified where applicable. You do not need to take any further action.",
+    },
+    "rejected": {
+      title: "Entitlement not confirmed",
+      description: "Based on the information provided, your entitlement could not be confirmed.",
+      nextSteps: "Check if you qualify under alternative criteria. You may wish to contact the department or seek advice from Citizens Advice. Your employer's HR department may also be able to help.",
+    },
+  },
+  grant: {
+    "approved": {
+      title: "Grant approved",
+      description: "Your grant application has been approved and funding will be arranged.",
+      nextSteps: "The department will confirm the grant amount and disbursement schedule. The conditions you accepted remain in effect throughout the grant period. Keep all receipts for audit purposes.",
+    },
+    "rejected": {
+      title: "Grant application unsuccessful",
+      description: "Unfortunately your grant application was not successful.",
+      nextSteps: "You may be able to reapply if your circumstances change. Contact the department for feedback on your application. Alternative funding sources may be available — ask your local council.",
+    },
+  },
+  legal_process: {
+    "completed": {
+      title: "Legal process complete",
+      description: "Your legal process has been completed successfully. All documentation will be filed officially.",
+      nextSteps: "Official documents will be sent to your registered address and to your solicitor (if appointed). Keep all paperwork in a safe place — you may need it in future. If you have questions, consult your solicitor or contact the relevant court.",
+    },
+    "rejected": {
+      title: "Application not accepted",
+      description: "Your legal application was not accepted. This does not prevent you from reapplying.",
+      nextSteps: "You have the right to appeal through the appropriate court or tribunal — time limits are strict, so seek legal advice promptly. Free legal advice is available from Citizens Advice, Law Centres, or the Legal Aid helpline.",
+    },
+    "handed-off": {
+      title: "Referred for specialist review",
+      description: "Your case requires specialist legal review and has been referred accordingly.",
+      nextSteps: "A specialist advisor will review your case. If you have a solicitor, they will be notified. For free legal advice: Citizens Advice (0800 144 8848), Law Centres Network, or the Legal Aid helpline.",
+    },
+  },
+  payment_service: {
+    "completed": {
+      title: "Payment complete",
+      description: "Your payment has been processed successfully.",
+      nextSteps: "A confirmation receipt will be sent to you. Keep this for your records. If you believe the amount was incorrect, contact the department within 30 days.",
+    },
+  },
+  license: {
+    "issued": {
+      title: "Licence issued",
+      description: "Your licence has been issued successfully.",
+      nextSteps: "Your licence will be sent to your registered address. You can check delivery status on GOV.UK. Remember to renew before it expires.",
+    },
+  },
+  register: {
+    "registered": {
+      title: "Registration complete",
+      description: "Your registration has been confirmed and recorded.",
+      nextSteps: "An official certificate or confirmation will be sent to you. Keep this safe — you may need it as proof of registration.",
+    },
+  },
+};
+
+/**
+ * Resolve the terminal state config for a given state and (optionally) interaction type.
+ * Uses type-specific overrides where available, falling back to the generic config.
+ */
+export function resolveTerminalConfig(
+  stateId: string,
+  interactionType?: string | null,
+): TerminalStateConfig {
+  const baseConfig = TERMINAL_STATE_CONFIG[stateId] || TERMINAL_STATE_CONFIG["completed"];
+
+  if (!interactionType) return baseConfig;
+
+  const typeOverrides = TERMINAL_CONFIG_OVERRIDES[interactionType as InteractionType];
+  if (!typeOverrides) return baseConfig;
+
+  const override = typeOverrides[stateId];
+  if (!override) return baseConfig;
+
+  return { ...baseConfig, ...override };
+}
+
+// ── Proposal C: Type-Specific Consent Framing ──
+
+export interface ConsentFraming {
+  /** Panel header text (e.g. "Consent Required") */
+  panelTitle: string;
+  /** Subheading text explaining what consent is for */
+  panelDescription: string;
+  /** Warning text when required consent is denied */
+  requiredDenialWarning: string;
+  /** Text for the required denial banner heading */
+  requiredDenialTitle: string;
+}
+
+const DEFAULT_CONSENT_FRAMING: ConsentFraming = {
+  panelTitle: "Consent Required",
+  panelDescription: "Review and grant consent for your application.",
+  requiredDenialWarning: "You have declined one or more required consents. Your application cannot proceed without these. Please change your decisions above to continue.",
+  requiredDenialTitle: "Required consents declined",
+};
+
+/**
+ * Type-specific consent framing — adjusts language to match the citizen experience lens.
+ */
+export const TYPOLOGY_CONSENT_FRAMING: Partial<Record<InteractionType, ConsentFraming>> = {
+  benefit: {
+    panelTitle: "Data Sharing Consent",
+    panelDescription: "To assess your benefit entitlement, we need your permission to access and share some of your information.",
+    requiredDenialWarning: "These consents are needed to assess your benefit claim. Without them, we cannot check what support you may be entitled to. You can change your mind at any time.",
+    requiredDenialTitle: "Required consents not yet given",
+  },
+  entitlement: {
+    panelTitle: "Verification Consent",
+    panelDescription: "To confirm your statutory entitlement, we need to verify some information with your employer and relevant departments.",
+    requiredDenialWarning: "These consents are needed to verify your statutory entitlement. Without verification, your right cannot be confirmed. You can change your mind at any time.",
+    requiredDenialTitle: "Required verifications not yet authorised",
+  },
+  grant: {
+    panelTitle: "Data Sharing Consent",
+    panelDescription: "To process your grant application, we need your permission to share information with the funding body.",
+    requiredDenialWarning: "These consents are required for your grant application. The funding body needs this information to assess your application.",
+    requiredDenialTitle: "Required consents not yet given",
+  },
+  legal_process: {
+    panelTitle: "Information Sharing Consent",
+    panelDescription: "Legal processes require certain information to be shared with the court or relevant authority. Review each item carefully — you may wish to consult a solicitor.",
+    requiredDenialWarning: "These consents are legally required to progress your case. Without them, the process cannot continue. If you are unsure, we recommend seeking legal advice before deciding.",
+    requiredDenialTitle: "Required consents not yet given",
+  },
+  payment_service: {
+    panelTitle: "Data Access Consent",
+    panelDescription: "To process your payment, we need to access your records and verify the amount due.",
+    requiredDenialWarning: "These consents are needed to calculate and process your payment. Without them, your payment cannot be processed through this service.",
+    requiredDenialTitle: "Required consents declined",
+  },
+  license: {
+    panelTitle: "Consent Required",
+    panelDescription: "To process your licence application, we need your permission to verify your details and share information with the issuing authority.",
+    requiredDenialWarning: "These consents are required for your licence application to proceed.",
+    requiredDenialTitle: "Required consents declined",
+  },
+  register: {
+    panelTitle: "Consent Required",
+    panelDescription: "To complete your registration, we need your permission to record and share certain information.",
+    requiredDenialWarning: "These consents are required for your registration to proceed.",
+    requiredDenialTitle: "Required consents declined",
+  },
+};
+
+/**
+ * Resolve consent framing for a given interaction type.
+ * Falls back to generic framing if no type-specific framing exists.
+ */
+export function resolveConsentFraming(interactionType?: string | null): ConsentFraming {
+  if (!interactionType) return DEFAULT_CONSENT_FRAMING;
+  return TYPOLOGY_CONSENT_FRAMING[interactionType as InteractionType] || DEFAULT_CONSENT_FRAMING;
+}
+
+// ── Proposal D: Type-Specific Escalation Paths ──
+
+export interface EscalationConfig {
+  /** Type of specialist the citizen should be routed to */
+  specialistType: string;
+  /** Human-readable label for the notice (e.g. "Referred to caseworker") */
+  noticeLabel: string;
+  /** Guidance shown to the citizen in the handoff notice */
+  citizenGuidance: string;
+  /** Additional resources/helplines to display */
+  resources: Array<{ label: string; detail: string }>;
+  /** Type-specific suggested actions for the receiving human agent */
+  suggestedActions: string[];
+}
+
+const DEFAULT_ESCALATION_CONFIG: EscalationConfig = {
+  specialistType: "advisor",
+  noticeLabel: "Handoff to human agent",
+  citizenGuidance: "A summary of your conversation will be shared with the advisor so you don't have to repeat yourself.",
+  resources: [],
+  suggestedActions: [
+    "Review conversation summary before connecting",
+    "Confirm citizen's identity and details",
+  ],
+};
+
+export const TYPOLOGY_ESCALATION_CONFIG: Partial<Record<InteractionType, EscalationConfig>> = {
+  benefit: {
+    specialistType: "caseworker",
+    noticeLabel: "Referred to a caseworker",
+    citizenGuidance: "A dedicated caseworker will review your case. They are a real person who can help with your benefit claim. Have your National Insurance number ready when they contact you.",
+    resources: [
+      { label: "Citizens Advice", detail: "Free, confidential advice — citizensadvice.org.uk or 0800 144 8848" },
+      { label: "Turn2us", detail: "Benefits calculator and grants — turn2us.org.uk" },
+    ],
+    suggestedActions: [
+      "Review income assessment and eligibility data collected",
+      "Check for alternative benefits the citizen may qualify for",
+      "Consider whether a home visit or phone appointment is more appropriate",
+      "Review any safeguarding flags from the conversation",
+    ],
+  },
+  entitlement: {
+    specialistType: "entitlement specialist",
+    noticeLabel: "Referred to an entitlement specialist",
+    citizenGuidance: "A specialist will verify your statutory entitlement. Your employer may also be contacted to confirm details. You do not need to do anything further at this stage.",
+    resources: [
+      { label: "ACAS", detail: "Employment rights advice — acas.org.uk or 0300 123 1100" },
+      { label: "GOV.UK", detail: "Check your employment rights — gov.uk/employment-status" },
+    ],
+    suggestedActions: [
+      "Verify employer details and earnings against RTI records",
+      "Check qualifying period and earnings thresholds",
+      "Contact employer HR department if verification is needed",
+    ],
+  },
+  grant: {
+    specialistType: "funding advisor",
+    noticeLabel: "Referred to a funding advisor",
+    citizenGuidance: "A funding advisor will review your grant application and help you understand the conditions. They can also suggest alternative funding sources if this grant isn't suitable.",
+    resources: [
+      { label: "Local council", detail: "Your local council may offer additional grants or funding support" },
+    ],
+    suggestedActions: [
+      "Review project details and cost estimates submitted",
+      "Check if citizen qualifies for other grants or funding streams",
+      "Verify property ownership and planning permissions if applicable",
+    ],
+  },
+  legal_process: {
+    specialistType: "legal advisor",
+    noticeLabel: "Referred for legal guidance",
+    citizenGuidance: "Your case needs specialist legal attention. If you have a solicitor, they will be notified. If you don't have legal representation, free advice is available from the organisations listed below.",
+    resources: [
+      { label: "Citizens Advice", detail: "Free legal guidance — citizensadvice.org.uk or 0800 144 8848" },
+      { label: "Law Centres Network", detail: "Free legal advice in your area — lawcentres.org.uk" },
+      { label: "Legal Aid", detail: "Check if you qualify — gov.uk/legal-aid" },
+      { label: "Court helpline", detail: "HMCTS — 0300 123 1024" },
+    ],
+    suggestedActions: [
+      "Review all documents and witness attestations submitted",
+      "Check if the citizen has legal representation — contact solicitor if so",
+      "Ensure all time-sensitive deadlines are flagged",
+      "Consider whether a face-to-face appointment is needed",
+      "Review any power of attorney or capacity concerns",
+    ],
+  },
+  payment_service: {
+    specialistType: "payment support",
+    noticeLabel: "Referred to payment support",
+    citizenGuidance: "A payment specialist will help resolve your issue. If there is a dispute about the amount owed, they can review the calculation.",
+    resources: [
+      { label: "HMRC helpline", detail: "Tax queries — 0300 200 3300" },
+    ],
+    suggestedActions: [
+      "Review amount calculation and any disputed figures",
+      "Check payment history for partial payments or overpayments",
+      "Verify the citizen's liability and assessment details",
+    ],
+  },
+  license: {
+    specialistType: "licensing support",
+    noticeLabel: "Referred to licensing support",
+    citizenGuidance: "A licensing specialist will review your application. If additional documents are needed, they will let you know.",
+    resources: [],
+    suggestedActions: [
+      "Review submitted documents and photo/identity verification",
+      "Check for any holds or restrictions on the citizen's record",
+    ],
+  },
+  register: {
+    specialistType: "registration officer",
+    noticeLabel: "Referred to a registration officer",
+    citizenGuidance: "A registration officer will complete your registration. You may need to attend in person — they will advise you.",
+    resources: [],
+    suggestedActions: [
+      "Review event details and supporting documentation",
+      "Check if in-person attendance is required for this registration type",
+    ],
+  },
+};
+
+/**
+ * Resolve escalation config for a given interaction type.
+ */
+export function resolveEscalationConfig(interactionType?: string | null): EscalationConfig {
+  if (!interactionType) return DEFAULT_ESCALATION_CONFIG;
+  return TYPOLOGY_ESCALATION_CONFIG[interactionType as InteractionType] || DEFAULT_ESCALATION_CONFIG;
+}
+
+// ── Proposal E: Type-Aware Proactivity Rules ──
+
+export interface ProactivityConfig {
+  /** How this type should be proactively surfaced */
+  mode: "suggest" | "warn" | "inform";
+  /** Framing language for proactive surfacing */
+  framingPrefix: string;
+  /** Whether services of this type should be proactive by default */
+  defaultProactive: boolean;
+  /** Priority for ordering proactive suggestions (lower = higher priority) */
+  priority: number;
+  /** Icon hint for UI rendering */
+  iconHint: "gift" | "alert" | "info" | "shield" | "clock" | "document";
+  /** Colour accent for proactive cards (GOV.UK palette) */
+  accentColor: string;
+}
+
+const DEFAULT_PROACTIVITY_CONFIG: ProactivityConfig = {
+  mode: "inform",
+  framingPrefix: "You may be interested in",
+  defaultProactive: false,
+  priority: 50,
+  iconHint: "info",
+  accentColor: "#1d70b8",
+};
+
+export const TYPOLOGY_PROACTIVITY_CONFIG: Partial<Record<InteractionType, ProactivityConfig>> = {
+  benefit: {
+    mode: "suggest",
+    framingPrefix: "Based on your circumstances, you may be entitled to",
+    defaultProactive: true,
+    priority: 10,
+    iconHint: "gift",
+    accentColor: "#00703c",
+  },
+  entitlement: {
+    mode: "suggest",
+    framingPrefix: "You have a statutory right to",
+    defaultProactive: true,
+    priority: 15,
+    iconHint: "shield",
+    accentColor: "#00703c",
+  },
+  grant: {
+    mode: "suggest",
+    framingPrefix: "You may be eligible for funding through",
+    defaultProactive: true,
+    priority: 20,
+    iconHint: "gift",
+    accentColor: "#00703c",
+  },
+  payment_service: {
+    mode: "warn",
+    framingPrefix: "You have an upcoming payment due for",
+    defaultProactive: true,
+    priority: 5,
+    iconHint: "alert",
+    accentColor: "#d4351c",
+  },
+  license: {
+    mode: "warn",
+    framingPrefix: "Your licence may need attention —",
+    defaultProactive: true,
+    priority: 25,
+    iconHint: "clock",
+    accentColor: "#f47738",
+  },
+  register: {
+    mode: "inform",
+    framingPrefix: "You may need to register for",
+    defaultProactive: false,
+    priority: 40,
+    iconHint: "document",
+    accentColor: "#1d70b8",
+  },
+  legal_process: {
+    mode: "inform",
+    framingPrefix: "You may need to begin a legal process for",
+    defaultProactive: false,
+    priority: 35,
+    iconHint: "document",
+    accentColor: "#912b88",
+  },
+  application: {
+    mode: "suggest",
+    framingPrefix: "You may want to apply for",
+    defaultProactive: true,
+    priority: 30,
+    iconHint: "info",
+    accentColor: "#1d70b8",
+  },
+  informational_hub: {
+    mode: "inform",
+    framingPrefix: "You might find it useful to read about",
+    defaultProactive: false,
+    priority: 60,
+    iconHint: "info",
+    accentColor: "#505a5f",
+  },
+};
+
+/**
+ * Resolve proactivity config for a given interaction type.
+ */
+export function resolveProactivityConfig(interactionType?: string | null): ProactivityConfig {
+  if (!interactionType) return DEFAULT_PROACTIVITY_CONFIG;
+  return TYPOLOGY_PROACTIVITY_CONFIG[interactionType as InteractionType] || DEFAULT_PROACTIVITY_CONFIG;
+}
 
 /**
  * Compute the union of all terminal state IDs from STATE_MODEL_TEMPLATES.
@@ -665,6 +1139,381 @@ export function getAllTerminalStateIds(): Set<string> {
   return ids;
 }
 
+// ── Benefit template (income-focused, payment schedule, caseworker escalation) ──
+
+const BENEFIT_TEMPLATE: StateInstructionTemplate = {
+  version: "1.0.0",
+  instructions: {
+    "not-started": `The citizen has just started the {serviceName} benefit claim with {department}.
+
+CRITICAL — IDENTITY IS ALREADY VERIFIED:
+The citizen is already authenticated via GOV.UK One Login. Identity verification is COMPLETE.
+Do NOT mention identity verification, One Login, or "verifying who you are" — it is DONE.
+
+CITIZEN EXPERIENCE LENS: "Seek support"
+The citizen may be in a vulnerable situation. Use warm, reassuring language. Avoid bureaucratic tone.
+Frame the service as support they are entitled to, not something they must "prove" they deserve.
+
+WHAT TO DO IN THIS RESPONSE:
+1. Welcome them warmly and with empathy
+2. Briefly explain what {serviceName} provides (1-2 sentences)
+3. Present the eligibility summary: {eligibilitySummary}
+4. If eligible, explain that you need their consent to share certain data with {department}
+5. Tell them that interactive consent cards will appear below
+
+Set "stateTransition" to "check-eligibility" in the JSON block.
+Do NOT skip ahead — complete this step only.
+Do NOT include any tasks in the JSON block.`,
+    "identity-verified": SHARED.identityVerified,
+    "eligibility-checked": SHARED.eligibilityChecked,
+    "consent-given": `Consent has been granted and personal details confirmed.
+Thank the citizen for granting consent. Confirm you have their details on file (name, DOB, NI number, address).
+Explain that you now need to understand their income and circumstances to assess their {serviceName} entitlement.
+An income assessment form will appear below automatically.
+Set "stateTransition" to "assess-income" in the JSON block.
+Do NOT include any tasks in the JSON block.`,
+    "income-assessed": `Income and circumstances have been submitted.
+Acknowledge the information provided. Explain that you may need a supporting document (payslips, bank statement, or similar).
+A document upload card will appear below.
+Set "stateTransition" to "upload-document" in the JSON block.
+Do NOT include any tasks in the JSON block.`,
+    "document-submitted": `A supporting document has been uploaded and details extracted.
+Acknowledge the upload and show the extracted details for confirmation.
+Once confirmed, explain you will collect any remaining details.
+Do NOT include any tasks in the JSON block.`,
+    "details-submitted": `Details have been submitted.
+Summarise the key information back to the citizen. Explain that {department} will now assess their claim.
+Set "stateTransition" to "begin-assessment" in the JSON block.
+Do NOT fabricate timelines — say "{department} will confirm."`,
+    "assessment": `The benefit claim is being assessed by {department}.
+Tell the citizen their claim has been submitted for assessment.
+Set "stateTransition" to "make-decision" in the JSON block.`,
+    "decision": `A decision has been made on the benefit claim.
+If approved: Congratulate the citizen warmly. Explain they need to set up payment details. Set "stateTransition" to "approve".
+If rejected: Explain sympathetically. Mention mandatory reconsideration and appeal rights. Set "stateTransition" to "reject-claim".
+Do NOT fabricate amounts — say "{department} will confirm."`,
+    "payment-details-collected": `Payment details have been collected.
+Confirm the bank details and payment frequency chosen. Explain that {department} will begin payments.
+Set "stateTransition" to "activate-benefit" in the JSON block.`,
+    "benefit-active": `The benefit is now active! Congratulate them warmly.
+Explain:
+- {department} will confirm the exact payment amounts and dates
+- They should report any changes in circumstances promptly
+- They can visit {govukUrl} for more information
+- If they need help, they can contact {department} or speak to a caseworker
+This is the FINAL message — do NOT ask follow-up questions.
+Do NOT include any tasks in the JSON block.`,
+    "rejected": `The benefit claim was not successful. Explain why clearly and sympathetically.
+IMPORTANT — mention the citizen's rights:
+- They have the right to request a MANDATORY RECONSIDERATION within one month
+- If still unhappy, they can appeal to an independent tribunal
+- They should contact {department} or a local advice service (Citizens Advice, etc.)
+- GOV.UK page for reference: {govukUrl}
+This is the FINAL message — do NOT ask follow-up questions.
+Do NOT include any tasks in the JSON block.`,
+    "handed-off": `This case has been referred to a caseworker at {department} for further review.
+Explain why, and provide:
+- A caseworker will be in touch — this is a person, not a bot
+- The citizen should have their National Insurance number ready
+- They can also contact {department} directly
+- GOV.UK page for reference: {govukUrl}
+This is the FINAL message — do NOT ask follow-up questions.
+Do NOT include any tasks in the JSON block.`,
+  },
+  forcedTransitions: {
+    "not-started": "verify-identity",
+    "identity-verified": "check-eligibility",
+  },
+  autoTransitions: [
+    {
+      fromState: "eligibility-checked",
+      trigger: "grant-consent",
+      pattern: "I have reviewed all consent|consent.*granted|granted.*consent|please proceed|I consent|go ahead|yes.*proceed|agree|done|let's go|ready|start|apply",
+    },
+    {
+      fromState: "document-submitted",
+      trigger: "submit-details",
+      pattern: "everything.*correct|looks correct|details.*correct|yes.*correct|confirm|that's right|all correct|details are correct",
+    },
+  ],
+};
+
+// ── Entitlement template (employer verification, statutory rights) ──
+
+const ENTITLEMENT_TEMPLATE: StateInstructionTemplate = {
+  version: "1.0.0",
+  instructions: {
+    "not-started": `The citizen has just started the {serviceName} entitlement claim with {department}.
+
+CRITICAL — IDENTITY IS ALREADY VERIFIED:
+The citizen is already authenticated via GOV.UK One Login. Identity verification is COMPLETE.
+Do NOT mention identity verification, One Login, or "verifying who you are" — it is DONE.
+
+CITIZEN EXPERIENCE LENS: "Claim a right"
+The citizen has a statutory right to this entitlement. Frame it as confirming their right, not "applying" for something.
+Use confident, empowering language: "You are entitled to..." not "You may be eligible for..."
+
+WHAT TO DO IN THIS RESPONSE:
+1. Welcome them
+2. Explain what {serviceName} provides and that it is a statutory entitlement
+3. Present the eligibility summary: {eligibilitySummary}
+4. If eligible, explain that consent is needed to verify their entitlement with {department}
+5. Consent cards will appear below
+
+Set "stateTransition" to "check-eligibility" in the JSON block.
+Do NOT skip ahead.
+Do NOT include any tasks in the JSON block.`,
+    "identity-verified": SHARED.identityVerified,
+    "eligibility-checked": SHARED.eligibilityChecked,
+    "consent-given": `Consent has been granted and personal details confirmed.
+Thank the citizen. Explain that to verify their entitlement, you need their employer's details.
+An employer verification form will appear below.
+Set "stateTransition" to "verify-employer" in the JSON block.
+Do NOT include any tasks in the JSON block.`,
+    "employer-verified": `Employer details have been submitted.
+Acknowledge the details. Explain that a supporting document may be needed (contract, payslip, etc.).
+A document upload card will appear below.
+Set "stateTransition" to "upload-document" in the JSON block.
+Do NOT include any tasks in the JSON block.`,
+    "document-submitted": `A supporting document has been uploaded and details extracted.
+Acknowledge the upload. Show extracted details for confirmation.
+Do NOT include any tasks in the JSON block.`,
+    "entitlement-confirmed": `The entitlement has been verified and confirmed.
+Present the entitlement details to the citizen (amount, period, conditions).
+An entitlement confirmation card will appear below for them to accept.
+Set "stateTransition" to "confirm-entitlement" in the JSON block.
+Do NOT fabricate specific amounts — say "{department} will confirm exact figures."`,
+    "confirmed": `The entitlement has been confirmed! Tell the citizen clearly:
+- Their statutory entitlement to {serviceName} has been confirmed
+- {department} will send official confirmation
+- They can visit {govukUrl} for more information
+- Their employer will be notified where applicable
+This is the FINAL message — do NOT ask follow-up questions.
+Do NOT include any tasks in the JSON block.`,
+    "rejected": `The entitlement claim was not successful. Explain clearly and sympathetically.
+Mention:
+- The citizen may be able to request a review
+- They should check if they qualify under alternative criteria
+- They can contact {department} or seek advice from Citizens Advice
+- GOV.UK page: {govukUrl}
+This is the FINAL message.
+Do NOT include any tasks in the JSON block.`,
+    "handed-off": `This case has been referred to a human advisor for further review.
+Explain why, and provide:
+- The citizen should contact {department} directly
+- They may wish to seek independent advice
+- GOV.UK page for reference: {govukUrl}
+This is the FINAL message.
+Do NOT include any tasks in the JSON block.`,
+  },
+  forcedTransitions: {
+    "not-started": "verify-identity",
+    "identity-verified": "check-eligibility",
+  },
+  autoTransitions: [
+    {
+      fromState: "eligibility-checked",
+      trigger: "grant-consent",
+      pattern: "I have reviewed all consent|consent.*granted|granted.*consent|please proceed|I consent|go ahead|yes.*proceed|agree|done|let's go|ready",
+    },
+    {
+      fromState: "document-submitted",
+      trigger: "confirm-entitlement",
+      pattern: "everything.*correct|looks correct|details.*correct|yes.*correct|confirm|that's right|all correct",
+    },
+  ],
+};
+
+// ── Grant template (funding application with conditions) ──
+
+const GRANT_TEMPLATE: StateInstructionTemplate = {
+  version: "1.0.0",
+  instructions: {
+    "not-started": `The citizen has just started the {serviceName} grant application with {department}.
+
+CRITICAL — IDENTITY IS ALREADY VERIFIED:
+The citizen is already authenticated via GOV.UK One Login. Identity verification is COMPLETE.
+Do NOT mention identity verification.
+
+CITIZEN EXPERIENCE LENS: "Seek support"
+Grants are funding the citizen is applying for — often for adaptations, business support, or community projects.
+Be encouraging but clear about the conditions that come with grant funding.
+
+WHAT TO DO IN THIS RESPONSE:
+1. Welcome them
+2. Explain what {serviceName} provides and the type of funding available
+3. Present the eligibility summary: {eligibilitySummary}
+4. If eligible, explain consent is needed before proceeding
+5. Consent cards will appear below
+
+Set "stateTransition" to "check-eligibility" in the JSON block.
+Do NOT skip ahead.
+Do NOT include any tasks in the JSON block.`,
+    "identity-verified": SHARED.identityVerified,
+    "eligibility-checked": SHARED.eligibilityChecked,
+    "consent-given": `Consent has been granted and personal details confirmed.
+Thank the citizen. Explain that you need a supporting document for their {serviceName} application.
+A document upload card will appear below.
+Set "stateTransition" to "upload-document" in the JSON block.
+Do NOT include any tasks in the JSON block.`,
+    "document-submitted": `A supporting document has been uploaded and details extracted.
+Acknowledge the upload. Show extracted details for confirmation.
+Once confirmed, explain that remaining details are needed for the grant application.
+Do NOT include any tasks in the JSON block.`,
+    "details-submitted": `Details have been submitted.
+Summarise the key information. Explain that the grant has specific conditions the citizen must review and accept.
+A grant conditions card will appear below.
+Set "stateTransition" to "review-conditions" in the JSON block.`,
+    "conditions-reviewed": `The grant conditions have been reviewed and accepted.
+Confirm the conditions accepted. Explain that {department} will now assess the application.
+Set "stateTransition" to "begin-assessment" in the JSON block.`,
+    "assessment": `The grant application is being assessed by {department}.
+Tell the citizen their application has been submitted. Processing times vary.
+Set "stateTransition" to "make-decision" in the JSON block.`,
+    "decision": `A decision has been made on the grant application.
+If approved: Congratulate the citizen. Explain the grant terms and next steps. Set "stateTransition" to "approve".
+If rejected: Explain sympathetically. Set "stateTransition" to "reject-application".
+Do NOT fabricate specific amounts.`,
+    "approved": `The grant has been approved! Congratulate them.
+Explain:
+- {department} will confirm the grant amount and disbursement schedule
+- The conditions accepted earlier remain in effect
+- They can visit {govukUrl} for more information
+This is the FINAL message — do NOT ask follow-up questions.
+Do NOT include any tasks in the JSON block.`,
+    "rejected": SHARED.rejected("grant application"),
+    "handed-off": SHARED.handedOff,
+  },
+  forcedTransitions: {
+    "not-started": "verify-identity",
+    "identity-verified": "check-eligibility",
+  },
+  autoTransitions: [
+    {
+      fromState: "eligibility-checked",
+      trigger: "grant-consent",
+      pattern: "I have reviewed all consent|consent.*granted|granted.*consent|please proceed|I consent|go ahead|yes.*proceed|agree|done|let's go|ready",
+    },
+    {
+      fromState: "document-submitted",
+      trigger: "submit-details",
+      pattern: "everything.*correct|looks correct|details.*correct|yes.*correct|confirm|that's right|all correct",
+    },
+  ],
+};
+
+// ── Legal Process template (careful pacing, solicitor details, human escalation) ──
+
+const LEGAL_PROCESS_TEMPLATE: StateInstructionTemplate = {
+  version: "1.0.0",
+  instructions: {
+    "not-started": `The citizen has just started the {serviceName} legal process with {department}.
+
+CRITICAL — IDENTITY IS ALREADY VERIFIED:
+The citizen is already authenticated via GOV.UK One Login. Identity verification is COMPLETE.
+Do NOT mention identity verification.
+
+CITIZEN EXPERIENCE LENS: "Navigate complexity"
+Legal processes are often stressful and unfamiliar. The citizen may be dealing with bereavement, incapacity, or family matters.
+Use clear, calm, patient language. Explain legal terms when you use them. Never rush.
+Explicitly mention that professional legal advice is available and may be wise.
+
+WHAT TO DO IN THIS RESPONSE:
+1. Welcome them with care and sensitivity
+2. Explain what {serviceName} involves — be honest about the process being multi-step
+3. Present the eligibility summary: {eligibilitySummary}
+4. Mention that they may wish to seek legal advice before proceeding (this is NOT a requirement)
+5. If eligible, explain that consent is needed before proceeding
+6. Consent cards will appear below
+
+Set "stateTransition" to "check-eligibility" in the JSON block.
+Do NOT skip ahead — this is a process that should not be rushed.
+Do NOT include any tasks in the JSON block.`,
+    "identity-verified": SHARED.identityVerified,
+    "eligibility-checked": SHARED.eligibilityChecked,
+    "consent-given": `Consent has been granted and personal details confirmed.
+Thank the citizen. Explain that the next step is to confirm whether they have legal representation.
+This is optional — many people complete {serviceName} without a solicitor, but professional advice is recommended for complex cases.
+A legal representative form will appear below.
+Set "stateTransition" to "collect-solicitor-details" in the JSON block.
+Do NOT include any tasks in the JSON block.`,
+    "solicitor-details-collected": `Legal representation details have been provided (or the citizen confirmed they are acting alone).
+Acknowledge their choice. If they have a solicitor, note the details.
+Explain that a witness or certificate provider may be needed depending on the type of {serviceName}.
+A witness attestation form will appear below.
+Set "stateTransition" to "collect-witness" in the JSON block.
+Do NOT include any tasks in the JSON block.`,
+    "witness-attested": `Witness details have been provided.
+Acknowledge the details. Explain that supporting documents are needed for the {serviceName} process.
+A document upload card will appear below.
+Set "stateTransition" to "upload-document" in the JSON block.
+Do NOT include any tasks in the JSON block.`,
+    "document-submitted": `Documents have been uploaded and details extracted.
+Acknowledge the upload. Show extracted details for confirmation.
+Take time to explain what happens next — do not rush through this.
+Do NOT include any tasks in the JSON block.`,
+    "details-submitted": `All details have been submitted.
+Summarise the full submission back to the citizen clearly.
+Explain that {department} will now review the submission. This may take some time for legal processes.
+Set "stateTransition" to "begin-review" in the JSON block.
+Do NOT fabricate timelines.`,
+    "review": `The submission is being reviewed by {department}.
+Tell the citizen:
+- Their submission is with {department} for review
+- Legal processes can take longer than standard applications — this is normal
+- They will be contacted if further information is needed
+- Their solicitor (if appointed) will also be notified
+Set "stateTransition" to "make-decision" in the JSON block.`,
+    "decision": `A decision has been made.
+If approved: Explain the outcome clearly. Set "stateTransition" to "approve".
+If referred: Explain that further legal steps are needed. Set "stateTransition" to "handoff".
+If rejected: Explain sympathetically and mention appeal rights. Set "stateTransition" to "reject".`,
+    "completed": `The legal process is complete.
+Explain:
+- {department} will send official documentation
+- The citizen should keep all paperwork safe
+- If they have a solicitor, their solicitor will receive copies
+- They can visit {govukUrl} for more information
+- If they need further legal guidance, they should consult their solicitor or a legal advice service
+This is the FINAL message — do NOT ask follow-up questions.
+Do NOT include any tasks in the JSON block.`,
+    "rejected": `The legal process was not successful. Explain clearly and sympathetically.
+IMPORTANT — legal processes have specific appeal mechanisms:
+- The citizen has the right to appeal through the appropriate court or tribunal
+- They should seek legal advice before deciding whether to appeal
+- Time limits for appeals are strict — mention this
+- {department} will provide details of the appeal process
+- GOV.UK page: {govukUrl}
+This is the FINAL message.
+Do NOT include any tasks in the JSON block.`,
+    "handed-off": `This case has been referred for specialist legal review.
+Explain why, and provide:
+- A specialist advisor will review the case
+- The citizen should consult their solicitor (if they have one)
+- They can contact {department} directly
+- For free legal advice: Citizens Advice, Law Centres Network, or the Legal Aid helpline
+- GOV.UK page for reference: {govukUrl}
+This is the FINAL message.
+Do NOT include any tasks in the JSON block.`,
+  },
+  forcedTransitions: {
+    "not-started": "verify-identity",
+    "identity-verified": "check-eligibility",
+  },
+  autoTransitions: [
+    {
+      fromState: "eligibility-checked",
+      trigger: "grant-consent",
+      pattern: "I have reviewed all consent|consent.*granted|granted.*consent|please proceed|I consent|go ahead|yes.*proceed|agree|done|let's go|ready",
+    },
+    {
+      fromState: "document-submitted",
+      trigger: "submit-details",
+      pattern: "everything.*correct|looks correct|details.*correct|yes.*correct|confirm|that's right|all correct",
+    },
+  ],
+};
+
 // ── Registry: interaction type → template ──
 
 export const INSTRUCTION_TEMPLATE_REGISTRY: Record<InteractionType, StateInstructionTemplate> = {
@@ -676,6 +1525,11 @@ export const INSTRUCTION_TEMPLATE_REGISTRY: Record<InteractionType, StateInstruc
   appointment_booker: APPOINTMENT_BOOKER_TEMPLATE,
   task_list: TASK_LIST_TEMPLATE,
   informational_hub: INFORMATIONAL_HUB_TEMPLATE,
+  // ── Typology-specific (Phase 1) ──
+  benefit: BENEFIT_TEMPLATE,
+  entitlement: ENTITLEMENT_TEMPLATE,
+  grant: GRANT_TEMPLATE,
+  legal_process: LEGAL_PROCESS_TEMPLATE,
 };
 
 // ── State model templates (mirrored from legibility-studio/lib/interaction-types.ts) ──
@@ -692,6 +1546,7 @@ const STATE_MODEL_TEMPLATES: Record<InteractionType, StateModelTemplate> = {
       { id: "identity-verified" },
       { id: "eligibility-checked" },
       { id: "consent-given" },
+      { id: "document-submitted" },
       { id: "details-submitted" },
       { id: "assessment" },
       { id: "decision", receipt: true },
@@ -705,7 +1560,8 @@ const STATE_MODEL_TEMPLATES: Record<InteractionType, StateModelTemplate> = {
       { from: "eligibility-checked", to: "consent-given", trigger: "grant-consent", condition: "eligible" },
       { from: "eligibility-checked", to: "rejected", trigger: "reject", condition: "not-eligible" },
       { from: "eligibility-checked", to: "handed-off", trigger: "handoff", condition: "edge-case" },
-      { from: "consent-given", to: "details-submitted", trigger: "submit-details" },
+      { from: "consent-given", to: "document-submitted", trigger: "upload-document" },
+      { from: "document-submitted", to: "details-submitted", trigger: "submit-details" },
       { from: "details-submitted", to: "assessment", trigger: "begin-assessment" },
       { from: "assessment", to: "decision", trigger: "make-decision" },
       { from: "decision", to: "completed", trigger: "approve" },
@@ -718,6 +1574,7 @@ const STATE_MODEL_TEMPLATES: Record<InteractionType, StateModelTemplate> = {
       { id: "identity-verified" },
       { id: "eligibility-checked" },
       { id: "consent-given" },
+      { id: "document-submitted" },
       { id: "details-confirmed" },
       { id: "payment-made", receipt: true },
       { id: "issued", type: "terminal", receipt: true },
@@ -730,7 +1587,8 @@ const STATE_MODEL_TEMPLATES: Record<InteractionType, StateModelTemplate> = {
       { from: "eligibility-checked", to: "consent-given", trigger: "grant-consent", condition: "eligible" },
       { from: "eligibility-checked", to: "refused", trigger: "reject", condition: "not-eligible" },
       { from: "eligibility-checked", to: "handed-off", trigger: "handoff", condition: "edge-case" },
-      { from: "consent-given", to: "details-confirmed", trigger: "confirm-details" },
+      { from: "consent-given", to: "document-submitted", trigger: "upload-document" },
+      { from: "document-submitted", to: "details-confirmed", trigger: "confirm-details" },
       { from: "details-confirmed", to: "payment-made", trigger: "make-payment" },
       { from: "payment-made", to: "issued", trigger: "issue-licence" },
     ],
@@ -855,6 +1713,127 @@ const STATE_MODEL_TEMPLATES: Record<InteractionType, StateModelTemplate> = {
       { from: "information-provided", to: "completed", trigger: "complete" },
     ],
   },
+  // ── Typology-specific state machines (Phase 1) ──
+  benefit: {
+    states: [
+      { id: "not-started", type: "initial" },
+      { id: "identity-verified" },
+      { id: "eligibility-checked" },
+      { id: "consent-given" },
+      { id: "income-assessed" },
+      { id: "document-submitted" },
+      { id: "details-submitted" },
+      { id: "assessment" },
+      { id: "decision", receipt: true },
+      { id: "payment-details-collected" },
+      { id: "benefit-active", type: "terminal", receipt: true },
+      { id: "rejected", type: "terminal", receipt: true },
+      { id: "handed-off", type: "terminal", receipt: true },
+    ],
+    transitions: [
+      { from: "not-started", to: "identity-verified", trigger: "verify-identity" },
+      { from: "identity-verified", to: "eligibility-checked", trigger: "check-eligibility" },
+      { from: "eligibility-checked", to: "consent-given", trigger: "grant-consent", condition: "eligible" },
+      { from: "eligibility-checked", to: "rejected", trigger: "reject", condition: "not-eligible" },
+      { from: "eligibility-checked", to: "handed-off", trigger: "handoff", condition: "edge-case" },
+      { from: "consent-given", to: "income-assessed", trigger: "assess-income" },
+      { from: "income-assessed", to: "document-submitted", trigger: "upload-document" },
+      { from: "document-submitted", to: "details-submitted", trigger: "submit-details" },
+      { from: "details-submitted", to: "assessment", trigger: "begin-assessment" },
+      { from: "assessment", to: "decision", trigger: "make-decision" },
+      { from: "decision", to: "payment-details-collected", trigger: "approve" },
+      { from: "decision", to: "rejected", trigger: "reject-claim" },
+      { from: "payment-details-collected", to: "benefit-active", trigger: "activate-benefit" },
+    ],
+  },
+  entitlement: {
+    states: [
+      { id: "not-started", type: "initial" },
+      { id: "identity-verified" },
+      { id: "eligibility-checked" },
+      { id: "consent-given" },
+      { id: "employer-verified" },
+      { id: "document-submitted" },
+      { id: "entitlement-confirmed", receipt: true },
+      { id: "confirmed", type: "terminal", receipt: true },
+      { id: "rejected", type: "terminal", receipt: true },
+      { id: "handed-off", type: "terminal", receipt: true },
+    ],
+    transitions: [
+      { from: "not-started", to: "identity-verified", trigger: "verify-identity" },
+      { from: "identity-verified", to: "eligibility-checked", trigger: "check-eligibility" },
+      { from: "eligibility-checked", to: "consent-given", trigger: "grant-consent", condition: "eligible" },
+      { from: "eligibility-checked", to: "rejected", trigger: "reject", condition: "not-eligible" },
+      { from: "eligibility-checked", to: "handed-off", trigger: "handoff", condition: "edge-case" },
+      { from: "consent-given", to: "employer-verified", trigger: "verify-employer" },
+      { from: "employer-verified", to: "document-submitted", trigger: "upload-document" },
+      { from: "document-submitted", to: "entitlement-confirmed", trigger: "confirm-entitlement" },
+      { from: "entitlement-confirmed", to: "confirmed", trigger: "accept-entitlement" },
+    ],
+  },
+  grant: {
+    states: [
+      { id: "not-started", type: "initial" },
+      { id: "identity-verified" },
+      { id: "eligibility-checked" },
+      { id: "consent-given" },
+      { id: "document-submitted" },
+      { id: "details-submitted" },
+      { id: "conditions-reviewed" },
+      { id: "assessment" },
+      { id: "decision", receipt: true },
+      { id: "approved", type: "terminal", receipt: true },
+      { id: "rejected", type: "terminal", receipt: true },
+      { id: "handed-off", type: "terminal", receipt: true },
+    ],
+    transitions: [
+      { from: "not-started", to: "identity-verified", trigger: "verify-identity" },
+      { from: "identity-verified", to: "eligibility-checked", trigger: "check-eligibility" },
+      { from: "eligibility-checked", to: "consent-given", trigger: "grant-consent", condition: "eligible" },
+      { from: "eligibility-checked", to: "rejected", trigger: "reject", condition: "not-eligible" },
+      { from: "eligibility-checked", to: "handed-off", trigger: "handoff", condition: "edge-case" },
+      { from: "consent-given", to: "document-submitted", trigger: "upload-document" },
+      { from: "document-submitted", to: "details-submitted", trigger: "submit-details" },
+      { from: "details-submitted", to: "conditions-reviewed", trigger: "review-conditions" },
+      { from: "conditions-reviewed", to: "assessment", trigger: "begin-assessment" },
+      { from: "assessment", to: "decision", trigger: "make-decision" },
+      { from: "decision", to: "approved", trigger: "approve" },
+      { from: "decision", to: "rejected", trigger: "reject-application" },
+    ],
+  },
+  legal_process: {
+    states: [
+      { id: "not-started", type: "initial" },
+      { id: "identity-verified" },
+      { id: "eligibility-checked" },
+      { id: "consent-given" },
+      { id: "solicitor-details-collected" },
+      { id: "witness-attested" },
+      { id: "document-submitted" },
+      { id: "details-submitted" },
+      { id: "review" },
+      { id: "decision", receipt: true },
+      { id: "completed", type: "terminal", receipt: true },
+      { id: "rejected", type: "terminal", receipt: true },
+      { id: "handed-off", type: "terminal", receipt: true },
+    ],
+    transitions: [
+      { from: "not-started", to: "identity-verified", trigger: "verify-identity" },
+      { from: "identity-verified", to: "eligibility-checked", trigger: "check-eligibility" },
+      { from: "eligibility-checked", to: "consent-given", trigger: "grant-consent", condition: "eligible" },
+      { from: "eligibility-checked", to: "rejected", trigger: "reject", condition: "not-eligible" },
+      { from: "eligibility-checked", to: "handed-off", trigger: "handoff", condition: "edge-case" },
+      { from: "consent-given", to: "solicitor-details-collected", trigger: "collect-solicitor-details" },
+      { from: "solicitor-details-collected", to: "witness-attested", trigger: "collect-witness" },
+      { from: "witness-attested", to: "document-submitted", trigger: "upload-document" },
+      { from: "document-submitted", to: "details-submitted", trigger: "submit-details" },
+      { from: "details-submitted", to: "review", trigger: "begin-review" },
+      { from: "review", to: "decision", trigger: "make-decision" },
+      { from: "decision", to: "completed", trigger: "approve" },
+      { from: "decision", to: "rejected", trigger: "reject" },
+      { from: "decision", to: "handed-off", trigger: "handoff" },
+    ],
+  },
 };
 
 // ── Resolver functions ──
@@ -927,6 +1906,11 @@ export const INTERACTION_TYPE_TITLES: Record<InteractionType, string> = {
   appointment_booker: "Appointment Booking",
   task_list: "Task Progress",
   informational_hub: "Information Lookup",
+  // ── Typology-specific (Phase 1) ──
+  benefit: "Benefit Claim",
+  entitlement: "Entitlement Claim",
+  grant: "Grant Application",
+  legal_process: "Legal Process",
 };
 
 /** Human-readable labels for template state IDs */
@@ -935,6 +1919,7 @@ const TEMPLATE_STATE_LABELS: Record<string, string> = {
   "identity-verified": "Identity",
   "eligibility-checked": "Eligibility",
   "consent-given": "Consent",
+  "document-submitted": "Document",
   "details-submitted": "Details",
   "details-confirmed": "Details",
   "assessment": "Assessment",
@@ -959,6 +1944,18 @@ const TEMPLATE_STATE_LABELS: Record<string, string> = {
   "photo-submitted": "Photo",
   "application-submitted": "Submit",
   "claim-submitted": "Submit",
+  // ── Typology-specific states (Phase 1) ──
+  "income-assessed": "Income",
+  "payment-details-collected": "Payment Setup",
+  "benefit-active": "Active",
+  "employer-verified": "Employer",
+  "entitlement-confirmed": "Entitlement",
+  "confirmed": "Confirmed",
+  "conditions-reviewed": "Conditions",
+  "approved": "Approved",
+  "solicitor-details-collected": "Legal Rep",
+  "witness-attested": "Witness",
+  "review": "Review",
 };
 
 /**

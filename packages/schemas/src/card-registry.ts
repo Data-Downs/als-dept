@@ -20,6 +20,11 @@ export const INTERACTION_TYPES = [
   "appointment_booker",
   "task_list",
   "payment_service",
+  // ── New typology-specific interaction types (Phase 1 expansion) ──
+  "benefit",
+  "entitlement",
+  "grant",
+  "legal_process",
 ] as const;
 
 export type InteractionType = (typeof INTERACTION_TYPES)[number];
@@ -207,6 +212,7 @@ const PAYMENT_CARD: CardDefinition = {
       required: true,
       category: "payment",
       options: [
+        { value: "apple_pay", label: "Apple Pay" },
         { value: "debit_card", label: "Debit card" },
         { value: "credit_card", label: "Credit card" },
         { value: "direct_debit", label: "Direct debit" },
@@ -402,6 +408,275 @@ const DECISION_HELPER_CARD: CardDefinition = {
   dataCategory: "informational",
 };
 
+const DOCUMENT_UPLOAD_CARD: CardDefinition = {
+  cardType: "document-upload",
+  title: "Upload supporting document",
+  description: "Upload a document such as a P45, photo ID, or utility bill. We'll extract the key details for you to confirm.",
+  fields: [
+    {
+      key: "document_file",
+      label: "Choose a file",
+      type: "file",
+      required: true,
+      category: "documents",
+    },
+  ],
+  submitLabel: "Confirm extracted details",
+  dataCategory: "documents",
+};
+
+// ── Typology-Specific Card Definitions (Phase 1) ──
+
+const INCOME_ASSESSMENT_CARD: CardDefinition = {
+  cardType: "income-assessment",
+  title: "Income and circumstances",
+  description: "We need to understand your financial situation to assess your benefit entitlement.",
+  fields: [
+    {
+      key: "employment_status",
+      label: "Employment status",
+      type: "radio",
+      required: true,
+      category: "employment",
+      options: [
+        { value: "employed", label: "Employed" },
+        { value: "self_employed", label: "Self-employed" },
+        { value: "unemployed", label: "Unemployed" },
+        { value: "unable_to_work", label: "Unable to work" },
+        { value: "carer", label: "Full-time carer" },
+      ],
+    },
+    {
+      key: "monthly_income",
+      label: "Monthly income before tax (£)",
+      type: "currency",
+      required: false,
+      placeholder: "e.g. 1200",
+      category: "financial",
+      validation: { min: 0 },
+      showWhen: { field: "employment_status", values: ["employed", "self_employed"] },
+    },
+    {
+      key: "housing_costs",
+      label: "Monthly housing costs (£)",
+      type: "currency",
+      required: true,
+      placeholder: "e.g. 650",
+      category: "housing",
+      validation: { min: 0, max: 10000 },
+    },
+    {
+      key: "dependants",
+      label: "Number of dependants",
+      type: "number",
+      required: true,
+      placeholder: "e.g. 2",
+      category: "household",
+      validation: { min: 0, max: 20 },
+    },
+  ],
+  submitLabel: "Confirm income details",
+  dataCategory: "financial",
+};
+
+const PAYMENT_SCHEDULE_CARD: CardDefinition = {
+  cardType: "payment-schedule",
+  title: "Payment details",
+  description: "Choose how you'd like to receive your benefit payments.",
+  fields: [
+    BANK_NAME_FIELD,
+    SORT_CODE_FIELD,
+    ACCOUNT_NUMBER_FIELD,
+    {
+      key: "payment_frequency",
+      label: "Payment frequency",
+      type: "radio",
+      required: true,
+      category: "payment",
+      options: [
+        { value: "weekly", label: "Weekly" },
+        { value: "fortnightly", label: "Fortnightly" },
+        { value: "monthly", label: "Monthly" },
+      ],
+    },
+  ],
+  submitLabel: "Confirm payment details",
+  dataCategory: "financial",
+};
+
+const EMPLOYER_VERIFICATION_CARD: CardDefinition = {
+  cardType: "employer-verification",
+  title: "Employer details",
+  description: "We need your employer's details to verify your entitlement.",
+  fields: [
+    {
+      key: "employer_name",
+      label: "Employer name",
+      type: "text",
+      required: true,
+      placeholder: "e.g. Acme Ltd",
+      category: "employment",
+    },
+    {
+      key: "employer_address",
+      label: "Employer address",
+      type: "text",
+      required: true,
+      placeholder: "e.g. 1 High Street, London",
+      category: "employment",
+    },
+    {
+      key: "start_date",
+      label: "Employment start date",
+      type: "date",
+      required: true,
+      category: "employment",
+    },
+    {
+      key: "weekly_earnings",
+      label: "Average weekly earnings (£)",
+      type: "currency",
+      required: true,
+      placeholder: "e.g. 450",
+      category: "financial",
+      validation: { min: 0 },
+    },
+  ],
+  submitLabel: "Confirm employer details",
+  dataCategory: "employment",
+};
+
+const ENTITLEMENT_CONFIRMATION_CARD: CardDefinition = {
+  cardType: "entitlement-confirmation",
+  title: "Your entitlement",
+  description: "Based on the information provided, here is your statutory entitlement.",
+  fields: [
+    {
+      key: "entitlement_amount",
+      label: "Entitlement amount",
+      type: "readonly",
+      required: false,
+      category: "entitlement",
+    },
+    {
+      key: "entitlement_period",
+      label: "Entitlement period",
+      type: "readonly",
+      required: false,
+      category: "entitlement",
+    },
+  ],
+  submitLabel: "Accept entitlement",
+  dataCategory: "entitlement",
+};
+
+const FUNDING_CONDITIONS_CARD: CardDefinition = {
+  cardType: "funding-conditions",
+  title: "Grant conditions",
+  description: "Review and accept the conditions attached to this funding.",
+  fields: [
+    {
+      key: "project_description",
+      label: "Brief project description",
+      type: "text",
+      required: true,
+      placeholder: "e.g. Bathroom adaptation for wheelchair access",
+      category: "grant",
+    },
+    {
+      key: "estimated_cost",
+      label: "Estimated cost (£)",
+      type: "currency",
+      required: true,
+      placeholder: "e.g. 8000",
+      category: "financial",
+      validation: { min: 0 },
+    },
+    {
+      key: "accept_conditions",
+      label: "I accept the grant conditions",
+      type: "checkbox",
+      required: true,
+      category: "grant",
+    },
+  ],
+  submitLabel: "Accept conditions and proceed",
+  dataCategory: "grant",
+};
+
+const SOLICITOR_DETAILS_CARD: CardDefinition = {
+  cardType: "solicitor-details",
+  title: "Legal representative",
+  description: "If you have a solicitor or legal advisor acting on your behalf, provide their details here. This is optional.",
+  fields: [
+    {
+      key: "has_solicitor",
+      label: "Do you have a solicitor or legal advisor?",
+      type: "radio",
+      required: true,
+      category: "legal",
+      options: [
+        { value: "yes", label: "Yes" },
+        { value: "no", label: "No — I am acting on my own behalf" },
+      ],
+    },
+    {
+      key: "solicitor_name",
+      label: "Solicitor or firm name",
+      type: "text",
+      required: false,
+      placeholder: "e.g. Smith & Partners LLP",
+      category: "legal",
+      showWhen: { field: "has_solicitor", values: ["yes"] },
+    },
+    {
+      key: "solicitor_reference",
+      label: "Solicitor reference (if known)",
+      type: "text",
+      required: false,
+      placeholder: "e.g. SP/2026/12345",
+      category: "legal",
+      showWhen: { field: "has_solicitor", values: ["yes"] },
+    },
+  ],
+  submitLabel: "Confirm legal representation",
+  dataCategory: "legal",
+};
+
+const WITNESS_ATTESTATION_CARD: CardDefinition = {
+  cardType: "witness-attestation",
+  title: "Witness or certificate provider",
+  description: "Some legal processes require a witness or certificate provider to confirm your identity and intentions.",
+  fields: [
+    {
+      key: "witness_name",
+      label: "Full name of witness / certificate provider",
+      type: "text",
+      required: true,
+      placeholder: "e.g. Dr Jane Smith",
+      category: "legal",
+    },
+    {
+      key: "witness_relationship",
+      label: "Their relationship to you",
+      type: "text",
+      required: true,
+      placeholder: "e.g. GP, solicitor, family friend (known 2+ years)",
+      category: "legal",
+    },
+    {
+      key: "witness_contact",
+      label: "Contact details",
+      type: "text",
+      required: true,
+      placeholder: "e.g. phone number or email",
+      category: "legal",
+    },
+  ],
+  submitLabel: "Confirm witness details",
+  dataCategory: "legal",
+};
+
 // ── Template Card Definitions (generic, per-interaction-type) ──
 
 const APPLICATION_ELIGIBILITY_CARD: CardDefinition = {
@@ -480,6 +755,7 @@ const TEMPLATE_CARD_REGISTRY: InteractionCardSet[] = [
   {
     interactionType: "application",
     mappings: [
+      { stateId: "document-submitted", cards: [DOCUMENT_UPLOAD_CARD] },
       { stateId: "details-submitted", cards: [APPLICATION_ELIGIBILITY_CARD] },
     ],
   },
@@ -492,6 +768,7 @@ const TEMPLATE_CARD_REGISTRY: InteractionCardSet[] = [
   {
     interactionType: "license",
     mappings: [
+      { stateId: "document-submitted", cards: [DOCUMENT_UPLOAD_CARD] },
       { stateId: "details-confirmed", cards: [LICENSE_DETAILS_CARD] },
       { stateId: "payment-made", cards: [PAYMENT_CARD] },
     ],
@@ -527,6 +804,40 @@ const TEMPLATE_CARD_REGISTRY: InteractionCardSet[] = [
     interactionType: "informational_hub",
     mappings: [
       { stateId: "information-provided", cards: [DECISION_HELPER_CARD] },
+    ],
+  },
+  // ── Typology-specific interaction types (Phase 1) ──
+  {
+    interactionType: "benefit",
+    mappings: [
+      { stateId: "income-assessed", cards: [INCOME_ASSESSMENT_CARD] },
+      { stateId: "document-submitted", cards: [DOCUMENT_UPLOAD_CARD] },
+      { stateId: "details-submitted", cards: [APPLICATION_ELIGIBILITY_CARD] },
+      { stateId: "payment-details-collected", cards: [PAYMENT_SCHEDULE_CARD] },
+    ],
+  },
+  {
+    interactionType: "entitlement",
+    mappings: [
+      { stateId: "employer-verified", cards: [EMPLOYER_VERIFICATION_CARD] },
+      { stateId: "document-submitted", cards: [DOCUMENT_UPLOAD_CARD] },
+      { stateId: "entitlement-confirmed", cards: [ENTITLEMENT_CONFIRMATION_CARD] },
+    ],
+  },
+  {
+    interactionType: "grant",
+    mappings: [
+      { stateId: "document-submitted", cards: [DOCUMENT_UPLOAD_CARD] },
+      { stateId: "details-submitted", cards: [APPLICATION_ELIGIBILITY_CARD] },
+      { stateId: "conditions-reviewed", cards: [FUNDING_CONDITIONS_CARD] },
+    ],
+  },
+  {
+    interactionType: "legal_process",
+    mappings: [
+      { stateId: "solicitor-details-collected", cards: [SOLICITOR_DETAILS_CARD] },
+      { stateId: "witness-attested", cards: [WITNESS_ATTESTATION_CARD] },
+      { stateId: "document-submitted", cards: [DOCUMENT_UPLOAD_CARD] },
     ],
   },
 ];
@@ -694,7 +1005,12 @@ export function inferInteractionType(serviceType: string | null | undefined): In
   if (!serviceType) return "application";
 
   const mapping: Record<string, InteractionType> = {
-    benefit: "application",
+    // ── 1:1 typology mappings (Phase 1 — no more collapse) ──
+    benefit: "benefit",
+    entitlement: "entitlement",
+    grant: "grant",
+    legal_process: "legal_process",
+    // ── Direct mappings (unchanged) ──
     registration: "register",
     obligation: "payment_service",
     licence: "license",
@@ -705,9 +1021,9 @@ export function inferInteractionType(serviceType: string | null | undefined): In
     test: "appointment_booker",
     payment: "payment_service",
     tax: "payment_service",
-    grant: "application",
-    entitlement: "application",
     portal: "portal",
+    // ── Generic application fallthrough for unknown types ──
+    application: "application",
   };
 
   return mapping[serviceType.toLowerCase()] || "application";

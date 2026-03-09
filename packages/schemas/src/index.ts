@@ -458,17 +458,28 @@ export interface StateInstructions {
 export {
   INSTRUCTION_TEMPLATE_REGISTRY,
   TERMINAL_STATE_CONFIG,
+  TERMINAL_CONFIG_OVERRIDES,
+  TYPOLOGY_CONSENT_FRAMING,
+  TYPOLOGY_ESCALATION_CONFIG,
+  TYPOLOGY_PROACTIVITY_CONFIG,
   INTERACTION_TYPE_TITLES,
   getAllTerminalStateIds,
   generateMilestonesForType,
   resolveTemplateInstructions,
   templateToStateModel,
+  resolveTerminalConfig,
+  resolveConsentFraming,
+  resolveEscalationConfig,
+  resolveProactivityConfig,
 } from "./state-instruction-templates";
 
 export type {
   TemplateContext,
   StateInstructionTemplate,
   TerminalStateConfig,
+  ConsentFraming,
+  EscalationConfig,
+  ProactivityConfig,
   MilestoneDefinition,
   ServiceMilestoneConfig,
 } from "./state-instruction-templates";

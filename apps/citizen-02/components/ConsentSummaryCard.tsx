@@ -1,6 +1,7 @@
 "use client";
 
 import type { ConsentGrant } from "@/lib/types";
+import { resolveConsentFraming } from "@als/schemas";
 
 interface ConsentSummaryCardProps {
   grants: ConsentGrant[];
@@ -9,6 +10,7 @@ interface ConsentSummaryCardProps {
   onChangeDecision: (grantId: string) => void;
   hasRequiredDenials: boolean;
   isSubmitting: boolean;
+  interactionType?: string;
 }
 
 export function ConsentSummaryCard({
@@ -18,9 +20,11 @@ export function ConsentSummaryCard({
   onChangeDecision,
   hasRequiredDenials,
   isSubmitting,
+  interactionType,
 }: ConsentSummaryCardProps) {
   const grantedCount = grants.filter((g) => decisions[g.id] === "granted").length;
   const deniedCount = grants.filter((g) => decisions[g.id] === "denied").length;
+  const framing = resolveConsentFraming(interactionType);
 
   return (
     <div
@@ -100,7 +104,7 @@ export function ConsentSummaryCard({
                 {/* Required denial warning (inline) */}
                 {!isGranted && grant.required && (
                   <p className="text-xs text-red-600 mt-1">
-                    This consent is required to continue your application.
+                    This consent is required to continue.
                   </p>
                 )}
               </div>
@@ -112,12 +116,10 @@ export function ConsentSummaryCard({
         {hasRequiredDenials && (
           <div className="mt-4 bg-yellow-50 border border-yellow-200 p-4 rounded-xl">
             <p className="text-sm font-bold text-yellow-800">
-              Required consents declined
+              {framing.requiredDenialTitle}
             </p>
             <p className="text-xs text-yellow-700 mt-1">
-              You have declined one or more required consents. Your application
-              cannot proceed without these. Please change your decisions above to
-              continue.
+              {framing.requiredDenialWarning}
             </p>
           </div>
         )}

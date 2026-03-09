@@ -13,7 +13,7 @@ import { StateProgressTracker } from "./StateProgressTracker";
 import { JourneyCompleteCard } from "./JourneyCompleteCard";
 import { CardHost } from "./cards/CardHost";
 import { RelatedServicesCard } from "./RelatedServicesCard";
-import { getAllTerminalStateIds, TERMINAL_STATE_CONFIG } from "@als/schemas";
+import { getAllTerminalStateIds, TERMINAL_STATE_CONFIG, resolveTerminalConfig } from "@als/schemas";
 import { QuickReplies } from "./QuickReplies";
 import { PipelineTraceBar } from "./PipelineTraceBar";
 
@@ -269,6 +269,7 @@ export function ChatView() {
                 useAppStore.getState().setConsentDecision(id, decision);
               }}
               disabled={isLoading}
+              interactionType={interactionType ?? undefined}
             />
 
             {/* Summary card appears when all consents are decided */}
@@ -282,6 +283,7 @@ export function ChatView() {
                 }}
                 hasRequiredDenials={hasRequiredDenials}
                 isSubmitting={isLoading}
+                interactionType={interactionType ?? undefined}
               />
             )}
           </div>
@@ -296,6 +298,7 @@ export function ChatView() {
               department={(activeHandoff.routing?.department as string) || "Government service"}
               phone={(activeHandoff.routing?.suggestedQueue as string) || undefined}
               onDismiss={() => useAppStore.setState({ activeHandoff: null })}
+              interactionType={interactionType ?? undefined}
             />
           </div>
         )}
@@ -307,9 +310,10 @@ export function ChatView() {
               state={ucState}
               serviceName={serviceName ?? undefined}
               serviceId={currentService ?? undefined}
+              interactionType={interactionType ?? undefined}
             />
             {/* Related services — only for success terminals */}
-            {currentService && TERMINAL_STATE_CONFIG[ucState]?.isSuccess && (
+            {currentService && resolveTerminalConfig(ucState, interactionType).isSuccess && (
               <RelatedServicesCard serviceId={currentService} />
             )}
           </div>

@@ -11,6 +11,7 @@
  */
 
 import type { HandoffPackage, HandoffReason, CapabilityManifest } from "@als/schemas";
+import { resolveEscalationConfig } from "@als/schemas";
 
 function generateId(): string {
   return `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
@@ -103,6 +104,7 @@ export class HandoffManager {
     timeSpent: string;
     traceId: string;
     receiptIds: string[];
+    interactionType?: string;
   }): HandoffPackage {
     const urgency = opts.reason === "safeguarding-concern"
       ? "safeguarding"
@@ -140,12 +142,13 @@ export class HandoffManager {
 
       traceId: opts.traceId,
       receiptIds: opts.receiptIds,
-      suggestedActions: this.generateSuggestedActions(opts.reason, opts.service),
+      suggestedActions: this.generateSuggestedActions(opts.reason, opts.service, opts.interactionType),
 
       routing: {
         department: opts.service?.department || "Unknown",
         serviceArea: opts.service?.name || "General",
         suggestedQueue: opts.service?.handoff?.department_queue || "general-enquiries",
+        specialistType: resolveEscalationConfig(opts.interactionType).specialistType,
       },
     };
   }
@@ -157,10 +160,12 @@ export class HandoffManager {
 
   private generateSuggestedActions(
     reason: HandoffReason,
-    service?: CapabilityManifest
+    service?: CapabilityManifest,
+    interactionType?: string,
   ): string[] {
     const actions: string[] = [];
 
+    // Reason-based actions (universal)
     switch (reason) {
       case "safeguarding-concern":
         actions.push("Follow safeguarding protocol immediately");
@@ -181,6 +186,14 @@ export class HandoffManager {
         break;
       default:
         actions.push("Review the handoff package and conversation history");
+    }
+
+    // Type-specific actions (Proposal D)
+    const escalation = resolveEscalationConfig(interactionType);
+    for (const action of escalation.suggestedActions) {
+      if (!actions.includes(action)) {
+        actions.push(action);
+      }
     }
 
     if (service?.handoff?.escalation_phone) {

@@ -1,12 +1,14 @@
 "use client";
 
 import type { ConsentGrant } from "@/lib/types";
+import { resolveConsentFraming } from "@als/schemas";
 
 interface ConsentPanelProps {
   grants: ConsentGrant[];
   decisions: Record<string, "granted" | "denied">;
   onDecision: (grantId: string, decision: "granted" | "denied") => void;
   disabled?: boolean;
+  interactionType?: string;
 }
 
 function GrantRow({
@@ -99,8 +101,10 @@ export function ConsentPanel({
   decisions,
   onDecision,
   disabled,
+  interactionType,
 }: ConsentPanelProps) {
   const allDecided = grants.length > 0 && grants.every((g) => decisions[g.id] !== undefined);
+  const framing = resolveConsentFraming(interactionType);
 
   return (
     <div
@@ -115,11 +119,11 @@ export function ConsentPanel({
             </svg>
           </span>
           <span className="text-sm font-bold text-purple-700">
-            Consent Required
+            {framing.panelTitle}
           </span>
         </div>
         <p className="text-sm text-govuk-dark-grey mt-2 ml-[38px]">
-          Review and grant consent for your application.
+          {framing.panelDescription}
         </p>
       </div>
 

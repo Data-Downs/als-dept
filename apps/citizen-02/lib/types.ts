@@ -219,32 +219,7 @@ export interface ActivePlan {
   services: LifeEventService[];
 }
 
-export const PERSONA_NAMES: Record<string, string> = {
-  "emma-parker": "Emma & Liam Parker",
-  "rajesh-patel": "Rajesh Patel",
-  "margaret-thompson": "Margaret Thompson",
-  "david-evans": "David Evans",
-  "priya-sharma": "Priya Sharma",
-  "mary-summers": "Hugo & Mary Summers",
-};
-
-export const PERSONA_COLORS: Record<string, string> = {
-  "emma-parker": "#1d70b8",
-  "rajesh-patel": "#00703c",
-  "margaret-thompson": "#912b88",
-  "david-evans": "#d4351c",
-  "priya-sharma": "#f47738",
-  "mary-summers": "#4c6272",
-};
-
-export const PERSONA_INITIALS: Record<string, string> = {
-  "emma-parker": "EP",
-  "rajesh-patel": "RP",
-  "margaret-thompson": "MT",
-  "david-evans": "DE",
-  "priya-sharma": "PS",
-  "mary-summers": "MS",
-};
+export { PERSONA_NAMES, PERSONA_COLORS, PERSONA_INITIALS } from "./service-data";
 
 export interface PlanGroup {
   depth: number;
@@ -275,11 +250,19 @@ export interface LifeEventService {
   name: string;
   dept: string;
   serviceType: string;
+  interactionType?: string;
   proactive: boolean;
   gated: boolean;
   desc: string;
   govuk_url: string;
   eligibility_summary: string;
+  proactivity?: {
+    mode: "suggest" | "warn" | "inform";
+    framingPrefix: string;
+    priority: number;
+    iconHint: string;
+    accentColor: string;
+  };
 }
 
 // ── New types for citizen-02 ──
@@ -343,6 +326,7 @@ export type BottomSheetType =
   | "task-detail"
   | "topic-questions"
   | "filing-prompt"
+  | "payment"
   | null;
 
 export interface BottomSheetState {
