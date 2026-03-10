@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Critical Review &mdash; Is the Stack Actually Agentic?</title>
-  <meta name="description" content="An honest assessment of whether the Agentic Legibility Stack genuinely leverages agentic capabilities, with four alternative interaction models illustrated as conversation prototypes.">
+  <meta name="description" content="The ALS platform has cross-service infrastructure (service graph, life events, persona filtering) that the agent doesn't yet use. Four interaction models show what becomes possible when it does.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -136,17 +136,47 @@
     .mock-btn { display: inline-block; padding: 0.4rem 1rem; font-size: 0.7rem; font-weight: 600; border-radius: 4px; border: none; color: #fff; background: #00703c; margin-top: 0.35rem; }
 
     /* Receipt card */
-    .receipt-card { align-self: flex-start; width: 90%; background: #fff; border: 1px solid #e0dfde; border-radius: 12px 12px 0 0; overflow: hidden; }
-    .receipt-header { background: #f0faf4; padding: 0.5rem 0.75rem; display: flex; align-items: center; gap: 0.35rem; font-size: 0.7rem; font-weight: 600; color: #00703c; border-bottom: 1px solid #e0dfde; }
-    .receipt-header .receipt-icon { font-size: 0.85rem; }
-    .receipt-body { padding: 0.65rem 0.75rem; font-size: 0.68rem; color: #505a5f; }
-    .receipt-body .receipt-row { display: flex; justify-content: space-between; padding: 0.2rem 0; border-bottom: 1px solid #f3f2f1; }
+    .receipt-wrapper {
+      align-self: flex-start;
+      width: 90%;
+      filter: drop-shadow(0 1px 3px rgba(0,0,0,0.10)) drop-shadow(0 1px 2px rgba(0,0,0,0.06));
+    }
+    .receipt-card {
+      align-self: flex-start;
+      width: 100%;
+      background: #fff;
+      border-radius: 12px 12px 0 0;
+    }
+    .receipt-header {
+      background: transparent;
+      padding: 0.75rem 1rem;
+      display: flex; align-items: center; gap: 0.5rem;
+      font-size: 0.82rem; font-weight: 700; color: #00703c;
+    }
+    .receipt-header .receipt-icon {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 1.6rem; height: 1.6rem; border-radius: 50%;
+      background: #e6f4ea; font-size: 0.8rem; flex-shrink: 0;
+    }
+    .receipt-header .receipt-time {
+      margin-left: auto; font-size: 0.68rem; font-weight: 400; color: #505a5f;
+    }
+    .receipt-body { padding: 0 1rem 0.75rem; font-size: 0.78rem; color: #0b0c0c; line-height: 1.55; }
+    .receipt-body .receipt-row { display: flex; justify-content: space-between; padding: 0.25rem 0; border-bottom: 1px solid #f3f2f1; }
     .receipt-body .receipt-row:last-child { border-bottom: none; }
-    .receipt-body .receipt-key { font-weight: 500; color: #0b0c0c; }
+    .receipt-body .receipt-key { font-weight: 600; color: #0b0c0c; }
     .receipt-body .receipt-val { color: #505a5f; text-align: right; max-width: 55%; }
-    .receipt-disclosure { background: #f3f2f1; padding: 0.45rem 0.75rem; font-size: 0.6rem; color: #505a5f; border-top: 1px solid #e0dfde; }
-    .receipt-disclosure summary { font-weight: 600; cursor: pointer; color: #1d70b8; }
-    .receipt-tearoff { width: 90%; align-self: flex-start; height: 8px; background: repeating-linear-gradient(90deg, #fff 0 6px, transparent 6px 12px); border-left: 1px solid #e0dfde; border-right: 1px solid #e0dfde; }
+    .receipt-disclosure {
+      background: transparent;
+      padding: 0.55rem 1rem 0.75rem;
+      font-size: 0.7rem; color: #505a5f;
+      border-top: 1px solid #e0dfde;
+    }
+    .receipt-disclosure summary { font-weight: 500; cursor: pointer; color: #505a5f; }
+    .receipt-zigzag {
+      display: block; width: 100%;
+    }
+    .receipt-tearoff { display: none; }
 
     /* Consent panel */
     .consent-card { align-self: flex-start; width: 90%; background: #fff; border: 2px solid #912b88; border-radius: 12px; overflow: hidden; }
@@ -340,11 +370,11 @@
   <div class="container">
     <div class="hero-label">Critical Review &mdash; March 2026</div>
     <h1 class="reveal" style="animation-delay:0.1s">Is the Stack Actually Agentic?</h1>
-    <p class="hero-subtitle reveal" style="animation-delay:0.2s">The architecture's separation of concerns is sound. But the LLM is in the wrong cage.</p>
+    <p class="hero-subtitle reveal" style="animation-delay:0.2s">The platform infrastructure is more capable than the agent that sits on top of it.</p>
     <p class="reveal" style="animation-delay:0.3s; font-size: 0.95rem; color: #505a5f; max-width: 680px;">
-      An honest assessment of whether the Agentic Legibility Stack genuinely leverages agentic capabilities &mdash;
-      or is replicating forms with better UX. Four alternative interaction models are presented, each illustrated
-      as a conversation prototype using the driving licence renewal service.
+      The Agentic Legibility Stack already has cross-service reasoning infrastructure &mdash; a typed service graph with 108 services,
+      16 life events, topological planning, and persona-aware filtering. But the LLM agent doesn't yet leverage it within conversations.
+      Four interaction models show what becomes possible when it does.
     </p>
   </div>
 </header>
@@ -355,11 +385,12 @@
 <section class="section section-alt" id="assessment">
   <div class="container">
     <div class="section-tag">The Honest Assessment</div>
-    <h2>What the LLM Actually Does Today</h2>
+    <h2>What's Built vs What the Agent Uses</h2>
     <p class="section-intro">
-      Currently, Claude's role in the stack is essentially three things: generate conversational wrapper text
+      The platform has two layers: a rich cross-service infrastructure (service graph, life event plans, persona-aware filtering)
+      and an LLM agent layer. Currently, the agent's role is limited to three things: generate conversational wrapper text
       around deterministic decisions, extract facts from citizen input into structured fields, and propose
-      state transitions that the state machine validates.
+      state transitions that the state machine validates. The infrastructure is ready &mdash; the agent just isn't wired into it yet.
     </p>
 
     <div class="flow-diagram">
@@ -375,28 +406,32 @@
     </div>
 
     <p style="text-align: center; font-size: 0.85rem; color: #505a5f; margin-bottom: 2rem;">
-      Everything that matters &mdash; eligibility, consent, state advancement, card selection, field requirements &mdash; is pre-authored and deterministic.
+      Within a single service, everything that matters &mdash; eligibility, consent, state advancement, card selection &mdash; is pre-authored and deterministic.
     </p>
 
     <div class="grid-2">
       <div>
         <div class="callout callout-good" style="margin-top: 0;">
-          <h4 style="color: #00703c; margin-bottom: 0.5rem;">What's genuinely good</h4>
+          <h4 style="color: #00703c; margin-bottom: 0.5rem;">What's built and working</h4>
           <ul style="margin-left: 1rem; font-size: 0.9rem;">
             <li><strong>Full auditability</strong> &mdash; every decision is traced</li>
             <li><strong>Safety</strong> &mdash; LLM cannot override policy</li>
             <li><strong>Reproducibility</strong> &mdash; same input, same output</li>
             <li><strong>Two-tier data model</strong> &mdash; verified credentials vs incidental data</li>
             <li><strong>Granular consent</strong> &mdash; properly authored per service</li>
+            <li><strong>Service graph</strong> &mdash; 108 services, typed REQUIRES/ENABLES edges</li>
+            <li><strong>Life event plans</strong> &mdash; 16 life events with topological ordering</li>
+            <li><strong>Persona-aware filtering</strong> &mdash; plans adapt to eligibility</li>
+            <li><strong>Cross-session plan tracking</strong> &mdash; progress persists across visits</li>
           </ul>
         </div>
       </div>
       <div>
         <div class="callout callout-bad" style="margin-top: 0;">
-          <h4 style="color: #d4351c; margin-bottom: 0.5rem;">What's missing</h4>
+          <h4 style="color: #d4351c; margin-bottom: 0.5rem;">What the agent doesn't yet do</h4>
           <ul style="margin-left: 1rem; font-size: 0.9rem;">
-            <li><strong>No autonomous goal decomposition</strong> &mdash; journeys are pre-authored state machines</li>
-            <li><strong>No cross-service reasoning</strong> &mdash; each service is an isolated linear flow</li>
+            <li><strong>Agent is single-service</strong> &mdash; chat processes one service at a time, despite the graph infrastructure</li>
+            <li><strong>No in-conversation cross-service reasoning</strong> &mdash; the LLM doesn't query the service graph or suggest next steps</li>
             <li><strong>No predictive error prevention</strong> &mdash; collect first, reject after</li>
             <li><strong>No data minimisation reasoning</strong> &mdash; everyone gets the same form</li>
             <li><strong>Confidence unused</strong> &mdash; fact-extraction confidence is logged but never acted on</li>
@@ -406,52 +441,67 @@
     </div>
 
     <div class="callout callout-verdict" style="margin-top: 2rem;">
-      <h4 style="color: #f47738; margin-bottom: 0.5rem;">The verdict</h4>
-      <p>The result is a <strong>sophisticated form-filling system with conversational UX</strong>.
-      The citizen fills in the same fields they'd fill in on a GOV.UK form &mdash; they just do it via cards
-      injected into a chat flow instead of pages on a website. The LLM's reasoning capabilities are wasted on text generation.</p>
+      <h4 style="color: #f47738; margin-bottom: 0.5rem;">The gap</h4>
+      <p>The platform has sophisticated cross-service infrastructure: a dependency graph with topological planning, persona-aware
+      life event decomposition, and multi-session state tracking. But the <strong>LLM agent doesn't use any of it</strong>.
+      Within a chat conversation, the agent processes one service at a time. The cross-service intelligence lives in the
+      UI layer (dashboard, plan view) rather than in the agent's reasoning loop. The infrastructure is ready &mdash;
+      the next step is wiring the agent into it.</p>
     </div>
 
     <h3 style="margin-top: 2.5rem; margin-bottom: 0.75rem;">Agentic capability scorecard</h3>
     <table class="score-table">
       <thead>
-        <tr><th>Capability</th><th>Current ALS</th><th>Truly Agentic</th></tr>
+        <tr><th>Capability</th><th>Platform Infrastructure</th><th>LLM Agent</th><th>Agentic Target</th></tr>
       </thead>
       <tbody>
         <tr>
           <td>Multi-service reasoning</td>
-          <td class="score-no">No &mdash; one service at a time</td>
-          <td class="score-yes">Cross-service dependency graphs</td>
+          <td class="score-yes">Service graph with 120+ typed edges</td>
+          <td class="score-no">Single-service per conversation</td>
+          <td>Agent queries graph in real-time</td>
+        </tr>
+        <tr>
+          <td>Life event decomposition</td>
+          <td class="score-yes">16 life events, topological plans</td>
+          <td class="score-no">Not exposed to agent</td>
+          <td>Agent builds and tracks plans</td>
+        </tr>
+        <tr>
+          <td>Persona-aware planning</td>
+          <td class="score-yes">Eligibility filtering, plan recomputation</td>
+          <td class="score-no">Not used in chat</td>
+          <td>Agent adapts plans to citizen context</td>
         </tr>
         <tr>
           <td>Predictive reasoning</td>
-          <td class="score-no">No &mdash; collect then reject</td>
-          <td class="score-yes">Anticipate rejections before formal application</td>
+          <td class="score-partial">Policy data exists</td>
+          <td class="score-no">Collect then reject</td>
+          <td>Anticipate rejections before application</td>
         </tr>
         <tr>
           <td>Data minimisation</td>
-          <td class="score-no">No &mdash; same form for everyone</td>
-          <td class="score-yes">Adapt fields to citizen's situation</td>
-        </tr>
-        <tr>
-          <td>Goal decomposition</td>
-          <td class="score-no">No &mdash; pre-authored state machines</td>
-          <td class="score-yes">Break life events into service sequences</td>
+          <td class="score-partial">Field schemas exist</td>
+          <td class="score-no">Same form for everyone</td>
+          <td>Adapt fields to citizen's situation</td>
         </tr>
         <tr>
           <td>Temporal reasoning</td>
-          <td class="score-no">No &mdash; linear flow only</td>
-          <td class="score-yes">"Do X before Y because Z"</td>
+          <td class="score-yes">REQUIRES/ENABLES edge ordering</td>
+          <td class="score-no">Linear flow only</td>
+          <td>"Do X before Y because Z"</td>
         </tr>
         <tr>
           <td>Deterministic safety</td>
-          <td class="score-yes">Yes &mdash; eligibility, consent, state</td>
-          <td class="score-yes">Preserved in all models below</td>
+          <td class="score-yes">Eligibility, consent, state</td>
+          <td class="score-yes">Preserved</td>
+          <td>Preserved in all models below</td>
         </tr>
         <tr>
           <td>Auditability</td>
-          <td class="score-yes">Yes &mdash; full trace</td>
-          <td class="score-yes">Extended with reasoning audit trail</td>
+          <td class="score-yes">Full trace</td>
+          <td class="score-yes">Full trace</td>
+          <td>Extended with reasoning audit trail</td>
         </tr>
       </tbody>
     </table>
@@ -466,8 +516,9 @@
     <div class="section-tag">Model 1</div>
     <h2>The Proactive Advocate</h2>
     <p class="section-intro">
-      Citizen describes a life situation. The agent reasons across multiple services, identifies what's relevant,
-      warns about gotchas, and builds a plan. Deterministic engines handle each individual service.
+      The platform already has a service graph with cross-service edges and life event entry points.
+      The Proactive Advocate wires the LLM agent into this infrastructure &mdash; the agent queries the graph in real-time,
+      reasons about gotchas, and builds plans within the conversation. Deterministic engines still handle each individual service.
     </p>
 
     <div class="grid-3" style="margin-bottom: 2rem;">
@@ -483,8 +534,8 @@
       </div>
       <div class="card card-accent card-orange">
         <div class="card-tag">Key insight</div>
-        <h3>Combinatorial space</h3>
-        <p>Life events &times; services &times; circumstances is too large for state machines. This is where LLM reasoning shines.</p>
+        <h3>Infrastructure exists, agent doesn't use it</h3>
+        <p>The service graph and life event plans are built. The gap is connecting the LLM to them so it can reason about gotchas and sequencing in real-time.</p>
       </div>
     </div>
 
@@ -543,7 +594,7 @@
               </div>
             </div>
             <div class="bubble bubble-agent" style="margin-top: 0.25rem; font-size: 0.72rem; color: #505a5f; background: #f3f2f1; border-color: #e0dfde;">
-              <em>No mention of D1 entitlement, pension changes, or other age-triggered obligations. The citizen must discover these themselves.</em>
+              <em>The platform dashboard shows life event plans with related services. But within the chat, the agent handles one service in isolation &mdash; no mention of D1 entitlement, pension changes, or other age-triggered obligations.</em>
             </div>
           </div>
           <div class="phone-input-bar">
@@ -631,7 +682,7 @@
     </div>
 
     <div class="callout">
-      <strong>What changed:</strong> The LLM is doing genuine multi-service reasoning that would be impractical to encode as a state machine (the combinatorial space of life events &times; services &times; circumstances is too large). Each individual service transaction still goes through the deterministic engine.
+      <strong>What changed:</strong> The LLM agent now queries the service graph that already exists in <code>@als/service-graph</code>. The life event plans, REQUIRES/ENABLES edges, and persona filtering are already built &mdash; this model connects the agent to them so it can reason about gotchas and sequencing within the conversation. Each individual service transaction still goes through the deterministic engine.
     </div>
   </div>
 </section>
@@ -966,7 +1017,7 @@
               </div>
             </div>
 
-            <div class="receipt-card">
+            <div class="receipt-wrapper"><div class="receipt-card">
               <div class="receipt-header"><span class="receipt-icon">&#10003;</span> Renewal submitted &middot; 14:17</div>
               <div class="receipt-body">
                 <div class="receipt-row"><span class="receipt-key">Fields provided</span><span class="receipt-val" style="color: #00703c; font-weight: 600;">3 of 8</span></div>
@@ -979,7 +1030,7 @@
                 </details>
               </div>
             </div>
-            <div class="receipt-tearoff"></div>
+            <svg class="receipt-zigzag" height="14" preserveAspectRatio="none" viewBox="0 0 200 14" fill="white"><polygon points="0,0 6.25,14 12.5,0 18.75,14 25,0 31.25,14 37.5,0 43.75,14 50,0 56.25,14 62.5,0 68.75,14 75,0 81.25,14 87.5,0 93.75,14 100,0 106.25,14 112.5,0 118.75,14 125,0 131.25,14 137.5,0 143.75,14 150,0 156.25,14 162.5,0 168.75,14 175,0 181.25,14 187.5,0 193.75,14 200,0"/></svg></div>
 
             <div class="bubble bubble-agent">Done. New licence arrives within <strong>3 weeks</strong>. That was 3 steps instead of 8.</div>
           </div>
@@ -1006,8 +1057,9 @@
     <div class="section-tag">Model 4</div>
     <h2>The Life-Event Coordinator</h2>
     <p class="section-intro">
-      Citizens don't think in services, they think in life events. "I'm retiring." "I'm having a baby."
-      "Someone died." Each event spans multiple services with complex interdependencies. The agent coordinates across sessions.
+      Citizens don't think in services, they think in life events. The platform already supports this &mdash; 16 life events
+      with topological plans, persona-aware filtering, and cross-session plan tracking in the UI. This model moves that
+      coordination into the agent itself, so it can actively guide citizens across services within the conversation.
     </p>
 
     <div class="grid-3" style="margin-bottom: 2rem;">
@@ -1023,8 +1075,8 @@
       </div>
       <div class="card card-accent card-orange">
         <div class="card-tag">Key insight</div>
-        <h3>Multi-session state</h3>
-        <p>A citizen "moving abroad" would navigate 6-8 separate services themselves. The coordinator does this for them across multiple sessions.</p>
+        <h3>From UI to agent</h3>
+        <p>The plan view and dashboard already show multi-service journeys with progress tracking. The next step is the agent actively guiding citizens through them, not just the UI.</p>
       </div>
     </div>
 
@@ -1068,7 +1120,7 @@
               </div>
             </div>
             <div class="bubble bubble-agent" style="margin-top: 0.25rem; font-size: 0.72rem; color: #505a5f; background: #f3f2f1; border-color: #e0dfde;">
-              <em>Only handles one service. Rajesh must separately discover and navigate pension export, healthcare S1, and licence exchange. No deadline coordination.</em>
+              <em>The chat agent handles one service. The dashboard shows related services and the plan view tracks progress &mdash; but within this conversation, Rajesh gets no guidance on pension export, healthcare S1, or licence exchange.</em>
             </div>
           </div>
           <div class="phone-input-bar">
@@ -1175,7 +1227,7 @@
     </div>
 
     <div class="callout">
-      <strong>What changed:</strong> The current system handles one service at a time. A citizen "moving abroad" would navigate 4+ separate services, understand dependencies, and track progress themselves. The Life-Event Coordinator does this reasoning for them &mdash; across multiple sessions &mdash; while each individual service transaction remains fully deterministic.
+      <strong>What changed:</strong> The platform's plan view and dashboard already show multi-service journeys with topological ordering and progress tracking. The Life-Event Coordinator moves this intelligence into the agent &mdash; it queries the service graph, reasons about deadlines and dependencies, and guides the citizen through the plan within the conversation. The infrastructure (<code>getLifeEventPlan</code>, REQUIRES/ENABLES edges, persona filtering) is already built.
     </div>
   </div>
 </section>
@@ -1187,26 +1239,27 @@
 <section class="section" id="architecture">
   <div class="container">
     <div class="section-tag">The Shift</div>
-    <h2>Where the LLM Should Reason</h2>
+    <h2>Connecting the Agent to What's Already Built</h2>
     <p class="section-intro">
-      The current architecture's separation of concerns is correct. The change needed is not in the
-      deterministic layer. It's in what the LLM is asked to reason about.
+      The architecture's separation of concerns is correct, and significant cross-service infrastructure already exists.
+      The change needed is not in building new data models &mdash; it's in wiring the LLM agent into the infrastructure
+      that's already there, and extending it where gaps remain.
     </p>
 
-    <h3 style="margin-bottom: 1rem;">Current flow</h3>
+    <h3 style="margin-bottom: 1rem;">Current: agent handles one service, platform shows the map</h3>
     <div class="flow-diagram">
-      <span class="flow-node dim">Citizen selects service</span>
+      <span class="flow-node">Dashboard shows life event plan</span>
+      <span class="flow-arrow">&rarr;</span>
+      <span class="flow-node dim">Citizen selects one service</span>
       <span class="flow-arrow">&rarr;</span>
       <span class="flow-node dim">LLM narrates form</span>
       <span class="flow-arrow">&rarr;</span>
-      <span class="flow-node dim">Citizen fills form</span>
-      <span class="flow-arrow">&rarr;</span>
       <span class="flow-node dim">Engine decides</span>
       <span class="flow-arrow">&rarr;</span>
-      <span class="flow-node dim">LLM narrates result</span>
+      <span class="flow-node dim">Citizen returns to dashboard for next service</span>
     </div>
 
-    <h3 style="margin-bottom: 1rem;">Proposed flow</h3>
+    <h3 style="margin-bottom: 1rem;">Proposed: agent reasons across services using existing graph</h3>
     <div class="flow-diagram">
       <span class="flow-node highlight">Citizen describes situation</span>
       <span class="flow-arrow">&rarr;</span>
@@ -1247,41 +1300,59 @@
       </div>
     </div>
 
-    <h3 style="margin-top: 2.5rem; margin-bottom: 1rem;">What would need to change</h3>
+    <h3 style="margin-top: 2.5rem; margin-bottom: 1rem;">What exists vs what needs building</h3>
     <table class="score-table">
       <thead>
-        <tr><th>Component</th><th>Package</th><th>Purpose</th></tr>
+        <tr><th>Component</th><th>Package</th><th>Status</th><th>What's needed</th></tr>
       </thead>
       <tbody>
         <tr>
+          <td>Cross-service dependency graph</td>
+          <td><code>@als/service-graph</code></td>
+          <td class="score-yes">Built &mdash; 108 services, REQUIRES/ENABLES edges</td>
+          <td>Expose to agent via MCP tools or function calls</td>
+        </tr>
+        <tr>
+          <td>Life event plans</td>
+          <td><code>@als/service-graph</code></td>
+          <td class="score-yes">Built &mdash; 16 life events, topological ordering</td>
+          <td>Agent queries <code>getLifeEventPlan()</code> in conversation</td>
+        </tr>
+        <tr>
+          <td>Persona-aware filtering</td>
+          <td><code>citizen-02 API</code></td>
+          <td class="score-yes">Built &mdash; eligibility filtering, plan recomputation</td>
+          <td>Pass persona context to agent reasoning</td>
+        </tr>
+        <tr>
+          <td>Multi-session plan tracking</td>
+          <td><code>citizen-02 store</code></td>
+          <td class="score-yes">Built &mdash; Zustand + localStorage persistence</td>
+          <td>Agent reads/updates plan progress during chat</td>
+        </tr>
+        <tr>
           <td>Service catalogue for LLM reasoning</td>
           <td><code>@als/runtime</code></td>
-          <td>Structured metadata about every service: criteria, timelines, common rejection reasons, dependencies. The LLM reasons over this; it doesn't replace the policy engine.</td>
+          <td class="score-partial">Partial &mdash; manifests + policies exist, not optimised for LLM</td>
+          <td>Structured gotcha metadata, common rejection reasons, timelines</td>
         </tr>
         <tr>
           <td>Soft pre-screening protocol</td>
           <td><code>@als/legibility</code></td>
-          <td>Read-only access to policy rules so the agent can ask "would this citizen likely qualify?" without creating a formal application.</td>
-        </tr>
-        <tr>
-          <td>Cross-service dependency graph</td>
-          <td><code>@als/runtime</code></td>
-          <td>Which services depend on which, ordering constraints, what can run in parallel.</td>
-        </tr>
-        <tr>
-          <td>Multi-session state persistence</td>
-          <td><code>@als/runtime</code></td>
-          <td>Track progress across services and sessions for life-event coordination.</td>
+          <td class="score-no">Not built</td>
+          <td>Read-only access to policy rules for predictive reasoning</td>
         </tr>
         <tr>
           <td>Agent reasoning audit trail</td>
           <td><code>@als/evidence</code></td>
-          <td>Every suggestion the agent makes is logged with reasoning, so "the system told me to do X" has a verifiable record.</td>
+          <td class="score-partial">Partial &mdash; evidence store exists, reasoning not logged</td>
+          <td>Log agent suggestions with reasoning so "the system told me X" is verifiable</td>
         </tr>
         <tr>
           <td>Field relevance engine</td>
           <td><code>@als/legibility</code></td>
-          <td>Maps citizen context to required vs optional fields, enabling the data minimisation model.</td>
+          <td class="score-no">Not built</td>
+          <td>Maps citizen context to required vs optional fields for data minimisation</td>
         </tr>
       </tbody>
     </table>
@@ -1295,51 +1366,40 @@
 <section class="section section-alt" id="recommendation">
   <div class="container">
     <div class="section-tag">Recommended Next Step</div>
-    <h2>Start with Models 2 and 3</h2>
+    <h2>Build the Agentic Layer</h2>
     <p class="section-intro">
-      The Error Preventer and Data Minimiser deliver the most citizen-facing value with the least
-      architectural disruption. Both work within the existing single-service flow but change
-      <strong>how</strong> the LLM engages within it.
+      The platform infrastructure is substantially complete. The next step is building a genuinely agentic application
+      on top of it &mdash; one where the LLM agent actively uses the service graph, life event plans, and persona context
+      to guide citizens through multi-service journeys.
     </p>
 
     <div class="grid-2" style="margin-bottom: 2rem;">
       <div class="card card-accent card-blue">
-        <div class="card-tag">Low disruption, high impact</div>
-        <h3>Model 2: Error Preventer</h3>
-        <p>Works within the current single-service flow. Add a "soft pre-screening" step before the formal card
-          is presented. The LLM asks 1-2 conversational questions to catch likely problems. No new infrastructure needed &mdash;
-          just policy metadata the LLM can reason about.</p>
-        <p style="margin-top: 0.75rem;"><strong>Prototype with:</strong> Driving licence renewal for citizens with medical conditions.</p>
+        <div class="card-tag">Infrastructure ready</div>
+        <h3>Models 1 &amp; 4: Cross-Service Agent</h3>
+        <p>The service graph, life event plans, persona filtering, and plan tracking are <strong>already built</strong>.
+          The Proactive Advocate and Life-Event Coordinator primarily need the agent to be connected to this infrastructure
+          via MCP tools or function calls. This is the highest-leverage work: turn existing data into active agent reasoning.</p>
+        <p style="margin-top: 0.75rem;"><strong>Prototype with:</strong> A life event conversation (e.g. "turning 70") where the agent
+          queries the service graph, identifies related services, and builds a plan &mdash; within the chat.</p>
       </div>
       <div class="card card-accent card-green">
-        <div class="card-tag">Low disruption, high impact</div>
-        <h3>Model 3: Data Minimiser</h3>
-        <p>Works within the current card system. Add a field-relevance layer that maps citizen context to
-          required vs optional fields. The card renders with fewer fields; a "show all fields" toggle preserves the full form.</p>
-        <p style="margin-top: 0.75rem;"><strong>Prototype with:</strong> Driving licence renewal for a straightforward case (no conditions, unchanged details).</p>
-      </div>
-    </div>
-
-    <div class="grid-2" style="margin-bottom: 2rem;">
-      <div class="card card-accent card-orange">
-        <div class="card-tag">Larger build</div>
-        <h3>Model 1: Proactive Advocate</h3>
-        <p>Requires cross-service reasoning infrastructure and a service catalogue with gotcha metadata.
-          Build after Models 2-3 prove the pattern of LLM reasoning alongside deterministic control.</p>
-      </div>
-      <div class="card card-accent card-purple">
-        <div class="card-tag">Largest build</div>
-        <h3>Model 4: Life-Event Coordinator</h3>
-        <p>Requires multi-session state persistence and cross-service dependency graphs.
-          The most ambitious model &mdash; but also the most transformative for citizens navigating complex life events.</p>
+        <div class="card-tag">New capability needed</div>
+        <h3>Models 2 &amp; 3: Predictive &amp; Adaptive</h3>
+        <p>The Error Preventer and Data Minimiser require new infrastructure &mdash; a soft pre-screening protocol
+          and a field relevance engine. These add genuine new reasoning capabilities but work within the existing
+          single-service flow.</p>
+        <p style="margin-top: 0.75rem;"><strong>Prototype with:</strong> Driving licence renewal &mdash; medical condition pre-screening (Model 2)
+          and field reduction for straightforward cases (Model 3).</p>
       </div>
     </div>
 
     <div class="callout callout-verdict">
-      <strong>The bottom line:</strong> The separation of concerns in the current architecture is correct and should be preserved.
-      The opportunity is not in changing the deterministic layer &mdash; it's in giving the LLM something meaningful to reason about.
-      Right now, the most capable reasoning model in the world is being used to write paragraphs around forms. It should be
-      reasoning about which forms, in what order, and whether this citizen should even be filling one out right now.
+      <strong>The bottom line:</strong> This is no longer a question of building infrastructure &mdash; the service graph, life event plans,
+      and cross-session state tracking already exist. The question is whether to build a new agentic application that wires
+      the LLM into this infrastructure, giving it something genuinely meaningful to reason about: which services, in what order,
+      and whether this citizen should even be filling out a form right now. The deterministic layer is sound.
+      The platform is ready. The agent needs to catch up.
     </div>
   </div>
 </section>
