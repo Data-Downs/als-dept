@@ -89,8 +89,8 @@ export function TaskReceiptCard({ content, timestamp }: TaskReceiptCardProps) {
         )}
       </div>
       {/* Zig-zag tear-off bottom edge */}
-      <svg className="block w-full" height="8" preserveAspectRatio="none" viewBox="0 0 240 8" fill="white">
-        <polygon points="0,0 5,8 10,0 15,8 20,0 25,8 30,0 35,8 40,0 45,8 50,0 55,8 60,0 65,8 70,0 75,8 80,0 85,8 90,0 95,8 100,0 105,8 110,0 115,8 120,0 125,8 130,0 135,8 140,0 145,8 150,0 155,8 160,0 165,8 170,0 175,8 180,0 185,8 190,0 195,8 200,0 205,8 210,0 215,8 220,0 225,8 230,0 235,8 240,0" />
+      <svg className="block w-full" height="14" preserveAspectRatio="none" viewBox="0 0 200 14" fill="white">
+        <polygon points="0,0 6.25,14 12.5,0 18.75,14 25,0 31.25,14 37.5,0 43.75,14 50,0 56.25,14 62.5,0 68.75,14 75,0 81.25,14 87.5,0 93.75,14 100,0 106.25,14 112.5,0 118.75,14 125,0 131.25,14 137.5,0 143.75,14 150,0 156.25,14 162.5,0 168.75,14 175,0 181.25,14 187.5,0 193.75,14 200,0" />
       </svg>
     </div>
   );
