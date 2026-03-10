@@ -50,11 +50,21 @@ const config: Config = {
           "0%, 80%, 100%": { transform: "scale(0)" },
           "40%": { transform: "scale(1)" },
         },
+        "slide-in-right": {
+          from: { transform: "translateX(100%)" },
+          to: { transform: "translateX(0)" },
+        },
+        "scale-in": {
+          from: { opacity: "0", transform: "scale(0.95)" },
+          to: { opacity: "1", transform: "scale(1)" },
+        },
       },
       animation: {
         "slide-up": "slide-up 0.3s cubic-bezier(0.25, 0.1, 0.25, 1.4)",
         "fade-in": "fade-in 0.2s ease-out",
         "bounce-dot": "bounce-dot 1.4s infinite ease-in-out both",
+        "slide-in-right": "slide-in-right 0.25s ease-out",
+        "scale-in": "scale-in 0.15s ease-out",
       },
     },
   },

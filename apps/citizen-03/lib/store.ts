@@ -10,7 +10,17 @@
  */
 
 import { create } from "zustand";
-import type { ChatMessage, ChatApiResponse, Conversation, ViewType, PersonaData, ToolUseRecord, AgentCard } from "./types";
+import type {
+  ChatMessage,
+  ChatApiResponse,
+  Conversation,
+  ViewType,
+  PersonaData,
+  ToolUseRecord,
+  AgentCard,
+  ToolProgress,
+  StreamEvent,
+} from "./types";
 
 interface AppStore {
   // Identity
@@ -30,8 +40,17 @@ interface AppStore {
   lastToolsUsed: string[];
   lastToolUseLog: ToolUseRecord[];
   lastIterations: number;
+  lastTraceId: string;
   cards: AgentCard[];
   quickReplies: string[];
+
+  // Streaming
+  toolProgress: ToolProgress[];
+  streamingText: string;
+
+  // UI panels
+  settingsPanelOpen: boolean;
+  showTrace: boolean;
 
   // Actions
   setPersona: (id: string) => Promise<void>;
@@ -40,6 +59,8 @@ interface AppStore {
   startNewConversation: () => void;
   loadConversation: (id: string) => void;
   clearReasoningBadge: () => void;
+  toggleSettings: () => void;
+  toggleTrace: () => void;
 }
 
 // localStorage-backed conversations
@@ -65,6 +86,36 @@ function saveConversation(personaId: string, conversation: Conversation) {
 
 export { getConversations };
 
+// ── SSE stream reader ──
+
+async function readSSEStream(
+  response: Response,
+  onEvent: (event: StreamEvent) => void,
+): Promise<void> {
+  const reader = response.body!.getReader();
+  const decoder = new TextDecoder();
+  let buffer = "";
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+
+    buffer += decoder.decode(value, { stream: true });
+    const lines = buffer.split("\n");
+    buffer = lines.pop() || "";
+
+    for (const line of lines) {
+      if (line.startsWith("data: ")) {
+        const data = line.slice(6);
+        if (data === "[DONE]") return;
+        try {
+          onEvent(JSON.parse(data));
+        } catch { /* malformed event */ }
+      }
+    }
+  }
+}
+
 export const useAppStore = create<AppStore>((set, get) => ({
   persona: null,
   personaData: null,
@@ -78,8 +129,13 @@ export const useAppStore = create<AppStore>((set, get) => ({
   lastToolsUsed: [],
   lastToolUseLog: [],
   lastIterations: 0,
+  lastTraceId: "",
   cards: [],
   quickReplies: [],
+  toolProgress: [],
+  streamingText: "",
+  settingsPanelOpen: false,
+  showTrace: false,
 
   setPersona: async (id: string) => {
     set({
@@ -96,7 +152,6 @@ export const useAppStore = create<AppStore>((set, get) => ({
       sessionStorage.setItem("c03_persona", id);
     }
 
-    // Load persona data from file
     try {
       const response = await fetch(`/api/persona/${id}`);
       if (response.ok) {
@@ -104,7 +159,7 @@ export const useAppStore = create<AppStore>((set, get) => ({
         set({ personaData: data });
       }
     } catch {
-      // persona data is optional for the chat to work
+      // persona data is optional
     }
   },
 
@@ -120,8 +175,11 @@ export const useAppStore = create<AppStore>((set, get) => ({
       lastToolsUsed: [],
       lastToolUseLog: [],
       lastIterations: 0,
+      lastTraceId: "",
       cards: [],
       quickReplies: [],
+      toolProgress: [],
+      streamingText: "",
       currentView: "chat",
     });
   },
@@ -149,10 +207,16 @@ export const useAppStore = create<AppStore>((set, get) => ({
       ...state.messages,
       { role: "user", content: text },
     ];
-    set({ messages: updated, isLoading: true });
+    set({
+      messages: updated,
+      isLoading: true,
+      toolProgress: [],
+      cards: [],
+      quickReplies: [],
+    });
 
     try {
-      const response = await fetch("/api/chat", {
+      const response = await fetch("/api/chat/stream", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -167,43 +231,127 @@ export const useAppStore = create<AppStore>((set, get) => ({
         throw new Error(err.details || err.error || `HTTP ${response.status}`);
       }
 
-      const data: ChatApiResponse = await response.json();
+      // Check if it's a streaming response
+      const contentType = response.headers.get("content-type") || "";
+      if (contentType.includes("text/event-stream")) {
+        // Stream mode
+        let finalData: ChatApiResponse | null = null;
 
-      const newHistory: ChatMessage[] = [
-        ...updated,
-        { role: "assistant", content: data.response },
-      ];
+        await readSSEStream(response, (event) => {
+          switch (event.type) {
+            case "tool_start":
+              set((s) => ({
+                toolProgress: [
+                  ...s.toolProgress,
+                  { tool: event.tool, label: event.label, status: "running" },
+                ],
+              }));
+              break;
 
-      const conversationId = state.activeConversationId || `conv_${Date.now()}`;
-      const conversation: Conversation = state.activeConversation
-        ? { ...state.activeConversation, messages: newHistory, updatedAt: new Date().toISOString() }
-        : {
-            id: conversationId,
-            title: data.conversationTitle || "New conversation",
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
+            case "tool_complete":
+              set((s) => ({
+                toolProgress: s.toolProgress.map((tp) =>
+                  tp.tool === event.tool && tp.status === "running"
+                    ? { ...tp, status: event.isError ? "error" : "complete", summary: event.summary, durationMs: event.durationMs }
+                    : tp
+                ),
+              }));
+              break;
+
+            case "reasoning":
+              set({ reasoning: event.text, hasNewReasoning: true });
+              break;
+
+            case "response":
+              finalData = event as unknown as ChatApiResponse;
+              break;
+
+            case "error":
+              throw new Error(event.message);
+          }
+        });
+
+        if (finalData) {
+          const data = finalData as ChatApiResponse;
+          const newHistory: ChatMessage[] = [
+            ...updated,
+            { role: "assistant", content: data.response },
+          ];
+
+          const conversationId = state.activeConversationId || `conv_${Date.now()}`;
+          const conversation: Conversation = state.activeConversation
+            ? { ...state.activeConversation, messages: newHistory, updatedAt: new Date().toISOString() }
+            : {
+                id: conversationId,
+                title: data.conversationTitle || "New conversation",
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString(),
+                messages: newHistory,
+              };
+
+          if (data.conversationTitle && !state.activeConversation) {
+            conversation.title = data.conversationTitle;
+          }
+
+          saveConversation(state.persona!, conversation);
+
+          set({
             messages: newHistory,
-          };
+            activeConversationId: conversationId,
+            activeConversation: conversation,
+            reasoning: data.reasoning,
+            hasNewReasoning: !!data.reasoning,
+            isLoading: false,
+            lastToolsUsed: data.toolsUsed,
+            lastToolUseLog: data.toolUseLog,
+            lastIterations: data.iterations,
+            lastTraceId: data.traceId,
+            cards: data.cards || [],
+            quickReplies: data.quickReplies || [],
+          });
+        } else {
+          throw new Error("Stream ended without a response");
+        }
+      } else {
+        // Fallback: non-streaming JSON response
+        const data: ChatApiResponse = await response.json();
+        const newHistory: ChatMessage[] = [
+          ...updated,
+          { role: "assistant", content: data.response },
+        ];
 
-      if (data.conversationTitle && !state.activeConversation) {
-        conversation.title = data.conversationTitle;
+        const conversationId = state.activeConversationId || `conv_${Date.now()}`;
+        const conversation: Conversation = state.activeConversation
+          ? { ...state.activeConversation, messages: newHistory, updatedAt: new Date().toISOString() }
+          : {
+              id: conversationId,
+              title: data.conversationTitle || "New conversation",
+              createdAt: new Date().toISOString(),
+              updatedAt: new Date().toISOString(),
+              messages: newHistory,
+            };
+
+        if (data.conversationTitle && !state.activeConversation) {
+          conversation.title = data.conversationTitle;
+        }
+
+        saveConversation(state.persona!, conversation);
+
+        set({
+          messages: newHistory,
+          activeConversationId: conversationId,
+          activeConversation: conversation,
+          reasoning: data.reasoning,
+          hasNewReasoning: !!data.reasoning,
+          isLoading: false,
+          lastToolsUsed: data.toolsUsed,
+          lastToolUseLog: data.toolUseLog,
+          lastIterations: data.iterations,
+          lastTraceId: data.traceId || "",
+          cards: data.cards || [],
+          quickReplies: data.quickReplies || [],
+        });
       }
-
-      saveConversation(state.persona!, conversation);
-
-      set({
-        messages: newHistory,
-        activeConversationId: conversationId,
-        activeConversation: conversation,
-        reasoning: data.reasoning,
-        hasNewReasoning: !!data.reasoning,
-        isLoading: false,
-        lastToolsUsed: data.toolsUsed,
-        lastToolUseLog: data.toolUseLog,
-        lastIterations: data.iterations,
-        cards: data.cards || [],
-        quickReplies: data.quickReplies || [],
-      });
     } catch (error) {
       console.error("Chat error:", error);
       const errorMsg = error instanceof Error ? error.message : "Something went wrong";
@@ -213,9 +361,17 @@ export const useAppStore = create<AppStore>((set, get) => ({
           { role: "assistant", content: `Something went wrong.\n\n${errorMsg}` },
         ],
         isLoading: false,
+        toolProgress: [],
       });
     }
   },
 
   clearReasoningBadge: () => set({ hasNewReasoning: false }),
+  toggleSettings: () => set((s) => ({ settingsPanelOpen: !s.settingsPanelOpen })),
+  toggleTrace: () => set((s) => {
+    if (s.hasNewReasoning && !s.showTrace) {
+      return { showTrace: true, hasNewReasoning: false };
+    }
+    return { showTrace: !s.showTrace };
+  }),
 }));

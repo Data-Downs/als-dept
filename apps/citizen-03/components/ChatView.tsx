@@ -2,42 +2,56 @@
 
 import { useState, useRef, useEffect } from "react";
 import { useAppStore } from "@/lib/store";
-import type { ToolUseRecord, AgentCard } from "@/lib/types";
+import type { AgentCard, ToolProgress } from "@/lib/types";
+import { TraceDetail } from "./TraceDetail";
 import ReactMarkdown from "react-markdown";
 
-// ── Tool trace cards ──
+// ── Streaming tool progress ──
 
-const TOOL_META: Record<string, { label: string; icon: string; color: string }> = {
-  query_service_graph: { label: "Searched services", icon: "🔍", color: "bg-blue-50 border-blue-200" },
-  get_life_event_plan: { label: "Life event plan", icon: "📋", color: "bg-purple-50 border-purple-200" },
-  get_related_services: { label: "Related services", icon: "🔗", color: "bg-indigo-50 border-indigo-200" },
-  check_eligibility: { label: "Eligibility check", icon: "✓", color: "bg-green-50 border-green-200" },
-  get_citizen_context: { label: "Your profile", icon: "👤", color: "bg-gray-50 border-gray-200" },
-  record_evidence: { label: "Recorded evidence", icon: "📝", color: "bg-yellow-50 border-yellow-200" },
-};
-
-function ToolTraceRow({ record }: { record: ToolUseRecord }) {
-  const meta = TOOL_META[record.tool] || { label: record.tool, icon: "⚙️", color: "bg-gray-50 border-gray-200" };
-  const output = record.output;
-
-  let summary = "";
-  if (output) {
-    switch (record.tool) {
-      case "query_service_graph": summary = `${output.totalCount} services`; break;
-      case "get_life_event_plan": summary = `${output.lifeEvent}: ${output.totalServices} services`; break;
-      case "get_related_services": summary = `${output.requiresCount} prereqs, ${output.enablesCount} downstream`; break;
-      case "check_eligibility": summary = output.eligible === true ? "Eligible" : output.eligible === false ? "Not eligible" : "No policy"; break;
-      case "get_citizen_context": summary = `${output.verifiedFieldCount} verified fields`; break;
-      case "record_evidence": summary = `${output.eventType}`; break;
-    }
-  }
+function ToolProgressBar({ tools }: { tools: ToolProgress[] }) {
+  if (tools.length === 0) return null;
 
   return (
-    <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] border ${meta.color}`}>
-      <span>{meta.icon}</span>
-      <span className="text-gray-600">{meta.label}</span>
-      {summary && <span className="text-gray-400">· {summary}</span>}
-    </span>
+    <div className="flex justify-start">
+      <div className="bg-white rounded-2xl rounded-bl-md px-4 py-3 border border-gray-100 shadow-sm max-w-[85%]">
+        <div className="space-y-1.5">
+          {tools.map((tp, i) => (
+            <div key={i} className="flex items-center gap-2">
+              {tp.status === "running" ? (
+                <div className="w-3.5 h-3.5 shrink-0">
+                  <svg className="animate-spin" viewBox="0 0 14 14" fill="none">
+                    <circle cx="7" cy="7" r="5.5" stroke="#b1b4b6" strokeWidth="1.5"/>
+                    <path d="M12.5 7a5.5 5.5 0 00-5.5-5.5" stroke="#1d70b8" strokeWidth="1.5" strokeLinecap="round"/>
+                  </svg>
+                </div>
+              ) : tp.status === "error" ? (
+                <span className="text-[10px]">❌</span>
+              ) : (
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" className="shrink-0">
+                  <circle cx="7" cy="7" r="5.5" fill="#00703c" fillOpacity="0.1" stroke="#00703c" strokeWidth="1.2"/>
+                  <path d="M4.5 7l2 2 3-3.5" stroke="#00703c" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              )}
+              <span className={`text-xs ${tp.status === "running" ? "text-govuk-black font-medium" : "text-govuk-dark-grey"}`}>
+                {tp.label}
+              </span>
+              {tp.status === "complete" && tp.durationMs !== undefined && (
+                <span className="text-[9px] text-govuk-mid-grey font-mono">{tp.durationMs}ms</span>
+              )}
+            </div>
+          ))}
+          {tools.some((tp) => tp.status === "running") && (
+            <div className="flex items-center gap-2 mt-1">
+              <div className="flex gap-1">
+                <span className="w-1.5 h-1.5 bg-govuk-mid-grey rounded-full animate-bounce-dot" />
+                <span className="w-1.5 h-1.5 bg-govuk-mid-grey rounded-full animate-bounce-dot" style={{ animationDelay: "0.16s" }} />
+                <span className="w-1.5 h-1.5 bg-govuk-mid-grey rounded-full animate-bounce-dot" style={{ animationDelay: "0.32s" }} />
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
   );
 }
 
@@ -56,12 +70,12 @@ function AgentCardComponent({ card, onTap }: { card: AgentCard; onTap: (text: st
     return (
       <button
         onClick={() => onTap(`Tell me more about ${card.title}`)}
-        className={`w-full text-left bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-md transition-shadow touch-feedback ${urgency ? `border-l-4 ${urgency.border}` : ""}`}
+        className={`w-full text-left bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-md transition-all duration-200 active:scale-[0.98] ${urgency ? `border-l-4 ${urgency.border}` : ""}`}
       >
         <div className="px-3.5 py-3">
           <div className="flex items-start justify-between gap-2">
             <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-1.5">
+              <div className="flex items-center gap-1.5 flex-wrap">
                 {urgency && (
                   <span className={`text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-full ${urgency.badge}`}>
                     {urgency.label}
@@ -70,6 +84,11 @@ function AgentCardComponent({ card, onTap }: { card: AgentCard; onTap: (text: st
                 {card.eligible === true && (
                   <span className="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-full bg-green-100 text-green-700">
                     Eligible
+                  </span>
+                )}
+                {card.eligible === false && (
+                  <span className="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-full bg-gray-100 text-gray-500">
+                    Not eligible
                   </span>
                 )}
               </div>
@@ -86,8 +105,11 @@ function AgentCardComponent({ card, onTap }: { card: AgentCard; onTap: (text: st
               target="_blank"
               rel="noopener noreferrer"
               onClick={(e) => e.stopPropagation()}
-              className="inline-block mt-1.5 text-[10px] text-govuk-blue underline"
+              className="inline-flex items-center gap-1 mt-2 text-[10px] text-govuk-blue hover:text-govuk-dark-blue"
             >
+              <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+                <path d="M8 5.5v2.5a1 1 0 01-1 1H2a1 1 0 01-1-1V3a1 1 0 011-1h2.5M6 1h3v3M4.5 5.5L9 1" stroke="currentColor" strokeWidth="0.8" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
               View on GOV.UK
             </a>
           )}
@@ -100,18 +122,21 @@ function AgentCardComponent({ card, onTap }: { card: AgentCard; onTap: (text: st
     return (
       <button
         onClick={() => onTap(`Help me with: ${card.title}`)}
-        className="w-full text-left bg-govuk-blue/5 rounded-xl border border-govuk-blue/20 px-3.5 py-3 hover:bg-govuk-blue/10 transition-colors touch-feedback"
+        className="w-full text-left bg-govuk-blue/5 rounded-xl border border-govuk-blue/20 px-3.5 py-3 hover:bg-govuk-blue/10 transition-all duration-200 active:scale-[0.98]"
       >
         <div className="flex items-center gap-2.5">
           <div className="w-7 h-7 rounded-full bg-govuk-blue/10 flex items-center justify-center shrink-0">
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-              <path d="M3 7h8M7 3v8" stroke="#1d70b8" strokeWidth="1.5" strokeLinecap="round"/>
+              <path d="M7 3v8M3 7h8" stroke="#1d70b8" strokeWidth="1.5" strokeLinecap="round"/>
             </svg>
           </div>
           <div className="flex-1 min-w-0">
             <h3 className="font-semibold text-sm text-govuk-black">{card.title}</h3>
             <p className="text-xs text-govuk-dark-grey mt-0.5">{card.description}</p>
           </div>
+          <svg width="16" height="16" viewBox="0 0 16 16" className="text-govuk-mid-grey shrink-0">
+            <path d="M6 3l5 5-5 5" stroke="currentColor" fill="none" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
         </div>
       </button>
     );
@@ -126,7 +151,7 @@ function AgentCardComponent({ card, onTap }: { card: AgentCard; onTap: (text: st
         </div>
         <div>
           <h3 className="font-semibold text-sm text-govuk-black">{card.title}</h3>
-          <p className="text-xs text-govuk-dark-grey mt-0.5">{card.description}</p>
+          <p className="text-xs text-govuk-dark-grey mt-0.5 leading-relaxed">{card.description}</p>
         </div>
       </div>
     </div>
@@ -142,19 +167,22 @@ export function ChatView() {
   const hasNewReasoning = useAppStore((s) => s.hasNewReasoning);
   const lastToolUseLog = useAppStore((s) => s.lastToolUseLog);
   const lastIterations = useAppStore((s) => s.lastIterations);
+  const lastTraceId = useAppStore((s) => s.lastTraceId);
   const cards = useAppStore((s) => s.cards);
   const quickReplies = useAppStore((s) => s.quickReplies);
+  const toolProgress = useAppStore((s) => s.toolProgress);
+  const showTrace = useAppStore((s) => s.showTrace);
   const sendMessage = useAppStore((s) => s.sendMessage);
   const navigateTo = useAppStore((s) => s.navigateTo);
-  const clearReasoningBadge = useAppStore((s) => s.clearReasoningBadge);
+  const toggleSettings = useAppStore((s) => s.toggleSettings);
+  const toggleTrace = useAppStore((s) => s.toggleTrace);
 
   const [input, setInput] = useState("");
-  const [showTrace, setShowTrace] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, isLoading, cards]);
+  }, [messages, isLoading, cards, toolProgress]);
 
   const handleSend = (text?: string) => {
     const msg = text || input.trim();
@@ -171,7 +199,7 @@ export function ChatView() {
           <div className="flex items-center gap-2">
             <button
               onClick={() => navigateTo("dashboard")}
-              className="p-1 -ml-1 rounded hover:bg-white/10"
+              className="p-1 -ml-1 rounded hover:bg-white/10 transition-colors"
             >
               <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
                 <path d="M12 4l-6 6 6 6" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -183,20 +211,34 @@ export function ChatView() {
             </div>
           </div>
 
-          <button
-            onClick={() => {
-              setShowTrace(!showTrace);
-              if (hasNewReasoning) clearReasoningBadge();
-            }}
-            className={`relative flex items-center gap-1 px-2 py-1 rounded text-xs ${
-              showTrace ? "bg-white/20" : "hover:bg-white/10"
-            }`}
-          >
-            Trace
-            {hasNewReasoning && !showTrace && (
-              <span className="absolute -top-1 -right-1 w-2 h-2 bg-govuk-yellow rounded-full" />
-            )}
-          </button>
+          <div className="flex items-center gap-1">
+            {/* Trace toggle */}
+            <button
+              onClick={toggleTrace}
+              className={`relative flex items-center gap-1 px-2 py-1 rounded text-xs transition-colors ${
+                showTrace ? "bg-white/20" : "hover:bg-white/10"
+              }`}
+            >
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                <path d="M1 6h2l1.5-3 2 6L8 3l1.5 3H11" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+              Trace
+              {hasNewReasoning && !showTrace && (
+                <span className="absolute -top-1 -right-1 w-2 h-2 bg-govuk-yellow rounded-full" />
+              )}
+            </button>
+
+            {/* Settings */}
+            <button
+              onClick={toggleSettings}
+              className="p-1.5 rounded hover:bg-white/10 transition-colors"
+            >
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <circle cx="8" cy="8" r="2" stroke="white" strokeWidth="1.2"/>
+                <path d="M8 1v2M8 13v2M1 8h2M13 8h2M3.05 3.05l1.41 1.41M11.54 11.54l1.41 1.41M3.05 12.95l1.41-1.41M11.54 4.46l1.41-1.41" stroke="white" strokeWidth="1.2" strokeLinecap="round"/>
+              </svg>
+            </button>
+          </div>
         </div>
       </header>
 
@@ -204,7 +246,12 @@ export function ChatView() {
       <main className="flex-1 overflow-y-auto p-4 space-y-3">
         {messages.length === 0 && (
           <div className="text-center py-12 text-govuk-mid-grey">
-            <p className="text-sm">Ask me about any government service.</p>
+            <div className="w-12 h-12 mx-auto mb-3 rounded-full bg-govuk-blue/10 flex items-center justify-center">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z" stroke="#1d70b8" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </div>
+            <p className="text-sm font-medium text-govuk-black">Ask me about any government service</p>
             <p className="text-xs mt-1">I&apos;ll search services, check eligibility, and guide you step by step.</p>
           </div>
         )}
@@ -213,7 +260,7 @@ export function ChatView() {
           const isLastAssistant = msg.role === "assistant" && i === messages.length - 1;
 
           return (
-            <div key={i}>
+            <div key={i} className="animate-fade-in">
               {/* Message bubble */}
               <div className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
                 <div
@@ -242,31 +289,28 @@ export function ChatView() {
                 </div>
               )}
 
-              {/* Tool trace — shown after cards when trace is enabled */}
+              {/* Trace — shown after cards when enabled */}
               {showTrace && isLastAssistant && lastToolUseLog.length > 0 && (
-                <div className="mt-2 animate-fade-in">
-                  <div className="flex items-center gap-1.5 mb-1.5">
-                    <div className="h-px flex-1 bg-gray-200" />
-                    <span className="text-[10px] text-gray-400 font-medium">
-                      {lastIterations} loop{lastIterations !== 1 ? "s" : ""}
-                    </span>
-                    <div className="h-px flex-1 bg-gray-200" />
-                  </div>
-                  <div className="flex flex-wrap gap-1">
-                    {lastToolUseLog.map((record, j) => (
-                      <ToolTraceRow key={j} record={record} />
-                    ))}
-                  </div>
-                  {reasoning && (
-                    <p className="text-[10px] text-gray-400 mt-1.5 italic leading-relaxed">{reasoning}</p>
-                  )}
+                <div className="mt-3 animate-fade-in">
+                  <TraceDetail
+                    toolUseLog={lastToolUseLog}
+                    iterations={lastIterations}
+                    reasoning={reasoning}
+                    traceId={lastTraceId}
+                  />
                 </div>
               )}
             </div>
           );
         })}
 
-        {isLoading && (
+        {/* Streaming tool progress */}
+        {isLoading && toolProgress.length > 0 && (
+          <ToolProgressBar tools={toolProgress} />
+        )}
+
+        {/* Loading indicator (shown before any tool progress) */}
+        {isLoading && toolProgress.length === 0 && (
           <div className="flex justify-start">
             <div className="bg-white rounded-2xl rounded-bl-md px-4 py-3 border border-gray-100 shadow-sm">
               <div className="flex items-center gap-2">
@@ -292,7 +336,7 @@ export function ChatView() {
               <button
                 key={i}
                 onClick={() => handleSend(reply)}
-                className="shrink-0 px-3 py-1.5 bg-white rounded-full border border-gray-200 text-xs text-govuk-blue hover:bg-blue-50 hover:border-govuk-blue transition-colors whitespace-nowrap"
+                className="shrink-0 px-3 py-1.5 bg-white rounded-full border border-gray-200 text-xs text-govuk-blue hover:bg-blue-50 hover:border-govuk-blue transition-colors whitespace-nowrap active:scale-[0.97]"
               >
                 {reply}
               </button>
@@ -311,12 +355,12 @@ export function ChatView() {
             onKeyDown={(e) => e.key === "Enter" && handleSend()}
             placeholder="Type a message..."
             disabled={isLoading}
-            className="flex-1 px-4 py-2.5 rounded-full border border-gray-200 text-sm focus:outline-none focus:border-govuk-blue focus:ring-1 focus:ring-govuk-blue disabled:opacity-50"
+            className="flex-1 px-4 py-2.5 rounded-full border border-gray-200 text-sm focus:outline-none focus:border-govuk-blue focus:ring-1 focus:ring-govuk-blue disabled:opacity-50 transition-colors"
           />
           <button
             onClick={() => handleSend()}
             disabled={!input.trim() || isLoading}
-            className="w-10 h-10 rounded-full bg-govuk-blue text-white flex items-center justify-center shrink-0 disabled:opacity-50 hover:bg-govuk-dark-blue transition-colors"
+            className="w-10 h-10 rounded-full bg-govuk-blue text-white flex items-center justify-center shrink-0 disabled:opacity-50 hover:bg-govuk-dark-blue transition-colors active:scale-95"
           >
             <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
               <path d="M4 10h12M12 4l6 6-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
