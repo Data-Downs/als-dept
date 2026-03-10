@@ -1,0 +1,203 @@
+{
+  "id": "helen-pitt",
+  "name": "Helen Pitt",
+  "personaName": "Helen Pitt",
+  "description": "Part-time university lecturer and single mother, juggling work with caring for daughter and recently bereaved mother",
+  "date_of_birth": "1974-10-15",
+  "age": 51,
+  "national_insurance_number": "HP741015B",
+  "address": {
+    "line_1": "42 Elmwood Avenue",
+    "city": "London",
+    "postcode": "SE24 9LD",
+    "country": "England"
+  },
+  "jurisdiction": "England",
+  "credentials": [
+    {
+      "type": "national-insurance",
+      "issuer": "HMRC",
+      "number": "HP741015B",
+      "issued": "1992-10-15",
+      "status": "valid"
+    },
+    {
+      "type": "driving-licence",
+      "issuer": "DVLA",
+      "number": "PITT741015H99JK",
+      "issued": "2015-08-20",
+      "expires": "2025-10-15",
+      "status": "valid"
+    },
+    {
+      "type": "proof-of-address",
+      "issuer": "HM Land Registry",
+      "number": "TITLE-SGL123456",
+      "issued": "2012-04-15",
+      "status": "valid"
+    }
+  ],
+  "employment_status": "employed",
+  "employer": "University of the Arts London",
+  "income": 32400,
+  "savings": 0,
+  "bank_account": true,
+  "no_fixed_address": false,
+  "primaryContact": {
+    "firstName": "Helen",
+    "middleName": "Elizabeth",
+    "lastName": "Pitt",
+    "dateOfBirth": "1974-10-15",
+    "nationalInsuranceNumber": "HP741015B",
+    "email": "h.pitt@fashion.arts.ac.uk",
+    "phone": "07789234567"
+  },
+  "employment": {
+    "status": "Employed",
+    "employer": "University of the Arts London (London College of Fashion)",
+    "jobTitle": "Senior Lecturer in Fashion Business Management",
+    "startDate": "2008-09-01",
+    "annualIncome": 32400,
+    "workingPattern": "Part-time (0.6 FTE - 3 days per week)",
+    "taxCode": "1257L",
+    "payrollNumber": "UAL-FCH-08234"
+  },
+  "financials": {
+    "householdIncome": 33629,
+    "monthlyMortgage": 1000,
+    "councilTaxBand": "D",
+    "councilTaxAnnual": 1650,
+    "currentAccount": {
+      "bank": "Nationwide Building Society",
+      "sortCode": "07-01-16",
+      "accountNumber": "12847563",
+      "balance": 1840
+    },
+    "savingsAccount": {
+      "bank": "Nationwide Building Society",
+      "sortCode": "07-01-16",
+      "accountNumber": "23958471",
+      "balance": 4200
+    },
+    "propertyValue": 450000,
+    "mortgageBalance": 170000,
+    "mortgageProvider": "Halifax",
+    "monthlyOutgoings": 2850
+  },
+  "benefits": {
+    "currentlyReceiving": [
+      {
+        "type": "Child Benefit",
+        "amount": 25.6,
+        "frequency": "weekly",
+        "startDate": "2015-04-01",
+        "reason": "First child - Ariel Pitt",
+        "childBenefitNumber": "CHB12345678A"
+      }
+    ],
+    "previousClaims": [],
+    "potentiallyEligibleFor": [
+      "Universal Credit",
+      "Council Tax Reduction",
+      "Help with childcare costs"
+    ]
+  },
+  "healthInfo": {
+    "gpSurgery": "Herne Hill Group Practice",
+    "nhsNumber": "485 123 4567",
+    "conditions": [
+      {
+        "name": "Stress and anxiety",
+        "diagnosed": "2025-11-20",
+        "severity": "Moderate",
+        "management": "Self-management, considering counselling, awaiting referral"
+      },
+      {
+        "name": "Insomnia",
+        "diagnosed": "2026-01-15",
+        "severity": "Mild to moderate",
+        "management": "Sleep hygiene advice, occasional use of over-the-counter sleep aids"
+      }
+    ],
+    "medications": [],
+    "hospitalAppointments": []
+  },
+  "family": {
+    "children": [
+      {
+        "firstName": "Ariel",
+        "lastName": "Pitt",
+        "dateOfBirth": "2015-03-12",
+        "age": 11,
+        "school": "Dulwich Hamlet Junior School",
+        "childBenefitNumber": "CHB12345678A"
+      }
+    ],
+    "notes": "Single parent. Ariel's father has no contact and provides no financial support. Helen's mother (Mags) lives in Kingston and recently lost her husband. Helen is increasingly needed to support her mother while managing full-time care of Ariel.",
+    "supportNetwork": [
+      "Mother (Mags) in Kingston - but now requires Helen's support",
+      "Colleague Sarah at London College of Fashion",
+      "Friend Emma from Ariel's school",
+      "Neighbors in Herne Hill"
+    ],
+    "caringResponsibilities": {
+      "mother": {
+        "name": "Margaret (Mags) Pitt",
+        "age": 76,
+        "location": "Kingston upon Thames",
+        "distance": "Approximately 1 hour by car",
+        "needs": "Emotional support following bereavement, assistance with practical tasks, increasing need for companionship and help with household management",
+        "recentBereavement": {
+          "deceased": "Husband (Helen's father)",
+          "dateOfDeath": "2025-12-18",
+          "impact": "Mags is struggling with grief, managing the house alone, and household finances"
+        },
+        "frequency": "Helen visits 1-2 times per week, increasing phone contact"
+      }
+    }
+  },
+  "housing": {
+    "type": "Owner occupier",
+    "monthlyMortgage": 1000,
+    "purchaseDate": "2021-04-15",
+    "purchasePrice": 40000000,
+    "currentValue": 450000,
+    "mortgageEndDate": "2032-04-15",
+    "numberOfBedrooms": 2,
+    "propertyType": "Flat"
+  },
+  "vehicles": [
+    {
+      "make": "Mini",
+      "model": "Cooper",
+      "year": 2007,
+      "color": "Racing Green",
+      "registrationNumber": "KV07 PLM",
+      "owner": "Helen Pitt",
+      "motExpiry": "2027-03-04",
+      "motLastPassed": "2026-03-05",
+      "taxExpiry": "2027-03-01",
+      "insuranceExpiry": "2026-11-30",
+      "annualMileage": 6500,
+      "notes": "Used for commute to UAL, visiting mother in Kingston, and Ariel's school run and activities"
+    }
+  ],
+  "communicationStyle": {
+    "tone": "Professional and articulate but increasingly stressed and vulnerable. Warm and engaged but showing signs of emotional strain. Pragmatic about seeking help but worried about stigma.",
+    "techSavvy": "Good - regularly uses university systems, email, and smartphone apps. Comfortable with online forms but prefers phone or face-to-face for complex matters. Uses online banking and some government digital services.",
+    "primaryConcerns": [
+      "Managing reduced income on part-time hours while maintaining household",
+      "Finding time and energy to support grieving mother while caring for Ariel",
+      "Worry about being judged for needing benefits despite being a professional",
+      "Concern about daughter's wellbeing during this stressful period",
+      "Fear of not being able to manage everything and letting people down"
+    ],
+    "typicalPhrases": [
+      "I've always managed before, but with Mum needing me more and more, I'm really struggling to make ends meet",
+      "I feel guilty even looking into this - I have a good job - but three days a week just isn't enough anymore",
+      "My daughter needs me, my mother needs me, and I'm trying to do right by my students too",
+      "I'm worried about how this will affect my mortgage or my daughter's future",
+      "I've never claimed benefits before and I'm not sure if I'm even eligible, but I don't know what else to do"
+    ]
+  }
+}

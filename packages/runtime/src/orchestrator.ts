@@ -150,7 +150,7 @@ export interface OrchestratorOutput {
 
 // ── Structured output parser ──
 
-interface ParsedTaskField {
+export interface ParsedTaskField {
   key: string;
   label: string;
   type: "text" | "email" | "tel" | "currency" | "date" | "number" | "confirm" | "select";

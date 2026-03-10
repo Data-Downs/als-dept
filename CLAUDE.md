@@ -7,6 +7,7 @@ A Turborepo monorepo implementing a reference architecture for UK government ser
 
 ```
 apps/
+  citizen-02/           → Standalone citizen app with bundled data (Next.js, port 3102)
   citizen-experience/   → Citizen-facing chat + auth UI (Next.js, port 3000)
   legibility-studio/    → Admin dashboard for services, traces, gap analysis (Next.js, port 3001)
 
@@ -49,6 +50,11 @@ data/
 - Tests use Vitest with workspace configuration — each package has its own `vitest.config.ts`
 - Never make real API calls in tests — mock external dependencies (Anthropic SDK, databases)
 - Evidence tests use an in-memory DatabaseAdapter, not real SQLite
+- citizen-02 has unit, component, and API route tests (54 tests across 6 files) plus Playwright E2E smoke tests
+  - Component tests use `@testing-library/react` with `@vitejs/plugin-react` for JSX transform
+  - API route tests use `// @vitest-environment node` override
+  - Mock Zustand store via `vi.mock("@/lib/store")` in component tests
+  - E2E: `cd apps/citizen-02 && npx playwright test` (requires dev server on port 3102)
 
 ## Environment
 - Requires `ANTHROPIC_API_KEY` env variable for LLM functionality

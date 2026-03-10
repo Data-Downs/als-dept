@@ -94,3 +94,8 @@ export async function getCaseStore(): Promise<CaseStore> {
   await ensureInit();
   return caseStore!;
 }
+
+export async function getEvidenceAdapter(): Promise<DatabaseAdapter> {
+  await ensureInit();
+  return adapter!;
+}

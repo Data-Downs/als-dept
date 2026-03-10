@@ -512,7 +512,7 @@ export const NODES: Record<string, ServiceNode> = {
   'hmrc-p45': {
     id: 'hmrc-p45', name: 'Obtain P45 from employer', dept: 'HMRC', deptKey: 'hmrc',
     deadline: null,
-    desc: 'Employer must provide on last day. Required for new job or benefit claim.',
+    desc: 'Your employer must provide a P45 when you leave a job. If you already have it you can upload it directly; if not we can help you request one. Required for a new job or benefit claim.',
     govuk_url: 'https://www.gov.uk/paye-forms-p45-p60-p11d/p45',
     serviceType: 'document',
     proactive: true,
@@ -524,8 +524,9 @@ export const NODES: Record<string, ServiceNode> = {
         { factor: 'employment', description: 'Must have been employed under PAYE and left that employment.' },
       ],
       keyQuestions: [
-        'Did you receive your P45 on your last day?',
-        'If not, have you contacted your former employer to request it?',
+        'Do you already have your P45 from your former employer?',
+        'How long ago did you leave the job? (Employers must issue a P45 on or before the last working day.)',
+        'If you do not have it yet, have you contacted your former employer to request it?',
       ],
       means_tested: false,
       evidenceRequired: ['Employer provides P45 — no application needed'],

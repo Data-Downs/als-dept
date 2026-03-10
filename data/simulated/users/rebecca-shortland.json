@@ -1,0 +1,277 @@
+{
+  "id": "rebecca-shortland",
+  "name": "Rebecca Shortland",
+  "personaName": "Rebecca Shortland",
+  "description": "Recently redundant marketing manager, single mother navigating sudden unemployment",
+  "color": "#b58900",
+  "date_of_birth": "1980-06-18",
+  "age": 45,
+  "national_insurance_number": "SH618045D",
+  "address": {
+    "line_1": "14 Willow Drive",
+    "city": "Wilmslow",
+    "county": "Cheshire",
+    "postcode": "SK9 3LH",
+    "country": "England"
+  },
+  "jurisdiction": "England",
+  "credentials": [
+    {
+      "type": "national-insurance",
+      "issuer": "HMRC",
+      "number": "SH618045D",
+      "issued": "1998-06-18",
+      "status": "valid"
+    },
+    {
+      "type": "driving-licence",
+      "issuer": "DVLA",
+      "number": "SHORT806186RS9KL",
+      "issued": "2020-07-15",
+      "expires": "2030-07-15",
+      "status": "valid"
+    },
+    {
+      "type": "passport",
+      "issuer": "HM Passport Office",
+      "number": "528794321",
+      "issued": "2022-09-12",
+      "expires": "2032-09-12",
+      "status": "valid"
+    },
+    {
+      "type": "proof-of-address",
+      "issuer": "Cheshire East Council",
+      "number": "CT-SK9-3LH-14",
+      "issued": "2025-04-01",
+      "expires": "2026-04-01",
+      "status": "valid"
+    }
+  ],
+  "employment_status": "unemployed",
+  "income": 0,
+  "savings": 12000,
+  "bank_account": true,
+  "no_fixed_address": false,
+  "primaryContact": {
+    "firstName": "Rebecca",
+    "middleName": "Jane",
+    "lastName": "Shortland",
+    "dateOfBirth": "1980-06-18",
+    "nationalInsuranceNumber": "SH618045D",
+    "email": "rebecca.shortland@gmail.com",
+    "phone": "07823456789"
+  },
+  "employment": {
+    "status": "Unemployed",
+    "previousEmployer": "Zenith Digital Solutions Ltd (Manchester)",
+    "previousJobTitle": "Senior Marketing Manager",
+    "startDate": "2014-03-01",
+    "employmentEndDate": "2026-03-03",
+    "endReason": "Redundancy - departmental restructure",
+    "yearsWorked": 12,
+    "previousIncome": 58000,
+    "redundancyPackage": {
+      "statutory": 12500,
+      "enhanced": 15000,
+      "total": 27500,
+      "paymentDate": "2026-03-31",
+      "noticePeriod": "3 months (paid in lieu)",
+      "unusedHoliday": 2100
+    }
+  },
+  "financials": {
+    "householdIncome": 6000,
+    "monthlyMortgage": 1350,
+    "mortgageOutstanding": 220000,
+    "propertyValue": 385000,
+    "councilTaxBand": "D",
+    "councilTaxAnnual": 2245,
+    "currentAccount": {
+      "bank": "HSBC",
+      "sortCode": "40-47-09",
+      "accountNumber": "12847365",
+      "balance": 3200
+    },
+    "savingsAccount": {
+      "bank": "HSBC",
+      "sortCode": "40-47-09",
+      "accountNumber": "88774521",
+      "balance": 12000
+    },
+    "childMaintenance": {
+      "monthlyAmount": 500,
+      "payer": "Ex-husband (Stuart Griffiths)",
+      "reliable": true,
+      "arrangement": "Child Maintenance Service"
+    },
+    "monthlyExpenses": {
+      "mortgage": 1350,
+      "utilities": 280,
+      "councilTax": 187,
+      "carInsurance": 85,
+      "carRunning": 120,
+      "groceries": 450,
+      "schoolCosts": 180,
+      "phoneInternet": 95,
+      "other": 300
+    }
+  },
+  "benefits": {
+    "currentlyReceiving": [
+      {
+        "type": "Child Benefit",
+        "amount": 102.4,
+        "frequency": "Monthly (4-weekly)",
+        "startDate": "2013-06-01",
+        "childName": "Phoenix Shortland"
+      }
+    ],
+    "previousClaims": [],
+    "potentiallyEligibleFor": [
+      "Universal Credit",
+      "Council Tax Reduction",
+      "Free School Meals (via Universal Credit)",
+      "Help with Mortgage Interest (if UC claim extends beyond 9 months)"
+    ]
+  },
+  "healthInfo": {
+    "gpSurgery": "Wilmslow Health Centre",
+    "nhsNumber": "485 392 5847",
+    "conditions": [
+      {
+        "name": "Stress and anxiety",
+        "diagnosed": "2026-03-05",
+        "severity": "Mild to moderate",
+        "management": "GP referred for counselling sessions, considering medication"
+      }
+    ],
+    "medications": [],
+    "recentAppointments": [
+      {
+        "type": "GP consultation",
+        "date": "2026-03-05",
+        "reason": "Stress management post-redundancy"
+      }
+    ]
+  },
+  "family": {
+    "children": [
+      {
+        "firstName": "Phoenix",
+        "lastName": "Shortland",
+        "dateOfBirth": "2013-05-22",
+        "age": 12,
+        "school": "Wilmslow High School (Year 8)",
+        "childBenefitNumber": "CHB45892341",
+        "livesWithMother": true
+      }
+    ],
+    "exSpouse": {
+      "firstName": "Stuart",
+      "lastName": "Griffiths",
+      "relationship": "Ex-husband (divorced 2022)",
+      "childMaintenance": 500,
+      "residesIn": "Sale, Greater Manchester",
+      "contactArrangement": "Alternate weekends and Wednesday evenings"
+    },
+    "notes": "Divorced 4 years ago. Stuart sees Phoenix regularly and pays maintenance reliably. Rebecca's parents live in Yorkshire and provide occasional childcare during school holidays.",
+    "supportNetwork": [
+      "Parents in Harrogate (retired, occasional help)",
+      "Close friend Sarah (also single mum, lives in Altrincham)",
+      "School mum network",
+      "Former work colleagues staying in touch"
+    ]
+  },
+  "housing": {
+    "type": "Owner occupier",
+    "purchaseDate": "2015-08-01",
+    "purchasePrice": 285000,
+    "currentValue": 385000,
+    "mortgageProvider": "Nationwide Building Society",
+    "mortgageType": "Fixed rate (ends 2028)",
+    "monthlyMortgage": 1350,
+    "yearsRemaining": 18
+  },
+  "vehicles": [
+    {
+      "make": "Volkswagen",
+      "model": "Golf",
+      "year": 2021,
+      "color": "Silver",
+      "registrationNumber": "BF21 KPL",
+      "owner": "Rebecca Shortland",
+      "motExpiry": "2027-02-14",
+      "taxExpiry": "2026-09-01",
+      "insuranceExpiry": "2026-07-18",
+      "businessUse": false,
+      "annualMileage": 8500,
+      "financeOutstanding": 0,
+      "notes": "Essential for school runs and previous commute to Manchester office"
+    }
+  ],
+  "education": {
+    "highest": "Bachelor of Arts in Marketing and Communications",
+    "university": "University of Leeds",
+    "graduated": 2002,
+    "professionalQualifications": [
+      "Chartered Institute of Marketing (CIM) Diploma",
+      "Google Analytics Certified"
+    ]
+  },
+  "digitalProfile": {
+    "linkedIn": "rebecca-shortland-marketing",
+    "emailUse": "Daily - professional and personal",
+    "socialMedia": "Active on LinkedIn, occasional Facebook",
+    "onlineBanking": "Very comfortable",
+    "govUkAccount": "Yes - set up for Self Assessment in past"
+  },
+  "communicationStyle": {
+    "tone": "Professional, articulate, slightly anxious but trying to stay composed. Used to being in control but feeling vulnerable about finances and impact on Phoenix. Determined to find solutions quickly.",
+    "techSavvy": "High - 12 years in tech sector marketing, very comfortable with digital platforms and online forms. Prefers online services but wants reassurance she's doing things correctly. Can troubleshoot basic technical issues.",
+    "primaryConcerns": [
+      "Keeping up with mortgage payments without draining savings",
+      "How redundancy package affects Universal Credit eligibility",
+      "Timeline for receiving any support payments",
+      "Impact on Phoenix's schooling and activities",
+      "Finding new employment quickly in competitive market",
+      "Whether she qualifies for help or if she's 'too well off'"
+    ],
+    "typicalPhrases": [
+      "I've always been financially independent, so this is really difficult for me",
+      "I need to make sure Phoenix doesn't feel the impact of this",
+      "How long does the redundancy money last before I can get help?",
+      "I'm used to managing marketing budgets, but navigating benefits is completely new territory",
+      "Can I claim anything while actively job hunting?",
+      "I just want to do this right and not mess anything up"
+    ]
+  },
+  "currentSituation": {
+    "redundancyDate": "2026-03-03",
+    "weeksSinceRedundancy": 1,
+    "jobSearchStatus": "Just started updating CV and LinkedIn. Contacted recruitment agencies. Monitoring job boards daily.",
+    "emotionalState": "Shocked and anxious but trying to stay positive. Worried about money running out. Concerned about explaining situation to Phoenix. Feeling slightly embarrassed about needing government support despite working for 20+ years.",
+    "immediateNeeds": [
+      "Understand Universal Credit eligibility with redundancy payment",
+      "Work out household budget on reduced income",
+      "Research Council Tax Reduction",
+      "Update CV and activate job search",
+      "Talk to mortgage provider about payment holiday options if needed"
+    ],
+    "strengths": [
+      "Organized and systematic - will approach job search strategically",
+      "Tech-savvy - comfortable with online applications",
+      "Strong professional network in Manchester tech/marketing scene",
+      "Financial literacy - has been managing household budget for years",
+      "Resilient - has navigated divorce and single parenthood successfully"
+    ],
+    "barriers": [
+      "Age discrimination in tech sector (mid-40s)",
+      "Saturated marketing job market in Greater Manchester",
+      "Redundancy payment delays Universal Credit eligibility (capital rules)",
+      "Limited flexibility due to school run commitments",
+      "Pride and discomfort about claiming benefits",
+      "Gap between redundancy ending and receiving UC (if eligible)"
+    ]
+  }
+}

@@ -17,6 +17,8 @@ export default function PersonaDetailPage({
   const [userData, setUserData] = useState<Record<string, unknown> | null>(null);
   const [loading, setLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isResetting, setIsResetting] = useState(false);
+  const [resetDone, setResetDone] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
 
@@ -60,6 +62,47 @@ export default function PersonaDetailPage({
       setError(err instanceof Error ? err.message : "Something went wrong");
     } finally {
       setIsSubmitting(false);
+    }
+  }
+
+  async function handleReset() {
+    if (!confirm(
+      `Reset all interaction data for "${(userData?.personaName as string) || userId}"?\n\n` +
+      "This will delete:\n" +
+      "- All conversations and chat history\n" +
+      "- All tasks and to-do items\n" +
+      "- All life event plans in progress\n" +
+      "- All submitted and inferred personal data\n" +
+      "- All consent grants and service access records\n" +
+      "- All evidence traces and cases\n\n" +
+      "The persona definition itself will not be changed.\n" +
+      "You will also need to clear browser localStorage in the citizen app."
+    )) return;
+
+    setIsResetting(true);
+    setError(null);
+    setResetDone(false);
+
+    try {
+      const citizenApi = process.env.NEXT_PUBLIC_CITIZEN_API || "http://localhost:3102";
+      const res = await fetch(
+        `${citizenApi}/api/personal-data/${encodeURIComponent(userId)}/reset`,
+        { method: "DELETE" },
+      );
+
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        throw new Error(body.error || `Reset failed (${res.status})`);
+      }
+
+      const data = await res.json();
+      console.log("[Studio] Persona reset result:", data);
+      setResetDone(true);
+      setTimeout(() => setResetDone(false), 5000);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Reset failed");
+    } finally {
+      setIsResetting(false);
     }
   }
 
@@ -110,6 +153,13 @@ export default function PersonaDetailPage({
               Back
             </button>
             <button
+              onClick={handleReset}
+              disabled={isResetting}
+              className="px-4 py-2 text-sm border border-red-300 text-red-700 rounded-lg hover:bg-red-50 transition-colors disabled:opacity-50"
+            >
+              {isResetting ? "Resetting..." : "Reset Interaction Data"}
+            </button>
+            <button
               onClick={handleSave}
               disabled={isSubmitting}
               className="px-4 py-2 text-sm bg-studio-accent text-white rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50"
@@ -129,6 +179,15 @@ export default function PersonaDetailPage({
       {saved && (
         <div className="border border-green-200 rounded-lg bg-green-50 px-4 py-3 mb-4">
           <p className="text-sm text-green-800">Changes saved successfully.</p>
+        </div>
+      )}
+      {resetDone && (
+        <div className="border border-amber-200 rounded-lg bg-amber-50 px-4 py-3 mb-4">
+          <p className="text-sm text-amber-800">
+            Server-side interaction data has been reset. To complete the reset, clear localStorage
+            in the citizen app browser (open DevTools &rarr; Application &rarr; Local Storage &rarr;
+            delete keys starting with <code className="bg-amber-100 px-1 rounded">c02_</code> for this persona).
+          </p>
         </div>
       )}
 

@@ -13,7 +13,7 @@ import type { LLMAdapter, LLMChatResult, OrchestratorOutput } from "@als/runtime
 import { AnthropicAdapter } from "@als/adapters";
 import type { AnthropicChatInput, AnthropicChatOutput } from "@als/adapters";
 import type { InvocationContext, PolicyRuleset, StateModelDefinition, StateInstructions, CardRequest, TemplateContext } from "@als/schemas";
-import { resolveCardsWithOverrides, inferInteractionType, INSTRUCTION_TEMPLATE_REGISTRY, resolveTemplateInstructions, templateToStateModel } from "@als/schemas";
+import { resolveCardsWithOverrides, inferInteractionType, INSTRUCTION_TEMPLATE_REGISTRY, resolveTemplateInstructions, templateToStateModel, type InteractionType } from "@als/schemas";
 import type { StateCardMapping } from "@als/schemas";
 import { getTraceEmitter, getReceiptGenerator } from "@/lib/evidence";
 import { getServiceArtefact, getPersonaData, getPromptFile, getAnyManifest, getGraphNode, getCardDefinitions } from "@/lib/service-data";
@@ -687,14 +687,29 @@ async function chatHandler(input: unknown): Promise<ChatOutput> {
   // Resolution chain: per-service DB overrides → static card registry.
   let cardRequests: CardRequest[] = [];
 
-  // Determine interaction type from graph node (hoisted for return value)
+  // Determine interaction type from graph node, with fallback for hand-crafted services
   const graphNodeForCards = serviceId ? getGraphNode(serviceId) : null;
   const serviceTypeForCards = graphNodeForCards?.serviceType ?? null;
-  const resolvedInteractionType = inferInteractionType(serviceTypeForCards);
+  let resolvedInteractionType = inferInteractionType(serviceTypeForCards);
+
+  // Hand-crafted services (e.g. dvla.renew-driving-licence) have no graph node.
+  // Fall back to matching the serviceId against known patterns.
+  if (!graphNodeForCards && serviceId) {
+    const HANDCRAFTED_INTERACTION_TYPES: Record<string, InteractionType> = {
+      "dvla.renew-driving-licence": "license",
+      "dwp.apply-universal-credit": "application",
+      "dwp.check-state-pension": "application",
+    };
+    if (HANDCRAFTED_INTERACTION_TYPES[serviceId]) {
+      resolvedInteractionType = HANDCRAFTED_INTERACTION_TYPES[serviceId];
+    }
+  }
 
   if (result.ucState) {
     const postTransitionState = result.ucState.currentState;
     const interactionType = resolvedInteractionType;
+    console.log(`   [CardResolver] interactionType=${interactionType}, state=${postTransitionState}, history=${result.ucState.stateHistory?.join(" → ")}`);
+
 
     // Load DB card overrides (from Studio)
     let dbCardOverrides: StateCardMapping[] | null = null;
@@ -703,8 +718,20 @@ async function chatHandler(input: unknown): Promise<ChatOutput> {
       if (raw) dbCardOverrides = raw as unknown as StateCardMapping[];
     } catch { /* Studio unavailable — fall through to static registry */ }
 
+    // Hand-crafted services handle most states conversationally via state-instructions.
+    // Only resolve registry cards at states where a structured UI card is appropriate.
+    const HANDCRAFTED_CARD_STATES: Record<string, Set<string>> = {
+      "dvla.renew-driving-licence": new Set(["payment-made"]),
+      "dwp.apply-universal-credit": new Set(["personal-details-collected", "income-details-collected", "payment-made"]),
+    };
+    const allowedStates = HANDCRAFTED_CARD_STATES[serviceId];
+    const shouldResolveCards = !allowedStates || allowedStates.has(postTransitionState);
+
     // Resolve cards: DB overrides first, then static registry
-    const cardDefs = resolveCardsWithOverrides(interactionType, postTransitionState, serviceId, dbCardOverrides);
+    const cardDefs = shouldResolveCards
+      ? resolveCardsWithOverrides(interactionType, postTransitionState, serviceId, dbCardOverrides)
+      : [];
+    console.log(`   [CardResolver] resolved ${cardDefs.length} cards for (${interactionType}, ${postTransitionState})${!shouldResolveCards ? " [skipped — hand-crafted service]" : ""}`);
     if (cardDefs.length > 0) {
       cardRequests = cardDefs.map((def) => ({
         cardType: def.cardType,
@@ -714,7 +741,7 @@ async function chatHandler(input: unknown): Promise<ChatOutput> {
       }));
 
       // Strip LLM-generated tasks that overlap with card data categories
-      const CARD_DATA_KEYWORDS = /housing|tenure|rent|bank\s*account|sort\s*code|payment\s*account/i;
+      const CARD_DATA_KEYWORDS = /housing|tenure|rent|bank\s*account|sort\s*code|payment\s*account|payment.*fee|fee.*payment|make\s*payment|complete\s*payment|pay\s*(?:by|with|£)/i;
       result.tasks = result.tasks.filter((t) => {
         const text = `${t.description} ${t.detail}`;
         return !CARD_DATA_KEYWORDS.test(text);
@@ -798,7 +825,7 @@ async function chatHandler(input: unknown): Promise<ChatOutput> {
 
 
   console.log(
-    `   Done. Tools: ${result.toolsUsed.length > 0 ? result.toolsUsed.join(", ") : "none"}${result.conversationTitle ? `, Title: "${result.conversationTitle}"` : ""}${result.tasks.length > 0 ? `, Tasks: ${result.tasks.length}` : ""}`
+    `   Done. Tools: ${result.toolsUsed.length > 0 ? result.toolsUsed.join(", ") : "none"}${result.conversationTitle ? `, Title: "${result.conversationTitle}"` : ""}${result.tasks.length > 0 ? `, Tasks: ${result.tasks.length}` : ""}${cardRequests.length > 0 ? `, Cards: ${cardRequests.map(c => c.cardType).join(", ")}` : ""}`
   );
 
   return {

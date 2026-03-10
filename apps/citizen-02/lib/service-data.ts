@@ -39,6 +39,7 @@ import margaretThompson from "../../../data/simulated/users/margaret-thompson.js
 import priyaSharma from "../../../data/simulated/users/priya-sharma.json";
 import davidEvans from "../../../data/simulated/users/david-evans.json";
 import marySummers from "../../../data/simulated/users/mary-summers.json";
+import rebeccaShortland from "../../../data/simulated/users/rebecca-shortland.json";
 
 // ── Prompt files (bundled as string constants for Cloudflare) ──
 
@@ -625,11 +626,49 @@ const ALL_USERS: Record<string, unknown>[] = [
   priyaSharma as unknown as Record<string, unknown>,
   davidEvans as unknown as Record<string, unknown>,
   marySummers as unknown as Record<string, unknown>,
+  rebeccaShortland as unknown as Record<string, unknown>,
 ];
 
 const PERSONA_DATA: Record<string, Record<string, unknown>> = {};
 for (const user of ALL_USERS) {
   PERSONA_DATA[user.id as string] = user;
+}
+
+// ── Derived persona metadata (single source of truth from JSON files) ──
+
+function deriveInitials(personaName: string): string {
+  const words = personaName
+    .split(/\s+/)
+    .filter((w) => /^[A-Z]/.test(w));
+  if (words.length === 0) return "??";
+  if (words.length === 1) return words[0][0];
+  // First letter of first word + first letter of last word
+  return words[0][0] + words[words.length - 1][0];
+}
+
+export const PERSONA_NAMES: Record<string, string> = {};
+export const PERSONA_COLORS: Record<string, string> = {};
+export const PERSONA_INITIALS: Record<string, string> = {};
+
+export const PERSONA_LIST: Array<{
+  id: string;
+  name: string;
+  initials: string;
+  color: string;
+  desc: string;
+}> = [];
+
+for (const user of ALL_USERS) {
+  const id = user.id as string;
+  const personaName = (user.personaName ?? user.name) as string;
+  const color = (user.color as string) ?? "#505a5f";
+  const initials = deriveInitials(user.name as string);
+  const desc = (user.description as string) ?? "";
+
+  PERSONA_NAMES[id] = personaName;
+  PERSONA_COLORS[id] = color;
+  PERSONA_INITIALS[id] = initials;
+  PERSONA_LIST.push({ id, name: personaName, initials, color, desc });
 }
 
 /** Extract the directory slug from a serviceId (e.g. "dvla.renew-driving-licence" → "renew-driving-licence") */

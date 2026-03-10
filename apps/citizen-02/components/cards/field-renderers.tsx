@@ -223,6 +223,24 @@ export function ChecklistField({ field, value, onChange, disabled }: FieldProps)
   );
 }
 
+export function FileInput({ field, value, onChange, disabled }: FieldProps) {
+  return (
+    <div className="flex items-center gap-2">
+      <input
+        type="file"
+        accept="application/pdf,image/*"
+        onChange={(e) => {
+          const f = e.target.files?.[0];
+          if (f) onChange(field.key, f.name);
+        }}
+        disabled={disabled}
+        className="text-sm text-govuk-black file:mr-2 file:py-2 file:px-3 file:rounded-lg file:border file:border-gray-200 file:text-sm file:font-medium file:bg-white file:text-govuk-black hover:file:bg-gray-50"
+      />
+      {value && <span className="text-xs text-govuk-dark-grey truncate">{String(value)}</span>}
+    </div>
+  );
+}
+
 /** Renders the correct input component for a CardFieldDef type */
 export function FieldRenderer({ field, value, onChange, disabled }: FieldProps) {
   switch (field.type) {
@@ -250,6 +268,8 @@ export function FieldRenderer({ field, value, onChange, disabled }: FieldProps) 
       return <ReadonlyField field={field} value={value} />;
     case "checklist":
       return <ChecklistField field={field} value={value} onChange={onChange} disabled={disabled} />;
+    case "file":
+      return <FileInput field={field} value={value} onChange={onChange} disabled={disabled} />;
     case "address":
       // Address fields rendered as a group of text inputs
       return <TextInput field={field} value={value} onChange={onChange} disabled={disabled} />;

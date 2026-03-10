@@ -5,6 +5,8 @@ import type { CardRequest, CardSubmission } from "@als/schemas";
 import { useAppStore } from "@/lib/store";
 import { GenericFormCard } from "./GenericFormCard";
 import { BankSelectorCard } from "./BankSelectorCard";
+import { DocumentUploadCard } from "./DocumentUploadCard";
+import { PaymentCard } from "./PaymentCard";
 
 interface CardHostProps {
   cardRequests: CardRequest[];
@@ -157,6 +159,21 @@ export function CardHost({ cardRequests, onAllSubmitted, disabled }: CardHostPro
                       definition={card.definition}
                       onSubmit={(fields) => handleCardSubmit(card, fields)}
                       disabled={disabled || isSubmittingCard}
+                    />
+                  ) : card.definition.cardType === "document-upload" ? (
+                    <DocumentUploadCard
+                      definition={card.definition}
+                      serviceId={card.serviceId}
+                      stateId={card.stateId}
+                      onSubmit={(fields) => handleCardSubmit(card, fields)}
+                      disabled={disabled || isSubmittingCard}
+                    />
+                  ) : card.definition.cardType === "payment-card" ? (
+                    <PaymentCard
+                      definition={card.definition}
+                      onSubmit={(fields) => handleCardSubmit(card, fields)}
+                      disabled={disabled || isSubmittingCard}
+                      prefillData={card.prefillData}
                     />
                   ) : (
                     <GenericFormCard

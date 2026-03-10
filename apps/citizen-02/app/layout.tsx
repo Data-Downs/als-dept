@@ -1,8 +1,9 @@
 import type { Metadata, Viewport } from "next";
+import { PhoneFrame } from "@/components/PhoneFrame";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "ALS Citizen 02 — Government Services",
+  title: "ALS Citizen App — Government Services",
   description:
     "A next-generation citizen experience for UK government services, powered by AI agents with full transparency and auditability.",
 };
@@ -21,7 +22,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <PhoneFrame>{children}</PhoneFrame>
+      </body>
     </html>
   );
 }

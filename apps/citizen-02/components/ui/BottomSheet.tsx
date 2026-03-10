@@ -102,7 +102,7 @@ export function BottomSheet({ open, onClose, children, title }: BottomSheetProps
         role="dialog"
         aria-modal="true"
         aria-label={title || "Bottom sheet"}
-        className="absolute bottom-0 left-0 right-0 bg-white rounded-t-2xl max-h-[85vh] overflow-y-auto animate-slide-up scroll-momentum"
+        className="absolute bottom-0 left-0 right-0 bg-white rounded-t-2xl max-h-[85%] overflow-y-auto animate-slide-up scroll-momentum"
         style={{ maxWidth: 600, margin: "0 auto" }}
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}

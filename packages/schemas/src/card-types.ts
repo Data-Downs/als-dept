@@ -19,7 +19,8 @@ export type CardFieldType =
   | "sort-code"
   | "account-number"
   | "readonly"
-  | "checklist";
+  | "checklist"
+  | "file";
 
 export interface CardFieldDef {
   /** Maps to submitted_data field_key */

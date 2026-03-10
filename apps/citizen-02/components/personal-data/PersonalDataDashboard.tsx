@@ -19,9 +19,11 @@ interface PersonalData {
 export function PersonalDataDashboard() {
   const persona = useAppStore((s) => s.persona);
   const setOpen = useAppStore((s) => s.setSettingsPaneOpen);
+  const navigateTo = useAppStore((s) => s.navigateTo);
   const [data, setData] = useState<PersonalData | null>(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<"data" | "access">("data");
+  const [resetting, setResetting] = useState(false);
 
   const fetchData = useCallback(async () => {
     if (!persona) return;
@@ -145,6 +147,53 @@ export function PersonalDataDashboard() {
               onRefresh={fetchData}
             />
           )}
+
+          {/* Reset section */}
+          <div className="mt-8 pt-4 border-t border-gray-200">
+            <button
+              onClick={async () => {
+                if (!confirm(
+                  "Reset all interaction data for this persona?\n\n" +
+                  "This will delete all conversations, tasks, plans, submitted data, " +
+                  "inferred data, consent grants, and evidence traces.\n\n" +
+                  "This cannot be undone."
+                )) return;
+
+                setResetting(true);
+                try {
+                  // 1. Clear server-side data
+                  await fetch(`/api/personal-data/${persona}/reset`, { method: "DELETE" });
+
+                  // 2. Clear client-side localStorage
+                  localStorage.removeItem(`c02_conversations_${persona}`);
+                  localStorage.removeItem(`c02_tasks_${persona}`);
+                  localStorage.removeItem(`c02_plans_${persona}`);
+                  localStorage.removeItem(`c02_topics_${persona}`);
+
+                  // 3. Clear session and navigate to persona picker
+                  sessionStorage.removeItem("c02_persona");
+                  sessionStorage.removeItem("c02_agent");
+                  sessionStorage.removeItem("c02_serviceMode");
+
+                  setOpen(false);
+                  // Force full reload to reset all in-memory state
+                  window.location.href = "/";
+                } catch (err) {
+                  console.error("Reset failed:", err);
+                  alert("Reset failed. Check the console for details.");
+                } finally {
+                  setResetting(false);
+                }
+              }}
+              disabled={resetting}
+              className="w-full py-2.5 text-sm font-medium text-red-700 border border-red-200 rounded-xl hover:bg-red-50 transition-colors disabled:opacity-50"
+            >
+              {resetting ? "Resetting..." : "Reset all interaction data"}
+            </button>
+            <p className="text-xs text-govuk-mid-grey mt-2 text-center">
+              Clears all conversations, tasks, plans, and personal data. Persona profile is not affected.
+            </p>
+          </div>
         </div>
       </div>
     </div>
