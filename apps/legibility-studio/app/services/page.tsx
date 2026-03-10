@@ -47,7 +47,9 @@ interface TypologySummary {
   withConsent: number;
 }
 
-function TypologyDashboard({ services, onSelectType }: { services: Service[]; onSelectType: (type: string) => void }) {
+function TypologyDashboard({ services, onSelectType, activeType }: { services: Service[]; onSelectType: (type: string) => void; activeType: string }) {
+  const [expanded, setExpanded] = useState(false);
+
   const summaries = useMemo(() => {
     const grouped: Record<string, Service[]> = {};
     for (const s of services) {
@@ -71,7 +73,6 @@ function TypologyDashboard({ services, onSelectType }: { services: Service[]; on
       });
     }
 
-    // Add "unknown" if there are services without a serviceType
     const unknownGroup = services.filter((s) => !s.serviceType || !TYPOLOGY_CONFIG[s.serviceType]);
     if (unknownGroup.length > 0) {
       result.push({
@@ -89,58 +90,95 @@ function TypologyDashboard({ services, onSelectType }: { services: Service[]; on
     return result.sort((a, b) => b.count - a.count);
   }, [services]);
 
-  const totalServices = services.length;
+  const activeSummaries = summaries.filter((s) => s.count > 0);
 
   return (
-    <div className="border border-studio-border rounded-xl bg-white p-6 mb-8">
-      <div className="flex justify-between items-start mb-4">
-        <div>
-          <h2 className="text-lg font-bold mb-1">Service Typologies</h2>
-          <p className="text-sm text-gray-500">
-            {totalServices} services across {summaries.filter((s) => s.count > 0).length} typologies. Click a typology to filter.
-          </p>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        {summaries.filter((s) => s.count > 0).map((s) => {
-          const completeness = s.count > 0
-            ? Math.round(((s.withPolicy + s.withStateModel + s.withConsent) / (s.count * 3)) * 100)
-            : 0;
-
-          return (
+    <div className="border border-studio-border rounded-xl bg-white mb-8">
+      {/* Compact summary row — always visible */}
+      <div className="px-5 py-3 flex items-center gap-3">
+        <button
+          onClick={() => setExpanded(!expanded)}
+          className="flex items-center gap-2 text-sm font-bold text-gray-700 hover:text-gray-900 shrink-0"
+        >
+          <svg
+            className={`w-4 h-4 transition-transform ${expanded ? "rotate-90" : ""}`}
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={2}
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+          </svg>
+          Service Typologies
+        </button>
+        <div className="flex flex-wrap gap-1.5">
+          {activeSummaries.map((s) => (
             <button
               key={s.type}
               onClick={() => onSelectType(s.type)}
-              className={`${s.config.bgColor} ${s.config.borderColor} border rounded-xl p-4 text-left hover:shadow-md transition-shadow group`}
+              className={`inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full border transition-colors ${
+                activeType === s.type
+                  ? `${s.config.bgColor} ${s.config.borderColor} ${s.config.color} ring-1 ring-offset-1 ring-current`
+                  : `${s.config.bgColor} ${s.config.borderColor} ${s.config.color} hover:shadow-sm`
+              }`}
             >
-              <div className="flex items-center gap-2 mb-2">
-                <span className={`text-lg font-bold ${s.config.color}`}>{s.config.icon}</span>
-                <span className={`text-sm font-bold ${s.config.color}`}>{s.config.label}</span>
-              </div>
-              <div className="text-2xl font-light tracking-tight mb-1">{s.count}</div>
-              <div className="text-xs text-gray-500 space-y-0.5">
-                <div className="flex justify-between">
-                  <span>Full: {s.fullCount}</span>
-                  <span>Graph: {s.graphCount}</span>
-                </div>
-                <div className="flex items-center gap-1.5 mt-1.5">
-                  <div className="flex-1 h-1.5 bg-gray-200 rounded-full overflow-hidden">
-                    <div
-                      className="h-full bg-govuk-green rounded-full transition-all"
-                      style={{ width: `${completeness}%` }}
-                    />
-                  </div>
-                  <span className="text-[10px] font-medium">{completeness}%</span>
-                </div>
-                <div className="text-[10px] text-gray-400">
-                  artefact completeness
-                </div>
-              </div>
+              <span>{s.config.icon}</span>
+              <span>{s.config.label}</span>
+              <span className="font-bold">{s.count}</span>
             </button>
-          );
-        })}
+          ))}
+        </div>
       </div>
+
+      {/* Expanded detail grid */}
+      {expanded && (
+        <div className="border-t border-studio-border px-5 py-4">
+          <p className="text-xs text-gray-500 mb-3">
+            {services.length} services across {activeSummaries.length} typologies. Click a typology to filter.
+          </p>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            {activeSummaries.map((s) => {
+              const completeness = s.count > 0
+                ? Math.round(((s.withPolicy + s.withStateModel + s.withConsent) / (s.count * 3)) * 100)
+                : 0;
+
+              return (
+                <button
+                  key={s.type}
+                  onClick={() => onSelectType(s.type)}
+                  className={`${s.config.bgColor} ${s.config.borderColor} border rounded-xl p-4 text-left hover:shadow-md transition-shadow ${
+                    activeType === s.type ? "ring-2 ring-offset-1 ring-current" : ""
+                  }`}
+                >
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className={`text-lg font-bold ${s.config.color}`}>{s.config.icon}</span>
+                    <span className={`text-sm font-bold ${s.config.color}`}>{s.config.label}</span>
+                  </div>
+                  <div className="text-2xl font-light tracking-tight mb-1">{s.count}</div>
+                  <div className="text-xs text-gray-500 space-y-0.5">
+                    <div className="flex justify-between">
+                      <span>Full: {s.fullCount}</span>
+                      <span>Graph: {s.graphCount}</span>
+                    </div>
+                    <div className="flex items-center gap-1.5 mt-1.5">
+                      <div className="flex-1 h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                        <div
+                          className="h-full bg-govuk-green rounded-full transition-all"
+                          style={{ width: `${completeness}%` }}
+                        />
+                      </div>
+                      <span className="text-[10px] font-medium">{completeness}%</span>
+                    </div>
+                    <div className="text-[10px] text-gray-400">
+                      artefact completeness
+                    </div>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -467,9 +505,13 @@ export default function ServicesPage() {
         </div>
       )}
 
-      {/* Typology Dashboard (Proposal F) */}
+      {/* All-services dashboard — top level */}
+      {dashboard && <AllServicesDashboard dashboard={dashboard} />}
+
+      {/* Typology Dashboard — collapsible summary */}
       <TypologyDashboard
         services={services}
+        activeType={typologyFilter}
         onSelectType={(type) => setTypologyFilter((prev) => (prev === type ? "all" : type))}
       />
 
@@ -553,9 +595,6 @@ export default function ServicesPage() {
           </button>
         )}
       </div>
-
-      {/* All-services dashboard */}
-      {dashboard && <AllServicesDashboard dashboard={dashboard} />}
 
       {/* Agent Services */}
       {agentServices.length > 0 && (
