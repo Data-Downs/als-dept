@@ -171,44 +171,48 @@
       margin-top: 0.35rem;
     }
 
-    /* Receipt card (tear-off) */
-    .receipt-card {
+    /* Receipt card (tear-off) — uses drop-shadow so the zig-zag edge casts shadow too */
+    .receipt-wrapper {
       align-self: flex-start;
       width: 90%;
+      filter: drop-shadow(0 1px 3px rgba(0,0,0,0.10)) drop-shadow(0 1px 2px rgba(0,0,0,0.06));
+    }
+    .receipt-card {
+      align-self: flex-start;
+      width: 100%;
       background: #fff;
-      border: 1px solid #e0dfde;
-      border-bottom: none;
       border-radius: 12px 12px 0 0;
-      overflow: hidden;
     }
     .receipt-header {
-      background: #f0faf4;
-      padding: 0.5rem 0.75rem;
-      display: flex; align-items: center; gap: 0.35rem;
-      font-size: 0.7rem; font-weight: 600; color: #00703c;
-      border-bottom: 1px solid #e0dfde;
+      background: transparent;
+      padding: 0.75rem 1rem;
+      display: flex; align-items: center; gap: 0.5rem;
+      font-size: 0.82rem; font-weight: 700; color: #00703c;
     }
-    .receipt-header .receipt-icon { font-size: 0.85rem; }
-    .receipt-body { padding: 0.65rem 0.75rem; font-size: 0.68rem; color: #505a5f; }
-    .receipt-body .receipt-row { display: flex; justify-content: space-between; padding: 0.2rem 0; border-bottom: 1px solid #f3f2f1; }
+    .receipt-header .receipt-icon {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 1.6rem; height: 1.6rem; border-radius: 50%;
+      background: #e6f4ea; font-size: 0.8rem; flex-shrink: 0;
+    }
+    .receipt-header .receipt-time {
+      margin-left: auto; font-size: 0.68rem; font-weight: 400; color: #505a5f;
+    }
+    .receipt-body { padding: 0 1rem 0.75rem; font-size: 0.78rem; color: #0b0c0c; line-height: 1.55; }
+    .receipt-body .receipt-row { display: flex; justify-content: space-between; padding: 0.25rem 0; border-bottom: 1px solid #f3f2f1; }
     .receipt-body .receipt-row:last-child { border-bottom: none; }
-    .receipt-body .receipt-key { font-weight: 500; color: #0b0c0c; }
+    .receipt-body .receipt-key { font-weight: 600; color: #0b0c0c; }
     .receipt-body .receipt-val { color: #505a5f; text-align: right; max-width: 55%; }
     .receipt-disclosure {
-      background: #f3f2f1;
-      padding: 0.45rem 0.75rem;
-      font-size: 0.6rem; color: #505a5f;
+      background: transparent;
+      padding: 0.55rem 1rem 0.75rem;
+      font-size: 0.7rem; color: #505a5f;
       border-top: 1px solid #e0dfde;
     }
-    .receipt-disclosure summary { font-weight: 600; cursor: pointer; color: #1d70b8; }
-    .receipt-tearoff {
-      width: 90%; align-self: flex-start;
-      height: 14px;
-      margin-top: -0.5rem;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 14' preserveAspectRatio='none'%3E%3Cpolygon fill='%23ffffff' points='0,0 6.25,14 12.5,0 18.75,14 25,0 31.25,14 37.5,0 43.75,14 50,0 56.25,14 62.5,0 68.75,14 75,0 81.25,14 87.5,0 93.75,14 100,0 106.25,14 112.5,0 118.75,14 125,0 131.25,14 137.5,0 143.75,14 150,0 156.25,14 162.5,0 168.75,14 175,0 181.25,14 187.5,0 193.75,14 200,0'/%3E%3C/svg%3E");
-      background-size: 100% 100%;
-      background-repeat: no-repeat;
+    .receipt-disclosure summary { font-weight: 500; cursor: pointer; color: #505a5f; }
+    .receipt-zigzag {
+      display: block; width: 100%;
     }
+    .receipt-tearoff { display: none; }
 
     /* Consent panel */
     .consent-card {
@@ -482,7 +486,7 @@
           </div>
 
           <!-- Receipt -->
-          <div class="receipt-card">
+          <div class="receipt-wrapper"><div class="receipt-card">
             <div class="receipt-header"><span class="receipt-icon">&#10003;</span> Details submitted &middot; 09:43</div>
             <div class="receipt-body">
               <div class="receipt-row"><span class="receipt-key">Employment</span><span class="receipt-val">Unemployed</span></div>
@@ -498,7 +502,7 @@
               </details>
             </div>
           </div>
-          <div class="receipt-tearoff"></div>
+          <svg class="receipt-zigzag" height="14" preserveAspectRatio="none" viewBox="0 0 200 14" fill="white"><polygon points="0,0 6.25,14 12.5,0 18.75,14 25,0 31.25,14 37.5,0 43.75,14 50,0 56.25,14 62.5,0 68.75,14 75,0 81.25,14 87.5,0 93.75,14 100,0 106.25,14 112.5,0 118.75,14 125,0 131.25,14 137.5,0 143.75,14 150,0 156.25,14 162.5,0 168.75,14 175,0 181.25,14 187.5,0 193.75,14 200,0"/></svg></div>
 
           <div class="bubble bubble-agent">
             Thanks David. Based on your income and savings, you <strong>meet the eligibility criteria</strong> for Universal Credit.<br><br>
@@ -558,7 +562,7 @@
           </div>
 
           <!-- Receipt -->
-          <div class="receipt-card">
+          <div class="receipt-wrapper"><div class="receipt-card">
             <div class="receipt-header"><span class="receipt-icon">&#10003;</span> Payment details confirmed &middot; 09:45</div>
             <div class="receipt-body">
               <div class="receipt-row"><span class="receipt-key">Bank</span><span class="receipt-val">Lloyds Bank</span></div>
@@ -573,7 +577,7 @@
               </details>
             </div>
           </div>
-          <div class="receipt-tearoff"></div>
+          <svg class="receipt-zigzag" height="14" preserveAspectRatio="none" viewBox="0 0 200 14" fill="white"><polygon points="0,0 6.25,14 12.5,0 18.75,14 25,0 31.25,14 37.5,0 43.75,14 50,0 56.25,14 62.5,0 68.75,14 75,0 81.25,14 87.5,0 93.75,14 100,0 106.25,14 112.5,0 118.75,14 125,0 131.25,14 137.5,0 143.75,14 150,0 156.25,14 162.5,0 168.75,14 175,0 181.25,14 187.5,0 193.75,14 200,0"/></svg></div>
 
           <div class="bubble bubble-agent">Your Universal Credit claim has been <strong>submitted successfully</strong>. You'll receive your first payment within 5 weeks.</div>
 
@@ -678,8 +682,8 @@
             </div>
           </div>
 
-          <div class="receipt-card">
-            <div class="receipt-header" style="background:#e3f2fd; color:#1d70b8;"><span class="receipt-icon">&#10003;</span> Employment verified &middot; 10:17</div>
+          <div class="receipt-wrapper"><div class="receipt-card">
+            <div class="receipt-header" style="color:#1d70b8;"><span class="receipt-icon">&#10003;</span> Employment verified &middot; 10:17</div>
             <div class="receipt-body">
               <div class="receipt-row"><span class="receipt-key">Employer</span><span class="receipt-val">Guy's &amp; St Thomas' NHS Trust</span></div>
               <div class="receipt-row"><span class="receipt-key">Employed since</span><span class="receipt-val">March 2022 (4 years)</span></div>
@@ -692,7 +696,7 @@
               </details>
             </div>
           </div>
-          <div class="receipt-tearoff"></div>
+          <svg class="receipt-zigzag" height="14" preserveAspectRatio="none" viewBox="0 0 200 14" fill="white"><polygon points="0,0 6.25,14 12.5,0 18.75,14 25,0 31.25,14 37.5,0 43.75,14 50,0 56.25,14 62.5,0 68.75,14 75,0 81.25,14 87.5,0 93.75,14 100,0 106.25,14 112.5,0 118.75,14 125,0 131.25,14 137.5,0 143.75,14 150,0 156.25,14 162.5,0 168.75,14 175,0 181.25,14 187.5,0 193.75,14 200,0"/></svg></div>
 
           <div class="bubble bubble-agent">
             You meet all the qualifying conditions. You've been employed for over 26 weeks and your earnings are above the £123/week threshold.<br><br>
@@ -868,8 +872,8 @@
             </div>
           </div>
 
-          <div class="receipt-card">
-            <div class="receipt-header" style="background:#fbe9e7; color:#d4351c;"><span class="receipt-icon">&#10003;</span> Payment submitted &middot; 14:24</div>
+          <div class="receipt-wrapper"><div class="receipt-card">
+            <div class="receipt-header" style="color:#d4351c;"><span class="receipt-icon">&#10003;</span> Payment submitted &middot; 14:24</div>
             <div class="receipt-body">
               <div class="receipt-row"><span class="receipt-key">Amount</span><span class="receipt-val">£18,340.00</span></div>
               <div class="receipt-row"><span class="receipt-key">Method</span><span class="receipt-val">Direct Debit</span></div>
@@ -882,7 +886,7 @@
               </details>
             </div>
           </div>
-          <div class="receipt-tearoff"></div>
+          <svg class="receipt-zigzag" height="14" preserveAspectRatio="none" viewBox="0 0 200 14" fill="white"><polygon points="0,0 6.25,14 12.5,0 18.75,14 25,0 31.25,14 37.5,0 43.75,14 50,0 56.25,14 62.5,0 68.75,14 75,0 81.25,14 87.5,0 93.75,14 100,0 106.25,14 112.5,0 118.75,14 125,0 131.25,14 137.5,0 143.75,14 150,0 156.25,14 162.5,0 168.75,14 175,0 181.25,14 187.5,0 193.75,14 200,0"/></svg></div>
 
           <!-- Journey Complete -->
           <div class="journey-card">
@@ -991,8 +995,8 @@
             </div>
           </div>
 
-          <div class="receipt-card">
-            <div class="receipt-header" style="background:#f7ecf5; color:#912b88;"><span class="receipt-icon">&#10003;</span> Registration submitted &middot; 11:34</div>
+          <div class="receipt-wrapper"><div class="receipt-card">
+            <div class="receipt-header" style="color:#912b88;"><span class="receipt-icon">&#10003;</span> Registration submitted &middot; 11:34</div>
             <div class="receipt-body">
               <div class="receipt-row"><span class="receipt-key">Child</span><span class="receipt-val">Oliver James Parker</span></div>
               <div class="receipt-row"><span class="receipt-key">Date of birth</span><span class="receipt-val">10 August 2026</span></div>
@@ -1005,7 +1009,7 @@
               </details>
             </div>
           </div>
-          <div class="receipt-tearoff"></div>
+          <svg class="receipt-zigzag" height="14" preserveAspectRatio="none" viewBox="0 0 200 14" fill="white"><polygon points="0,0 6.25,14 12.5,0 18.75,14 25,0 31.25,14 37.5,0 43.75,14 50,0 56.25,14 62.5,0 68.75,14 75,0 81.25,14 87.5,0 93.75,14 100,0 106.25,14 112.5,0 118.75,14 125,0 131.25,14 137.5,0 143.75,14 150,0 156.25,14 162.5,0 168.75,14 175,0 181.25,14 187.5,0 193.75,14 200,0"/></svg></div>
 
           <div class="journey-card">
             <div class="journey-header">
@@ -1132,8 +1136,8 @@
             </div>
           </div>
 
-          <div class="receipt-card">
-            <div class="receipt-header" style="background:#fef3ec; color:#f47738;"><span class="receipt-icon">&#10003;</span> Application submitted &middot; 15:18</div>
+          <div class="receipt-wrapper"><div class="receipt-card">
+            <div class="receipt-header" style="color:#f47738;"><span class="receipt-icon">&#10003;</span> Application submitted &middot; 15:18</div>
             <div class="receipt-body">
               <div class="receipt-row"><span class="receipt-key">Applicant</span><span class="receipt-val">Margaret Thompson</span></div>
               <div class="receipt-row"><span class="receipt-key">Condition</span><span class="receipt-val">Walking difficulty (arthritis)</span></div>
@@ -1146,7 +1150,7 @@
               </details>
             </div>
           </div>
-          <div class="receipt-tearoff"></div>
+          <svg class="receipt-zigzag" height="14" preserveAspectRatio="none" viewBox="0 0 200 14" fill="white"><polygon points="0,0 6.25,14 12.5,0 18.75,14 25,0 31.25,14 37.5,0 43.75,14 50,0 56.25,14 62.5,0 68.75,14 75,0 81.25,14 87.5,0 93.75,14 100,0 106.25,14 112.5,0 118.75,14 125,0 131.25,14 137.5,0 143.75,14 150,0 156.25,14 162.5,0 168.75,14 175,0 181.25,14 187.5,0 193.75,14 200,0"/></svg></div>
 
           <div class="journey-card">
             <div class="journey-header">
@@ -1256,8 +1260,8 @@
             </div>
           </div>
 
-          <div class="receipt-card">
-            <div class="receipt-header" style="background:#e6f4f6; color:#0b7285;"><span class="receipt-icon">&#10003;</span> Renewal processed &middot; 08:57</div>
+          <div class="receipt-wrapper"><div class="receipt-card">
+            <div class="receipt-header" style="color:#0b7285;"><span class="receipt-icon">&#10003;</span> Renewal processed &middot; 08:57</div>
             <div class="receipt-body">
               <div class="receipt-row"><span class="receipt-key">Licence type</span><span class="receipt-val">Full &mdash; Category B</span></div>
               <div class="receipt-row"><span class="receipt-key">Payment</span><span class="receipt-val">£14.00 (debit card)</span></div>
@@ -1269,7 +1273,7 @@
               </details>
             </div>
           </div>
-          <div class="receipt-tearoff"></div>
+          <svg class="receipt-zigzag" height="14" preserveAspectRatio="none" viewBox="0 0 200 14" fill="white"><polygon points="0,0 6.25,14 12.5,0 18.75,14 25,0 31.25,14 37.5,0 43.75,14 50,0 56.25,14 62.5,0 68.75,14 75,0 81.25,14 87.5,0 93.75,14 100,0 106.25,14 112.5,0 118.75,14 125,0 131.25,14 137.5,0 143.75,14 150,0 156.25,14 162.5,0 168.75,14 175,0 181.25,14 187.5,0 193.75,14 200,0"/></svg></div>
 
           <div class="journey-card">
             <div class="journey-header">
@@ -1408,8 +1412,8 @@
             </div>
           </div>
 
-          <div class="receipt-card">
-            <div class="receipt-header" style="background:#e8edf3; color:#003078;"><span class="receipt-icon">&#10003;</span> LPA submitted &middot; 16:52</div>
+          <div class="receipt-wrapper"><div class="receipt-card">
+            <div class="receipt-header" style="color:#003078;"><span class="receipt-icon">&#10003;</span> LPA submitted &middot; 16:52</div>
             <div class="receipt-body">
               <div class="receipt-row"><span class="receipt-key">Donor</span><span class="receipt-val">Dorothy Summers</span></div>
               <div class="receipt-row"><span class="receipt-key">Attorney</span><span class="receipt-val">Mary Summers</span></div>
@@ -1423,7 +1427,7 @@
               </details>
             </div>
           </div>
-          <div class="receipt-tearoff"></div>
+          <svg class="receipt-zigzag" height="14" preserveAspectRatio="none" viewBox="0 0 200 14" fill="white"><polygon points="0,0 6.25,14 12.5,0 18.75,14 25,0 31.25,14 37.5,0 43.75,14 50,0 56.25,14 62.5,0 68.75,14 75,0 81.25,14 87.5,0 93.75,14 100,0 106.25,14 112.5,0 118.75,14 125,0 131.25,14 137.5,0 143.75,14 150,0 156.25,14 162.5,0 168.75,14 175,0 181.25,14 187.5,0 193.75,14 200,0"/></svg></div>
 
           <div class="journey-card">
             <div class="journey-header">
@@ -1519,8 +1523,8 @@
             </div>
           </div>
 
-          <div class="receipt-card">
-            <div class="receipt-header" style="background:#f5f0eb; color:#6f4e37;"><span class="receipt-icon">&#10003;</span> Grant application submitted &middot; 19:25</div>
+          <div class="receipt-wrapper"><div class="receipt-card">
+            <div class="receipt-header" style="color:#6f4e37;"><span class="receipt-icon">&#10003;</span> Grant application submitted &middot; 19:25</div>
             <div class="receipt-body">
               <div class="receipt-row"><span class="receipt-key">Applicant</span><span class="receipt-val">Helen Pitt (for mother)</span></div>
               <div class="receipt-row"><span class="receipt-key">Project</span><span class="receipt-val">Stairlift + bathroom</span></div>
@@ -1533,7 +1537,7 @@
               </details>
             </div>
           </div>
-          <div class="receipt-tearoff"></div>
+          <svg class="receipt-zigzag" height="14" preserveAspectRatio="none" viewBox="0 0 200 14" fill="white"><polygon points="0,0 6.25,14 12.5,0 18.75,14 25,0 31.25,14 37.5,0 43.75,14 50,0 56.25,14 62.5,0 68.75,14 75,0 81.25,14 87.5,0 93.75,14 100,0 106.25,14 112.5,0 118.75,14 125,0 131.25,14 137.5,0 143.75,14 150,0 156.25,14 162.5,0 168.75,14 175,0 181.25,14 187.5,0 193.75,14 200,0"/></svg></div>
 
           <div class="journey-card">
             <div class="journey-header">
@@ -1647,8 +1651,8 @@
           </div>
 
           <!-- Receipt for the handoff -->
-          <div class="receipt-card">
-            <div class="receipt-header" style="background:#e3f2fd; color:#1d70b8;"><span class="receipt-icon">&#128100;</span> Handoff receipt &middot; 14:38</div>
+          <div class="receipt-wrapper"><div class="receipt-card">
+            <div class="receipt-header" style="color:#1d70b8;"><span class="receipt-icon">&#128100;</span> Handoff receipt &middot; 14:38</div>
             <div class="receipt-body">
               <div class="receipt-row"><span class="receipt-key">Service</span><span class="receipt-val">Attendance Allowance</span></div>
               <div class="receipt-row"><span class="receipt-key">Reason</span><span class="receipt-val">Citizen-requested</span></div>
@@ -1661,7 +1665,7 @@
               </details>
             </div>
           </div>
-          <div class="receipt-tearoff"></div>
+          <svg class="receipt-zigzag" height="14" preserveAspectRatio="none" viewBox="0 0 200 14" fill="white"><polygon points="0,0 6.25,14 12.5,0 18.75,14 25,0 31.25,14 37.5,0 43.75,14 50,0 56.25,14 62.5,0 68.75,14 75,0 81.25,14 87.5,0 93.75,14 100,0 106.25,14 112.5,0 118.75,14 125,0 131.25,14 137.5,0 143.75,14 150,0 156.25,14 162.5,0 168.75,14 175,0 181.25,14 187.5,0 193.75,14 200,0"/></svg></div>
 
           <!-- Journey terminal (escalated) -->
           <div class="journey-card">
@@ -1758,8 +1762,8 @@
             </div>
           </div>
 
-          <div class="receipt-card">
-            <div class="receipt-header" style="background:#fbe9e7; color:#d4351c;"><span class="receipt-icon">&#10007;</span> Eligibility check &middot; 12:07</div>
+          <div class="receipt-wrapper"><div class="receipt-card">
+            <div class="receipt-header" style="color:#d4351c;"><span class="receipt-icon">&#10007;</span> Eligibility check &middot; 12:07</div>
             <div class="receipt-body">
               <div class="receipt-row"><span class="receipt-key">Employment</span><span class="receipt-val">Self-employed</span></div>
               <div class="receipt-row"><span class="receipt-key">Monthly income</span><span class="receipt-val">£7,083</span></div>
@@ -1771,7 +1775,7 @@
               </details>
             </div>
           </div>
-          <div class="receipt-tearoff"></div>
+          <svg class="receipt-zigzag" height="14" preserveAspectRatio="none" viewBox="0 0 200 14" fill="white"><polygon points="0,0 6.25,14 12.5,0 18.75,14 25,0 31.25,14 37.5,0 43.75,14 50,0 56.25,14 62.5,0 68.75,14 75,0 81.25,14 87.5,0 93.75,14 100,0 106.25,14 112.5,0 118.75,14 125,0 131.25,14 137.5,0 143.75,14 150,0 156.25,14 162.5,0 168.75,14 175,0 181.25,14 187.5,0 193.75,14 200,0"/></svg></div>
 
           <div class="bubble bubble-agent">
             I'm afraid you're <strong>not eligible</strong> for Universal Credit. Here's why:<br><br>
@@ -1885,8 +1889,8 @@
           </div>
 
           <!-- Receipt showing no data shared -->
-          <div class="receipt-card">
-            <div class="receipt-header" style="background:#f3f2f1; color:#505a5f;"><span class="receipt-icon">&#128274;</span> Consent declined &middot; 10:48</div>
+          <div class="receipt-wrapper"><div class="receipt-card">
+            <div class="receipt-header" style="color:#505a5f;"><span class="receipt-icon">&#128274;</span> Consent declined &middot; 10:48</div>
             <div class="receipt-body">
               <div class="receipt-row"><span class="receipt-key">Service</span><span class="receipt-val">Universal Credit</span></div>
               <div class="receipt-row"><span class="receipt-key">Consent status</span><span class="receipt-val" style="color:#d4351c; font-weight:600;">Declined (required)</span></div>
@@ -1894,7 +1898,7 @@
               <div class="receipt-row"><span class="receipt-key">Application status</span><span class="receipt-val">Cannot proceed</span></div>
             </div>
           </div>
-          <div class="receipt-tearoff"></div>
+          <svg class="receipt-zigzag" height="14" preserveAspectRatio="none" viewBox="0 0 200 14" fill="white"><polygon points="0,0 6.25,14 12.5,0 18.75,14 25,0 31.25,14 37.5,0 43.75,14 50,0 56.25,14 62.5,0 68.75,14 75,0 81.25,14 87.5,0 93.75,14 100,0 106.25,14 112.5,0 118.75,14 125,0 131.25,14 137.5,0 143.75,14 150,0 156.25,14 162.5,0 168.75,14 175,0 181.25,14 187.5,0 193.75,14 200,0"/></svg></div>
 
           <!-- Journey terminal (abandoned) -->
           <div class="journey-card" style="border-color:#b1b4b6;">
