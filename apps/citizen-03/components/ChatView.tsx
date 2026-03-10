@@ -282,7 +282,7 @@ export function ChatView() {
 
               {/* Cards — shown after the last assistant message */}
               {isLastAssistant && cards.length > 0 && (
-                <div className="mt-2 space-y-2 animate-fade-in">
+                <div className="mt-2 space-y-2 stagger-in">
                   {cards.map((card, j) => (
                     <AgentCardComponent key={j} card={card} onTap={handleSend} />
                   ))}
