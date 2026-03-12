@@ -117,7 +117,10 @@ interface AppStore {
   closeBottomSheet: () => void;
   showToast: (text: string) => void;
 
+  dismissTimelineItem: (itemId: string) => void;
+
   // Plan actions
+  deletePlan: (planId: string) => void;
   startPlan: (lifeEvent: LifeEventInfo) => void;
   loadPlan: (planId: string) => void;
   startServiceFromPlan: (serviceId: string, serviceName: string) => void;
@@ -227,7 +230,17 @@ function saveActivePlan(personaId: string, plan: ActivePlan) {
   }
 }
 
-export { getConversations, deleteConversation, getTasks, saveTasks, getActivePlans };
+function getDismissedItems(personaId: string): string[] {
+  if (typeof window === "undefined") return [];
+  try {
+    const raw = localStorage.getItem(`c02_dismissed_${personaId}`);
+    return raw ? JSON.parse(raw) : [];
+  } catch {
+    return [];
+  }
+}
+
+export { getConversations, deleteConversation, getTasks, saveTasks, getActivePlans, getDismissedItems };
 
 let toastTimer: ReturnType<typeof setTimeout> | null = null;
 
@@ -680,7 +693,48 @@ export const useAppStore = create<AppStore>((set, get) => ({
     set({ hasNewReasoning: false });
   },
 
+  dismissTimelineItem: (itemId: string) => {
+    const state = get();
+    if (!state.persona) return;
+
+    // Task-based items (prefixed "task-")
+    if (itemId.startsWith("task-")) {
+      const taskId = itemId.slice(5);
+      const tasks = getTasks(state.persona);
+      const task = tasks.find((t) => t.id === taskId);
+      if (task) {
+        task.status = "dismissed";
+        task.updatedAt = new Date().toISOString();
+        saveTasks(state.persona, tasks);
+      }
+      return;
+    }
+
+    // Data-derived items (MOT, tax, pregnancy) — store dismissed IDs
+    try {
+      const key = `c02_dismissed_${state.persona}`;
+      const raw = localStorage.getItem(key);
+      const dismissed: string[] = raw ? JSON.parse(raw) : [];
+      if (!dismissed.includes(itemId)) {
+        dismissed.push(itemId);
+        localStorage.setItem(key, JSON.stringify(dismissed));
+      }
+    } catch { /* ignore */ }
+  },
+
   // ── Plan actions ──
+
+  deletePlan: (planId: string) => {
+    const state = get();
+    if (!state.persona) return;
+    const plans = getActivePlans(state.persona).filter((p) => p.id !== planId);
+    try {
+      localStorage.setItem(`c02_plans_${state.persona}`, JSON.stringify(plans));
+    } catch { /* ignore */ }
+    if (state.activePlan?.id === planId) {
+      set({ activePlan: null, activePlanId: null });
+    }
+  },
 
   startPlan: (lifeEvent: LifeEventInfo) => {
     const state = get();

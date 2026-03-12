@@ -5,6 +5,7 @@ import { useAppStore, getConversations, getActivePlans } from "@/lib/store";
 import type { ServiceType, LifeEventInfo, ActivePlan } from "@/lib/types";
 import { UnifiedTimeline } from "./dashboard/UnifiedTimeline";
 import { NearYouSection } from "./dashboard/NearYouSection";
+import { SwipeToDelete } from "./ui/SwipeToDelete";
 
 /** Blue-circle icon set — Material Design filled icons on blue circles */
 function ServiceIcon({ children }: { children: React.ReactNode }) {
@@ -209,6 +210,7 @@ export function Dashboard() {
   const startNewConversation = useAppStore((s) => s.startNewConversation);
   const startPlan = useAppStore((s) => s.startPlan);
   const loadPlan = useAppStore((s) => s.loadPlan);
+  const deletePlan = useAppStore((s) => s.deletePlan);
   const openBottomSheet = useAppStore((s) => s.openBottomSheet);
   const [lifeEvents, setLifeEvents] = useState<LifeEventInfo[]>([]);
   const [expandedEvent, setExpandedEvent] = useState<string | null>(null);
@@ -282,6 +284,7 @@ export function Dashboard() {
         personaData={personaData}
         persona={persona}
         onItemTap={(item) => openBottomSheet("task-detail", item)}
+        onDismiss={(itemId) => useAppStore.getState().dismissTimelineItem(itemId)}
         onSeeAll={() => navigateTo("tasks")}
       />
 
@@ -411,23 +414,29 @@ export function Dashboard() {
               const done = Object.values(ap.serviceProgress).filter((s) => s === "completed" || s === "skipped").length;
               const pct = total > 0 ? Math.round((done / total) * 100) : 0;
               return (
-                <button
-                  key={ap.id}
-                  onClick={() => { loadPlan(ap.id); navigateTo("plan"); }}
-                  className="w-full text-left p-4 bg-white rounded-card shadow-sm hover:shadow-md transition-all touch-feedback"
-                >
-                  <div className="flex items-center gap-3 mb-2">
-                    <span className="text-xl">{ap.lifeEventIcon}</span>
-                    <div className="flex-1 min-w-0">
-                      <strong className="block text-sm text-govuk-black">{ap.lifeEventName}</strong>
-                      <span className="text-xs text-govuk-dark-grey">{done} of {total} services &middot; {pct}%</span>
-                    </div>
-                    <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-blue-100 text-blue-700 shrink-0">Continue</span>
-                  </div>
-                  <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
-                    <div className="h-full bg-govuk-green rounded-full transition-all" style={{ width: `${pct}%` }} />
-                  </div>
-                </button>
+                <div key={ap.id} className="rounded-card overflow-hidden shadow-sm">
+                  <SwipeToDelete onDelete={() => {
+                    deletePlan(ap.id);
+                    setActivePlans((prev) => prev.filter((p) => p.id !== ap.id));
+                  }}>
+                    <button
+                      onClick={() => { loadPlan(ap.id); navigateTo("plan"); }}
+                      className="w-full text-left p-4 bg-white hover:shadow-md transition-all touch-feedback"
+                    >
+                      <div className="flex items-center gap-3 mb-2">
+                        <span className="text-xl">{ap.lifeEventIcon}</span>
+                        <div className="flex-1 min-w-0">
+                          <strong className="block text-sm text-govuk-black">{ap.lifeEventName}</strong>
+                          <span className="text-xs text-govuk-dark-grey">{done} of {total} services &middot; {pct}%</span>
+                        </div>
+                        <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-blue-100 text-blue-700 shrink-0">Continue</span>
+                      </div>
+                      <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
+                        <div className="h-full bg-govuk-green rounded-full transition-all" style={{ width: `${pct}%` }} />
+                      </div>
+                    </button>
+                  </SwipeToDelete>
+                </div>
               );
             })}
           </div>
