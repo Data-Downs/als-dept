@@ -367,6 +367,10 @@ export const useAppStore = create<AppStore>((set, get) => ({
       currentService: service !== undefined ? service : get().currentService,
       serviceName: serviceName !== undefined ? serviceName : get().serviceName,
     });
+    // Scroll to top when navigating to a new view
+    if (typeof window !== "undefined") {
+      document.getElementById("main-content")?.scrollTo(0, 0);
+    }
   },
 
   navigateBack: () => {
@@ -379,6 +383,9 @@ export const useAppStore = create<AppStore>((set, get) => ({
         currentService: prev.view === "dashboard" ? null : prev.service,
         serviceName: prev.view === "dashboard" ? null : prev.serviceName,
       });
+      if (typeof window !== "undefined") {
+        document.getElementById("main-content")?.scrollTo(0, 0);
+      }
     }
   },
 
