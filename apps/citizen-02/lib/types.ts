@@ -215,6 +215,8 @@ export interface ActivePlan {
   updatedAt: string;
   serviceProgress: Record<string, ServicePlanStatus>;
   serviceConversations: Record<string, string>;
+  /** Human-readable reasons for auto-skipped services */
+  skipReasons?: Record<string, string>;
   plan: LifeEventPlan;
   services: LifeEventService[];
 }

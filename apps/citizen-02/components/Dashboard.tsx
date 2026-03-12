@@ -438,7 +438,7 @@ export function Dashboard() {
       {lifeEvents.length > 0 && (
         <div className="mb-5">
           <h3 className="text-base font-extrabold text-govuk-black mb-3">Services</h3>
-          <div className="flex gap-3 overflow-x-auto pb-2 snap-x snap-mandatory scrollbar-hide -mx-4 px-4">
+          <div className="flex gap-3 overflow-x-auto pb-2 snap-x snap-mandatory scrollbar-hide">
             {[...lifeEvents].sort((a, b) => {
               // "Having a Baby" first
               if (a.name === "Having a Baby") return -1;
@@ -448,17 +448,24 @@ export function Dashboard() {
               <button
                 key={le.id}
                 onClick={() => setExpandedEvent(expandedEvent === le.id ? null : le.id)}
-                className={`shrink-0 w-44 text-left p-4 rounded-card snap-start transition-all touch-feedback ${
+                className={`shrink-0 w-64 text-left rounded-2xl snap-start transition-all touch-feedback ${
                   expandedEvent === le.id
-                    ? "bg-blue-50 shadow-md ring-2 ring-govuk-blue"
+                    ? "bg-blue-50 shadow-[0_0_12px_rgba(0,0,0,0.12)]"
                     : "bg-white shadow-sm hover:shadow-md"
                 }`}
               >
-                <span className="text-2xl leading-none block mb-2">{le.icon}</span>
-                <strong className="block text-sm text-govuk-black leading-tight">{le.name}</strong>
-                <span className="text-xs text-govuk-dark-grey">{le.totalServiceCount} services</span>
+                <div className="p-5 pb-4">
+                  <span className="text-3xl leading-none block mb-3">{le.icon}</span>
+                  <strong className="block text-xl font-bold text-govuk-black leading-snug">{le.name}</strong>
+                  <span className="block text-sm text-govuk-dark-grey mt-1">{le.desc ? le.desc.slice(0, 60) : ""}</span>
+                </div>
+                <div className="border-t border-gray-100 px-5 py-3">
+                  <span className="text-xs font-semibold text-govuk-dark-grey">{le.totalServiceCount} services</span>
+                </div>
               </button>
             ))}
+            {/* End spacer so last card doesn't sit flush with edge */}
+            <div className="shrink-0 w-1" aria-hidden />
           </div>
 
           {/* Expanded life event detail */}

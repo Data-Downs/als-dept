@@ -21,6 +21,7 @@ import type {
 } from "./types";
 import type { CardRequest, PipelineTrace } from "@als/schemas";
 import { getAllTerminalStateIds } from "@als/schemas";
+import { computePlanRelevance } from "./plan-relevance";
 
 interface AppStore {
   // Identity
@@ -700,6 +701,33 @@ export const useAppStore = create<AppStore>((set, get) => ({
       serviceProgress[svc.id] = entryIds.has(svc.id) ? "available" : "locked";
     }
 
+    // Auto-skip services that aren't relevant to this persona
+    const irrelevant = computePlanRelevance(lifeEvent.services, state.personaData);
+    const skipReasons: Record<string, string> = {};
+
+    for (const [svcId, result] of Object.entries(irrelevant)) {
+      serviceProgress[svcId] = "skipped";
+      skipReasons[svcId] = result.reason;
+    }
+
+    // Unlock downstream services whose prerequisites are now all skipped
+    const edges = lifeEvent.plan.edges;
+    for (const [skippedId] of Object.entries(irrelevant)) {
+      const downstreamIds = edges.filter((e) => e.from === skippedId).map((e) => e.to);
+      for (const toId of downstreamIds) {
+        if (serviceProgress[toId] !== "locked") continue;
+        // Skip if this downstream service is also irrelevant
+        if (irrelevant[toId]) continue;
+        const prereqIds = edges.filter((e) => e.to === toId).map((e) => e.from);
+        const allMet = prereqIds.every(
+          (pid) => serviceProgress[pid] === "completed" || serviceProgress[pid] === "skipped"
+        );
+        if (allMet) {
+          serviceProgress[toId] = "available";
+        }
+      }
+    }
+
     const plan: ActivePlan = {
       id: `plan_${lifeEvent.id}_${Date.now()}`,
       lifeEventId: lifeEvent.id,
@@ -709,6 +737,7 @@ export const useAppStore = create<AppStore>((set, get) => ({
       updatedAt: new Date().toISOString(),
       serviceProgress,
       serviceConversations: {},
+      skipReasons,
       plan: lifeEvent.plan,
       services: lifeEvent.services,
     };

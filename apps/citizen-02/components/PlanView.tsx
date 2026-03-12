@@ -126,7 +126,7 @@ export function PlanView() {
     );
   }
 
-  const { plan, services, serviceProgress } = activePlan;
+  const { plan, services, serviceProgress, skipReasons } = activePlan;
   const svcLookup = new Map(services.map((s) => [s.id, s]));
 
   const serviceHints = useMemo(
@@ -145,7 +145,8 @@ export function PlanView() {
     const svc = svcLookup.get(serviceId);
     if (!svc) return;
 
-    if (status === "available") {
+    const autoSkipped = status === "skipped" && !!skipReasons?.[serviceId];
+    if (status === "available" || autoSkipped) {
       setExpandedServiceId((prev) => (prev === serviceId ? null : serviceId));
       return;
     } else if (status === "in_progress") {
@@ -224,7 +225,8 @@ export function PlanView() {
                 if (!svc) return null;
                 const status = serviceProgress[svcId] || "locked";
                 const config = STATUS_CONFIG[status];
-                const clickable = status === "available" || status === "in_progress";
+                const autoSkipped = status === "skipped" && !!skipReasons?.[svcId];
+                const clickable = status === "available" || status === "in_progress" || autoSkipped;
 
                 const isExpanded = expandedServiceId === svcId;
 
@@ -264,12 +266,42 @@ export function PlanView() {
                           </span>
                         )}
                         {status === "skipped" && (
-                          <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-gray-100 text-gray-500 shrink-0">
-                            Skipped
+                          <span className={`text-xs font-bold px-2.5 py-1 rounded-full shrink-0 ${
+                            skipReasons?.[svcId]
+                              ? "bg-amber-50 text-amber-700"
+                              : "bg-gray-100 text-gray-500"
+                          }`}>
+                            {skipReasons?.[svcId] ? "Not needed" : "Skipped"}
                           </span>
                         )}
                       </div>
                     </button>
+
+                    {/* Auto-skipped reason panel */}
+                    {isExpanded && autoSkipped && (
+                      <div className="shadow-sm rounded-b-card bg-amber-50/50 p-4 space-y-3">
+                        <div className="flex items-start gap-2 p-3 bg-white border border-amber-200 rounded-lg">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#b45309" strokeWidth="2" className="shrink-0 mt-0.5">
+                            <circle cx="12" cy="12" r="10" />
+                            <path d="M12 16v-4M12 8h.01" />
+                          </svg>
+                          <span className="text-sm text-amber-800 leading-relaxed">
+                            {skipReasons?.[svcId]}
+                          </span>
+                        </div>
+                        <p className="text-xs text-govuk-dark-grey">
+                          This was automatically skipped based on your personal data. If this isn&apos;t right, you can still start it.
+                        </p>
+                        <div className="flex items-center gap-3 pt-1">
+                          <button
+                            onClick={() => handleStartService(svcId)}
+                            className="flex-1 py-2.5 rounded-full bg-white border border-gray-300 text-govuk-black text-sm font-bold hover:bg-gray-50 transition-colors touch-feedback"
+                          >
+                            Start anyway
+                          </button>
+                        </div>
+                      </div>
+                    )}
 
                     {/* Inline service brief */}
                     {isExpanded && status === "available" && (() => {
