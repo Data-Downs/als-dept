@@ -296,34 +296,39 @@ export function Dashboard() {
         );
         return (
           <>
-            <div className="bg-white rounded-2xl shadow-sm mb-5 divide-y divide-gray-100">
-              {visibleTopics.map(({ key, label }) => (
-                <button
-                  key={key}
-                  onClick={() => navigateTo("detail", key, label)}
-                  className="flex items-center gap-4 w-full px-5 py-5 hover:bg-gray-50 transition-all text-left touch-feedback first:rounded-t-2xl last:rounded-b-2xl"
-                >
-                  {serviceIcons[key]}
-                  <div className="flex-1 min-w-0">
-                    <strong className="block text-lg font-bold text-govuk-black">{label}</strong>
-                    <span className="text-sm text-govuk-dark-grey">
-                      {getServiceDetail(key, personaData)}
-                    </span>
-                  </div>
-                  <svg className="shrink-0 text-govuk-blue" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M9 18l6-6-6-6" />
-                  </svg>
-                </button>
-              ))}
-            </div>
-
-            {/* Browse topics button */}
-            <div className="mb-5">
+            <div className="rounded-2xl shadow-sm mb-5 overflow-hidden">
+              <div className="bg-white divide-y divide-gray-100">
+                {visibleTopics.map(({ key, label }) => (
+                  <button
+                    key={key}
+                    onClick={() => navigateTo("detail", key, label)}
+                    className="flex items-center gap-4 w-full px-5 py-5 hover:bg-gray-50 transition-all text-left touch-feedback"
+                  >
+                    {serviceIcons[key]}
+                    <div className="flex-1 min-w-0">
+                      <strong className="block text-lg font-bold text-govuk-black">{label}</strong>
+                      <span className="text-sm text-govuk-dark-grey">
+                        {getServiceDetail(key, personaData)}
+                      </span>
+                    </div>
+                    <svg className="shrink-0 text-govuk-blue" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M9 18l6-6-6-6" />
+                    </svg>
+                  </button>
+                ))}
+              </div>
+              {/* Browse topics — last item in the container */}
               <button
                 onClick={() => setShowBrowseTopics(true)}
-                className="w-full py-4 bg-white rounded-2xl shadow-sm text-govuk-blue font-bold text-base hover:bg-gray-50 transition-colors touch-feedback"
+                className="flex items-center gap-4 w-full px-5 py-5 bg-blue-50 border-t border-gray-100 hover:bg-blue-100 transition-all text-left touch-feedback"
               >
-                Browse topics
+                <div className="w-14 h-14 rounded-full bg-govuk-blue flex items-center justify-center shrink-0">
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="12" y1="5" x2="12" y2="19" />
+                    <line x1="5" y1="12" x2="19" y2="12" />
+                  </svg>
+                </div>
+                <strong className="text-lg font-bold text-govuk-blue">Browse topics</strong>
               </button>
             </div>
 
@@ -429,28 +434,29 @@ export function Dashboard() {
         </div>
       )}
 
-      {/* Life events */}
+      {/* Services carousel */}
       {lifeEvents.length > 0 && (
         <div className="mb-5">
-          <h3 className="text-base font-extrabold text-govuk-black mb-3">Life events</h3>
-          <div className="grid grid-cols-2 gap-2">
-            {lifeEvents.map((le) => (
+          <h3 className="text-base font-extrabold text-govuk-black mb-3">Services</h3>
+          <div className="flex gap-3 overflow-x-auto pb-2 snap-x snap-mandatory scrollbar-hide -mx-4 px-4">
+            {[...lifeEvents].sort((a, b) => {
+              // "Having a Baby" first
+              if (a.name === "Having a Baby") return -1;
+              if (b.name === "Having a Baby") return 1;
+              return 0;
+            }).map((le) => (
               <button
                 key={le.id}
                 onClick={() => setExpandedEvent(expandedEvent === le.id ? null : le.id)}
-                className={`w-full text-left p-3 rounded-card transition-all touch-feedback ${
+                className={`shrink-0 w-44 text-left p-4 rounded-card snap-start transition-all touch-feedback ${
                   expandedEvent === le.id
                     ? "bg-blue-50 shadow-md ring-2 ring-govuk-blue"
                     : "bg-white shadow-sm hover:shadow-md"
                 }`}
               >
-                <div className="flex items-start gap-2">
-                  <span className="text-lg leading-none mt-0.5">{le.icon}</span>
-                  <div className="min-w-0">
-                    <strong className="block text-sm text-govuk-black leading-tight">{le.name}</strong>
-                    <span className="text-xs text-govuk-dark-grey">{le.totalServiceCount} services</span>
-                  </div>
-                </div>
+                <span className="text-2xl leading-none block mb-2">{le.icon}</span>
+                <strong className="block text-sm text-govuk-black leading-tight">{le.name}</strong>
+                <span className="text-xs text-govuk-dark-grey">{le.totalServiceCount} services</span>
               </button>
             ))}
           </div>

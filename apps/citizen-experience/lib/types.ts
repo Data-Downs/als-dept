@@ -219,6 +219,7 @@ export const PERSONA_NAMES: Record<string, string> = {
   "david-evans": "David Evans",
   "priya-sharma": "Priya Sharma",
   "mary-summers": "Hugo & Mary Summers",
+  "anna-cotton": "Anna & Tom Cotton",
 };
 
 export const PERSONA_COLORS: Record<string, string> = {
@@ -228,6 +229,7 @@ export const PERSONA_COLORS: Record<string, string> = {
   "david-evans": "#d4351c",
   "priya-sharma": "#f47738",
   "mary-summers": "#4c6272",
+  "anna-cotton": "#28a197",
 };
 
 export const PERSONA_INITIALS: Record<string, string> = {
@@ -237,6 +239,7 @@ export const PERSONA_INITIALS: Record<string, string> = {
   "david-evans": "DE",
   "priya-sharma": "PS",
   "mary-summers": "MS",
+  "anna-cotton": "AC",
 };
 
 export interface PlanGroup {

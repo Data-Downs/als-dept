@@ -42,6 +42,11 @@ export class ServiceClient {
     this.fetcher = options?.fetcher;
   }
 
+  /** GET /api/personas — returns { users: [...] } or null */
+  async getPersonas(): Promise<{ users: Array<Record<string, unknown>> } | null> {
+    return this.fetchJson("/api/personas");
+  }
+
   /** GET /api/v1/services/:id — returns full service detail or null */
   async getService(id: string): Promise<Record<string, unknown> | null> {
     return this.fetchJson(`/api/v1/services/${encodeURIComponent(id)}`);
