@@ -65,7 +65,7 @@ const config: Config = {
         },
       },
       animation: {
-        "slide-up": "slide-up 0.3s cubic-bezier(0.25, 0.1, 0.25, 1.4)",
+        "slide-up": "slide-up 0.35s cubic-bezier(0.33, 0, 0.2, 1)",
         "slide-in-right": "slide-in-right 0.25s ease-out",
         "fade-in": "fade-in 0.2s ease-out",
         "bounce-dot": "bounce-dot 1.4s infinite ease-in-out both",

@@ -275,7 +275,18 @@ export function Dashboard() {
     <div className="max-w-lg mx-auto">
       {/* Greeting */}
       <div className="mb-5">
-        <h2 className="text-2xl font-bold">Hello, {firstName}</h2>
+        <div className="flex items-center gap-1">
+          <h2 className="text-2xl font-bold">Hello, {firstName}</h2>
+          <button
+            onClick={() => openBottomSheet("agent-selection")}
+            className="shrink-0 touch-feedback p-1 -ml-0.5"
+            aria-label="Choose agent"
+          >
+            <svg className="text-govuk-blue" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M6 9l6 6 6-6" />
+            </svg>
+          </button>
+        </div>
         <p className="text-govuk-dark-grey text-sm">Your government services at a glance</p>
       </div>
 
@@ -464,8 +475,7 @@ export function Dashboard() {
                 }`}
               >
                 <div className="p-5 pb-4">
-                  <span className="text-3xl leading-none block mb-3">{le.icon}</span>
-                  <strong className="block text-xl font-bold text-govuk-black leading-snug">{le.name}</strong>
+                  <strong className="block text-2xl font-bold text-govuk-black leading-snug">{le.name}</strong>
                   <span className="block text-sm text-govuk-dark-grey mt-1">{le.desc ? le.desc.slice(0, 60) : ""}</span>
                 </div>
                 <div className="border-t border-gray-100 px-5 py-3">

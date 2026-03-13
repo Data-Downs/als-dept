@@ -176,7 +176,11 @@ export function UnifiedTimeline({
           <SwipeToDelete key={item.id} onDelete={() => handleDismiss(item.id)}>
             <button
               onClick={() => onItemTap?.(item)}
-              className="flex items-center gap-3 w-full p-3.5 text-left bg-white hover:bg-gray-50 transition-colors touch-feedback"
+              className={`flex items-center gap-3 w-full p-3.5 text-left transition-colors touch-feedback ${
+                item.source === "agent" || item.taskType === "agent"
+                  ? "bg-blue-50/60 hover:bg-blue-50"
+                  : "bg-white hover:bg-gray-50"
+              }`}
             >
               <UrgencyDot urgency={item.urgency} size="md" />
               <div className="flex-1 min-w-0">
@@ -185,7 +189,18 @@ export function UnifiedTimeline({
                 </span>
                 <span className="flex items-center gap-1.5 text-xs text-govuk-dark-grey">
                   <span className="capitalize">{item.service}</span>
-                  {item.source !== "data" && (
+                  {(item.source === "agent" || item.taskType === "agent") && (
+                    <>
+                      <span>&middot;</span>
+                      <span className="inline-flex items-center gap-1 text-blue-700 font-semibold">
+                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
+                          <path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                        </svg>
+                        Agent task
+                      </span>
+                    </>
+                  )}
+                  {item.source !== "data" && item.source !== "agent" && item.taskType !== "agent" && (
                     <>
                       <span>&middot;</span>
                       <span className="capitalize">{item.source}</span>

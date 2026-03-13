@@ -57,6 +57,7 @@ export function ChatView() {
   const cardsSubmitted = useAppStore((s) => s.cardsSubmitted);
   const lastAssistantRef = useRef<HTMLDivElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const chatScrollRef = useRef<HTMLDivElement>(null);
 
   // Derived consent state
   const hasRequiredDenials = pendingConsent
@@ -80,20 +81,30 @@ export function ChatView() {
     (lastResponseTasks.length === 0 || tasksSubmitted) &&
     (pendingCards.length === 0 || cardsSubmitted);
 
-  // Scroll to the top of the last assistant message when new content arrives
+  // Scroll to the top of the last assistant message when new content arrives.
+  // Uses requestAnimationFrame to wait for the browser to paint the new content
+  // so the element's offsetTop is accurate.
   const scrollToLastAssistant = () => {
-    lastAssistantRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    requestAnimationFrame(() => {
+      const el = lastAssistantRef.current;
+      const container = chatScrollRef.current;
+      if (el && container) {
+        container.scrollTo({ top: el.offsetTop - container.offsetTop, behavior: "smooth" });
+      }
+    });
   };
 
   // Scroll to bottom to reveal cards (consent, task summary, etc.)
   const scrollToEnd = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    requestAnimationFrame(() => {
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    });
   };
 
   useEffect(() => {
     if (!isLoading && (showTasks || showCards || showConsent)) {
       scrollToEnd();
-    } else {
+    } else if (!isLoading) {
       scrollToLastAssistant();
     }
   }, [conversationHistory, isLoading, activeHandoff, ucState, showTasks, showCards, showConsent]);
@@ -138,6 +149,7 @@ export function ChatView() {
       )}
 
       <div
+        ref={chatScrollRef}
         className="flex-1 overflow-y-auto px-4 py-4 pb-4 space-y-3"
         role="log"
         aria-live="polite"

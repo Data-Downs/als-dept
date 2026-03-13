@@ -708,8 +708,19 @@ export async function getCardDefinitions(serviceId: string): Promise<Array<Recor
   return Array.isArray(defs) ? defs as Array<Record<string, unknown>> : null;
 }
 
-/** Get persona data by persona ID */
+/** Get persona data by persona ID — reads from disk in dev for live reload */
 export function getPersonaData(personaId: string): Record<string, unknown> | null {
+  if (process.env.NODE_ENV === "development") {
+    try {
+      const fs = require("fs");
+      const path = require("path");
+      const filePath = path.join(process.cwd(), "..", "..", "data", "simulated", "users", `${personaId}.json`);
+      if (fs.existsSync(filePath)) {
+        const raw = fs.readFileSync(filePath, "utf-8");
+        return JSON.parse(raw) as Record<string, unknown>;
+      }
+    } catch { /* fall through to bundled data */ }
+  }
   return PERSONA_DATA[personaId] ?? null;
 }
 

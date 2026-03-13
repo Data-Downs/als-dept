@@ -2,10 +2,19 @@
 
 import { useState, useMemo } from "react";
 import { useAppStore } from "@/lib/store";
-import type { ServicePlanStatus, ServiceType } from "@/lib/types";
+import type { ServicePlanStatus, ServiceType, LifeEventService } from "@/lib/types";
 import { computeServiceHints } from "@/lib/plan-hints";
 import { DocumentUploadCard } from "@/components/cards/DocumentUploadCard";
 import type { CardDefinition } from "@als/schemas";
+
+/** Determine whether a service can be handled by an AI agent on the citizen's behalf */
+function isAgentLed(svc: LifeEventService): boolean {
+  const agentTypes = new Set([
+    "benefit", "entitlement", "grant", "application",
+    "tax", "payment", "licence", "license",
+  ]);
+  return agentTypes.has(svc.serviceType) || (svc.proactivity?.mode === "suggest");
+}
 
 const STATUS_CONFIG: Record<
   ServicePlanStatus,
@@ -53,7 +62,7 @@ const STATUS_CONFIG: Record<
   },
 };
 
-function StatusIcon({ status }: { status: ServicePlanStatus }) {
+function StatusIcon({ status, agentLed }: { status: ServicePlanStatus; agentLed?: boolean }) {
   switch (status) {
     case "completed":
       return (
@@ -73,8 +82,10 @@ function StatusIcon({ status }: { status: ServicePlanStatus }) {
       );
     case "available":
       return (
-        <span className="w-6 h-6 rounded-full bg-green-100 border-2 border-green-500 flex items-center justify-center shrink-0">
-          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#16a34a" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+        <span className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 ${
+          agentLed ? "bg-blue-100 border-2 border-blue-500" : "bg-green-100 border-2 border-green-500"
+        }`}>
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke={agentLed ? "#1d70b8" : "#16a34a"} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
             <path d="M5 12h14M12 5l7 7-7 7" />
           </svg>
         </span>
@@ -227,6 +238,7 @@ export function PlanView() {
                 const config = STATUS_CONFIG[status];
                 const autoSkipped = status === "skipped" && !!skipReasons?.[svcId];
                 const clickable = status === "available" || status === "in_progress" || autoSkipped;
+                const agentLed = isAgentLed(svc);
 
                 const isExpanded = expandedServiceId === svcId;
 
@@ -242,7 +254,7 @@ export function PlanView() {
                       }`}
                     >
                       <div className="flex items-center gap-3">
-                        <StatusIcon status={status} />
+                        <StatusIcon status={status} agentLed={agentLed} />
                         <div className="flex-1 min-w-0">
                           <strong className={`block text-sm ${config.textClass}`}>
                             {svc.name}
@@ -250,12 +262,19 @@ export function PlanView() {
                           <span className={`text-xs ${config.dimmed ? "text-gray-400" : "text-govuk-dark-grey"}`}>
                             {svc.dept} &middot; {svc.serviceType}
                           </span>
+                          {agentLed && !config.dimmed && (
+                            <span className="block text-xs text-blue-700 mt-0.5">
+                              Agent task
+                            </span>
+                          )}
                         </div>
                         {clickable && (
                           <span className={`text-xs font-bold px-2.5 py-1 rounded-full shrink-0 ${
                             status === "in_progress"
                               ? "bg-blue-100 text-blue-700"
-                              : "bg-green-100 text-green-700"
+                              : agentLed
+                                ? "bg-blue-100 text-blue-700"
+                                : "bg-green-100 text-green-700"
                           }`}>
                             {status === "available" && isExpanded ? "Collapse" : config.label}
                           </span>
@@ -400,9 +419,13 @@ export function PlanView() {
                             <div className="flex items-center gap-3 pt-1">
                               <button
                                 onClick={() => handleStartService(svcId)}
-                                className="flex-1 py-2.5 rounded-full bg-govuk-green text-white text-sm font-bold hover:bg-govuk-green/90 transition-colors touch-feedback"
+                                className={`flex-1 py-2.5 rounded-full text-white text-sm font-bold transition-colors touch-feedback ${
+                                  agentLed
+                                    ? "bg-govuk-blue hover:bg-blue-800"
+                                    : "bg-govuk-green hover:bg-govuk-green/90"
+                                }`}
                               >
-                                Start this service
+                                {agentLed ? "Let agent handle this" : "Start this service"}
                               </button>
                               <button
                                 onClick={() => handleSkipService(svcId)}

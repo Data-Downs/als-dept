@@ -107,8 +107,9 @@ a:focus {
 
 /* Bottom sheet backdrop */
 .sheet-backdrop {
-  background: rgba(0, 0, 0, 0.4);
-  backdrop-filter: blur(2px);
+  background: rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
 }
 
 /* Reduced motion */

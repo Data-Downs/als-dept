@@ -143,13 +143,19 @@ export function TaskDetailSheet({ data }: TaskDetailSheetProps) {
         <span className="px-2 py-0.5 rounded-full bg-gray-100 text-xs font-medium text-govuk-dark-grey capitalize">
           {item.service}
         </span>
-        {(item.source || storedTask?.type) && (
+        {(item.source === "agent" || storedTask?.type === "agent") && (
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-blue-100 text-xs font-bold text-blue-700">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
+              <path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+            </svg>
+            Agent task
+          </span>
+        )}
+        {(item.source || storedTask?.type) && item.source !== "agent" && storedTask?.type !== "agent" && (
           <span className={`px-2 py-0.5 rounded-full text-xs font-bold uppercase ${
-            (item.source === "agent" || storedTask?.type === "agent")
-              ? "bg-blue-50 text-blue-700"
-              : item.source === "data"
-                ? "bg-green-50 text-green-700"
-                : "bg-gray-100 text-gray-600"
+            item.source === "data"
+              ? "bg-green-50 text-green-700"
+              : "bg-gray-100 text-gray-600"
           }`}>
             {item.source === "data" ? "data" : storedTask?.type || item.source}
           </span>
