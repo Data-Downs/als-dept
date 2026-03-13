@@ -11,3 +11,7 @@ assets = { directory = ".open-next/assets", binding = "ASSETS" }
 
 [vars]
 STUDIO_API_URL = "https://als-studio.chris-8ab.workers.dev"
+
+[[services]]
+binding = "STUDIO"
+service = "als-studio"

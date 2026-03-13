@@ -11,7 +11,7 @@ import path from "path";
 export async function GET() {
   try {
     // Try Studio API first
-    const client = getServiceClient();
+    const client = await getServiceClient();
     if (client) {
       const result = await client.getPersonas();
       if (result?.users?.length) {

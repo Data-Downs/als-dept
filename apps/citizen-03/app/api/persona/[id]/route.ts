@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getServiceClient } from "@/lib/service-client";
 import fs from "fs/promises";
 import path from "path";
 
@@ -9,21 +10,16 @@ export async function GET(
   const { id } = await params;
 
   // Try Studio API first (works on Cloudflare Workers where filesystem is unavailable)
-  const studioUrl = process.env.STUDIO_API_URL;
-  if (studioUrl) {
-    try {
-      const res = await fetch(`${studioUrl.replace(/\/+$/, "")}/api/personas/${encodeURIComponent(id)}`, {
-        headers: { Accept: "application/json" },
-        signal: AbortSignal.timeout(5_000),
-      });
-      if (res.ok) {
-        const data = await res.json();
-        // Studio returns { user: {...}, credentialTypes: [...] } — unwrap
-        return NextResponse.json(data.user ?? data);
+  try {
+    const client = await getServiceClient();
+    if (client) {
+      const result = await client.getPersona(id);
+      if (result?.user) {
+        return NextResponse.json(result.user);
       }
-    } catch {
-      // Fall through to filesystem
     }
+  } catch {
+    // Fall through to filesystem
   }
 
   // Fallback: read from filesystem (local dev)
