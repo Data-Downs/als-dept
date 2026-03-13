@@ -19,6 +19,7 @@
     "@als/personal-data": "*",
     "@als/schemas": "*",
     "@als/service-graph": "*",
+    "@opennextjs/cloudflare": "^1.16.6",
     "next": "15.1.12",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
