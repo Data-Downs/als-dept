@@ -19,6 +19,8 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      - name: Build workspace packages (needed for test resolution)
+        run: npx turbo run build --filter='./packages/*' -- --noCheck
       - run: npm test
 
   deploy-studio:
