@@ -97,3 +97,22 @@ jobs:
         run: npx turbo run build --filter='./packages/*' -- --noCheck
       - run: npx @opennextjs/cloudflare build && npx wrangler deploy
         working-directory: apps/citizen-02
+
+  deploy-citizen-03:
+    name: Deploy Citizen 03
+    needs: [test, deploy-studio]
+    runs-on: ubuntu-latest
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Build workspace packages (emit JS, skip type-check)
+        run: npx turbo run build --filter='./packages/*' -- --noCheck
+      - run: npx @opennextjs/cloudflare build && npx wrangler deploy
+        working-directory: apps/citizen-03
