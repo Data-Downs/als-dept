@@ -21,6 +21,7 @@ import type {
 } from "./types";
 import type { CardRequest, PipelineTrace } from "@als/schemas";
 import { getAllTerminalStateIds } from "@als/schemas";
+import { computePlanRelevance } from "./plan-relevance";
 
 interface AppStore {
   // Identity
@@ -116,7 +117,10 @@ interface AppStore {
   closeBottomSheet: () => void;
   showToast: (text: string) => void;
 
+  dismissTimelineItem: (itemId: string) => void;
+
   // Plan actions
+  deletePlan: (planId: string) => void;
   startPlan: (lifeEvent: LifeEventInfo) => void;
   loadPlan: (planId: string) => void;
   startServiceFromPlan: (serviceId: string, serviceName: string) => void;
@@ -226,7 +230,17 @@ function saveActivePlan(personaId: string, plan: ActivePlan) {
   }
 }
 
-export { getConversations, deleteConversation, getTasks, saveTasks, getActivePlans };
+function getDismissedItems(personaId: string): string[] {
+  if (typeof window === "undefined") return [];
+  try {
+    const raw = localStorage.getItem(`c02_dismissed_${personaId}`);
+    return raw ? JSON.parse(raw) : [];
+  } catch {
+    return [];
+  }
+}
+
+export { getConversations, deleteConversation, getTasks, saveTasks, getActivePlans, getDismissedItems };
 
 let toastTimer: ReturnType<typeof setTimeout> | null = null;
 
@@ -353,6 +367,10 @@ export const useAppStore = create<AppStore>((set, get) => ({
       currentService: service !== undefined ? service : get().currentService,
       serviceName: serviceName !== undefined ? serviceName : get().serviceName,
     });
+    // Scroll to top when navigating to a new view
+    if (typeof window !== "undefined") {
+      document.getElementById("main-content")?.scrollTo(0, 0);
+    }
   },
 
   navigateBack: () => {
@@ -365,6 +383,9 @@ export const useAppStore = create<AppStore>((set, get) => ({
         currentService: prev.view === "dashboard" ? null : prev.service,
         serviceName: prev.view === "dashboard" ? null : prev.serviceName,
       });
+      if (typeof window !== "undefined") {
+        document.getElementById("main-content")?.scrollTo(0, 0);
+      }
     }
   },
 
@@ -679,7 +700,48 @@ export const useAppStore = create<AppStore>((set, get) => ({
     set({ hasNewReasoning: false });
   },
 
+  dismissTimelineItem: (itemId: string) => {
+    const state = get();
+    if (!state.persona) return;
+
+    // Task-based items (prefixed "task-")
+    if (itemId.startsWith("task-")) {
+      const taskId = itemId.slice(5);
+      const tasks = getTasks(state.persona);
+      const task = tasks.find((t) => t.id === taskId);
+      if (task) {
+        task.status = "dismissed";
+        task.updatedAt = new Date().toISOString();
+        saveTasks(state.persona, tasks);
+      }
+      return;
+    }
+
+    // Data-derived items (MOT, tax, pregnancy) — store dismissed IDs
+    try {
+      const key = `c02_dismissed_${state.persona}`;
+      const raw = localStorage.getItem(key);
+      const dismissed: string[] = raw ? JSON.parse(raw) : [];
+      if (!dismissed.includes(itemId)) {
+        dismissed.push(itemId);
+        localStorage.setItem(key, JSON.stringify(dismissed));
+      }
+    } catch { /* ignore */ }
+  },
+
   // ── Plan actions ──
+
+  deletePlan: (planId: string) => {
+    const state = get();
+    if (!state.persona) return;
+    const plans = getActivePlans(state.persona).filter((p) => p.id !== planId);
+    try {
+      localStorage.setItem(`c02_plans_${state.persona}`, JSON.stringify(plans));
+    } catch { /* ignore */ }
+    if (state.activePlan?.id === planId) {
+      set({ activePlan: null, activePlanId: null });
+    }
+  },
 
   startPlan: (lifeEvent: LifeEventInfo) => {
     const state = get();
@@ -700,6 +762,33 @@ export const useAppStore = create<AppStore>((set, get) => ({
       serviceProgress[svc.id] = entryIds.has(svc.id) ? "available" : "locked";
     }
 
+    // Auto-skip services that aren't relevant to this persona
+    const irrelevant = computePlanRelevance(lifeEvent.services, state.personaData);
+    const skipReasons: Record<string, string> = {};
+
+    for (const [svcId, result] of Object.entries(irrelevant)) {
+      serviceProgress[svcId] = "skipped";
+      skipReasons[svcId] = result.reason;
+    }
+
+    // Unlock downstream services whose prerequisites are now all skipped
+    const edges = lifeEvent.plan.edges;
+    for (const [skippedId] of Object.entries(irrelevant)) {
+      const downstreamIds = edges.filter((e) => e.from === skippedId).map((e) => e.to);
+      for (const toId of downstreamIds) {
+        if (serviceProgress[toId] !== "locked") continue;
+        // Skip if this downstream service is also irrelevant
+        if (irrelevant[toId]) continue;
+        const prereqIds = edges.filter((e) => e.to === toId).map((e) => e.from);
+        const allMet = prereqIds.every(
+          (pid) => serviceProgress[pid] === "completed" || serviceProgress[pid] === "skipped"
+        );
+        if (allMet) {
+          serviceProgress[toId] = "available";
+        }
+      }
+    }
+
     const plan: ActivePlan = {
       id: `plan_${lifeEvent.id}_${Date.now()}`,
       lifeEventId: lifeEvent.id,
@@ -709,6 +798,7 @@ export const useAppStore = create<AppStore>((set, get) => ({
       updatedAt: new Date().toISOString(),
       serviceProgress,
       serviceConversations: {},
+      skipReasons,
       plan: lifeEvent.plan,
       services: lifeEvent.services,
     };

@@ -19,7 +19,7 @@ interface HeroCard {
   service: string;
 }
 
-function buildHeroCards(data: PersonaData): HeroCard[] {
+export function buildHeroCards(data: PersonaData): HeroCard[] {
   const cards: HeroCard[] = [];
 
   // Vehicle cards
@@ -141,7 +141,7 @@ export function HeroCarousel({ personaData, filterService, onCardTap }: HeroCaro
       <div
         ref={scrollRef}
         onScroll={handleScroll}
-        className="flex gap-3 overflow-x-auto scroll-snap-x scroll-momentum pb-2 -mx-4 px-4"
+        className="flex gap-3 overflow-x-auto scroll-snap-x scroll-momentum pb-2"
         style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
       >
         {cards.map((card) => (

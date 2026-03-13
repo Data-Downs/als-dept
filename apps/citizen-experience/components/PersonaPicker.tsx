@@ -1,19 +1,28 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { useAppStore } from "@/lib/store";
-import { PERSONA_NAMES, PERSONA_COLORS } from "@/lib/types";
 
-const personas = [
-  { id: "emma-parker", initials: "EP", desc: "Young couple expecting their first baby" },
-  { id: "rajesh-patel", initials: "RP", desc: "Self-employed IT consultant, two children" },
-  { id: "margaret-thompson", initials: "MT", desc: "Retired, managing health conditions" },
-  { id: "david-evans", initials: "DE", desc: "Recently redundant, looking for work" },
-  { id: "priya-sharma", initials: "PS", desc: "Recently redundant, applying for Universal Credit" },
-  { id: "mary-summers", initials: "MS", desc: "Affluent couple, retirement planning & power of attorney" },
-];
+interface Persona {
+  id: string;
+  name: string;
+  initials: string;
+  color: string;
+  desc: string;
+}
 
 export function PersonaPicker() {
   const setPersona = useAppStore((s) => s.setPersona);
+  const [personas, setPersonas] = useState<Persona[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch("/api/personas")
+      .then((r) => r.json())
+      .then((data) => setPersonas(data.personas || []))
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, []);
 
   return (
     <div className="max-w-md mx-auto pt-8">
@@ -38,37 +47,52 @@ export function PersonaPicker() {
       </div>
 
       <div className="flex flex-col gap-3">
-        {personas.map((p) => (
-          <button
-            key={p.id}
-            onClick={() => setPersona(p.id)}
-            className="flex items-center gap-4 w-full p-4 bg-white rounded-2xl shadow-sm hover:shadow-md transition-all text-left"
-          >
+        {loading ? (
+          Array.from({ length: 5 }).map((_, i) => (
             <div
-              className="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-sm shrink-0"
-              style={{ backgroundColor: PERSONA_COLORS[p.id] }}
+              key={i}
+              className="flex items-center gap-4 w-full p-4 bg-white rounded-2xl shadow-sm animate-pulse"
             >
-              {p.initials}
+              <div className="w-12 h-12 rounded-full bg-gray-200 shrink-0" />
+              <div className="flex-1 space-y-2">
+                <div className="h-4 bg-gray-200 rounded w-1/3" />
+                <div className="h-3 bg-gray-100 rounded w-2/3" />
+              </div>
             </div>
-            <div className="flex-1 min-w-0">
-              <strong className="block text-govuk-black">
-                {PERSONA_NAMES[p.id]}
-              </strong>
-              <span className="text-sm text-govuk-dark-grey">{p.desc}</span>
-            </div>
-            <svg
-              className="shrink-0 text-govuk-blue"
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
+          ))
+        ) : (
+          personas.map((p) => (
+            <button
+              key={p.id}
+              onClick={() => setPersona(p.id)}
+              className="flex items-center gap-4 w-full p-4 bg-white rounded-2xl shadow-sm hover:shadow-md transition-all text-left"
             >
-              <path d="M9 18l6-6-6-6" />
-            </svg>
-          </button>
-        ))}
+              <div
+                className="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-sm shrink-0"
+                style={{ backgroundColor: p.color || "#505a5f" }}
+              >
+                {p.initials}
+              </div>
+              <div className="flex-1 min-w-0">
+                <strong className="block text-govuk-black">
+                  {p.name}
+                </strong>
+                <span className="text-sm text-govuk-dark-grey">{p.desc}</span>
+              </div>
+              <svg
+                className="shrink-0 text-govuk-blue"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
+                <path d="M9 18l6-6-6-6" />
+              </svg>
+            </button>
+          ))
+        )}
       </div>
 
       <p className="text-center text-xs text-govuk-dark-grey mt-8">

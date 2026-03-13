@@ -1,10 +1,12 @@
 "use client";
 
+import { useState } from "react";
 import type { PersonaData, TimelineItem, StoredTask } from "@/lib/types";
 import { DEMO_TODAY } from "@/lib/types";
-import { getTasks } from "@/lib/store";
+import { getTasks, getDismissedItems } from "@/lib/store";
 import { UrgencyDot } from "../ui/UrgencyDot";
 import { LiveBadge } from "../ui/LiveBadge";
+import { SwipeToDelete } from "../ui/SwipeToDelete";
 
 function daysUntil(dateStr: string): number {
   const target = new Date(dateStr);
@@ -129,6 +131,7 @@ interface UnifiedTimelineProps {
   maxItems?: number;
   filterService?: string;
   onItemTap?: (item: TimelineItem) => void;
+  onDismiss?: (itemId: string) => void;
   onSeeAll?: () => void;
 }
 
@@ -138,12 +141,21 @@ export function UnifiedTimeline({
   maxItems = 6,
   filterService,
   onItemTap,
+  onDismiss,
   onSeeAll,
 }: UnifiedTimelineProps) {
-  const items = buildTimelineItems(personaData, persona, filterService);
+  const [localDismissed, setLocalDismissed] = useState<Set<string>>(new Set());
+  const dismissed = persona ? new Set([...getDismissedItems(persona), ...localDismissed]) : localDismissed;
+  const items = buildTimelineItems(personaData, persona, filterService)
+    .filter((item) => !dismissed.has(item.id));
   const displayItems = items.slice(0, maxItems);
 
   if (displayItems.length === 0) return null;
+
+  const handleDismiss = (itemId: string) => {
+    setLocalDismissed((prev) => new Set([...prev, itemId]));
+    onDismiss?.(itemId);
+  };
 
   return (
     <div className="mb-5">
@@ -159,48 +171,64 @@ export function UnifiedTimeline({
         )}
       </div>
 
-      <div className="bg-white rounded-card shadow-sm divide-y divide-gray-100">
+      <div className="bg-white rounded-card shadow-sm divide-y divide-gray-100 overflow-hidden">
         {displayItems.map((item) => (
-          <button
-            key={item.id}
-            onClick={() => onItemTap?.(item)}
-            className="flex items-center gap-3 w-full p-3.5 text-left hover:bg-gray-50 transition-colors touch-feedback first:rounded-t-card last:rounded-b-card"
-          >
-            <UrgencyDot urgency={item.urgency} size="md" />
-            <div className="flex-1 min-w-0">
-              <span className="block text-sm font-medium text-govuk-black truncate">
-                {item.title}
-              </span>
-              <span className="flex items-center gap-1.5 text-xs text-govuk-dark-grey">
-                <span className="capitalize">{item.service}</span>
-                {item.source !== "data" && (
-                  <>
-                    <span>&middot;</span>
-                    <span className="capitalize">{item.source}</span>
-                  </>
-                )}
-                {item.isLive && <LiveBadge />}
-              </span>
-            </div>
-            <span className={`text-xs font-bold shrink-0 ${
-              item.urgency === "urgent" ? "text-govuk-red" :
-              item.urgency === "warning" ? "text-govuk-orange" :
-              "text-govuk-dark-grey"
-            }`}>
-              {item.dueLabel}
-            </span>
-            <svg
-              className="shrink-0 text-govuk-mid-grey"
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
+          <SwipeToDelete key={item.id} onDelete={() => handleDismiss(item.id)}>
+            <button
+              onClick={() => onItemTap?.(item)}
+              className={`flex items-center gap-3 w-full p-3.5 text-left transition-colors touch-feedback ${
+                item.source === "agent" || item.taskType === "agent"
+                  ? "bg-blue-50/60 hover:bg-blue-50"
+                  : "bg-white hover:bg-gray-50"
+              }`}
             >
-              <path d="M9 18l6-6-6-6" />
-            </svg>
-          </button>
+              <UrgencyDot urgency={item.urgency} size="md" />
+              <div className="flex-1 min-w-0">
+                <span className="block text-sm font-medium text-govuk-black truncate">
+                  {item.title}
+                </span>
+                <span className="flex items-center gap-1.5 text-xs text-govuk-dark-grey">
+                  <span className="capitalize">{item.service}</span>
+                  {(item.source === "agent" || item.taskType === "agent") && (
+                    <>
+                      <span>&middot;</span>
+                      <span className="inline-flex items-center gap-1 text-blue-700 font-semibold">
+                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
+                          <path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                        </svg>
+                        Agent task
+                      </span>
+                    </>
+                  )}
+                  {item.source !== "data" && item.source !== "agent" && item.taskType !== "agent" && (
+                    <>
+                      <span>&middot;</span>
+                      <span className="capitalize">{item.source}</span>
+                    </>
+                  )}
+                  {item.isLive && <LiveBadge />}
+                </span>
+              </div>
+              <span className={`text-xs font-bold shrink-0 ${
+                item.urgency === "urgent" ? "text-govuk-red" :
+                item.urgency === "warning" ? "text-govuk-orange" :
+                "text-govuk-dark-grey"
+              }`}>
+                {item.dueLabel}
+              </span>
+              <svg
+                className="shrink-0 text-govuk-mid-grey"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
+                <path d="M9 18l6-6-6-6" />
+              </svg>
+            </button>
+          </SwipeToDelete>
         ))}
       </div>
     </div>

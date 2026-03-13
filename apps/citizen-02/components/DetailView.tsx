@@ -2,9 +2,10 @@
 
 import { useAppStore, getConversations } from "@/lib/store";
 import type { ServiceType } from "@/lib/types";
-import { HeroCarousel } from "./dashboard/HeroCarousel";
+import { HeroCarousel, buildHeroCards } from "./dashboard/HeroCarousel";
 import { UnifiedTimeline } from "./dashboard/UnifiedTimeline";
 import { TopicList } from "./detail/TopicList";
+import { ServiceContextCard } from "./detail/ServiceContextCard";
 
 export function DetailView() {
   const personaData = useAppStore((s) => s.personaData);
@@ -21,8 +22,20 @@ export function DetailView() {
     ? getConversations(persona).filter((c) => c.service === currentService).slice(0, 5)
     : [];
 
+  // Only show the context card when the carousel has no cards for this service
+  const hasCarouselCards = buildHeroCards(personaData).some((c) => c.service === currentService);
+
   return (
     <div className="max-w-lg mx-auto">
+      {/* Contextual data card — shown when no carousel cards exist for this service */}
+      {!hasCarouselCards && (
+        <ServiceContextCard
+          service={currentService}
+          serviceName={serviceName || currentService}
+          personaData={personaData}
+        />
+      )}
+
       {/* Hero carousel filtered to this service */}
       <HeroCarousel
         personaData={personaData}

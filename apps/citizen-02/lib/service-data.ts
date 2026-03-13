@@ -40,6 +40,7 @@ import priyaSharma from "../../../data/simulated/users/priya-sharma.json";
 import davidEvans from "../../../data/simulated/users/david-evans.json";
 import marySummers from "../../../data/simulated/users/mary-summers.json";
 import rebeccaShortland from "../../../data/simulated/users/rebecca-shortland.json";
+import annaCotton from "../../../data/simulated/users/anna-cotton.json";
 
 // ── Prompt files (bundled as string constants for Cloudflare) ──
 
@@ -627,6 +628,7 @@ const ALL_USERS: Record<string, unknown>[] = [
   davidEvans as unknown as Record<string, unknown>,
   marySummers as unknown as Record<string, unknown>,
   rebeccaShortland as unknown as Record<string, unknown>,
+  annaCotton as unknown as Record<string, unknown>,
 ];
 
 const PERSONA_DATA: Record<string, Record<string, unknown>> = {};
@@ -706,8 +708,19 @@ export async function getCardDefinitions(serviceId: string): Promise<Array<Recor
   return Array.isArray(defs) ? defs as Array<Record<string, unknown>> : null;
 }
 
-/** Get persona data by persona ID */
+/** Get persona data by persona ID — reads from disk in dev for live reload */
 export function getPersonaData(personaId: string): Record<string, unknown> | null {
+  if (process.env.NODE_ENV === "development") {
+    try {
+      const fs = require("fs");
+      const path = require("path");
+      const filePath = path.join(process.cwd(), "..", "..", "data", "simulated", "users", `${personaId}.json`);
+      if (fs.existsSync(filePath)) {
+        const raw = fs.readFileSync(filePath, "utf-8");
+        return JSON.parse(raw) as Record<string, unknown>;
+      }
+    } catch { /* fall through to bundled data */ }
+  }
   return PERSONA_DATA[personaId] ?? null;
 }
 

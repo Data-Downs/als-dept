@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useAppStore, getTasks, saveTasks } from "@/lib/store";
 import type { StoredTask } from "@/lib/types";
 import { UrgencyDot } from "./ui/UrgencyDot";
+import { SwipeToDelete } from "./ui/SwipeToDelete";
 import { DEMO_TODAY } from "@/lib/types";
 
 type FilterTab = "all" | "driving" | "benefits" | "family";
@@ -41,6 +42,7 @@ export function TasksView() {
   const openBottomSheet = useAppStore((s) => s.openBottomSheet);
   const showToast = useAppStore((s) => s.showToast);
   const [activeFilter, setActiveFilter] = useState<FilterTab>("all");
+  const [, forceUpdate] = useState(0);
 
   if (!persona) return null;
 
@@ -73,6 +75,7 @@ export function TasksView() {
       task.updatedAt = new Date().toISOString();
       saveTasks(persona, tasks);
       showToast("Task dismissed");
+      forceUpdate((n) => n + 1);
     }
   };
 
@@ -114,75 +117,79 @@ export function TasksView() {
           <h3 className="text-base font-extrabold text-govuk-black mb-3">
             Active ({filteredActive.length})
           </h3>
-          <div className="bg-white rounded-card shadow-sm divide-y divide-gray-100">
+          <div className="bg-white rounded-card shadow-sm divide-y divide-gray-100 overflow-hidden">
             {filteredActive.map((task) => {
               const days = task.dueDate ? daysUntil(task.dueDate) : null;
               return (
-                <div
-                  key={task.id}
-                  className="p-3.5"
-                >
-                  <button
-                    onClick={() => openBottomSheet("task-detail", task)}
-                    className="flex items-start gap-3 w-full text-left touch-feedback"
-                  >
-                    {days !== null && (
-                      <UrgencyDot urgency={getUrgency(days)} size="md" />
-                    )}
-                    <div className="flex-1 min-w-0">
-                      <span className="block text-sm font-medium text-govuk-black">
-                        {task.description}
-                      </span>
-                      <span className="flex items-center gap-1.5 text-xs text-govuk-dark-grey mt-0.5">
-                        <span className="capitalize">{task.service}</span>
-                        <span>&middot;</span>
-                        <span className={`px-1.5 py-0.5 rounded text-[10px] font-bold uppercase ${
-                          task.type === "agent"
-                            ? "bg-blue-50 text-blue-700"
-                            : "bg-gray-100 text-gray-600"
-                        }`}>
-                          {task.type}
+                <SwipeToDelete key={task.id} onDelete={() => handleDismiss(task.id)}>
+                  <div className={`p-3.5 ${task.type === "agent" ? "bg-blue-50/60" : "bg-white"}`}>
+                    <button
+                      onClick={() => openBottomSheet("task-detail", task)}
+                      className="flex items-start gap-3 w-full text-left touch-feedback"
+                    >
+                      {days !== null && (
+                        <UrgencyDot urgency={getUrgency(days)} size="md" />
+                      )}
+                      <div className="flex-1 min-w-0">
+                        <span className="block text-sm font-medium text-govuk-black">
+                          {task.description}
                         </span>
-                        <span>&middot;</span>
-                        <span className={`px-1.5 py-0.5 rounded text-[10px] font-bold uppercase ${
-                          task.status === "accepted"
-                            ? "bg-green-50 text-green-700"
-                            : "bg-yellow-50 text-yellow-700"
-                        }`}>
-                          {task.status}
+                        <span className="flex items-center gap-1.5 text-xs text-govuk-dark-grey mt-0.5">
+                          <span className="capitalize">{task.service}</span>
+                          <span>&middot;</span>
+                          {task.type === "agent" ? (
+                            <span className="inline-flex items-center gap-1 text-blue-700 font-semibold">
+                              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
+                                <path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                              </svg>
+                              Agent task
+                            </span>
+                          ) : (
+                            <span className="px-1.5 py-0.5 rounded text-[10px] font-bold uppercase bg-gray-100 text-gray-600">
+                              You
+                            </span>
+                          )}
+                          <span>&middot;</span>
+                          <span className={`px-1.5 py-0.5 rounded text-[10px] font-bold uppercase ${
+                            task.status === "accepted"
+                              ? "bg-green-50 text-green-700"
+                              : "bg-yellow-50 text-yellow-700"
+                          }`}>
+                            {task.status}
+                          </span>
                         </span>
-                      </span>
-                    </div>
-                    {days !== null && (
-                      <span className={`text-xs font-bold shrink-0 ${
-                        days < 0 ? "text-govuk-red" :
-                        days < 14 ? "text-govuk-red" :
-                        days < 30 ? "text-govuk-orange" :
-                        "text-govuk-dark-grey"
-                      }`}>
-                        {formatDueLabel(days)}
-                      </span>
-                    )}
-                  </button>
+                      </div>
+                      {days !== null && (
+                        <span className={`text-xs font-bold shrink-0 ${
+                          days < 0 ? "text-govuk-red" :
+                          days < 14 ? "text-govuk-red" :
+                          days < 30 ? "text-govuk-orange" :
+                          "text-govuk-dark-grey"
+                        }`}>
+                          {formatDueLabel(days)}
+                        </span>
+                      )}
+                    </button>
 
-                  {/* Action buttons for suggested tasks */}
-                  {task.status === "suggested" && (
-                    <div className="flex items-center gap-2 mt-2 ml-8">
-                      <button
-                        onClick={() => handleAccept(task.id)}
-                        className="px-3 py-1 rounded-full bg-govuk-green text-white text-xs font-bold hover:bg-govuk-green/90 transition-colors"
-                      >
-                        Accept
-                      </button>
-                      <button
-                        onClick={() => handleDismiss(task.id)}
-                        className="px-3 py-1 rounded-full bg-gray-100 text-govuk-dark-grey text-xs font-bold hover:bg-gray-200 transition-colors"
-                      >
-                        Dismiss
-                      </button>
-                    </div>
-                  )}
-                </div>
+                    {/* Action buttons for suggested tasks */}
+                    {task.status === "suggested" && (
+                      <div className="flex items-center gap-2 mt-2 ml-8">
+                        <button
+                          onClick={() => handleAccept(task.id)}
+                          className="px-3 py-1 rounded-full bg-govuk-green text-white text-xs font-bold hover:bg-govuk-green/90 transition-colors"
+                        >
+                          Accept
+                        </button>
+                        <button
+                          onClick={() => handleDismiss(task.id)}
+                          className="px-3 py-1 rounded-full bg-gray-100 text-govuk-dark-grey text-xs font-bold hover:bg-gray-200 transition-colors"
+                        >
+                          Dismiss
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </SwipeToDelete>
               );
             })}
           </div>

@@ -2,14 +2,13 @@
 
 import { useState, useEffect } from "react";
 import { useAppStore } from "@/lib/store";
-import { PERSONA_NAMES, PERSONA_COLORS, PERSONA_INITIALS } from "@/lib/types";
 
-interface TestUser {
+interface PersonaInfo {
   id: string;
   name: string;
-  age: number;
-  employment_status: string;
-  address: { city: string; postcode: string };
+  initials: string;
+  color: string;
+  desc: string;
 }
 
 export function PersonaSelectorOverlay() {
@@ -20,29 +19,14 @@ export function PersonaSelectorOverlay() {
   const setAgent = useAppStore((s) => s.setAgent);
   const setServiceMode = useAppStore((s) => s.setServiceMode);
   const setOpen = useAppStore((s) => s.setPersonaSelectorOpen);
-  const [users, setUsers] = useState<TestUser[]>([]);
+  const [personas, setPersonas] = useState<PersonaInfo[]>([]);
 
   useEffect(() => {
-    fetch("/api/auth/test-users")
+    fetch("/api/personas")
       .then((r) => r.json())
-      .then((data) => setUsers(data.users || []))
+      .then((data) => setPersonas(data.personas || []))
       .catch(() => {});
   }, []);
-
-  // Build persona list: prefer live test users, fall back to static
-  const personas = users.length > 0
-    ? users.map((u) => ({
-        id: u.id,
-        name: u.name,
-        desc: `${u.employment_status}, age ${u.age}, ${u.address.city}`,
-      }))
-    : [
-        { id: "emma-parker", name: "Emma Parker", desc: "Employed, age 29, London" },
-        { id: "rajesh-patel", name: "Rajesh Patel", desc: "Self-employed, age 43, Cambridge" },
-        { id: "margaret-thompson", name: "Margaret Thompson", desc: "Retired, age 74, Harrogate" },
-        { id: "david-evans", name: "David Evans", desc: "Unemployed, age 34, Bristol" },
-        { id: "priya-sharma", name: "Priya Sharma", desc: "Unemployed, age 28, Manchester" },
-      ];
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
@@ -82,12 +66,12 @@ export function PersonaSelectorOverlay() {
               >
                 <span
                   className="w-10 h-10 rounded-full flex items-center justify-center text-white text-sm font-bold shrink-0"
-                  style={{ backgroundColor: PERSONA_COLORS[p.id] || "#505a5f" }}
+                  style={{ backgroundColor: p.color || "#505a5f" }}
                 >
-                  {PERSONA_INITIALS[p.id] || p.name.split(" ").map(n => n[0]).join("")}
+                  {p.initials || p.name.split(" ").map(n => n[0]).join("")}
                 </span>
                 <div className="min-w-0">
-                  <strong className="block text-sm">{PERSONA_NAMES[p.id] || p.name}</strong>
+                  <strong className="block text-sm">{p.name}</strong>
                   <span className="text-xs text-govuk-dark-grey">{p.desc}</span>
                 </div>
                 {persona === p.id && (

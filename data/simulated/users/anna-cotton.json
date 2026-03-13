@@ -1,0 +1,213 @@
+{
+  "id": "anna-cotton",
+  "name": "Anna Cotton",
+  "personaName": "Anna & Tom Cotton",
+  "description": "Primary school teacher with young family, managing career and toddler care",
+  "date_of_birth": "1993-11-08",
+  "age": 32,
+  "national_insurance_number": "AC081193B",
+  "address": {
+    "line_1": "Rose Cottage",
+    "line_2": "14 Chapel Lane",
+    "city": "Wilmslow",
+    "county": "Cheshire",
+    "postcode": "SK9 5JF",
+    "country": "England"
+  },
+  "jurisdiction": "England",
+  "credentials": [
+    {
+      "type": "national-insurance",
+      "issuer": "HMRC",
+      "number": "AC081193B",
+      "issued": "2011-11-08",
+      "status": "valid"
+    },
+    {
+      "type": "driving-licence",
+      "issuer": "DVLA",
+      "number": "COTTO931108AM9JK",
+      "issued": "2012-04-15",
+      "expires": "2032-04-15",
+      "status": "valid"
+    },
+    {
+      "type": "proof-of-address",
+      "issuer": "Council Tax",
+      "number": "CT-AC-SK95JF",
+      "issued": "2025-04-01",
+      "expires": "2026-04-01",
+      "status": "valid"
+    }
+  ],
+  "employment_status": "employed",
+  "employer": "Wilmslow Primary School",
+  "income": 32500,
+  "savings": 18500,
+  "bank_account": true,
+  "primaryContact": {
+    "firstName": "Anna",
+    "middleName": "Louise",
+    "lastName": "Cotton",
+    "dateOfBirth": "1993-11-08",
+    "nationalInsuranceNumber": "AC081193B",
+    "email": "anna.cotton@gmail.com",
+    "phone": "07789456123"
+  },
+  "spouse": {
+    "firstName": "Tom",
+    "middleName": "Richard",
+    "lastName": "Cotton",
+    "dateOfBirth": "1992-05-14",
+    "nationalInsuranceNumber": "TC140592C",
+    "email": "tom.cotton@outlook.com",
+    "phone": "07834567890"
+  },
+  "employment": {
+    "anna": {
+      "status": "Employed",
+      "employer": "Wilmslow Primary School",
+      "jobTitle": "Primary School Teacher - Year 4",
+      "startDate": "2016-09-01",
+      "annualIncome": 32500,
+      "taxCode": "1257L",
+      "payrollNumber": "WPS2016089"
+    },
+    "tom": {
+      "status": "Employed",
+      "employer": "Barclays Bank PLC",
+      "jobTitle": "Senior Software Developer - Digital Banking",
+      "startDate": "2018-03-01",
+      "annualIncome": 90000,
+      "taxCode": "1257L",
+      "payrollNumber": "BARC20180301"
+    }
+  },
+  "financials": {
+    "combinedAnnualIncome": 122500,
+    "householdIncome": 122500,
+    "monthlyMortgage": 1450,
+    "councilTaxBand": "D",
+    "councilTaxAnnual": 2180,
+    "currentAccount": {
+      "bank": "HSBC",
+      "sortCode": "40-47-09",
+      "accountNumber": "12345678",
+      "balance": 3200
+    },
+    "savingsAccount": {
+      "bank": "HSBC",
+      "sortCode": "40-47-09",
+      "accountNumber": "23456789",
+      "balance": 18500
+    },
+    "jointAccount": {
+      "bank": "HSBC",
+      "sortCode": "40-47-09",
+      "accountNumber": "34567890",
+      "balance": 5800
+    }
+  },
+  "benefits": {
+    "currentlyReceiving": [
+      {
+        "type": "Child Benefit",
+        "amount": 102.4,
+        "frequency": "every 4 weeks",
+        "startDate": "2024-02-01",
+        "reason": "First child - Casper"
+      }
+    ],
+    "previousClaims": []
+  },
+  "healthInfo": {
+    "anna": {
+      "gpSurgery": "Wilmslow Health Centre",
+      "nhsNumber": "485 762 3891",
+      "conditions": [],
+      "medications": []
+    },
+    "tom": {
+      "gpSurgery": "Wilmslow Health Centre",
+      "nhsNumber": "492 318 5647",
+      "conditions": [],
+      "medications": []
+    }
+  },
+  "family": {
+    "children": [
+      {
+        "firstName": "Casper",
+        "lastName": "Cotton",
+        "dateOfBirth": "2024-01-18",
+        "childBenefitNumber": "CHB12345678"
+      }
+    ],
+    "notes": "Young family with toddler. Anna's parents live in Manchester and help with childcare. Tom's parents in Surrey.",
+    "supportNetwork": [
+      "Anna's parents in Manchester (regular childcare support)",
+      "Tom's parents in Surrey (occasional visits)",
+      "School community - other teacher mums",
+      "Local playgroup friends"
+    ]
+  },
+  "housing": {
+    "type": "Owner occupier",
+    "propertyType": "Two-bedroom cottage",
+    "purchaseDate": "2020-06-15",
+    "purchasePrice": 285000,
+    "mortgageProvider": "Nationwide Building Society",
+    "monthlyMortgage": 1450,
+    "mortgageBalance": 235000,
+    "estimatedValue": 310000
+  },
+  "vehicles": [
+    {
+      "make": "Mini",
+      "model": "Cooper",
+      "year": 2021,
+      "color": "British Racing Green",
+      "registrationNumber": "YK21 FDM",
+      "owner": "Anna Cotton",
+      "motExpiry": "2026-03-22",
+      "taxExpiry": "2026-07-01",
+      "insuranceExpiry": "2026-08-15",
+      "businessUse": false,
+      "annualMileage": 6500,
+      "notes": "Used for school commute and local errands"
+    },
+    {
+      "make": "Volkswagen",
+      "model": "Tiguan",
+      "year": 2022,
+      "color": "Pure White",
+      "registrationNumber": "TC22 VPN",
+      "owner": "Tom Cotton",
+      "motExpiry": "2028-01-10",
+      "taxExpiry": "2026-09-01",
+      "insuranceExpiry": "2026-07-28",
+      "businessUse": false,
+      "annualMileage": 12000,
+      "notes": "Tom's daily driver to bank office in Manchester"
+    }
+  ],
+  "communicationStyle": {
+    "tone": "Warm and articulate, professional but approachable. Organised and detail-oriented from teaching background. Occasionally tired from juggling work and toddler care.",
+    "techSavvy": "Competent with technology - uses education apps, online banking, parenting forums. Comfortable with digital forms but prefers clear instructions. Tom helps with complex tech issues.",
+    "primaryConcerns": [
+      "Childcare arrangements and costs",
+      "Balancing teaching career with being a good mum",
+      "Building up savings for Casper's future",
+      "Tax efficiency with their combined income",
+      "Understanding what benefits and support they're entitled to"
+    ],
+    "typicalPhrases": [
+      "I just want to make sure we're doing the right thing for Casper",
+      "Between marking and toddler bedtimes, I don't have much time for complicated forms",
+      "Tom handles most of our finances but I need to understand this too",
+      "Is there anything else we should be claiming with a young child?",
+      "I'm quite organised normally, but with a two-year-old everything takes longer",
+      "We're fortunate with Tom's salary, but childcare costs are eye-watering"
+    ]
+  }
+}

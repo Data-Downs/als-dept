@@ -5,6 +5,7 @@ import { useAppStore, getConversations, getActivePlans } from "@/lib/store";
 import type { ServiceType, LifeEventInfo, ActivePlan } from "@/lib/types";
 import { UnifiedTimeline } from "./dashboard/UnifiedTimeline";
 import { NearYouSection } from "./dashboard/NearYouSection";
+import { SwipeToDelete } from "./ui/SwipeToDelete";
 
 /** Blue-circle icon set — Material Design filled icons on blue circles */
 function ServiceIcon({ children }: { children: React.ReactNode }) {
@@ -209,6 +210,7 @@ export function Dashboard() {
   const startNewConversation = useAppStore((s) => s.startNewConversation);
   const startPlan = useAppStore((s) => s.startPlan);
   const loadPlan = useAppStore((s) => s.loadPlan);
+  const deletePlan = useAppStore((s) => s.deletePlan);
   const openBottomSheet = useAppStore((s) => s.openBottomSheet);
   const [lifeEvents, setLifeEvents] = useState<LifeEventInfo[]>([]);
   const [expandedEvent, setExpandedEvent] = useState<string | null>(null);
@@ -273,7 +275,18 @@ export function Dashboard() {
     <div className="max-w-lg mx-auto">
       {/* Greeting */}
       <div className="mb-5">
-        <h2 className="text-2xl font-bold">Hello, {firstName}</h2>
+        <div className="flex items-center gap-1">
+          <h2 className="text-2xl font-bold">Hello, {firstName}</h2>
+          <button
+            onClick={() => openBottomSheet("agent-selection")}
+            className="shrink-0 touch-feedback p-1 -ml-0.5"
+            aria-label="Choose agent"
+          >
+            <svg className="text-govuk-blue" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M6 9l6 6 6-6" />
+            </svg>
+          </button>
+        </div>
         <p className="text-govuk-dark-grey text-sm">Your government services at a glance</p>
       </div>
 
@@ -282,6 +295,7 @@ export function Dashboard() {
         personaData={personaData}
         persona={persona}
         onItemTap={(item) => openBottomSheet("task-detail", item)}
+        onDismiss={(itemId) => useAppStore.getState().dismissTimelineItem(itemId)}
         onSeeAll={() => navigateTo("tasks")}
       />
 
@@ -296,34 +310,39 @@ export function Dashboard() {
         );
         return (
           <>
-            <div className="bg-white rounded-2xl shadow-sm mb-5 divide-y divide-gray-100">
-              {visibleTopics.map(({ key, label }) => (
-                <button
-                  key={key}
-                  onClick={() => navigateTo("detail", key, label)}
-                  className="flex items-center gap-4 w-full px-5 py-5 hover:bg-gray-50 transition-all text-left touch-feedback first:rounded-t-2xl last:rounded-b-2xl"
-                >
-                  {serviceIcons[key]}
-                  <div className="flex-1 min-w-0">
-                    <strong className="block text-lg font-bold text-govuk-black">{label}</strong>
-                    <span className="text-sm text-govuk-dark-grey">
-                      {getServiceDetail(key, personaData)}
-                    </span>
-                  </div>
-                  <svg className="shrink-0 text-govuk-blue" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M9 18l6-6-6-6" />
-                  </svg>
-                </button>
-              ))}
-            </div>
-
-            {/* Browse topics button */}
-            <div className="mb-5">
+            <div className="rounded-2xl shadow-sm mb-5 overflow-hidden">
+              <div className="bg-white divide-y divide-gray-100">
+                {visibleTopics.map(({ key, label }) => (
+                  <button
+                    key={key}
+                    onClick={() => navigateTo("detail", key, label)}
+                    className="flex items-center gap-4 w-full px-5 py-5 hover:bg-gray-50 transition-all text-left touch-feedback"
+                  >
+                    {serviceIcons[key]}
+                    <div className="flex-1 min-w-0">
+                      <strong className="block text-lg font-bold text-govuk-black">{label}</strong>
+                      <span className="text-sm text-govuk-dark-grey">
+                        {getServiceDetail(key, personaData)}
+                      </span>
+                    </div>
+                    <svg className="shrink-0 text-govuk-blue" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M9 18l6-6-6-6" />
+                    </svg>
+                  </button>
+                ))}
+              </div>
+              {/* Browse topics — last item in the container */}
               <button
                 onClick={() => setShowBrowseTopics(true)}
-                className="w-full py-4 bg-white rounded-2xl shadow-sm text-govuk-blue font-bold text-base hover:bg-gray-50 transition-colors touch-feedback"
+                className="flex items-center gap-4 w-full px-5 py-5 bg-blue-50 border-t border-gray-100 hover:bg-blue-100 transition-all text-left touch-feedback"
               >
-                Browse topics
+                <div className="w-14 h-14 rounded-full bg-govuk-blue flex items-center justify-center shrink-0">
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="12" y1="5" x2="12" y2="19" />
+                    <line x1="5" y1="12" x2="19" y2="12" />
+                  </svg>
+                </div>
+                <strong className="text-lg font-bold text-govuk-blue">Browse topics</strong>
               </button>
             </div>
 
@@ -406,53 +425,66 @@ export function Dashboard() {
               const done = Object.values(ap.serviceProgress).filter((s) => s === "completed" || s === "skipped").length;
               const pct = total > 0 ? Math.round((done / total) * 100) : 0;
               return (
-                <button
-                  key={ap.id}
-                  onClick={() => { loadPlan(ap.id); navigateTo("plan"); }}
-                  className="w-full text-left p-4 bg-white rounded-card shadow-sm hover:shadow-md transition-all touch-feedback"
-                >
-                  <div className="flex items-center gap-3 mb-2">
-                    <span className="text-xl">{ap.lifeEventIcon}</span>
-                    <div className="flex-1 min-w-0">
-                      <strong className="block text-sm text-govuk-black">{ap.lifeEventName}</strong>
-                      <span className="text-xs text-govuk-dark-grey">{done} of {total} services &middot; {pct}%</span>
-                    </div>
-                    <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-blue-100 text-blue-700 shrink-0">Continue</span>
-                  </div>
-                  <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
-                    <div className="h-full bg-govuk-green rounded-full transition-all" style={{ width: `${pct}%` }} />
-                  </div>
-                </button>
+                <div key={ap.id} className="rounded-card overflow-hidden shadow-sm">
+                  <SwipeToDelete onDelete={() => {
+                    deletePlan(ap.id);
+                    setActivePlans((prev) => prev.filter((p) => p.id !== ap.id));
+                  }}>
+                    <button
+                      onClick={() => { loadPlan(ap.id); navigateTo("plan"); }}
+                      className="w-full text-left p-4 bg-white hover:shadow-md transition-all touch-feedback"
+                    >
+                      <div className="flex items-center gap-3 mb-2">
+                        <span className="text-xl">{ap.lifeEventIcon}</span>
+                        <div className="flex-1 min-w-0">
+                          <strong className="block text-sm text-govuk-black">{ap.lifeEventName}</strong>
+                          <span className="text-xs text-govuk-dark-grey">{done} of {total} services &middot; {pct}%</span>
+                        </div>
+                        <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-blue-100 text-blue-700 shrink-0">Continue</span>
+                      </div>
+                      <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
+                        <div className="h-full bg-govuk-green rounded-full transition-all" style={{ width: `${pct}%` }} />
+                      </div>
+                    </button>
+                  </SwipeToDelete>
+                </div>
               );
             })}
           </div>
         </div>
       )}
 
-      {/* Life events */}
+      {/* Services carousel */}
       {lifeEvents.length > 0 && (
         <div className="mb-5">
-          <h3 className="text-base font-extrabold text-govuk-black mb-3">Life events</h3>
-          <div className="grid grid-cols-2 gap-2">
-            {lifeEvents.map((le) => (
+          <h3 className="text-base font-extrabold text-govuk-black mb-3">Services</h3>
+          <div className="flex gap-3 overflow-x-auto pb-2 snap-x snap-mandatory scrollbar-hide">
+            {[...lifeEvents].sort((a, b) => {
+              // "Having a Baby" first
+              if (a.name === "Having a Baby") return -1;
+              if (b.name === "Having a Baby") return 1;
+              return 0;
+            }).map((le) => (
               <button
                 key={le.id}
                 onClick={() => setExpandedEvent(expandedEvent === le.id ? null : le.id)}
-                className={`w-full text-left p-3 rounded-card transition-all touch-feedback ${
+                className={`shrink-0 w-64 text-left rounded-2xl snap-start transition-all touch-feedback ${
                   expandedEvent === le.id
-                    ? "bg-blue-50 shadow-md ring-2 ring-govuk-blue"
+                    ? "bg-blue-50 shadow-[0_0_12px_rgba(0,0,0,0.12)]"
                     : "bg-white shadow-sm hover:shadow-md"
                 }`}
               >
-                <div className="flex items-start gap-2">
-                  <span className="text-lg leading-none mt-0.5">{le.icon}</span>
-                  <div className="min-w-0">
-                    <strong className="block text-sm text-govuk-black leading-tight">{le.name}</strong>
-                    <span className="text-xs text-govuk-dark-grey">{le.totalServiceCount} services</span>
-                  </div>
+                <div className="p-5 pb-4">
+                  <strong className="block text-2xl font-bold text-govuk-black leading-snug">{le.name}</strong>
+                  <span className="block text-sm text-govuk-dark-grey mt-1">{le.desc ? le.desc.slice(0, 60) : ""}</span>
+                </div>
+                <div className="border-t border-gray-100 px-5 py-3">
+                  <span className="text-xs font-semibold text-govuk-dark-grey">{le.totalServiceCount} services</span>
                 </div>
               </button>
             ))}
+            {/* End spacer so last card doesn't sit flush with edge */}
+            <div className="shrink-0 w-1" aria-hidden />
           </div>
 
           {/* Expanded life event detail */}

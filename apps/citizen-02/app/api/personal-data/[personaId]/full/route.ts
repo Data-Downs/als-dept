@@ -9,6 +9,15 @@ export async function GET(
   const { personaId } = await params;
 
   try {
+    // In dev mode, always return fresh file data so edits in Legibility Studio are picked up
+    if (process.env.NODE_ENV === "development") {
+      const freshData = getPersonaData(personaId);
+      if (freshData) {
+        return NextResponse.json(freshData);
+      }
+      return NextResponse.json({ error: "Persona not found" }, { status: 404 });
+    }
+
     const submittedStore = await getSubmittedStore();
 
     // Seed from bundled persona data on first access

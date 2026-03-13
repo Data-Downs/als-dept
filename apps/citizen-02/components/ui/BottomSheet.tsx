@@ -14,7 +14,7 @@ export function BottomSheet({ open, onClose, children, title }: BottomSheetProps
   const dragStartY = useRef<number | null>(null);
   const currentTranslateY = useRef(0);
 
-  // Focus trapping
+  // Focus trapping (keyboard only — no auto-focus to avoid scroll jumps)
   useEffect(() => {
     if (!open) return;
 
@@ -46,20 +46,9 @@ export function BottomSheet({ open, onClose, children, title }: BottomSheetProps
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, [open, onClose]);
 
-  // Auto-focus first focusable element
-  useEffect(() => {
-    if (open && sheetRef.current) {
-      const first = sheetRef.current.querySelector<HTMLElement>(
-        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-      );
-      first?.focus();
-    }
-  }, [open]);
-
   // Drag to dismiss
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
     const target = e.target as HTMLElement;
-    // Only allow drag from handle or when scrolled to top
     if (target.closest("[data-sheet-handle]") || (sheetRef.current && sheetRef.current.scrollTop <= 0)) {
       dragStartY.current = e.touches[0].clientY;
     }
@@ -88,7 +77,12 @@ export function BottomSheet({ open, onClose, children, title }: BottomSheetProps
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50" role="presentation">
+    <div
+      className="fixed inset-0 z-50 overflow-hidden"
+      role="presentation"
+      style={{ touchAction: "none" }}
+      onTouchMove={(e) => e.preventDefault()}
+    >
       {/* Backdrop */}
       <div
         className="absolute inset-0 sheet-backdrop animate-fade-in"
@@ -103,9 +97,13 @@ export function BottomSheet({ open, onClose, children, title }: BottomSheetProps
         aria-modal="true"
         aria-label={title || "Bottom sheet"}
         className="absolute bottom-0 left-0 right-0 bg-white rounded-t-2xl max-h-[85%] overflow-y-auto animate-slide-up scroll-momentum"
-        style={{ maxWidth: 600, margin: "0 auto" }}
+        style={{ maxWidth: 600, margin: "0 auto", touchAction: "pan-y" }}
         onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
+        onTouchMove={(e) => {
+          // Allow sheet content scrolling, but prevent propagation to the overlay
+          e.stopPropagation();
+          handleTouchMove(e);
+        }}
         onTouchEnd={handleTouchEnd}
       >
         {/* Handle bar */}
