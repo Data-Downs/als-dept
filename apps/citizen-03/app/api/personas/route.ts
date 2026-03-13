@@ -9,15 +9,11 @@ import path from "path";
  * Fetches personas from Legibility Studio API, falling back to filesystem.
  */
 export async function GET() {
-  const debug: string[] = [];
   try {
     // Try Studio API first
-    debug.push("resolving client...");
     const client = await getServiceClient();
-    debug.push(`client: ${client ? "ok" : "null"}`);
     if (client) {
       const result = await client.getPersonas();
-      debug.push(`result: ${result ? `${result.users?.length ?? 0} users` : "null"}`);
       if (result?.users?.length) {
         const personas = result.users.map((u) => ({
           id: u.id as string,
@@ -29,14 +25,13 @@ export async function GET() {
         return NextResponse.json({ personas, source: "studio" });
       }
     }
-  } catch (err) {
-    debug.push(`error: ${err instanceof Error ? err.message : String(err)}`);
+  } catch {
     // Fall through to filesystem
   }
 
   // Fallback: read user JSON files from filesystem
   const personas = await loadPersonasFromFilesystem();
-  return NextResponse.json({ personas, source: "filesystem", debug });
+  return NextResponse.json({ personas, source: "filesystem" });
 }
 
 async function loadPersonasFromFilesystem() {
