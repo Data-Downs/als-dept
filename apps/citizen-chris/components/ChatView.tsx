@@ -16,6 +16,8 @@ import { RelatedServicesCard } from "./RelatedServicesCard";
 import { getAllTerminalStateIds, TERMINAL_STATE_CONFIG, resolveTerminalConfig } from "@als/schemas";
 import { QuickReplies } from "./QuickReplies";
 import { PipelineTraceBar } from "./PipelineTraceBar";
+import { PlanCardsInChat } from "./PlanCardsInChat";
+import { RegisterBirthCard } from "./RegisterBirthCard";
 
 const TERMINAL_STATES = getAllTerminalStateIds();
 
@@ -192,6 +194,41 @@ export function ChatView() {
             return (
               <div key={idx}>
                 <TaskReceiptCard content={msg.content.slice(RECEIPT_PREFIX.length)} />
+              </div>
+            );
+          }
+
+          // Detect [PLAN_CARDS] marker in assistant messages
+          const hasPlanCards = !isUser && typeof msg.content === "string" && msg.content.includes("[PLAN_CARDS]");
+          // Detect [REGISTER_BIRTH_CARD] marker
+          const hasRegisterCard = !isUser && typeof msg.content === "string" && msg.content.includes("[REGISTER_BIRTH_CARD]");
+
+          if (hasPlanCards) {
+            const [beforeMarker] = (msg.content as string).split("[PLAN_CARDS]");
+            return (
+              <div key={idx} ref={isLastAssistant ? lastAssistantRef : undefined}>
+                <div className="flex justify-start">
+                  <div className="max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed text-govuk-black prose prose-sm prose-neutral max-w-none">
+                    <ReactMarkdown>{beforeMarker.trim()}</ReactMarkdown>
+                  </div>
+                </div>
+                <div>
+                  <PlanCardsInChat />
+                </div>
+              </div>
+            );
+          }
+
+          if (hasRegisterCard) {
+            const [beforeMarker] = (msg.content as string).split("[REGISTER_BIRTH_CARD]");
+            return (
+              <div key={idx} ref={isLastAssistant ? lastAssistantRef : undefined}>
+                <div className="flex justify-start">
+                  <div className="max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed text-govuk-black prose prose-sm prose-neutral max-w-none">
+                    <ReactMarkdown>{beforeMarker.trim()}</ReactMarkdown>
+                  </div>
+                </div>
+                <RegisterBirthCard />
               </div>
             );
           }

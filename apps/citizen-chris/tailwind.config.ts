@@ -38,6 +38,7 @@ const config: Config = {
           "sans-serif",
         ],
         mono: ['"SF Mono"', '"Menlo"', '"Consolas"', "monospace"],
+        plate: ['"Charles Wright"', "Arial", "sans-serif"],
       },
       borderRadius: {
         card: "12px",

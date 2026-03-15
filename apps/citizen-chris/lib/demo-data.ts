@@ -218,22 +218,25 @@ What would you like to do?`,
   {
     patterns: [/plan/i, /having a baby/i, /baby/i, /pregnant/i, /maternity/i],
     response: {
-      response: `I can help you create a plan for everything you need when having a baby. This brings together services from across government into one joined-up view.
+      response: `I can help you with everything you need when having a baby. I'll organise all of the services across government into one simplified experience.
 
-Here's what a **Having a Baby** plan typically covers:
+Here's what we'll cover:
 
-1. **Maternity Allowance** — Financial support during maternity leave
-2. **Sure Start Maternity Grant** — A one-off £500 payment
-3. **Child Benefit** — You're already receiving this for Casper, but you'll need to claim for a new baby
-4. **Free prescriptions** — Automatic during pregnancy and for 12 months after
-5. **Healthy Start vouchers** — Help with milk, fruit and vitamins
-6. **Register the birth** — Must be done within 42 days
-7. **GP registration** — Register the baby with your GP
-
-Would you like me to start this plan? I'll show you what applies to your situation and what you can skip.`,
+[PLAN_CARDS]`,
       reasoning: "Anna doesn't currently have a pregnancy recorded in her data, but she's asking about having a baby. I'll present the plan options and let her start it. Some services like Sure Start Grant likely won't apply due to her income, but I'll let the plan view's auto-skip logic handle that.",
       tasks: [],
       conversationTitle: "Having a Baby plan",
+    },
+  },
+  {
+    patterns: [/remind.*register/i, /register.*birth/i, /register the birth/i],
+    response: {
+      response: `Of course — I've added a reminder for you.
+
+[REGISTER_BIRTH_CARD]`,
+      reasoning: "The user wants to be reminded to register the birth. Showing a single task card with an 'Add to calendar' action.",
+      tasks: [],
+      conversationTitle: "Register the birth reminder",
     },
   },
   {

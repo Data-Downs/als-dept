@@ -27,8 +27,10 @@ function formatDueLabel(days: number): string {
   if (days === 0) return "Today";
   if (days === 1) return "Tomorrow";
   if (days < 7) return `${days} days`;
-  if (days < 30) return `${Math.floor(days / 7)} weeks`;
-  return `${Math.floor(days / 30)} months`;
+  const w = Math.floor(days / 7);
+  if (days < 30) return `${w} week${w !== 1 ? "s" : ""}`;
+  const m = Math.floor(days / 30);
+  return `${m} month${m !== 1 ? "s" : ""}`;
 }
 
 function getUrgency(days: number): "urgent" | "warning" | "ok" {
@@ -301,7 +303,7 @@ export function TasksView() {
               {group.label}
             </span>
             <span className="text-[11px] text-govuk-dark-grey">
-              {group.tasks.length} things
+              {group.tasks.length} task{group.tasks.length !== 1 ? "s" : ""}
               {dueParts.length > 0 ? ` · ${dueParts.join(", ")}` : ""}
             </span>
           </div>
