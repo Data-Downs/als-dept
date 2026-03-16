@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { useAppStore } from "@/lib/store";
-import { PERSONA_LIST } from "@/lib/service-data";
 
 interface PersonaItem {
   id: string;
@@ -15,7 +14,7 @@ interface PersonaItem {
 export function PersonaPicker() {
   const setPersona = useAppStore((s) => s.setPersona);
   const openBottomSheet = useAppStore((s) => s.openBottomSheet);
-  const [personas, setPersonas] = useState<PersonaItem[]>(PERSONA_LIST);
+  const [personas, setPersonas] = useState<PersonaItem[]>([]);
 
   useEffect(() => {
     fetch("/api/personas")

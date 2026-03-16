@@ -32,10 +32,10 @@ export function DetailView() {
     : [];
 
   const handleAskAbout = (topic: string) => {
-    startNewConversation("benefits", topic);
-    navigateTo("chat", "benefits", topic);
+    startNewConversation("benefits", `Check eligibility for ${topic}`);
+    navigateTo("chat", "benefits", `Check eligibility for ${topic}`);
     setTimeout(() => {
-      useAppStore.getState().sendMessage(`Tell me about ${topic}`);
+      useAppStore.getState().sendMessage(`Check my eligibility for ${topic}`);
     }, 100);
   };
 
@@ -65,7 +65,7 @@ export function DetailView() {
       {/* Eligible support promo cards — benefits only */}
       {eligibleSupport.length > 0 && (
         <div className="mb-5">
-          <h3 className="text-xs font-bold text-govuk-dark-grey uppercase tracking-wide mb-3">
+          <h3 className="text-sm font-bold blue-ripple-text mb-3">
             You may be eligible for
           </h3>
           <div className="flex flex-col gap-2">
@@ -75,33 +75,24 @@ export function DetailView() {
                 onClick={() => handleAskAbout(item.name)}
                 className="w-full text-left bg-white rounded-card shadow-sm p-4 hover:shadow-md transition-all touch-feedback"
               >
-                <div className="flex items-start gap-3">
-                  <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center shrink-0 mt-0.5">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1d70b8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-                    </svg>
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-1">
-                      <strong className="text-sm font-bold text-govuk-black">{item.name}</strong>
-                      <span className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded-full shrink-0 ${
-                        item.status === "eligible"
-                          ? "bg-blue-100 text-blue-700"
-                          : "bg-amber-100 text-amber-700"
-                      }`}>
-                        {item.status === "eligible" ? "Eligible" : "Check"}
-                      </span>
-                    </div>
-                    <p className="text-sm text-govuk-dark-grey mb-1">{item.description}</p>
-                    <div className="flex items-baseline gap-1.5">
-                      <span className="text-base font-bold text-govuk-blue">{item.amount}</span>
-                      <span className="text-xs text-govuk-dark-grey">{item.frequency}</span>
-                    </div>
-                    <span className="text-xs text-govuk-blue font-medium mt-2 inline-block">
-                      Find out more →
-                    </span>
-                  </div>
+                <div className="flex items-center gap-2 mb-1">
+                  <strong className="text-sm font-bold text-govuk-black">{item.name}</strong>
+                  <span className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded-full shrink-0 ${
+                    item.status === "eligible"
+                      ? "bg-blue-100 text-blue-700"
+                      : "bg-amber-100 text-amber-700"
+                  }`}>
+                    {item.status === "eligible" ? "Eligible" : "Check"}
+                  </span>
                 </div>
+                <p className="text-sm text-govuk-dark-grey mb-1">{item.description}</p>
+                <div className="flex items-baseline gap-1.5">
+                  <span className="text-base font-bold text-govuk-blue">{item.amount}</span>
+                  <span className="text-xs text-govuk-dark-grey">{item.frequency}</span>
+                </div>
+                <span className="text-xs text-govuk-blue font-medium mt-2 inline-block">
+                  Find out more →
+                </span>
               </button>
             ))}
           </div>

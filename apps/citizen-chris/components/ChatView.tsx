@@ -104,9 +104,11 @@ export function ChatView() {
   };
 
   useEffect(() => {
-    if (!isLoading && (showTasks || showCards || showConsent)) {
+    if (isLoading) {
+      // While loading, scroll to show the user message + typing indicator
       scrollToEnd();
-    } else if (!isLoading) {
+    } else if (conversationHistory.length > 0) {
+      // When response arrives, scroll to the top of the assistant's response
       scrollToLastAssistant();
     }
   }, [conversationHistory, isLoading, activeHandoff, ucState, showTasks, showCards, showConsent]);
@@ -198,10 +200,10 @@ export function ChatView() {
             );
           }
 
-          // Detect [PLAN_CARDS] marker in assistant messages
+          // Detect special markers in assistant messages
           const hasPlanCards = !isUser && typeof msg.content === "string" && msg.content.includes("[PLAN_CARDS]");
-          // Detect [REGISTER_BIRTH_CARD] marker
           const hasRegisterCard = !isUser && typeof msg.content === "string" && msg.content.includes("[REGISTER_BIRTH_CARD]");
+          const hasApplicationReceipt = !isUser && typeof msg.content === "string" && msg.content.includes("[APPLICATION_RECEIPT]");
 
           if (hasPlanCards) {
             const [beforeMarker] = (msg.content as string).split("[PLAN_CARDS]");
@@ -229,6 +231,20 @@ export function ChatView() {
                   </div>
                 </div>
                 <RegisterBirthCard />
+              </div>
+            );
+          }
+
+          if (hasApplicationReceipt) {
+            const [beforeMarker] = (msg.content as string).split("[APPLICATION_RECEIPT]");
+            return (
+              <div key={idx} ref={isLastAssistant ? lastAssistantRef : undefined}>
+                <div className="flex justify-start">
+                  <div className="max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed text-govuk-black prose prose-sm prose-neutral max-w-none">
+                    <ReactMarkdown>{beforeMarker.trim()}</ReactMarkdown>
+                  </div>
+                </div>
+                <TaskReceiptCard content="Application submitted — awaiting confirmation&#10;&#10;Your Tax-Free Childcare application has been submitted to HMRC. You'll receive confirmation within 5 working days. The agent is monitoring this for you." />
               </div>
             );
           }
@@ -266,7 +282,7 @@ export function ChatView() {
 
         {/* Dynamic form cards — rendered when chat API returns cardRequests */}
         {showCards && (
-          <div className="max-w-[85%] mt-1">
+          <div className="mt-1">
             <CardHost
               cardRequests={pendingCards}
               onAllSubmitted={(msg) => useAppStore.getState().submitCardsSummary(msg)}
@@ -310,7 +326,7 @@ export function ChatView() {
 
         {/* Consent panel — single grouped card for all grants */}
         {showConsent && (
-          <div className="max-w-[85%] mt-1">
+          <div className="mt-1">
             <ConsentPanel
               grants={pendingConsent}
               decisions={consentDecisions}
@@ -340,7 +356,7 @@ export function ChatView() {
 
         {/* Handoff notice */}
         {activeHandoff && activeHandoff.triggered && (
-          <div className="max-w-[85%]">
+          <div className="mt-1">
             <HandoffNotice
               urgency={(activeHandoff.urgency as "routine" | "priority" | "urgent" | "safeguarding") || "routine"}
               reason={activeHandoff.description || "The agent has determined you should speak to a person."}
@@ -354,7 +370,7 @@ export function ChatView() {
 
         {/* Journey complete card — shown when state is terminal */}
         {!isLoading && ucState && TERMINAL_STATES.has(ucState) && (
-          <div className="max-w-[85%] mt-1">
+          <div className="mt-1">
             <JourneyCompleteCard
               state={ucState}
               serviceName={serviceName ?? undefined}

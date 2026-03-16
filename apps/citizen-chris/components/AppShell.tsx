@@ -77,7 +77,14 @@ function BottomTabBar() {
         <TabButton
           label={agent === "max" ? "Max" : "Dot"}
           active={currentView === "chat"}
-          onClick={() => navigateTo("chat")}
+          onClick={() => {
+            // Start a fresh conversation so the demo auto-type triggers
+            const state = useAppStore.getState();
+            if (state.conversationHistory.length > 0) {
+              state.startNewConversation(null, null);
+            }
+            navigateTo("chat");
+          }}
           icon={
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
               <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />

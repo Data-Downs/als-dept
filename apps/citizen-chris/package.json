@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev --port 3104 -H 0.0.0.0",
+    "dev:clean": "rm -rf .next && next dev --port 3104 -H 0.0.0.0",
     "build": "next build",
     "build:cf": "npx @opennextjs/cloudflare build",
     "deploy": "npm run build:cf && wrangler deploy",

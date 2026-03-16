@@ -221,7 +221,7 @@ export interface ActivePlan {
   services: LifeEventService[];
 }
 
-export { PERSONA_NAMES, PERSONA_COLORS, PERSONA_INITIALS } from "./service-data";
+export { PERSONA_NAMES, PERSONA_COLORS, PERSONA_INITIALS } from "./persona-meta";
 
 export interface PlanGroup {
   depth: number;

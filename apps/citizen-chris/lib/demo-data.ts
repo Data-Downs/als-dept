@@ -250,18 +250,9 @@ Here's what we'll cover:
 
 I'll keep you updated on progress. You can check the status anytime from your to-do list.
 
-Is there anything else you'd like help with?`,
+[APPLICATION_RECEIPT]`,
       reasoning: "The user has confirmed they want to proceed. In a real scenario, this would trigger the actual service application. For the demo, I'm showing what the delegated agent experience looks like.",
-      tasks: [
-        {
-          id: `demo-application-${Date.now()}`,
-          description: "Application submitted — awaiting confirmation",
-          detail: "Your application has been submitted. You'll receive confirmation within 5 working days. The agent is monitoring this for you.",
-          type: "agent",
-          dueDate: null,
-          dataNeeded: [],
-        },
-      ],
+      tasks: [],
       conversationTitle: null,
     },
   },

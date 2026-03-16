@@ -83,12 +83,18 @@ export function MessageInput() {
     }
   }, [currentView, conversationHistory.length, isLoading, sendMessage]);
 
-  // Reset the trigger when navigating away from chat
+  // Reset the trigger when navigating away from chat or when conversation is cleared
   useEffect(() => {
     if (currentView !== "chat") {
       autoTypeTriggered.current = false;
     }
   }, [currentView]);
+
+  useEffect(() => {
+    if (conversationHistory.length === 0) {
+      autoTypeTriggered.current = false;
+    }
+  }, [conversationHistory.length]);
 
   // ── Voice recording flow ──
   const handleMicTap = useCallback(() => {

@@ -69,6 +69,15 @@ function getServiceDetail(service: string, data: import("@/lib/types").PersonaDa
       const emp = data.employment as Record<string, unknown> | undefined;
       const status = emp?.status ?? emp?.employment_status ?? (raw.employment_status as string);
       if (status === "self-employed" || status === "Self-Employed") return "Self-employed";
+      // Try to get job title from employment entries
+      if (emp) {
+        const entries = Object.values(emp).filter(
+          (v) => v && typeof v === "object" && "jobTitle" in (v as Record<string, unknown>),
+        ) as Array<Record<string, unknown>>;
+        if (entries.length > 0) {
+          return String(entries[0].jobTitle ?? "Employment rights, pay");
+        }
+      }
       return "Employment rights, pay";
     }
     case "parenting": {
@@ -77,6 +86,10 @@ function getServiceDetail(service: string, data: import("@/lib/types").PersonaDa
       }
       if (data.children && data.children.length > 0) {
         return data.children.map((c) => c.firstName).join(" & ");
+      }
+      const familyChildren = (data.family as Record<string, unknown> | undefined)?.children as Array<Record<string, unknown>> | undefined;
+      if (familyChildren && familyChildren.length > 0) {
+        return familyChildren.map((c) => c.firstName as string).join(" & ");
       }
       return "Childcare, child benefit";
     }
@@ -139,6 +152,7 @@ function isServiceRelevant(service: string, data: import("@/lib/types").PersonaD
       return !!(
         data.pregnancy ||
         (data.children && data.children.length > 0) ||
+        ((data.family as Record<string, unknown> | undefined)?.children) ||
         data.partner
       );
     case "travel":
@@ -189,11 +203,12 @@ export const SERVICE_LIFE_EVENTS: Record<string, string[]> = {
   travel: ["Arriving in the UK"],
 };
 
-// Demo: trimmed to the three topics relevant to Anna's story
+// Demo: trimmed to the topics relevant to Anna's story
 const QUICK_ACCESS: Array<{ key: ServiceType; label: string }> = [
   { key: "benefits", label: "Benefits" },
   { key: "driving", label: "Driving & Transport" },
   { key: "parenting", label: "Parenting & Guardianship" },
+  { key: "employment", label: "Employment" },
 ];
 
 // Full set for the Browse topics overlay

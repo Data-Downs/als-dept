@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { useAppStore } from "@/lib/store";
-import { PERSONA_LIST } from "@/lib/service-data";
 import { BottomSheet } from "./ui/BottomSheet";
 
 interface PersonaItem {
@@ -21,7 +20,7 @@ export function PersonaSelectorOverlay() {
   const setAgent = useAppStore((s) => s.setAgent);
   const setServiceMode = useAppStore((s) => s.setServiceMode);
   const setOpen = useAppStore((s) => s.setPersonaSelectorOpen);
-  const [personas, setPersonas] = useState<PersonaItem[]>(PERSONA_LIST);
+  const [personas, setPersonas] = useState<PersonaItem[]>([]);
 
   useEffect(() => {
     fetch("/api/personas")
