@@ -1,0 +1,1207 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GOV.UK Services MCP Server &mdash; Developer Guide</title>
+    <meta
+      name="description"
+      content="Developer guide for the ALS GOV.UK Services MCP Server. 110 UK government services exposed as structured tools, resources, and prompts via StreamableHTTP."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /* ── Reset & Base ── */
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        font-family: "Inter", Arial, sans-serif;
+        color: #0b0c0c;
+        line-height: 1.6;
+        background: #fff;
+        -webkit-font-smoothing: antialiased;
+      }
+      a {
+        color: #1d70b8;
+        text-decoration: none;
+      }
+      a:hover {
+        text-decoration: underline;
+        color: #003078;
+      }
+      code,
+      pre {
+        font-family: "JetBrains Mono", monospace;
+      }
+      img {
+        max-width: 100%;
+      }
+
+      /* ── Layout ── */
+      .container {
+        max-width: 960px;
+        margin: 0 auto;
+        padding: 0 1.5rem;
+      }
+      .section {
+        padding: 4rem 0;
+      }
+      .section-alt {
+        background: #f3f2f1;
+      }
+      .section-dark {
+        background: #0b0c0c;
+        color: #fff;
+      }
+      .section-dark a {
+        color: #b1b4b6;
+      }
+      .section-dark a:hover {
+        color: #fff;
+      }
+
+      h1,
+      h2,
+      h3 {
+        line-height: 1.2;
+      }
+      h2 {
+        font-size: 1.75rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+      }
+      h3 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+      }
+      .section-intro {
+        font-size: 1.1rem;
+        color: #505a5f;
+        max-width: 700px;
+        margin-bottom: 2rem;
+      }
+
+      /* ── Nav ── */
+      .nav {
+        background: #fff;
+        border-bottom: 1px solid #b1b4b6;
+        padding: 0.75rem 0;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+      .nav .container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+      }
+      .nav-brand {
+        font-weight: 700;
+        font-size: 1rem;
+        color: #0b0c0c;
+        white-space: nowrap;
+        text-decoration: none;
+      }
+      .nav-brand:hover {
+        text-decoration: none;
+        color: #0b0c0c;
+      }
+      .nav-links {
+        display: flex;
+        gap: 1.25rem;
+        list-style: none;
+        flex-wrap: wrap;
+        align-items: center;
+      }
+      .nav-links a {
+        font-size: 0.85rem;
+        font-weight: 500;
+        color: #505a5f;
+      }
+      .nav-links a:hover {
+        color: #1d70b8;
+        text-decoration: none;
+      }
+
+      @media (max-width: 640px) {
+        .nav-links {
+          display: none;
+        }
+      }
+
+      /* ── Hero ── */
+      .hero {
+        padding: 5rem 0 4rem;
+      }
+      .hero-label {
+        display: inline-block;
+        background: #f3f2f1;
+        color: #505a5f;
+        font-size: 0.8rem;
+        font-weight: 600;
+        padding: 0.25rem 0.75rem;
+        border-radius: 2px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 1.25rem;
+      }
+      .hero h1 {
+        font-size: 2.75rem;
+        font-weight: 700;
+        margin-bottom: 0.75rem;
+      }
+      .hero-subtitle {
+        font-size: 1.35rem;
+        color: #505a5f;
+        font-weight: 400;
+        max-width: 640px;
+        margin-bottom: 1.5rem;
+      }
+      .hero-desc {
+        font-size: 1.05rem;
+        color: #505a5f;
+        max-width: 640px;
+        margin-bottom: 2rem;
+      }
+      .hero-actions {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+        margin-bottom: 1rem;
+      }
+      .btn {
+        display: inline-block;
+        padding: 0.65rem 1.5rem;
+        font-size: 0.95rem;
+        font-weight: 600;
+        border-radius: 2px;
+        text-decoration: none;
+        transition: background 0.15s;
+      }
+      .btn-primary {
+        background: #1d70b8;
+        color: #fff;
+      }
+      .btn-primary:hover {
+        background: #003078;
+        color: #fff;
+        text-decoration: none;
+      }
+      .btn-secondary {
+        background: #f3f2f1;
+        color: #0b0c0c;
+        border: 1px solid #b1b4b6;
+      }
+      .btn-secondary:hover {
+        background: #e0dfde;
+        text-decoration: none;
+      }
+      .tech-badges {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+      }
+      .badge {
+        display: inline-block;
+        background: #f3f2f1;
+        color: #505a5f;
+        font-size: 0.75rem;
+        font-weight: 500;
+        padding: 0.2rem 0.6rem;
+        border-radius: 2px;
+        border: 1px solid #e0dfde;
+      }
+
+      @media (max-width: 640px) {
+        .hero h1 {
+          font-size: 2rem;
+        }
+        .hero-subtitle {
+          font-size: 1.15rem;
+        }
+      }
+
+      /* ── Cards ── */
+      .grid-2 {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
+      }
+      .grid-3 {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.5rem;
+      }
+
+      @media (max-width: 800px) {
+        .grid-3 {
+          grid-template-columns: 1fr;
+        }
+      }
+      @media (max-width: 640px) {
+        .grid-2 {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .card {
+        background: #fff;
+        border: 1px solid #b1b4b6;
+        border-radius: 2px;
+        padding: 1.5rem;
+      }
+      .card-accent {
+        border-left: 4px solid;
+      }
+      .card-blue {
+        border-left-color: #1d70b8;
+      }
+      .card-green {
+        border-left-color: #00703c;
+      }
+      .card-orange {
+        border-left-color: #f47738;
+      }
+      .card-purple {
+        border-left-color: #912b88;
+      }
+      .card-teal {
+        border-left-color: #0b7285;
+      }
+      .card h3 {
+        margin-bottom: 0.5rem;
+      }
+      .card p {
+        color: #505a5f;
+        font-size: 0.95rem;
+      }
+      .card-tag {
+        display: inline-block;
+        font-size: 0.7rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: #505a5f;
+        margin-bottom: 0.75rem;
+      }
+
+      /* ── Code blocks ── */
+      .code-block {
+        background: #f8f8f8;
+        border: 1px solid #e0dfde;
+        border-radius: 2px;
+        padding: 1rem;
+        font-size: 0.8rem;
+        line-height: 1.5;
+        overflow-x: auto;
+        margin-top: 0.75rem;
+      }
+      .code-block pre {
+        margin: 0;
+        white-space: pre;
+      }
+      .code-block code {
+        color: #0b0c0c;
+      }
+      .code-block + .code-block {
+        margin-top: 1rem;
+      }
+      .kw {
+        color: #1d70b8;
+      }
+      .str {
+        color: #00703c;
+      }
+      .num {
+        color: #912b88;
+      }
+      .cmt {
+        color: #505a5f;
+        font-style: italic;
+      }
+
+      .code-label {
+        display: inline-block;
+        background: #e0dfde;
+        color: #505a5f;
+        font-size: 0.7rem;
+        font-weight: 600;
+        padding: 0.15rem 0.5rem;
+        border-radius: 2px 2px 0 0;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        margin-bottom: -1px;
+        position: relative;
+        top: 1px;
+      }
+
+      /* ── Callout ── */
+      .callout {
+        background: #f3f2f1;
+        border-left: 4px solid #b1b4b6;
+        padding: 1rem 1.25rem;
+        margin-top: 1.5rem;
+        font-size: 0.95rem;
+        color: #505a5f;
+      }
+      .callout-green {
+        border-left-color: #00703c;
+      }
+      .callout-blue {
+        border-left-color: #1d70b8;
+      }
+      .callout-orange {
+        border-left-color: #f47738;
+      }
+
+      /* ── Table ── */
+      .data-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.9rem;
+      }
+      .data-table th,
+      .data-table td {
+        text-align: left;
+        padding: 0.65rem 1rem;
+        border-bottom: 1px solid #e0dfde;
+      }
+      .data-table th {
+        font-weight: 600;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: #505a5f;
+        background: #f8f8f8;
+      }
+      .data-table code {
+        font-size: 0.85rem;
+        background: #f3f2f1;
+        padding: 0.1rem 0.35rem;
+        border-radius: 2px;
+      }
+
+      @media (max-width: 640px) {
+        .data-table {
+          font-size: 0.8rem;
+        }
+        .data-table th,
+        .data-table td {
+          padding: 0.5rem;
+        }
+      }
+
+      /* ── Stats Banner ── */
+      .stat-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 2rem;
+        text-align: center;
+        padding: 1rem 0;
+      }
+      .stat-grid .stat-number {
+        font-size: 3rem;
+        font-weight: 700;
+        color: #fff;
+        line-height: 1;
+        margin-bottom: 0.25rem;
+      }
+      .stat-grid .stat-label {
+        font-size: 0.85rem;
+        color: #b1b4b6;
+        font-weight: 500;
+      }
+      @media (max-width: 640px) {
+        .stat-grid {
+          grid-template-columns: repeat(2, 1fr);
+          gap: 1.5rem;
+        }
+        .stat-grid .stat-number {
+          font-size: 2.25rem;
+        }
+      }
+
+      /* ── Inline code ── */
+      p code,
+      li code,
+      td code,
+      strong code {
+        background: #f3f2f1;
+        padding: 0.1rem 0.35rem;
+        border-radius: 2px;
+        font-size: 0.85em;
+      }
+
+      /* ── Lists ── */
+      .content-list {
+        list-style: none;
+        padding: 0;
+      }
+      .content-list li {
+        padding: 0.35rem 0;
+        padding-left: 1.25rem;
+        position: relative;
+        font-size: 0.95rem;
+        color: #505a5f;
+      }
+      .content-list li::before {
+        content: "\2022";
+        position: absolute;
+        left: 0;
+        color: #1d70b8;
+        font-weight: 700;
+      }
+
+      /* ── Endpoint Box ── */
+      .endpoint-box {
+        background: #f0f6fc;
+        border: 2px solid #1d70b8;
+        border-radius: 2px;
+        padding: 1rem 1.5rem;
+        margin: 1.5rem 0;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        flex-wrap: wrap;
+      }
+      .endpoint-box .ep-label {
+        font-size: 0.7rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        background: #1d70b8;
+        color: #fff;
+        padding: 0.2rem 0.5rem;
+        border-radius: 2px;
+      }
+      .endpoint-box code {
+        font-size: 0.9rem;
+        font-weight: 500;
+        color: #0b0c0c;
+      }
+
+      /* ── Footer ── */
+      .footer {
+        background: #0b0c0c;
+        color: #b1b4b6;
+        padding: 2.5rem 0;
+        font-size: 0.85rem;
+      }
+      .footer-grid {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 2rem;
+        flex-wrap: wrap;
+      }
+      .footer strong {
+        color: #fff;
+        font-size: 1rem;
+      }
+      .footer p {
+        margin-top: 0.35rem;
+      }
+      .footer a {
+        color: #b1b4b6;
+      }
+      .footer a:hover {
+        color: #fff;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- ── Nav ── -->
+    <nav class="nav">
+      <div class="container">
+        <a class="nav-brand" href="index.html">Agentic Legibility Stack</a>
+        <ul class="nav-links">
+          <li><a href="index.html">Platform</a></li>
+          <li><a href="mcp-guide.html" style="color: #1d70b8">MCP Guide</a></li>
+          <li><a href="agentic-legibility-stack-brief.html">Build Brief</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- ── Hero ── -->
+    <section class="hero">
+      <div class="container">
+        <div class="hero-label">Developer Guide</div>
+        <h1>GOV.UK Services MCP Server</h1>
+        <p class="hero-subtitle">
+          A public MCP server exposing 110 UK government services as structured
+          tools, resources, and prompts. No API key required.
+        </p>
+        <div class="endpoint-box">
+          <span class="ep-label">Endpoint</span>
+          <code>https://als-studio.chris-8ab.workers.dev/api/mcp</code>
+        </div>
+        <p class="hero-desc" style="margin-bottom: 1rem">
+          <strong>Transport:</strong> StreamableHTTP (MCP protocol over HTTPS)
+        </p>
+        <div class="tech-badges">
+          <span class="badge">StreamableHTTP</span>
+          <span class="badge">110 Services</span>
+          <span class="badge">220 Tools</span>
+          <span class="badge">440 Resources</span>
+          <span class="badge">220 Prompts</span>
+          <span class="badge">Cloudflare Workers</span>
+          <span class="badge">Open CORS</span>
+          <span class="badge">No Auth</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Stats ── -->
+    <section class="section-dark section" style="padding: 3rem 0">
+      <div class="container">
+        <div class="stat-grid">
+          <div>
+            <div class="stat-number">110</div>
+            <div class="stat-label">Government Services</div>
+          </div>
+          <div>
+            <div class="stat-number">220</div>
+            <div class="stat-label">Tools</div>
+          </div>
+          <div>
+            <div class="stat-number">440</div>
+            <div class="stat-label">Resources</div>
+          </div>
+          <div>
+            <div class="stat-number">220</div>
+            <div class="stat-label">Prompts</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Quick Start ── -->
+    <section class="section section-alt" id="quick-start">
+      <div class="container">
+        <h2>Quick Start</h2>
+        <p class="section-intro">
+          Connect to the MCP server from Claude Desktop, Claude Code, any MCP
+          SDK client, or raw HTTP.
+        </p>
+
+        <h3>Claude Desktop</h3>
+        <p style="color: #505a5f; font-size: 0.95rem; margin-bottom: 0.5rem">
+          Add this to your Claude Desktop MCP config (<code
+            >~/Library/Application
+            Support/Claude/claude_desktop_config.json</code
+          >
+          on macOS):
+        </p>
+        <div class="code-block">
+          <pre><code>{
+  <span class="str">"mcpServers"</span>: {
+    <span class="str">"als-govuk"</span>: {
+      <span class="str">"type"</span>: <span class="str">"streamable-http"</span>,
+      <span class="str">"url"</span>: <span class="str">"https://als-studio.chris-8ab.workers.dev/api/mcp"</span>
+    }
+  }
+}</code></pre>
+        </div>
+        <p style="color: #505a5f; font-size: 0.95rem; margin-top: 1rem">
+          Restart Claude Desktop. You'll have access to 110 UK government
+          services.
+        </p>
+
+        <h3 style="margin-top: 2rem">Claude Code</h3>
+        <p style="color: #505a5f; font-size: 0.95rem; margin-bottom: 0.5rem">
+          Add to your project's <code>.mcp.json</code>:
+        </p>
+        <div class="code-block">
+          <pre><code>{
+  <span class="str">"mcpServers"</span>: {
+    <span class="str">"als-govuk"</span>: {
+      <span class="str">"type"</span>: <span class="str">"streamable-http"</span>,
+      <span class="str">"url"</span>: <span class="str">"https://als-studio.chris-8ab.workers.dev/api/mcp"</span>
+    }
+  }
+}</code></pre>
+        </div>
+
+        <h3 style="margin-top: 2rem">Any MCP Client (TypeScript SDK)</h3>
+        <div class="code-block">
+          <pre><code><span class="kw">import</span> { Client } <span class="kw">from</span> <span class="str">"@modelcontextprotocol/sdk/client/index.js"</span>;
+<span class="kw">import</span> { StreamableHTTPClientTransport } <span class="kw">from</span> <span class="str">"@modelcontextprotocol/sdk/client/streamableHttp.js"</span>;
+
+<span class="kw">const</span> client = <span class="kw">new</span> Client({ name: <span class="str">"my-app"</span>, version: <span class="str">"1.0"</span> });
+<span class="kw">const</span> transport = <span class="kw">new</span> StreamableHTTPClientTransport(
+  <span class="kw">new</span> URL(<span class="str">"https://als-studio.chris-8ab.workers.dev/api/mcp"</span>)
+);
+<span class="kw">await</span> client.connect(transport);
+
+<span class="cmt">// List all tools</span>
+<span class="kw">const</span> { tools } = <span class="kw">await</span> client.listTools();
+console.log(<span class="str">`${tools.length} tools available`</span>);
+
+<span class="cmt">// Call a tool</span>
+<span class="kw">const</span> result = <span class="kw">await</span> client.callTool(<span class="str">"dwp_universal_credit_check_eligibility"</span>, {
+  citizen_data: { age: <span class="num">28</span>, employment_status: <span class="str">"unemployed"</span>, savings: <span class="num">2400</span> }
+});
+console.log(result);</code></pre>
+        </div>
+
+        <h3 style="margin-top: 2rem">Raw HTTP (curl)</h3>
+        <div class="code-block">
+          <pre><code><span class="cmt"># Initialize</span>
+curl -X POST https://als-studio.chris-8ab.workers.dev/api/mcp \
+  -H <span class="str">"Content-Type: application/json"</span> \
+  -H <span class="str">"Accept: application/json, text/event-stream"</span> \
+  -d <span class="str">'{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2024-11-05","capabilities":{},"clientInfo":{"name":"test","version":"1.0"}}}'</span></code></pre>
+        </div>
+
+        <div class="code-block">
+          <pre><code><span class="cmt"># List tools</span>
+curl -X POST https://als-studio.chris-8ab.workers.dev/api/mcp \
+  -H <span class="str">"Content-Type: application/json"</span> \
+  -H <span class="str">"Accept: application/json, text/event-stream"</span> \
+  -d <span class="str">'{"jsonrpc":"2.0","id":2,"method":"tools/list","params":{}}'</span></code></pre>
+        </div>
+
+        <div class="code-block">
+          <pre><code><span class="cmt"># Call a tool</span>
+curl -X POST https://als-studio.chris-8ab.workers.dev/api/mcp \
+  -H <span class="str">"Content-Type: application/json"</span> \
+  -H <span class="str">"Accept: application/json, text/event-stream"</span> \
+  -d <span class="str">'{"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"dwp_universal_credit_check_eligibility","arguments":{"citizen_data":{"age":28,"employment_status":"unemployed","savings":2400}}}}'</span></code></pre>
+        </div>
+
+        <div class="callout callout-blue">
+          <strong>Response format:</strong> Responses are in SSE format:
+          <code>event: message\ndata: {JSON}\n\n</code>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── What's Available ── -->
+    <section class="section" id="whats-available">
+      <div class="container">
+        <h2>What's Available</h2>
+        <p class="section-intro">
+          Each of the 110 services exposes 2 tools, 4 resources, and 2 prompts
+          &mdash; 880 MCP primitives in total.
+        </p>
+
+        <h3>220 Tools (2 per service)</h3>
+        <div class="grid-2" style="margin-top: 1rem; margin-bottom: 2rem">
+          <div class="card card-accent card-blue">
+            <div class="card-tag">Read-only</div>
+            <h3><code>{service}_check_eligibility</code></h3>
+            <p>Evaluate policy rules against citizen data.</p>
+            <ul class="content-list" style="margin-top: 0.5rem">
+              <li>
+                <strong>Input:</strong> <code>citizen_data</code> (object with
+                fields like age, employment_status, savings, jurisdiction, etc.)
+              </li>
+              <li>
+                <strong>Output:</strong> rules passed, rules failed, edge cases,
+                explanation
+              </li>
+              <li>Idempotent &mdash; safe to call repeatedly</li>
+            </ul>
+          </div>
+          <div class="card card-accent card-green">
+            <div class="card-tag">Mutating</div>
+            <h3><code>{service}_advance_state</code></h3>
+            <p>Move through the service state machine.</p>
+            <ul class="content-list" style="margin-top: 0.5rem">
+              <li>
+                <strong>Input:</strong> <code>current_state</code> (string),
+                <code>trigger</code> (string)
+              </li>
+              <li>
+                <strong>Output:</strong> new state, whether it's terminal,
+                whether it requires a receipt, allowed next transitions
+              </li>
+              <li>Not idempotent</li>
+            </ul>
+          </div>
+        </div>
+
+        <p style="color: #505a5f; font-size: 0.95rem; margin-bottom: 0.5rem">
+          <strong>Example tool names:</strong>
+        </p>
+        <div class="code-block">
+          <pre><code>dwp_universal_credit_check_eligibility
+dwp_universal_credit_advance_state
+dvla_renew_driving_licence_check_eligibility
+dvla_renew_driving_licence_advance_state
+hmrc_child_benefit_check_eligibility
+gro_register_birth_advance_state</code></pre>
+        </div>
+
+        <h3 style="margin-top: 2.5rem">440 Resources (4 per service)</h3>
+        <p style="color: #505a5f; font-size: 0.95rem; margin-bottom: 1rem">
+          Each service has 4 JSON resources accessible via
+          <code>service://</code> URIs:
+        </p>
+
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Resource</th>
+              <th>URI Pattern</th>
+              <th>What It Contains</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Manifest</strong></td>
+              <td><code>service://{id}/manifest</code></td>
+              <td>
+                Service identity, inputs/outputs, fees, SLAs, redress pathways
+              </td>
+            </tr>
+            <tr>
+              <td><strong>Policy</strong></td>
+              <td><code>service://{id}/policy</code></td>
+              <td>
+                Eligibility rules with conditions, failure messages,
+                alternatives
+              </td>
+            </tr>
+            <tr>
+              <td><strong>State Model</strong></td>
+              <td><code>service://{id}/state-model</code></td>
+              <td>
+                Valid states and transitions, terminal states, receipt triggers
+              </td>
+            </tr>
+            <tr>
+              <td><strong>Consent</strong></td>
+              <td><code>service://{id}/consent</code></td>
+              <td>
+                Data sharing requirements, purposes, revocation mechanisms
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <p style="color: #505a5f; font-size: 0.95rem; margin-top: 1rem">
+          <strong>Example URIs:</strong>
+        </p>
+        <div class="code-block">
+          <pre><code>service://dwp-universal-credit/manifest
+service://dwp-universal-credit/policy
+service://dvla-renew-driving-licence/state-model
+service://gro-register-birth/consent</code></pre>
+        </div>
+
+        <h3 style="margin-top: 2.5rem">220 Prompts (2 per service)</h3>
+        <div class="grid-2" style="margin-top: 1rem">
+          <div class="card card-accent card-purple">
+            <div class="card-tag">Journey</div>
+            <h3><code>{service}_journey</code></h3>
+            <p>
+              A step-by-step guide for helping a citizen through the service.
+              Includes state flow, rules, constraints, and consent requirements.
+              Accepts an optional <code>citizen_context</code> argument.
+            </p>
+          </div>
+          <div class="card card-accent card-orange">
+            <div class="card-tag">Eligibility</div>
+            <h3><code>{service}_eligibility_check</code></h3>
+            <p>
+              A focused eligibility assessment template. Accepts an optional
+              <code>citizen_data_json</code> argument with the citizen's
+              details.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Examples ── -->
+    <section class="section section-alt" id="examples">
+      <div class="container">
+        <h2>Examples</h2>
+        <p class="section-intro">
+          Two worked examples showing eligibility checking and state machine
+          traversal.
+        </p>
+
+        <h3>Check Universal Credit Eligibility</h3>
+        <p style="color: #505a5f; font-size: 0.95rem; margin-bottom: 0.5rem">
+          Call the <code>dwp_universal_credit_check_eligibility</code> tool with
+          citizen data:
+        </p>
+
+        <span class="code-label">Request</span>
+        <div class="code-block" style="margin-top: 0">
+          <pre><code>{
+  <span class="str">"citizen_data"</span>: {
+    <span class="str">"age"</span>: <span class="num">28</span>,
+    <span class="str">"jurisdiction"</span>: <span class="str">"England"</span>,
+    <span class="str">"employment_status"</span>: <span class="str">"unemployed"</span>,
+    <span class="str">"savings"</span>: <span class="num">2400</span>,
+    <span class="str">"housing_status"</span>: <span class="str">"renting"</span>
+  }
+}</code></pre>
+        </div>
+
+        <span class="code-label" style="margin-top: 1rem"
+          >Response (abbreviated)</span
+        >
+        <div class="code-block" style="margin-top: 0">
+          <pre><code>{
+  <span class="str">"eligible"</span>: <span class="kw">false</span>,
+  <span class="str">"passed"</span>: [
+    { <span class="str">"id"</span>: <span class="str">"age-range"</span>, <span class="str">"description"</span>: <span class="str">"Applicant must be 18 or over and under State Pension age"</span> },
+    { <span class="str">"id"</span>: <span class="str">"under-pension-age"</span>, <span class="str">"description"</span>: <span class="str">"Applicant must be under State Pension age"</span> },
+    { <span class="str">"id"</span>: <span class="str">"uk-resident"</span>, <span class="str">"description"</span>: <span class="str">"Applicant must be living in the UK"</span> }
+  ],
+  <span class="str">"failed"</span>: [
+    { <span class="str">"id"</span>: <span class="str">"capital-limit"</span>, <span class="str">"description"</span>: <span class="str">"Savings must be under &pound;16,000"</span>, <span class="str">"reason_if_failed"</span>: <span class="str">"..."</span> }
+  ],
+  <span class="str">"edge_cases"</span>: [
+    { <span class="str">"id"</span>: <span class="str">"student-exception"</span>, <span class="str">"description"</span>: <span class="str">"Students may qualify in certain circumstances"</span> }
+  ],
+  <span class="str">"explanation"</span>: <span class="str">"Based on the rules evaluated..."</span>
+}</code></pre>
+        </div>
+
+        <h3 style="margin-top: 2.5rem">Walk Through a State Machine</h3>
+        <p style="color: #505a5f; font-size: 0.95rem; margin-bottom: 0.5rem">
+          Call <code>dwp_universal_credit_advance_state</code>:
+        </p>
+
+        <span class="code-label">Request</span>
+        <div class="code-block" style="margin-top: 0">
+          <pre><code>{
+  <span class="str">"current_state"</span>: <span class="str">"not-started"</span>,
+  <span class="str">"trigger"</span>: <span class="str">"begin"</span>
+}</code></pre>
+        </div>
+
+        <span class="code-label" style="margin-top: 1rem">Response</span>
+        <div class="code-block" style="margin-top: 0">
+          <pre><code>{
+  <span class="str">"success"</span>: <span class="kw">true</span>,
+  <span class="str">"newState"</span>: <span class="str">"identity-verification"</span>,
+  <span class="str">"isTerminal"</span>: <span class="kw">false</span>,
+  <span class="str">"requiresReceipt"</span>: <span class="kw">false</span>,
+  <span class="str">"allowedTransitions"</span>: [<span class="str">"identity-verified"</span>, <span class="str">"handed-off"</span>]
+}</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Services Covered ── -->
+    <section class="section" id="services">
+      <div class="container">
+        <h2>Services Covered</h2>
+        <p class="section-intro">
+          110 services across 15 UK government departments.
+        </p>
+
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Department</th>
+              <th>Count</th>
+              <th>Examples</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>HMRC</strong></td>
+              <td>27</td>
+              <td>
+                Child Benefit, Self Assessment, Tax-Free Childcare, Stamp Duty
+              </td>
+            </tr>
+            <tr>
+              <td><strong>DWP</strong></td>
+              <td>21</td>
+              <td>Universal Credit, PIP, State Pension, Carer's Allowance</td>
+            </tr>
+            <tr>
+              <td><strong>Local Authority</strong></td>
+              <td>14</td>
+              <td>Council Tax, School Admissions, Planning Permission</td>
+            </tr>
+            <tr>
+              <td><strong>Home Office</strong></td>
+              <td>6</td>
+              <td>UK Visa, Settled Status, Passport</td>
+            </tr>
+            <tr>
+              <td><strong>HMCTS</strong></td>
+              <td>6</td>
+              <td>Probate, Divorce, Employment Tribunal</td>
+            </tr>
+            <tr>
+              <td><strong>NHS</strong></td>
+              <td>5</td>
+              <td>GP Registration, Healthy Start, NHS Prescriptions</td>
+            </tr>
+            <tr>
+              <td><strong>GRO</strong></td>
+              <td>5</td>
+              <td>Register Birth, Register Death, Marriage Certificate</td>
+            </tr>
+            <tr>
+              <td><strong>DVLA</strong></td>
+              <td>5</td>
+              <td>Driving Licence, Vehicle Tax, SORN</td>
+            </tr>
+            <tr>
+              <td><strong>DVSA</strong></td>
+              <td>2</td>
+              <td>Theory Test, Driving Test</td>
+            </tr>
+            <tr>
+              <td><strong>OPG</strong></td>
+              <td>2</td>
+              <td>Lasting Power of Attorney</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <p style="color: #505a5f; font-size: 0.95rem; margin-top: 1rem">
+          Plus Companies House, Land Registry, SLC, ICO, and FCA.
+        </p>
+      </div>
+    </section>
+
+    <!-- ── Use Cases ── -->
+    <section class="section section-alt" id="use-cases">
+      <div class="container">
+        <h2>Use Cases</h2>
+        <p class="section-intro">
+          What you can build with 110 government services available as MCP
+          tools.
+        </p>
+
+        <div class="grid-2">
+          <div class="card card-accent card-blue">
+            <div class="card-tag">Chatbot</div>
+            <h3>Benefits Adviser</h3>
+            <p>
+              Use the eligibility tools to check which benefits a citizen
+              qualifies for based on their circumstances, then use the journey
+              prompts to guide them through the application.
+            </p>
+          </div>
+          <div class="card card-accent card-green">
+            <div class="card-tag">Search</div>
+            <h3>Government Service Search</h3>
+            <p>
+              Read manifests to build a searchable catalogue of services with
+              fees, SLAs, and requirements.
+            </p>
+          </div>
+          <div class="card card-accent card-purple">
+            <div class="card-tag">Compliance</div>
+            <h3>Compliance Checking</h3>
+            <p>
+              Use state models to verify that a service integration follows the
+              correct state machine transitions.
+            </p>
+          </div>
+          <div class="card card-accent card-orange">
+            <div class="card-tag">Training Data</div>
+            <h3>Gov-Focused AI Training</h3>
+            <p>
+              The 440 resources provide structured, machine-readable
+              descriptions of how UK government services work.
+            </p>
+          </div>
+        </div>
+
+        <div class="card card-accent card-teal" style="margin-top: 1.5rem">
+          <div class="card-tag">Prototyping</div>
+          <h3>Prototype a GOV.UK Frontend</h3>
+          <p>
+            Use the consent models to build data-sharing permission screens, and
+            state models to build progress trackers.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Technical Details ── -->
+    <section class="section" id="technical-details">
+      <div class="container">
+        <h2>Technical Details</h2>
+
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Property</th>
+              <th>Value</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Transport</strong></td>
+              <td>
+                StreamableHTTP (MCP protocol version <code>2024-11-05</code>)
+              </td>
+            </tr>
+            <tr>
+              <td><strong>Authentication</strong></td>
+              <td>None &mdash; open access, open CORS</td>
+            </tr>
+            <tr>
+              <td><strong>Hosting</strong></td>
+              <td>Cloudflare Workers (global edge)</td>
+            </tr>
+            <tr>
+              <td><strong>Data source</strong></td>
+              <td>Cloudflare D1 database</td>
+            </tr>
+            <tr>
+              <td><strong>Stateless</strong></td>
+              <td>
+                Each request creates a fresh server instance &mdash; no session
+                management needed
+              </td>
+            </tr>
+            <tr>
+              <td><strong>CORS headers</strong></td>
+              <td>
+                <code>Access-Control-Allow-Origin: *</code> &mdash; works from
+                browsers
+              </td>
+            </tr>
+            <tr>
+              <td><strong>Response format</strong></td>
+              <td>
+                Server-Sent Events (<code>event: message\ndata: {JSON}</code>)
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ── Important Notes ── -->
+    <section class="section section-alt" id="notes">
+      <div class="container">
+        <h2>Important Notes</h2>
+
+        <div
+          class="callout callout-orange"
+          style="margin-top: 0; margin-bottom: 1rem"
+        >
+          <strong>Reference implementation.</strong> This is not a live
+          government service. The policy rules and state models are
+          illustrative.
+        </div>
+
+        <div class="callout callout-blue" style="margin-bottom: 1rem">
+          <strong>Data quality.</strong> 4 services are hand-authored with
+          detailed artefacts (Universal Credit, Driving Licence, State Pension,
+          Robot Registration). The remaining 106 are auto-generated from GOV.UK
+          content.
+        </div>
+
+        <div class="callout callout-green" style="margin-bottom: 1rem">
+          <strong>Read-only from the client's perspective.</strong>
+          <code>advance_state</code> returns what the new state would be &mdash;
+          it doesn't persist anything server-side.
+        </div>
+
+        <div class="callout" style="margin-bottom: 0">
+          <strong>Rate limiting.</strong> No rate limiting is currently
+          enforced, but please be reasonable with usage.
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Source Code ── -->
+    <section class="section" id="source-code">
+      <div class="container">
+        <h2>Source Code</h2>
+        <p class="section-intro">
+          The MCP server implementation lives in the
+          <a href="https://github.com/datadowns/agentic-legibility-stack"
+            >Agentic Legibility Stack</a
+          >
+          monorepo.
+        </p>
+
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Component</th>
+              <th>Path</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Server core</strong></td>
+              <td><code>packages/mcp-server/src/index.ts</code></td>
+            </tr>
+            <tr>
+              <td><strong>Tool handlers</strong></td>
+              <td><code>packages/mcp-server/src/tool-handlers.ts</code></td>
+            </tr>
+            <tr>
+              <td><strong>Remote HTTP route</strong></td>
+              <td><code>apps/legibility-studio/app/api/mcp/route.ts</code></td>
+            </tr>
+            <tr>
+              <td><strong>D1 factory</strong></td>
+              <td><code>apps/legibility-studio/lib/mcp-server.ts</code></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="hero-actions" style="margin-top: 2rem">
+          <a
+            href="https://github.com/datadowns/agentic-legibility-stack"
+            class="btn btn-primary"
+            target="_blank"
+            rel="noopener"
+            >View on GitHub</a
+          >
+          <a href="index.html" class="btn btn-secondary">Back to Platform</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Footer ── -->
+    <footer class="footer">
+      <div class="container">
+        <div class="footer-grid">
+          <div>
+            <strong>Agentic Legibility Stack</strong>
+            <p>
+              A reference architecture for accountable AI agents in UK
+              government.
+            </p>
+          </div>
+          <div>
+            <a
+              href="https://github.com/datadowns/agentic-legibility-stack"
+              target="_blank"
+              rel="noopener"
+              >GitHub</a
+            >
+            &middot; <a href="index.html">Platform</a> &middot;
+            <a href="mcp-guide.html">MCP Guide</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
