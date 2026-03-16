@@ -5,6 +5,7 @@ import { useAppStore, getTasks, saveTasks } from "@/lib/store";
 import type { StoredTask, PersonaData } from "@/lib/types";
 import { UrgencyDot } from "./ui/UrgencyDot";
 import { SwipeToAction } from "./ui/SwipeToAction";
+import { formatWithPlates } from "./ui/RegPlate";
 import { DEMO_TODAY } from "@/lib/types";
 
 type FilterTab = "all" | "driving" | "benefits" | "family";
@@ -64,11 +65,15 @@ function groupTasks(
   const groupLabels = new Map<string, string>();
 
   for (const task of tasks) {
-    const text = `${task.description} ${task.detail}`.toLowerCase();
+    const text =
+      `${formatWithPlates(task.description)} ${task.detail}`.toLowerCase();
     let matched = false;
 
     for (const v of vehicles) {
-      if (text.includes(v.label.toLowerCase()) || text.includes(v.reg.toLowerCase())) {
+      if (
+        text.includes(v.label.toLowerCase()) ||
+        text.includes(v.reg.toLowerCase())
+      ) {
         if (!groupMap.has(v.key)) {
           groupMap.set(v.key, []);
           groupLabels.set(v.key, v.label);
@@ -113,12 +118,15 @@ export function TasksView() {
   const personaData = useAppStore((s) => s.personaData);
   const openBottomSheet = useAppStore((s) => s.openBottomSheet);
   const showToast = useAppStore((s) => s.showToast);
+  const taskVersion = useAppStore((s) => s.taskVersion);
   const [activeFilter, setActiveFilter] = useState<FilterTab>("all");
   const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set());
   const [, forceUpdate] = useState(0);
 
   if (!persona) return null;
 
+  // Re-read tasks whenever taskVersion changes (bumped by saveTasks)
+  void taskVersion;
   const allTasks = getTasks(persona);
   const activeTasks = allTasks.filter(
     (t) => t.status !== "completed" && t.status !== "dismissed",
@@ -220,7 +228,7 @@ export function TasksView() {
             )}
             <div className="flex-1 min-w-0">
               <span className="block text-sm font-medium text-govuk-black leading-tight">
-                {task.description}
+                {formatWithPlates(task.description)}
               </span>
               {task.status === "suggested" && (
                 <span className="inline-block px-1.5 py-0.5 rounded text-[10px] font-bold uppercase bg-yellow-50 text-yellow-700 mt-0.5">
@@ -346,7 +354,7 @@ export function TasksView() {
                     <UrgencyDot urgency={getUrgency(days)} size="sm" />
                   )}
                   <span className="flex-1 text-sm text-govuk-black truncate">
-                    {task.description}
+                    {formatWithPlates(task.description)}
                   </span>
                   {days !== null && (
                     <span
@@ -465,7 +473,7 @@ export function TasksView() {
                 </span>
                 <div className="flex-1 min-w-0">
                   <span className="block text-sm text-govuk-dark-grey line-through leading-tight">
-                    {task.description}
+                    {formatWithPlates(task.description)}
                   </span>
                 </div>
               </div>

@@ -35,7 +35,11 @@ interface AppStore {
   currentView: ViewType;
   currentService: ServiceType | null;
   serviceName: string | null;
-  viewHistory: Array<{ view: ViewType; service: ServiceType | null; serviceName: string | null }>;
+  viewHistory: Array<{
+    view: ViewType;
+    service: ServiceType | null;
+    serviceName: string | null;
+  }>;
 
   // Chat
   conversationHistory: ChatMessage[];
@@ -72,6 +76,7 @@ interface AppStore {
   }>;
   taskCompletions: Record<string, string>;
   tasksSubmitted: boolean;
+  taskVersion: number;
 
   // Interaction type (from chat API — used for dynamic milestones)
   interactionType: string | null;
@@ -82,6 +87,9 @@ interface AppStore {
   // Dynamic Cards
   pendingCards: CardRequest[];
   cardsSubmitted: boolean;
+
+  // Life events (fetched once on persona load)
+  lifeEvents: LifeEventInfo[];
 
   // Active plans
   activePlanId: string | null;
@@ -97,10 +105,17 @@ interface AppStore {
   setPersona: (id: string) => Promise<void>;
   setAgent: (agent: AgentType) => void;
   setServiceMode: (mode: ServiceMode) => void;
-  navigateTo: (view: ViewType, service?: ServiceType | null, serviceName?: string | null) => void;
+  navigateTo: (
+    view: ViewType,
+    service?: ServiceType | null,
+    serviceName?: string | null,
+  ) => void;
   navigateBack: () => void;
   sendMessage: (text: string) => Promise<void>;
-  startNewConversation: (service?: ServiceType | null, serviceName?: string | null) => void;
+  startNewConversation: (
+    service?: ServiceType | null,
+    serviceName?: string | null,
+  ) => void;
   loadConversation: (conversationId: string) => void;
   setReasoning: (reasoning: string) => void;
   clearReasoningBadge: () => void;
@@ -129,7 +144,7 @@ interface AppStore {
   markServiceSkipped: (serviceId: string) => void;
   completeServiceWithUpload: (
     serviceId: string,
-    fields: Record<string, string | number | boolean>
+    fields: Record<string, string | number | boolean>,
   ) => Promise<void>;
 }
 
@@ -159,7 +174,10 @@ function saveConversation(personaId: string, conversation: Conversation) {
   } catch {
     all.pop();
     try {
-      localStorage.setItem(`c02_conversations_${personaId}`, JSON.stringify(all));
+      localStorage.setItem(
+        `c02_conversations_${personaId}`,
+        JSON.stringify(all),
+      );
     } catch {
       /* ignore */
     }
@@ -168,7 +186,9 @@ function saveConversation(personaId: string, conversation: Conversation) {
 
 function deleteConversation(personaId: string, conversationId: string) {
   if (typeof window === "undefined") return;
-  const all = getConversations(personaId).filter((c) => c.id !== conversationId);
+  const all = getConversations(personaId).filter(
+    (c) => c.id !== conversationId,
+  );
   try {
     localStorage.setItem(`c02_conversations_${personaId}`, JSON.stringify(all));
   } catch {
@@ -185,6 +205,8 @@ function saveTasks(personaId: string, tasks: StoredTask[]) {
   } catch {
     /* ignore */
   }
+  // Bump version so components subscribed to taskVersion re-render
+  useAppStore.setState((s) => ({ taskVersion: s.taskVersion + 1 }));
 }
 
 function getTasks(personaId: string): StoredTask[] {
@@ -240,7 +262,14 @@ function getDismissedItems(personaId: string): string[] {
   }
 }
 
-export { getConversations, deleteConversation, getTasks, saveTasks, getActivePlans, getDismissedItems };
+export {
+  getConversations,
+  deleteConversation,
+  getTasks,
+  saveTasks,
+  getActivePlans,
+  getDismissedItems,
+};
 
 let toastTimer: ReturnType<typeof setTimeout> | null = null;
 
@@ -270,10 +299,12 @@ export const useAppStore = create<AppStore>((set, get) => ({
   lastResponseTasks: [],
   taskCompletions: {},
   tasksSubmitted: false,
+  taskVersion: 0,
   interactionType: null,
   lastPipelineTrace: null,
   pendingCards: [],
   cardsSubmitted: false,
+  lifeEvents: [],
   activePlanId: null,
   activePlan: null,
   settingsPaneOpen: false,
@@ -309,6 +340,7 @@ export const useAppStore = create<AppStore>((set, get) => ({
       activeConversationId: null,
       activeConversation: null,
       enrichedData: null,
+      lifeEvents: [],
     });
 
     if (typeof window !== "undefined") {
@@ -323,6 +355,19 @@ export const useAppStore = create<AppStore>((set, get) => ({
       }
     } catch (error) {
       console.error("Error loading persona:", error);
+    }
+
+    // Fetch life events before showing dashboard
+    try {
+      const leResp = await fetch(`/api/life-events?persona=${id}`);
+      if (leResp.ok) {
+        const leData = await leResp.json();
+        if (leData.lifeEvents) {
+          set({ lifeEvents: leData.lifeEvents });
+        }
+      }
+    } catch {
+      // non-critical — dashboard still works without life events
     }
 
     set({ currentView: "dashboard" });
@@ -352,13 +397,21 @@ export const useAppStore = create<AppStore>((set, get) => ({
     }
   },
 
-  navigateTo: (view: ViewType, service?: ServiceType | null, serviceName?: string | null) => {
+  navigateTo: (
+    view: ViewType,
+    service?: ServiceType | null,
+    serviceName?: string | null,
+  ) => {
     const state = get();
     if (state.currentView !== view) {
       set((s) => ({
         viewHistory: [
           ...s.viewHistory,
-          { view: s.currentView, service: s.currentService, serviceName: s.serviceName },
+          {
+            view: s.currentView,
+            service: s.currentService,
+            serviceName: s.serviceName,
+          },
         ],
       }));
     }
@@ -389,7 +442,10 @@ export const useAppStore = create<AppStore>((set, get) => ({
     }
   },
 
-  startNewConversation: (service?: ServiceType | null, serviceName?: string | null) => {
+  startNewConversation: (
+    service?: ServiceType | null,
+    serviceName?: string | null,
+  ) => {
     set({
       conversationHistory: [],
       activeConversationId: null,
@@ -450,7 +506,9 @@ export const useAppStore = create<AppStore>((set, get) => ({
       benefits: "benefits",
       family: "parenting",
     };
-    const scenario = service ? (LEGACY_SCENARIO_MAP[service] || service) : "triage";
+    const scenario = service
+      ? LEGACY_SCENARIO_MAP[service] || service
+      : "triage";
     const isNewConversation = state.conversationHistory.length === 0;
 
     const updatedHistory: ChatMessage[] = [
@@ -476,8 +534,12 @@ export const useAppStore = create<AppStore>((set, get) => ({
       });
 
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({})) as Record<string, string>;
-        const detail = errorData.details || errorData.error || `HTTP ${response.status}`;
+        const errorData = (await response.json().catch(() => ({}))) as Record<
+          string,
+          string
+        >;
+        const detail =
+          errorData.details || errorData.error || `HTTP ${response.status}`;
         throw new Error(`Chat request failed: ${detail}`);
       }
 
@@ -488,8 +550,7 @@ export const useAppStore = create<AppStore>((set, get) => ({
         { role: "assistant", content: data.response },
       ];
 
-      const conversationId =
-        state.activeConversationId || `conv_${Date.now()}`;
+      const conversationId = state.activeConversationId || `conv_${Date.now()}`;
       const conversation: Conversation = state.activeConversation
         ? {
             ...state.activeConversation,
@@ -511,9 +572,12 @@ export const useAppStore = create<AppStore>((set, get) => ({
         conversation.title = data.conversationTitle;
       }
 
-      conversation.ucState = data.ucState?.currentState ?? state.ucState ?? undefined;
-      conversation.ucStateHistory = data.ucState?.stateHistory ?? state.ucStateHistory ?? undefined;
-      conversation.interactionType = data.interactionType ?? state.interactionType ?? undefined;
+      conversation.ucState =
+        data.ucState?.currentState ?? state.ucState ?? undefined;
+      conversation.ucStateHistory =
+        data.ucState?.stateHistory ?? state.ucStateHistory ?? undefined;
+      conversation.interactionType =
+        data.interactionType ?? state.interactionType ?? undefined;
 
       if (data.tasks && data.tasks.length > 0) {
         conversation.tasks = data.tasks;
@@ -561,25 +625,36 @@ export const useAppStore = create<AppStore>((set, get) => ({
         lastUcStateInfo: data.ucState ?? state.lastUcStateInfo,
         pendingConsent: data.consentRequests ?? [],
         lastResponseTasks: data.tasks ?? [],
-        taskCompletions: (data.tasks && data.tasks.length > 0) ? {} : state.taskCompletions,
-        tasksSubmitted: (data.tasks && data.tasks.length > 0) ? false : state.tasksSubmitted,
+        taskCompletions:
+          data.tasks && data.tasks.length > 0 ? {} : state.taskCompletions,
+        tasksSubmitted:
+          data.tasks && data.tasks.length > 0 ? false : state.tasksSubmitted,
         interactionType: data.interactionType ?? state.interactionType,
         lastPipelineTrace: data.pipelineTrace ?? null,
         pendingCards: data.cardRequests ?? [],
-        cardsSubmitted: (data.cardRequests && data.cardRequests.length > 0) ? false : state.cardsSubmitted,
-        consentDecisions: (data.ucState?.currentState !== state.ucState)
-          ? {}
-          : state.consentDecisions,
-        consentSubmitted: (data.ucState?.currentState !== state.ucState)
-          ? false
-          : state.consentSubmitted,
+        cardsSubmitted:
+          data.cardRequests && data.cardRequests.length > 0
+            ? false
+            : state.cardsSubmitted,
+        consentDecisions:
+          data.ucState?.currentState !== state.ucState
+            ? {}
+            : state.consentDecisions,
+        consentSubmitted:
+          data.ucState?.currentState !== state.ucState
+            ? false
+            : state.consentSubmitted,
       });
     } catch (error) {
       console.error("Chat error:", error);
-      const errorMessage = error instanceof Error ? error.message : "Something went wrong";
+      const errorMessage =
+        error instanceof Error ? error.message : "Something went wrong";
       const errorHistory: ChatMessage[] = [
         ...updatedHistory,
-        { role: "assistant", content: `Something went wrong.\n\n${errorMessage}\n\nCheck that ANTHROPIC_API_KEY is set correctly in apps/citizen-chris/.env.local` },
+        {
+          role: "assistant",
+          content: `Something went wrong.\n\n${errorMessage}\n\nCheck that ANTHROPIC_API_KEY is set correctly in apps/citizen-chris/.env.local`,
+        },
       ];
       set({
         conversationHistory: errorHistory,
@@ -611,7 +686,9 @@ export const useAppStore = create<AppStore>((set, get) => ({
     for (const grant of pendingConsent) {
       const decision = consentDecisions[grant.id];
       if (decision === "granted") {
-        const dataStr = grant.data_shared.map((d) => d.replace(/_/g, " ")).join(", ");
+        const dataStr = grant.data_shared
+          .map((d) => d.replace(/_/g, " "))
+          .join(", ");
         lines.push(`- Granted: ${grant.description} (sharing: ${dataStr})`);
       } else if (decision === "denied") {
         lines.push(`- Declined: ${grant.description}`);
@@ -631,7 +708,10 @@ export const useAppStore = create<AppStore>((set, get) => ({
     set({ taskCompletions: updatedCompletions });
 
     if (state.persona && state.activeConversation) {
-      const conv = { ...state.activeConversation, taskCompletions: updatedCompletions };
+      const conv = {
+        ...state.activeConversation,
+        taskCompletions: updatedCompletions,
+      };
       saveConversation(state.persona, conv);
       set({ activeConversation: conv });
     }
@@ -644,7 +724,10 @@ export const useAppStore = create<AppStore>((set, get) => ({
     set({ taskCompletions: updatedCompletions });
 
     if (state.persona && state.activeConversation) {
-      const conv = { ...state.activeConversation, taskCompletions: updatedCompletions };
+      const conv = {
+        ...state.activeConversation,
+        taskCompletions: updatedCompletions,
+      };
       saveConversation(state.persona, conv);
       set({ activeConversation: conv });
     }
@@ -726,7 +809,9 @@ export const useAppStore = create<AppStore>((set, get) => ({
         dismissed.push(itemId);
         localStorage.setItem(key, JSON.stringify(dismissed));
       }
-    } catch { /* ignore */ }
+    } catch {
+      /* ignore */
+    }
   },
 
   // ── Plan actions ──
@@ -737,7 +822,9 @@ export const useAppStore = create<AppStore>((set, get) => ({
     const plans = getActivePlans(state.persona).filter((p) => p.id !== planId);
     try {
       localStorage.setItem(`c02_plans_${state.persona}`, JSON.stringify(plans));
-    } catch { /* ignore */ }
+    } catch {
+      /* ignore */
+    }
     if (state.activePlan?.id === planId) {
       set({ activePlan: null, activePlanId: null });
     }
@@ -748,7 +835,7 @@ export const useAppStore = create<AppStore>((set, get) => ({
     if (!state.persona || !lifeEvent.plan) return;
 
     const existing = getActivePlans(state.persona).find(
-      (p) => p.lifeEventId === lifeEvent.id
+      (p) => p.lifeEventId === lifeEvent.id,
     );
     if (existing) {
       set({ activePlanId: existing.id, activePlan: existing });
@@ -763,7 +850,10 @@ export const useAppStore = create<AppStore>((set, get) => ({
     }
 
     // Auto-skip services that aren't relevant to this persona
-    const irrelevant = computePlanRelevance(lifeEvent.services, state.personaData);
+    const irrelevant = computePlanRelevance(
+      lifeEvent.services,
+      state.personaData,
+    );
     const skipReasons: Record<string, string> = {};
 
     for (const [svcId, result] of Object.entries(irrelevant)) {
@@ -774,14 +864,18 @@ export const useAppStore = create<AppStore>((set, get) => ({
     // Unlock downstream services whose prerequisites are now all skipped
     const edges = lifeEvent.plan.edges;
     for (const [skippedId] of Object.entries(irrelevant)) {
-      const downstreamIds = edges.filter((e) => e.from === skippedId).map((e) => e.to);
+      const downstreamIds = edges
+        .filter((e) => e.from === skippedId)
+        .map((e) => e.to);
       for (const toId of downstreamIds) {
         if (serviceProgress[toId] !== "locked") continue;
         // Skip if this downstream service is also irrelevant
         if (irrelevant[toId]) continue;
         const prereqIds = edges.filter((e) => e.to === toId).map((e) => e.from);
         const allMet = prereqIds.every(
-          (pid) => serviceProgress[pid] === "completed" || serviceProgress[pid] === "skipped"
+          (pid) =>
+            serviceProgress[pid] === "completed" ||
+            serviceProgress[pid] === "skipped",
         );
         if (allMet) {
           serviceProgress[toId] = "available";
@@ -871,7 +965,7 @@ export const useAppStore = create<AppStore>((set, get) => ({
       if (progress[toId] !== "locked") continue;
       const prereqIds = edges.filter((e) => e.to === toId).map((e) => e.from);
       const allMet = prereqIds.every(
-        (pid) => progress[pid] === "completed" || progress[pid] === "skipped"
+        (pid) => progress[pid] === "completed" || progress[pid] === "skipped",
       );
       if (allMet) {
         progress[toId] = "available";
@@ -906,7 +1000,7 @@ export const useAppStore = create<AppStore>((set, get) => ({
       if (progress[toId] !== "locked") continue;
       const prereqIds = edges.filter((e) => e.to === toId).map((e) => e.from);
       const allMet = prereqIds.every(
-        (pid) => progress[pid] === "completed" || progress[pid] === "skipped"
+        (pid) => progress[pid] === "completed" || progress[pid] === "skipped",
       );
       if (allMet) {
         progress[toId] = "available";
@@ -925,7 +1019,7 @@ export const useAppStore = create<AppStore>((set, get) => ({
 
   completeServiceWithUpload: async (
     serviceId: string,
-    fields: Record<string, string | number | boolean>
+    fields: Record<string, string | number | boolean>,
   ) => {
     const state = get();
     if (!state.persona || !state.activePlan) return;
