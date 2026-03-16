@@ -209,7 +209,7 @@ export function TasksView() {
           }
         : {}),
       rightAction: {
-        label: "Delete",
+        label: isAgent ? "Stop" : "Delete",
         color: "#d4351c",
         onAction: () => handleDismiss(task.id),
         direction: "left" as const,
@@ -218,7 +218,7 @@ export function TasksView() {
 
     return (
       <SwipeToAction key={task.id} {...swipeActions}>
-        <div className="px-3 py-2.5 bg-white">
+        <div className="px-3 py-3.5 bg-white">
           <button
             onClick={() => openBottomSheet("task-detail", task)}
             className="flex items-center gap-2.5 w-full text-left touch-feedback"
@@ -303,7 +303,7 @@ export function TasksView() {
       <div key={group.key}>
         <button
           onClick={() => toggleGroup(group.key)}
-          className="flex items-center gap-2.5 w-full px-3 py-2.5 text-left transition-colors bg-white hover:bg-gray-50 touch-feedback"
+          className="flex items-center gap-2.5 w-full px-3 py-3.5 text-left transition-colors bg-white hover:bg-gray-50 touch-feedback"
         >
           <UrgencyDot urgency={group.mostUrgent} size="md" />
           <div className="flex-1 min-w-0">
@@ -456,7 +456,7 @@ export function TasksView() {
             {filteredCompleted.map((task) => (
               <div
                 key={task.id}
-                className="flex items-center gap-2.5 px-3 py-2.5"
+                className="flex items-center gap-2.5 px-3 py-3.5"
               >
                 <span className="w-5 h-5 rounded-full bg-green-600 flex items-center justify-center shrink-0">
                   <svg

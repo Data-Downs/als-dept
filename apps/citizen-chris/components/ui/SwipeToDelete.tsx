@@ -1,6 +1,12 @@
 "use client";
 
-import { useRef, useState, useCallback, useEffect, type ReactNode } from "react";
+import {
+  useRef,
+  useState,
+  useCallback,
+  useEffect,
+  type ReactNode,
+} from "react";
 
 interface SwipeToDeleteProps {
   children: ReactNode;
@@ -12,7 +18,11 @@ interface SwipeToDeleteProps {
  * Wraps a list item. Swiping/dragging left reveals a red "Delete" button.
  * Works on both touch (mobile) and mouse (desktop).
  */
-export function SwipeToDelete({ children, onDelete, label = "Delete" }: SwipeToDeleteProps) {
+export function SwipeToDelete({
+  children,
+  onDelete,
+  label = "Delete",
+}: SwipeToDeleteProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const startXRef = useRef(0);
@@ -33,23 +43,29 @@ export function SwipeToDelete({ children, onDelete, label = "Delete" }: SwipeToD
     hasDragged.current = false;
   }, []);
 
-  const moveDrag = useCallback((clientX: number) => {
-    if (!dragging.current) return;
-    const dx = clientX - startXRef.current;
-    currentXRef.current = dx;
+  const moveDrag = useCallback(
+    (clientX: number) => {
+      if (!dragging.current) return;
+      const dx = clientX - startXRef.current;
+      currentXRef.current = dx;
 
-    if (Math.abs(dx) > DRAG_DEAD_ZONE) {
-      hasDragged.current = true;
-    }
+      if (Math.abs(dx) > DRAG_DEAD_ZONE) {
+        hasDragged.current = true;
+      }
 
-    if (revealed) {
-      const newOffset = Math.min(0, Math.max(-BUTTON_WIDTH, -BUTTON_WIDTH + dx));
-      setOffset(newOffset);
-    } else {
-      const newOffset = Math.min(0, Math.max(-BUTTON_WIDTH, dx));
-      setOffset(newOffset);
-    }
-  }, [revealed]);
+      if (revealed) {
+        const newOffset = Math.min(
+          0,
+          Math.max(-BUTTON_WIDTH, -BUTTON_WIDTH + dx),
+        );
+        setOffset(newOffset);
+      } else {
+        const newOffset = Math.min(0, Math.max(-BUTTON_WIDTH, dx));
+        setOffset(newOffset);
+      }
+    },
+    [revealed],
+  );
 
   const endDrag = useCallback(() => {
     if (!dragging.current) return;
@@ -72,23 +88,32 @@ export function SwipeToDelete({ children, onDelete, label = "Delete" }: SwipeToD
   }, [revealed]);
 
   // Touch handlers
-  const handleTouchStart = useCallback((e: React.TouchEvent) => {
-    startDrag(e.touches[0].clientX);
-  }, [startDrag]);
+  const handleTouchStart = useCallback(
+    (e: React.TouchEvent) => {
+      startDrag(e.touches[0].clientX);
+    },
+    [startDrag],
+  );
 
-  const handleTouchMove = useCallback((e: React.TouchEvent) => {
-    moveDrag(e.touches[0].clientX);
-  }, [moveDrag]);
+  const handleTouchMove = useCallback(
+    (e: React.TouchEvent) => {
+      moveDrag(e.touches[0].clientX);
+    },
+    [moveDrag],
+  );
 
   const handleTouchEnd = useCallback(() => {
     endDrag();
   }, [endDrag]);
 
   // Mouse handlers
-  const handleMouseDown = useCallback((e: React.MouseEvent) => {
-    e.preventDefault();
-    startDrag(e.clientX);
-  }, [startDrag]);
+  const handleMouseDown = useCallback(
+    (e: React.MouseEvent) => {
+      e.preventDefault();
+      startDrag(e.clientX);
+    },
+    [startDrag],
+  );
 
   // Use window-level listeners for mouse move/up so dragging works even if cursor leaves the element
   useEffect(() => {
@@ -133,18 +158,20 @@ export function SwipeToDelete({ children, onDelete, label = "Delete" }: SwipeToD
 
   return (
     <div className="relative overflow-hidden" ref={containerRef}>
-      {/* Red delete button behind */}
-      <div
-        className="absolute inset-y-0 right-0 flex items-center justify-center bg-red-600 text-white font-bold text-sm"
-        style={{ width: BUTTON_WIDTH }}
-      >
-        <button
-          onClick={handleDelete}
-          className="w-full h-full flex items-center justify-center"
+      {/* Red delete/stop button behind — only rendered when swiping */}
+      {offset < 0 && (
+        <div
+          className="absolute inset-y-0 right-0 flex items-center justify-center bg-red-600 text-white font-bold text-sm"
+          style={{ width: BUTTON_WIDTH }}
         >
-          {label}
-        </button>
-      </div>
+          <button
+            onClick={handleDelete}
+            className="w-full h-full flex items-center justify-center"
+          >
+            {label}
+          </button>
+        </div>
+      )}
 
       {/* Sliding content */}
       <div

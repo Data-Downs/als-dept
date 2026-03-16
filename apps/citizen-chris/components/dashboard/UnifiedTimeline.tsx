@@ -305,10 +305,10 @@ export function UnifiedTimeline({
       // Single item — render directly
       const item = group.items[0];
       return (
-        <SwipeToDelete key={group.key} onDelete={() => handleDismiss(item.id)}>
+        <SwipeToDelete key={group.key} onDelete={() => handleDismiss(item.id)} label={item.taskType === "agent" ? "Stop" : "Delete"}>
           <button
             onClick={() => onItemTap?.(item)}
-            className="flex items-center gap-2.5 w-full px-3 py-2.5 text-left transition-colors bg-white hover:bg-gray-50 touch-feedback"
+            className="flex items-center gap-2.5 w-full px-3 py-3.5 text-left transition-colors bg-white hover:bg-gray-50 touch-feedback"
           >
             <UrgencyDot urgency={item.urgency} size="md" />
             <div className="flex-1 min-w-0">
@@ -352,7 +352,7 @@ export function UnifiedTimeline({
       <div key={group.key}>
         <button
           onClick={() => toggleGroup(group.key)}
-          className="flex items-center gap-2.5 w-full px-3 py-2.5 text-left transition-colors bg-white hover:bg-gray-50 touch-feedback"
+          className="flex items-center gap-2.5 w-full px-3 py-3.5 text-left transition-colors bg-white hover:bg-gray-50 touch-feedback"
         >
           <UrgencyDot urgency={group.mostUrgent} size="md" />
           <div className="flex-1 min-w-0">
