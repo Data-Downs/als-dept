@@ -3,9 +3,10 @@
 import { useState } from "react";
 import type { PersonaData, TimelineItem, StoredTask } from "@/lib/types";
 import { DEMO_TODAY } from "@/lib/types";
-import { getTasks, getDismissedItems } from "@/lib/store";
+import { getTasks, getDismissedItems, useAppStore } from "@/lib/store";
 import { UrgencyDot } from "../ui/UrgencyDot";
 import { SwipeToDelete } from "../ui/SwipeToDelete";
+import { formatWithPlates } from "../ui/RegPlate";
 
 function daysUntil(dateStr: string): number {
   const target = new Date(dateStr);
@@ -118,7 +119,8 @@ export function buildTimelineItems(
     for (const v of personaData.vehicles) {
       const vehicleName = `${v.make} ${v.model}`.toLowerCase();
       const hasCoveringTask = activeTaskTexts.some(
-        (text) => text.includes(vehicleName) || text.includes(v.registrationNumber),
+        (text) =>
+          text.includes(vehicleName) || text.includes(v.registrationNumber),
       );
 
       if (!hasCoveringTask) {
@@ -220,7 +222,7 @@ interface UnifiedTimelineProps {
 export function UnifiedTimeline({
   personaData,
   persona,
-  maxItems = 6,
+  maxItems = 4,
   filterService,
   onItemTap,
   onDismiss,
@@ -228,6 +230,8 @@ export function UnifiedTimeline({
 }: UnifiedTimelineProps) {
   const [localDismissed, setLocalDismissed] = useState<Set<string>>(new Set());
   const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set());
+  // Subscribe to taskVersion so we re-render when tasks are saved (e.g. delegation)
+  useAppStore((s) => s.taskVersion);
   const dismissed = persona
     ? new Set([...getDismissedItems(persona), ...localDismissed])
     : localDismissed;
@@ -275,7 +279,7 @@ export function UnifiedTimeline({
     >
       <UrgencyDot urgency={item.urgency} size="sm" />
       <span className="flex-1 text-sm text-govuk-black truncate">
-        {item.title}
+        {formatWithPlates(item.title)}
       </span>
       {item.dueLabel && (
         <span
@@ -309,7 +313,7 @@ export function UnifiedTimeline({
             <UrgencyDot urgency={item.urgency} size="md" />
             <div className="flex-1 min-w-0">
               <span className="block text-sm font-medium text-govuk-black truncate leading-tight">
-                {item.title}
+                {formatWithPlates(item.title)}
               </span>
             </div>
             {item.dueLabel && (
@@ -356,7 +360,8 @@ export function UnifiedTimeline({
               {group.label}
             </span>
             <span className="text-[11px] text-govuk-dark-grey">
-              {group.items.length} task{group.items.length !== 1 ? "s" : ""}{dueSummary ? ` · ${dueSummary}` : ""}
+              {group.items.length} task{group.items.length !== 1 ? "s" : ""}
+              {dueSummary ? ` · ${dueSummary}` : ""}
             </span>
           </div>
           <span
@@ -400,12 +405,12 @@ export function UnifiedTimeline({
             <h3 className="text-base font-extrabold text-govuk-black">
               Your to-dos
             </h3>
-            {items.length > maxItems && onSeeAll && (
+            {yourGroups.length > maxItems && onSeeAll && (
               <button
                 onClick={onSeeAll}
                 className="text-sm text-govuk-blue font-medium"
               >
-                See all ({items.length})
+                See all ({yourItems.length})
               </button>
             )}
           </div>
@@ -422,6 +427,14 @@ export function UnifiedTimeline({
             <h3 className="text-base font-extrabold blue-ripple-text">
               Agent to-dos
             </h3>
+            {agentGroups.length > maxItems && onSeeAll && (
+              <button
+                onClick={onSeeAll}
+                className="text-sm text-govuk-blue font-medium"
+              >
+                See all ({agentItems.length})
+              </button>
+            )}
           </div>
           <div className="bg-white rounded-card shadow-sm divide-y divide-gray-100 overflow-hidden mb-4">
             {displayAgentGroups.map(renderGroup)}
