@@ -100,6 +100,8 @@ interface AppStore {
   personaSelectorOpen: boolean;
   bottomSheet: BottomSheetState;
   toast: ToastMessage | null;
+  agentIntroVisible: boolean;
+  previousAgent: AgentType | null;
 
   // Actions
   setPersona: (id: string) => Promise<void>;
@@ -131,6 +133,8 @@ interface AppStore {
   openBottomSheet: (type: BottomSheetState["type"], data?: unknown) => void;
   closeBottomSheet: () => void;
   showToast: (text: string) => void;
+  showAgentIntro: () => void;
+  dismissAgentIntro: (accepted: boolean) => void;
 
   dismissTimelineItem: (itemId: string) => void;
 
@@ -311,6 +315,8 @@ export const useAppStore = create<AppStore>((set, get) => ({
   personaSelectorOpen: false,
   bottomSheet: { type: null },
   toast: null,
+  agentIntroVisible: false,
+  previousAgent: null,
 
   setSettingsPaneOpen: (open: boolean) => set({ settingsPaneOpen: open }),
   setPersonaSelectorOpen: (open: boolean) => set({ personaSelectorOpen: open }),
@@ -326,6 +332,20 @@ export const useAppStore = create<AppStore>((set, get) => ({
       set({ toast: null });
       toastTimer = null;
     }, 2000);
+  },
+
+  showAgentIntro: () => {
+    set((s) => ({ agentIntroVisible: true, previousAgent: s.agent }));
+  },
+
+  dismissAgentIntro: (accepted: boolean) => {
+    if (!accepted) {
+      const prev = get().previousAgent;
+      if (prev) {
+        get().setAgent(prev);
+      }
+    }
+    set({ agentIntroVisible: false, previousAgent: null });
   },
 
   setPersona: async (id: string) => {

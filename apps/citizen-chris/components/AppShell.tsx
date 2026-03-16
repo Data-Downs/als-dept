@@ -15,6 +15,7 @@ import { PersonalDataDashboard } from "./personal-data/PersonalDataDashboard";
 import { Toast } from "./ui/Toast";
 import { BottomSheet } from "./ui/BottomSheet";
 import { AgentSelectionSheet } from "./sheets/AgentSelectionSheet";
+import { AgentIntroScreen } from "./sheets/AgentIntroScreen";
 import { TaskDetailSheet } from "./sheets/TaskDetailSheet";
 import { TopicQuestionsSheet } from "./sheets/TopicQuestionsSheet";
 import { FilingPromptSheet } from "./sheets/FilingPromptSheet";
@@ -220,6 +221,7 @@ export function AppShell() {
   const setAgent = useAppStore((s) => s.setAgent);
   const settingsPaneOpen = useAppStore((s) => s.settingsPaneOpen);
   const personaSelectorOpen = useAppStore((s) => s.personaSelectorOpen);
+  const agentIntroVisible = useAppStore((s) => s.agentIntroVisible);
 
   const journeyComplete = !!(ucState && TERMINAL_STATES.has(ucState));
 
@@ -305,6 +307,9 @@ export function AppShell() {
       {/* Overlays */}
       {personaSelectorOpen && <PersonaSelectorOverlay />}
       {settingsPaneOpen && <PersonalDataDashboard />}
+
+      {/* Agent intro full-screen overlay */}
+      {agentIntroVisible && <AgentIntroScreen />}
 
       {/* Toast */}
       <Toast />
