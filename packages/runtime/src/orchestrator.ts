@@ -25,11 +25,7 @@ import type {
   PipelineStep,
   PipelineTrace,
 } from "@als/schemas";
-import {
-  PolicyEvaluator,
-  StateMachine,
-  FieldCollector,
-} from "@als/legibility";
+import { PolicyEvaluator, StateMachine, FieldCollector } from "@als/legibility";
 import type { ServiceArtefacts } from "@als/legibility";
 import { HandoffManager } from "./handoff-manager";
 import type { ServiceStrategy, ToolDefinition } from "./service-strategy";
@@ -153,14 +149,31 @@ export interface OrchestratorOutput {
 export interface ParsedTaskField {
   key: string;
   label: string;
-  type: "text" | "email" | "tel" | "currency" | "date" | "number" | "confirm" | "select";
+  type:
+    | "text"
+    | "email"
+    | "tel"
+    | "currency"
+    | "date"
+    | "number"
+    | "confirm"
+    | "select";
   placeholder?: string;
   options?: Array<{ value: string; label: string }>;
   prefill?: string;
   required?: boolean;
 }
 
-const VALID_FIELD_TYPES = new Set(["text", "email", "tel", "currency", "date", "number", "confirm", "select"]);
+const VALID_FIELD_TYPES = new Set([
+  "text",
+  "email",
+  "tel",
+  "currency",
+  "date",
+  "number",
+  "confirm",
+  "select",
+]);
 
 interface ParsedStructuredOutput {
   title?: string;
@@ -223,16 +236,28 @@ function parseStructuredOutput(responseText: string): {
     for (const t of raw.tasks.slice(0, 3)) {
       if (typeof t !== "object" || t === null) continue;
       const task = t as Record<string, unknown>;
-      const description = typeof task.description === "string" ? task.description.trim().slice(0, 60) : "";
-      const detail = typeof task.detail === "string" ? task.detail.trim().slice(0, 150) : "";
-      const type = task.type === "agent" || task.type === "user" ? task.type : null;
+      const description =
+        typeof task.description === "string"
+          ? task.description.trim().slice(0, 60)
+          : "";
+      const detail =
+        typeof task.detail === "string" ? task.detail.trim().slice(0, 150) : "";
+      const type =
+        task.type === "agent" || task.type === "user" ? task.type : null;
       if (!description || !detail || !type) continue;
-      const entry: NonNullable<ParsedStructuredOutput["tasks"]>[number] = { description, detail, type };
+      const entry: NonNullable<ParsedStructuredOutput["tasks"]>[number] = {
+        description,
+        detail,
+        type,
+      };
       if (typeof task.dueDate === "string" && ISO_DATE_RE.test(task.dueDate)) {
         entry.dueDate = task.dueDate;
       }
       if (Array.isArray(task.dataNeeded)) {
-        entry.dataNeeded = task.dataNeeded.filter((d): d is string => typeof d === "string").map(d => d.trim()).filter(Boolean);
+        entry.dataNeeded = task.dataNeeded
+          .filter((d): d is string => typeof d === "string")
+          .map((d) => d.trim())
+          .filter(Boolean);
       }
       if (Array.isArray(task.options)) {
         const validOpts: Array<{ value: string; label: string }> = [];
@@ -251,20 +276,30 @@ function parseStructuredOutput(responseText: string): {
           if (typeof f !== "object" || f === null) continue;
           const field = f as Record<string, unknown>;
           const key = typeof field.key === "string" ? field.key.trim() : "";
-          const label = typeof field.label === "string" ? field.label.trim() : "";
+          const label =
+            typeof field.label === "string" ? field.label.trim() : "";
           const ftype = typeof field.type === "string" ? field.type.trim() : "";
           if (!key || !label || !VALID_FIELD_TYPES.has(ftype)) continue;
-          const parsed: ParsedTaskField = { key, label, type: ftype as ParsedTaskField["type"] };
-          if (typeof field.placeholder === "string") parsed.placeholder = field.placeholder.trim();
-          if (typeof field.prefill === "string") parsed.prefill = field.prefill.trim();
-          if (typeof field.required === "boolean") parsed.required = field.required;
+          const parsed: ParsedTaskField = {
+            key,
+            label,
+            type: ftype as ParsedTaskField["type"],
+          };
+          if (typeof field.placeholder === "string")
+            parsed.placeholder = field.placeholder.trim();
+          if (typeof field.prefill === "string")
+            parsed.prefill = field.prefill.trim();
+          if (typeof field.required === "boolean")
+            parsed.required = field.required;
           if (ftype === "select" && Array.isArray(field.options)) {
             const selOpts: Array<{ value: string; label: string }> = [];
             for (const so of field.options.slice(0, 6)) {
               if (typeof so !== "object" || so === null) continue;
               const sopt = so as Record<string, unknown>;
-              const sv = typeof sopt.value === "string" ? sopt.value.trim() : "";
-              const sl = typeof sopt.label === "string" ? sopt.label.trim() : "";
+              const sv =
+                typeof sopt.value === "string" ? sopt.value.trim() : "";
+              const sl =
+                typeof sopt.label === "string" ? sopt.label.trim() : "";
               if (sv && sl) selOpts.push({ value: sv, label: sl });
             }
             if (selOpts.length > 0) parsed.options = selOpts;
@@ -284,10 +319,23 @@ function parseStructuredOutput(responseText: string): {
       if (typeof f !== "object" || f === null) continue;
       const fact = f as Record<string, unknown>;
       const key = typeof fact.key === "string" ? fact.key.trim() : "";
-      const confidence = (fact.confidence === "high" || fact.confidence === "medium" || fact.confidence === "low") ? fact.confidence : "medium";
-      const sourceSnippet = typeof fact.source_snippet === "string" ? fact.source_snippet.trim().slice(0, 200) : "";
+      const confidence =
+        fact.confidence === "high" ||
+        fact.confidence === "medium" ||
+        fact.confidence === "low"
+          ? fact.confidence
+          : "medium";
+      const sourceSnippet =
+        typeof fact.source_snippet === "string"
+          ? fact.source_snippet.trim().slice(0, 200)
+          : "";
       if (!key || fact.value === undefined) continue;
-      validFacts.push({ key, value: fact.value, confidence, source_snippet: sourceSnippet });
+      validFacts.push({
+        key,
+        value: fact.value,
+        confidence,
+        source_snippet: sourceSnippet,
+      });
     }
     if (validFacts.length > 0) output.extractedFacts = validFacts;
   }
@@ -302,7 +350,7 @@ function hashPrompt(prompt: string): string {
   let hash = 0;
   for (let i = 0; i < prompt.length; i++) {
     const char = prompt.charCodeAt(i);
-    hash = ((hash << 5) - hash) + char;
+    hash = (hash << 5) - hash + char;
     hash = hash & hash; // Convert to 32-bit integer
   }
   return Math.abs(hash).toString(36);
@@ -310,11 +358,27 @@ function hashPrompt(prompt: string): string {
 
 // ── Deterministic task injection ──
 
-const HOUSING_DATA_FIELDS = new Set(["tenure_type", "housing_tenure", "housing_status", "monthly_rent", "rent", "address", "housing tenure"]);
-const BANK_DATA_FIELDS = new Set(["sort_code", "account_number", "bank_accounts", "bank_account", "bank_details", "bank accounts"]);
+const HOUSING_DATA_FIELDS = new Set([
+  "tenure_type",
+  "housing_tenure",
+  "housing_status",
+  "monthly_rent",
+  "rent",
+  "address",
+  "housing tenure",
+]);
+const BANK_DATA_FIELDS = new Set([
+  "sort_code",
+  "account_number",
+  "bank_accounts",
+  "bank_account",
+  "bank_details",
+  "bank accounts",
+]);
 const HOUSING_KEYWORDS = /housing|tenure|rent|own.*home|accommodation/i;
 const BANK_KEYWORDS = /bank\s*account|payment\s*account|sort\s*code/i;
-const ELIGIBILITY_KEYWORDS = /eligib|verify.*identity|identity.*verif|check.*uc|uc.*check/i;
+const ELIGIBILITY_KEYWORDS =
+  /eligib|verify.*identity|identity.*verif|check.*uc|uc.*check/i;
 
 interface TaskEntry {
   id: string;
@@ -327,12 +391,26 @@ interface TaskEntry {
   fields?: ParsedTaskField[];
 }
 
-function taskMatchesHousing(t: { dataNeeded: string[]; description: string; detail: string }) {
-  return t.dataNeeded.some(d => HOUSING_DATA_FIELDS.has(d)) || HOUSING_KEYWORDS.test(`${t.description} ${t.detail}`);
+function taskMatchesHousing(t: {
+  dataNeeded: string[];
+  description: string;
+  detail: string;
+}) {
+  return (
+    t.dataNeeded.some((d) => HOUSING_DATA_FIELDS.has(d)) ||
+    HOUSING_KEYWORDS.test(`${t.description} ${t.detail}`)
+  );
 }
 
-function taskMatchesBank(t: { dataNeeded: string[]; description: string; detail: string }) {
-  return t.dataNeeded.some(d => BANK_DATA_FIELDS.has(d)) || BANK_KEYWORDS.test(`${t.description} ${t.detail}`);
+function taskMatchesBank(t: {
+  dataNeeded: string[];
+  description: string;
+  detail: string;
+}) {
+  return (
+    t.dataNeeded.some((d) => BANK_DATA_FIELDS.has(d)) ||
+    BANK_KEYWORDS.test(`${t.description} ${t.detail}`)
+  );
 }
 
 function injectDeterministicTasks(
@@ -343,21 +421,20 @@ function injectDeterministicTasks(
 ): TaskEntry[] {
   const result = [...tasks];
 
-  const isHousingState = (
-    (postTransitionState === "personal-details-collected") ||
-    (preTransitionState === "personal-details-collected" && !transitioned)
-  );
-  const isBankState = (
-    (postTransitionState === "income-details-collected") ||
-    (preTransitionState === "income-details-collected" && !transitioned)
-  );
+  const isHousingState =
+    postTransitionState === "personal-details-collected" ||
+    (preTransitionState === "personal-details-collected" && !transitioned);
+  const isBankState =
+    postTransitionState === "income-details-collected" ||
+    (preTransitionState === "income-details-collected" && !transitioned);
 
   if (isHousingState) {
-    const filtered = result.filter(t => !taskMatchesHousing(t));
+    const filtered = result.filter((t) => !taskMatchesHousing(t));
     filtered.push({
       id: `task_housing_${Date.now()}`,
       description: "Provide your housing details",
-      detail: "Select your housing situation and enter your monthly rent if applicable",
+      detail:
+        "Select your housing situation and enter your monthly rent if applicable",
       type: "user",
       dueDate: null,
       dataNeeded: ["tenure_type", "monthly_rent"],
@@ -367,11 +444,12 @@ function injectDeterministicTasks(
   }
 
   if (isBankState) {
-    const filtered = result.filter(t => !taskMatchesBank(t));
+    const filtered = result.filter((t) => !taskMatchesBank(t));
     filtered.push({
       id: `task_bank_${Date.now()}`,
       description: "Select a bank account for UC payments",
-      detail: "Choose which account you'd like Universal Credit payments sent to, or enter new details",
+      detail:
+        "Choose which account you'd like Universal Credit payments sent to, or enter new details",
       type: "user",
       dueDate: null,
       dataNeeded: ["sort_code", "account_number"],
@@ -381,21 +459,31 @@ function injectDeterministicTasks(
   }
 
   // For other states, strip housing/bank/eligibility tasks the LLM may have generated
-  const stripped = result.filter(t => !taskMatchesHousing(t) && !taskMatchesBank(t));
+  const stripped = result.filter(
+    (t) => !taskMatchesHousing(t) && !taskMatchesBank(t),
+  );
   return stripEligibility(stripped);
 }
 
 function stripEligibility(tasks: TaskEntry[]): TaskEntry[] {
-  return tasks.filter(t => !ELIGIBILITY_KEYWORDS.test(`${t.description} ${t.detail}`));
+  return tasks.filter(
+    (t) => !ELIGIBILITY_KEYWORDS.test(`${t.description} ${t.detail}`),
+  );
 }
 
 // ── Employment status extraction ──
 
-function extractEmploymentStatus(employment: Record<string, unknown> | undefined): string {
+function extractEmploymentStatus(
+  employment: Record<string, unknown> | undefined,
+): string {
   if (!employment) return "unknown";
   if (typeof employment.status === "string") return employment.status;
   for (const val of Object.values(employment)) {
-    if (typeof val === "object" && val !== null && "status" in (val as Record<string, unknown>)) {
+    if (
+      typeof val === "object" &&
+      val !== null &&
+      "status" in (val as Record<string, unknown>)
+    ) {
       return (val as Record<string, unknown>).status as string;
     }
   }
@@ -405,24 +493,49 @@ function extractEmploymentStatus(employment: Record<string, unknown> | undefined
 // ── Data on file context builder ──
 
 function buildDataOnFileContext(personaData: Record<string, unknown>): string {
-  const contact = personaData.primaryContact as Record<string, unknown> | undefined;
-  const financials = personaData.financials as Record<string, unknown> | undefined;
-  const employment = personaData.employment as Record<string, unknown> | undefined;
+  const contact = personaData.primaryContact as
+    | Record<string, unknown>
+    | undefined;
+  const financials = personaData.financials as
+    | Record<string, unknown>
+    | undefined;
+  const employment = personaData.employment as
+    | Record<string, unknown>
+    | undefined;
   const address = personaData.address as Record<string, unknown> | undefined;
 
-  const personaName = (personaData.name as string) || (contact?.firstName ? `${contact.firstName} ${contact.lastName}` : null);
-  const personaDob = (personaData.date_of_birth as string) || (contact?.dateOfBirth as string) || null;
-  const personaNI = (personaData.national_insurance_number as string) || (contact?.nationalInsuranceNumber as string) || null;
-  const personaSavings = (personaData.savings as number) ?? (financials?.savingsAccount ? ((financials.savingsAccount as Record<string, unknown>).balance as number) || 0 : null);
+  const personaName =
+    (personaData.name as string) ||
+    (contact?.firstName ? `${contact.firstName} ${contact.lastName}` : null);
+  const personaDob =
+    (personaData.date_of_birth as string) ||
+    (contact?.dateOfBirth as string) ||
+    null;
+  const personaNI =
+    (personaData.national_insurance_number as string) ||
+    (contact?.nationalInsuranceNumber as string) ||
+    null;
+  const personaSavings =
+    (personaData.savings as number) ??
+    (financials?.savingsAccount
+      ? ((financials.savingsAccount as Record<string, unknown>)
+          .balance as number) || 0
+      : null);
   const personaEmployer = (personaData.employer as string) || null;
-  const empStatus = (personaData.employment_status as string) || extractEmploymentStatus(employment);
+  const empStatus =
+    (personaData.employment_status as string) ||
+    extractEmploymentStatus(employment);
 
   const lines: string[] = [];
-  lines.push("DATA ON FILE (from citizen's records — use these values, do not make up others):");
+  lines.push(
+    "DATA ON FILE (from citizen's records — use these values, do not make up others):",
+  );
   lines.push(`- Name: ${personaName || "NEED TO ASK"}`);
   lines.push(`- DOB: ${personaDob || "NEED TO ASK"}`);
   lines.push(`- NI Number: ${personaNI || "NEED TO ASK"}`);
-  lines.push(`- Address: ${address ? [address.line_1 || address.line1, address.city, address.postcode].filter(Boolean).join(", ") : "NEED TO ASK"}`);
+  lines.push(
+    `- Address: ${address ? [address.line_1 || address.line1, address.city, address.postcode].filter(Boolean).join(", ") : "NEED TO ASK"}`,
+  );
 
   let empLine = `- Employment status: ${empStatus && empStatus !== "unknown" ? empStatus : "NEED TO ASK"}`;
   if (personaEmployer) {
@@ -431,21 +544,31 @@ function buildDataOnFileContext(personaData: Record<string, unknown>): string {
     for (const val of Object.values(employment)) {
       if (typeof val === "object" && val !== null) {
         const emp = val as Record<string, unknown>;
-        if (emp.previousEmployer) empLine += ` (previously: ${emp.previousEmployer}, ended: ${emp.employmentEndDate || "unknown"}, reason: ${emp.endReason || "unknown"})`;
+        if (emp.previousEmployer)
+          empLine += ` (previously: ${emp.previousEmployer}, ended: ${emp.employmentEndDate || "unknown"}, reason: ${emp.endReason || "unknown"})`;
         else if (emp.employer) empLine += ` (employer: ${emp.employer})`;
         break;
       }
     }
-    if (employment.previousEmployer) empLine += ` (previously: ${employment.previousEmployer})`;
-    if (employment.businessName) empLine += ` (business: ${employment.businessName})`;
+    if (employment.previousEmployer)
+      empLine += ` (previously: ${employment.previousEmployer})`;
+    if (employment.businessName)
+      empLine += ` (business: ${employment.businessName})`;
   }
   lines.push(empLine);
 
-  lines.push(`- Savings: ${personaSavings !== null ? `£${personaSavings}` : "NEED TO ASK"}`);
-  lines.push(`- Housing tenure: ${(address as Record<string, unknown>)?.housingStatus || "NEED TO ASK — citizen must provide"}`);
+  lines.push(
+    `- Savings: ${personaSavings !== null ? `£${personaSavings}` : "NEED TO ASK"}`,
+  );
+  lines.push(
+    `- Housing tenure: ${(address as Record<string, unknown>)?.housingStatus || "NEED TO ASK — citizen must provide"}`,
+  );
 
-  const bankAccounts = (financials?.bankAccounts as Array<Record<string, unknown>>) || [];
-  lines.push(`- Bank accounts: ${bankAccounts.length > 0 ? bankAccounts.map(a => `${a.bank || a.label} (****${(a.accountNumber as string || "").slice(-4)})`).join(", ") : (personaData.bank_account ? "Yes (details not on file)" : "NEED TO ASK — citizen must provide")}`);
+  const bankAccounts =
+    (financials?.bankAccounts as Array<Record<string, unknown>>) || [];
+  lines.push(
+    `- Bank accounts: ${bankAccounts.length > 0 ? bankAccounts.map((a) => `${a.bank || a.label} (****${((a.accountNumber as string) || "").slice(-4)})`).join(", ") : personaData.bank_account ? "Yes (details not on file)" : "NEED TO ASK — citizen must provide"}`,
+  );
 
   return lines.join("\n");
 }
@@ -472,10 +595,23 @@ export class Orchestrator {
 
   async run(input: OrchestratorInput): Promise<OrchestratorOutput> {
     const {
-      persona, agent, scenario, serviceId, messages,
-      generateTitle, personaData, agentPrompt, personaPrompt, scenarioPrompt,
-      policyRuleset, stateModelDef, consentModel, stateInstructions,
-      policyContext: policyCtx, factsAlreadyKnown, unresolvedContradictions,
+      persona,
+      agent,
+      scenario,
+      serviceId,
+      messages,
+      generateTitle,
+      personaData,
+      agentPrompt,
+      personaPrompt,
+      scenarioPrompt,
+      policyRuleset,
+      stateModelDef,
+      consentModel,
+      stateInstructions,
+      policyContext: policyCtx,
+      factsAlreadyKnown,
+      unresolvedContradictions,
       floodDataHandler,
     } = input;
 
@@ -502,15 +638,21 @@ export class Orchestrator {
           edgeCaseCount: policyResult.edgeCases.length,
         };
         steps.push({
-          id: "policy-eval", name: "PolicyEvaluator", type: "deterministic",
-          label: "Policy evaluation (rule-based)", status: "complete",
+          id: "policy-eval",
+          name: "PolicyEvaluator",
+          type: "deterministic",
+          label: "Policy evaluation (rule-based)",
+          status: "complete",
           durationMs: Date.now() - t0,
           detail: `Eligible: ${policyResult.eligible}, ${policyResult.passed.length} passed, ${policyResult.failed.length} failed`,
         });
       } else {
         steps.push({
-          id: "policy-eval", name: "PolicyEvaluator", type: "deterministic",
-          label: "Policy evaluation (rule-based)", status: "skipped",
+          id: "policy-eval",
+          name: "PolicyEvaluator",
+          type: "deterministic",
+          label: "Policy evaluation (rule-based)",
+          status: "skipped",
           durationMs: Date.now() - t0,
           detail: "No policy ruleset provided",
         });
@@ -525,15 +667,21 @@ export class Orchestrator {
         stateMachine = new StateMachine(stateModelDef);
         stateMachine.setState(currentState);
         steps.push({
-          id: "state-setup", name: "StateMachine", type: "deterministic",
-          label: "State machine setup", status: "complete",
+          id: "state-setup",
+          name: "StateMachine",
+          type: "deterministic",
+          label: "State machine setup",
+          status: "complete",
           durationMs: Date.now() - t0,
           detail: `State: ${currentState}`,
         });
       } else {
         steps.push({
-          id: "state-setup", name: "StateMachine", type: "deterministic",
-          label: "State machine setup", status: "skipped",
+          id: "state-setup",
+          name: "StateMachine",
+          type: "deterministic",
+          label: "State machine setup",
+          status: "skipped",
           durationMs: Date.now() - t0,
         });
       }
@@ -548,28 +696,42 @@ export class Orchestrator {
         fieldCollector = new FieldCollector(manifest.input_schema);
         fieldCollector.seedFromPersona(personaData);
         steps.push({
-          id: "field-collector", name: "FieldCollector", type: "deterministic",
-          label: "Field collection (rule-based)", status: "complete",
+          id: "field-collector",
+          name: "FieldCollector",
+          type: "deterministic",
+          label: "Field collection (rule-based)",
+          status: "complete",
           durationMs: Date.now() - t0,
         });
       } else {
         steps.push({
-          id: "field-collector", name: "FieldCollector", type: "deterministic",
-          label: "Field collection (rule-based)", status: "skipped",
+          id: "field-collector",
+          name: "FieldCollector",
+          type: "deterministic",
+          label: "Field collection (rule-based)",
+          status: "skipped",
           durationMs: Date.now() - t0,
         });
       }
     }
 
     // ── Agent Selection (deterministic) ──
-    const selectedAgent = Orchestrator.selectAgent(serviceId, stateModelDef, currentState);
+    const selectedAgent = Orchestrator.selectAgent(
+      serviceId,
+      stateModelDef,
+      currentState,
+    );
     steps.push({
-      id: "agent-select", name: "AgentSelector", type: "deterministic",
+      id: "agent-select",
+      name: "AgentSelector",
+      type: "deterministic",
       label: `Agent selection: ${selectedAgent}`,
-      status: "complete", durationMs: 0,
-      detail: selectedAgent === "triage"
-        ? "No active service journey — using triage agent"
-        : "Active service journey — using journey agent",
+      status: "complete",
+      durationMs: 0,
+      detail:
+        selectedAgent === "triage"
+          ? "No active service journey — using triage agent"
+          : "Active service journey — using journey agent",
     });
 
     // ── 4-5. Build Strategy Context + System Prompt ──
@@ -586,31 +748,49 @@ export class Orchestrator {
 
     {
       const t0 = Date.now();
-      const strategyServiceContext = await Promise.resolve(this.strategy.buildServiceContext(strategyCtx));
+      const strategyServiceContext = await Promise.resolve(
+        this.strategy.buildServiceContext(strategyCtx),
+      );
 
       if (selectedAgent === "triage") {
         systemPrompt = this.buildTriagePrompt({
-          agent, agentPrompt, personaPrompt, scenarioPrompt,
-          personaData, generateTitle,
+          agent,
+          agentPrompt,
+          personaPrompt,
+          scenarioPrompt,
+          personaData,
+          generateTitle,
           strategyServiceContext,
-          factsAlreadyKnown, unresolvedContradictions,
+          factsAlreadyKnown,
+          unresolvedContradictions,
         });
       } else {
         systemPrompt = this.buildJourneyPrompt({
-          agent, scenario, serviceId,
-          agentPrompt, personaPrompt, scenarioPrompt,
-          personaData, policyResult,
-          stateMachine, consentModel, stateInstructions,
+          agent,
+          scenario,
+          serviceId,
+          agentPrompt,
+          personaPrompt,
+          scenarioPrompt,
+          personaData,
+          policyResult,
+          stateMachine,
+          consentModel,
+          stateInstructions,
           fieldCollector,
-          factsAlreadyKnown, unresolvedContradictions,
+          factsAlreadyKnown,
+          unresolvedContradictions,
           generateTitle,
           strategyServiceContext,
         });
       }
 
       steps.push({
-        id: "prompt-build", name: "PromptBuilder", type: "deterministic",
-        label: `${capitalize(selectedAgent)} prompt construction`, status: "complete",
+        id: "prompt-build",
+        name: "PromptBuilder",
+        type: "deterministic",
+        label: `${capitalize(selectedAgent)} prompt construction`,
+        status: "complete",
         durationMs: Date.now() - t0,
       });
     }
@@ -623,8 +803,11 @@ export class Orchestrator {
       tools = this.strategy.buildTools(strategyCtx);
       hasTools = tools.length > 0;
       steps.push({
-        id: "tool-build", name: "ToolBuilder", type: "deterministic",
-        label: "Tool list construction", status: "complete",
+        id: "tool-build",
+        name: "ToolBuilder",
+        type: "deterministic",
+        label: "Tool list construction",
+        status: "complete",
         durationMs: Date.now() - t0,
         detail: `${tools.length} tools available`,
       });
@@ -648,19 +831,31 @@ export class Orchestrator {
         if (llmResult.stopReason === "tool_use") {
           if (llmResult.reasoning) reasoning = llmResult.reasoning;
 
-          loopMessages.push({ role: "assistant", content: llmResult.rawContent });
+          loopMessages.push({
+            role: "assistant",
+            content: llmResult.rawContent,
+          });
 
-          const toolResults: Array<{ type: "tool_result"; tool_use_id: string; content: string }> = [];
+          const toolResults: Array<{
+            type: "tool_result";
+            tool_use_id: string;
+            content: string;
+          }> = [];
 
           for (const toolCall of llmResult.toolCalls) {
             toolsUsed.push(toolCall.name);
 
             let toolResult: string;
             if (toolCall.name === "ea_current_floods" && floodDataHandler) {
-              const city = (personaData.address as Record<string, unknown>)?.city as string || "";
+              const city =
+                ((personaData.address as Record<string, unknown>)
+                  ?.city as string) || "";
               toolResult = await floodDataHandler(city);
             } else {
-              toolResult = await this.strategy.dispatchToolCall(toolCall.name, toolCall.input);
+              toolResult = await this.strategy.dispatchToolCall(
+                toolCall.name,
+                toolCall.input,
+              );
             }
 
             toolResults.push({
@@ -680,10 +875,14 @@ export class Orchestrator {
         break;
       }
       steps.push({
-        id: "llm-call", name: "LanguageAgent", type: "ai",
-        label: "LLM generation", status: responseText ? "complete" : "error",
+        id: "llm-call",
+        name: "LanguageAgent",
+        type: "ai",
+        label: "LLM generation",
+        status: responseText ? "complete" : "error",
         durationMs: Date.now() - t0,
-        detail: toolsUsed.length > 0 ? `${toolsUsed.length} tool calls` : undefined,
+        detail:
+          toolsUsed.length > 0 ? `${toolsUsed.length} tool calls` : undefined,
         agentName: selectedAgent,
       });
     }
@@ -698,7 +897,10 @@ export class Orchestrator {
       structuredOutput = parsed.parsed;
       responseText = parsed.cleanText;
 
-      conversationTitle = (generateTitle && structuredOutput?.title) ? structuredOutput.title : null;
+      conversationTitle =
+        generateTitle && structuredOutput?.title
+          ? structuredOutput.title
+          : null;
 
       tasks = (structuredOutput?.tasks || []).map((t, i) => ({
         id: `task_${Date.now()}_${i}`,
@@ -711,15 +913,24 @@ export class Orchestrator {
         ...(t.fields ? { fields: t.fields } : {}),
       }));
       steps.push({
-        id: "output-parse", name: "OutputParser", type: "deterministic",
-        label: "Parse structured output", status: structuredOutput ? "complete" : "skipped",
+        id: "output-parse",
+        name: "OutputParser",
+        type: "deterministic",
+        label: "Parse structured output",
+        status: structuredOutput ? "complete" : "skipped",
         durationMs: Date.now() - t0,
-        detail: structuredOutput ? `${tasks.length} tasks, ${structuredOutput.extractedFacts?.length || 0} facts` : undefined,
+        detail: structuredOutput
+          ? `${tasks.length} tasks, ${structuredOutput.extractedFacts?.length || 0} facts`
+          : undefined,
       });
     }
 
     // ── 10. State Transitions ──
-    const stateTransitions: Array<{ fromState: string; toState: string; trigger: string }> = [];
+    const stateTransitions: Array<{
+      fromState: string;
+      toState: string;
+      trigger: string;
+    }> = [];
     let ucStateInfo: OrchestratorOutput["ucState"] | undefined;
     const stateTransitionT0 = Date.now();
 
@@ -731,8 +942,13 @@ export class Orchestrator {
 
     if (stateMachine) {
       // Validate LLM's proposed transition
-      if (structuredOutput?.proposedTransition && stateTransitions.length === 0) {
-        const result = stateMachine.transition(structuredOutput.proposedTransition);
+      if (
+        structuredOutput?.proposedTransition &&
+        stateTransitions.length === 0
+      ) {
+        const result = stateMachine.transition(
+          structuredOutput.proposedTransition,
+        );
         if (result.success) {
           stateTransitions.push({
             fromState: result.fromState,
@@ -764,7 +980,8 @@ export class Orchestrator {
       // Apply auto-transitions from state-instructions.json patterns
       if (stateTransitions.length === 0 && stateInstructions?.autoTransitions) {
         const lastUserMsg = messages.filter((m) => m.role === "user").pop();
-        const userText = typeof lastUserMsg?.content === "string" ? lastUserMsg.content : "";
+        const userText =
+          typeof lastUserMsg?.content === "string" ? lastUserMsg.content : "";
 
         for (const auto of stateInstructions.autoTransitions) {
           if (auto.fromState === stateMachine.getState()) {
@@ -816,16 +1033,26 @@ export class Orchestrator {
 
       ucStateInfo = {
         currentState: stateMachine.getState(),
-        previousState: stateTransitions.length > 0 ? stateTransitions[0].fromState : undefined,
-        trigger: stateTransitions.length > 0 ? stateTransitions[stateTransitions.length - 1].trigger : undefined,
-        allowedTransitions: stateMachine.allowedTransitions().map(t => t.trigger!).filter(Boolean),
+        previousState:
+          stateTransitions.length > 0
+            ? stateTransitions[0].fromState
+            : undefined,
+        trigger:
+          stateTransitions.length > 0
+            ? stateTransitions[stateTransitions.length - 1].trigger
+            : undefined,
+        allowedTransitions: stateMachine
+          .allowedTransitions()
+          .map((t) => t.trigger!)
+          .filter(Boolean),
         stateHistory: updatedHistory,
       };
     } else if (mcpTransitions.length > 0) {
       // MCP mode without local state machine: build from tool results
       const latestState = stateTransitions[stateTransitions.length - 1].toState;
       const updatedHistory = [...clientStateHistory];
-      if (!updatedHistory.includes(currentState)) updatedHistory.push(currentState);
+      if (!updatedHistory.includes(currentState))
+        updatedHistory.push(currentState);
       for (const t of stateTransitions) {
         if (!updatedHistory.includes(t.toState)) updatedHistory.push(t.toState);
       }
@@ -839,10 +1066,16 @@ export class Orchestrator {
     }
 
     steps.push({
-      id: "state-transition", name: "StateValidator", type: "deterministic",
-      label: "State transition validation", status: stateTransitions.length > 0 ? "complete" : "skipped",
+      id: "state-transition",
+      name: "StateValidator",
+      type: "deterministic",
+      label: "State transition validation",
+      status: stateTransitions.length > 0 ? "complete" : "skipped",
       durationMs: Date.now() - stateTransitionT0,
-      detail: stateTransitions.length > 0 ? `${stateTransitions.length} transition(s)` : undefined,
+      detail:
+        stateTransitions.length > 0
+          ? `${stateTransitions.length} transition(s)`
+          : undefined,
     });
 
     // ── 11. Deterministic Task Injection ──
@@ -856,15 +1089,21 @@ export class Orchestrator {
           stateTransitions.length > 0,
         );
         steps.push({
-          id: "task-injection", name: "TaskInjector", type: "deterministic",
-          label: "Deterministic task injection", status: "complete",
+          id: "task-injection",
+          name: "TaskInjector",
+          type: "deterministic",
+          label: "Deterministic task injection",
+          status: "complete",
           durationMs: Date.now() - t0,
           detail: `${tasks.length} task(s)`,
         });
       } else {
         steps.push({
-          id: "task-injection", name: "TaskInjector", type: "deterministic",
-          label: "Deterministic task injection", status: "skipped",
+          id: "task-injection",
+          name: "TaskInjector",
+          type: "deterministic",
+          label: "Deterministic task injection",
+          status: "skipped",
           durationMs: Date.now() - t0,
         });
       }
@@ -877,8 +1116,8 @@ export class Orchestrator {
       if (consentModel && stateMachine) {
         const stateId = stateMachine.getState();
         if (stateId === "eligibility-checked") {
-          const grants = (consentModel.grants || []);
-          consentRequests = grants.map(g => ({
+          const grants = consentModel.grants || [];
+          consentRequests = grants.map((g) => ({
             id: g.id,
             description: g.description,
             data_shared: g.data_shared,
@@ -888,10 +1127,15 @@ export class Orchestrator {
         }
       }
       steps.push({
-        id: "consent-check", name: "ConsentResolver", type: "deterministic",
-        label: "Consent check", status: consentRequests ? "complete" : "skipped",
+        id: "consent-check",
+        name: "ConsentResolver",
+        type: "deterministic",
+        label: "Consent check",
+        status: consentRequests ? "complete" : "skipped",
         durationMs: Date.now() - t0,
-        detail: consentRequests ? `${consentRequests.length} grant(s)` : undefined,
+        detail: consentRequests
+          ? `${consentRequests.length} grant(s)`
+          : undefined,
       });
     }
 
@@ -899,10 +1143,15 @@ export class Orchestrator {
     let handoffInfo: OrchestratorOutput["handoff"] | undefined;
     {
       const t0 = Date.now();
-      const lastUserMessage = messages.filter(m => m.role === "user").pop();
-      const lastUserText = typeof lastUserMessage?.content === "string" ? lastUserMessage.content : "";
+      const lastUserMessage = messages.filter((m) => m.role === "user").pop();
+      const lastUserText =
+        typeof lastUserMessage?.content === "string"
+          ? lastUserMessage.content
+          : "";
       const handoffCheck = this.handoffManager.evaluateTriggers(lastUserText, {
-        policyEdgeCase: policyResultInfo ? policyResultInfo.edgeCaseCount > 0 : false,
+        policyEdgeCase: policyResultInfo
+          ? policyResultInfo.edgeCaseCount > 0
+          : false,
       });
 
       if (handoffCheck.triggered) {
@@ -914,7 +1163,9 @@ export class Orchestrator {
           citizen: { name: citizenName },
           stepsCompleted: [`Chat conversation (${messages.length} messages)`],
           stepsBlocked: [handoffCheck.description || "Trigger detected"],
-          dataCollected: Object.keys(personaData).filter(k => k !== "communicationStyle"),
+          dataCollected: Object.keys(personaData).filter(
+            (k) => k !== "communicationStyle",
+          ),
           timeSpent: `${messages.length} exchanges`,
           traceId: "",
           receiptIds: [],
@@ -929,10 +1180,15 @@ export class Orchestrator {
         };
       }
       steps.push({
-        id: "handoff-check", name: "HandoffDetector", type: "deterministic",
-        label: "Handoff detection", status: handoffCheck.triggered ? "complete" : "skipped",
+        id: "handoff-check",
+        name: "HandoffDetector",
+        type: "deterministic",
+        label: "Handoff detection",
+        status: handoffCheck.triggered ? "complete" : "skipped",
         durationMs: Date.now() - t0,
-        detail: handoffCheck.triggered ? `Reason: ${handoffCheck.reason}` : undefined,
+        detail: handoffCheck.triggered
+          ? `Reason: ${handoffCheck.reason}`
+          : undefined,
       });
     }
 
@@ -959,7 +1215,8 @@ export class Orchestrator {
 
     return {
       response: responseText,
-      reasoning: reasoning || "No internal reasoning available for this response.",
+      reasoning:
+        reasoning || "No internal reasoning available for this response.",
       toolsUsed,
       conversationTitle,
       tasks,
@@ -981,7 +1238,8 @@ export class Orchestrator {
     currentState?: string,
   ): "triage" | "journey" {
     if (!serviceId || serviceId === "triage") return "triage";
-    if (!stateModelDef && (!currentState || currentState === "not-started")) return "triage";
+    if (!stateModelDef && (!currentState || currentState === "not-started"))
+      return "triage";
     return "journey";
   }
 
@@ -1001,9 +1259,15 @@ export class Orchestrator {
     unresolvedContradictions?: string;
   }): string {
     const {
-      agent, agentPrompt, personaPrompt, scenarioPrompt,
-      personaData, generateTitle, strategyServiceContext,
-      factsAlreadyKnown, unresolvedContradictions,
+      agent,
+      agentPrompt,
+      personaPrompt,
+      scenarioPrompt,
+      personaData,
+      generateTitle,
+      strategyServiceContext,
+      factsAlreadyKnown,
+      unresolvedContradictions,
     } = opts;
 
     const parts: string[] = [];
@@ -1017,7 +1281,9 @@ export class Orchestrator {
     parts.push("---");
 
     // Persona data
-    parts.push(`PERSONA DATA AVAILABLE:\nYou have access to the following data about the user. Use this according to your agent personality (DOT asks permission, MAX auto-fills).\n\n${JSON.stringify(personaData, null, 2)}`);
+    parts.push(
+      `PERSONA DATA AVAILABLE:\nYou have access to the following data about the user. Use this according to your agent personality (DOT asks permission, MAX auto-fills).\n\n${JSON.stringify(personaData, null, 2)}`,
+    );
 
     // Service catalog/graph context
     if (strategyServiceContext) {
@@ -1034,7 +1300,9 @@ export class Orchestrator {
 
     // Character
     parts.push("---");
-    parts.push(`Remember: Stay in character as ${agent.toUpperCase()} agent, communicate according to the persona style, and help the citizen find the right government service.`);
+    parts.push(
+      `Remember: Stay in character as ${agent.toUpperCase()} agent, communicate according to the persona style, and help the citizen find the right government service.`,
+    );
 
     if (generateTitle) {
       parts.push(TITLE_INSTRUCTIONS);
@@ -1070,11 +1338,21 @@ export class Orchestrator {
     strategyServiceContext: string;
   }): string {
     const {
-      agent, scenario, serviceId,
-      agentPrompt, personaPrompt, scenarioPrompt,
-      personaData, stateMachine, consentModel, stateInstructions,
-      fieldCollector, factsAlreadyKnown, unresolvedContradictions,
-      generateTitle, strategyServiceContext,
+      agent,
+      scenario,
+      serviceId,
+      agentPrompt,
+      personaPrompt,
+      scenarioPrompt,
+      personaData,
+      stateMachine,
+      consentModel,
+      stateInstructions,
+      fieldCollector,
+      factsAlreadyKnown,
+      unresolvedContradictions,
+      generateTitle,
+      strategyServiceContext,
     } = opts;
 
     const parts: string[] = [];
@@ -1088,7 +1366,9 @@ export class Orchestrator {
     parts.push("---");
 
     // Persona data
-    parts.push(`PERSONA DATA AVAILABLE:\nYou have access to the following data about the user. Use this according to your agent personality (DOT asks permission, MAX auto-fills).\n\n${JSON.stringify(personaData, null, 2)}`);
+    parts.push(
+      `PERSONA DATA AVAILABLE:\nYou have access to the following data about the user. Use this according to your agent personality (DOT asks permission, MAX auto-fills).\n\n${JSON.stringify(personaData, null, 2)}`,
+    );
 
     // Strategy-built service context (policy results, tool instructions, etc.)
     if (strategyServiceContext) {
@@ -1106,7 +1386,15 @@ export class Orchestrator {
     // State model context
     if (stateMachine) {
       parts.push("---");
-      parts.push(this.buildStateContext(stateMachine, consentModel, stateInstructions, personaData, serviceId));
+      parts.push(
+        this.buildStateContext(
+          stateMachine,
+          consentModel,
+          stateInstructions,
+          personaData,
+          serviceId,
+        ),
+      );
     }
 
     // Field collector context
@@ -1117,7 +1405,9 @@ export class Orchestrator {
 
     // Character and guardrails
     parts.push("---");
-    parts.push(`Remember: Stay in character as ${agent.toUpperCase()} agent, communicate according to the persona style, and help with the ${scenario} scenario.`);
+    parts.push(
+      `Remember: Stay in character as ${agent.toUpperCase()} agent, communicate according to the persona style, and help with the ${scenario} scenario.`,
+    );
 
     parts.push(ACCURACY_GUARDRAILS);
 
@@ -1145,10 +1435,14 @@ export class Orchestrator {
     const lines: string[] = [];
     lines.push("STATE MODEL JOURNEY:");
     lines.push(`Current state: ${currentState}`);
-    lines.push(`Is terminal: ${isTerminal ? "YES — journey complete" : "NO — journey in progress"}`);
+    lines.push(
+      `Is terminal: ${isTerminal ? "YES — journey complete" : "NO — journey in progress"}`,
+    );
 
     if (allowed.length > 0) {
-      lines.push(`Available transitions: ${allowed.map(t => `${t.trigger} → ${t.to}`).join(", ")}`);
+      lines.push(
+        `Available transitions: ${allowed.map((t) => `${t.trigger} → ${t.to}`).join(", ")}`,
+      );
     }
 
     // Per-state instructions from data file
@@ -1172,7 +1466,9 @@ export class Orchestrator {
         lines.push("");
         lines.push("CONSENT REQUIREMENTS:");
         for (const grant of grants) {
-          lines.push(`- ${grant.id}: ${grant.description} (data: ${grant.data_shared.join(", ")})`);
+          lines.push(
+            `- ${grant.id}: ${grant.description} (data: ${grant.data_shared.join(", ")})`,
+          );
         }
       }
     }
@@ -1180,10 +1476,16 @@ export class Orchestrator {
     // Transition instructions
     lines.push("");
     lines.push("STATE TRANSITIONS:");
-    lines.push('When you determine a state transition should happen, set the "stateTransition" field in the JSON block to the trigger name.');
+    lines.push(
+      'When you determine a state transition should happen, set the "stateTransition" field in the JSON block to the trigger name.',
+    );
     lines.push('For example: "stateTransition": "verify-identity"');
-    lines.push("IMPORTANT: Only set ONE state transition per response. Do NOT skip ahead or combine steps.");
-    lines.push("IMPORTANT: For states that collect data (housing, bank details, income), do NOT set a transition until the user has actually provided the information in a message. Ask for the data and STOP — wait for their reply.");
+    lines.push(
+      "IMPORTANT: Only set ONE state transition per response. Do NOT skip ahead or combine steps.",
+    );
+    lines.push(
+      "IMPORTANT: For states that collect data (housing, bank details, income), do NOT set a transition until the user has actually provided the information in a message. Ask for the data and STOP — wait for their reply.",
+    );
 
     return lines.join("\n");
   }

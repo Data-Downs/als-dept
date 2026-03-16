@@ -69,7 +69,15 @@ function isActive(pathname: string, item: NavItem): boolean {
   return pathname === item.href;
 }
 
-function NavLink({ item, active, collapsed }: { item: NavItem; active: boolean; collapsed: boolean }) {
+function NavLink({
+  item,
+  active,
+  collapsed,
+}: {
+  item: NavItem;
+  active: boolean;
+  collapsed: boolean;
+}) {
   if (item.disabled) {
     return (
       <span
@@ -98,7 +106,13 @@ function NavLink({ item, active, collapsed }: { item: NavItem; active: boolean; 
   );
 }
 
-export default function Sidebar({ collapsed, onToggle }: { collapsed: boolean; onToggle: () => void }) {
+export default function Sidebar({
+  collapsed,
+  onToggle,
+}: {
+  collapsed: boolean;
+  onToggle: () => void;
+}) {
   const pathname = usePathname();
 
   return (
@@ -107,9 +121,14 @@ export default function Sidebar({ collapsed, onToggle }: { collapsed: boolean; o
       style={{ width: collapsed ? "56px" : "var(--sidebar-width)" }}
     >
       {/* Brand */}
-      <div className={`h-14 flex items-center ${collapsed ? "justify-center" : "px-5 justify-between"}`}>
+      <div
+        className={`h-14 flex items-center ${collapsed ? "justify-center" : "px-5 justify-between"}`}
+      >
         {!collapsed && (
-          <a href="/" className="text-gray-900 font-bold text-base tracking-tight">
+          <a
+            href="/"
+            className="text-gray-900 font-bold text-base tracking-tight"
+          >
             Legibility Studio
           </a>
         )}
@@ -119,7 +138,11 @@ export default function Sidebar({ collapsed, onToggle }: { collapsed: boolean; o
           aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
           title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
         >
-          {collapsed ? <PanelLeftOpen size={18} /> : <PanelLeftClose size={18} />}
+          {collapsed ? (
+            <PanelLeftOpen size={18} />
+          ) : (
+            <PanelLeftClose size={18} />
+          )}
         </button>
       </div>
 
@@ -160,7 +183,9 @@ export default function Sidebar({ collapsed, onToggle }: { collapsed: boolean; o
       </nav>
 
       {/* Footer */}
-      <div className={`border-t border-studio-border ${collapsed ? "py-3 px-2" : "px-4 py-4"}`}>
+      <div
+        className={`border-t border-studio-border ${collapsed ? "py-3 px-2" : "px-4 py-4"}`}
+      >
         {collapsed ? (
           <a
             href="mailto:chris@datadowns.com"
@@ -171,7 +196,9 @@ export default function Sidebar({ collapsed, onToggle }: { collapsed: boolean; o
           </a>
         ) : (
           <>
-            <p className="text-[11px] text-gray-400">Agentic Legibility Stack</p>
+            <p className="text-[11px] text-gray-400">
+              Agentic Legibility Stack
+            </p>
             <p className="text-[11px] text-gray-400 mt-1">
               A project by Chris Downs
             </p>
@@ -182,7 +209,9 @@ export default function Sidebar({ collapsed, onToggle }: { collapsed: boolean; o
               <Mail size={10} />
               chris@datadowns.com
             </a>
-            <p className="text-[10px] text-gray-300 mt-2">&copy; {new Date().getFullYear()} Chris Downs</p>
+            <p className="text-[10px] text-gray-300 mt-2">
+              &copy; {new Date().getFullYear()} Chris Downs
+            </p>
           </>
         )}
       </div>

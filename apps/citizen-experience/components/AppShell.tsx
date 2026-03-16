@@ -15,7 +15,13 @@ import { getAllTerminalStateIds } from "@als/schemas";
 
 const TERMINAL_STATES = getAllTerminalStateIds();
 
-function TabButton({ label, icon, active, onClick, disabled }: {
+function TabButton({
+  label,
+  icon,
+  active,
+  onClick,
+  disabled,
+}: {
   label: string;
   icon: React.ReactNode;
   active: boolean;
@@ -56,7 +62,16 @@ function BottomTabBar() {
             navigateTo("dashboard");
           }}
           icon={
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+            <svg
+              width="22"
+              height="22"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.8"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
               <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
               <polyline points="9 22 9 12 15 12 15 22" />
             </svg>
@@ -67,7 +82,16 @@ function BottomTabBar() {
           active={currentView === "chat"}
           onClick={() => navigateTo("chat")}
           icon={
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+            <svg
+              width="22"
+              height="22"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.8"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
               <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
             </svg>
           }
@@ -78,7 +102,16 @@ function BottomTabBar() {
           onClick={() => {}}
           disabled
           icon={
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+            <svg
+              width="22"
+              height="22"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.8"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
               <rect x="2" y="5" width="20" height="14" rx="2" />
               <path d="M16 12h.01" />
             </svg>
@@ -90,7 +123,16 @@ function BottomTabBar() {
           onClick={() => {}}
           disabled
           icon={
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+            <svg
+              width="22"
+              height="22"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.8"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
               <circle cx="12" cy="12" r="10" />
               <path d="M12 16v-4M12 8h.01" />
             </svg>
@@ -156,7 +198,10 @@ export function AppShell() {
       </main>
 
       {/* Input bar — hidden on persona-picker, plan view, and when journey is complete */}
-      {persona && currentView !== "persona-picker" && currentView !== "plan" && !journeyComplete && <MessageInput />}
+      {persona &&
+        currentView !== "persona-picker" &&
+        currentView !== "plan" &&
+        !journeyComplete && <MessageInput />}
 
       {/* Bottom tab navigation — hidden on persona-picker */}
       {currentView !== "persona-picker" && <BottomTabBar />}

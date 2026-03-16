@@ -94,8 +94,11 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error("[v1/generate-batch] POST error:", error);
     return jsonWithCors(
-      { error: error instanceof Error ? error.message : "Batch generation failed" },
-      { status: 500 }
+      {
+        error:
+          error instanceof Error ? error.message : "Batch generation failed",
+      },
+      { status: 500 },
     );
   }
 }

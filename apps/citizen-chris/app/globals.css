@@ -3,16 +3,21 @@
 @tailwind utilities;
 
 @font-face {
-  font-family: 'Charles Wright';
-  src: url('/fonts/CharlesWright-Bold.otf') format('opentype');
+  font-family: "Charles Wright";
+  src: url("/fonts/CharlesWright-Bold.otf") format("opentype");
   font-weight: 700;
   font-style: normal;
   font-display: swap;
 }
 
 /* Hide scrollbar for carousel containers */
-.scrollbar-hide::-webkit-scrollbar { display: none; }
-.scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
 
 :root {
   /* GOV.UK colour tokens */
@@ -103,21 +108,21 @@ button.bg-govuk-blue:active,
 a.bg-govuk-blue:active,
 button.bg-govuk-blue.touch-feedback:active,
 a.bg-govuk-blue.touch-feedback:active {
-  background-color: #1B4F72 !important;
-  color: #6B9DB8 !important;
+  background-color: #1b4f72 !important;
+  color: #6b9db8 !important;
   transition: none !important;
 }
 
 /* Ensure text-white doesn't override active state */
 button.bg-govuk-blue.text-white:active,
 a.bg-govuk-blue.text-white:active {
-  color: #6B9DB8 !important;
+  color: #6b9db8 !important;
 }
 
 /* Blue text links/buttons → pale blue text on press */
 button.text-govuk-blue:active,
 a.text-govuk-blue:active {
-  color: #6B9DB8 !important;
+  color: #6b9db8 !important;
 }
 
 /* Blue circle icons → darker blue on press */
@@ -152,14 +157,30 @@ a.bg-govuk-green:active {
 }
 
 @keyframes blue-ripple {
-  0% { background-position: 200% center; }
-  100% { background-position: 0% center; }
+  0% {
+    background-position: 200% center;
+  }
+  100% {
+    background-position: 0% center;
+  }
 }
 
 /* ── Voice recording waveform ── */
 .waveform-container {
-  mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
-  -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 10%,
+    black 90%,
+    transparent
+  );
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 10%,
+    black 90%,
+    transparent
+  );
 }
 
 .waveform-bar {
@@ -171,9 +192,18 @@ a.bg-govuk-green:active {
 }
 
 @keyframes waveform-pulse {
-  0% { height: 4px; opacity: 0.3; }
-  50% { height: 16px; opacity: 0.7; }
-  100% { height: 6px; opacity: 0.4; }
+  0% {
+    height: 4px;
+    opacity: 0.3;
+  }
+  50% {
+    height: 16px;
+    opacity: 0.7;
+  }
+  100% {
+    height: 6px;
+    opacity: 0.4;
+  }
 }
 
 /* ── Transcribing dots ── */
@@ -183,11 +213,21 @@ a.bg-govuk-green:active {
 }
 
 @keyframes transcribing-dots {
-  0% { content: ""; }
-  25% { content: "."; }
-  50% { content: ".."; }
-  75% { content: "..."; }
-  100% { content: ""; }
+  0% {
+    content: "";
+  }
+  25% {
+    content: ".";
+  }
+  50% {
+    content: "..";
+  }
+  75% {
+    content: "...";
+  }
+  100% {
+    content: "";
+  }
 }
 
 /* Momentum scrolling on iOS */
@@ -240,7 +280,7 @@ select {
   height: 100vh;
   height: 100dvh;
   overflow: hidden;
-  background: #04084A;
+  background: #04084a;
   padding: 2rem;
 }
 

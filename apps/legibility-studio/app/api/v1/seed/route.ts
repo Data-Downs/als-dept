@@ -1,4 +1,7 @@
-import { getServiceStoreAdapter, invalidateServiceStore } from "@/lib/service-store-init";
+import {
+  getServiceStoreAdapter,
+  invalidateServiceStore,
+} from "@/lib/service-store-init";
 import { handleOptions, jsonWithCors } from "@/lib/cors";
 import { seedServiceStore } from "@als/service-store";
 
@@ -25,6 +28,9 @@ export async function POST(request: Request) {
     return jsonWithCors({ success: true, seeded: result });
   } catch (error) {
     console.error("[v1/seed] Error:", error);
-    return jsonWithCors({ error: "Failed to seed service store" }, { status: 500 });
+    return jsonWithCors(
+      { error: "Failed to seed service store" },
+      { status: 500 },
+    );
   }
 }

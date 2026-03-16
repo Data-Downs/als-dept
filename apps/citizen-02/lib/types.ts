@@ -85,7 +85,15 @@ export interface ChatMessage {
 export interface TaskField {
   key: string;
   label: string;
-  type: "text" | "email" | "tel" | "currency" | "date" | "number" | "confirm" | "select";
+  type:
+    | "text"
+    | "email"
+    | "tel"
+    | "currency"
+    | "date"
+    | "number"
+    | "confirm"
+    | "select";
   placeholder?: string;
   options?: Array<{ value: string; label: string }>;
   prefill?: string;
@@ -204,7 +212,12 @@ export type ViewType =
   | "tasks"
   | "plan";
 
-export type ServicePlanStatus = "locked" | "available" | "in_progress" | "completed" | "skipped";
+export type ServicePlanStatus =
+  | "locked"
+  | "available"
+  | "in_progress"
+  | "completed"
+  | "skipped";
 
 export interface ActivePlan {
   id: string;
@@ -221,7 +234,11 @@ export interface ActivePlan {
   services: LifeEventService[];
 }
 
-export { PERSONA_NAMES, PERSONA_COLORS, PERSONA_INITIALS } from "./service-data";
+export {
+  PERSONA_NAMES,
+  PERSONA_COLORS,
+  PERSONA_INITIALS,
+} from "./service-data";
 
 export interface PlanGroup {
   depth: number;

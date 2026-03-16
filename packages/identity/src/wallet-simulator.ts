@@ -6,7 +6,11 @@
  * In production, this would be a real wallet SDK.
  */
 
-import type { TestUser, WalletCredential, CredentialPresentation } from "./credential-types";
+import type {
+  TestUser,
+  WalletCredential,
+  CredentialPresentation,
+} from "./credential-types";
 
 export class WalletSimulator {
   private credentials = new Map<string, WalletCredential[]>();
@@ -24,7 +28,7 @@ export class WalletSimulator {
   /** Request a presentation of a specific credential type */
   requestPresentation(
     userId: string,
-    credentialType: string
+    credentialType: string,
   ): { available: boolean; credential?: WalletCredential } {
     const userCredentials = this.credentials.get(userId) || [];
     const credential = userCredentials.find((c) => c.type === credentialType);
@@ -39,9 +43,12 @@ export class WalletSimulator {
   /** Present a credential (returns structured claims for verification) */
   presentCredential(
     userId: string,
-    credentialType: string
+    credentialType: string,
   ): CredentialPresentation | null {
-    const { available, credential } = this.requestPresentation(userId, credentialType);
+    const { available, credential } = this.requestPresentation(
+      userId,
+      credentialType,
+    );
     if (!available || !credential) return null;
 
     return {
@@ -62,9 +69,12 @@ export class WalletSimulator {
   /** Check the status of a credential */
   checkStatus(
     userId: string,
-    credentialType: string
+    credentialType: string,
   ): { exists: boolean; status?: string; expired?: boolean } {
-    const { available, credential } = this.requestPresentation(userId, credentialType);
+    const { available, credential } = this.requestPresentation(
+      userId,
+      credentialType,
+    );
     if (!available || !credential) {
       return { exists: false };
     }

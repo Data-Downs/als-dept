@@ -55,7 +55,7 @@ function extractPath(govukUrl: string): string {
  * Fetch and extract content from a GOV.UK page.
  */
 export async function extractGovukContent(
-  govukUrl: string
+  govukUrl: string,
 ): Promise<ExtractedContent | null> {
   const adapter = getGovukContentAdapter();
   const path = extractPath(govukUrl);
@@ -76,7 +76,11 @@ export async function extractGovukContent(
 
   // Multi-page guide (e.g. /pip, /universal-credit)
   if (Array.isArray(details.parts)) {
-    for (const part of details.parts as Array<{ title: string; body: string; slug: string }>) {
+    for (const part of details.parts as Array<{
+      title: string;
+      body: string;
+      slug: string;
+    }>) {
       const body = stripHtml(part.body || "");
       if (body) {
         sections.push({ heading: part.title || part.slug, body });
@@ -93,7 +97,10 @@ export async function extractGovukContent(
   }
 
   // Transaction pages with introductory_paragraph
-  if (details.introductory_paragraph && typeof details.introductory_paragraph === "string") {
+  if (
+    details.introductory_paragraph &&
+    typeof details.introductory_paragraph === "string"
+  ) {
     const body = stripHtml(details.introductory_paragraph);
     if (body && !sections.some((s) => s.body.includes(body.slice(0, 50)))) {
       sections.unshift({ heading: "Introduction", body });
@@ -101,7 +108,10 @@ export async function extractGovukContent(
   }
 
   // More information section
-  if (details.more_information && typeof details.more_information === "string") {
+  if (
+    details.more_information &&
+    typeof details.more_information === "string"
+  ) {
     const body = stripHtml(details.more_information);
     if (body) {
       sections.push({ heading: "More information", body });
@@ -109,8 +119,13 @@ export async function extractGovukContent(
   }
 
   // External related links (useful for understanding scope)
-  if (details.external_related_links && Array.isArray(details.external_related_links)) {
-    const links = (details.external_related_links as Array<{ title: string; url: string }>)
+  if (
+    details.external_related_links &&
+    Array.isArray(details.external_related_links)
+  ) {
+    const links = (
+      details.external_related_links as Array<{ title: string; url: string }>
+    )
       .map((l) => `- ${l.title}: ${l.url}`)
       .join("\n");
     if (links) {
@@ -123,7 +138,9 @@ export async function extractGovukContent(
     sections.push({ heading: "Overview", body: output.description });
   }
 
-  const fullText = sections.map((s) => `## ${s.heading}\n${s.body}`).join("\n\n");
+  const fullText = sections
+    .map((s) => `## ${s.heading}\n${s.body}`)
+    .join("\n\n");
 
   return {
     title: output.title,

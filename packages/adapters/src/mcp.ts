@@ -6,7 +6,12 @@
  * the interface and delegates to the existing mcp-client module.
  */
 
-import type { ServiceAdapter, AdapterConfig, AdapterRequest, AdapterResponse } from "./service-adapter";
+import type {
+  ServiceAdapter,
+  AdapterConfig,
+  AdapterRequest,
+  AdapterResponse,
+} from "./service-adapter";
 
 export interface McpToolInput {
   toolName: string;
@@ -22,7 +27,9 @@ export class McpAdapter implements ServiceAdapter {
   readonly type = "mcp";
   private serverUrl: string | null = null;
   private ready = false;
-  private toolCallFn: ((name: string, args: Record<string, unknown>) => Promise<unknown>) | null = null;
+  private toolCallFn:
+    | ((name: string, args: Record<string, unknown>) => Promise<unknown>)
+    | null = null;
 
   initialize(config: AdapterConfig): void {
     if (config.baseUrl) this.serverUrl = config.baseUrl as string;
@@ -30,7 +37,9 @@ export class McpAdapter implements ServiceAdapter {
   }
 
   /** Register an external tool-call function (for bridging to existing mcp-client) */
-  setToolCallFunction(fn: (name: string, args: Record<string, unknown>) => Promise<unknown>): void {
+  setToolCallFunction(
+    fn: (name: string, args: Record<string, unknown>) => Promise<unknown>,
+  ): void {
     this.toolCallFn = fn;
   }
 

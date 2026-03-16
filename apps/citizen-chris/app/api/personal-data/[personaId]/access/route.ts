@@ -3,7 +3,7 @@ import { getServiceAccessStore } from "@/lib/personal-data-store";
 
 export async function GET(
   _request: NextRequest,
-  { params }: { params: Promise<{ personaId: string }> }
+  { params }: { params: Promise<{ personaId: string }> },
 ) {
   const { personaId } = await params;
 
@@ -22,7 +22,7 @@ export async function GET(
     console.error("[PersonalData] GET access error:", error);
     return NextResponse.json(
       { error: "Failed to load access data" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

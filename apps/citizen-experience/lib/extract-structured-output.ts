@@ -30,7 +30,9 @@ const ISO_DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
  * Always strips the matched block from display text (even if JSON is malformed).
  * Returns { parsed: null, cleanText: original } if no block found.
  */
-export function extractStructuredOutput(responseText: string): ExtractionResult {
+export function extractStructuredOutput(
+  responseText: string,
+): ExtractionResult {
   // Find the last ```json ... ``` block
   const fencePattern = /```json\s*\n([\s\S]*?)```/g;
   let lastMatch: RegExpExecArray | null = null;
@@ -67,7 +69,10 @@ export function extractStructuredOutput(responseText: string): ExtractionResult 
   }
 
   // State transition
-  if (typeof raw.stateTransition === "string" && raw.stateTransition.trim().length > 0) {
+  if (
+    typeof raw.stateTransition === "string" &&
+    raw.stateTransition.trim().length > 0
+  ) {
     output.stateTransition = raw.stateTransition.trim();
   }
 
@@ -78,15 +83,14 @@ export function extractStructuredOutput(responseText: string): ExtractionResult 
       if (typeof t !== "object" || t === null) continue;
       const task = t as Record<string, unknown>;
 
-      const description = typeof task.description === "string"
-        ? task.description.trim().slice(0, 60)
-        : "";
-      const detail = typeof task.detail === "string"
-        ? task.detail.trim().slice(0, 150)
-        : "";
-      const type = task.type === "agent" || task.type === "user"
-        ? task.type
-        : null;
+      const description =
+        typeof task.description === "string"
+          ? task.description.trim().slice(0, 60)
+          : "";
+      const detail =
+        typeof task.detail === "string" ? task.detail.trim().slice(0, 150) : "";
+      const type =
+        task.type === "agent" || task.type === "user" ? task.type : null;
 
       if (!description || !detail || !type) continue;
 
@@ -121,12 +125,23 @@ export function extractStructuredOutput(responseText: string): ExtractionResult 
       if (typeof f !== "object" || f === null) continue;
       const fact = f as Record<string, unknown>;
       const key = typeof fact.key === "string" ? fact.key.trim() : "";
-      const confidence = (fact.confidence === "high" || fact.confidence === "medium" || fact.confidence === "low")
-        ? fact.confidence
-        : "medium";
-      const sourceSnippet = typeof fact.source_snippet === "string" ? fact.source_snippet.trim().slice(0, 200) : "";
+      const confidence =
+        fact.confidence === "high" ||
+        fact.confidence === "medium" ||
+        fact.confidence === "low"
+          ? fact.confidence
+          : "medium";
+      const sourceSnippet =
+        typeof fact.source_snippet === "string"
+          ? fact.source_snippet.trim().slice(0, 200)
+          : "";
       if (!key || fact.value === undefined) continue;
-      validFacts.push({ key, value: fact.value, confidence, source_snippet: sourceSnippet });
+      validFacts.push({
+        key,
+        value: fact.value,
+        confidence,
+        source_snippet: sourceSnippet,
+      });
     }
     if (validFacts.length > 0) {
       output.extractedFacts = validFacts;

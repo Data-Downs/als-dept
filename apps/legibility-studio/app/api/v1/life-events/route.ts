@@ -17,6 +17,9 @@ export async function GET() {
     return jsonWithCors({ lifeEvents, total: lifeEvents.length });
   } catch (error) {
     console.error("[v1/life-events] Error:", error);
-    return jsonWithCors({ error: "Failed to list life events" }, { status: 500 });
+    return jsonWithCors(
+      { error: "Failed to list life events" },
+      { status: 500 },
+    );
   }
 }

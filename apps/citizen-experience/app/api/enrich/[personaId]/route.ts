@@ -11,14 +11,24 @@ async function getLocalFloodData(city: string): Promise<string> {
     });
     let data: Record<string, unknown>;
     try {
-      data = typeof raw === "string" ? JSON.parse(raw) : (raw as Record<string, unknown>);
+      data =
+        typeof raw === "string"
+          ? JSON.parse(raw)
+          : (raw as Record<string, unknown>);
     } catch {
-      return JSON.stringify({ warnings: [], summary: "No flood data available." });
+      return JSON.stringify({
+        warnings: [],
+        summary: "No flood data available.",
+      });
     }
     const result = data?.result as Record<string, unknown> | undefined;
-    const items = ((result?.items || data?.items) as Array<Record<string, unknown>>) || [];
+    const items =
+      ((result?.items || data?.items) as Array<Record<string, unknown>>) || [];
     if (items.length === 0) {
-      return JSON.stringify({ warnings: [], summary: "No active flood warnings." });
+      return JSON.stringify({
+        warnings: [],
+        summary: "No active flood warnings.",
+      });
     }
     const cityLower = (city || "").toLowerCase();
     const localWarnings = items.filter((item) => {
@@ -26,7 +36,11 @@ async function getLocalFloodData(city: string): Promise<string> {
       const county = (floodArea?.county || "").toLowerCase();
       const area = ((item.eaAreaName as string) || "").toLowerCase();
       const desc = ((item.description as string) || "").toLowerCase();
-      return county.includes(cityLower) || area.includes(cityLower) || desc.includes(cityLower);
+      return (
+        county.includes(cityLower) ||
+        area.includes(cityLower) ||
+        desc.includes(cityLower)
+      );
     });
     const summary = localWarnings.map((w) => ({
       area: w.description,
@@ -40,9 +54,10 @@ async function getLocalFloodData(city: string): Promise<string> {
       nationalWarnings: items.length,
       location: city,
       warnings: summary,
-      summary: summary.length > 0
-        ? `${summary.length} active flood warning(s) near ${city}.`
-        : `No active flood warnings near ${city}. There are ${items.length} warnings elsewhere in England.`,
+      summary:
+        summary.length > 0
+          ? `${summary.length} active flood warning(s) near ${city}.`
+          : `No active flood warnings near ${city}. There are ${items.length} warnings elsewhere in England.`,
     });
   } catch {
     return JSON.stringify({ error: "Flood data temporarily unavailable." });
@@ -51,7 +66,7 @@ async function getLocalFloodData(city: string): Promise<string> {
 
 export async function GET(
   _request: NextRequest,
-  { params }: { params: Promise<{ personaId: string }> }
+  { params }: { params: Promise<{ personaId: string }> },
 ) {
   try {
     const { personaId } = await params;
@@ -66,9 +81,13 @@ export async function GET(
     if (bundled) {
       await submittedStore.seedFromPersona(personaId, bundled);
     }
-    const personaData = await submittedStore.reconstructPersonaData(personaId) || bundled;
+    const personaData =
+      (await submittedStore.reconstructPersonaData(personaId)) || bundled;
     if (!personaData) {
-      return NextResponse.json({ enriched: false, reason: "Persona not found" });
+      return NextResponse.json({
+        enriched: false,
+        reason: "Persona not found",
+      });
     }
     const address = personaData.address as Record<string, unknown> | undefined;
     const postcode = address?.postcode as string | undefined;

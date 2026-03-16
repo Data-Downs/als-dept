@@ -16,7 +16,9 @@ export function PaymentSheet() {
   const closeBottomSheet = useAppStore((s) => s.closeBottomSheet);
   const [phase, setPhase] = useState<PaymentPhase>("confirm");
 
-  const data = bottomSheet.data as { amount?: string; onSuccess?: () => void } | undefined;
+  const data = bottomSheet.data as
+    | { amount?: string; onSuccess?: () => void }
+    | undefined;
   const amount = data?.amount ?? "£0.00";
 
   const handleSuccess = useCallback(() => {
@@ -48,7 +50,7 @@ export function PaymentSheet() {
           {/* Apple Pay logo */}
           <div className="flex justify-center">
             <svg width="48" height="48" viewBox="0 0 24 24" fill="white">
-              <path d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.48-3.24 0-1.44.62-2.2.44-3.06-.4C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.32 2.32-2.12 4.53-3.74 4.25z"/>
+              <path d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.48-3.24 0-1.44.62-2.2.44-3.06-.4C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.32 2.32-2.12 4.53-3.74 4.25z" />
             </svg>
           </div>
 
@@ -63,7 +65,16 @@ export function PaymentSheet() {
             className="w-full flex items-center justify-center gap-3 bg-white text-gray-950 font-semibold text-sm py-4 rounded-2xl hover:bg-gray-100 transition-colors"
           >
             {/* Face ID icon */}
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
               <rect x="3" y="3" width="18" height="18" rx="4" />
               <circle cx="9" cy="10" r="1" fill="currentColor" />
               <circle cx="15" cy="10" r="1" fill="currentColor" />
@@ -72,7 +83,9 @@ export function PaymentSheet() {
             Pay with Face ID
           </button>
 
-          <p className="text-xs text-gray-500">Simulated payment for demonstration</p>
+          <p className="text-xs text-gray-500">
+            Simulated payment for demonstration
+          </p>
         </div>
       </div>
     );
@@ -87,7 +100,17 @@ export function PaymentSheet() {
           <div className="relative w-20 h-20 flex items-center justify-center">
             <div className="absolute inset-0 rounded-full bg-white/10 animate-ping" />
             <div className="absolute inset-2 rounded-full bg-white/20 animate-pulse" />
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="relative z-10">
+            <svg
+              width="32"
+              height="32"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="white"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="relative z-10"
+            >
               <rect x="3" y="3" width="18" height="18" rx="4" />
               <circle cx="9" cy="10" r="1" fill="white" />
               <circle cx="15" cy="10" r="1" fill="white" />
@@ -106,7 +129,16 @@ export function PaymentSheet() {
       <div className="flex flex-col items-center gap-4">
         {/* Green checkmark */}
         <div className="w-16 h-16 rounded-full bg-green-500 flex items-center justify-center">
-          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+          <svg
+            width="32"
+            height="32"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="white"
+            strokeWidth="3"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
             <polyline points="20 6 9 17 4 12" />
           </svg>
         </div>

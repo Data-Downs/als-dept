@@ -79,7 +79,7 @@ export class TraceEmitter {
     type: TraceEventType,
     span: SpanContext,
     payload: Record<string, unknown>,
-    parentSpanId?: string
+    parentSpanId?: string,
   ): Promise<TraceEvent> {
     const event: TraceEvent = {
       id: `evt_${generateId()}`,
@@ -135,8 +135,11 @@ export class TraceEmitter {
     if (!cs) return;
 
     try {
-      const serviceId = event.metadata.capabilityId || (event.payload.serviceId as string);
-      const totalStates = serviceId ? this.totalStatesMap[serviceId] : undefined;
+      const serviceId =
+        event.metadata.capabilityId || (event.payload.serviceId as string);
+      const totalStates = serviceId
+        ? this.totalStatesMap[serviceId]
+        : undefined;
       await cs.upsertCase(event, totalStates);
     } catch (err) {
       console.error("[TraceEmitter] Failed to update ledger case:", err);
@@ -147,7 +150,7 @@ export class TraceEmitter {
   async endSpan(
     span: SpanContext,
     type: TraceEventType,
-    payload: Record<string, unknown>
+    payload: Record<string, unknown>,
   ): Promise<TraceEvent> {
     return this.emit(type, span, payload);
   }

@@ -18,7 +18,7 @@ function slugToPrefix(serviceId: string): string {
 export function buildJourneyPrompt(
   serviceId: string,
   artefacts: ServiceArtefacts,
-  citizenContext?: string
+  citizenContext?: string,
 ): string {
   const m = artefacts.manifest;
   const lines: string[] = [];
@@ -41,7 +41,8 @@ export function buildJourneyPrompt(
       const fee = constraints.fee as Record<string, unknown>;
       lines.push(`- **Fee:** ${fee.amount} ${fee.currency}`);
     }
-    if (constraints.availability) lines.push(`- **Availability:** ${constraints.availability}`);
+    if (constraints.availability)
+      lines.push(`- **Availability:** ${constraints.availability}`);
     lines.push("");
   }
 
@@ -50,7 +51,8 @@ export function buildJourneyPrompt(
     lines.push("## Eligibility Rules");
     for (const rule of artefacts.policy.rules) {
       lines.push(`- **${rule.id}:** ${rule.description}`);
-      if (rule.reason_if_failed) lines.push(`  - If failed: ${rule.reason_if_failed}`);
+      if (rule.reason_if_failed)
+        lines.push(`  - If failed: ${rule.reason_if_failed}`);
     }
     if (artefacts.policy.edge_cases && artefacts.policy.edge_cases.length > 0) {
       lines.push("");
@@ -68,7 +70,12 @@ export function buildJourneyPrompt(
     lines.push("");
     const states = artefacts.stateModel.states;
     for (const state of states) {
-      const label = state.type === "initial" ? " (START)" : state.type === "terminal" ? " (END)" : "";
+      const label =
+        state.type === "initial"
+          ? " (START)"
+          : state.type === "terminal"
+            ? " (END)"
+            : "";
       lines.push(`- **${state.id}**${label}`);
     }
     lines.push("");
@@ -83,20 +90,25 @@ export function buildJourneyPrompt(
   // Consent requirements
   if (artefacts.consent) {
     lines.push("## Consent Requirements");
-    const grants = (artefacts.consent as unknown as Record<string, unknown>).grants as Array<Record<string, unknown>> | undefined;
+    const grants = (artefacts.consent as unknown as Record<string, unknown>)
+      .grants as Array<Record<string, unknown>> | undefined;
     if (grants) {
       for (const g of grants) {
         lines.push(`- **${g.id}:** ${g.description}`);
-        lines.push(`  - Data shared: ${(g.data_shared as string[]).join(", ")}`);
+        lines.push(
+          `  - Data shared: ${(g.data_shared as string[]).join(", ")}`,
+        );
         lines.push(`  - Purpose: ${g.purpose}`);
         lines.push(`  - Required: ${g.required ? "Yes" : "No"}`);
       }
     }
-    const revocation = (artefacts.consent as unknown as Record<string, unknown>).revocation as Record<string, string> | undefined;
+    const revocation = (artefacts.consent as unknown as Record<string, unknown>)
+      .revocation as Record<string, string> | undefined;
     if (revocation) {
       lines.push("");
       lines.push(`**Revocation:** ${revocation.mechanism}`);
-      if (revocation.effect) lines.push(`**Effect of revocation:** ${revocation.effect}`);
+      if (revocation.effect)
+        lines.push(`**Effect of revocation:** ${revocation.effect}`);
     }
     lines.push("");
   }
@@ -105,8 +117,10 @@ export function buildJourneyPrompt(
   const handoff = m.handoff as Record<string, unknown> | undefined;
   if (handoff) {
     lines.push("## Escalation / Handoff");
-    if (handoff.escalation_phone) lines.push(`- **Phone:** ${handoff.escalation_phone}`);
-    if (handoff.opening_hours) lines.push(`- **Hours:** ${handoff.opening_hours}`);
+    if (handoff.escalation_phone)
+      lines.push(`- **Phone:** ${handoff.escalation_phone}`);
+    if (handoff.opening_hours)
+      lines.push(`- **Hours:** ${handoff.opening_hours}`);
     lines.push("");
   }
 
@@ -114,20 +128,32 @@ export function buildJourneyPrompt(
   const redress = m.redress as Record<string, unknown> | undefined;
   if (redress) {
     lines.push("## Redress");
-    if (redress.complaint_url) lines.push(`- **Complaints:** ${redress.complaint_url}`);
-    if (redress.appeal_process) lines.push(`- **Appeals:** ${redress.appeal_process}`);
+    if (redress.complaint_url)
+      lines.push(`- **Complaints:** ${redress.complaint_url}`);
+    if (redress.appeal_process)
+      lines.push(`- **Appeals:** ${redress.appeal_process}`);
     if (redress.ombudsman) lines.push(`- **Ombudsman:** ${redress.ombudsman}`);
     lines.push("");
   }
 
   // Instructions
   lines.push("## Instructions");
-  lines.push("You are helping a citizen navigate this government service journey.");
-  lines.push("Follow the state machine flow above — complete each step before moving to the next.");
-  lines.push("Use the eligibility rules to determine whether the citizen qualifies.");
-  lines.push("Ensure all required consents are obtained before proceeding with data collection.");
+  lines.push(
+    "You are helping a citizen navigate this government service journey.",
+  );
+  lines.push(
+    "Follow the state machine flow above — complete each step before moving to the next.",
+  );
+  lines.push(
+    "Use the eligibility rules to determine whether the citizen qualifies.",
+  );
+  lines.push(
+    "Ensure all required consents are obtained before proceeding with data collection.",
+  );
   lines.push("If an edge case is detected, follow the specified action.");
-  lines.push("Never fabricate reference numbers, payment amounts, or specific dates.");
+  lines.push(
+    "Never fabricate reference numbers, payment amounts, or specific dates.",
+  );
 
   // Citizen context
   if (citizenContext) {
@@ -142,14 +168,16 @@ export function buildJourneyPrompt(
 export function buildEligibilityPrompt(
   serviceId: string,
   artefacts: ServiceArtefacts,
-  citizenDataJson?: string
+  citizenDataJson?: string,
 ): string {
   const m = artefacts.manifest;
   const lines: string[] = [];
 
   lines.push(`# Eligibility Assessment: ${m.name}`);
   lines.push("");
-  lines.push(`You are assessing a citizen's eligibility for **${m.name}** (${m.department}).`);
+  lines.push(
+    `You are assessing a citizen's eligibility for **${m.name}** (${m.department}).`,
+  );
   lines.push("");
 
   if (artefacts.policy) {
@@ -157,7 +185,9 @@ export function buildEligibilityPrompt(
     for (const rule of artefacts.policy.rules) {
       const cond = rule.condition;
       lines.push(`- **${rule.id}:** ${rule.description}`);
-      lines.push(`  - Check: \`${cond.field}\` ${cond.operator} ${JSON.stringify(cond.value)}`);
+      lines.push(
+        `  - Check: \`${cond.field}\` ${cond.operator} ${JSON.stringify(cond.value)}`,
+      );
       lines.push(`  - If failed: "${rule.reason_if_failed}"`);
     }
     lines.push("");
@@ -194,7 +224,7 @@ export function buildEligibilityPrompt(
 export function registerPromptsForService(
   mcpServer: McpServer,
   serviceId: string,
-  artefacts: ServiceArtefacts
+  artefacts: ServiceArtefacts,
 ): number {
   const prefix = slugToPrefix(serviceId);
   const serviceName = artefacts.manifest.name;
@@ -204,16 +234,27 @@ export function registerPromptsForService(
   mcpServer.prompt(
     `${prefix}_journey`,
     `Step-by-step guide for helping a citizen with "${serviceName}"`,
-    { citizen_context: z.string().optional().describe("Optional context about the citizen's situation") },
+    {
+      citizen_context: z
+        .string()
+        .optional()
+        .describe("Optional context about the citizen's situation"),
+    },
     (args) => ({
-      messages: [{
-        role: "user" as const,
-        content: {
-          type: "text" as const,
-          text: buildJourneyPrompt(serviceId, artefacts, args.citizen_context),
+      messages: [
+        {
+          role: "user" as const,
+          content: {
+            type: "text" as const,
+            text: buildJourneyPrompt(
+              serviceId,
+              artefacts,
+              args.citizen_context,
+            ),
+          },
         },
-      }],
-    })
+      ],
+    }),
   );
   count++;
 
@@ -222,16 +263,27 @@ export function registerPromptsForService(
     mcpServer.prompt(
       `${prefix}_eligibility_check`,
       `Eligibility assessment template for "${serviceName}"`,
-      { citizen_data_json: z.string().optional().describe("Citizen data as JSON string for evaluation") },
+      {
+        citizen_data_json: z
+          .string()
+          .optional()
+          .describe("Citizen data as JSON string for evaluation"),
+      },
       (args) => ({
-        messages: [{
-          role: "user" as const,
-          content: {
-            type: "text" as const,
-            text: buildEligibilityPrompt(serviceId, artefacts, args.citizen_data_json),
+        messages: [
+          {
+            role: "user" as const,
+            content: {
+              type: "text" as const,
+              text: buildEligibilityPrompt(
+                serviceId,
+                artefacts,
+                args.citizen_data_json,
+              ),
+            },
           },
-        }],
-      })
+        ],
+      }),
     );
     count++;
   }
@@ -239,7 +291,10 @@ export function registerPromptsForService(
   return count;
 }
 
-export function registerAllPrompts(mcpServer: McpServer, store: ArtefactStore): number {
+export function registerAllPrompts(
+  mcpServer: McpServer,
+  store: ArtefactStore,
+): number {
   let total = 0;
   for (const serviceId of store.listServices()) {
     const artefacts = store.get(serviceId);

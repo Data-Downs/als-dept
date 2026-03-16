@@ -38,5 +38,5 @@ function deriveInitials(name: string): string {
 }
 
 export const PERSONA_INITIALS: Record<string, string> = Object.fromEntries(
-  Object.entries(PERSONA_NAMES).map(([id, name]) => [id, deriveInitials(name)])
+  Object.entries(PERSONA_NAMES).map(([id, name]) => [id, deriveInitials(name)]),
 );

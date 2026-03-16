@@ -28,7 +28,12 @@ const ENRICHMENT_DATA: Record<string, CsvEnrichment> = {
     interactionType: "license",
     behindLogin: true,
     eligibilityComplexity: "simple",
-    dataCollected: ["driving_licence_number", "national_insurance_number", "address", "photo"],
+    dataCollected: [
+      "driving_licence_number",
+      "national_insurance_number",
+      "address",
+      "photo",
+    ],
   },
   "/tax-your-vehicle": {
     interactionType: "payment_service",
@@ -52,7 +57,12 @@ const ENRICHMENT_DATA: Record<string, CsvEnrichment> = {
     interactionType: "application",
     behindLogin: true,
     eligibilityComplexity: "mid",
-    dataCollected: ["identity_documents", "address", "national_insurance_number", "photo"],
+    dataCollected: [
+      "identity_documents",
+      "address",
+      "national_insurance_number",
+      "photo",
+    ],
   },
   "/change-address-driving-licence": {
     interactionType: "register",
@@ -66,7 +76,13 @@ const ENRICHMENT_DATA: Record<string, CsvEnrichment> = {
     interactionType: "application",
     behindLogin: true,
     eligibilityComplexity: "complex",
-    dataCollected: ["national_insurance_number", "bank_details", "housing_costs", "income", "employment_status"],
+    dataCollected: [
+      "national_insurance_number",
+      "bank_details",
+      "housing_costs",
+      "income",
+      "employment_status",
+    ],
   },
   "/state-pension": {
     interactionType: "portal",
@@ -78,13 +94,23 @@ const ENRICHMENT_DATA: Record<string, CsvEnrichment> = {
     interactionType: "application",
     behindLogin: true,
     eligibilityComplexity: "complex",
-    dataCollected: ["medical_conditions", "daily_living_needs", "mobility_needs", "gp_details"],
+    dataCollected: [
+      "medical_conditions",
+      "daily_living_needs",
+      "mobility_needs",
+      "gp_details",
+    ],
   },
   "/carers-allowance": {
     interactionType: "application",
     behindLogin: true,
     eligibilityComplexity: "complex",
-    dataCollected: ["care_recipient_details", "hours_caring", "income", "bank_details"],
+    dataCollected: [
+      "care_recipient_details",
+      "hours_caring",
+      "income",
+      "bank_details",
+    ],
   },
   "/attendance-allowance": {
     interactionType: "application",
@@ -96,7 +122,12 @@ const ENRICHMENT_DATA: Record<string, CsvEnrichment> = {
     interactionType: "application",
     behindLogin: false,
     eligibilityComplexity: "mid",
-    dataCollected: ["child_details", "birth_certificate", "bank_details", "national_insurance_number"],
+    dataCollected: [
+      "child_details",
+      "birth_certificate",
+      "bank_details",
+      "national_insurance_number",
+    ],
   },
 
   // ── HMRC ──
@@ -104,7 +135,12 @@ const ENRICHMENT_DATA: Record<string, CsvEnrichment> = {
     interactionType: "payment_service",
     behindLogin: true,
     eligibilityComplexity: "complex",
-    dataCollected: ["income_details", "expenses", "national_insurance_number", "utr"],
+    dataCollected: [
+      "income_details",
+      "expenses",
+      "national_insurance_number",
+      "utr",
+    ],
   },
   "/check-national-insurance-record": {
     interactionType: "portal",
@@ -124,7 +160,12 @@ const ENRICHMENT_DATA: Record<string, CsvEnrichment> = {
     interactionType: "application",
     behindLogin: true,
     eligibilityComplexity: "mid",
-    dataCollected: ["identity_documents", "photo", "countersignatory", "old_passport"],
+    dataCollected: [
+      "identity_documents",
+      "photo",
+      "countersignatory",
+      "old_passport",
+    ],
   },
 
   // ── Home Office / UKVI ──
@@ -138,13 +179,22 @@ const ENRICHMENT_DATA: Record<string, CsvEnrichment> = {
     interactionType: "application",
     behindLogin: true,
     eligibilityComplexity: "complex",
-    dataCollected: ["passport", "biometrics", "financial_evidence", "sponsor_details"],
+    dataCollected: [
+      "passport",
+      "biometrics",
+      "financial_evidence",
+      "sponsor_details",
+    ],
   },
   "/settled-status-eu-citizens-families": {
     interactionType: "application",
     behindLogin: true,
     eligibilityComplexity: "complex",
-    dataCollected: ["identity_documents", "proof_of_residence", "national_insurance_number"],
+    dataCollected: [
+      "identity_documents",
+      "proof_of_residence",
+      "national_insurance_number",
+    ],
   },
 
   // ── GRO ──
@@ -180,7 +230,12 @@ const ENRICHMENT_DATA: Record<string, CsvEnrichment> = {
     interactionType: "application",
     behindLogin: true,
     eligibilityComplexity: "mid",
-    dataCollected: ["death_certificate", "will", "estate_value", "applicant_details"],
+    dataCollected: [
+      "death_certificate",
+      "will",
+      "estate_value",
+      "applicant_details",
+    ],
   },
   "/get-a-divorce": {
     interactionType: "application",
@@ -218,7 +273,13 @@ const ENRICHMENT_DATA: Record<string, CsvEnrichment> = {
     interactionType: "register",
     behindLogin: false,
     eligibilityComplexity: "simple",
-    dataCollected: ["name", "address", "date_of_birth", "national_insurance_number", "nationality"],
+    dataCollected: [
+      "name",
+      "address",
+      "date_of_birth",
+      "national_insurance_number",
+      "nationality",
+    ],
   },
 
   // ── Environment Agency ──
@@ -243,7 +304,12 @@ const ENRICHMENT_DATA: Record<string, CsvEnrichment> = {
     interactionType: "task_list",
     behindLogin: true,
     eligibilityComplexity: "mid",
-    dataCollected: ["company_name", "directors", "shareholders", "registered_address"],
+    dataCollected: [
+      "company_name",
+      "directors",
+      "shareholders",
+      "registered_address",
+    ],
   },
 
   // ── FCDO ──
@@ -281,7 +347,12 @@ const ENRICHMENT_DATA: Record<string, CsvEnrichment> = {
     interactionType: "application",
     behindLogin: false,
     eligibilityComplexity: "complex",
-    dataCollected: ["medical_conditions", "mobility_assessment", "photo", "proof_of_address"],
+    dataCollected: [
+      "medical_conditions",
+      "mobility_assessment",
+      "photo",
+      "proof_of_address",
+    ],
   },
 
   // ── Tell Us Once ──
@@ -311,7 +382,9 @@ const ENRICHMENT_DATA: Record<string, CsvEnrichment> = {
  * Look up CSV enrichment for a service by its govuk_url.
  * Tries exact path match, then falls back to partial match.
  */
-export function getEnrichment(govukUrl: string | null | undefined): CsvEnrichment | null {
+export function getEnrichment(
+  govukUrl: string | null | undefined,
+): CsvEnrichment | null {
   if (!govukUrl) return null;
 
   // Extract path from full URL
@@ -340,7 +413,7 @@ export function getEnrichment(govukUrl: string | null | undefined): CsvEnrichmen
  * Build a map of serviceId → enrichment for all services that have matches.
  */
 export function buildEnrichmentMap(
-  services: Array<{ id: string; govukUrl?: string | null }>
+  services: Array<{ id: string; govukUrl?: string | null }>,
 ): Map<string, CsvEnrichment> {
   const map = new Map<string, CsvEnrichment>();
   for (const svc of services) {

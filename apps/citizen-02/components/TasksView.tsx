@@ -48,10 +48,10 @@ export function TasksView() {
 
   const allTasks = getTasks(persona);
   const activeTasks = allTasks.filter(
-    (t) => t.status !== "completed" && t.status !== "dismissed"
+    (t) => t.status !== "completed" && t.status !== "dismissed",
   );
   const completedTasks = allTasks.filter(
-    (t) => t.status === "completed" || t.status === "dismissed"
+    (t) => t.status === "completed" || t.status === "dismissed",
   );
 
   const filterTasks = (tasks: StoredTask[]) =>
@@ -121,8 +121,13 @@ export function TasksView() {
             {filteredActive.map((task) => {
               const days = task.dueDate ? daysUntil(task.dueDate) : null;
               return (
-                <SwipeToDelete key={task.id} onDelete={() => handleDismiss(task.id)}>
-                  <div className={`p-3.5 ${task.type === "agent" ? "bg-blue-50/60" : "bg-white"}`}>
+                <SwipeToDelete
+                  key={task.id}
+                  onDelete={() => handleDismiss(task.id)}
+                >
+                  <div
+                    className={`p-3.5 ${task.type === "agent" ? "bg-blue-50/60" : "bg-white"}`}
+                  >
                     <button
                       onClick={() => openBottomSheet("task-detail", task)}
                       className="flex items-start gap-3 w-full text-left touch-feedback"
@@ -139,7 +144,17 @@ export function TasksView() {
                           <span>&middot;</span>
                           {task.type === "agent" ? (
                             <span className="inline-flex items-center gap-1 text-blue-700 font-semibold">
-                              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
+                              <svg
+                                width="10"
+                                height="10"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2.5"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                className="shrink-0"
+                              >
                                 <path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
                               </svg>
                               Agent task
@@ -150,22 +165,29 @@ export function TasksView() {
                             </span>
                           )}
                           <span>&middot;</span>
-                          <span className={`px-1.5 py-0.5 rounded text-[10px] font-bold uppercase ${
-                            task.status === "accepted"
-                              ? "bg-green-50 text-green-700"
-                              : "bg-yellow-50 text-yellow-700"
-                          }`}>
+                          <span
+                            className={`px-1.5 py-0.5 rounded text-[10px] font-bold uppercase ${
+                              task.status === "accepted"
+                                ? "bg-green-50 text-green-700"
+                                : "bg-yellow-50 text-yellow-700"
+                            }`}
+                          >
                             {task.status}
                           </span>
                         </span>
                       </div>
                       {days !== null && (
-                        <span className={`text-xs font-bold shrink-0 ${
-                          days < 0 ? "text-govuk-red" :
-                          days < 14 ? "text-govuk-red" :
-                          days < 30 ? "text-govuk-orange" :
-                          "text-govuk-dark-grey"
-                        }`}>
+                        <span
+                          className={`text-xs font-bold shrink-0 ${
+                            days < 0
+                              ? "text-govuk-red"
+                              : days < 14
+                                ? "text-govuk-red"
+                                : days < 30
+                                  ? "text-govuk-orange"
+                                  : "text-govuk-dark-grey"
+                          }`}
+                        >
                           {formatDueLabel(days)}
                         </span>
                       )}
@@ -220,12 +242,17 @@ export function TasksView() {
           </h3>
           <div className="bg-white rounded-card shadow-sm divide-y divide-gray-100 opacity-60">
             {filteredCompleted.map((task) => (
-              <div
-                key={task.id}
-                className="flex items-center gap-3 p-3.5"
-              >
+              <div key={task.id} className="flex items-center gap-3 p-3.5">
                 <span className="w-5 h-5 rounded-full bg-green-600 flex items-center justify-center shrink-0">
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round">
+                  <svg
+                    width="12"
+                    height="12"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="white"
+                    strokeWidth="3"
+                    strokeLinecap="round"
+                  >
                     <path d="M20 6L9 17l-5-5" />
                   </svg>
                 </span>
@@ -233,7 +260,9 @@ export function TasksView() {
                   <span className="block text-sm text-govuk-dark-grey line-through">
                     {task.description}
                   </span>
-                  <span className="text-xs text-govuk-mid-grey capitalize">{task.service}</span>
+                  <span className="text-xs text-govuk-mid-grey capitalize">
+                    {task.service}
+                  </span>
                 </div>
               </div>
             ))}

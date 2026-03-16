@@ -47,31 +47,65 @@ function ContactFields({
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6">
       <FormField label="First Name">
-        <input className={inputClass} value={(contact.firstName as string) ?? ""} onChange={(e) => set("firstName", e.target.value)} />
+        <input
+          className={inputClass}
+          value={(contact.firstName as string) ?? ""}
+          onChange={(e) => set("firstName", e.target.value)}
+        />
       </FormField>
       <FormField label="Last Name">
-        <input className={inputClass} value={(contact.lastName as string) ?? ""} onChange={(e) => set("lastName", e.target.value)} />
+        <input
+          className={inputClass}
+          value={(contact.lastName as string) ?? ""}
+          onChange={(e) => set("lastName", e.target.value)}
+        />
       </FormField>
       <FormField label="Date of Birth">
-        <input type="date" className={inputClass} value={(contact.dateOfBirth as string) ?? ""} onChange={(e) => set("dateOfBirth", e.target.value)} />
+        <input
+          type="date"
+          className={inputClass}
+          value={(contact.dateOfBirth as string) ?? ""}
+          onChange={(e) => set("dateOfBirth", e.target.value)}
+        />
       </FormField>
       <FormField label="NI Number">
-        <input className={inputClass} value={(contact.nationalInsuranceNumber as string) ?? ""} onChange={(e) => set("nationalInsuranceNumber", e.target.value)} />
+        <input
+          className={inputClass}
+          value={(contact.nationalInsuranceNumber as string) ?? ""}
+          onChange={(e) => set("nationalInsuranceNumber", e.target.value)}
+        />
       </FormField>
       <FormField label="Email">
-        <input type="email" className={inputClass} value={(contact.email as string) ?? ""} onChange={(e) => set("email", e.target.value)} />
+        <input
+          type="email"
+          className={inputClass}
+          value={(contact.email as string) ?? ""}
+          onChange={(e) => set("email", e.target.value)}
+        />
       </FormField>
       <FormField label="Phone">
-        <input className={inputClass} value={(contact.phone as string) ?? ""} onChange={(e) => set("phone", e.target.value)} />
+        <input
+          className={inputClass}
+          value={(contact.phone as string) ?? ""}
+          onChange={(e) => set("phone", e.target.value)}
+        />
       </FormField>
       {contact.mobile !== undefined && (
         <FormField label="Mobile">
-          <input className={inputClass} value={(contact.mobile as string) ?? ""} onChange={(e) => set("mobile", e.target.value)} />
+          <input
+            className={inputClass}
+            value={(contact.mobile as string) ?? ""}
+            onChange={(e) => set("mobile", e.target.value)}
+          />
         </FormField>
       )}
       {contact.middleName !== undefined && (
         <FormField label="Middle Name">
-          <input className={inputClass} value={(contact.middleName as string) ?? ""} onChange={(e) => set("middleName", e.target.value)} />
+          <input
+            className={inputClass}
+            value={(contact.middleName as string) ?? ""}
+            onChange={(e) => set("middleName", e.target.value)}
+          />
         </FormField>
       )}
     </div>
@@ -96,30 +130,59 @@ function AddressFields({
   return (
     <>
       <FormField label="Line 1">
-        <input className={inputClass} value={(address[line1Key] as string) ?? ""} onChange={(e) => set(line1Key, e.target.value)} />
+        <input
+          className={inputClass}
+          value={(address[line1Key] as string) ?? ""}
+          onChange={(e) => set(line1Key, e.target.value)}
+        />
       </FormField>
       <FormField label="Line 2">
-        <input className={inputClass} value={(address[line2Key] as string) ?? ""} onChange={(e) => set(line2Key, e.target.value)} />
+        <input
+          className={inputClass}
+          value={(address[line2Key] as string) ?? ""}
+          onChange={(e) => set(line2Key, e.target.value)}
+        />
       </FormField>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-x-6">
         <FormField label="City">
-          <input className={inputClass} value={(address.city as string) ?? ""} onChange={(e) => set("city", e.target.value)} />
+          <input
+            className={inputClass}
+            value={(address.city as string) ?? ""}
+            onChange={(e) => set("city", e.target.value)}
+          />
         </FormField>
         <FormField label="Postcode">
-          <input className={inputClass} value={(address.postcode as string) ?? ""} onChange={(e) => set("postcode", e.target.value)} />
+          <input
+            className={inputClass}
+            value={(address.postcode as string) ?? ""}
+            onChange={(e) => set("postcode", e.target.value)}
+          />
         </FormField>
         {address.county !== undefined && (
           <FormField label="County">
-            <input className={inputClass} value={(address.county as string) ?? ""} onChange={(e) => set("county", e.target.value)} />
+            <input
+              className={inputClass}
+              value={(address.county as string) ?? ""}
+              onChange={(e) => set("county", e.target.value)}
+            />
           </FormField>
         )}
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6">
         <FormField label="Housing Status">
-          <input className={inputClass} value={(address.housingStatus as string) ?? ""} onChange={(e) => set("housingStatus", e.target.value)} />
+          <input
+            className={inputClass}
+            value={(address.housingStatus as string) ?? ""}
+            onChange={(e) => set("housingStatus", e.target.value)}
+          />
         </FormField>
         <FormField label="Residing Since">
-          <input type="date" className={inputClass} value={(address.residingSince as string) ?? ""} onChange={(e) => set("residingSince", e.target.value)} />
+          <input
+            type="date"
+            className={inputClass}
+            value={(address.residingSince as string) ?? ""}
+            onChange={(e) => set("residingSince", e.target.value)}
+          />
         </FormField>
       </div>
     </>
@@ -138,7 +201,9 @@ export default function PersonaForm({ data, onChange }: Props) {
   const phrases = (commStyle.typicalPhrases ?? []) as string[];
 
   // Collect remaining keys for JSON fallback (keys not handled by any section)
-  const extraKeys = Object.keys(data).filter((k) => !ALL_STRUCTURED_KEYS.has(k));
+  const extraKeys = Object.keys(data).filter(
+    (k) => !ALL_STRUCTURED_KEYS.has(k),
+  );
 
   function formatLabel(key: string): string {
     return key
@@ -206,7 +271,9 @@ export default function PersonaForm({ data, onChange }: Props) {
             <input
               className={inputClass}
               value={(data.national_insurance_number as string) ?? ""}
-              onChange={(e) => update({ national_insurance_number: e.target.value })}
+              onChange={(e) =>
+                update({ national_insurance_number: e.target.value })
+              }
             />
           </FormField>
           <FormField label="Employment Status">
@@ -238,7 +305,9 @@ export default function PersonaForm({ data, onChange }: Props) {
               type="number"
               className={inputClass}
               value={(data.income as number) ?? ""}
-              onChange={(e) => update({ income: parseInt(e.target.value) || 0 })}
+              onChange={(e) =>
+                update({ income: parseInt(e.target.value) || 0 })
+              }
             />
           </FormField>
           <FormField label="Savings">
@@ -246,7 +315,9 @@ export default function PersonaForm({ data, onChange }: Props) {
               type="number"
               className={inputClass}
               value={(data.savings as number) ?? ""}
-              onChange={(e) => update({ savings: parseInt(e.target.value) || 0 })}
+              onChange={(e) =>
+                update({ savings: parseInt(e.target.value) || 0 })
+              }
             />
           </FormField>
           {/* Standalone conditional fields */}
@@ -264,7 +335,9 @@ export default function PersonaForm({ data, onChange }: Props) {
               <select
                 className={inputClass}
                 value={data.self_employed ? "yes" : "no"}
-                onChange={(e) => update({ self_employed: e.target.value === "yes" })}
+                onChange={(e) =>
+                  update({ self_employed: e.target.value === "yes" })
+                }
               >
                 <option value="yes">Yes</option>
                 <option value="no">No</option>
@@ -288,7 +361,9 @@ export default function PersonaForm({ data, onChange }: Props) {
               <select
                 className={inputClass}
                 value={data.no_fixed_address ? "yes" : "no"}
-                onChange={(e) => update({ no_fixed_address: e.target.value === "yes" })}
+                onChange={(e) =>
+                  update({ no_fixed_address: e.target.value === "yes" })
+                }
               >
                 <option value="yes">Yes</option>
                 <option value="no">No</option>
@@ -301,7 +376,11 @@ export default function PersonaForm({ data, onChange }: Props) {
                 type="number"
                 className={inputClass}
                 value={(data.pension_qualifying_years as number) ?? ""}
-                onChange={(e) => update({ pension_qualifying_years: parseInt(e.target.value) || 0 })}
+                onChange={(e) =>
+                  update({
+                    pension_qualifying_years: parseInt(e.target.value) || 0,
+                  })
+                }
               />
             </FormField>
           )}
@@ -331,7 +410,9 @@ export default function PersonaForm({ data, onChange }: Props) {
             className={inputClass}
             value={(commStyle.tone as string) ?? ""}
             onChange={(e) =>
-              update({ communicationStyle: { ...commStyle, tone: e.target.value } })
+              update({
+                communicationStyle: { ...commStyle, tone: e.target.value },
+              })
             }
           />
         </FormField>
@@ -340,7 +421,9 @@ export default function PersonaForm({ data, onChange }: Props) {
             className={inputClass}
             value={(commStyle.techSavvy as string) ?? ""}
             onChange={(e) =>
-              update({ communicationStyle: { ...commStyle, techSavvy: e.target.value } })
+              update({
+                communicationStyle: { ...commStyle, techSavvy: e.target.value },
+              })
             }
           />
         </FormField>
@@ -408,7 +491,9 @@ export default function PersonaForm({ data, onChange }: Props) {
               update({
                 communicationStyle: {
                   ...commStyle,
-                  primaryConcerns: concerns.map((c, idx) => (idx === i ? val : c)),
+                  primaryConcerns: concerns.map((c, idx) =>
+                    idx === i ? val : c,
+                  ),
                 },
               })
             }
@@ -445,7 +530,9 @@ export default function PersonaForm({ data, onChange }: Props) {
               update({
                 communicationStyle: {
                   ...commStyle,
-                  typicalPhrases: phrases.map((p, idx) => (idx === i ? val : p)),
+                  typicalPhrases: phrases.map((p, idx) =>
+                    idx === i ? val : p,
+                  ),
                 },
               })
             }

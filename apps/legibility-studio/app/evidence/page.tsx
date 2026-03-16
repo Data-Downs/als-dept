@@ -46,7 +46,9 @@ export default function EvidencePage() {
   const [tab, setTab] = useState<Tab>("explorer");
 
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_CITIZEN_API || "http://localhost:3100"}/api/traces`)
+    fetch(
+      `${process.env.NEXT_PUBLIC_CITIZEN_API || "http://localhost:3100"}/api/traces`,
+    )
       .then((r) => r.json())
       .then((data) => {
         setTraces(data.traces || []);
@@ -63,7 +65,9 @@ export default function EvidencePage() {
     setSelectedTraceId(traceId);
     setDetailLoading(true);
     try {
-      const resp = await fetch(`${process.env.NEXT_PUBLIC_CITIZEN_API || "http://localhost:3100"}/api/traces/${traceId}`);
+      const resp = await fetch(
+        `${process.env.NEXT_PUBLIC_CITIZEN_API || "http://localhost:3100"}/api/traces/${traceId}`,
+      );
       const data = await resp.json();
       setTraceEvents(data.events || []);
       setTraceReceipts(data.receipts || []);
@@ -75,12 +79,16 @@ export default function EvidencePage() {
   };
 
   if (loading) {
-    return <div className="text-center py-12 text-gray-500">Loading evidence...</div>;
+    return (
+      <div className="text-center py-12 text-gray-500">Loading evidence...</div>
+    );
   }
 
   return (
     <div>
-      <Breadcrumbs items={[{ label: "Dashboard", href: "/" }, { label: "Evidence" }]} />
+      <Breadcrumbs
+        items={[{ label: "Dashboard", href: "/" }, { label: "Evidence" }]}
+      />
       <PageHeader
         title="Evidence Plane"
         subtitle={`Browse traces and receipts from agent interactions.${totalEvents > 0 ? ` ${totalEvents} total events recorded.` : ""}`}
@@ -118,12 +126,16 @@ export default function EvidencePage() {
                     : "border-studio-border bg-white hover:border-studio-accent"
                 }`}
               >
-                <div className="font-mono text-xs font-bold truncate">{trace.traceId}</div>
+                <div className="font-mono text-xs font-bold truncate">
+                  {trace.traceId}
+                </div>
                 <div className="flex justify-between mt-1">
                   <span className="text-xs text-gray-500">
                     {new Date(trace.firstEvent).toLocaleString("en-GB")}
                   </span>
-                  <span className="text-xs font-bold">{trace.eventCount} events</span>
+                  <span className="text-xs font-bold">
+                    {trace.eventCount} events
+                  </span>
                 </div>
               </button>
             ))}
@@ -134,12 +146,16 @@ export default function EvidencePage() {
         <div className="col-span-2">
           {!selectedTraceId && (
             <div className="bg-white border border-studio-border rounded-xl p-12 text-center">
-              <p className="text-gray-500">Select a session to explore its trace events.</p>
+              <p className="text-gray-500">
+                Select a session to explore its trace events.
+              </p>
             </div>
           )}
 
           {selectedTraceId && detailLoading && (
-            <div className="text-center py-8 text-gray-500">Loading trace...</div>
+            <div className="text-center py-8 text-gray-500">
+              Loading trace...
+            </div>
           )}
 
           {selectedTraceId && !detailLoading && (

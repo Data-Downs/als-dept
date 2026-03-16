@@ -5,9 +5,17 @@
  * Returns a PolicyResult with passed/failed rules and explanation.
  */
 
-import type { PolicyRuleset, PolicyRule, PolicyEdgeCase, PolicyResult } from "@als/schemas";
+import type {
+  PolicyRuleset,
+  PolicyRule,
+  PolicyEdgeCase,
+  PolicyResult,
+} from "@als/schemas";
 
-function getNestedValue(obj: Record<string, unknown>, path: string | undefined): unknown {
+function getNestedValue(
+  obj: Record<string, unknown>,
+  path: string | undefined,
+): unknown {
   if (!path) return undefined;
   return path.split(".").reduce((current: unknown, key: string) => {
     if (current === null || current === undefined) return undefined;
@@ -17,7 +25,7 @@ function getNestedValue(obj: Record<string, unknown>, path: string | undefined):
 
 function evaluateCondition(
   condition: PolicyRule["condition"],
-  context: Record<string, unknown>
+  context: Record<string, unknown>,
 ): boolean {
   const fieldValue = getNestedValue(context, condition.field);
 
@@ -31,9 +39,15 @@ function evaluateCondition(
     case "!=":
       return fieldValue !== condition.value;
     case ">=":
-      return typeof fieldValue === "number" && fieldValue >= (condition.value as number);
+      return (
+        typeof fieldValue === "number" &&
+        fieldValue >= (condition.value as number)
+      );
     case "<=":
-      return typeof fieldValue === "number" && fieldValue <= (condition.value as number);
+      return (
+        typeof fieldValue === "number" &&
+        fieldValue <= (condition.value as number)
+      );
     case "in":
       if (Array.isArray(condition.value)) {
         return condition.value.includes(fieldValue);
@@ -49,7 +63,10 @@ export class PolicyEvaluator {
    * Evaluate a ruleset against a citizen context object.
    * Returns which rules passed, which failed, and any detected edge cases.
    */
-  evaluate(ruleset: PolicyRuleset, context: Record<string, unknown>): PolicyResult {
+  evaluate(
+    ruleset: PolicyRuleset,
+    context: Record<string, unknown>,
+  ): PolicyResult {
     const passed: PolicyRule[] = [];
     const failed: PolicyRule[] = [];
     const detectedEdgeCases: PolicyEdgeCase[] = [];

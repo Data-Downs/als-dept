@@ -14,7 +14,9 @@ export default function PersonaDetailPage({
   const { userId } = use(params);
   const router = useRouter();
 
-  const [userData, setUserData] = useState<Record<string, unknown> | null>(null);
+  const [userData, setUserData] = useState<Record<string, unknown> | null>(
+    null,
+  );
   const [loading, setLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isResetting, setIsResetting] = useState(false);
@@ -45,11 +47,14 @@ export default function PersonaDetailPage({
     setSaved(false);
 
     try {
-      const response = await fetch(`/api/personas/${encodeURIComponent(userId)}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ user: userData }),
-      });
+      const response = await fetch(
+        `/api/personas/${encodeURIComponent(userId)}`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ user: userData }),
+        },
+      );
 
       if (!response.ok) {
         const err = await response.json();
@@ -66,25 +71,29 @@ export default function PersonaDetailPage({
   }
 
   async function handleReset() {
-    if (!confirm(
-      `Reset all interaction data for "${(userData?.personaName as string) || userId}"?\n\n` +
-      "This will delete:\n" +
-      "- All conversations and chat history\n" +
-      "- All tasks and to-do items\n" +
-      "- All life event plans in progress\n" +
-      "- All submitted and inferred personal data\n" +
-      "- All consent grants and service access records\n" +
-      "- All evidence traces and cases\n\n" +
-      "The persona definition itself will not be changed.\n" +
-      "You will also need to clear browser localStorage in the citizen app."
-    )) return;
+    if (
+      !confirm(
+        `Reset all interaction data for "${(userData?.personaName as string) || userId}"?\n\n` +
+          "This will delete:\n" +
+          "- All conversations and chat history\n" +
+          "- All tasks and to-do items\n" +
+          "- All life event plans in progress\n" +
+          "- All submitted and inferred personal data\n" +
+          "- All consent grants and service access records\n" +
+          "- All evidence traces and cases\n\n" +
+          "The persona definition itself will not be changed.\n" +
+          "You will also need to clear browser localStorage in the citizen app.",
+      )
+    )
+      return;
 
     setIsResetting(true);
     setError(null);
     setResetDone(false);
 
     try {
-      const citizenApi = process.env.NEXT_PUBLIC_CITIZEN_API || "http://localhost:3102";
+      const citizenApi =
+        process.env.NEXT_PUBLIC_CITIZEN_API || "http://localhost:3102";
       const res = await fetch(
         `${citizenApi}/api/personal-data/${encodeURIComponent(userId)}/reset`,
         { method: "DELETE" },
@@ -110,7 +119,10 @@ export default function PersonaDetailPage({
     return (
       <>
         <Breadcrumbs
-          items={[{ label: "Personas", href: "/personas" }, { label: "Loading..." }]}
+          items={[
+            { label: "Personas", href: "/personas" },
+            { label: "Loading..." },
+          ]}
         />
         <p className="text-sm text-gray-400 mt-8">Loading persona data...</p>
       </>
@@ -121,25 +133,29 @@ export default function PersonaDetailPage({
     return (
       <>
         <Breadcrumbs
-          items={[{ label: "Personas", href: "/personas" }, { label: "Not Found" }]}
+          items={[
+            { label: "Personas", href: "/personas" },
+            { label: "Not Found" },
+          ]}
         />
-        <PageHeader title="Not Found" subtitle={error || `No user found with id "${userId}"`} />
+        <PageHeader
+          title="Not Found"
+          subtitle={error || `No user found with id "${userId}"`}
+        />
       </>
     );
   }
 
-  const name = (userData.personaName as string) || (userData.name as string) || userId;
+  const name =
+    (userData.personaName as string) || (userData.name as string) || userId;
   const address = userData.address as Record<string, unknown> | undefined;
-  const city = address?.city as string || "";
-  const empStatus = userData.employment_status as string || "";
+  const city = (address?.city as string) || "";
+  const empStatus = (userData.employment_status as string) || "";
 
   return (
     <>
       <Breadcrumbs
-        items={[
-          { label: "Personas", href: "/personas" },
-          { label: name },
-        ]}
+        items={[{ label: "Personas", href: "/personas" }, { label: name }]}
       />
       <PageHeader
         title={name}
@@ -184,9 +200,11 @@ export default function PersonaDetailPage({
       {resetDone && (
         <div className="border border-amber-200 rounded-lg bg-amber-50 px-4 py-3 mb-4">
           <p className="text-sm text-amber-800">
-            Server-side interaction data has been reset. To complete the reset, clear localStorage
-            in the citizen app browser (open DevTools &rarr; Application &rarr; Local Storage &rarr;
-            delete keys starting with <code className="bg-amber-100 px-1 rounded">c02_</code> for this persona).
+            Server-side interaction data has been reset. To complete the reset,
+            clear localStorage in the citizen app browser (open DevTools &rarr;
+            Application &rarr; Local Storage &rarr; delete keys starting with{" "}
+            <code className="bg-amber-100 px-1 rounded">c02_</code> for this
+            persona).
           </p>
         </div>
       )}
@@ -194,8 +212,8 @@ export default function PersonaDetailPage({
       {/* Restart note */}
       <div className="border border-blue-200 rounded-lg bg-blue-50 px-4 py-3 mb-6">
         <p className="text-xs text-blue-800">
-          Changes to persona data require restarting the citizen-experience dev server to take
-          effect in the chat UI.
+          Changes to persona data require restarting the citizen-experience dev
+          server to take effect in the chat UI.
         </p>
       </div>
 

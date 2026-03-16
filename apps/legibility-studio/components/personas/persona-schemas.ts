@@ -55,7 +55,9 @@ export function defaultForType(type: FieldDef["type"]): unknown {
 
 export function blankItem(fields: FieldDef[]): Record<string, unknown> {
   return Object.fromEntries(
-    fields.filter((f) => !f.optional).map((f) => [f.key, defaultForType(f.type)])
+    fields
+      .filter((f) => !f.optional)
+      .map((f) => [f.key, defaultForType(f.type)]),
   );
 }
 
@@ -320,11 +322,27 @@ export const financialsSchema: ObjectSectionSchema = {
     },
   ],
   subSections: [
-    { key: "currentAccount", title: "Current Account", fields: bankAccountFields },
-    { key: "savingsAccount", title: "Savings Account", fields: bankAccountFields },
+    {
+      key: "currentAccount",
+      title: "Current Account",
+      fields: bankAccountFields,
+    },
+    {
+      key: "savingsAccount",
+      title: "Savings Account",
+      fields: bankAccountFields,
+    },
     { key: "jointAccount", title: "Joint Account", fields: bankAccountFields },
-    { key: "businessAccount", title: "Business Account", fields: bankAccountFields },
-    { key: "personalAccount", title: "Personal Account", fields: bankAccountFields },
+    {
+      key: "businessAccount",
+      title: "Business Account",
+      fields: bankAccountFields,
+    },
+    {
+      key: "personalAccount",
+      title: "Personal Account",
+      fields: bankAccountFields,
+    },
     {
       key: "statePension",
       title: "State Pension",

@@ -56,30 +56,30 @@ The prototype is a Node.js application with:
 
 **Rationale:**
 
-| Factor | Decision |
-|--------|----------|
-| GDS compatibility | Node.js is explicitly listed as a supported language in the GDS Way. TypeScript is explicitly endorsed for Node.js projects. |
-| Developer familiarity | Next.js is the most widely adopted React framework globally. Any developer hired into government digital will likely know it. |
-| Monorepo structure | Turborepo gives us the `/apps` and `/packages` layout from the planning document with proper workspace management, shared dependencies, and build caching. |
-| Existing prototype | The prototype is already Node.js. Migration path is straightforward. |
-| Server-side rendering | Next.js supports SSR, which matters for accessibility (a GDS requirement) and progressive enhancement. |
-| API routes | Next.js API routes give us a clean backend without needing a separate Express server. |
-| Nothing proprietary | Next.js is open source (MIT). Turborepo is open source. TypeScript is open source. No vendor lock-in. |
+| Factor                | Decision                                                                                                                                                   |
+| --------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| GDS compatibility     | Node.js is explicitly listed as a supported language in the GDS Way. TypeScript is explicitly endorsed for Node.js projects.                               |
+| Developer familiarity | Next.js is the most widely adopted React framework globally. Any developer hired into government digital will likely know it.                              |
+| Monorepo structure    | Turborepo gives us the `/apps` and `/packages` layout from the planning document with proper workspace management, shared dependencies, and build caching. |
+| Existing prototype    | The prototype is already Node.js. Migration path is straightforward.                                                                                       |
+| Server-side rendering | Next.js supports SSR, which matters for accessibility (a GDS requirement) and progressive enhancement.                                                     |
+| API routes            | Next.js API routes give us a clean backend without needing a separate Express server.                                                                      |
+| Nothing proprietary   | Next.js is open source (MIT). Turborepo is open source. TypeScript is open source. No vendor lock-in.                                                      |
 
 ### Full Stack
 
-| Layer | Technology | Why |
-|-------|-----------|-----|
-| Framework | Next.js 14+ (App Router) | Standard, well-documented, GDS-compatible |
-| Language | TypeScript | Type safety, GDS-endorsed, catches errors early |
-| Monorepo | Turborepo | Clean workspace management for apps + packages |
-| Styling | GOV.UK Design System + Tailwind CSS | GOV.UK Frontend for government patterns, Tailwind for custom UI |
-| State | React Context + Zustand | Simple, no boilerplate, works with SSR |
-| AI Integration | Anthropic SDK (TypeScript) | Direct Claude API integration |
-| MCP | Existing MCP server integration | Preserved from prototype |
-| Data Storage | JSON files (manifests/config) + SQLite (traces/receipts) | No external database dependency, portable, inspectable |
-| Testing | Vitest + Playwright | Fast unit tests, reliable E2E tests |
-| Linting | ESLint + Prettier | Standard, matches GDS practice |
+| Layer          | Technology                                               | Why                                                             |
+| -------------- | -------------------------------------------------------- | --------------------------------------------------------------- |
+| Framework      | Next.js 14+ (App Router)                                 | Standard, well-documented, GDS-compatible                       |
+| Language       | TypeScript                                               | Type safety, GDS-endorsed, catches errors early                 |
+| Monorepo       | Turborepo                                                | Clean workspace management for apps + packages                  |
+| Styling        | GOV.UK Design System + Tailwind CSS                      | GOV.UK Frontend for government patterns, Tailwind for custom UI |
+| State          | React Context + Zustand                                  | Simple, no boilerplate, works with SSR                          |
+| AI Integration | Anthropic SDK (TypeScript)                               | Direct Claude API integration                                   |
+| MCP            | Existing MCP server integration                          | Preserved from prototype                                        |
+| Data Storage   | JSON files (manifests/config) + SQLite (traces/receipts) | No external database dependency, portable, inspectable          |
+| Testing        | Vitest + Playwright                                      | Fast unit tests, reliable E2E tests                             |
+| Linting        | ESLint + Prettier                                        | Standard, matches GDS practice                                  |
 
 ---
 
@@ -196,10 +196,11 @@ The agent must NEVER call MCP servers, external APIs, or any government service 
 Every single call goes through one function:
 
 ```typescript
-CapabilityInvoker.invoke(capability_id, input, context)
+CapabilityInvoker.invoke(capability_id, input, context);
 ```
 
 This is the single choke point. It is where:
+
 - The capability manifest is looked up
 - Policy rules are evaluated
 - Consent is checked
@@ -213,6 +214,7 @@ Nothing bypasses this.
 ### 5.2 Everything Is a Capability
 
 Each government service interaction is defined by four artefacts:
+
 1. **Capability Manifest** — what the service does, what it needs, what it promises
 2. **Policy Ruleset** — who is eligible, what the rules are, what evidence is needed
 3. **State Model** — what states a request can be in, what transitions are allowed
@@ -221,11 +223,13 @@ Each government service interaction is defined by four artefacts:
 ### 5.3 Publish vs Prove (Two Planes)
 
 **Control Plane (Legibility Studio):**
+
 - Where service designers author, edit, and publish artefacts
 - Published artefacts become immutable (frozen versions)
 - This is the "what should happen" side
 
 **Evidence Plane (built into both apps):**
+
 - Where runtime activity is recorded
 - Receipts, traces, logs, audit records
 - Append-only (no silent edits)
@@ -237,12 +241,12 @@ The Evidence Plane is NOT a third app. It is a data layer and UI panel that appe
 
 Personal data follows a strict split:
 
-| Data Type | Where It Lives | Example | Who Controls It |
-|-----------|---------------|---------|-----------------|
-| Verified Credentials | GOV.UK Wallet (on device) | Driving licence, veteran status | Government issues, citizen holds |
-| Incidental Personal Data | On-device secure store | Partner's name, preferences, notes | Citizen only |
-| Session Context | In-memory only | Current conversation state | Destroyed after session |
-| Consent Records | Evidence Plane | "I agreed to share my address with DVLA" | Append-only audit log |
+| Data Type                | Where It Lives            | Example                                  | Who Controls It                  |
+| ------------------------ | ------------------------- | ---------------------------------------- | -------------------------------- |
+| Verified Credentials     | GOV.UK Wallet (on device) | Driving licence, veteran status          | Government issues, citizen holds |
+| Incidental Personal Data | On-device secure store    | Partner's name, preferences, notes       | Citizen only                     |
+| Session Context          | In-memory only            | Current conversation state               | Destroyed after session          |
+| Consent Records          | Evidence Plane            | "I agreed to share my address with DVLA" | Append-only audit log            |
 
 Nothing personal is stored server-side unless the citizen explicitly consents, and even then, the consent is recorded as a formal artefact.
 
@@ -259,6 +263,7 @@ The agent must always be able to say "I can't help with this — let me connect 
 GOV.UK One Login is the government's identity system. It uses OIDC (OpenID Connect), which is the same protocol used by "Sign in with Google" or "Sign in with Apple" — a well-established, secure way to prove identity online.
 
 It provides:
+
 - **Authentication** — "this person is who they claim to be" (via email + password + 2FA)
 - **Identity verification** — "we have checked their passport/driving licence and confirmed their identity" (higher confidence)
 - **User attributes** — name, date of birth, address (returned as claims in a secure token)
@@ -286,12 +291,12 @@ We build a `OneLoginSimulator` that:
 // packages/identity/one-login-simulator.ts
 
 interface OneLoginConfig {
-  mode: 'simulated' | 'integration' | 'production';
+  mode: "simulated" | "integration" | "production";
   clientId: string;
   redirectUri: string;
-  scopes: string[];  // e.g. ['openid', 'email', 'phone']
-  claims: string[];  // e.g. ['https://vocab.account.gov.uk/v1/coreIdentityJWT']
-  levelOfConfidence: 'Cl' | 'Cl.Cm';
+  scopes: string[]; // e.g. ['openid', 'email', 'phone']
+  claims: string[]; // e.g. ['https://vocab.account.gov.uk/v1/coreIdentityJWT']
+  levelOfConfidence: "Cl" | "Cl.Cm";
 }
 ```
 
@@ -306,6 +311,7 @@ GOV.UK Wallet lets citizens save government-issued digital documents on their ph
 Currently available: HM Armed Forces Veteran Card. Coming next: digital driving licence.
 
 Key principles:
+
 - Documents are stored locally on the user's device (not in the cloud)
 - The user decides whether to share information
 - Only government-issued documents (not tickets or commercial cards)
@@ -336,25 +342,25 @@ interface WalletCredential {
   id: string;
   type: CredentialType;
   issuer: {
-    id: string;            // DID of issuing department
-    name: string;          // e.g. "DVLA"
+    id: string; // DID of issuing department
+    name: string; // e.g. "DVLA"
   };
   subject: {
-    oneLoginSub: string;   // Linked to One Login identity
+    oneLoginSub: string; // Linked to One Login identity
   };
-  claims: Record<string, unknown>;  // The actual data (e.g. licence number, categories)
-  issuedAt: string;        // ISO 8601
-  expiresAt: string;       // ISO 8601
-  status: 'valid' | 'expired' | 'revoked' | 'suspended';
+  claims: Record<string, unknown>; // The actual data (e.g. licence number, categories)
+  issuedAt: string; // ISO 8601
+  expiresAt: string; // ISO 8601
+  status: "valid" | "expired" | "revoked" | "suspended";
   // In production, this would be a proper SD-JWT or mdoc
   // In simulation, it's a plain JSON object with a simulated signature
 }
 
 type CredentialType =
-  | 'driving-licence'
-  | 'veteran-card'
-  | 'dbs-check'
-  | 'professional-qualification';
+  | "driving-licence"
+  | "veteran-card"
+  | "dbs-check"
+  | "professional-qualification";
 ```
 
 ### How It Connects to the Agent
@@ -377,6 +383,7 @@ When the agent needs to verify something about the citizen (e.g. "do they hold a
 Citizens have two types of personal information:
 
 **Tier 1: Verified Credentials (from Wallet)**
+
 - Government-attested facts
 - Cryptographically signed (in production)
 - Examples: driving licence details, veteran status, national insurance number
@@ -384,6 +391,7 @@ Citizens have two types of personal information:
 - Shared only with explicit consent per-service, per-session
 
 **Tier 2: Incidental Personal Data (on-device only)**
+
 - Self-declared information the citizen provides to help the agent
 - NOT verified by government
 - Examples: partner's name, number of children, housing situation, communication preferences, notes about ongoing cases
@@ -406,20 +414,20 @@ interface PersonalDataProfile {
   // Tier 2: Incidental (self-declared, on-device, fully citizen-controlled)
   incidental: {
     // Core personal context
-    preferredName?: string;           // "Call me Dave" vs formal name
+    preferredName?: string; // "Call me Dave" vs formal name
     householdMembers?: HouseholdMember[];
     communicationPreferences?: {
-      preferredChannel: 'email' | 'phone' | 'post' | 'text';
+      preferredChannel: "email" | "phone" | "post" | "text";
       preferredLanguage: string;
       accessibilityNeeds?: string[];
     };
     housingStatus?: string;
     employmentStatus?: string;
-    notes?: string[];                 // Free-text notes the citizen wants remembered
+    notes?: string[]; // Free-text notes the citizen wants remembered
 
     // Agent interaction preferences
     agentPreferences?: {
-      verbosity: 'brief' | 'normal' | 'detailed';
+      verbosity: "brief" | "normal" | "detailed";
       confirmBeforeActing: boolean;
       showEvidenceTrail: boolean;
     };
@@ -427,13 +435,13 @@ interface PersonalDataProfile {
 
   // Metadata
   dataPrivacy: {
-    consentRecords: ConsentRecord[];  // Every time data was shared
-    dataRetentionPolicy: 'session-only' | 'on-device-persistent';
+    consentRecords: ConsentRecord[]; // Every time data was shared
+    dataRetentionPolicy: "session-only" | "on-device-persistent";
   };
 }
 
 interface HouseholdMember {
-  relationship: string;    // "partner", "child", "parent"
+  relationship: string; // "partner", "child", "parent"
   name?: string;
   dateOfBirth?: string;
   // NO government identifiers stored here — those stay in Wallet
@@ -442,10 +450,10 @@ interface HouseholdMember {
 interface ConsentRecord {
   id: string;
   timestamp: string;
-  dataShared: string[];         // Which fields were shared
-  sharedWith: string;           // Which service/capability
-  purpose: string;              // Why it was shared
-  duration: 'session' | 'until-revoked';
+  dataShared: string[]; // Which fields were shared
+  sharedWith: string; // Which service/capability
+  purpose: string; // Why it was shared
+  duration: "session" | "until-revoked";
   revoked: boolean;
   revokedAt?: string;
 }
@@ -467,7 +475,7 @@ const PRIVACY_RULES = {
   enforceDataMinimisation: true,
 
   // Session data is destroyed when the conversation ends
-  sessionDataLifetime: 'session-only',
+  sessionDataLifetime: "session-only",
 
   // The citizen can see everything that's been shared and with whom
   fullTransparency: true,
@@ -505,11 +513,11 @@ When handoff occurs, the system generates a structured package that a call centr
 interface HandoffPackage {
   id: string;
   createdAt: string;
-  urgency: 'routine' | 'priority' | 'urgent' | 'safeguarding';
+  urgency: "routine" | "priority" | "urgent" | "safeguarding";
 
   // Who is being handed off
   citizen: {
-    name: string;                // From One Login identity
+    name: string; // From One Login identity
     contactDetails: {
       preferredChannel: string;
       phone?: string;
@@ -522,43 +530,43 @@ interface HandoffPackage {
   // Why the handoff is happening
   reason: {
     category: HandoffReason;
-    description: string;         // Human-readable explanation
-    agentAssessment: string;     // What the agent thinks the issue is
+    description: string; // Human-readable explanation
+    agentAssessment: string; // What the agent thinks the issue is
   };
 
   // What's been done so far
   conversationSummary: {
-    serviceAttempted: string;     // e.g. "Renew driving licence"
-    stepsCompleted: string[];     // What the agent successfully did
-    stepsBlocked: string[];      // What couldn't be completed and why
-    dataCollected: string[];     // What information has been gathered (not the data itself)
-    timeSpent: string;           // Duration of conversation
+    serviceAttempted: string; // e.g. "Renew driving licence"
+    stepsCompleted: string[]; // What the agent successfully did
+    stepsBlocked: string[]; // What couldn't be completed and why
+    dataCollected: string[]; // What information has been gathered (not the data itself)
+    timeSpent: string; // Duration of conversation
   };
 
   // The evidence trail
-  traceId: string;               // Links to the full trace in the Evidence Plane
-  receiptIds: string[];           // Receipts generated during the conversation
+  traceId: string; // Links to the full trace in the Evidence Plane
+  receiptIds: string[]; // Receipts generated during the conversation
 
   // Suggested next steps for the human agent
   suggestedActions: string[];
 
   // Routing information
   routing: {
-    department: string;           // e.g. "DVLA"
-    serviceArea: string;          // e.g. "Licence renewals"
-    suggestedQueue: string;       // e.g. "complex-cases"
-    referenceNumber?: string;     // If one was generated
+    department: string; // e.g. "DVLA"
+    serviceArea: string; // e.g. "Licence renewals"
+    suggestedQueue: string; // e.g. "complex-cases"
+    referenceNumber?: string; // If one was generated
   };
 }
 
 type HandoffReason =
-  | 'complexity-exceeded'
-  | 'repeated-failure'
-  | 'citizen-requested'
-  | 'safeguarding-concern'
-  | 'dispute-or-complaint'
-  | 'technical-failure'
-  | 'policy-edge-case';
+  | "complexity-exceeded"
+  | "repeated-failure"
+  | "citizen-requested"
+  | "safeguarding-concern"
+  | "dispute-or-complaint"
+  | "technical-failure"
+  | "policy-edge-case";
 ```
 
 ### Handoff UX
@@ -615,7 +623,11 @@ In the Citizen Experience, handoff looks like:
   },
 
   "eligibility_ruleset_id": "dvla.renew-licence.eligibility",
-  "consent_requirements": ["identity-verification", "photo-sharing", "address-confirmation"],
+  "consent_requirements": [
+    "identity-verification",
+    "photo-sharing",
+    "address-confirmation"
+  ],
   "evidence_requirements": ["driving-licence-credential", "identity-verified"],
 
   "redress": {
@@ -711,15 +723,51 @@ Simple, declarative, not a programming language:
     { "id": "failed", "type": "terminal", "receipt": true }
   ],
   "transitions": [
-    { "from": "not-started", "to": "identity-verified", "trigger": "one-login-auth-complete" },
-    { "from": "identity-verified", "to": "eligibility-checked", "trigger": "policy-evaluation-complete" },
-    { "from": "eligibility-checked", "to": "data-collected", "condition": "eligible == true" },
-    { "from": "eligibility-checked", "to": "handed-off", "condition": "eligible == false && edge_case == true" },
-    { "from": "eligibility-checked", "to": "failed", "condition": "eligible == false && edge_case == false" },
-    { "from": "data-collected", "to": "consent-granted", "trigger": "consent-confirmed" },
-    { "from": "consent-granted", "to": "application-submitted", "trigger": "service-invoked" },
-    { "from": "application-submitted", "to": "payment-completed", "trigger": "payment-confirmed" },
-    { "from": "payment-completed", "to": "completed", "trigger": "confirmation-received" },
+    {
+      "from": "not-started",
+      "to": "identity-verified",
+      "trigger": "one-login-auth-complete"
+    },
+    {
+      "from": "identity-verified",
+      "to": "eligibility-checked",
+      "trigger": "policy-evaluation-complete"
+    },
+    {
+      "from": "eligibility-checked",
+      "to": "data-collected",
+      "condition": "eligible == true"
+    },
+    {
+      "from": "eligibility-checked",
+      "to": "handed-off",
+      "condition": "eligible == false && edge_case == true"
+    },
+    {
+      "from": "eligibility-checked",
+      "to": "failed",
+      "condition": "eligible == false && edge_case == false"
+    },
+    {
+      "from": "data-collected",
+      "to": "consent-granted",
+      "trigger": "consent-confirmed"
+    },
+    {
+      "from": "consent-granted",
+      "to": "application-submitted",
+      "trigger": "service-invoked"
+    },
+    {
+      "from": "application-submitted",
+      "to": "payment-completed",
+      "trigger": "payment-confirmed"
+    },
+    {
+      "from": "payment-completed",
+      "to": "completed",
+      "trigger": "confirmation-received"
+    },
     { "from": "*", "to": "handed-off", "trigger": "escalation-requested" }
   ]
 }
@@ -777,40 +825,40 @@ Simple, declarative, not a programming language:
 ```typescript
 interface TraceEvent {
   id: string;
-  traceId: string;          // Groups all events in one conversation
-  spanId: string;           // Groups events within one operation
+  traceId: string; // Groups all events in one conversation
+  spanId: string; // Groups events within one operation
   parentSpanId?: string;
   timestamp: string;
   type: TraceEventType;
   payload: Record<string, unknown>;
   metadata: {
-    userId: string;          // Pseudonymised
+    userId: string; // Pseudonymised
     sessionId: string;
     capabilityId?: string;
   };
 }
 
 type TraceEventType =
-  | 'llm.request'
-  | 'llm.response'
-  | 'plan.created'
-  | 'plan.step.started'
-  | 'plan.step.completed'
-  | 'capability.invoked'
-  | 'capability.result'
-  | 'policy.evaluated'
-  | 'consent.requested'
-  | 'consent.granted'
-  | 'consent.denied'
-  | 'consent.revoked'
-  | 'credential.requested'
-  | 'credential.presented'
-  | 'receipt.issued'
-  | 'state.transition'
-  | 'handoff.initiated'
-  | 'handoff.package.created'
-  | 'error.raised'
-  | 'redress.offered';
+  | "llm.request"
+  | "llm.response"
+  | "plan.created"
+  | "plan.step.started"
+  | "plan.step.completed"
+  | "capability.invoked"
+  | "capability.result"
+  | "policy.evaluated"
+  | "consent.requested"
+  | "consent.granted"
+  | "consent.denied"
+  | "consent.revoked"
+  | "credential.requested"
+  | "credential.presented"
+  | "receipt.issued"
+  | "state.transition"
+  | "handoff.initiated"
+  | "handoff.package.created"
+  | "error.raised"
+  | "redress.offered";
 ```
 
 ---
@@ -819,10 +867,10 @@ type TraceEventType =
 
 ### Why These Three
 
-| Service | Why It's a Good Demo |
-|---------|---------------------|
-| **Renew Driving Licence** | Directly connects to GOV.UK Wallet (driving licence is the next credential going into Wallet). Clear eligibility rules. Payment involved. Strong handoff scenarios (medical conditions, endorsements). |
-| **Apply for Universal Credit** | The most complex eligibility scenario in UK government. Tests the policy DSL thoroughly. Multiple household members involved (tests personal data model). High stakes for citizens. Strong safeguarding handoff needs. |
+| Service                          | Why It's a Good Demo                                                                                                                                                                                                       |
+| -------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Renew Driving Licence**        | Directly connects to GOV.UK Wallet (driving licence is the next credential going into Wallet). Clear eligibility rules. Payment involved. Strong handoff scenarios (medical conditions, endorsements).                     |
+| **Apply for Universal Credit**   | The most complex eligibility scenario in UK government. Tests the policy DSL thoroughly. Multiple household members involved (tests personal data model). High stakes for citizens. Strong safeguarding handoff needs.     |
 | **Check State Pension Forecast** | Read-only service (no application, no payment). Good contrast with the others. Tests credential sharing without modification. Simple but meaningful. Shows the system handles information requests, not just transactions. |
 
 ### Scraping & Gap Analysis
@@ -883,12 +931,14 @@ The Evidence Plane is a **shared data layer and UI component**, not a standalone
 ### What Each App Sees
 
 **Citizen Experience** shows the citizen:
+
 - Their own receipts ("Here's proof that you applied for X on Y date")
 - Their consent history ("You shared your driving licence with DVLA on Z date")
 - A timeline of what the agent did on their behalf
 - The ability to download their data
 
 **Legibility Studio** shows the service designer/auditor:
+
 - Full trace explorer (every event, filterable)
 - Performance dashboards (how long capabilities take, failure rates)
 - Failure categorisation (why things go wrong)
@@ -1002,16 +1052,16 @@ This project demonstrates:
 
 ## Appendix A: Key GOV.UK References
 
-| Resource | URL | Purpose |
-|----------|-----|---------|
-| GOV.UK One Login Docs | https://docs.sign-in.service.gov.uk/ | OIDC integration reference |
-| GOV.UK Wallet Docs | https://docs.wallet.service.gov.uk/ | Credential issuance/verification reference |
-| GOV.UK Wallet Guidance | https://www.gov.uk/guidance/using-govuk-wallet-in-government | Policy and principles |
-| GOV.UK Wallet Public | https://www.gov.uk/wallet | Citizen-facing description |
-| GOV.UK Content API | https://content-api.publishing.service.gov.uk | For scraping service content |
-| GDS Way - Languages | https://gds-way.digital.cabinet-office.gov.uk/standards/programming-languages.html | Tech stack validation |
-| GOV.UK Design System | https://design-system.service.gov.uk/ | UI patterns and components |
-| Source Prototype | https://github.com/Data-Downs/gov-agent-simulator (branch: Taskified) | Existing codebase |
+| Resource               | URL                                                                                | Purpose                                    |
+| ---------------------- | ---------------------------------------------------------------------------------- | ------------------------------------------ |
+| GOV.UK One Login Docs  | https://docs.sign-in.service.gov.uk/                                               | OIDC integration reference                 |
+| GOV.UK Wallet Docs     | https://docs.wallet.service.gov.uk/                                                | Credential issuance/verification reference |
+| GOV.UK Wallet Guidance | https://www.gov.uk/guidance/using-govuk-wallet-in-government                       | Policy and principles                      |
+| GOV.UK Wallet Public   | https://www.gov.uk/wallet                                                          | Citizen-facing description                 |
+| GOV.UK Content API     | https://content-api.publishing.service.gov.uk                                      | For scraping service content               |
+| GDS Way - Languages    | https://gds-way.digital.cabinet-office.gov.uk/standards/programming-languages.html | Tech stack validation                      |
+| GOV.UK Design System   | https://design-system.service.gov.uk/                                              | UI patterns and components                 |
+| Source Prototype       | https://github.com/Data-Downs/gov-agent-simulator (branch: Taskified)              | Existing codebase                          |
 
 ---
 
@@ -1045,7 +1095,11 @@ This project demonstrates:
       "housingStatus": "private-rental",
       "householdMembers": [
         { "relationship": "partner", "name": "Fatima" },
-        { "relationship": "child", "name": "Amir", "dateOfBirth": "2015-09-10" },
+        {
+          "relationship": "child",
+          "name": "Amir",
+          "dateOfBirth": "2015-09-10"
+        },
         { "relationship": "child", "name": "Noor", "dateOfBirth": "2018-01-30" }
       ]
     }
@@ -1071,7 +1125,9 @@ This project demonstrates:
     "scenario": "medical-condition-edge-case",
     "walletCredentials": ["driving-licence"],
     "incidentalData": {
-      "notes": ["Has epilepsy — needs medical fitness assessment for licence renewal"]
+      "notes": [
+        "Has epilepsy — needs medical fitness assessment for licence renewal"
+      ]
     }
   }
 ]
@@ -1079,4 +1135,4 @@ This project demonstrates:
 
 ---
 
-*This document is the complete brief for Claude Code. Begin with Step 1 of the Migration Strategy.*
+_This document is the complete brief for Claude Code. Begin with Step 1 of the Migration Strategy._

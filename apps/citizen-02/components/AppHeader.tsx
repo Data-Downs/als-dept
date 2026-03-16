@@ -2,10 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useAppStore } from "@/lib/store";
-import {
-  PERSONA_COLORS,
-  PERSONA_INITIALS,
-} from "@/lib/types";
+import { PERSONA_COLORS, PERSONA_INITIALS } from "@/lib/types";
 
 export function AppHeader() {
   const [mcpConnected, setMcpConnected] = useState(false);
@@ -147,9 +144,7 @@ export function AppHeader() {
         </div>
 
         {/* Title row */}
-        <h1 className="text-white font-bold text-2xl mt-2">
-          {title}
-        </h1>
+        <h1 className="text-white font-bold text-2xl mt-2">{title}</h1>
       </div>
     </header>
   );

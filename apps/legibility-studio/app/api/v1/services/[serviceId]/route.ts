@@ -12,7 +12,7 @@ export async function OPTIONS() {
  */
 export async function GET(
   _request: NextRequest,
-  { params }: { params: Promise<{ serviceId: string }> }
+  { params }: { params: Promise<{ serviceId: string }> },
 ) {
   try {
     const { serviceId } = await params;
@@ -54,7 +54,7 @@ export async function GET(
  */
 export async function PUT(
   request: NextRequest,
-  { params }: { params: Promise<{ serviceId: string }> }
+  { params }: { params: Promise<{ serviceId: string }> },
 ) {
   try {
     const { serviceId } = await params;
@@ -85,7 +85,7 @@ export async function PUT(
  */
 export async function DELETE(
   _request: NextRequest,
-  { params }: { params: Promise<{ serviceId: string }> }
+  { params }: { params: Promise<{ serviceId: string }> },
 ) {
   try {
     const { serviceId } = await params;

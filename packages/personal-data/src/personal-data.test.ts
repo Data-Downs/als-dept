@@ -10,11 +10,26 @@ const testUser: TestUser = {
   date_of_birth: "1990-05-20",
   age: 35,
   national_insurance_number: "QQ123456C",
-  address: { line_1: "42 Test Lane", line_2: "Flat B", city: "London", postcode: "SW1A 1AA" },
+  address: {
+    line_1: "42 Test Lane",
+    line_2: "Flat B",
+    city: "London",
+    postcode: "SW1A 1AA",
+  },
   jurisdiction: "England",
   credentials: [
-    { type: "driving-licence", issuer: "DVLA", number: "DL123", status: "valid" },
-    { type: "national-insurance", issuer: "HMRC", number: "QQ123456C", status: "valid" },
+    {
+      type: "driving-licence",
+      issuer: "DVLA",
+      number: "DL123",
+      status: "valid",
+    },
+    {
+      type: "national-insurance",
+      issuer: "HMRC",
+      number: "QQ123456C",
+      status: "valid",
+    },
   ],
   employment_status: "employed",
   employer: "NHS",
@@ -59,7 +74,9 @@ describe("VerifiedStore — Tier 1 verified data", () => {
     const noValidUser: TestUser = {
       ...testUser,
       id: "user-2",
-      credentials: [{ type: "expired-card", issuer: "Test", status: "expired" }],
+      credentials: [
+        { type: "expired-card", issuer: "Test", status: "expired" },
+      ],
     };
     wallet.loadFromTestUser(noValidUser);
     const data = store.getVerifiedData("user-2", noValidUser);
@@ -111,7 +128,13 @@ describe("IncidentalStore — Tier 2 incidental data", () => {
   });
 
   it("can add data from conversation (Tier 2 enrichment)", () => {
-    const field = store.recordFromConversation("user-1", "preferred_language", "Welsh", "sess-1", "stated");
+    const field = store.recordFromConversation(
+      "user-1",
+      "preferred_language",
+      "Welsh",
+      "sess-1",
+      "stated",
+    );
     expect(field.key).toBe("preferred_language");
     expect(field.value).toBe("Welsh");
     expect(field.confidence).toBe("stated");
@@ -163,7 +186,11 @@ describe("Tier separation", () => {
     const store = new VerifiedStore(new WalletSimulator());
     const methods = Object.getOwnPropertyNames(Object.getPrototypeOf(store));
     const writeMethods = methods.filter(
-      (m) => m.startsWith("set") || m.startsWith("write") || m.startsWith("update") || m.startsWith("store")
+      (m) =>
+        m.startsWith("set") ||
+        m.startsWith("write") ||
+        m.startsWith("update") ||
+        m.startsWith("store"),
     );
     expect(writeMethods).toEqual([]);
   });

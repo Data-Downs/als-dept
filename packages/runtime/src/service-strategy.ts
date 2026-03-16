@@ -37,7 +37,9 @@ export interface ServiceStrategy {
   dispatchToolCall(name: string, input: unknown): Promise<string>;
 
   /** Extract state transitions from MCP tool results (MCP mode only) */
-  extractStateTransitions(loopMessages: Array<{ role: string; content: unknown }>): Array<{
+  extractStateTransitions(
+    loopMessages: Array<{ role: string; content: unknown }>,
+  ): Array<{
     fromState: string;
     toState: string;
     trigger: string;

@@ -27,7 +27,10 @@ export class ServiceClient {
   private cache = new Map<string, CacheEntry<unknown>>();
   private inflight = new Map<string, Promise<unknown>>();
 
-  constructor(baseUrl: string, options?: { ttl?: number; timeout?: number; fetcher?: Fetcher }) {
+  constructor(
+    baseUrl: string,
+    options?: { ttl?: number; timeout?: number; fetcher?: Fetcher },
+  ) {
     this.baseUrl = baseUrl.replace(/\/+$/, "");
     this.ttl = options?.ttl ?? 60_000;
     this.timeout = options?.timeout ?? 5_000;
@@ -35,12 +38,16 @@ export class ServiceClient {
   }
 
   /** GET /api/personas — returns { users: [...] } or null */
-  async getPersonas(): Promise<{ users: Array<Record<string, unknown>> } | null> {
+  async getPersonas(): Promise<{
+    users: Array<Record<string, unknown>>;
+  } | null> {
     return this.fetchJson("/api/personas");
   }
 
   /** GET /api/personas/:id — returns { user: {...} } or null */
-  async getPersona(id: string): Promise<{ user: Record<string, unknown> } | null> {
+  async getPersona(
+    id: string,
+  ): Promise<{ user: Record<string, unknown> } | null> {
     return this.fetchJson(`/api/personas/${encodeURIComponent(id)}`);
   }
 
@@ -93,7 +100,10 @@ export class ServiceClient {
 }
 
 /** Resolve STUDIO_API_URL and optional service binding from env */
-async function resolveStudioConfig(): Promise<{ url?: string; fetcher?: Fetcher }> {
+async function resolveStudioConfig(): Promise<{
+  url?: string;
+  fetcher?: Fetcher;
+}> {
   // On Cloudflare Workers with OpenNext, check for service binding + vars first
   try {
     const { getCloudflareContext } = await import("@opennextjs/cloudflare");

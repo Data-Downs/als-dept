@@ -14,7 +14,10 @@ export interface EligibilityResult {
 }
 
 /** Extract a numeric value from text near given keywords (e.g. "income up to £80,000" → 80000) */
-export function extractNumberFromText(text: string, keywords: string[]): number | null {
+export function extractNumberFromText(
+  text: string,
+  keywords: string[],
+): number | null {
   const lower = text.toLowerCase();
   if (!keywords.some((kw) => lower.includes(kw.toLowerCase()))) return null;
   // Match £-prefixed numbers with optional commas (e.g. £80,000 or £450000)
@@ -24,9 +27,12 @@ export function extractNumberFromText(text: string, keywords: string[]): number 
 }
 
 /** Calculate age from a date-of-birth string */
-export function getPersonaAge(personaData: Record<string, unknown>): number | null {
+export function getPersonaAge(
+  personaData: Record<string, unknown>,
+): number | null {
   const dob =
-    (personaData.primaryContact as Record<string, unknown> | undefined)?.dateOfBirth ??
+    (personaData.primaryContact as Record<string, unknown> | undefined)
+      ?.dateOfBirth ??
     personaData.date_of_birth ??
     personaData.dateOfBirth;
   if (typeof dob !== "string") return null;
@@ -35,7 +41,10 @@ export function getPersonaAge(personaData: Record<string, unknown>): number | nu
   const now = new Date();
   let age = now.getFullYear() - birthDate.getFullYear();
   const monthDiff = now.getMonth() - birthDate.getMonth();
-  if (monthDiff < 0 || (monthDiff === 0 && now.getDate() < birthDate.getDate())) {
+  if (
+    monthDiff < 0 ||
+    (monthDiff === 0 && now.getDate() < birthDate.getDate())
+  ) {
     age--;
   }
   return age;
@@ -43,7 +52,9 @@ export function getPersonaAge(personaData: Record<string, unknown>): number | nu
 
 /** Check whether the persona owns property */
 function personaOwnsProperty(personaData: Record<string, unknown>): boolean {
-  const financials = personaData.financials as Record<string, unknown> | undefined;
+  const financials = personaData.financials as
+    | Record<string, unknown>
+    | undefined;
   const properties = financials?.properties as unknown[] | undefined;
   if (properties && properties.length > 0) return true;
   const address = personaData.address as Record<string, unknown> | undefined;
@@ -55,9 +66,14 @@ function personaOwnsProperty(personaData: Record<string, unknown>): boolean {
 }
 
 /** Get household income from persona data */
-function getHouseholdIncome(personaData: Record<string, unknown>): number | null {
-  const financials = personaData.financials as Record<string, unknown> | undefined;
-  if (financials?.combinedAnnualIncome) return financials.combinedAnnualIncome as number;
+function getHouseholdIncome(
+  personaData: Record<string, unknown>,
+): number | null {
+  const financials = personaData.financials as
+    | Record<string, unknown>
+    | undefined;
+  if (financials?.combinedAnnualIncome)
+    return financials.combinedAnnualIncome as number;
   if (typeof personaData.income === "number") return personaData.income;
   const emp = personaData.employment as Record<string, unknown> | undefined;
   if (emp?.annualIncome) return emp.annualIncome as number;
@@ -100,10 +116,15 @@ export function checkPersonaEligibility(
     switch (criterion.factor) {
       case "property": {
         if (
-          (descLower.includes("first-time buyer") || descLower.includes("first home")) &&
+          (descLower.includes("first-time buyer") ||
+            descLower.includes("first home")) &&
           personaOwnsProperty(personaData)
         ) {
-          return { eligible: false, reason: "Requires first-time buyer status but persona owns property" };
+          return {
+            eligible: false,
+            reason:
+              "Requires first-time buyer status but persona owns property",
+          };
         }
         break;
       }
@@ -114,7 +135,10 @@ export function checkPersonaEligibility(
         // Check "under X" pattern
         const underMatch = descLower.match(/under (\d+)/);
         if (underMatch && age >= parseInt(underMatch[1], 10)) {
-          return { eligible: false, reason: `Age ${age} exceeds upper limit of ${underMatch[1]}` };
+          return {
+            eligible: false,
+            reason: `Age ${age} exceeds upper limit of ${underMatch[1]}`,
+          };
         }
         // Check "before age X" pattern (e.g. "opened before age 40")
         const beforeAgeMatch = descLower.match(/before age (\d+)/);
@@ -128,7 +152,10 @@ export function checkPersonaEligibility(
           const lo = parseInt(rangeMatch[1], 10);
           const hi = parseInt(rangeMatch[2], 10);
           if (age < lo || age > hi) {
-            return { eligible: false, reason: `Age ${age} outside range ${lo}-${hi}` };
+            return {
+              eligible: false,
+              reason: `Age ${age} outside range ${lo}-${hi}`,
+            };
           }
         }
         break;
@@ -136,22 +163,35 @@ export function checkPersonaEligibility(
 
       case "income": {
         if (!eligibility.means_tested) break;
-        const threshold = extractNumberFromText(criterion.description, ["income", "earning"]);
+        const threshold = extractNumberFromText(criterion.description, [
+          "income",
+          "earning",
+        ]);
         if (threshold === null) break;
         const income = getHouseholdIncome(personaData);
         if (income === null) break;
         if (income > threshold) {
-          return { eligible: false, reason: `Household income £${income.toLocaleString()} exceeds threshold £${threshold.toLocaleString()}` };
+          return {
+            eligible: false,
+            reason: `Household income £${income.toLocaleString()} exceeds threshold £${threshold.toLocaleString()}`,
+          };
         }
         break;
       }
 
       case "asset": {
-        const savingsThreshold = extractNumberFromText(criterion.description, ["saving", "asset", "capital"]);
+        const savingsThreshold = extractNumberFromText(criterion.description, [
+          "saving",
+          "asset",
+          "capital",
+        ]);
         if (savingsThreshold === null) break;
         const savings = personaData.savings as number | undefined;
         if (savings !== undefined && savings > savingsThreshold) {
-          return { eligible: false, reason: `Savings £${savings.toLocaleString()} exceed threshold £${savingsThreshold.toLocaleString()}` };
+          return {
+            eligible: false,
+            reason: `Savings £${savings.toLocaleString()} exceed threshold £${savingsThreshold.toLocaleString()}`,
+          };
         }
         break;
       }

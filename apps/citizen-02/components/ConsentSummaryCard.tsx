@@ -22,19 +22,28 @@ export function ConsentSummaryCard({
   isSubmitting,
   interactionType,
 }: ConsentSummaryCardProps) {
-  const grantedCount = grants.filter((g) => decisions[g.id] === "granted").length;
+  const grantedCount = grants.filter(
+    (g) => decisions[g.id] === "granted",
+  ).length;
   const deniedCount = grants.filter((g) => decisions[g.id] === "denied").length;
   const framing = resolveConsentFraming(interactionType);
 
   return (
-    <div
-      className="my-3 rounded-2xl bg-white shadow-sm"
-    >
+    <div className="my-3 rounded-2xl bg-white shadow-sm">
       <div className="px-5 py-5">
         {/* Header */}
         <div className="flex items-center gap-2.5 mb-3">
           <span className="w-7 h-7 rounded-full bg-purple-100 flex items-center justify-center shrink-0">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#912b88" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="#912b88"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
               <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
             </svg>
           </span>
@@ -57,7 +66,10 @@ export function ConsentSummaryCard({
             const isGranted = decision === "granted";
 
             return (
-              <div key={grant.id} className="py-3 border-t border-gray-200 first:border-t-0 first:pt-0 last:pb-0">
+              <div
+                key={grant.id}
+                className="py-3 border-t border-gray-200 first:border-t-0 first:pt-0 last:pb-0"
+              >
                 {/* Row header: description + status + change */}
                 <div className="flex items-start justify-between gap-2">
                   <div className="flex-1 min-w-0">

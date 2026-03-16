@@ -17,8 +17,14 @@ export default function CaseDetailPage({
         items={[
           { label: "Dashboard", href: "/" },
           { label: "Services", href: "/services" },
-          { label: serviceId, href: `/services/${encodeURIComponent(serviceId)}` },
-          { label: "Ledger", href: `/services/${encodeURIComponent(serviceId)}/ledger` },
+          {
+            label: serviceId,
+            href: `/services/${encodeURIComponent(serviceId)}`,
+          },
+          {
+            label: "Ledger",
+            href: `/services/${encodeURIComponent(serviceId)}/ledger`,
+          },
           { label: userId },
         ]}
       />

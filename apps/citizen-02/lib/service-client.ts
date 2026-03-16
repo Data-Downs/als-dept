@@ -21,8 +21,8 @@ interface CacheEntry<T> {
 }
 
 interface ServiceClientOptions {
-  ttl?: number;      // cache TTL in ms (default 60_000)
-  timeout?: number;  // fetch timeout in ms (default 5_000)
+  ttl?: number; // cache TTL in ms (default 60_000)
+  timeout?: number; // fetch timeout in ms (default 5_000)
   fetcher?: Fetcher; // optional service binding fetcher
 }
 
@@ -43,7 +43,9 @@ export class ServiceClient {
   }
 
   /** GET /api/personas — returns { users: [...] } or null */
-  async getPersonas(): Promise<{ users: Array<Record<string, unknown>> } | null> {
+  async getPersonas(): Promise<{
+    users: Array<Record<string, unknown>>;
+  } | null> {
     return this.fetchJson("/api/personas");
   }
 
@@ -53,12 +55,18 @@ export class ServiceClient {
   }
 
   /** GET /api/v1/services — returns { services, lifeEvents, total } or null */
-  async getAllServices(): Promise<{ services: unknown[]; total: number } | null> {
+  async getAllServices(): Promise<{
+    services: unknown[];
+    total: number;
+  } | null> {
     return this.fetchJson("/api/v1/services");
   }
 
   /** GET /api/v1/life-events — returns { lifeEvents, total } or null */
-  async getLifeEvents(): Promise<{ lifeEvents: unknown[]; total: number } | null> {
+  async getLifeEvents(): Promise<{
+    lifeEvents: unknown[];
+    total: number;
+  } | null> {
     return this.fetchJson("/api/v1/life-events");
   }
 
@@ -73,7 +81,9 @@ export class ServiceClient {
     const service = await this.getService(id);
     if (!service) return null;
     const artefact = service[type];
-    return artefact && typeof artefact === "object" ? (artefact as Record<string, unknown>) : null;
+    return artefact && typeof artefact === "object"
+      ? (artefact as Record<string, unknown>)
+      : null;
   }
 
   /** Core fetch with TTL cache, dedup, timeout, and graceful error handling */
@@ -133,7 +143,10 @@ export class ServiceClient {
 }
 
 /** Resolve STUDIO_API_URL and optional service binding from env */
-async function resolveStudioConfig(): Promise<{ url?: string; fetcher?: Fetcher }> {
+async function resolveStudioConfig(): Promise<{
+  url?: string;
+  fetcher?: Fetcher;
+}> {
   // On Cloudflare Workers with OpenNext, check for service binding + vars first
   try {
     const { getCloudflareContext } = await import("@opennextjs/cloudflare");

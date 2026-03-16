@@ -35,9 +35,7 @@ export function PhoneFrame({ children }: { children: React.ReactNode }) {
     <div className="phone-frame-wrapper">
       <div className="phone-frame-device">
         <div className="phone-frame-island" />
-        <div className="phone-frame-screen">
-          {children}
-        </div>
+        <div className="phone-frame-screen">{children}</div>
         <div className="phone-frame-home-indicator">
           <div className="phone-frame-home-bar" />
         </div>

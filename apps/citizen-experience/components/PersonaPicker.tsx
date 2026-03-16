@@ -42,57 +42,54 @@ export function PersonaPicker() {
         </svg>
         <h1 className="text-2xl font-bold mb-2">Who are you today?</h1>
         <p className="text-govuk-dark-grey">
-          Choose a persona to explore government services from their perspective.
+          Choose a persona to explore government services from their
+          perspective.
         </p>
       </div>
 
       <div className="flex flex-col gap-3">
-        {loading ? (
-          Array.from({ length: 5 }).map((_, i) => (
-            <div
-              key={i}
-              className="flex items-center gap-4 w-full p-4 bg-white rounded-2xl shadow-sm animate-pulse"
-            >
-              <div className="w-12 h-12 rounded-full bg-gray-200 shrink-0" />
-              <div className="flex-1 space-y-2">
-                <div className="h-4 bg-gray-200 rounded w-1/3" />
-                <div className="h-3 bg-gray-100 rounded w-2/3" />
-              </div>
-            </div>
-          ))
-        ) : (
-          personas.map((p) => (
-            <button
-              key={p.id}
-              onClick={() => setPersona(p.id)}
-              className="flex items-center gap-4 w-full p-4 bg-white rounded-2xl shadow-sm hover:shadow-md transition-all text-left"
-            >
+        {loading
+          ? Array.from({ length: 5 }).map((_, i) => (
               <div
-                className="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-sm shrink-0"
-                style={{ backgroundColor: p.color || "#505a5f" }}
+                key={i}
+                className="flex items-center gap-4 w-full p-4 bg-white rounded-2xl shadow-sm animate-pulse"
               >
-                {p.initials}
+                <div className="w-12 h-12 rounded-full bg-gray-200 shrink-0" />
+                <div className="flex-1 space-y-2">
+                  <div className="h-4 bg-gray-200 rounded w-1/3" />
+                  <div className="h-3 bg-gray-100 rounded w-2/3" />
+                </div>
               </div>
-              <div className="flex-1 min-w-0">
-                <strong className="block text-govuk-black">
-                  {p.name}
-                </strong>
-                <span className="text-sm text-govuk-dark-grey">{p.desc}</span>
-              </div>
-              <svg
-                className="shrink-0 text-govuk-blue"
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
+            ))
+          : personas.map((p) => (
+              <button
+                key={p.id}
+                onClick={() => setPersona(p.id)}
+                className="flex items-center gap-4 w-full p-4 bg-white rounded-2xl shadow-sm hover:shadow-md transition-all text-left"
               >
-                <path d="M9 18l6-6-6-6" />
-              </svg>
-            </button>
-          ))
-        )}
+                <div
+                  className="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-sm shrink-0"
+                  style={{ backgroundColor: p.color || "#505a5f" }}
+                >
+                  {p.initials}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <strong className="block text-govuk-black">{p.name}</strong>
+                  <span className="text-sm text-govuk-dark-grey">{p.desc}</span>
+                </div>
+                <svg
+                  className="shrink-0 text-govuk-blue"
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
+                  <path d="M9 18l6-6-6-6" />
+                </svg>
+              </button>
+            ))}
       </div>
 
       <p className="text-center text-xs text-govuk-dark-grey mt-8">

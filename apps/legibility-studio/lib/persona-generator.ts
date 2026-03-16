@@ -30,7 +30,7 @@ export function nameToId(name: string): string {
 
 export function buildBlankPersona(
   name: string,
-  id: string
+  id: string,
 ): Record<string, unknown> {
   const parts = name.trim().split(/\s+/);
   const firstName = parts[0] || "";
@@ -248,7 +248,7 @@ The persona JSON must include these top-level keys:
 
 function buildUserPrompt(
   scenarioDescription: string,
-  options?: GeneratePersonaOptions
+  options?: GeneratePersonaOptions,
 ): string {
   let prompt = `Generate a complete UK citizen test persona based on this scenario:
 
@@ -323,7 +323,7 @@ const REQUIRED_KEYS = [
 ];
 
 function validatePersona(
-  persona: Record<string, unknown>
+  persona: Record<string, unknown>,
 ): { valid: true } | { valid: false; missing: string[] } {
   const missing = REQUIRED_KEYS.filter((key) => persona[key] === undefined);
   if (missing.length > 0) {
@@ -336,7 +336,7 @@ function validatePersona(
 
 export async function generatePersona(
   scenarioDescription: string,
-  options?: GeneratePersonaOptions
+  options?: GeneratePersonaOptions,
 ): Promise<Record<string, unknown>> {
   // 1. Build prompts
   const systemPrompt = buildSystemPrompt();
@@ -366,7 +366,7 @@ export async function generatePersona(
   const persona = parsePersonaJson(responseText);
   if (!persona) {
     throw new Error(
-      "Failed to parse LLM response into valid persona JSON. Please try again."
+      "Failed to parse LLM response into valid persona JSON. Please try again.",
     );
   }
 
@@ -374,7 +374,7 @@ export async function generatePersona(
   const validation = validatePersona(persona);
   if (!validation.valid) {
     throw new Error(
-      `Generated persona missing required fields: ${validation.missing.join(", ")}. Please try again.`
+      `Generated persona missing required fields: ${validation.missing.join(", ")}. Please try again.`,
     );
   }
 

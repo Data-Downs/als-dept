@@ -3,7 +3,7 @@ import { getServiceAccessStore } from "@/lib/personal-data-store";
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: Promise<{ personaId: string }> }
+  { params }: { params: Promise<{ personaId: string }> },
 ) {
   const { personaId } = await params;
 
@@ -28,7 +28,7 @@ export async function POST(
     } else {
       return NextResponse.json(
         { error: "Provide one of: grantId, serviceId, or fieldKey" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -40,7 +40,7 @@ export async function POST(
     console.error("[PersonalData] POST revoke error:", error);
     return NextResponse.json(
       { error: "Failed to revoke access" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

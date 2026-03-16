@@ -63,7 +63,11 @@ export default function ActivityLog({ events }: ActivityLogProps) {
               dangerouslySetInnerHTML={{
                 __html: eventIcons[event.type] || "&#9679;",
               }}
-              style={{ fontSize: "8px", lineHeight: "12px", textAlign: "center" }}
+              style={{
+                fontSize: "8px",
+                lineHeight: "12px",
+                textAlign: "center",
+              }}
             />
             <div className="flex justify-between items-baseline">
               <span className="text-sm font-medium">

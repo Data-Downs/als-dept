@@ -12,11 +12,30 @@ interface HandoffNoticeProps {
   interactionType?: string;
 }
 
-const urgencyStyles: Record<string, { bg: string; border: string; label: string }> = {
-  routine: { bg: "bg-blue-50", border: "border-blue-400", label: "Handoff to human agent" },
-  priority: { bg: "bg-yellow-50", border: "border-yellow-400", label: "Priority handoff" },
-  urgent: { bg: "bg-orange-50", border: "border-orange-400", label: "Urgent handoff" },
-  safeguarding: { bg: "bg-red-50", border: "border-red-400", label: "Immediate support needed" },
+const urgencyStyles: Record<
+  string,
+  { bg: string; border: string; label: string }
+> = {
+  routine: {
+    bg: "bg-blue-50",
+    border: "border-blue-400",
+    label: "Handoff to human agent",
+  },
+  priority: {
+    bg: "bg-yellow-50",
+    border: "border-yellow-400",
+    label: "Priority handoff",
+  },
+  urgent: {
+    bg: "bg-orange-50",
+    border: "border-orange-400",
+    label: "Urgent handoff",
+  },
+  safeguarding: {
+    bg: "bg-red-50",
+    border: "border-red-400",
+    label: "Immediate support needed",
+  },
 };
 
 export default function HandoffNotice({
@@ -38,7 +57,10 @@ export default function HandoffNotice({
       <div className="flex justify-between items-start">
         <h4 className="font-bold text-sm">{label}</h4>
         {onDismiss && (
-          <button onClick={onDismiss} className="text-gray-400 hover:text-gray-600">
+          <button
+            onClick={onDismiss}
+            className="text-gray-400 hover:text-gray-600"
+          >
             &#10005;
           </button>
         )}
@@ -55,15 +77,11 @@ export default function HandoffNotice({
             Phone: <strong>{phone}</strong>
           </div>
         )}
-        {hours && (
-          <div className="text-xs text-gray-500 mt-1">{hours}</div>
-        )}
+        {hours && <div className="text-xs text-gray-500 mt-1">{hours}</div>}
       </div>
 
       {/* Type-specific citizen guidance */}
-      <p className="text-xs text-gray-500 mt-3">
-        {escalation.citizenGuidance}
-      </p>
+      <p className="text-xs text-gray-500 mt-3">{escalation.citizenGuidance}</p>
 
       {/* Type-specific resources (Proposal D) */}
       {escalation.resources.length > 0 && (

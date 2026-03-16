@@ -23,7 +23,11 @@ export interface GeneratedArtefacts {
   stateModel: Record<string, unknown>;
   consent: Record<string, unknown>;
   interactionType: InteractionType;
-  govukContent: { title: string; documentType: string; sectionCount: number } | null;
+  govukContent: {
+    title: string;
+    documentType: string;
+    sectionCount: number;
+  } | null;
   enrichment: CsvEnrichment | null;
 }
 
@@ -194,7 +198,7 @@ function buildUserPrompt(
   service: ServiceWithArtefacts,
   govukContent: string | null,
   interactionType: InteractionType,
-  enrichment: CsvEnrichment | null
+  enrichment: CsvEnrichment | null,
 ): string {
   const typeInfo = INTERACTION_TYPE_MAP[interactionType];
 
@@ -259,9 +263,10 @@ Generate the three artefacts now. Remember to customise the state model template
 // ── Response parsing ──
 
 function parseLabeledJsonBlocks(
-  text: string
+  text: string,
 ): { policy: unknown; stateModel: unknown; consent: unknown } | null {
-  const blockPattern = /```json\s+(policy|state-model|consent)\s*\n([\s\S]*?)```/g;
+  const blockPattern =
+    /```json\s+(policy|state-model|consent)\s*\n([\s\S]*?)```/g;
   const blocks: Record<string, unknown> = {};
 
   let match: RegExpExecArray | null;
@@ -310,26 +315,34 @@ const OPERATOR_ALIASES: Record<string, string> = {
   ">": ">=",
   "<": "<=",
   "=": "==",
-  "equals": "==",
-  "equal": "==",
-  "is": "==",
+  equals: "==",
+  equal: "==",
+  is: "==",
   "not-equal": "!=",
-  "not_equal": "!=",
+  not_equal: "!=",
   "not-equals": "!=",
-  "not_exists": "not-exists",
-  "notExists": "not-exists",
-  "not_exist": "not-exists",
-  "contains": "in",
-  "includes": "in",
+  not_exists: "not-exists",
+  notExists: "not-exists",
+  not_exist: "not-exists",
+  contains: "in",
+  includes: "in",
   "one-of": "in",
-  "one_of": "in",
-  "true": "exists",
-  "false": "not-exists",
-  "present": "exists",
-  "absent": "not-exists",
+  one_of: "in",
+  true: "exists",
+  false: "not-exists",
+  present: "exists",
+  absent: "not-exists",
 };
 
-const VALID_OPS = new Set([">=", "<=", "==", "!=", "exists", "not-exists", "in"]);
+const VALID_OPS = new Set([
+  ">=",
+  "<=",
+  "==",
+  "!=",
+  "exists",
+  "not-exists",
+  "in",
+]);
 
 /** Normalize LLM-generated operators to our valid set. Mutates in place. */
 function normalizePolicy(p: Record<string, unknown>): void {
@@ -366,7 +379,9 @@ function validatePolicy(p: Record<string, unknown>): boolean {
 function validateStateModel(sm: Record<string, unknown>): boolean {
   if (!sm.id || !sm.version) return false;
   const states = sm.states as Array<{ id: string; type?: string }> | undefined;
-  const transitions = sm.transitions as Array<{ from: string; to: string }> | undefined;
+  const transitions = sm.transitions as
+    | Array<{ from: string; to: string }>
+    | undefined;
   if (!Array.isArray(states) || states.length === 0) return false;
   if (!Array.isArray(transitions) || transitions.length === 0) return false;
   const hasInitial = states.some((s) => s.type === "initial");
@@ -385,7 +400,8 @@ function validateConsent(c: Record<string, unknown>): boolean {
   const grants = c.grants as Array<{ data_shared?: string[] }> | undefined;
   if (!Array.isArray(grants) || grants.length === 0) return false;
   for (const g of grants) {
-    if (!Array.isArray(g.data_shared) || g.data_shared.length === 0) return false;
+    if (!Array.isArray(g.data_shared) || g.data_shared.length === 0)
+      return false;
   }
   return true;
 }
@@ -393,7 +409,7 @@ function validateConsent(c: Record<string, unknown>): boolean {
 // ── Main generator ──
 
 export async function generateArtefacts(
-  service: ServiceWithArtefacts
+  service: ServiceWithArtefacts,
 ): Promise<GeneratedArtefacts> {
   // 1. Determine interaction type
   const enrichment = getEnrichment(service.govukUrl);
@@ -401,7 +417,8 @@ export async function generateArtefacts(
     enrichment?.interactionType || inferInteractionType(service.serviceType);
 
   // 2. Fetch GOV.UK content
-  let govukContentResult: Awaited<ReturnType<typeof extractGovukContent>> = null;
+  let govukContentResult: Awaited<ReturnType<typeof extractGovukContent>> =
+    null;
   if (service.govukUrl) {
     try {
       govukContentResult = await extractGovukContent(service.govukUrl);
@@ -416,7 +433,7 @@ export async function generateArtefacts(
     service,
     govukContentResult?.fullText || null,
     interactionType,
-    enrichment
+    enrichment,
   );
 
   // 4. Call LLM

@@ -67,14 +67,23 @@ export function PersonalDataDashboard() {
             </span>
             <div className="flex-1 min-w-0">
               <h2 className="font-bold text-base">{PERSONA_NAMES[persona]}</h2>
-              <p className="text-xs text-govuk-dark-grey">Personal data dashboard</p>
+              <p className="text-xs text-govuk-dark-grey">
+                Personal data dashboard
+              </p>
             </div>
             <button
               onClick={() => setOpen(false)}
               className="p-2 text-govuk-dark-grey hover:text-govuk-black"
               aria-label="Close"
             >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
                 <path d="M18 6L6 18M6 6l12 12" />
               </svg>
             </button>
@@ -119,14 +128,22 @@ export function PersonalDataDashboard() {
             <div className="space-y-6">
               {/* Tier 1: Verified */}
               <VerifiedSection
-                data={data.tier1 as unknown as Parameters<typeof VerifiedSection>[0]["data"]}
+                data={
+                  data.tier1 as unknown as Parameters<
+                    typeof VerifiedSection
+                  >[0]["data"]
+                }
               />
 
               <div className="border-t border-govuk-mid-grey" />
 
               {/* Tier 2: Submitted */}
               <SubmittedSection
-                fields={data.tier2.fields as unknown as Parameters<typeof SubmittedSection>[0]["fields"]}
+                fields={
+                  data.tier2.fields as unknown as Parameters<
+                    typeof SubmittedSection
+                  >[0]["fields"]
+                }
                 personaId={persona}
                 onRefresh={fetchData}
               />
@@ -135,14 +152,22 @@ export function PersonalDataDashboard() {
 
               {/* Tier 3: Inferred */}
               <InferredSection
-                facts={data.tier3.facts as unknown as Parameters<typeof InferredSection>[0]["facts"]}
+                facts={
+                  data.tier3.facts as unknown as Parameters<
+                    typeof InferredSection
+                  >[0]["facts"]
+                }
                 personaId={persona}
                 onRefresh={fetchData}
               />
             </div>
           ) : (
             <AccessControlSection
-              accessMap={data.accessMap as unknown as Parameters<typeof AccessControlSection>[0]["accessMap"]}
+              accessMap={
+                data.accessMap as unknown as Parameters<
+                  typeof AccessControlSection
+                >[0]["accessMap"]
+              }
               personaId={persona}
               onRefresh={fetchData}
             />
@@ -152,17 +177,22 @@ export function PersonalDataDashboard() {
           <div className="mt-8 pt-4 border-t border-gray-200">
             <button
               onClick={async () => {
-                if (!confirm(
-                  "Reset all interaction data for this persona?\n\n" +
-                  "This will delete all conversations, tasks, plans, submitted data, " +
-                  "inferred data, consent grants, and evidence traces.\n\n" +
-                  "This cannot be undone."
-                )) return;
+                if (
+                  !confirm(
+                    "Reset all interaction data for this persona?\n\n" +
+                      "This will delete all conversations, tasks, plans, submitted data, " +
+                      "inferred data, consent grants, and evidence traces.\n\n" +
+                      "This cannot be undone.",
+                  )
+                )
+                  return;
 
                 setResetting(true);
                 try {
                   // 1. Clear server-side data
-                  await fetch(`/api/personal-data/${persona}/reset`, { method: "DELETE" });
+                  await fetch(`/api/personal-data/${persona}/reset`, {
+                    method: "DELETE",
+                  });
 
                   // 2. Clear client-side localStorage
                   localStorage.removeItem(`c02_conversations_${persona}`);
@@ -191,7 +221,8 @@ export function PersonalDataDashboard() {
               {resetting ? "Resetting..." : "Reset all interaction data"}
             </button>
             <p className="text-xs text-govuk-mid-grey mt-2 text-center">
-              Clears all conversations, tasks, plans, and personal data. Persona profile is not affected.
+              Clears all conversations, tasks, plans, and personal data. Persona
+              profile is not affected.
             </p>
           </div>
         </div>

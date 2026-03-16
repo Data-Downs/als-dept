@@ -152,8 +152,16 @@ export class TraceStore {
   }
 
   /** Get all unique trace IDs, most recent first */
-  async listTraces(limit = 50): Promise<Array<{ traceId: string; firstEvent: string; eventCount: number }>> {
-    return this.db.all<{ traceId: string; firstEvent: string; eventCount: number }>(
+  async listTraces(
+    limit = 50,
+  ): Promise<
+    Array<{ traceId: string; firstEvent: string; eventCount: number }>
+  > {
+    return this.db.all<{
+      traceId: string;
+      firstEvent: string;
+      eventCount: number;
+    }>(
       `SELECT trace_id as traceId, MIN(timestamp) as firstEvent, COUNT(*) as eventCount
        FROM trace_events
        GROUP BY trace_id

@@ -40,7 +40,7 @@ export interface SeedResult {
  */
 export async function seedServiceStore(
   db: DatabaseAdapter,
-  options: SeedOptions
+  options: SeedOptions,
 ): Promise<SeedResult> {
   const artefactStore = new ServiceArtefactStore(db);
   const graphStore = new ServiceGraphStore(db);
@@ -96,7 +96,8 @@ export async function seedServiceStore(
   // 2. Seed full-artefact services from embedded data
   for (const fullSvc of FULL_SERVICES) {
     // Use graph ID if available, otherwise use manifest ID
-    const serviceId = fullSvc.graphId || (fullSvc.manifest.id as string) || fullSvc.dirName;
+    const serviceId =
+      fullSvc.graphId || (fullSvc.manifest.id as string) || fullSvc.dirName;
 
     // Delete any existing entry (graph or stale full) with this ID
     await db.run("DELETE FROM services WHERE id = ?", serviceId);
@@ -112,14 +113,17 @@ export async function seedServiceStore(
       manifest: {
         ...fullSvc.manifest,
         source: "full",
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } as any,
       policy: fullSvc.policy,
       stateModel: fullSvc.stateModel,
       consent: fullSvc.consent,
       source: "full",
       departmentKey: fullSvc.manifest.department
-        ? (fullSvc.manifest.department as string).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "")
+        ? (fullSvc.manifest.department as string)
+            .toLowerCase()
+            .replace(/[^a-z0-9]+/g, "-")
+            .replace(/^-+|-+$/g, "")
         : "other",
     });
     fullCount++;

@@ -50,7 +50,9 @@ export default function TestUserPicker({ onSelect }: TestUserPickerProps) {
       ))}
 
       {users.length === 0 && (
-        <div className="text-center text-gray-400 py-8">Loading test users...</div>
+        <div className="text-center text-gray-400 py-8">
+          Loading test users...
+        </div>
       )}
     </div>
   );

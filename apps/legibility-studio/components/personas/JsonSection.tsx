@@ -9,7 +9,11 @@ interface JsonSectionProps {
   onChange: (updated: unknown) => void;
 }
 
-export default function JsonSection({ label, value, onChange }: JsonSectionProps) {
+export default function JsonSection({
+  label,
+  value,
+  onChange,
+}: JsonSectionProps) {
   const [open, setOpen] = useState(false);
   const [text, setText] = useState(() => JSON.stringify(value, null, 2));
   const [error, setError] = useState<string | null>(null);

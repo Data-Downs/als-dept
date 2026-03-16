@@ -9,7 +9,12 @@ interface BottomSheetProps {
   title?: string;
 }
 
-export function BottomSheet({ open, onClose, children, title }: BottomSheetProps) {
+export function BottomSheet({
+  open,
+  onClose,
+  children,
+  title,
+}: BottomSheetProps) {
   const sheetRef = useRef<HTMLDivElement>(null);
   const dragStartY = useRef<number | null>(null);
   const currentTranslateY = useRef(0);
@@ -26,7 +31,7 @@ export function BottomSheet({ open, onClose, children, title }: BottomSheetProps
       if (e.key !== "Tab" || !sheetRef.current) return;
 
       const focusable = sheetRef.current.querySelectorAll<HTMLElement>(
-        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
       );
       if (focusable.length === 0) return;
 
@@ -49,7 +54,10 @@ export function BottomSheet({ open, onClose, children, title }: BottomSheetProps
   // Drag to dismiss
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
     const target = e.target as HTMLElement;
-    if (target.closest("[data-sheet-handle]") || (sheetRef.current && sheetRef.current.scrollTop <= 0)) {
+    if (
+      target.closest("[data-sheet-handle]") ||
+      (sheetRef.current && sheetRef.current.scrollTop <= 0)
+    ) {
       dragStartY.current = e.touches[0].clientY;
     }
   }, []);
@@ -107,7 +115,10 @@ export function BottomSheet({ open, onClose, children, title }: BottomSheetProps
         onTouchEnd={handleTouchEnd}
       >
         {/* Handle bar */}
-        <div className="flex justify-center pt-3 pb-1 cursor-grab" data-sheet-handle>
+        <div
+          className="flex justify-center pt-3 pb-1 cursor-grab"
+          data-sheet-handle
+        >
           <div className="w-10 h-1 bg-govuk-mid-grey rounded-full" />
         </div>
 
@@ -119,9 +130,7 @@ export function BottomSheet({ open, onClose, children, title }: BottomSheetProps
         )}
 
         {/* Content */}
-        <div className="px-5 py-4">
-          {children}
-        </div>
+        <div className="px-5 py-4">{children}</div>
       </div>
     </div>
   );

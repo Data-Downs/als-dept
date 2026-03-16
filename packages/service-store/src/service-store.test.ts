@@ -3,7 +3,8 @@ import * as fs from "fs";
 import * as path from "path";
 
 const SERVICES_DIR = path.resolve(__dirname, "../../../data/services");
-const SERVICES = fs.readdirSync(SERVICES_DIR, { withFileTypes: true })
+const SERVICES = fs
+  .readdirSync(SERVICES_DIR, { withFileTypes: true })
   .filter((d) => d.isDirectory())
   .map((d) => d.name);
 
@@ -28,7 +29,10 @@ describe("Service manifest loading from data/services/", () => {
 
       it("manifest has required fields (id, name, capabilities/description)", () => {
         const manifest = JSON.parse(
-          fs.readFileSync(path.join(SERVICES_DIR, svc, "manifest.json"), "utf-8")
+          fs.readFileSync(
+            path.join(SERVICES_DIR, svc, "manifest.json"),
+            "utf-8",
+          ),
         );
         expect(manifest.id).toBeTruthy();
         expect(manifest.name).toBeTruthy();
@@ -38,7 +42,10 @@ describe("Service manifest loading from data/services/", () => {
 
       it("manifest has version and department", () => {
         const manifest = JSON.parse(
-          fs.readFileSync(path.join(SERVICES_DIR, svc, "manifest.json"), "utf-8")
+          fs.readFileSync(
+            path.join(SERVICES_DIR, svc, "manifest.json"),
+            "utf-8",
+          ),
         );
         expect(manifest.version).toBeTruthy();
         expect(manifest.department).toBeTruthy();
@@ -46,7 +53,10 @@ describe("Service manifest loading from data/services/", () => {
 
       it("manifest has input_schema and output_schema", () => {
         const manifest = JSON.parse(
-          fs.readFileSync(path.join(SERVICES_DIR, svc, "manifest.json"), "utf-8")
+          fs.readFileSync(
+            path.join(SERVICES_DIR, svc, "manifest.json"),
+            "utf-8",
+          ),
         );
         expect(manifest.input_schema).toBeDefined();
         expect(manifest.input_schema.type).toBe("object");
@@ -57,7 +67,7 @@ describe("Service manifest loading from data/services/", () => {
   for (const svc of SERVICES) {
     it(`${svc}: manifest data is well-formed`, () => {
       const manifest = JSON.parse(
-        fs.readFileSync(path.join(SERVICES_DIR, svc, "manifest.json"), "utf-8")
+        fs.readFileSync(path.join(SERVICES_DIR, svc, "manifest.json"), "utf-8"),
       );
       // id should not be empty
       expect(manifest.id.length).toBeGreaterThan(0);

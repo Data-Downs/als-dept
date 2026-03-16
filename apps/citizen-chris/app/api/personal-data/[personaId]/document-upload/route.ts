@@ -19,7 +19,7 @@ function ensureAdapter() {
  */
 export async function POST(
   request: NextRequest,
-  { params }: { params: Promise<{ personaId: string }> }
+  { params }: { params: Promise<{ personaId: string }> },
 ) {
   const { personaId } = await params;
 
@@ -40,8 +40,22 @@ export async function POST(
     // Build the vision content block
     const isPdf = mimeType === "application/pdf";
     const contentBlock = isPdf
-      ? { type: "document" as const, source: { type: "base64" as const, media_type: mimeType, data: base64 } }
-      : { type: "image" as const, source: { type: "base64" as const, media_type: mimeType, data: base64 } };
+      ? {
+          type: "document" as const,
+          source: {
+            type: "base64" as const,
+            media_type: mimeType,
+            data: base64,
+          },
+        }
+      : {
+          type: "image" as const,
+          source: {
+            type: "base64" as const,
+            media_type: mimeType,
+            data: base64,
+          },
+        };
 
     const systemPrompt = `You are a UK government document data extractor. The user has uploaded a supporting document as part of a government service journey (serviceId: ${serviceId || "unknown"}, personaId: ${personaId}).
 
@@ -69,7 +83,10 @@ Return ONLY valid JSON, no markdown fences, no explanation.`;
             role: "user",
             content: [
               contentBlock,
-              { type: "text", text: "Extract the structured fields from this document." },
+              {
+                type: "text",
+                text: "Extract the structured fields from this document.",
+              },
             ],
           },
         ],
@@ -87,23 +104,28 @@ Return ONLY valid JSON, no markdown fences, no explanation.`;
     if (!result.success || !result.output) {
       return NextResponse.json(
         { error: result.error || "Extraction failed" },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
-    const responseText = (result.output as { responseText: string }).responseText;
+    const responseText = (result.output as { responseText: string })
+      .responseText;
 
     // Parse the JSON response
     let parsed: { extracted: Record<string, string>; summary: string };
     try {
       // Strip any markdown fences if present
-      const cleaned = responseText.replace(/```json\n?/g, "").replace(/```\n?/g, "").trim();
+      const cleaned = responseText
+        .replace(/```json\n?/g, "")
+        .replace(/```\n?/g, "")
+        .trim();
       parsed = JSON.parse(cleaned);
     } catch {
       // Fallback: return raw text as summary
       parsed = {
         extracted: { raw_text: responseText },
-        summary: "Document processed but structured extraction was not possible.",
+        summary:
+          "Document processed but structured extraction was not possible.",
       };
     }
 
@@ -115,7 +137,7 @@ Return ONLY valid JSON, no markdown fences, no explanation.`;
     console.error("[DocumentUpload] POST error:", error);
     return NextResponse.json(
       { error: "Failed to process document" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

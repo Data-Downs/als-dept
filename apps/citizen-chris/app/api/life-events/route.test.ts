@@ -12,7 +12,11 @@ vi.mock("@/lib/eligibility-filter", () => ({
 }));
 
 import { GET } from "./route";
-import { getLifeEvents, getGraphEngine, getPersonaData } from "@/lib/service-data";
+import {
+  getLifeEvents,
+  getGraphEngine,
+  getPersonaData,
+} from "@/lib/service-data";
 import { checkPersonaEligibility } from "@/lib/eligibility-filter";
 
 const mockedGetLifeEvents = vi.mocked(getLifeEvents);
@@ -119,38 +123,64 @@ describe("GET /api/life-events", () => {
     mockedGetPersonaData.mockReturnValue({ id: "mary-summers" });
     mockedCheckEligibility.mockImplementation((eligibility) => {
       const e = eligibility as { summary: string };
-      if (e.summary === "first-time buyers only") return { eligible: false, reason: "owns property" };
+      if (e.summary === "first-time buyers only")
+        return { eligible: false, reason: "owns property" };
       return { eligible: true };
     });
 
     const mockEngine = {
       getLifeEventServices: vi.fn().mockReturnValue([
         {
-          id: "help-to-buy", name: "Help to Buy", dept: "HE",
-          serviceType: "grant", proactive: true, gated: false,
-          desc: "First-time buyer scheme", govuk_url: "https://gov.uk/htb",
+          id: "help-to-buy",
+          name: "Help to Buy",
+          dept: "HE",
+          serviceType: "grant",
+          proactive: true,
+          gated: false,
+          desc: "First-time buyer scheme",
+          govuk_url: "https://gov.uk/htb",
           eligibility: { summary: "first-time buyers only" },
         },
         {
-          id: "sdlt", name: "Stamp Duty", dept: "HMRC",
-          serviceType: "obligation", proactive: true, gated: true,
-          desc: "File SDLT return", govuk_url: "https://gov.uk/sdlt",
+          id: "sdlt",
+          name: "Stamp Duty",
+          dept: "HMRC",
+          serviceType: "obligation",
+          proactive: true,
+          gated: true,
+          desc: "File SDLT return",
+          govuk_url: "https://gov.uk/sdlt",
           eligibility: { summary: "all property purchases" },
         },
       ]),
       getLifeEventPlan: vi.fn().mockReturnValue({
         entryServiceIds: ["help-to-buy", "sdlt"],
-        groups: [{ depth: 0, label: "Start here", prerequisiteIds: [], serviceIds: ["help-to-buy", "sdlt"] }],
+        groups: [
+          {
+            depth: 0,
+            label: "Start here",
+            prerequisiteIds: [],
+            serviceIds: ["help-to-buy", "sdlt"],
+          },
+        ],
         edges: [{ from: "help-to-buy", to: "sdlt", type: "ENABLES" }],
       }),
     };
 
     mockedGetGraphEngine.mockReturnValue(mockEngine as never);
     mockedGetLifeEvents.mockResolvedValue([
-      { id: "buying-home", icon: "🏠", name: "Buying a Home", desc: "Buy a home", entryNodes: ["help-to-buy", "sdlt"] },
+      {
+        id: "buying-home",
+        icon: "🏠",
+        name: "Buying a Home",
+        desc: "Buy a home",
+        entryNodes: ["help-to-buy", "sdlt"],
+      },
     ] as never[]);
 
-    const response = await GET(makeRequest("http://localhost:3102/api/life-events?persona=mary-summers"));
+    const response = await GET(
+      makeRequest("http://localhost:3102/api/life-events?persona=mary-summers"),
+    );
     const data = await response.json();
 
     const le = data.lifeEvents[0];
@@ -168,8 +198,14 @@ describe("GET /api/life-events", () => {
     const mockEngine = {
       getLifeEventServices: vi.fn().mockReturnValue([
         {
-          id: "svc-1", name: "Service 1", dept: "D", serviceType: "benefit",
-          proactive: false, gated: false, desc: "desc", govuk_url: "https://gov.uk",
+          id: "svc-1",
+          name: "Service 1",
+          dept: "D",
+          serviceType: "benefit",
+          proactive: false,
+          gated: false,
+          desc: "desc",
+          govuk_url: "https://gov.uk",
           eligibility: { summary: "any" },
         },
       ]),

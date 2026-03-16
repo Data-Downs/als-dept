@@ -1,6 +1,12 @@
 "use client";
 
-import { useRef, useState, useCallback, useEffect, type ReactNode } from "react";
+import {
+  useRef,
+  useState,
+  useCallback,
+  useEffect,
+  type ReactNode,
+} from "react";
 
 interface SwipeAction {
   label: string;
@@ -20,7 +26,11 @@ interface SwipeToActionProps {
  * and swipe right (reveals left-side action).
  * Used for delete (swipe left) and delegate (swipe right).
  */
-export function SwipeToAction({ children, leftAction, rightAction }: SwipeToActionProps) {
+export function SwipeToAction({
+  children,
+  leftAction,
+  rightAction,
+}: SwipeToActionProps) {
   const contentRef = useRef<HTMLDivElement>(null);
   const startXRef = useRef(0);
   const currentXRef = useRef(0);
@@ -40,32 +50,41 @@ export function SwipeToAction({ children, leftAction, rightAction }: SwipeToActi
     hasDragged.current = false;
   }, []);
 
-  const moveDrag = useCallback((clientX: number) => {
-    if (!dragging.current) return;
-    const dx = clientX - startXRef.current;
-    currentXRef.current = dx;
+  const moveDrag = useCallback(
+    (clientX: number) => {
+      if (!dragging.current) return;
+      const dx = clientX - startXRef.current;
+      currentXRef.current = dx;
 
-    if (Math.abs(dx) > DRAG_DEAD_ZONE) {
-      hasDragged.current = true;
-    }
+      if (Math.abs(dx) > DRAG_DEAD_ZONE) {
+        hasDragged.current = true;
+      }
 
-    if (revealedDir === "left" && leftAction) {
-      // Currently showing left action (swiped right), dragging back
-      const newOffset = Math.max(0, Math.min(BUTTON_WIDTH, BUTTON_WIDTH + dx));
-      setOffset(newOffset);
-    } else if (revealedDir === "right" && rightAction) {
-      // Currently showing right action (swiped left), dragging back
-      const newOffset = Math.min(0, Math.max(-BUTTON_WIDTH, -BUTTON_WIDTH + dx));
-      setOffset(newOffset);
-    } else {
-      // No reveal — free dragging
-      let newOffset = dx;
-      if (!rightAction && newOffset < 0) newOffset = 0;
-      if (!leftAction && newOffset > 0) newOffset = 0;
-      newOffset = Math.max(-BUTTON_WIDTH, Math.min(BUTTON_WIDTH, newOffset));
-      setOffset(newOffset);
-    }
-  }, [revealedDir, leftAction, rightAction]);
+      if (revealedDir === "left" && leftAction) {
+        // Currently showing left action (swiped right), dragging back
+        const newOffset = Math.max(
+          0,
+          Math.min(BUTTON_WIDTH, BUTTON_WIDTH + dx),
+        );
+        setOffset(newOffset);
+      } else if (revealedDir === "right" && rightAction) {
+        // Currently showing right action (swiped left), dragging back
+        const newOffset = Math.min(
+          0,
+          Math.max(-BUTTON_WIDTH, -BUTTON_WIDTH + dx),
+        );
+        setOffset(newOffset);
+      } else {
+        // No reveal — free dragging
+        let newOffset = dx;
+        if (!rightAction && newOffset < 0) newOffset = 0;
+        if (!leftAction && newOffset > 0) newOffset = 0;
+        newOffset = Math.max(-BUTTON_WIDTH, Math.min(BUTTON_WIDTH, newOffset));
+        setOffset(newOffset);
+      }
+    },
+    [revealedDir, leftAction, rightAction],
+  );
 
   const endDrag = useCallback(() => {
     if (!dragging.current) return;
@@ -101,22 +120,31 @@ export function SwipeToAction({ children, leftAction, rightAction }: SwipeToActi
     }
   }, [revealedDir, leftAction, rightAction]);
 
-  const handleTouchStart = useCallback((e: React.TouchEvent) => {
-    startDrag(e.touches[0].clientX);
-  }, [startDrag]);
+  const handleTouchStart = useCallback(
+    (e: React.TouchEvent) => {
+      startDrag(e.touches[0].clientX);
+    },
+    [startDrag],
+  );
 
-  const handleTouchMove = useCallback((e: React.TouchEvent) => {
-    moveDrag(e.touches[0].clientX);
-  }, [moveDrag]);
+  const handleTouchMove = useCallback(
+    (e: React.TouchEvent) => {
+      moveDrag(e.touches[0].clientX);
+    },
+    [moveDrag],
+  );
 
   const handleTouchEnd = useCallback(() => {
     endDrag();
   }, [endDrag]);
 
-  const handleMouseDown = useCallback((e: React.MouseEvent) => {
-    e.preventDefault();
-    startDrag(e.clientX);
-  }, [startDrag]);
+  const handleMouseDown = useCallback(
+    (e: React.MouseEvent) => {
+      e.preventDefault();
+      startDrag(e.clientX);
+    },
+    [startDrag],
+  );
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
@@ -167,7 +195,16 @@ export function SwipeToAction({ children, leftAction, rightAction }: SwipeToActi
             onClick={() => handleAction(leftAction)}
             className="w-full h-full flex items-center justify-center gap-1.5"
           >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
               <path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
             </svg>
             {leftAction.label}

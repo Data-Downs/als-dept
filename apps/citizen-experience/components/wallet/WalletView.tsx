@@ -53,7 +53,9 @@ export default function WalletView({ credentials, userName }: WalletViewProps) {
               <div className="font-bold">
                 {credentialLabels[cred.type] || cred.type}
               </div>
-              <div className="text-sm text-gray-500">Issued by {cred.issuer}</div>
+              <div className="text-sm text-gray-500">
+                Issued by {cred.issuer}
+              </div>
               {cred.number && (
                 <div className="text-xs text-gray-400 mt-1 font-mono">
                   {cred.number}

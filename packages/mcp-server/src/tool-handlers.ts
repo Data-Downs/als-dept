@@ -9,11 +9,7 @@
  * served as MCP Resources — see resource-generator.ts.
  */
 
-import {
-  ArtefactStore,
-  PolicyEvaluator,
-  StateMachine,
-} from "@als/legibility";
+import { ArtefactStore, PolicyEvaluator, StateMachine } from "@als/legibility";
 import type { ToolMapping } from "./tool-generator";
 
 export interface ToolCallResult {
@@ -27,7 +23,7 @@ export function handleToolCall(
   toolName: string,
   args: Record<string, unknown>,
   store: ArtefactStore,
-  toolMap: Map<string, ToolMapping>
+  toolMap: Map<string, ToolMapping>,
 ): ToolCallResult {
   const mapping = toolMap.get(toolName);
   if (!mapping) {
@@ -108,7 +104,7 @@ export function handleToolCall(
                 allowedTransitions: allowedNext,
               },
               null,
-              2
+              2,
             ),
           },
         ],

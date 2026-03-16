@@ -12,7 +12,7 @@ export async function OPTIONS() {
  */
 export async function GET(
   _request: NextRequest,
-  { params }: { params: Promise<{ serviceId: string }> }
+  { params }: { params: Promise<{ serviceId: string }> },
 ) {
   try {
     const { serviceId } = await params;

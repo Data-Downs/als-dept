@@ -19,14 +19,21 @@ function generateReference(conversationId: string | null): string {
     hash = ((hash << 5) - hash + conversationId.charCodeAt(i)) | 0;
   }
   const abs = Math.abs(hash);
-  const upper = ((abs >> 16) & 0xffff).toString(16).toUpperCase().padStart(4, "0");
+  const upper = ((abs >> 16) & 0xffff)
+    .toString(16)
+    .toUpperCase()
+    .padStart(4, "0");
   const lower = (abs & 0xffff).toString(16).toUpperCase().padStart(4, "0");
   return `GOV-${upper}-${lower}`;
 }
 
 const FALLBACK_CONFIG: TerminalStateConfig = TERMINAL_STATE_CONFIG["completed"];
 
-export function JourneyCompleteCard({ state, serviceName, serviceId }: JourneyCompleteCardProps) {
+export function JourneyCompleteCard({
+  state,
+  serviceName,
+  serviceId,
+}: JourneyCompleteCardProps) {
   const navigateTo = useAppStore((s) => s.navigateTo);
   const startNewConversation = useAppStore((s) => s.startNewConversation);
   const activeConversationId = useAppStore((s) => s.activeConversationId);
@@ -56,7 +63,11 @@ export function JourneyCompleteCard({ state, serviceName, serviceId }: JourneyCo
     ? `${serviceName} — ${config.title.toLowerCase()}`
     : config.title;
 
-  const hasPlan = !!(activePlan && serviceId && activePlan.serviceProgress[serviceId]);
+  const hasPlan = !!(
+    activePlan &&
+    serviceId &&
+    activePlan.serviceProgress[serviceId]
+  );
 
   const handleReturn = () => {
     if (hasPlan) {
@@ -68,14 +79,23 @@ export function JourneyCompleteCard({ state, serviceName, serviceId }: JourneyCo
   };
 
   return (
-    <div
-      className={`my-3 rounded-2xl bg-white shadow-sm`}
-    >
+    <div className={`my-3 rounded-2xl bg-white shadow-sm`}>
       <div className="px-5 py-5">
         {/* Header */}
         <div className="flex items-center gap-2.5 mb-3">
-          <span className={`w-7 h-7 rounded-full ${config.iconBgClass} flex items-center justify-center shrink-0`}>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={config.borderColor} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <span
+            className={`w-7 h-7 rounded-full ${config.iconBgClass} flex items-center justify-center shrink-0`}
+          >
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke={config.borderColor}
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
               <path d={config.icon} />
             </svg>
           </span>

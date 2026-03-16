@@ -22,7 +22,11 @@ interface BankSelectorCardProps {
  * when available, with fallback to manual entry. Submits directly
  * to Tier 2 via CardHost.
  */
-export function BankSelectorCard({ definition, onSubmit, disabled }: BankSelectorCardProps) {
+export function BankSelectorCard({
+  definition,
+  onSubmit,
+  disabled,
+}: BankSelectorCardProps) {
   const personaData = useAppStore((s) => s.personaData);
   const [selected, setSelected] = useState<number | null>(null);
   const [useOther, setUseOther] = useState(false);
@@ -31,12 +35,16 @@ export function BankSelectorCard({ definition, onSubmit, disabled }: BankSelecto
   const [otherAccountNumber, setOtherAccountNumber] = useState("");
 
   const accounts: BankAccount[] =
-    (personaData?.financials as { bankAccounts?: BankAccount[] })?.bankAccounts ?? [];
+    (personaData?.financials as { bankAccounts?: BankAccount[] })
+      ?.bankAccounts ?? [];
   const showOther = useOther || accounts.length === 0;
 
   const canSubmitSaved = !showOther && selected !== null;
   const canSubmitOther =
-    showOther && otherBank && otherSortCode.length >= 6 && otherAccountNumber.length >= 6;
+    showOther &&
+    otherBank &&
+    otherSortCode.length >= 6 &&
+    otherAccountNumber.length >= 6;
   const canSubmit = canSubmitSaved || canSubmitOther;
 
   const handleSubmit = () => {
@@ -105,12 +113,20 @@ export function BankSelectorCard({ definition, onSubmit, disabled }: BankSelecto
                       isSelected ? "border-green-600" : "border-gray-300"
                     }`}
                   >
-                    {isSelected && <span className="w-2 h-2 rounded-full bg-green-600" />}
+                    {isSelected && (
+                      <span className="w-2 h-2 rounded-full bg-green-600" />
+                    )}
                   </span>
                   <div>
-                    <span className="font-medium text-govuk-black">{acct.bank}</span>
-                    <span className="text-govuk-dark-grey ml-1">— {acct.label}</span>
-                    <span className="text-govuk-dark-grey text-xs ml-1">(····{last4})</span>
+                    <span className="font-medium text-govuk-black">
+                      {acct.bank}
+                    </span>
+                    <span className="text-govuk-dark-grey ml-1">
+                      — {acct.label}
+                    </span>
+                    <span className="text-govuk-dark-grey text-xs ml-1">
+                      (····{last4})
+                    </span>
                   </div>
                 </div>
               </button>
@@ -135,7 +151,9 @@ export function BankSelectorCard({ definition, onSubmit, disabled }: BankSelecto
       {showOther && (
         <div className="space-y-2 border border-gray-200 rounded-lg p-3 bg-white">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-govuk-black">Enter account details</span>
+            <span className="text-xs font-semibold text-govuk-black">
+              Enter account details
+            </span>
             {accounts.length > 0 && (
               <button
                 type="button"

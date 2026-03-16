@@ -48,9 +48,7 @@ export default function FamilySection({ data, onChange }: Props) {
         <Section
           title="Support Network"
           badge={
-            supportNetwork.length > 0
-              ? `${supportNetwork.length}`
-              : undefined
+            supportNetwork.length > 0 ? `${supportNetwork.length}` : undefined
           }
         >
           {supportNetwork.length === 0 && (
@@ -59,20 +57,16 @@ export default function FamilySection({ data, onChange }: Props) {
           <DynamicList
             items={supportNetwork}
             addLabel="Add contact"
-            onAdd={() =>
-              update({ supportNetwork: [...supportNetwork, ""] })
-            }
+            onAdd={() => update({ supportNetwork: [...supportNetwork, ""] })}
             onRemove={(i) =>
               update({
-                supportNetwork: supportNetwork.filter(
-                  (_, idx) => idx !== i
-                ),
+                supportNetwork: supportNetwork.filter((_, idx) => idx !== i),
               })
             }
             onChange={(i, val) =>
               update({
                 supportNetwork: supportNetwork.map((v, idx) =>
-                  idx === i ? val : v
+                  idx === i ? val : v,
                 ),
               })
             }

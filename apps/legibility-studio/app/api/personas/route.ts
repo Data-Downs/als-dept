@@ -14,7 +14,10 @@ export async function GET() {
         description: (u.description as string) ?? "",
         color: (u.color as string) ?? "#505a5f",
         age: u.age as number,
-        address: { city: address?.city as string, postcode: address?.postcode as string },
+        address: {
+          city: address?.city as string,
+          postcode: address?.postcode as string,
+        },
         employment_status: u.employment_status as string,
         credentialCount: credentials.length,
         income: u.income as number,

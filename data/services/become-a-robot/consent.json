@@ -5,9 +5,7 @@
     {
       "id": "grant-1",
       "description": "Verify your identity using GOV.UK One Login",
-      "data_shared": [
-        "Name"
-      ],
+      "data_shared": ["Name"],
       "source": "Details",
       "purpose": "Check you exist",
       "duration": "session",

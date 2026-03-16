@@ -19,11 +19,15 @@ export function DetailView() {
   if (!personaData || !currentService) return null;
 
   const conversations = persona
-    ? getConversations(persona).filter((c) => c.service === currentService).slice(0, 5)
+    ? getConversations(persona)
+        .filter((c) => c.service === currentService)
+        .slice(0, 5)
     : [];
 
   // Only show the context card when the carousel has no cards for this service
-  const hasCarouselCards = buildHeroCards(personaData).some((c) => c.service === currentService);
+  const hasCarouselCards = buildHeroCards(personaData).some(
+    (c) => c.service === currentService,
+  );
 
   return (
     <div className="max-w-lg mx-auto">
@@ -75,7 +79,9 @@ export function DetailView() {
       {/* Conversations for this service */}
       {conversations.length > 0 && (
         <div className="mb-5">
-          <h3 className="text-base font-extrabold text-govuk-black mb-3">Conversations</h3>
+          <h3 className="text-base font-extrabold text-govuk-black mb-3">
+            Conversations
+          </h3>
           <div className="flex flex-col gap-2">
             {conversations.map((conv) => (
               <button
@@ -87,9 +93,12 @@ export function DetailView() {
                 className="flex items-center gap-3 w-full p-3 bg-white rounded-card shadow-sm hover:shadow-md transition-all text-left touch-feedback"
               >
                 <div className="flex-1 min-w-0">
-                  <span className="block text-sm font-medium truncate">{conv.title}</span>
+                  <span className="block text-sm font-medium truncate">
+                    {conv.title}
+                  </span>
                   <span className="text-xs text-govuk-dark-grey">
-                    {new Date(conv.updatedAt).toLocaleDateString("en-GB")} — {conv.messages.length} messages
+                    {new Date(conv.updatedAt).toLocaleDateString("en-GB")} —{" "}
+                    {conv.messages.length} messages
                   </span>
                 </div>
               </button>

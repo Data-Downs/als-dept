@@ -1,10 +1,7 @@
 "use client";
 
 import { useAppStore } from "@/lib/store";
-import {
-  PERSONA_COLORS,
-  PERSONA_INITIALS,
-} from "@/lib/types";
+import { PERSONA_COLORS, PERSONA_INITIALS } from "@/lib/types";
 
 export function AppHeader() {
   const persona = useAppStore((s) => s.persona);

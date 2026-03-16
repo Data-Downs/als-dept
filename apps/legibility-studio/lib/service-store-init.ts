@@ -36,7 +36,9 @@ async function ensureInit(): Promise<void> {
         const db = (env as any).SERVICE_STORE_DB;
         if (db) {
           adapter = new D1Adapter(db);
-          console.log("[ServiceStore] D1Adapter initialized via getCloudflareContext()");
+          console.log(
+            "[ServiceStore] D1Adapter initialized via getCloudflareContext()",
+          );
         }
       } catch {
         // Not on Cloudflare — fall through to SQLite
@@ -46,7 +48,13 @@ async function ensureInit(): Promise<void> {
       if (!adapter) {
         const path = await import("path");
         const { SqliteAdapter } = await import("@als/evidence/sqlite");
-        const dbPath = path.join(process.cwd(), "..", "..", "data", "services.db");
+        const dbPath = path.join(
+          process.cwd(),
+          "..",
+          "..",
+          "data",
+          "services.db",
+        );
         adapter = await SqliteAdapter.create(dbPath);
         console.log(`[ServiceStore] SqliteAdapter initialized at ${dbPath}`);
       } else {
@@ -69,7 +77,7 @@ async function ensureInit(): Promise<void> {
         console.log("[ServiceStore] Empty DB detected — auto-seeding...");
         const result = await seedServiceStore(adapter, { clear: false });
         console.log(
-          `[ServiceStore] Seeded: ${result.graphServices} graph + ${result.fullServices} full services, ${result.edges} edges, ${result.lifeEvents} life events`
+          `[ServiceStore] Seeded: ${result.graphServices} graph + ${result.fullServices} full services, ${result.edges} edges, ${result.lifeEvents} life events`,
         );
       }
     } catch (err) {

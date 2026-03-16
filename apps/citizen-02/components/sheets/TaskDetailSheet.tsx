@@ -5,7 +5,15 @@ import type { StoredTask, TimelineItem } from "@/lib/types";
 import { UrgencyDot } from "../ui/UrgencyDot";
 import { DEMO_TODAY } from "@/lib/types";
 
-function generateCalendarFile(item: { title?: string; description?: string; dueDate?: string; detail?: string; dueLabel?: string; id?: string; daysUntil?: number }) {
+function generateCalendarFile(item: {
+  title?: string;
+  description?: string;
+  dueDate?: string;
+  detail?: string;
+  dueLabel?: string;
+  id?: string;
+  daysUntil?: number;
+}) {
   const dateStr = item.dueDate || item.dueLabel;
   if (!dateStr) return;
 
@@ -77,7 +85,9 @@ export function TaskDetailSheet({ data }: TaskDetailSheetProps) {
 
   // Try to find the stored task if we have a persona
   const storedTask = persona
-    ? getTasks(persona).find((t) => `task-${t.id}` === item.id || t.id === item.id)
+    ? getTasks(persona).find(
+        (t) => `task-${t.id}` === item.id || t.id === item.id,
+      )
     : null;
 
   const handleAccept = () => {
@@ -114,7 +124,9 @@ export function TaskDetailSheet({ data }: TaskDetailSheetProps) {
       closeBottomSheet();
       // Send a question about this task
       setTimeout(() => {
-        useAppStore.getState().sendMessage(`Tell me more about: ${item.title || item.description}`);
+        useAppStore
+          .getState()
+          .sendMessage(`Tell me more about: ${item.title || item.description}`);
       }, 100);
     }
   };
@@ -126,14 +138,19 @@ export function TaskDetailSheet({ data }: TaskDetailSheetProps) {
       {/* Title and urgency */}
       <div className="flex items-start gap-3">
         {item.urgency && item.urgency !== "info" && (
-          <UrgencyDot urgency={item.urgency as "urgent" | "warning" | "ok"} size="md" />
+          <UrgencyDot
+            urgency={item.urgency as "urgent" | "warning" | "ok"}
+            size="md"
+          />
         )}
         <div className="flex-1">
           <h3 className="text-lg font-bold text-govuk-black">
-            {item.title || (storedTask?.description)}
+            {item.title || storedTask?.description}
           </h3>
           {item.subtitle && (
-            <p className="text-sm text-govuk-dark-grey mt-0.5">{item.subtitle}</p>
+            <p className="text-sm text-govuk-dark-grey mt-0.5">
+              {item.subtitle}
+            </p>
           )}
         </div>
       </div>
@@ -145,29 +162,49 @@ export function TaskDetailSheet({ data }: TaskDetailSheetProps) {
         </span>
         {(item.source === "agent" || storedTask?.type === "agent") && (
           <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-blue-100 text-xs font-bold text-blue-700">
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
+            <svg
+              width="10"
+              height="10"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="shrink-0"
+            >
               <path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
             </svg>
             Agent task
           </span>
         )}
-        {(item.source || storedTask?.type) && item.source !== "agent" && storedTask?.type !== "agent" && (
-          <span className={`px-2 py-0.5 rounded-full text-xs font-bold uppercase ${
-            item.source === "data"
-              ? "bg-green-50 text-green-700"
-              : "bg-gray-100 text-gray-600"
-          }`}>
-            {item.source === "data" ? "data" : storedTask?.type || item.source}
-          </span>
-        )}
+        {(item.source || storedTask?.type) &&
+          item.source !== "agent" &&
+          storedTask?.type !== "agent" && (
+            <span
+              className={`px-2 py-0.5 rounded-full text-xs font-bold uppercase ${
+                item.source === "data"
+                  ? "bg-green-50 text-green-700"
+                  : "bg-gray-100 text-gray-600"
+              }`}
+            >
+              {item.source === "data"
+                ? "data"
+                : storedTask?.type || item.source}
+            </span>
+          )}
         {(item.taskStatus || storedTask?.status) && (
-          <span className={`px-2 py-0.5 rounded-full text-xs font-bold uppercase ${
-            (item.taskStatus === "accepted" || storedTask?.status === "accepted")
-              ? "bg-green-50 text-green-700"
-              : (item.taskStatus === "completed" || storedTask?.status === "completed")
-                ? "bg-green-100 text-green-800"
-                : "bg-yellow-50 text-yellow-700"
-          }`}>
+          <span
+            className={`px-2 py-0.5 rounded-full text-xs font-bold uppercase ${
+              item.taskStatus === "accepted" ||
+              storedTask?.status === "accepted"
+                ? "bg-green-50 text-green-700"
+                : item.taskStatus === "completed" ||
+                    storedTask?.status === "completed"
+                  ? "bg-green-100 text-green-800"
+                  : "bg-yellow-50 text-yellow-700"
+            }`}
+          >
             {storedTask?.status || item.taskStatus}
           </span>
         )}
@@ -176,15 +213,24 @@ export function TaskDetailSheet({ data }: TaskDetailSheetProps) {
       {/* Due date */}
       {item.dueDate && (
         <div className="bg-gray-50 rounded-lg p-3">
-          <p className="text-xs font-bold text-govuk-dark-grey uppercase tracking-wide mb-1">Due date</p>
-          <p className="text-sm text-govuk-black font-medium">{formatDate(item.dueDate)}</p>
+          <p className="text-xs font-bold text-govuk-dark-grey uppercase tracking-wide mb-1">
+            Due date
+          </p>
+          <p className="text-sm text-govuk-black font-medium">
+            {formatDate(item.dueDate)}
+          </p>
           {days !== null && (
-            <p className={`text-xs font-bold mt-0.5 ${
-              days < 0 ? "text-govuk-red" :
-              days < 14 ? "text-govuk-red" :
-              days < 30 ? "text-govuk-orange" :
-              "text-govuk-dark-grey"
-            }`}>
+            <p
+              className={`text-xs font-bold mt-0.5 ${
+                days < 0
+                  ? "text-govuk-red"
+                  : days < 14
+                    ? "text-govuk-red"
+                    : days < 30
+                      ? "text-govuk-orange"
+                      : "text-govuk-dark-grey"
+              }`}
+            >
               {item.dueLabel}
             </p>
           )}
@@ -194,7 +240,9 @@ export function TaskDetailSheet({ data }: TaskDetailSheetProps) {
       {/* Detail/description */}
       {(item.detail || storedTask?.detail) && (
         <div className="bg-gray-50 rounded-lg p-3">
-          <p className="text-xs font-bold text-govuk-dark-grey uppercase tracking-wide mb-1">What the agent will do</p>
+          <p className="text-xs font-bold text-govuk-dark-grey uppercase tracking-wide mb-1">
+            What the agent will do
+          </p>
           <p className="text-sm text-govuk-black leading-relaxed">
             {item.detail || storedTask?.detail}
           </p>
@@ -204,11 +252,24 @@ export function TaskDetailSheet({ data }: TaskDetailSheetProps) {
       {/* Data needed */}
       {storedTask?.dataNeeded && storedTask.dataNeeded.length > 0 && (
         <div className="bg-gray-50 rounded-lg p-3">
-          <p className="text-xs font-bold text-govuk-dark-grey uppercase tracking-wide mb-2">Data needed</p>
+          <p className="text-xs font-bold text-govuk-dark-grey uppercase tracking-wide mb-2">
+            Data needed
+          </p>
           <ul className="space-y-1">
             {storedTask.dataNeeded.map((d, i) => (
-              <li key={i} className="flex items-center gap-2 text-sm text-govuk-black">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-govuk-mid-grey shrink-0">
+              <li
+                key={i}
+                className="flex items-center gap-2 text-sm text-govuk-black"
+              >
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  className="text-govuk-mid-grey shrink-0"
+                >
                   <circle cx="12" cy="12" r="10" />
                   <path d="M12 16v-4M12 8h.01" />
                 </svg>
@@ -223,18 +284,28 @@ export function TaskDetailSheet({ data }: TaskDetailSheetProps) {
       <div className="flex flex-col gap-2 pt-2">
         {item.dueDate && (
           <button
-            onClick={() => generateCalendarFile({
-              title: item.title,
-              description: storedTask?.description,
-              dueDate: item.dueDate,
-              detail: item.detail || storedTask?.detail,
-              dueLabel: item.dueLabel,
-              id: item.id,
-              daysUntil: days ?? undefined,
-            })}
+            onClick={() =>
+              generateCalendarFile({
+                title: item.title,
+                description: storedTask?.description,
+                dueDate: item.dueDate,
+                detail: item.detail || storedTask?.detail,
+                dueLabel: item.dueLabel,
+                id: item.id,
+                daysUntil: days ?? undefined,
+              })
+            }
             className="w-full py-3 rounded-full border-2 border-govuk-blue text-govuk-blue font-bold text-sm hover:bg-blue-50 transition-colors touch-feedback flex items-center justify-center gap-2"
           >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="shrink-0">
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              className="shrink-0"
+            >
               <rect x="3" y="4" width="18" height="18" rx="2" />
               <line x1="16" y1="2" x2="16" y2="6" />
               <line x1="8" y1="2" x2="8" y2="6" />

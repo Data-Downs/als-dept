@@ -1,1765 +1,3157 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Legibility Studio &mdash; Service Builder Briefing</title>
-  <meta name="description" content="How the Legibility Studio turns policy into machine-readable services that any AI agent can invoke — a briefing for design leaders and policy makers.">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-  <style>
-    /* ── Reset & Base ── */
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
-    body {
-      font-family: 'Inter', Arial, sans-serif;
-      color: #0b0c0c;
-      line-height: 1.6;
-      background: #fff;
-      -webkit-font-smoothing: antialiased;
-    }
-    a { color: #1d70b8; text-decoration: none; }
-    a:hover { text-decoration: underline; color: #003078; }
-    code, pre { font-family: 'JetBrains Mono', monospace; }
-    img { max-width: 100%; }
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Legibility Studio &mdash; Service Builder Briefing</title>
+    <meta
+      name="description"
+      content="How the Legibility Studio turns policy into machine-readable services that any AI agent can invoke — a briefing for design leaders and policy makers."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /* ── Reset & Base ── */
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        font-family: "Inter", Arial, sans-serif;
+        color: #0b0c0c;
+        line-height: 1.6;
+        background: #fff;
+        -webkit-font-smoothing: antialiased;
+      }
+      a {
+        color: #1d70b8;
+        text-decoration: none;
+      }
+      a:hover {
+        text-decoration: underline;
+        color: #003078;
+      }
+      code,
+      pre {
+        font-family: "JetBrains Mono", monospace;
+      }
+      img {
+        max-width: 100%;
+      }
 
-    /* ── Layout ── */
-    .container { max-width: 960px; margin: 0 auto; padding: 0 1.5rem; }
-    .container-wide { max-width: 1120px; margin: 0 auto; padding: 0 1.5rem; }
-    .section { padding: 4rem 0; }
-    .section-alt { background: #f3f2f1; }
-    .section-dark { background: #0b0c0c; color: #fff; }
-    .section-dark a { color: #b1b4b6; }
-    .section-dark a:hover { color: #fff; }
+      /* ── Layout ── */
+      .container {
+        max-width: 960px;
+        margin: 0 auto;
+        padding: 0 1.5rem;
+      }
+      .container-wide {
+        max-width: 1120px;
+        margin: 0 auto;
+        padding: 0 1.5rem;
+      }
+      .section {
+        padding: 4rem 0;
+      }
+      .section-alt {
+        background: #f3f2f1;
+      }
+      .section-dark {
+        background: #0b0c0c;
+        color: #fff;
+      }
+      .section-dark a {
+        color: #b1b4b6;
+      }
+      .section-dark a:hover {
+        color: #fff;
+      }
 
-    h1, h2, h3, h4 { line-height: 1.2; }
-    h2 { font-size: 1.75rem; font-weight: 700; margin-bottom: 1rem; }
-    h3 { font-size: 1.25rem; font-weight: 600; margin-bottom: 0.5rem; }
-    h4 { font-size: 1.05rem; font-weight: 600; margin-bottom: 0.4rem; }
-    .section-intro { font-size: 1.1rem; color: #505a5f; max-width: 700px; margin-bottom: 2rem; }
+      h1,
+      h2,
+      h3,
+      h4 {
+        line-height: 1.2;
+      }
+      h2 {
+        font-size: 1.75rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+      }
+      h3 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+      }
+      h4 {
+        font-size: 1.05rem;
+        font-weight: 600;
+        margin-bottom: 0.4rem;
+      }
+      .section-intro {
+        font-size: 1.1rem;
+        color: #505a5f;
+        max-width: 700px;
+        margin-bottom: 2rem;
+      }
 
-    /* ── Nav ── */
-    .nav {
-      background: #fff;
-      border-bottom: 1px solid #b1b4b6;
-      padding: 0.75rem 0;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
-    .nav .container {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 1rem;
-    }
-    .nav-brand {
-      font-weight: 700;
-      font-size: 1rem;
-      color: #0b0c0c;
-      white-space: nowrap;
-    }
-    .nav-links {
-      display: flex;
-      gap: 1.25rem;
-      list-style: none;
-      flex-wrap: wrap;
-      align-items: center;
-    }
-    .nav-links a {
-      font-size: 0.85rem;
-      font-weight: 500;
-      color: #505a5f;
-    }
-    .nav-links a:hover { color: #1d70b8; text-decoration: none; }
+      /* ── Nav ── */
+      .nav {
+        background: #fff;
+        border-bottom: 1px solid #b1b4b6;
+        padding: 0.75rem 0;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+      .nav .container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+      }
+      .nav-brand {
+        font-weight: 700;
+        font-size: 1rem;
+        color: #0b0c0c;
+        white-space: nowrap;
+      }
+      .nav-links {
+        display: flex;
+        gap: 1.25rem;
+        list-style: none;
+        flex-wrap: wrap;
+        align-items: center;
+      }
+      .nav-links a {
+        font-size: 0.85rem;
+        font-weight: 500;
+        color: #505a5f;
+      }
+      .nav-links a:hover {
+        color: #1d70b8;
+        text-decoration: none;
+      }
 
-    @media (max-width: 640px) {
-      .nav-links { display: none; }
-    }
+      @media (max-width: 640px) {
+        .nav-links {
+          display: none;
+        }
+      }
 
-    /* ── Hero ── */
-    .hero { padding: 5rem 0 4rem; }
-    .hero-label {
-      display: inline-block;
-      background: #f3f2f1;
-      color: #505a5f;
-      font-size: 0.8rem;
-      font-weight: 600;
-      padding: 0.25rem 0.75rem;
-      border-radius: 2px;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      margin-bottom: 1.25rem;
-    }
-    .hero h1 {
-      font-size: 2.75rem;
-      font-weight: 700;
-      margin-bottom: 0.75rem;
-    }
-    .hero-subtitle {
-      font-size: 1.35rem;
-      color: #505a5f;
-      font-weight: 400;
-      max-width: 640px;
-      margin-bottom: 1.5rem;
-    }
-    .hero-desc {
-      font-size: 1.05rem;
-      color: #505a5f;
-      max-width: 640px;
-      margin-bottom: 2rem;
-    }
+      /* ── Hero ── */
+      .hero {
+        padding: 5rem 0 4rem;
+      }
+      .hero-label {
+        display: inline-block;
+        background: #f3f2f1;
+        color: #505a5f;
+        font-size: 0.8rem;
+        font-weight: 600;
+        padding: 0.25rem 0.75rem;
+        border-radius: 2px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 1.25rem;
+      }
+      .hero h1 {
+        font-size: 2.75rem;
+        font-weight: 700;
+        margin-bottom: 0.75rem;
+      }
+      .hero-subtitle {
+        font-size: 1.35rem;
+        color: #505a5f;
+        font-weight: 400;
+        max-width: 640px;
+        margin-bottom: 1.5rem;
+      }
+      .hero-desc {
+        font-size: 1.05rem;
+        color: #505a5f;
+        max-width: 640px;
+        margin-bottom: 2rem;
+      }
 
-    @media (max-width: 640px) {
-      .hero h1 { font-size: 2rem; }
-      .hero-subtitle { font-size: 1.15rem; }
-    }
+      @media (max-width: 640px) {
+        .hero h1 {
+          font-size: 2rem;
+        }
+        .hero-subtitle {
+          font-size: 1.15rem;
+        }
+      }
 
-    /* ── Cards ── */
-    .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
-    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
-    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; }
+      /* ── Cards ── */
+      .grid-2 {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
+      }
+      .grid-3 {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.5rem;
+      }
+      .grid-4 {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1.5rem;
+      }
 
-    @media (max-width: 800px) {
-      .grid-3 { grid-template-columns: 1fr; }
-      .grid-4 { grid-template-columns: repeat(2, 1fr); }
-    }
-    @media (max-width: 640px) {
-      .grid-2 { grid-template-columns: 1fr; }
-      .grid-4 { grid-template-columns: 1fr; }
-    }
+      @media (max-width: 800px) {
+        .grid-3 {
+          grid-template-columns: 1fr;
+        }
+        .grid-4 {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+      @media (max-width: 640px) {
+        .grid-2 {
+          grid-template-columns: 1fr;
+        }
+        .grid-4 {
+          grid-template-columns: 1fr;
+        }
+      }
 
-    .card {
-      background: #fff;
-      border: 1px solid #b1b4b6;
-      border-radius: 2px;
-      padding: 1.5rem;
-    }
-    .card-accent { border-left: 4px solid; }
-    .card-blue { border-left-color: #1d70b8; }
-    .card-green { border-left-color: #00703c; }
-    .card-orange { border-left-color: #f47738; }
-    .card-purple { border-left-color: #912b88; }
-    .card-teal { border-left-color: #0b7285; }
-    .card-red { border-left-color: #d4351c; }
-    .card-navy { border-left-color: #003078; }
+      .card {
+        background: #fff;
+        border: 1px solid #b1b4b6;
+        border-radius: 2px;
+        padding: 1.5rem;
+      }
+      .card-accent {
+        border-left: 4px solid;
+      }
+      .card-blue {
+        border-left-color: #1d70b8;
+      }
+      .card-green {
+        border-left-color: #00703c;
+      }
+      .card-orange {
+        border-left-color: #f47738;
+      }
+      .card-purple {
+        border-left-color: #912b88;
+      }
+      .card-teal {
+        border-left-color: #0b7285;
+      }
+      .card-red {
+        border-left-color: #d4351c;
+      }
+      .card-navy {
+        border-left-color: #003078;
+      }
 
-    .card h3 { margin-bottom: 0.5rem; }
-    .card p { color: #505a5f; font-size: 0.95rem; }
-    .card-tag {
-      display: inline-block;
-      font-size: 0.7rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      color: #505a5f;
-      margin-bottom: 0.75rem;
-    }
-    .card-alt {
-      background: #f3f2f1;
-      border: 1px solid #e0dfde;
-    }
+      .card h3 {
+        margin-bottom: 0.5rem;
+      }
+      .card p {
+        color: #505a5f;
+        font-size: 0.95rem;
+      }
+      .card-tag {
+        display: inline-block;
+        font-size: 0.7rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: #505a5f;
+        margin-bottom: 0.75rem;
+      }
+      .card-alt {
+        background: #f3f2f1;
+        border: 1px solid #e0dfde;
+      }
 
-    /* ── Callout ── */
-    .callout {
-      background: #f3f2f1;
-      border-left: 4px solid #b1b4b6;
-      padding: 1rem 1.25rem;
-      margin-top: 1.5rem;
-      font-size: 0.95rem;
-      color: #505a5f;
-    }
-    .callout-blue { border-left-color: #1d70b8; }
-    .callout-orange { border-left-color: #f47738; }
-    .callout-red { border-left-color: #d4351c; }
-    .callout-green { border-left-color: #00703c; }
-    .callout-purple { border-left-color: #912b88; }
-    .callout strong { color: #0b0c0c; }
+      /* ── Callout ── */
+      .callout {
+        background: #f3f2f1;
+        border-left: 4px solid #b1b4b6;
+        padding: 1rem 1.25rem;
+        margin-top: 1.5rem;
+        font-size: 0.95rem;
+        color: #505a5f;
+      }
+      .callout-blue {
+        border-left-color: #1d70b8;
+      }
+      .callout-orange {
+        border-left-color: #f47738;
+      }
+      .callout-red {
+        border-left-color: #d4351c;
+      }
+      .callout-green {
+        border-left-color: #00703c;
+      }
+      .callout-purple {
+        border-left-color: #912b88;
+      }
+      .callout strong {
+        color: #0b0c0c;
+      }
 
-    /* ── Table ── */
-    .data-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.9rem;
-    }
-    .data-table th, .data-table td {
-      text-align: left;
-      padding: 0.65rem 1rem;
-      border-bottom: 1px solid #e0dfde;
-    }
-    .data-table th {
-      font-weight: 600;
-      font-size: 0.8rem;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-      color: #505a5f;
-      background: #f8f8f8;
-    }
-    .data-table code {
-      font-size: 0.85rem;
-      background: #f3f2f1;
-      padding: 0.1rem 0.35rem;
-      border-radius: 2px;
-    }
+      /* ── Table ── */
+      .data-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.9rem;
+      }
+      .data-table th,
+      .data-table td {
+        text-align: left;
+        padding: 0.65rem 1rem;
+        border-bottom: 1px solid #e0dfde;
+      }
+      .data-table th {
+        font-weight: 600;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: #505a5f;
+        background: #f8f8f8;
+      }
+      .data-table code {
+        font-size: 0.85rem;
+        background: #f3f2f1;
+        padding: 0.1rem 0.35rem;
+        border-radius: 2px;
+      }
 
-    @media (max-width: 640px) {
-      .data-table { font-size: 0.8rem; }
-      .data-table th, .data-table td { padding: 0.5rem; }
-    }
+      @media (max-width: 640px) {
+        .data-table {
+          font-size: 0.8rem;
+        }
+        .data-table th,
+        .data-table td {
+          padding: 0.5rem;
+        }
+      }
 
-    /* ── Flow Diagram ── */
-    .flow-diagram {
-      background: #f8f8f8;
-      border: 1px solid #e0dfde;
-      border-radius: 2px;
-      padding: 2rem 1.5rem;
-      margin: 2rem 0;
-      overflow-x: auto;
-    }
-    .flow-row {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      flex-wrap: wrap;
-      justify-content: center;
-      margin-bottom: 1rem;
-    }
-    .flow-row:last-child { margin-bottom: 0; }
-    .flow-node {
-      background: #fff;
-      border: 1px solid #b1b4b6;
-      border-radius: 2px;
-      padding: 0.5rem 0.75rem;
-      font-size: 0.8rem;
-      font-weight: 500;
-      text-align: center;
-      white-space: nowrap;
-    }
-    .flow-node-primary { background: #f0f6fc; border-color: #1d70b8; color: #1d70b8; }
-    .flow-node-green { background: #e6f4ea; border-color: #00703c; color: #00703c; }
-    .flow-node-orange { background: #fef3e8; border-color: #f47738; color: #b85c00; }
-    .flow-node-purple { background: #f5eaf4; border-color: #912b88; color: #912b88; }
-    .flow-node-teal { background: #e6f5f7; border-color: #0b7285; color: #0b7285; }
-    .flow-node-red { background: #fce8e6; border-color: #d4351c; color: #d4351c; }
-    .flow-node-navy { background: #e6eaf0; border-color: #003078; color: #003078; }
-    .flow-arrow { color: #505a5f; font-size: 1.1rem; line-height: 1; }
-    .flow-down {
-      display: flex;
-      justify-content: center;
-      color: #505a5f;
-      font-size: 1.1rem;
-      margin-bottom: 1rem;
-    }
-    .flow-label {
-      font-size: 0.7rem;
-      color: #505a5f;
-      text-align: center;
-      margin-bottom: 0.5rem;
-      font-weight: 500;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-    }
+      /* ── Flow Diagram ── */
+      .flow-diagram {
+        background: #f8f8f8;
+        border: 1px solid #e0dfde;
+        border-radius: 2px;
+        padding: 2rem 1.5rem;
+        margin: 2rem 0;
+        overflow-x: auto;
+      }
+      .flow-row {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+        justify-content: center;
+        margin-bottom: 1rem;
+      }
+      .flow-row:last-child {
+        margin-bottom: 0;
+      }
+      .flow-node {
+        background: #fff;
+        border: 1px solid #b1b4b6;
+        border-radius: 2px;
+        padding: 0.5rem 0.75rem;
+        font-size: 0.8rem;
+        font-weight: 500;
+        text-align: center;
+        white-space: nowrap;
+      }
+      .flow-node-primary {
+        background: #f0f6fc;
+        border-color: #1d70b8;
+        color: #1d70b8;
+      }
+      .flow-node-green {
+        background: #e6f4ea;
+        border-color: #00703c;
+        color: #00703c;
+      }
+      .flow-node-orange {
+        background: #fef3e8;
+        border-color: #f47738;
+        color: #b85c00;
+      }
+      .flow-node-purple {
+        background: #f5eaf4;
+        border-color: #912b88;
+        color: #912b88;
+      }
+      .flow-node-teal {
+        background: #e6f5f7;
+        border-color: #0b7285;
+        color: #0b7285;
+      }
+      .flow-node-red {
+        background: #fce8e6;
+        border-color: #d4351c;
+        color: #d4351c;
+      }
+      .flow-node-navy {
+        background: #e6eaf0;
+        border-color: #003078;
+        color: #003078;
+      }
+      .flow-arrow {
+        color: #505a5f;
+        font-size: 1.1rem;
+        line-height: 1;
+      }
+      .flow-down {
+        display: flex;
+        justify-content: center;
+        color: #505a5f;
+        font-size: 1.1rem;
+        margin-bottom: 1rem;
+      }
+      .flow-label {
+        font-size: 0.7rem;
+        color: #505a5f;
+        text-align: center;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
 
-    /* ── Specimen (floating UI element) ── */
-    .specimen {
-      background: #fafafa;
-      border: 1px solid #e0dfde;
-      border-radius: 2px;
-      padding: 1.25rem;
-      margin: 1rem 0;
-      font-size: 0.85rem;
-      line-height: 1.6;
-      max-height: 320px;
-      overflow-y: auto;
-    }
-    .specimen-tall { max-height: 440px; }
-    .specimen-label {
-      display: inline-block;
-      font-size: 0.7rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-      color: #fff;
-      background: #505a5f;
-      padding: 0.15rem 0.5rem;
-      border-radius: 2px;
-      margin-bottom: 0.75rem;
-    }
-    .specimen-label-blue { background: #1d70b8; }
-    .specimen-label-green { background: #00703c; }
-    .specimen-label-orange { background: #b85c00; }
-    .specimen-label-purple { background: #912b88; }
-    .specimen-label-teal { background: #0b7285; }
+      /* ── Specimen (floating UI element) ── */
+      .specimen {
+        background: #fafafa;
+        border: 1px solid #e0dfde;
+        border-radius: 2px;
+        padding: 1.25rem;
+        margin: 1rem 0;
+        font-size: 0.85rem;
+        line-height: 1.6;
+        max-height: 320px;
+        overflow-y: auto;
+      }
+      .specimen-tall {
+        max-height: 440px;
+      }
+      .specimen-label {
+        display: inline-block;
+        font-size: 0.7rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: #fff;
+        background: #505a5f;
+        padding: 0.15rem 0.5rem;
+        border-radius: 2px;
+        margin-bottom: 0.75rem;
+      }
+      .specimen-label-blue {
+        background: #1d70b8;
+      }
+      .specimen-label-green {
+        background: #00703c;
+      }
+      .specimen-label-orange {
+        background: #b85c00;
+      }
+      .specimen-label-purple {
+        background: #912b88;
+      }
+      .specimen-label-teal {
+        background: #0b7285;
+      }
 
-    /* ── Layers ── */
-    .layer-stack {
-      display: flex;
-      flex-direction: column;
-      gap: 0;
-    }
-    .layer {
-      border: 1px solid #b1b4b6;
-      padding: 1.25rem 1.5rem;
-      background: #fff;
-    }
-    .layer:first-child { border-radius: 2px 2px 0 0; }
-    .layer:last-child { border-radius: 0 0 2px 2px; }
-    .layer + .layer { border-top: none; }
-    .layer-label {
-      font-size: 0.7rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-      color: #505a5f;
-      margin-bottom: 0.35rem;
-    }
-    .layer-title {
-      font-size: 1rem;
-      font-weight: 600;
-      margin-bottom: 0.25rem;
-    }
-    .layer-desc {
-      font-size: 0.85rem;
-      color: #505a5f;
-    }
+      /* ── Layers ── */
+      .layer-stack {
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+      }
+      .layer {
+        border: 1px solid #b1b4b6;
+        padding: 1.25rem 1.5rem;
+        background: #fff;
+      }
+      .layer:first-child {
+        border-radius: 2px 2px 0 0;
+      }
+      .layer:last-child {
+        border-radius: 0 0 2px 2px;
+      }
+      .layer + .layer {
+        border-top: none;
+      }
+      .layer-label {
+        font-size: 0.7rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: #505a5f;
+        margin-bottom: 0.35rem;
+      }
+      .layer-title {
+        font-size: 1rem;
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+      }
+      .layer-desc {
+        font-size: 0.85rem;
+        color: #505a5f;
+      }
 
-    /* ── Stats Banner ── */
-    .stat-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 2rem;
-      text-align: center;
-      padding: 1rem 0;
-    }
-    .stat-grid .stat-number {
-      font-size: 3rem;
-      font-weight: 700;
-      color: #fff;
-      line-height: 1;
-      margin-bottom: 0.25rem;
-    }
-    .stat-grid .stat-label {
-      font-size: 0.85rem;
-      color: #b1b4b6;
-      font-weight: 500;
-    }
-    @media (max-width: 640px) {
-      .stat-grid { grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
-      .stat-grid .stat-number { font-size: 2.25rem; }
-    }
+      /* ── Stats Banner ── */
+      .stat-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 2rem;
+        text-align: center;
+        padding: 1rem 0;
+      }
+      .stat-grid .stat-number {
+        font-size: 3rem;
+        font-weight: 700;
+        color: #fff;
+        line-height: 1;
+        margin-bottom: 0.25rem;
+      }
+      .stat-grid .stat-label {
+        font-size: 0.85rem;
+        color: #b1b4b6;
+        font-weight: 500;
+      }
+      @media (max-width: 640px) {
+        .stat-grid {
+          grid-template-columns: repeat(2, 1fr);
+          gap: 1.5rem;
+        }
+        .stat-grid .stat-number {
+          font-size: 2.25rem;
+        }
+      }
 
-    /* ── Steps ── */
-    .steps { counter-reset: step-counter; list-style: none; }
-    .steps li {
-      position: relative;
-      padding-left: 3.25rem;
-      padding-bottom: 2rem;
-      border-left: 2px solid #e0dfde;
-      margin-left: 0.85rem;
-    }
-    .steps li:last-child { border-left-color: transparent; padding-bottom: 0; }
-    .steps li::before {
-      counter-increment: step-counter;
-      content: counter(step-counter);
-      position: absolute;
-      left: -0.85rem;
-      top: 0;
-      width: 1.6rem;
-      height: 1.6rem;
-      background: #1d70b8;
-      color: #fff;
-      border-radius: 50%;
-      font-size: 0.8rem;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .steps li h3 { margin-bottom: 0.35rem; }
-    .steps li p { color: #505a5f; font-size: 0.95rem; }
-    .steps li code {
-      font-size: 0.85rem;
-      background: #f3f2f1;
-      padding: 0.1rem 0.35rem;
-      border-radius: 2px;
-    }
+      /* ── Steps ── */
+      .steps {
+        counter-reset: step-counter;
+        list-style: none;
+      }
+      .steps li {
+        position: relative;
+        padding-left: 3.25rem;
+        padding-bottom: 2rem;
+        border-left: 2px solid #e0dfde;
+        margin-left: 0.85rem;
+      }
+      .steps li:last-child {
+        border-left-color: transparent;
+        padding-bottom: 0;
+      }
+      .steps li::before {
+        counter-increment: step-counter;
+        content: counter(step-counter);
+        position: absolute;
+        left: -0.85rem;
+        top: 0;
+        width: 1.6rem;
+        height: 1.6rem;
+        background: #1d70b8;
+        color: #fff;
+        border-radius: 50%;
+        font-size: 0.8rem;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .steps li h3 {
+        margin-bottom: 0.35rem;
+      }
+      .steps li p {
+        color: #505a5f;
+        font-size: 0.95rem;
+      }
+      .steps li code {
+        font-size: 0.85rem;
+        background: #f3f2f1;
+        padding: 0.1rem 0.35rem;
+        border-radius: 2px;
+      }
 
-    /* ── Studio UI Specimens ── */
-    .ui-specimen {
-      background: #fff;
-      border: 1px solid #d6d6d6;
-      border-radius: 8px;
-      overflow: hidden;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.06), 0 0 0 1px rgba(0,0,0,0.03);
-      margin: 1.5rem 0;
-      font-size: 0.82rem;
-    }
-    .ui-specimen-header {
-      background: #f9fafb;
-      border-bottom: 1px solid #e5e7eb;
-      padding: 0.6rem 1rem;
-      font-size: 0.7rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-      color: #6b7280;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-    .ui-specimen-header .dot {
-      width: 6px; height: 6px; border-radius: 50%; display: inline-block;
-    }
-    .ui-specimen-body { padding: 1rem; }
+      /* ── Studio UI Specimens ── */
+      .ui-specimen {
+        background: #fff;
+        border: 1px solid #d6d6d6;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow:
+          0 2px 12px rgba(0, 0, 0, 0.06),
+          0 0 0 1px rgba(0, 0, 0, 0.03);
+        margin: 1.5rem 0;
+        font-size: 0.82rem;
+      }
+      .ui-specimen-header {
+        background: #f9fafb;
+        border-bottom: 1px solid #e5e7eb;
+        padding: 0.6rem 1rem;
+        font-size: 0.7rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: #6b7280;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+      .ui-specimen-header .dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        display: inline-block;
+      }
+      .ui-specimen-body {
+        padding: 1rem;
+      }
 
-    /* KPI card specimen */
-    .ui-kpi-row {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 0.75rem;
-    }
-    @media (max-width: 640px) {
-      .ui-kpi-row { grid-template-columns: repeat(2, 1fr); }
-    }
-    .ui-kpi {
-      border: 1px solid #e5e7eb;
-      border-radius: 8px;
-      padding: 0.85rem;
-      background: #fff;
-    }
-    .ui-kpi-label {
-      font-size: 0.65rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-      color: #9ca3af;
-      margin-bottom: 0.25rem;
-    }
-    .ui-kpi-value {
-      font-size: 1.5rem;
-      font-weight: 700;
-      color: #0b0c0c;
-      line-height: 1.1;
-    }
-    .ui-kpi-sub {
-      font-size: 0.65rem;
-      color: #6b7280;
-      margin-top: 0.15rem;
-    }
+      /* KPI card specimen */
+      .ui-kpi-row {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 0.75rem;
+      }
+      @media (max-width: 640px) {
+        .ui-kpi-row {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+      .ui-kpi {
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        padding: 0.85rem;
+        background: #fff;
+      }
+      .ui-kpi-label {
+        font-size: 0.65rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: #9ca3af;
+        margin-bottom: 0.25rem;
+      }
+      .ui-kpi-value {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #0b0c0c;
+        line-height: 1.1;
+      }
+      .ui-kpi-sub {
+        font-size: 0.65rem;
+        color: #6b7280;
+        margin-top: 0.15rem;
+      }
 
-    /* Service row specimen */
-    .ui-service-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0.75rem 0;
-      border-bottom: 1px solid #f3f4f6;
-      gap: 0.75rem;
-    }
-    .ui-service-row:last-child { border-bottom: none; }
-    .ui-service-name {
-      font-weight: 600;
-      color: #1d70b8;
-      font-size: 0.82rem;
-    }
-    .ui-service-dept {
-      font-size: 0.7rem;
-      color: #9ca3af;
-    }
-    .ui-badge {
-      display: inline-block;
-      font-size: 0.6rem;
-      font-weight: 600;
-      padding: 0.15rem 0.4rem;
-      border-radius: 9999px;
-      border: 1px solid;
-      white-space: nowrap;
-    }
-    .ui-badge-benefit { background: #f0fdf4; border-color: #bbf7d0; color: #166534; }
-    .ui-badge-obligation { background: #fef2f2; border-color: #fecaca; color: #991b1b; }
-    .ui-badge-registration { background: #eff6ff; border-color: #bfdbfe; color: #1e40af; }
-    .ui-badge-application { background: #eef2ff; border-color: #c7d2fe; color: #3730a3; }
-    .ui-badge-document { background: #fffbeb; border-color: #fde68a; color: #92400e; }
-    .ui-badge-full { background: #f0fdf4; border-color: #bbf7d0; color: #166534; }
-    .ui-badge-graph { background: #f3f2f1; border-color: #d1d5db; color: #505a5f; }
-    .ui-artefact-pills {
-      display: flex;
-      gap: 0.35rem;
-      align-items: center;
-    }
-    .ui-pill {
-      font-size: 0.6rem;
-      font-weight: 500;
-      padding: 0.1rem 0.35rem;
-      border-radius: 2px;
-    }
-    .ui-pill-ok { background: #dcfce7; color: #166534; }
-    .ui-pill-missing { background: #fee2e2; color: #991b1b; }
-    .ui-completeness {
-      font-size: 0.7rem;
-      font-weight: 700;
-      color: #0b0c0c;
-      white-space: nowrap;
-    }
+      /* Service row specimen */
+      .ui-service-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid #f3f4f6;
+        gap: 0.75rem;
+      }
+      .ui-service-row:last-child {
+        border-bottom: none;
+      }
+      .ui-service-name {
+        font-weight: 600;
+        color: #1d70b8;
+        font-size: 0.82rem;
+      }
+      .ui-service-dept {
+        font-size: 0.7rem;
+        color: #9ca3af;
+      }
+      .ui-badge {
+        display: inline-block;
+        font-size: 0.6rem;
+        font-weight: 600;
+        padding: 0.15rem 0.4rem;
+        border-radius: 9999px;
+        border: 1px solid;
+        white-space: nowrap;
+      }
+      .ui-badge-benefit {
+        background: #f0fdf4;
+        border-color: #bbf7d0;
+        color: #166534;
+      }
+      .ui-badge-obligation {
+        background: #fef2f2;
+        border-color: #fecaca;
+        color: #991b1b;
+      }
+      .ui-badge-registration {
+        background: #eff6ff;
+        border-color: #bfdbfe;
+        color: #1e40af;
+      }
+      .ui-badge-application {
+        background: #eef2ff;
+        border-color: #c7d2fe;
+        color: #3730a3;
+      }
+      .ui-badge-document {
+        background: #fffbeb;
+        border-color: #fde68a;
+        color: #92400e;
+      }
+      .ui-badge-full {
+        background: #f0fdf4;
+        border-color: #bbf7d0;
+        color: #166534;
+      }
+      .ui-badge-graph {
+        background: #f3f2f1;
+        border-color: #d1d5db;
+        color: #505a5f;
+      }
+      .ui-artefact-pills {
+        display: flex;
+        gap: 0.35rem;
+        align-items: center;
+      }
+      .ui-pill {
+        font-size: 0.6rem;
+        font-weight: 500;
+        padding: 0.1rem 0.35rem;
+        border-radius: 2px;
+      }
+      .ui-pill-ok {
+        background: #dcfce7;
+        color: #166534;
+      }
+      .ui-pill-missing {
+        background: #fee2e2;
+        color: #991b1b;
+      }
+      .ui-completeness {
+        font-size: 0.7rem;
+        font-weight: 700;
+        color: #0b0c0c;
+        white-space: nowrap;
+      }
 
-    /* State flow specimen */
-    .ui-state-flow {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: 0.35rem;
-      padding: 0.5rem 0;
-    }
-    .ui-state {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.65rem;
-      padding: 0.25rem 0.5rem;
-      border-radius: 4px;
-      border: 1px solid;
-      white-space: nowrap;
-    }
-    .ui-state-done { background: #dcfce7; border-color: #86efac; color: #166534; }
-    .ui-state-current { background: #1d70b8; border-color: #1d70b8; color: #fff; }
-    .ui-state-pending { background: #f3f4f6; border-color: #d1d5db; color: #9ca3af; }
-    .ui-state-arrow { color: #d1d5db; font-size: 0.65rem; }
+      /* State flow specimen */
+      .ui-state-flow {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.35rem;
+        padding: 0.5rem 0;
+      }
+      .ui-state {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.65rem;
+        padding: 0.25rem 0.5rem;
+        border-radius: 4px;
+        border: 1px solid;
+        white-space: nowrap;
+      }
+      .ui-state-done {
+        background: #dcfce7;
+        border-color: #86efac;
+        color: #166534;
+      }
+      .ui-state-current {
+        background: #1d70b8;
+        border-color: #1d70b8;
+        color: #fff;
+      }
+      .ui-state-pending {
+        background: #f3f4f6;
+        border-color: #d1d5db;
+        color: #9ca3af;
+      }
+      .ui-state-arrow {
+        color: #d1d5db;
+        font-size: 0.65rem;
+      }
 
-    /* Trace event specimen */
-    .ui-trace-event {
-      display: flex;
-      align-items: flex-start;
-      gap: 0.5rem;
-      padding: 0.5rem 0;
-      border-bottom: 1px solid #f3f4f6;
-      font-size: 0.75rem;
-    }
-    .ui-trace-event:last-child { border-bottom: none; }
-    .ui-trace-badge {
-      font-size: 0.6rem;
-      font-weight: 600;
-      padding: 0.15rem 0.4rem;
-      border-radius: 4px;
-      white-space: nowrap;
-      flex-shrink: 0;
-    }
-    .ui-trace-purple { background: #f3e8ff; color: #7c3aed; }
-    .ui-trace-blue { background: #dbeafe; color: #1d4ed8; }
-    .ui-trace-indigo { background: #e0e7ff; color: #4338ca; }
-    .ui-trace-green { background: #dcfce7; color: #166534; }
-    .ui-trace-teal { background: #ccfbf1; color: #0f766e; }
-    .ui-trace-amber { background: #fef3c7; color: #92400e; }
-    .ui-trace-emerald { background: #d1fae5; color: #065f46; }
-    .ui-trace-time {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.6rem;
-      color: #9ca3af;
-      flex-shrink: 0;
-    }
-    .ui-trace-detail { color: #505a5f; }
+      /* Trace event specimen */
+      .ui-trace-event {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.5rem;
+        padding: 0.5rem 0;
+        border-bottom: 1px solid #f3f4f6;
+        font-size: 0.75rem;
+      }
+      .ui-trace-event:last-child {
+        border-bottom: none;
+      }
+      .ui-trace-badge {
+        font-size: 0.6rem;
+        font-weight: 600;
+        padding: 0.15rem 0.4rem;
+        border-radius: 4px;
+        white-space: nowrap;
+        flex-shrink: 0;
+      }
+      .ui-trace-purple {
+        background: #f3e8ff;
+        color: #7c3aed;
+      }
+      .ui-trace-blue {
+        background: #dbeafe;
+        color: #1d4ed8;
+      }
+      .ui-trace-indigo {
+        background: #e0e7ff;
+        color: #4338ca;
+      }
+      .ui-trace-green {
+        background: #dcfce7;
+        color: #166534;
+      }
+      .ui-trace-teal {
+        background: #ccfbf1;
+        color: #0f766e;
+      }
+      .ui-trace-amber {
+        background: #fef3c7;
+        color: #92400e;
+      }
+      .ui-trace-emerald {
+        background: #d1fae5;
+        color: #065f46;
+      }
+      .ui-trace-time {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.6rem;
+        color: #9ca3af;
+        flex-shrink: 0;
+      }
+      .ui-trace-detail {
+        color: #505a5f;
+      }
 
-    /* Gap analysis specimen */
-    .ui-gap-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.75rem;
-    }
-    .ui-gap-table th {
-      text-align: left;
-      padding: 0.4rem 0.5rem;
-      font-size: 0.6rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-      color: #9ca3af;
-      border-bottom: 1px solid #e5e7eb;
-    }
-    .ui-gap-table td {
-      padding: 0.4rem 0.5rem;
-      border-bottom: 1px solid #f3f4f6;
-    }
-    .ui-gap-table .check { color: #16a34a; font-weight: 700; }
-    .ui-gap-table .cross { color: #dc2626; font-weight: 700; }
-    .ui-gap-bar {
-      width: 100%;
-      height: 4px;
-      background: #f3f4f6;
-      border-radius: 2px;
-      overflow: hidden;
-    }
-    .ui-gap-bar-fill {
-      height: 100%;
-      border-radius: 2px;
-      background: #1d70b8;
-    }
+      /* Gap analysis specimen */
+      .ui-gap-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.75rem;
+      }
+      .ui-gap-table th {
+        text-align: left;
+        padding: 0.4rem 0.5rem;
+        font-size: 0.6rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: #9ca3af;
+        border-bottom: 1px solid #e5e7eb;
+      }
+      .ui-gap-table td {
+        padding: 0.4rem 0.5rem;
+        border-bottom: 1px solid #f3f4f6;
+      }
+      .ui-gap-table .check {
+        color: #16a34a;
+        font-weight: 700;
+      }
+      .ui-gap-table .cross {
+        color: #dc2626;
+        font-weight: 700;
+      }
+      .ui-gap-bar {
+        width: 100%;
+        height: 4px;
+        background: #f3f4f6;
+        border-radius: 2px;
+        overflow: hidden;
+      }
+      .ui-gap-bar-fill {
+        height: 100%;
+        border-radius: 2px;
+        background: #1d70b8;
+      }
 
-    /* ── Slide cards ── */
-    .slide-card {
-      background: #fff;
-      border: 2px solid #0b0c0c;
-      border-radius: 2px;
-      overflow: hidden;
-      break-inside: avoid;
-    }
-    .slide-card-visual {
-      background: #f3f2f1;
-      padding: 2rem 1.5rem;
-      min-height: 180px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-bottom: 2px solid #0b0c0c;
-    }
-    .slide-card-body {
-      padding: 1.5rem;
-    }
-    .slide-card-body h3 {
-      font-size: 1.35rem;
-      font-weight: 700;
-      margin-bottom: 0.5rem;
-    }
-    .slide-card-body p {
-      color: #505a5f;
-      font-size: 0.95rem;
-      line-height: 1.6;
-    }
-    .slide-card-number {
-      font-size: 0.7rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      color: #505a5f;
-      margin-bottom: 0.5rem;
-    }
+      /* ── Slide cards ── */
+      .slide-card {
+        background: #fff;
+        border: 2px solid #0b0c0c;
+        border-radius: 2px;
+        overflow: hidden;
+        break-inside: avoid;
+      }
+      .slide-card-visual {
+        background: #f3f2f1;
+        padding: 2rem 1.5rem;
+        min-height: 180px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-bottom: 2px solid #0b0c0c;
+      }
+      .slide-card-body {
+        padding: 1.5rem;
+      }
+      .slide-card-body h3 {
+        font-size: 1.35rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+      }
+      .slide-card-body p {
+        color: #505a5f;
+        font-size: 0.95rem;
+        line-height: 1.6;
+      }
+      .slide-card-number {
+        font-size: 0.7rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: #505a5f;
+        margin-bottom: 0.5rem;
+      }
 
-    /* Slide visual helpers */
-    .slide-diagram {
-      max-width: 340px;
-      width: 100%;
-    }
-    .slide-layer {
-      padding: 0.6rem 1rem;
-      border: 1px solid;
-      font-size: 0.75rem;
-      font-weight: 600;
-      text-align: center;
-    }
-    .slide-layer + .slide-layer { border-top: none; }
-    .slide-layer:first-child { border-radius: 2px 2px 0 0; }
-    .slide-layer:last-child { border-radius: 0 0 2px 2px; }
+      /* Slide visual helpers */
+      .slide-diagram {
+        max-width: 340px;
+        width: 100%;
+      }
+      .slide-layer {
+        padding: 0.6rem 1rem;
+        border: 1px solid;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-align: center;
+      }
+      .slide-layer + .slide-layer {
+        border-top: none;
+      }
+      .slide-layer:first-child {
+        border-radius: 2px 2px 0 0;
+      }
+      .slide-layer:last-child {
+        border-radius: 0 0 2px 2px;
+      }
 
-    /* ── Two-col split ── */
-    .two-col-split {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 2rem;
-      align-items: start;
-    }
-    @media (max-width: 640px) {
-      .two-col-split { grid-template-columns: 1fr; }
-    }
+      /* ── Two-col split ── */
+      .two-col-split {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+        align-items: start;
+      }
+      @media (max-width: 640px) {
+        .two-col-split {
+          grid-template-columns: 1fr;
+        }
+      }
 
-    /* ── Footer ── */
-    .footer {
-      background: #0b0c0c;
-      color: #b1b4b6;
-      padding: 2.5rem 0;
-      font-size: 0.85rem;
-    }
-  </style>
-</head>
-<body>
-
-<!-- ── Nav ── -->
-<nav class="nav">
-  <div class="container">
-    <a class="nav-brand" href="index.html">&#8592; Agentic Legibility Stack</a>
-    <ul class="nav-links">
-      <li><a href="index.html">Platform</a></li>
-      <li><a href="prompt-architecture.html">Prompt Architecture</a></li>
-      <li><a href="briefing-service-typologies.html">Typologies</a></li>
-      <li><a href="legibility-studio.html" style="color:#1d70b8;font-weight:600;">Studio</a></li>
-    </ul>
-  </div>
-</nav>
-
-<!-- ══════════════════════════════════════════════════════ -->
-<!-- ── Hero ── -->
-<!-- ══════════════════════════════════════════════════════ -->
-<section class="hero">
-  <div class="container">
-    <div class="hero-label">Service Builder Briefing</div>
-    <h1>Legibility Studio</h1>
-    <p class="hero-subtitle">
-      How policy becomes a service that any AI&nbsp;agent can invoke &mdash; and why that matters for accountability.
-    </p>
-    <p class="hero-desc">
-      The Legibility Studio is the service-builder interface for the Agentic Legibility Stack. It transforms policy documents into machine-readable service definitions &mdash; manifests, eligibility rules, state machines, and consent models &mdash; that sit as infrastructure beneath any agent product. This briefing explains the mechanics, the interface, and why the decoupling between services and agents is necessary.
-    </p>
-  </div>
-</section>
-
-<!-- ══════════════════════════════════════════════════════ -->
-<!-- ── Stats Banner ── -->
-<!-- ══════════════════════════════════════════════════════ -->
-<section class="section-dark" style="padding: 2.5rem 0;">
-  <div class="container">
-    <div class="stat-grid">
-      <div>
-        <div class="stat-number">108</div>
-        <div class="stat-label">Services registered</div>
+      /* ── Footer ── */
+      .footer {
+        background: #0b0c0c;
+        color: #b1b4b6;
+        padding: 2.5rem 0;
+        font-size: 0.85rem;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- ── Nav ── -->
+    <nav class="nav">
+      <div class="container">
+        <a class="nav-brand" href="index.html"
+          >&#8592; Agentic Legibility Stack</a
+        >
+        <ul class="nav-links">
+          <li><a href="index.html">Platform</a></li>
+          <li><a href="prompt-architecture.html">Prompt Architecture</a></li>
+          <li><a href="briefing-service-typologies.html">Typologies</a></li>
+          <li>
+            <a
+              href="legibility-studio.html"
+              style="color: #1d70b8; font-weight: 600"
+              >Studio</a
+            >
+          </li>
+        </ul>
       </div>
-      <div>
-        <div class="stat-number">4</div>
-        <div class="stat-label">Artefacts per service</div>
-      </div>
-      <div>
-        <div class="stat-number">8</div>
-        <div class="stat-label">Service typologies</div>
-      </div>
-      <div>
-        <div class="stat-number">14</div>
-        <div class="stat-label">Trace event types</div>
-      </div>
-    </div>
-  </div>
-</section>
+    </nav>
 
-<!-- ══════════════════════════════════════════════════════ -->
-<!-- ── Section 1: What the Studio Does ── -->
-<!-- ══════════════════════════════════════════════════════ -->
-<section class="section" id="what-it-does">
-  <div class="container">
-    <h2>What the Studio does</h2>
-    <p class="section-intro">
-      The Legibility Studio is the place where service owners design, generate, and monitor government services that AI agents can access on behalf of citizens. It is the control plane &mdash; the admin interface &mdash; not the citizen-facing product.
-    </p>
-
-    <div class="grid-3">
-      <div class="card card-accent card-blue">
-        <div class="card-tag">Design</div>
-        <h3>Create services</h3>
-        <p>Define a service from scratch &mdash; its eligibility rules, data requirements, consent model, and state machine &mdash; or generate all four artefacts from a GOV.UK page or uploaded policy document.</p>
+    <!-- ══════════════════════════════════════════════════════ -->
+    <!-- ── Hero ── -->
+    <!-- ══════════════════════════════════════════════════════ -->
+    <section class="hero">
+      <div class="container">
+        <div class="hero-label">Service Builder Briefing</div>
+        <h1>Legibility Studio</h1>
+        <p class="hero-subtitle">
+          How policy becomes a service that any AI&nbsp;agent can invoke &mdash;
+          and why that matters for accountability.
+        </p>
+        <p class="hero-desc">
+          The Legibility Studio is the service-builder interface for the Agentic
+          Legibility Stack. It transforms policy documents into machine-readable
+          service definitions &mdash; manifests, eligibility rules, state
+          machines, and consent models &mdash; that sit as infrastructure
+          beneath any agent product. This briefing explains the mechanics, the
+          interface, and why the decoupling between services and agents is
+          necessary.
+        </p>
       </div>
-      <div class="card card-accent card-green">
-        <div class="card-tag">Monitor</div>
-        <h3>Operational ledger</h3>
-        <p>Track every citizen case through its state machine in real time. See which cases are active, completed, rejected, or handed off to a human. Spot bottlenecks.</p>
-      </div>
-      <div class="card card-accent card-orange">
-        <div class="card-tag">Audit</div>
-        <h3>Evidence plane</h3>
-        <p>Replay any agent interaction event by event. Every LLM call, policy evaluation, consent request, state transition, and receipt is recorded immutably.</p>
-      </div>
-    </div>
+    </section>
 
-    <div class="callout callout-blue" style="margin-top:2rem;">
-      <strong>The key idea:</strong> The Studio does not build agents. It builds the <em>infrastructure</em> that agents consume. Any agent product &mdash; a chatbot, a voice assistant, a form-filling service &mdash; can sit on top of the same service definitions. The Studio is where those definitions are authored and governed.
-    </div>
-  </div>
-</section>
-
-<!-- ══════════════════════════════════════════════════════ -->
-<!-- ── Section 2: The Four Artefacts ── -->
-<!-- ══════════════════════════════════════════════════════ -->
-<section class="section section-alt" id="artefacts">
-  <div class="container">
-    <h2>The four legibility artefacts</h2>
-    <p class="section-intro">
-      Every service in the stack is defined by exactly four JSON files. Together, they make a service <em>legible</em> &mdash; transparent enough for a citizen to understand what is happening, and structured enough for a machine to enforce it.
-    </p>
-
-    <div class="grid-2">
-      <div class="card card-accent card-blue">
-        <div class="card-tag">Artefact 1</div>
-        <h3>Manifest</h3>
-        <p>The service contract. Declares what data the service needs, what it returns, fees, SLA, redress options, and handoff configuration. Think of it as the API specification for a government service.</p>
-        <div class="specimen" style="margin-top:1rem; max-height:160px;">
-          <code style="font-size:0.75rem; color:#505a5f;">
-            <span style="color:#1d70b8;">"id"</span>: "dvla.renew-driving-licence",<br>
-            <span style="color:#1d70b8;">"name"</span>: "Renew a driving licence",<br>
-            <span style="color:#1d70b8;">"department"</span>: "DVLA",<br>
-            <span style="color:#1d70b8;">"input_schema"</span>: { full_name, dob, licence_number&hellip; },<br>
-            <span style="color:#1d70b8;">"constraints"</span>: { sla: "3 weeks", fee: "&pound;14" },<br>
-            <span style="color:#1d70b8;">"redress"</span>: { complaint_url, appeal_process&hellip; }
-          </code>
+    <!-- ══════════════════════════════════════════════════════ -->
+    <!-- ── Stats Banner ── -->
+    <!-- ══════════════════════════════════════════════════════ -->
+    <section class="section-dark" style="padding: 2.5rem 0">
+      <div class="container">
+        <div class="stat-grid">
+          <div>
+            <div class="stat-number">108</div>
+            <div class="stat-label">Services registered</div>
+          </div>
+          <div>
+            <div class="stat-number">4</div>
+            <div class="stat-label">Artefacts per service</div>
+          </div>
+          <div>
+            <div class="stat-number">8</div>
+            <div class="stat-label">Service typologies</div>
+          </div>
+          <div>
+            <div class="stat-number">14</div>
+            <div class="stat-label">Trace event types</div>
+          </div>
         </div>
       </div>
+    </section>
 
-      <div class="card card-accent card-green">
-        <div class="card-tag">Artefact 2</div>
-        <h3>Policy Ruleset</h3>
-        <p>Machine-readable eligibility rules. Each rule has a condition (field, operator, value), a failure explanation, and optional edge cases for medical conditions or unusual circumstances.</p>
-        <div class="specimen" style="margin-top:1rem; max-height:160px;">
-          <code style="font-size:0.75rem; color:#505a5f;">
-            <span style="color:#00703c;">"rules"</span>: [<br>
-            &nbsp;&nbsp;{ field: "age", op: "&gt;=", value: 16,<br>
-            &nbsp;&nbsp;&nbsp;&nbsp;reason: "Must be 16+ to hold a licence" },<br>
-            &nbsp;&nbsp;{ field: "licence_status", op: "!=", "revoked",<br>
-            &nbsp;&nbsp;&nbsp;&nbsp;triggers_handoff: true }<br>
-            ]
-          </code>
-        </div>
-      </div>
-
-      <div class="card card-accent card-purple">
-        <div class="card-tag">Artefact 3</div>
-        <h3>State Model</h3>
-        <p>A finite state machine defining the citizen's journey. Each state can trigger a receipt. Transitions are guarded by conditions. Terminal states include completed, rejected, and handed-off.</p>
-        <div class="specimen" style="margin-top:1rem; max-height:160px;">
-          <code style="font-size:0.75rem; color:#505a5f;">
-            <span style="color:#912b88;">not-started</span> &rarr; identity-verified &rarr; eligibility-checked<br>
-            &rarr; consent-given &rarr; details-confirmed<br>
-            &rarr; payment-made &rarr; application-submitted<br>
-            &rarr; <span style="color:#00703c;">completed</span> | <span style="color:#d4351c;">rejected</span> | <span style="color:#f47738;">handed-off</span>
-          </code>
-        </div>
-      </div>
-
-      <div class="card card-accent card-teal">
-        <div class="card-tag">Artefact 4</div>
-        <h3>Consent Model</h3>
-        <p>Explicit data-sharing grants. Each grant names the data shared, its source, purpose, and duration. Includes delegation rules &mdash; what the agent can and cannot do on the citizen's behalf.</p>
-        <div class="specimen" style="margin-top:1rem; max-height:160px;">
-          <code style="font-size:0.75rem; color:#505a5f;">
-            <span style="color:#0b7285;">"grants"</span>: [<br>
-            &nbsp;&nbsp;{ id: "identity-verification",<br>
-            &nbsp;&nbsp;&nbsp;&nbsp;data: [name, dob, NI number],<br>
-            &nbsp;&nbsp;&nbsp;&nbsp;source: "one-login", duration: "session" }<br>
-            ],<br>
-            <span style="color:#0b7285;">"delegation"</span>: { limitations: "Cannot make payment" }
-          </code>
-        </div>
-      </div>
-    </div>
-
-    <div class="callout callout-purple" style="margin-top:2rem;">
-      <strong>Why four artefacts, not one?</strong> Because legibility requires separation of concerns. The manifest tells citizens <em>what</em> the service does. The policy tells them <em>whether they qualify</em>. The state model tells them <em>where they are</em>. The consent model tells them <em>what data is being shared</em>. Each can be audited, versioned, and governed independently.
-    </div>
-  </div>
-</section>
-
-<!-- ══════════════════════════════════════════════════════ -->
-<!-- ── Section 3: How a Service Gets Created ── -->
-<!-- ══════════════════════════════════════════════════════ -->
-<section class="section" id="creation-flow">
-  <div class="container">
-    <h2>How a service gets created</h2>
-    <p class="section-intro">
-      There are two paths: manual authoring through the Studio's form interface, or LLM-assisted generation from a GOV.UK page (and in future, an uploaded policy document).
-    </p>
-
-    <div class="two-col-split">
-      <div>
-        <h3>Path 1: LLM-assisted generation</h3>
-        <p style="color:#505a5f; font-size:0.95rem; margin-bottom:1.5rem;">
-          The current system scrapes the GOV.UK guidance page for a service, enriches it with CDDO metadata (login requirements, data collected, eligibility complexity), and feeds both to Claude Sonnet with a structured prompt and few-shot examples. The LLM generates all three missing artefacts &mdash; policy, state model, and consent &mdash; which are then validated and stored.
+    <!-- ══════════════════════════════════════════════════════ -->
+    <!-- ── Section 1: What the Studio Does ── -->
+    <!-- ══════════════════════════════════════════════════════ -->
+    <section class="section" id="what-it-does">
+      <div class="container">
+        <h2>What the Studio does</h2>
+        <p class="section-intro">
+          The Legibility Studio is the place where service owners design,
+          generate, and monitor government services that AI agents can access on
+          behalf of citizens. It is the control plane &mdash; the admin
+          interface &mdash; not the citizen-facing product.
         </p>
 
-        <ol class="steps">
-          <li>
-            <h3>Source content</h3>
-            <p>The Studio fetches the GOV.UK guidance page and extracts structured content &mdash; sections, headings, eligibility criteria. CDDO enrichment data adds metadata about login requirements and data collected.</p>
-          </li>
-          <li>
-            <h3>Classify typology</h3>
-            <p>The service is classified into one of 8 typologies (Benefit, Obligation, Registration, etc.) which selects a state-model template as the starting point.</p>
-          </li>
-          <li>
-            <h3>Generate artefacts</h3>
-            <p>Claude Sonnet receives a system prompt with JSON schemas, few-shot examples, and the service's GOV.UK content. It produces three labeled JSON blocks: <code>policy</code>, <code>state-model</code>, <code>consent</code>.</p>
-          </li>
-          <li>
-            <h3>Validate &amp; store</h3>
-            <p>Each artefact is validated against its schema &mdash; policy operators are normalised, state models are checked for valid transitions, consent grants are verified. Valid artefacts are persisted to the service store.</p>
-          </li>
-        </ol>
-      </div>
+        <div class="grid-3">
+          <div class="card card-accent card-blue">
+            <div class="card-tag">Design</div>
+            <h3>Create services</h3>
+            <p>
+              Define a service from scratch &mdash; its eligibility rules, data
+              requirements, consent model, and state machine &mdash; or generate
+              all four artefacts from a GOV.UK page or uploaded policy document.
+            </p>
+          </div>
+          <div class="card card-accent card-green">
+            <div class="card-tag">Monitor</div>
+            <h3>Operational ledger</h3>
+            <p>
+              Track every citizen case through its state machine in real time.
+              See which cases are active, completed, rejected, or handed off to
+              a human. Spot bottlenecks.
+            </p>
+          </div>
+          <div class="card card-accent card-orange">
+            <div class="card-tag">Audit</div>
+            <h3>Evidence plane</h3>
+            <p>
+              Replay any agent interaction event by event. Every LLM call,
+              policy evaluation, consent request, state transition, and receipt
+              is recorded immutably.
+            </p>
+          </div>
+        </div>
 
-      <div>
-        <h3>Path 2: Manual authoring</h3>
-        <p style="color:#505a5f; font-size:0.95rem; margin-bottom:1.5rem;">
-          The Studio provides a full form editor for each artefact. A service designer can build a service from scratch, defining every rule, state, and consent grant directly.
+        <div class="callout callout-blue" style="margin-top: 2rem">
+          <strong>The key idea:</strong> The Studio does not build agents. It
+          builds the <em>infrastructure</em> that agents consume. Any agent
+          product &mdash; a chatbot, a voice assistant, a form-filling service
+          &mdash; can sit on top of the same service definitions. The Studio is
+          where those definitions are authored and governed.
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════════ -->
+    <!-- ── Section 2: The Four Artefacts ── -->
+    <!-- ══════════════════════════════════════════════════════ -->
+    <section class="section section-alt" id="artefacts">
+      <div class="container">
+        <h2>The four legibility artefacts</h2>
+        <p class="section-intro">
+          Every service in the stack is defined by exactly four JSON files.
+          Together, they make a service <em>legible</em> &mdash; transparent
+          enough for a citizen to understand what is happening, and structured
+          enough for a machine to enforce it.
         </p>
 
-        <!-- Service Form Specimen -->
+        <div class="grid-2">
+          <div class="card card-accent card-blue">
+            <div class="card-tag">Artefact 1</div>
+            <h3>Manifest</h3>
+            <p>
+              The service contract. Declares what data the service needs, what
+              it returns, fees, SLA, redress options, and handoff configuration.
+              Think of it as the API specification for a government service.
+            </p>
+            <div class="specimen" style="margin-top: 1rem; max-height: 160px">
+              <code style="font-size: 0.75rem; color: #505a5f">
+                <span style="color: #1d70b8">"id"</span>:
+                "dvla.renew-driving-licence",<br />
+                <span style="color: #1d70b8">"name"</span>: "Renew a driving
+                licence",<br />
+                <span style="color: #1d70b8">"department"</span>: "DVLA",<br />
+                <span style="color: #1d70b8">"input_schema"</span>: { full_name,
+                dob, licence_number&hellip; },<br />
+                <span style="color: #1d70b8">"constraints"</span>: { sla: "3
+                weeks", fee: "&pound;14" },<br />
+                <span style="color: #1d70b8">"redress"</span>: { complaint_url,
+                appeal_process&hellip; }
+              </code>
+            </div>
+          </div>
+
+          <div class="card card-accent card-green">
+            <div class="card-tag">Artefact 2</div>
+            <h3>Policy Ruleset</h3>
+            <p>
+              Machine-readable eligibility rules. Each rule has a condition
+              (field, operator, value), a failure explanation, and optional edge
+              cases for medical conditions or unusual circumstances.
+            </p>
+            <div class="specimen" style="margin-top: 1rem; max-height: 160px">
+              <code style="font-size: 0.75rem; color: #505a5f">
+                <span style="color: #00703c">"rules"</span>: [<br />
+                &nbsp;&nbsp;{ field: "age", op: "&gt;=", value: 16,<br />
+                &nbsp;&nbsp;&nbsp;&nbsp;reason: "Must be 16+ to hold a licence"
+                },<br />
+                &nbsp;&nbsp;{ field: "licence_status", op: "!=", "revoked",<br />
+                &nbsp;&nbsp;&nbsp;&nbsp;triggers_handoff: true }<br />
+                ]
+              </code>
+            </div>
+          </div>
+
+          <div class="card card-accent card-purple">
+            <div class="card-tag">Artefact 3</div>
+            <h3>State Model</h3>
+            <p>
+              A finite state machine defining the citizen's journey. Each state
+              can trigger a receipt. Transitions are guarded by conditions.
+              Terminal states include completed, rejected, and handed-off.
+            </p>
+            <div class="specimen" style="margin-top: 1rem; max-height: 160px">
+              <code style="font-size: 0.75rem; color: #505a5f">
+                <span style="color: #912b88">not-started</span> &rarr;
+                identity-verified &rarr; eligibility-checked<br />
+                &rarr; consent-given &rarr; details-confirmed<br />
+                &rarr; payment-made &rarr; application-submitted<br />
+                &rarr; <span style="color: #00703c">completed</span> |
+                <span style="color: #d4351c">rejected</span> |
+                <span style="color: #f47738">handed-off</span>
+              </code>
+            </div>
+          </div>
+
+          <div class="card card-accent card-teal">
+            <div class="card-tag">Artefact 4</div>
+            <h3>Consent Model</h3>
+            <p>
+              Explicit data-sharing grants. Each grant names the data shared,
+              its source, purpose, and duration. Includes delegation rules
+              &mdash; what the agent can and cannot do on the citizen's behalf.
+            </p>
+            <div class="specimen" style="margin-top: 1rem; max-height: 160px">
+              <code style="font-size: 0.75rem; color: #505a5f">
+                <span style="color: #0b7285">"grants"</span>: [<br />
+                &nbsp;&nbsp;{ id: "identity-verification",<br />
+                &nbsp;&nbsp;&nbsp;&nbsp;data: [name, dob, NI number],<br />
+                &nbsp;&nbsp;&nbsp;&nbsp;source: "one-login", duration: "session"
+                }<br />
+                ],<br />
+                <span style="color: #0b7285">"delegation"</span>: { limitations:
+                "Cannot make payment" }
+              </code>
+            </div>
+          </div>
+        </div>
+
+        <div class="callout callout-purple" style="margin-top: 2rem">
+          <strong>Why four artefacts, not one?</strong> Because legibility
+          requires separation of concerns. The manifest tells citizens
+          <em>what</em> the service does. The policy tells them
+          <em>whether they qualify</em>. The state model tells them
+          <em>where they are</em>. The consent model tells them
+          <em>what data is being shared</em>. Each can be audited, versioned,
+          and governed independently.
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════════ -->
+    <!-- ── Section 3: How a Service Gets Created ── -->
+    <!-- ══════════════════════════════════════════════════════ -->
+    <section class="section" id="creation-flow">
+      <div class="container">
+        <h2>How a service gets created</h2>
+        <p class="section-intro">
+          There are two paths: manual authoring through the Studio's form
+          interface, or LLM-assisted generation from a GOV.UK page (and in
+          future, an uploaded policy document).
+        </p>
+
+        <div class="two-col-split">
+          <div>
+            <h3>Path 1: LLM-assisted generation</h3>
+            <p
+              style="color: #505a5f; font-size: 0.95rem; margin-bottom: 1.5rem"
+            >
+              The current system scrapes the GOV.UK guidance page for a service,
+              enriches it with CDDO metadata (login requirements, data
+              collected, eligibility complexity), and feeds both to Claude
+              Sonnet with a structured prompt and few-shot examples. The LLM
+              generates all three missing artefacts &mdash; policy, state model,
+              and consent &mdash; which are then validated and stored.
+            </p>
+
+            <ol class="steps">
+              <li>
+                <h3>Source content</h3>
+                <p>
+                  The Studio fetches the GOV.UK guidance page and extracts
+                  structured content &mdash; sections, headings, eligibility
+                  criteria. CDDO enrichment data adds metadata about login
+                  requirements and data collected.
+                </p>
+              </li>
+              <li>
+                <h3>Classify typology</h3>
+                <p>
+                  The service is classified into one of 8 typologies (Benefit,
+                  Obligation, Registration, etc.) which selects a state-model
+                  template as the starting point.
+                </p>
+              </li>
+              <li>
+                <h3>Generate artefacts</h3>
+                <p>
+                  Claude Sonnet receives a system prompt with JSON schemas,
+                  few-shot examples, and the service's GOV.UK content. It
+                  produces three labeled JSON blocks: <code>policy</code>,
+                  <code>state-model</code>, <code>consent</code>.
+                </p>
+              </li>
+              <li>
+                <h3>Validate &amp; store</h3>
+                <p>
+                  Each artefact is validated against its schema &mdash; policy
+                  operators are normalised, state models are checked for valid
+                  transitions, consent grants are verified. Valid artefacts are
+                  persisted to the service store.
+                </p>
+              </li>
+            </ol>
+          </div>
+
+          <div>
+            <h3>Path 2: Manual authoring</h3>
+            <p
+              style="color: #505a5f; font-size: 0.95rem; margin-bottom: 1.5rem"
+            >
+              The Studio provides a full form editor for each artefact. A
+              service designer can build a service from scratch, defining every
+              rule, state, and consent grant directly.
+            </p>
+
+            <!-- Service Form Specimen -->
+            <div class="ui-specimen">
+              <div class="ui-specimen-header">
+                <span class="dot" style="background: #f87171"></span>
+                <span class="dot" style="background: #fbbf24"></span>
+                <span class="dot" style="background: #34d399"></span>
+                Studio &mdash; New Service Form
+              </div>
+              <div class="ui-specimen-body" style="font-size: 0.78rem">
+                <div style="margin-bottom: 0.75rem">
+                  <div style="font-weight: 600; margin-bottom: 0.25rem">
+                    Service Name
+                  </div>
+                  <div
+                    style="
+                      border: 1px solid #d1d5db;
+                      border-radius: 6px;
+                      padding: 0.4rem 0.6rem;
+                      color: #0b0c0c;
+                    "
+                  >
+                    Renew a driving licence
+                  </div>
+                </div>
+                <div
+                  style="
+                    display: grid;
+                    grid-template-columns: 1fr 1fr;
+                    gap: 0.5rem;
+                    margin-bottom: 0.75rem;
+                  "
+                >
+                  <div>
+                    <div style="font-weight: 600; margin-bottom: 0.25rem">
+                      Department
+                    </div>
+                    <div
+                      style="
+                        border: 1px solid #d1d5db;
+                        border-radius: 6px;
+                        padding: 0.4rem 0.6rem;
+                        color: #505a5f;
+                      "
+                    >
+                      DVLA
+                    </div>
+                  </div>
+                  <div>
+                    <div style="font-weight: 600; margin-bottom: 0.25rem">
+                      Jurisdiction
+                    </div>
+                    <div
+                      style="
+                        border: 1px solid #d1d5db;
+                        border-radius: 6px;
+                        padding: 0.4rem 0.6rem;
+                        color: #505a5f;
+                      "
+                    >
+                      England &amp; Wales
+                    </div>
+                  </div>
+                </div>
+                <div style="margin-bottom: 0.75rem">
+                  <div style="font-weight: 600; margin-bottom: 0.25rem">
+                    Input Schema
+                  </div>
+                  <div
+                    style="
+                      background: #f8f8f8;
+                      border: 1px solid #e0dfde;
+                      border-radius: 6px;
+                      padding: 0.4rem 0.6rem;
+                      font-family: &quot;JetBrains Mono&quot;, monospace;
+                      font-size: 0.7rem;
+                      color: #505a5f;
+                    "
+                  >
+                    full_name: string &middot; date_of_birth: string &middot;
+                    licence_number: string
+                  </div>
+                </div>
+                <div
+                  style="
+                    border-top: 1px solid #e5e7eb;
+                    padding-top: 0.6rem;
+                    display: flex;
+                    gap: 0.5rem;
+                    flex-wrap: wrap;
+                  "
+                >
+                  <span
+                    style="
+                      font-size: 0.65rem;
+                      font-weight: 600;
+                      color: #1d70b8;
+                      border: 1px solid #1d70b8;
+                      border-radius: 4px;
+                      padding: 0.15rem 0.5rem;
+                    "
+                    >+ Policy Ruleset</span
+                  >
+                  <span
+                    style="
+                      font-size: 0.65rem;
+                      font-weight: 600;
+                      color: #912b88;
+                      border: 1px solid #912b88;
+                      border-radius: 4px;
+                      padding: 0.15rem 0.5rem;
+                    "
+                    >+ State Model</span
+                  >
+                  <span
+                    style="
+                      font-size: 0.65rem;
+                      font-weight: 600;
+                      color: #0b7285;
+                      border: 1px solid #0b7285;
+                      border-radius: 4px;
+                      padding: 0.15rem 0.5rem;
+                    "
+                    >+ Consent Model</span
+                  >
+                </div>
+              </div>
+            </div>
+
+            <div class="callout callout-orange" style="margin-top: 1rem">
+              <strong>Future:</strong> Upload a policy document (PDF, Word)
+              instead of scraping GOV.UK. The same generation pipeline applies
+              &mdash; the LLM reads the document, extracts eligibility rules,
+              models the journey as a state machine, and infers consent
+              requirements.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════════ -->
+    <!-- ── Section 4: The Generation Pipeline ── -->
+    <!-- ══════════════════════════════════════════════════════ -->
+    <section class="section section-alt" id="pipeline">
+      <div class="container">
+        <h2>The generation pipeline</h2>
+        <p class="section-intro">
+          A closer look at how source material becomes validated,
+          machine-readable service definitions.
+        </p>
+
+        <div class="flow-diagram">
+          <div class="flow-label">Input Sources</div>
+          <div class="flow-row">
+            <div class="flow-node flow-node-primary">GOV.UK page</div>
+            <div class="flow-node flow-node-primary">CDDO enrichment CSV</div>
+            <div class="flow-node flow-node-orange">
+              Policy document (future)
+            </div>
+          </div>
+          <div class="flow-down">&darr;</div>
+          <div class="flow-label">Content Extraction</div>
+          <div class="flow-row">
+            <div class="flow-node flow-node-teal">Content extractor</div>
+            <div class="flow-arrow">&rarr;</div>
+            <div class="flow-node flow-node-teal">Typology classifier</div>
+            <div class="flow-arrow">&rarr;</div>
+            <div class="flow-node flow-node-teal">Template selector</div>
+          </div>
+          <div class="flow-down">&darr;</div>
+          <div class="flow-label">LLM Generation</div>
+          <div class="flow-row">
+            <div class="flow-node flow-node-purple">
+              System prompt + schemas + few-shot examples
+            </div>
+            <div class="flow-arrow">&rarr;</div>
+            <div class="flow-node flow-node-purple">
+              Claude Sonnet (16K tokens, 8K thinking)
+            </div>
+          </div>
+          <div class="flow-down">&darr;</div>
+          <div class="flow-label">Validation &amp; Storage</div>
+          <div class="flow-row">
+            <div class="flow-node flow-node-green">
+              Parse labeled JSON blocks
+            </div>
+            <div class="flow-arrow">&rarr;</div>
+            <div class="flow-node flow-node-green">Normalise operators</div>
+            <div class="flow-arrow">&rarr;</div>
+            <div class="flow-node flow-node-green">Schema validate</div>
+            <div class="flow-arrow">&rarr;</div>
+            <div class="flow-node flow-node-green">Store to DB</div>
+          </div>
+        </div>
+
+        <div class="callout callout-green">
+          <strong>Batch generation:</strong> The Studio supports
+          batch-generating missing artefacts for up to 10 services at a time,
+          processing each through the same pipeline and surfacing failures
+          individually.
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════════ -->
+    <!-- ── Section 5: Interface Element by Element ── -->
+    <!-- ══════════════════════════════════════════════════════ -->
+    <section class="section" id="interface">
+      <div class="container">
+        <h2>The Studio interface, element by element</h2>
+        <p class="section-intro">
+          A walkthrough of every major screen and component in the Legibility
+          Studio.
+        </p>
+
+        <!-- ── 5a: Dashboard ── -->
+        <h3 style="margin-top: 2rem; color: #1d70b8">Dashboard</h3>
+        <p style="color: #505a5f; font-size: 0.95rem; margin-bottom: 1rem">
+          The landing page. Four KPI cards show the system-wide state at a
+          glance, followed by a paginated recent cases table and quick
+          navigation to the three main sections.
+        </p>
+
         <div class="ui-specimen">
           <div class="ui-specimen-header">
-            <span class="dot" style="background:#f87171;"></span>
-            <span class="dot" style="background:#fbbf24;"></span>
-            <span class="dot" style="background:#34d399;"></span>
-            Studio &mdash; New Service Form
-          </div>
-          <div class="ui-specimen-body" style="font-size:0.78rem;">
-            <div style="margin-bottom:0.75rem;">
-              <div style="font-weight:600;margin-bottom:0.25rem;">Service Name</div>
-              <div style="border:1px solid #d1d5db;border-radius:6px;padding:0.4rem 0.6rem;color:#0b0c0c;">Renew a driving licence</div>
-            </div>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;margin-bottom:0.75rem;">
-              <div>
-                <div style="font-weight:600;margin-bottom:0.25rem;">Department</div>
-                <div style="border:1px solid #d1d5db;border-radius:6px;padding:0.4rem 0.6rem;color:#505a5f;">DVLA</div>
-              </div>
-              <div>
-                <div style="font-weight:600;margin-bottom:0.25rem;">Jurisdiction</div>
-                <div style="border:1px solid #d1d5db;border-radius:6px;padding:0.4rem 0.6rem;color:#505a5f;">England &amp; Wales</div>
-              </div>
-            </div>
-            <div style="margin-bottom:0.75rem;">
-              <div style="font-weight:600;margin-bottom:0.25rem;">Input Schema</div>
-              <div style="background:#f8f8f8;border:1px solid #e0dfde;border-radius:6px;padding:0.4rem 0.6rem;font-family:'JetBrains Mono',monospace;font-size:0.7rem;color:#505a5f;">
-                full_name: string &middot; date_of_birth: string &middot; licence_number: string
-              </div>
-            </div>
-            <div style="border-top:1px solid #e5e7eb;padding-top:0.6rem;display:flex;gap:0.5rem;flex-wrap:wrap;">
-              <span style="font-size:0.65rem;font-weight:600;color:#1d70b8;border:1px solid #1d70b8;border-radius:4px;padding:0.15rem 0.5rem;">+ Policy Ruleset</span>
-              <span style="font-size:0.65rem;font-weight:600;color:#912b88;border:1px solid #912b88;border-radius:4px;padding:0.15rem 0.5rem;">+ State Model</span>
-              <span style="font-size:0.65rem;font-weight:600;color:#0b7285;border:1px solid #0b7285;border-radius:4px;padding:0.15rem 0.5rem;">+ Consent Model</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="callout callout-orange" style="margin-top:1rem;">
-          <strong>Future:</strong> Upload a policy document (PDF, Word) instead of scraping GOV.UK. The same generation pipeline applies &mdash; the LLM reads the document, extracts eligibility rules, models the journey as a state machine, and infers consent requirements.
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ══════════════════════════════════════════════════════ -->
-<!-- ── Section 4: The Generation Pipeline ── -->
-<!-- ══════════════════════════════════════════════════════ -->
-<section class="section section-alt" id="pipeline">
-  <div class="container">
-    <h2>The generation pipeline</h2>
-    <p class="section-intro">
-      A closer look at how source material becomes validated, machine-readable service definitions.
-    </p>
-
-    <div class="flow-diagram">
-      <div class="flow-label">Input Sources</div>
-      <div class="flow-row">
-        <div class="flow-node flow-node-primary">GOV.UK page</div>
-        <div class="flow-node flow-node-primary">CDDO enrichment CSV</div>
-        <div class="flow-node flow-node-orange">Policy document (future)</div>
-      </div>
-      <div class="flow-down">&darr;</div>
-      <div class="flow-label">Content Extraction</div>
-      <div class="flow-row">
-        <div class="flow-node flow-node-teal">Content extractor</div>
-        <div class="flow-arrow">&rarr;</div>
-        <div class="flow-node flow-node-teal">Typology classifier</div>
-        <div class="flow-arrow">&rarr;</div>
-        <div class="flow-node flow-node-teal">Template selector</div>
-      </div>
-      <div class="flow-down">&darr;</div>
-      <div class="flow-label">LLM Generation</div>
-      <div class="flow-row">
-        <div class="flow-node flow-node-purple">System prompt + schemas + few-shot examples</div>
-        <div class="flow-arrow">&rarr;</div>
-        <div class="flow-node flow-node-purple">Claude Sonnet (16K tokens, 8K thinking)</div>
-      </div>
-      <div class="flow-down">&darr;</div>
-      <div class="flow-label">Validation &amp; Storage</div>
-      <div class="flow-row">
-        <div class="flow-node flow-node-green">Parse labeled JSON blocks</div>
-        <div class="flow-arrow">&rarr;</div>
-        <div class="flow-node flow-node-green">Normalise operators</div>
-        <div class="flow-arrow">&rarr;</div>
-        <div class="flow-node flow-node-green">Schema validate</div>
-        <div class="flow-arrow">&rarr;</div>
-        <div class="flow-node flow-node-green">Store to DB</div>
-      </div>
-    </div>
-
-    <div class="callout callout-green">
-      <strong>Batch generation:</strong> The Studio supports batch-generating missing artefacts for up to 10 services at a time, processing each through the same pipeline and surfacing failures individually.
-    </div>
-  </div>
-</section>
-
-<!-- ══════════════════════════════════════════════════════ -->
-<!-- ── Section 5: Interface Element by Element ── -->
-<!-- ══════════════════════════════════════════════════════ -->
-<section class="section" id="interface">
-  <div class="container">
-    <h2>The Studio interface, element by element</h2>
-    <p class="section-intro">
-      A walkthrough of every major screen and component in the Legibility Studio.
-    </p>
-
-    <!-- ── 5a: Dashboard ── -->
-    <h3 style="margin-top:2rem;color:#1d70b8;">Dashboard</h3>
-    <p style="color:#505a5f;font-size:0.95rem;margin-bottom:1rem;">
-      The landing page. Four KPI cards show the system-wide state at a glance, followed by a paginated recent cases table and quick navigation to the three main sections.
-    </p>
-
-    <div class="ui-specimen">
-      <div class="ui-specimen-header">
-        <span class="dot" style="background:#f87171;"></span>
-        <span class="dot" style="background:#fbbf24;"></span>
-        <span class="dot" style="background:#34d399;"></span>
-        Studio &mdash; Dashboard
-      </div>
-      <div class="ui-specimen-body">
-        <div class="ui-kpi-row" style="margin-bottom:1rem;">
-          <div class="ui-kpi">
-            <div class="ui-kpi-label">Services</div>
-            <div class="ui-kpi-value">108</div>
-          </div>
-          <div class="ui-kpi">
-            <div class="ui-kpi-label">Total Cases</div>
-            <div class="ui-kpi-value">1,247</div>
-          </div>
-          <div class="ui-kpi">
-            <div class="ui-kpi-label">Active Cases</div>
-            <div class="ui-kpi-value">84</div>
-          </div>
-          <div class="ui-kpi">
-            <div class="ui-kpi-label">Completion Rate</div>
-            <div class="ui-kpi-value">76%</div>
-          </div>
-        </div>
-        <div style="font-size:0.7rem;font-weight:600;text-transform:uppercase;letter-spacing:0.04em;color:#9ca3af;margin-bottom:0.5rem;">Recent Cases</div>
-        <table style="width:100%;border-collapse:collapse;font-size:0.72rem;">
-          <thead>
-            <tr style="border-bottom:1px solid #e5e7eb;color:#9ca3af;font-size:0.6rem;text-transform:uppercase;letter-spacing:0.04em;">
-              <th style="text-align:left;padding:0.3rem 0.4rem;">Service</th>
-              <th style="text-align:left;padding:0.3rem 0.4rem;">User</th>
-              <th style="text-align:left;padding:0.3rem 0.4rem;">State</th>
-              <th style="text-align:left;padding:0.3rem 0.4rem;">Status</th>
-              <th style="text-align:left;padding:0.3rem 0.4rem;">Progress</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr style="border-bottom:1px solid #f3f4f6;">
-              <td style="padding:0.35rem 0.4rem;color:#1d70b8;font-weight:500;">Renew driving licence</td>
-              <td style="padding:0.35rem 0.4rem;font-family:'JetBrains Mono',monospace;font-size:0.6rem;color:#6b7280;">margaret-t</td>
-              <td style="padding:0.35rem 0.4rem;"><span style="background:#f3f4f6;padding:0.1rem 0.3rem;border-radius:2px;font-family:'JetBrains Mono',monospace;font-size:0.6rem;">consent-given</span></td>
-              <td style="padding:0.35rem 0.4rem;"><span style="background:#dbeafe;color:#1d4ed8;font-size:0.6rem;font-weight:600;padding:0.1rem 0.3rem;border-radius:2px;">in-progress</span></td>
-              <td style="padding:0.35rem 0.4rem;"><div style="display:flex;align-items:center;gap:0.3rem;"><div style="width:40px;height:3px;background:#e5e7eb;border-radius:2px;overflow:hidden;"><div style="width:55%;height:100%;background:#1d70b8;border-radius:2px;"></div></div><span style="font-size:0.6rem;color:#9ca3af;">55%</span></div></td>
-            </tr>
-            <tr style="border-bottom:1px solid #f3f4f6;">
-              <td style="padding:0.35rem 0.4rem;color:#1d70b8;font-weight:500;">Apply for State Pension</td>
-              <td style="padding:0.35rem 0.4rem;font-family:'JetBrains Mono',monospace;font-size:0.6rem;color:#6b7280;">james-w</td>
-              <td style="padding:0.35rem 0.4rem;"><span style="background:#f3f4f6;padding:0.1rem 0.3rem;border-radius:2px;font-family:'JetBrains Mono',monospace;font-size:0.6rem;">completed</span></td>
-              <td style="padding:0.35rem 0.4rem;"><span style="background:#dcfce7;color:#166534;font-size:0.6rem;font-weight:600;padding:0.1rem 0.3rem;border-radius:2px;">completed</span></td>
-              <td style="padding:0.35rem 0.4rem;"><div style="display:flex;align-items:center;gap:0.3rem;"><div style="width:40px;height:3px;background:#e5e7eb;border-radius:2px;overflow:hidden;"><div style="width:100%;height:100%;background:#16a34a;border-radius:2px;"></div></div><span style="font-size:0.6rem;color:#9ca3af;">100%</span></div></td>
-            </tr>
-            <tr>
-              <td style="padding:0.35rem 0.4rem;color:#1d70b8;font-weight:500;">Report a change of circumstances</td>
-              <td style="padding:0.35rem 0.4rem;font-family:'JetBrains Mono',monospace;font-size:0.6rem;color:#6b7280;">priya-k</td>
-              <td style="padding:0.35rem 0.4rem;"><span style="background:#f3f4f6;padding:0.1rem 0.3rem;border-radius:2px;font-family:'JetBrains Mono',monospace;font-size:0.6rem;">handed-off</span></td>
-              <td style="padding:0.35rem 0.4rem;"><span style="background:#fef3c7;color:#92400e;font-size:0.6rem;font-weight:600;padding:0.1rem 0.3rem;border-radius:2px;">handed-off</span></td>
-              <td style="padding:0.35rem 0.4rem;"><div style="display:flex;align-items:center;gap:0.3rem;"><div style="width:40px;height:3px;background:#e5e7eb;border-radius:2px;overflow:hidden;"><div style="width:40%;height:100%;background:#f59e0b;border-radius:2px;"></div></div><span style="font-size:0.6rem;color:#9ca3af;">40%</span></div></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- ── 5b: Services List ── -->
-    <h3 style="margin-top:3rem;color:#1d70b8;">Services List</h3>
-    <p style="color:#505a5f;font-size:0.95rem;margin-bottom:1rem;">
-      The hub for managing all registered services. Each service shows its typology badge, source (Full or Graph), artefact status pills (green tick or red cross for Policy, State Model, Consent), completeness percentage, and action buttons. Filters by typology, department, source, and search.
-    </p>
-
-    <div class="ui-specimen">
-      <div class="ui-specimen-header">
-        <span class="dot" style="background:#f87171;"></span>
-        <span class="dot" style="background:#fbbf24;"></span>
-        <span class="dot" style="background:#34d399;"></span>
-        Studio &mdash; Services
-      </div>
-      <div class="ui-specimen-body">
-        <!-- Typology bar -->
-        <div style="display:flex;gap:0.35rem;flex-wrap:wrap;margin-bottom:0.75rem;padding-bottom:0.75rem;border-bottom:1px solid #f3f4f6;">
-          <span style="font-size:0.65rem;font-weight:600;color:#505a5f;padding:0.15rem 0;margin-right:0.25rem;">Typologies</span>
-          <span class="ui-badge ui-badge-benefit">&pound; Benefit 24</span>
-          <span class="ui-badge ui-badge-obligation">! Obligation 18</span>
-          <span class="ui-badge ui-badge-registration">R Registration 22</span>
-          <span class="ui-badge ui-badge-application">A Application 15</span>
-          <span class="ui-badge ui-badge-document">D Document 14</span>
-        </div>
-        <!-- Service rows -->
-        <div class="ui-service-row">
-          <div style="flex:1;min-width:0;">
-            <div class="ui-service-name">Renew a driving licence</div>
-            <div class="ui-service-dept">DVLA</div>
-          </div>
-          <span class="ui-badge ui-badge-document" style="margin-right:0.25rem;">Document</span>
-          <span class="ui-badge ui-badge-full" style="margin-right:0.5rem;">Full</span>
-          <div class="ui-artefact-pills">
-            <span class="ui-pill ui-pill-ok">&#10003; Policy</span>
-            <span class="ui-pill ui-pill-ok">&#10003; States</span>
-            <span class="ui-pill ui-pill-ok">&#10003; Consent</span>
-          </div>
-          <div class="ui-completeness" style="margin-left:0.5rem;">100%</div>
-        </div>
-        <div class="ui-service-row">
-          <div style="flex:1;min-width:0;">
-            <div class="ui-service-name">Apply for Universal Credit</div>
-            <div class="ui-service-dept">DWP</div>
-          </div>
-          <span class="ui-badge ui-badge-benefit" style="margin-right:0.25rem;">Benefit</span>
-          <span class="ui-badge ui-badge-full" style="margin-right:0.5rem;">Full</span>
-          <div class="ui-artefact-pills">
-            <span class="ui-pill ui-pill-ok">&#10003; Policy</span>
-            <span class="ui-pill ui-pill-ok">&#10003; States</span>
-            <span class="ui-pill ui-pill-ok">&#10003; Consent</span>
-          </div>
-          <div class="ui-completeness" style="margin-left:0.5rem;">100%</div>
-        </div>
-        <div class="ui-service-row">
-          <div style="flex:1;min-width:0;">
-            <div class="ui-service-name">Register to vote</div>
-            <div class="ui-service-dept">Cabinet Office</div>
-          </div>
-          <span class="ui-badge ui-badge-registration" style="margin-right:0.25rem;">Registration</span>
-          <span class="ui-badge ui-badge-graph" style="margin-right:0.5rem;">Graph</span>
-          <div class="ui-artefact-pills">
-            <span class="ui-pill ui-pill-missing">&#10007; Policy</span>
-            <span class="ui-pill ui-pill-missing">&#10007; States</span>
-            <span class="ui-pill ui-pill-missing">&#10007; Consent</span>
-          </div>
-          <div class="ui-completeness" style="margin-left:0.5rem;color:#d4351c;">25%</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ── 5c: Service States Panel ── -->
-    <h3 style="margin-top:3rem;color:#912b88;">Service States Panel</h3>
-    <p style="color:#505a5f;font-size:0.95rem;margin-bottom:1rem;">
-      Every service has a state machine that defines the citizen's journey. The Studio visualises this as a horizontal flow. Completed states are green, the current state is highlighted in blue, and pending states are grey. This same state flow appears in the operational ledger for each individual case.
-    </p>
-
-    <div class="two-col-split">
-      <div>
-        <h4>How state models work</h4>
-        <p style="color:#505a5f;font-size:0.95rem;margin-bottom:1rem;">
-          A state model defines the valid paths through a service. Every service starts at <code>not-started</code> and ends at one of three terminal states: <code>completed</code> (success), <code>rejected</code> (ineligible), or <code>handed-off</code> (escalated to human).
-        </p>
-        <p style="color:#505a5f;font-size:0.95rem;margin-bottom:1rem;">
-          Transitions are guarded &mdash; the system only allows moves that are defined in the model. This makes the agent's behaviour deterministic at the service layer, even though the language layer is probabilistic. The agent cannot skip steps, cannot move backwards, and cannot reach a state without satisfying the transition conditions.
-        </p>
-        <p style="color:#505a5f;font-size:0.95rem;">
-          States marked with <code>receipt: true</code> automatically generate a citizen-facing receipt when entered &mdash; proof of what happened at that point in the journey.
-        </p>
-      </div>
-      <div>
-        <!-- State Flow Specimen -->
-        <div class="ui-specimen" style="margin-top:0;">
-          <div class="ui-specimen-header">
-            <span class="dot" style="background:#f87171;"></span>
-            <span class="dot" style="background:#fbbf24;"></span>
-            <span class="dot" style="background:#34d399;"></span>
-            State Progress &mdash; Renew Driving Licence
+            <span class="dot" style="background: #f87171"></span>
+            <span class="dot" style="background: #fbbf24"></span>
+            <span class="dot" style="background: #34d399"></span>
+            Studio &mdash; Dashboard
           </div>
           <div class="ui-specimen-body">
-            <div class="ui-state-flow">
-              <div class="ui-state ui-state-done">not-started</div>
-              <span class="ui-state-arrow">&rarr;</span>
-              <div class="ui-state ui-state-done">identity-verified</div>
-              <span class="ui-state-arrow">&rarr;</span>
-              <div class="ui-state ui-state-done">eligibility-checked</div>
-              <span class="ui-state-arrow">&rarr;</span>
-              <div class="ui-state ui-state-current">consent-given</div>
-              <span class="ui-state-arrow">&rarr;</span>
-              <div class="ui-state ui-state-pending">details-confirmed</div>
-              <span class="ui-state-arrow">&rarr;</span>
-              <div class="ui-state ui-state-pending">photo-submitted</div>
-              <span class="ui-state-arrow">&rarr;</span>
-              <div class="ui-state ui-state-pending">payment-made</div>
-              <span class="ui-state-arrow">&rarr;</span>
-              <div class="ui-state ui-state-pending">application-submitted</div>
-              <span class="ui-state-arrow">&rarr;</span>
-              <div class="ui-state ui-state-pending">completed</div>
+            <div class="ui-kpi-row" style="margin-bottom: 1rem">
+              <div class="ui-kpi">
+                <div class="ui-kpi-label">Services</div>
+                <div class="ui-kpi-value">108</div>
+              </div>
+              <div class="ui-kpi">
+                <div class="ui-kpi-label">Total Cases</div>
+                <div class="ui-kpi-value">1,247</div>
+              </div>
+              <div class="ui-kpi">
+                <div class="ui-kpi-label">Active Cases</div>
+                <div class="ui-kpi-value">84</div>
+              </div>
+              <div class="ui-kpi">
+                <div class="ui-kpi-label">Completion Rate</div>
+                <div class="ui-kpi-value">76%</div>
+              </div>
             </div>
-            <div style="margin-top:0.75rem;padding-top:0.75rem;border-top:1px solid #f3f4f6;font-size:0.7rem;color:#6b7280;">
-              <strong style="color:#0b0c0c;">Transition guard:</strong> eligibility-checked &rarr; consent-given requires condition <code style="font-size:0.65rem;background:#f3f2f1;padding:0.1rem 0.25rem;border-radius:2px;">eligible</code>
+            <div
+              style="
+                font-size: 0.7rem;
+                font-weight: 600;
+                text-transform: uppercase;
+                letter-spacing: 0.04em;
+                color: #9ca3af;
+                margin-bottom: 0.5rem;
+              "
+            >
+              Recent Cases
             </div>
-            <div style="margin-top:0.35rem;font-size:0.7rem;color:#6b7280;">
-              <strong style="color:#0b0c0c;">Terminal states:</strong>
-              <span style="color:#16a34a;">completed</span> &middot;
-              <span style="color:#dc2626;">rejected</span> &middot;
-              <span style="color:#f59e0b;">handed-off</span>
+            <table
+              style="width: 100%; border-collapse: collapse; font-size: 0.72rem"
+            >
+              <thead>
+                <tr
+                  style="
+                    border-bottom: 1px solid #e5e7eb;
+                    color: #9ca3af;
+                    font-size: 0.6rem;
+                    text-transform: uppercase;
+                    letter-spacing: 0.04em;
+                  "
+                >
+                  <th style="text-align: left; padding: 0.3rem 0.4rem">
+                    Service
+                  </th>
+                  <th style="text-align: left; padding: 0.3rem 0.4rem">User</th>
+                  <th style="text-align: left; padding: 0.3rem 0.4rem">
+                    State
+                  </th>
+                  <th style="text-align: left; padding: 0.3rem 0.4rem">
+                    Status
+                  </th>
+                  <th style="text-align: left; padding: 0.3rem 0.4rem">
+                    Progress
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr style="border-bottom: 1px solid #f3f4f6">
+                  <td
+                    style="
+                      padding: 0.35rem 0.4rem;
+                      color: #1d70b8;
+                      font-weight: 500;
+                    "
+                  >
+                    Renew driving licence
+                  </td>
+                  <td
+                    style="
+                      padding: 0.35rem 0.4rem;
+                      font-family: &quot;JetBrains Mono&quot;, monospace;
+                      font-size: 0.6rem;
+                      color: #6b7280;
+                    "
+                  >
+                    margaret-t
+                  </td>
+                  <td style="padding: 0.35rem 0.4rem">
+                    <span
+                      style="
+                        background: #f3f4f6;
+                        padding: 0.1rem 0.3rem;
+                        border-radius: 2px;
+                        font-family: &quot;JetBrains Mono&quot;, monospace;
+                        font-size: 0.6rem;
+                      "
+                      >consent-given</span
+                    >
+                  </td>
+                  <td style="padding: 0.35rem 0.4rem">
+                    <span
+                      style="
+                        background: #dbeafe;
+                        color: #1d4ed8;
+                        font-size: 0.6rem;
+                        font-weight: 600;
+                        padding: 0.1rem 0.3rem;
+                        border-radius: 2px;
+                      "
+                      >in-progress</span
+                    >
+                  </td>
+                  <td style="padding: 0.35rem 0.4rem">
+                    <div
+                      style="display: flex; align-items: center; gap: 0.3rem"
+                    >
+                      <div
+                        style="
+                          width: 40px;
+                          height: 3px;
+                          background: #e5e7eb;
+                          border-radius: 2px;
+                          overflow: hidden;
+                        "
+                      >
+                        <div
+                          style="
+                            width: 55%;
+                            height: 100%;
+                            background: #1d70b8;
+                            border-radius: 2px;
+                          "
+                        ></div>
+                      </div>
+                      <span style="font-size: 0.6rem; color: #9ca3af">55%</span>
+                    </div>
+                  </td>
+                </tr>
+                <tr style="border-bottom: 1px solid #f3f4f6">
+                  <td
+                    style="
+                      padding: 0.35rem 0.4rem;
+                      color: #1d70b8;
+                      font-weight: 500;
+                    "
+                  >
+                    Apply for State Pension
+                  </td>
+                  <td
+                    style="
+                      padding: 0.35rem 0.4rem;
+                      font-family: &quot;JetBrains Mono&quot;, monospace;
+                      font-size: 0.6rem;
+                      color: #6b7280;
+                    "
+                  >
+                    james-w
+                  </td>
+                  <td style="padding: 0.35rem 0.4rem">
+                    <span
+                      style="
+                        background: #f3f4f6;
+                        padding: 0.1rem 0.3rem;
+                        border-radius: 2px;
+                        font-family: &quot;JetBrains Mono&quot;, monospace;
+                        font-size: 0.6rem;
+                      "
+                      >completed</span
+                    >
+                  </td>
+                  <td style="padding: 0.35rem 0.4rem">
+                    <span
+                      style="
+                        background: #dcfce7;
+                        color: #166534;
+                        font-size: 0.6rem;
+                        font-weight: 600;
+                        padding: 0.1rem 0.3rem;
+                        border-radius: 2px;
+                      "
+                      >completed</span
+                    >
+                  </td>
+                  <td style="padding: 0.35rem 0.4rem">
+                    <div
+                      style="display: flex; align-items: center; gap: 0.3rem"
+                    >
+                      <div
+                        style="
+                          width: 40px;
+                          height: 3px;
+                          background: #e5e7eb;
+                          border-radius: 2px;
+                          overflow: hidden;
+                        "
+                      >
+                        <div
+                          style="
+                            width: 100%;
+                            height: 100%;
+                            background: #16a34a;
+                            border-radius: 2px;
+                          "
+                        ></div>
+                      </div>
+                      <span style="font-size: 0.6rem; color: #9ca3af"
+                        >100%</span
+                      >
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td
+                    style="
+                      padding: 0.35rem 0.4rem;
+                      color: #1d70b8;
+                      font-weight: 500;
+                    "
+                  >
+                    Report a change of circumstances
+                  </td>
+                  <td
+                    style="
+                      padding: 0.35rem 0.4rem;
+                      font-family: &quot;JetBrains Mono&quot;, monospace;
+                      font-size: 0.6rem;
+                      color: #6b7280;
+                    "
+                  >
+                    priya-k
+                  </td>
+                  <td style="padding: 0.35rem 0.4rem">
+                    <span
+                      style="
+                        background: #f3f4f6;
+                        padding: 0.1rem 0.3rem;
+                        border-radius: 2px;
+                        font-family: &quot;JetBrains Mono&quot;, monospace;
+                        font-size: 0.6rem;
+                      "
+                      >handed-off</span
+                    >
+                  </td>
+                  <td style="padding: 0.35rem 0.4rem">
+                    <span
+                      style="
+                        background: #fef3c7;
+                        color: #92400e;
+                        font-size: 0.6rem;
+                        font-weight: 600;
+                        padding: 0.1rem 0.3rem;
+                        border-radius: 2px;
+                      "
+                      >handed-off</span
+                    >
+                  </td>
+                  <td style="padding: 0.35rem 0.4rem">
+                    <div
+                      style="display: flex; align-items: center; gap: 0.3rem"
+                    >
+                      <div
+                        style="
+                          width: 40px;
+                          height: 3px;
+                          background: #e5e7eb;
+                          border-radius: 2px;
+                          overflow: hidden;
+                        "
+                      >
+                        <div
+                          style="
+                            width: 40%;
+                            height: 100%;
+                            background: #f59e0b;
+                            border-radius: 2px;
+                          "
+                        ></div>
+                      </div>
+                      <span style="font-size: 0.6rem; color: #9ca3af">40%</span>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ── 5b: Services List ── -->
+        <h3 style="margin-top: 3rem; color: #1d70b8">Services List</h3>
+        <p style="color: #505a5f; font-size: 0.95rem; margin-bottom: 1rem">
+          The hub for managing all registered services. Each service shows its
+          typology badge, source (Full or Graph), artefact status pills (green
+          tick or red cross for Policy, State Model, Consent), completeness
+          percentage, and action buttons. Filters by typology, department,
+          source, and search.
+        </p>
+
+        <div class="ui-specimen">
+          <div class="ui-specimen-header">
+            <span class="dot" style="background: #f87171"></span>
+            <span class="dot" style="background: #fbbf24"></span>
+            <span class="dot" style="background: #34d399"></span>
+            Studio &mdash; Services
+          </div>
+          <div class="ui-specimen-body">
+            <!-- Typology bar -->
+            <div
+              style="
+                display: flex;
+                gap: 0.35rem;
+                flex-wrap: wrap;
+                margin-bottom: 0.75rem;
+                padding-bottom: 0.75rem;
+                border-bottom: 1px solid #f3f4f6;
+              "
+            >
+              <span
+                style="
+                  font-size: 0.65rem;
+                  font-weight: 600;
+                  color: #505a5f;
+                  padding: 0.15rem 0;
+                  margin-right: 0.25rem;
+                "
+                >Typologies</span
+              >
+              <span class="ui-badge ui-badge-benefit">&pound; Benefit 24</span>
+              <span class="ui-badge ui-badge-obligation">! Obligation 18</span>
+              <span class="ui-badge ui-badge-registration"
+                >R Registration 22</span
+              >
+              <span class="ui-badge ui-badge-application"
+                >A Application 15</span
+              >
+              <span class="ui-badge ui-badge-document">D Document 14</span>
             </div>
-            <div style="margin-top:0.35rem;font-size:0.7rem;color:#6b7280;">
-              <strong style="color:#0b0c0c;">Receipt states:</strong> payment-made, application-submitted, completed, rejected, handed-off
+            <!-- Service rows -->
+            <div class="ui-service-row">
+              <div style="flex: 1; min-width: 0">
+                <div class="ui-service-name">Renew a driving licence</div>
+                <div class="ui-service-dept">DVLA</div>
+              </div>
+              <span
+                class="ui-badge ui-badge-document"
+                style="margin-right: 0.25rem"
+                >Document</span
+              >
+              <span class="ui-badge ui-badge-full" style="margin-right: 0.5rem"
+                >Full</span
+              >
+              <div class="ui-artefact-pills">
+                <span class="ui-pill ui-pill-ok">&#10003; Policy</span>
+                <span class="ui-pill ui-pill-ok">&#10003; States</span>
+                <span class="ui-pill ui-pill-ok">&#10003; Consent</span>
+              </div>
+              <div class="ui-completeness" style="margin-left: 0.5rem">
+                100%
+              </div>
+            </div>
+            <div class="ui-service-row">
+              <div style="flex: 1; min-width: 0">
+                <div class="ui-service-name">Apply for Universal Credit</div>
+                <div class="ui-service-dept">DWP</div>
+              </div>
+              <span
+                class="ui-badge ui-badge-benefit"
+                style="margin-right: 0.25rem"
+                >Benefit</span
+              >
+              <span class="ui-badge ui-badge-full" style="margin-right: 0.5rem"
+                >Full</span
+              >
+              <div class="ui-artefact-pills">
+                <span class="ui-pill ui-pill-ok">&#10003; Policy</span>
+                <span class="ui-pill ui-pill-ok">&#10003; States</span>
+                <span class="ui-pill ui-pill-ok">&#10003; Consent</span>
+              </div>
+              <div class="ui-completeness" style="margin-left: 0.5rem">
+                100%
+              </div>
+            </div>
+            <div class="ui-service-row">
+              <div style="flex: 1; min-width: 0">
+                <div class="ui-service-name">Register to vote</div>
+                <div class="ui-service-dept">Cabinet Office</div>
+              </div>
+              <span
+                class="ui-badge ui-badge-registration"
+                style="margin-right: 0.25rem"
+                >Registration</span
+              >
+              <span class="ui-badge ui-badge-graph" style="margin-right: 0.5rem"
+                >Graph</span
+              >
+              <div class="ui-artefact-pills">
+                <span class="ui-pill ui-pill-missing">&#10007; Policy</span>
+                <span class="ui-pill ui-pill-missing">&#10007; States</span>
+                <span class="ui-pill ui-pill-missing">&#10007; Consent</span>
+              </div>
+              <div
+                class="ui-completeness"
+                style="margin-left: 0.5rem; color: #d4351c"
+              >
+                25%
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── 5c: Service States Panel ── -->
+        <h3 style="margin-top: 3rem; color: #912b88">Service States Panel</h3>
+        <p style="color: #505a5f; font-size: 0.95rem; margin-bottom: 1rem">
+          Every service has a state machine that defines the citizen's journey.
+          The Studio visualises this as a horizontal flow. Completed states are
+          green, the current state is highlighted in blue, and pending states
+          are grey. This same state flow appears in the operational ledger for
+          each individual case.
+        </p>
+
+        <div class="two-col-split">
+          <div>
+            <h4>How state models work</h4>
+            <p style="color: #505a5f; font-size: 0.95rem; margin-bottom: 1rem">
+              A state model defines the valid paths through a service. Every
+              service starts at <code>not-started</code> and ends at one of
+              three terminal states: <code>completed</code> (success),
+              <code>rejected</code> (ineligible), or
+              <code>handed-off</code> (escalated to human).
+            </p>
+            <p style="color: #505a5f; font-size: 0.95rem; margin-bottom: 1rem">
+              Transitions are guarded &mdash; the system only allows moves that
+              are defined in the model. This makes the agent's behaviour
+              deterministic at the service layer, even though the language layer
+              is probabilistic. The agent cannot skip steps, cannot move
+              backwards, and cannot reach a state without satisfying the
+              transition conditions.
+            </p>
+            <p style="color: #505a5f; font-size: 0.95rem">
+              States marked with <code>receipt: true</code> automatically
+              generate a citizen-facing receipt when entered &mdash; proof of
+              what happened at that point in the journey.
+            </p>
+          </div>
+          <div>
+            <!-- State Flow Specimen -->
+            <div class="ui-specimen" style="margin-top: 0">
+              <div class="ui-specimen-header">
+                <span class="dot" style="background: #f87171"></span>
+                <span class="dot" style="background: #fbbf24"></span>
+                <span class="dot" style="background: #34d399"></span>
+                State Progress &mdash; Renew Driving Licence
+              </div>
+              <div class="ui-specimen-body">
+                <div class="ui-state-flow">
+                  <div class="ui-state ui-state-done">not-started</div>
+                  <span class="ui-state-arrow">&rarr;</span>
+                  <div class="ui-state ui-state-done">identity-verified</div>
+                  <span class="ui-state-arrow">&rarr;</span>
+                  <div class="ui-state ui-state-done">eligibility-checked</div>
+                  <span class="ui-state-arrow">&rarr;</span>
+                  <div class="ui-state ui-state-current">consent-given</div>
+                  <span class="ui-state-arrow">&rarr;</span>
+                  <div class="ui-state ui-state-pending">details-confirmed</div>
+                  <span class="ui-state-arrow">&rarr;</span>
+                  <div class="ui-state ui-state-pending">photo-submitted</div>
+                  <span class="ui-state-arrow">&rarr;</span>
+                  <div class="ui-state ui-state-pending">payment-made</div>
+                  <span class="ui-state-arrow">&rarr;</span>
+                  <div class="ui-state ui-state-pending">
+                    application-submitted
+                  </div>
+                  <span class="ui-state-arrow">&rarr;</span>
+                  <div class="ui-state ui-state-pending">completed</div>
+                </div>
+                <div
+                  style="
+                    margin-top: 0.75rem;
+                    padding-top: 0.75rem;
+                    border-top: 1px solid #f3f4f6;
+                    font-size: 0.7rem;
+                    color: #6b7280;
+                  "
+                >
+                  <strong style="color: #0b0c0c">Transition guard:</strong>
+                  eligibility-checked &rarr; consent-given requires condition
+                  <code
+                    style="
+                      font-size: 0.65rem;
+                      background: #f3f2f1;
+                      padding: 0.1rem 0.25rem;
+                      border-radius: 2px;
+                    "
+                    >eligible</code
+                  >
+                </div>
+                <div
+                  style="margin-top: 0.35rem; font-size: 0.7rem; color: #6b7280"
+                >
+                  <strong style="color: #0b0c0c">Terminal states:</strong>
+                  <span style="color: #16a34a">completed</span> &middot;
+                  <span style="color: #dc2626">rejected</span> &middot;
+                  <span style="color: #f59e0b">handed-off</span>
+                </div>
+                <div
+                  style="margin-top: 0.35rem; font-size: 0.7rem; color: #6b7280"
+                >
+                  <strong style="color: #0b0c0c">Receipt states:</strong>
+                  payment-made, application-submitted, completed, rejected,
+                  handed-off
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── 5d: Evidence & Trace Explorer ── -->
+        <h3 style="margin-top: 3rem; color: #00703c">
+          Evidence Plane &amp; Trace Explorer
+        </h3>
+        <p style="color: #505a5f; font-size: 0.95rem; margin-bottom: 1rem">
+          Every agent interaction generates an immutable trace. The Evidence
+          page has two modes: <strong>Explorer</strong> for filtering and
+          searching events, and <strong>Replay</strong> for stepping through a
+          session chronologically. Each event is colour-coded by type and
+          expandable to show its full JSON payload.
+        </p>
+
+        <div class="ui-specimen">
+          <div class="ui-specimen-header">
+            <span class="dot" style="background: #f87171"></span>
+            <span class="dot" style="background: #fbbf24"></span>
+            <span class="dot" style="background: #34d399"></span>
+            Studio &mdash; Trace Explorer
+          </div>
+          <div class="ui-specimen-body">
+            <!-- Filter chips -->
+            <div
+              style="
+                display: flex;
+                gap: 0.25rem;
+                flex-wrap: wrap;
+                margin-bottom: 0.75rem;
+              "
+            >
+              <span
+                style="
+                  font-size: 0.6rem;
+                  font-weight: 600;
+                  padding: 0.2rem 0.4rem;
+                  border-radius: 2px;
+                  background: #1d70b8;
+                  color: #fff;
+                "
+                >All (23)</span
+              >
+              <span
+                style="
+                  font-size: 0.6rem;
+                  font-weight: 500;
+                  padding: 0.2rem 0.4rem;
+                  border-radius: 2px;
+                  border: 1px solid #d1d5db;
+                  color: #505a5f;
+                "
+                >llm.request (4)</span
+              >
+              <span
+                style="
+                  font-size: 0.6rem;
+                  font-weight: 500;
+                  padding: 0.2rem 0.4rem;
+                  border-radius: 2px;
+                  border: 1px solid #d1d5db;
+                  color: #505a5f;
+                "
+                >policy.evaluated (2)</span
+              >
+              <span
+                style="
+                  font-size: 0.6rem;
+                  font-weight: 500;
+                  padding: 0.2rem 0.4rem;
+                  border-radius: 2px;
+                  border: 1px solid #d1d5db;
+                  color: #505a5f;
+                "
+                >state.transition (5)</span
+              >
+              <span
+                style="
+                  font-size: 0.6rem;
+                  font-weight: 500;
+                  padding: 0.2rem 0.4rem;
+                  border-radius: 2px;
+                  border: 1px solid #d1d5db;
+                  color: #505a5f;
+                "
+                >consent.granted (3)</span
+              >
+              <span
+                style="
+                  font-size: 0.6rem;
+                  font-weight: 500;
+                  padding: 0.2rem 0.4rem;
+                  border-radius: 2px;
+                  border: 1px solid #d1d5db;
+                  color: #505a5f;
+                "
+                >receipt.issued (4)</span
+              >
+            </div>
+            <!-- Trace events -->
+            <div class="ui-trace-event">
+              <span class="ui-trace-badge ui-trace-purple">llm.request</span>
+              <span class="ui-trace-time">14:23:01</span>
+              <span class="ui-trace-detail"
+                >System prompt + 3 messages &rarr; Claude Sonnet (8K thinking
+                budget)</span
+              >
+            </div>
+            <div class="ui-trace-event">
+              <span class="ui-trace-badge ui-trace-purple">llm.response</span>
+              <span class="ui-trace-time">14:23:04</span>
+              <span class="ui-trace-detail"
+                >1,247 tokens &middot; 2 tool calls &middot; 3.2s latency</span
+              >
+            </div>
+            <div class="ui-trace-event">
+              <span class="ui-trace-badge ui-trace-indigo"
+                >policy.evaluated</span
+              >
+              <span class="ui-trace-time">14:23:04</span>
+              <span class="ui-trace-detail"
+                >dvla.renew-licence.eligibility &mdash; 4/4 rules passed
+                &middot; eligible</span
+              >
+            </div>
+            <div class="ui-trace-event">
+              <span class="ui-trace-badge ui-trace-green">consent.granted</span>
+              <span class="ui-trace-time">14:23:06</span>
+              <span class="ui-trace-detail"
+                >identity-verification &mdash; [full_name, date_of_birth, NI]
+                from one-login</span
+              >
+            </div>
+            <div class="ui-trace-event">
+              <span class="ui-trace-badge ui-trace-teal">state.transition</span>
+              <span class="ui-trace-time">14:23:06</span>
+              <span class="ui-trace-detail"
+                >eligibility-checked &rarr; consent-given (trigger:
+                grant-consent)</span
+              >
+            </div>
+            <div class="ui-trace-event">
+              <span class="ui-trace-badge ui-trace-emerald"
+                >receipt.issued</span
+              >
+              <span class="ui-trace-time">14:23:06</span>
+              <span class="ui-trace-detail"
+                >Consent granted for identity-verification &middot;
+                session-scoped</span
+              >
+            </div>
+          </div>
+        </div>
+
+        <!-- ── 5e: Gap Analysis ── -->
+        <h3 style="margin-top: 3rem; color: #f47738">Gap Analysis</h3>
+        <p style="color: #505a5f; font-size: 0.95rem; margin-bottom: 1rem">
+          A system-wide view of artefact completeness. Shows which services have
+          all four artefacts and which have gaps. Surfaces the total gap count
+          and average completeness. Services with gaps can be batch-generated
+          directly from this view.
+        </p>
+
+        <div class="ui-specimen">
+          <div class="ui-specimen-header">
+            <span class="dot" style="background: #f87171"></span>
+            <span class="dot" style="background: #fbbf24"></span>
+            <span class="dot" style="background: #34d399"></span>
+            Studio &mdash; Gap Analysis
+          </div>
+          <div class="ui-specimen-body">
+            <div
+              style="
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 0.5rem;
+                margin-bottom: 0.75rem;
+              "
+            >
+              <div class="ui-kpi" style="padding: 0.6rem">
+                <div class="ui-kpi-label">Services</div>
+                <div class="ui-kpi-value" style="font-size: 1.1rem">108</div>
+              </div>
+              <div class="ui-kpi" style="padding: 0.6rem">
+                <div class="ui-kpi-label">Avg Completeness</div>
+                <div class="ui-kpi-value" style="font-size: 1.1rem">72%</div>
+              </div>
+              <div class="ui-kpi" style="padding: 0.6rem">
+                <div class="ui-kpi-label">Total Gaps</div>
+                <div
+                  class="ui-kpi-value"
+                  style="font-size: 1.1rem; color: #d4351c"
+                >
+                  84
+                </div>
+              </div>
+            </div>
+            <table class="ui-gap-table">
+              <thead>
+                <tr>
+                  <th>Service</th>
+                  <th>Dept</th>
+                  <th style="text-align: center">Manifest</th>
+                  <th style="text-align: center">Policy</th>
+                  <th style="text-align: center">States</th>
+                  <th style="text-align: center">Consent</th>
+                  <th style="text-align: right">Complete</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style="color: #1d70b8; font-weight: 500">
+                    Renew driving licence
+                  </td>
+                  <td style="color: #9ca3af">DVLA</td>
+                  <td style="text-align: center" class="check">&#10003;</td>
+                  <td style="text-align: center" class="check">&#10003;</td>
+                  <td style="text-align: center" class="check">&#10003;</td>
+                  <td style="text-align: center" class="check">&#10003;</td>
+                  <td style="text-align: right">
+                    <div
+                      style="
+                        display: flex;
+                        align-items: center;
+                        gap: 0.3rem;
+                        justify-content: flex-end;
+                      "
+                    >
+                      <div class="ui-gap-bar" style="width: 48px">
+                        <div
+                          class="ui-gap-bar-fill"
+                          style="width: 100%; background: #16a34a"
+                        ></div>
+                      </div>
+                      <strong>100%</strong>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="color: #1d70b8; font-weight: 500">
+                    Register to vote
+                  </td>
+                  <td style="color: #9ca3af">Cabinet Office</td>
+                  <td style="text-align: center" class="check">&#10003;</td>
+                  <td style="text-align: center" class="cross">&#10007;</td>
+                  <td style="text-align: center" class="cross">&#10007;</td>
+                  <td style="text-align: center" class="cross">&#10007;</td>
+                  <td style="text-align: right">
+                    <div
+                      style="
+                        display: flex;
+                        align-items: center;
+                        gap: 0.3rem;
+                        justify-content: flex-end;
+                      "
+                    >
+                      <div class="ui-gap-bar" style="width: 48px">
+                        <div class="ui-gap-bar-fill" style="width: 25%"></div>
+                      </div>
+                      <strong style="color: #d4351c">25%</strong>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="color: #1d70b8; font-weight: 500">
+                    Apply for State Pension
+                  </td>
+                  <td style="color: #9ca3af">DWP</td>
+                  <td style="text-align: center" class="check">&#10003;</td>
+                  <td style="text-align: center" class="check">&#10003;</td>
+                  <td style="text-align: center" class="check">&#10003;</td>
+                  <td style="text-align: center" class="cross">&#10007;</td>
+                  <td style="text-align: right">
+                    <div
+                      style="
+                        display: flex;
+                        align-items: center;
+                        gap: 0.3rem;
+                        justify-content: flex-end;
+                      "
+                    >
+                      <div class="ui-gap-bar" style="width: 48px">
+                        <div class="ui-gap-bar-fill" style="width: 75%"></div>
+                      </div>
+                      <strong>75%</strong>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ── 5f: Operational Ledger ── -->
+        <h3 style="margin-top: 3rem; color: #1d70b8">Operational Ledger</h3>
+        <p style="color: #505a5f; font-size: 0.95rem; margin-bottom: 1rem">
+          Each service has its own ledger showing per-service KPIs (total cases,
+          active, completed, rejected, handed-off, completion rate, handoff
+          rate, average progress), a status distribution bar, agent vs human
+          action ratios, bottleneck analysis, and a paginated case list.
+          Clicking a case opens the full timeline view.
+        </p>
+
+        <div class="grid-2">
+          <div class="card card-accent card-blue">
+            <h4>Ledger KPIs</h4>
+            <p>
+              Total, active, completed, rejected, and handed-off case counts.
+              Completion rate and handoff rate as percentages. Average progress
+              across all open cases.
+            </p>
+          </div>
+          <div class="card card-accent card-green">
+            <h4>Status distribution</h4>
+            <p>
+              Stacked horizontal bar showing the proportion of cases in each
+              status. Gives an immediate visual sense of whether the service is
+              healthy.
+            </p>
+          </div>
+          <div class="card card-accent card-purple">
+            <h4>Agent vs human actions</h4>
+            <p>
+              Side-by-side bars showing what percentage of actions were taken by
+              the agent versus requiring human intervention.
+            </p>
+          </div>
+          <div class="card card-accent card-orange">
+            <h4>Bottleneck analysis</h4>
+            <p>
+              Bar chart of states ranked by how many cases are currently stuck
+              at each state. Surfaces where the journey is breaking down.
+            </p>
+          </div>
+        </div>
+
+        <!-- ── 5g: Personas ── -->
+        <h3 style="margin-top: 3rem; color: #0b7285">Persona Management</h3>
+        <p style="color: #505a5f; font-size: 0.95rem; margin-bottom: 1rem">
+          The Personas section manages test citizens used for simulation. Each
+          persona has structured identity data (name, DOB, NI number, employment
+          status, income, savings), address, communication style preferences
+          (tone, tech-savviness, reassurance needs), credentials, family
+          details, health information, and more. Personas can be AI-generated
+          from a scenario description or hand-crafted through the form editor.
+        </p>
+
+        <div class="callout callout-blue">
+          <strong>Why personas matter:</strong> Service definitions are tested
+          by running simulated citizen journeys against them. A persona with
+          edge-case attributes (over 70, medical condition, non-UK address) will
+          exercise different branches of the policy ruleset and state model than
+          a standard applicant.
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════════ -->
+    <!-- ── Section 6: Architecture & Decoupling ── -->
+    <!-- ══════════════════════════════════════════════════════ -->
+    <section class="section section-alt" id="architecture">
+      <div class="container">
+        <h2>Architecture: the decoupled stack</h2>
+        <p class="section-intro">
+          The most important design decision in the stack is the separation
+          between <em>service infrastructure</em> and <em>agent products</em>.
+          The Studio builds the infrastructure. Agent products consume it.
+        </p>
+
+        <div class="layer-stack" style="max-width: 660px; margin: 0 auto 2rem">
+          <div
+            class="layer"
+            style="border-left: 4px solid #912b88; background: #f5eaf4"
+          >
+            <div class="layer-label" style="color: #912b88">
+              Agent Products &mdash; Swappable
+            </div>
+            <div class="layer-title">Citizen App (chatbot, voice, form)</div>
+            <div class="layer-desc">
+              Any front-end that speaks to citizens. Can be a conversational
+              agent, a traditional web form, a voice assistant, or a mobile app.
+              Multiple products can consume the same services simultaneously.
+            </div>
+          </div>
+          <div class="layer" style="border-left: 4px solid #1d70b8">
+            <div class="layer-label" style="color: #1d70b8">
+              Orchestration Layer
+            </div>
+            <div class="layer-title">Orchestrator + LLM Adapter</div>
+            <div class="layer-desc">
+              Deterministic state machine that loads artefacts, evaluates
+              policy, manages state transitions, and only delegates language
+              generation to the LLM. The agent proposes; the orchestrator
+              disposes.
+            </div>
+          </div>
+          <div
+            class="layer"
+            style="border-left: 4px solid #00703c; background: #e6f4ea"
+          >
+            <div class="layer-label" style="color: #00703c">
+              Service Infrastructure &mdash; Stable
+            </div>
+            <div class="layer-title">
+              Legibility Artefacts (Manifest + Policy + State Model + Consent)
+            </div>
+            <div class="layer-desc">
+              Machine-readable service definitions authored in the Legibility
+              Studio. Versioned, validated, and governed independently of any
+              agent. This is the layer that ensures legibility regardless of
+              which product sits above it.
+            </div>
+          </div>
+          <div class="layer" style="border-left: 4px solid #f47738">
+            <div class="layer-label" style="color: #f47738">Evidence Layer</div>
+            <div class="layer-title">Immutable Trace Store + Receipts</div>
+            <div class="layer-desc">
+              Append-only audit trail. Every decision, every data access, every
+              state transition is recorded. Citizen-facing receipts are
+              generated automatically at key states.
+            </div>
+          </div>
+        </div>
+
+        <div class="two-col-split">
+          <div>
+            <h3>Why decoupling matters</h3>
+            <p style="color: #505a5f; font-size: 0.95rem; margin-bottom: 1rem">
+              Without decoupling, every AI agent product becomes a vertically
+              integrated silo. Each chatbot implements its own eligibility
+              logic, its own state tracking, its own consent model. The rules
+              diverge. Auditability becomes impossible. When policy changes,
+              every product must be updated independently.
+            </p>
+            <p style="color: #505a5f; font-size: 0.95rem; margin-bottom: 1rem">
+              With the decoupled stack, service definitions are infrastructure.
+              They are authored once in the Studio, versioned, and consumed by
+              any agent product through a standard interface. When policy
+              changes, the artefact is updated in one place and every product
+              inherits the change immediately.
+            </p>
+            <p style="color: #505a5f; font-size: 0.95rem">
+              This is the same principle as separating data from presentation,
+              or separating policy from implementation. The service is not the
+              chatbot. The service is the rules, the journey, the consent model,
+              and the audit trail. The chatbot is just one way to access it.
+            </p>
+          </div>
+          <div>
+            <h3>The Capability Invoker</h3>
+            <p style="color: #505a5f; font-size: 0.95rem; margin-bottom: 1rem">
+              Every service call &mdash; from any agent, through any channel
+              &mdash; routes through a single choke point called the
+              <code>CapabilityInvoker</code>. This enforces:
+            </p>
+            <div class="card" style="margin-bottom: 1rem">
+              <table
+                style="
+                  width: 100%;
+                  font-size: 0.85rem;
+                  border-collapse: collapse;
+                "
+              >
+                <tr style="border-bottom: 1px solid #e0dfde">
+                  <td style="padding: 0.4rem 0; font-weight: 600; width: 40%">
+                    Receipt generation
+                  </td>
+                  <td style="padding: 0.4rem 0; color: #505a5f">
+                    Every invocation produces a citizen receipt
+                  </td>
+                </tr>
+                <tr style="border-bottom: 1px solid #e0dfde">
+                  <td style="padding: 0.4rem 0; font-weight: 600">
+                    Trace emission
+                  </td>
+                  <td style="padding: 0.4rem 0; color: #505a5f">
+                    Every call is logged to the immutable trace store
+                  </td>
+                </tr>
+                <tr style="border-bottom: 1px solid #e0dfde">
+                  <td style="padding: 0.4rem 0; font-weight: 600">
+                    Policy enforcement
+                  </td>
+                  <td style="padding: 0.4rem 0; color: #505a5f">
+                    Eligibility is evaluated deterministically, not by the LLM
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding: 0.4rem 0; font-weight: 600">
+                    No bypasses
+                  </td>
+                  <td style="padding: 0.4rem 0; color: #505a5f">
+                    There is no alternative path. Every agent goes through the
+                    same gate.
+                  </td>
+                </tr>
+              </table>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </section>
 
-    <!-- ── 5d: Evidence & Trace Explorer ── -->
-    <h3 style="margin-top:3rem;color:#00703c;">Evidence Plane &amp; Trace Explorer</h3>
-    <p style="color:#505a5f;font-size:0.95rem;margin-bottom:1rem;">
-      Every agent interaction generates an immutable trace. The Evidence page has two modes: <strong>Explorer</strong> for filtering and searching events, and <strong>Replay</strong> for stepping through a session chronologically. Each event is colour-coded by type and expandable to show its full JSON payload.
-    </p>
+    <!-- ══════════════════════════════════════════════════════ -->
+    <!-- ── Section 7: How Services Reach Citizens ── -->
+    <!-- ══════════════════════════════════════════════════════ -->
+    <section class="section" id="runtime">
+      <div class="container">
+        <h2>How a service reaches the citizen</h2>
+        <p class="section-intro">
+          From the moment a citizen starts a conversation to the moment they
+          receive a receipt &mdash; the full runtime pipeline.
+        </p>
 
-    <div class="ui-specimen">
-      <div class="ui-specimen-header">
-        <span class="dot" style="background:#f87171;"></span>
-        <span class="dot" style="background:#fbbf24;"></span>
-        <span class="dot" style="background:#34d399;"></span>
-        Studio &mdash; Trace Explorer
-      </div>
-      <div class="ui-specimen-body">
-        <!-- Filter chips -->
-        <div style="display:flex;gap:0.25rem;flex-wrap:wrap;margin-bottom:0.75rem;">
-          <span style="font-size:0.6rem;font-weight:600;padding:0.2rem 0.4rem;border-radius:2px;background:#1d70b8;color:#fff;">All (23)</span>
-          <span style="font-size:0.6rem;font-weight:500;padding:0.2rem 0.4rem;border-radius:2px;border:1px solid #d1d5db;color:#505a5f;">llm.request (4)</span>
-          <span style="font-size:0.6rem;font-weight:500;padding:0.2rem 0.4rem;border-radius:2px;border:1px solid #d1d5db;color:#505a5f;">policy.evaluated (2)</span>
-          <span style="font-size:0.6rem;font-weight:500;padding:0.2rem 0.4rem;border-radius:2px;border:1px solid #d1d5db;color:#505a5f;">state.transition (5)</span>
-          <span style="font-size:0.6rem;font-weight:500;padding:0.2rem 0.4rem;border-radius:2px;border:1px solid #d1d5db;color:#505a5f;">consent.granted (3)</span>
-          <span style="font-size:0.6rem;font-weight:500;padding:0.2rem 0.4rem;border-radius:2px;border:1px solid #d1d5db;color:#505a5f;">receipt.issued (4)</span>
-        </div>
-        <!-- Trace events -->
-        <div class="ui-trace-event">
-          <span class="ui-trace-badge ui-trace-purple">llm.request</span>
-          <span class="ui-trace-time">14:23:01</span>
-          <span class="ui-trace-detail">System prompt + 3 messages &rarr; Claude Sonnet (8K thinking budget)</span>
-        </div>
-        <div class="ui-trace-event">
-          <span class="ui-trace-badge ui-trace-purple">llm.response</span>
-          <span class="ui-trace-time">14:23:04</span>
-          <span class="ui-trace-detail">1,247 tokens &middot; 2 tool calls &middot; 3.2s latency</span>
-        </div>
-        <div class="ui-trace-event">
-          <span class="ui-trace-badge ui-trace-indigo">policy.evaluated</span>
-          <span class="ui-trace-time">14:23:04</span>
-          <span class="ui-trace-detail">dvla.renew-licence.eligibility &mdash; 4/4 rules passed &middot; eligible</span>
-        </div>
-        <div class="ui-trace-event">
-          <span class="ui-trace-badge ui-trace-green">consent.granted</span>
-          <span class="ui-trace-time">14:23:06</span>
-          <span class="ui-trace-detail">identity-verification &mdash; [full_name, date_of_birth, NI] from one-login</span>
-        </div>
-        <div class="ui-trace-event">
-          <span class="ui-trace-badge ui-trace-teal">state.transition</span>
-          <span class="ui-trace-time">14:23:06</span>
-          <span class="ui-trace-detail">eligibility-checked &rarr; consent-given (trigger: grant-consent)</span>
-        </div>
-        <div class="ui-trace-event">
-          <span class="ui-trace-badge ui-trace-emerald">receipt.issued</span>
-          <span class="ui-trace-time">14:23:06</span>
-          <span class="ui-trace-detail">Consent granted for identity-verification &middot; session-scoped</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- ── 5e: Gap Analysis ── -->
-    <h3 style="margin-top:3rem;color:#f47738;">Gap Analysis</h3>
-    <p style="color:#505a5f;font-size:0.95rem;margin-bottom:1rem;">
-      A system-wide view of artefact completeness. Shows which services have all four artefacts and which have gaps. Surfaces the total gap count and average completeness. Services with gaps can be batch-generated directly from this view.
-    </p>
-
-    <div class="ui-specimen">
-      <div class="ui-specimen-header">
-        <span class="dot" style="background:#f87171;"></span>
-        <span class="dot" style="background:#fbbf24;"></span>
-        <span class="dot" style="background:#34d399;"></span>
-        Studio &mdash; Gap Analysis
-      </div>
-      <div class="ui-specimen-body">
-        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:0.5rem;margin-bottom:0.75rem;">
-          <div class="ui-kpi" style="padding:0.6rem;">
-            <div class="ui-kpi-label">Services</div>
-            <div class="ui-kpi-value" style="font-size:1.1rem;">108</div>
+        <div class="flow-diagram">
+          <div class="flow-label">Citizen starts conversation</div>
+          <div class="flow-row">
+            <div class="flow-node flow-node-primary">Chat message</div>
           </div>
-          <div class="ui-kpi" style="padding:0.6rem;">
-            <div class="ui-kpi-label">Avg Completeness</div>
-            <div class="ui-kpi-value" style="font-size:1.1rem;">72%</div>
+          <div class="flow-down">&darr;</div>
+          <div class="flow-row">
+            <div class="flow-node flow-node-teal">
+              Orchestrator loads artefacts
+            </div>
+            <div class="flow-arrow">&rarr;</div>
+            <div class="flow-node">Manifest</div>
+            <div class="flow-node">Policy</div>
+            <div class="flow-node">States</div>
+            <div class="flow-node">Consent</div>
           </div>
-          <div class="ui-kpi" style="padding:0.6rem;">
-            <div class="ui-kpi-label">Total Gaps</div>
-            <div class="ui-kpi-value" style="font-size:1.1rem;color:#d4351c;">84</div>
+          <div class="flow-down">&darr;</div>
+          <div class="flow-row">
+            <div class="flow-node flow-node-green">Evaluate policy</div>
+            <div class="flow-arrow">&rarr;</div>
+            <div class="flow-node flow-node-green">Check state transitions</div>
+            <div class="flow-arrow">&rarr;</div>
+            <div class="flow-node flow-node-green">Track field collection</div>
+          </div>
+          <div class="flow-down">&darr;</div>
+          <div class="flow-row">
+            <div class="flow-node flow-node-purple">
+              Build prompt with context
+            </div>
+            <div class="flow-arrow">&rarr;</div>
+            <div class="flow-node flow-node-purple">LLM generates response</div>
+          </div>
+          <div class="flow-down">&darr;</div>
+          <div class="flow-row">
+            <div class="flow-node flow-node-green">Validate output</div>
+            <div class="flow-arrow">&rarr;</div>
+            <div class="flow-node flow-node-teal">Apply state transition</div>
+            <div class="flow-arrow">&rarr;</div>
+            <div class="flow-node flow-node-orange">Emit traces + receipt</div>
+          </div>
+          <div class="flow-down">&darr;</div>
+          <div class="flow-label">
+            Citizen sees response, receipt, and current state
           </div>
         </div>
-        <table class="ui-gap-table">
+
+        <div class="callout callout-purple">
+          <strong>Determinism by design:</strong> The LLM's role is strictly
+          language generation &mdash; explaining, asking questions, extracting
+          data from natural language. All decisions about eligibility, state
+          progression, and data access are made deterministically by the
+          orchestrator using the artefacts authored in the Studio.
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════════ -->
+    <!-- ── Section 8: Trace Event Reference ── -->
+    <!-- ══════════════════════════════════════════════════════ -->
+    <section class="section section-alt" id="events">
+      <div class="container">
+        <h2>Trace event types</h2>
+        <p class="section-intro">
+          Every interaction generates a sequence of typed, timestamped events in
+          the immutable evidence store. These are the 14 event types the Studio
+          tracks.
+        </p>
+
+        <table class="data-table">
           <thead>
             <tr>
-              <th>Service</th>
-              <th>Dept</th>
-              <th style="text-align:center;">Manifest</th>
-              <th style="text-align:center;">Policy</th>
-              <th style="text-align:center;">States</th>
-              <th style="text-align:center;">Consent</th>
-              <th style="text-align:right;">Complete</th>
+              <th>Event Type</th>
+              <th>Category</th>
+              <th>What it records</th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td style="color:#1d70b8;font-weight:500;">Renew driving licence</td>
-              <td style="color:#9ca3af;">DVLA</td>
-              <td style="text-align:center;" class="check">&#10003;</td>
-              <td style="text-align:center;" class="check">&#10003;</td>
-              <td style="text-align:center;" class="check">&#10003;</td>
-              <td style="text-align:center;" class="check">&#10003;</td>
-              <td style="text-align:right;"><div style="display:flex;align-items:center;gap:0.3rem;justify-content:flex-end;"><div class="ui-gap-bar" style="width:48px;"><div class="ui-gap-bar-fill" style="width:100%;background:#16a34a;"></div></div><strong>100%</strong></div></td>
+              <td><code>llm.request</code></td>
+              <td>LLM</td>
+              <td>
+                System prompt, messages, model, token budget sent to Claude
+              </td>
             </tr>
             <tr>
-              <td style="color:#1d70b8;font-weight:500;">Register to vote</td>
-              <td style="color:#9ca3af;">Cabinet Office</td>
-              <td style="text-align:center;" class="check">&#10003;</td>
-              <td style="text-align:center;" class="cross">&#10007;</td>
-              <td style="text-align:center;" class="cross">&#10007;</td>
-              <td style="text-align:center;" class="cross">&#10007;</td>
-              <td style="text-align:right;"><div style="display:flex;align-items:center;gap:0.3rem;justify-content:flex-end;"><div class="ui-gap-bar" style="width:48px;"><div class="ui-gap-bar-fill" style="width:25%;"></div></div><strong style="color:#d4351c;">25%</strong></div></td>
+              <td><code>llm.response</code></td>
+              <td>LLM</td>
+              <td>Response text, token counts, latency, tool calls made</td>
             </tr>
             <tr>
-              <td style="color:#1d70b8;font-weight:500;">Apply for State Pension</td>
-              <td style="color:#9ca3af;">DWP</td>
-              <td style="text-align:center;" class="check">&#10003;</td>
-              <td style="text-align:center;" class="check">&#10003;</td>
-              <td style="text-align:center;" class="check">&#10003;</td>
-              <td style="text-align:center;" class="cross">&#10007;</td>
-              <td style="text-align:right;"><div style="display:flex;align-items:center;gap:0.3rem;justify-content:flex-end;"><div class="ui-gap-bar" style="width:48px;"><div class="ui-gap-bar-fill" style="width:75%;"></div></div><strong>75%</strong></div></td>
+              <td><code>capability.invoked</code></td>
+              <td>Service</td>
+              <td>
+                Service call started &mdash; capability ID, input data, context
+              </td>
+            </tr>
+            <tr>
+              <td><code>capability.result</code></td>
+              <td>Service</td>
+              <td>
+                Service call completed &mdash; success/failure, duration, output
+              </td>
+            </tr>
+            <tr>
+              <td><code>policy.evaluated</code></td>
+              <td>Policy</td>
+              <td>
+                Eligibility check result &mdash; rules passed/failed,
+                explanation
+              </td>
+            </tr>
+            <tr>
+              <td><code>consent.requested</code></td>
+              <td>Consent</td>
+              <td>Consent asked for &mdash; grant ID, data fields, purpose</td>
+            </tr>
+            <tr>
+              <td><code>consent.granted</code></td>
+              <td>Consent</td>
+              <td>
+                Citizen gave consent &mdash; grant ID, data shared, source
+              </td>
+            </tr>
+            <tr>
+              <td><code>consent.denied</code></td>
+              <td>Consent</td>
+              <td>Citizen refused consent &mdash; grant ID, reason if given</td>
+            </tr>
+            <tr>
+              <td><code>consent.revoked</code></td>
+              <td>Consent</td>
+              <td>Citizen withdrew previously granted consent</td>
+            </tr>
+            <tr>
+              <td><code>credential.requested</code></td>
+              <td>Identity</td>
+              <td>Identity credential requested from citizen</td>
+            </tr>
+            <tr>
+              <td><code>credential.presented</code></td>
+              <td>Identity</td>
+              <td>
+                Citizen presented credential &mdash; type, verification status
+              </td>
+            </tr>
+            <tr>
+              <td><code>receipt.issued</code></td>
+              <td>Evidence</td>
+              <td>
+                Citizen receipt generated &mdash; action, outcome, data summary
+              </td>
+            </tr>
+            <tr>
+              <td><code>state.transition</code></td>
+              <td>State</td>
+              <td>
+                State machine moved &mdash; from state, to state, trigger,
+                condition
+              </td>
+            </tr>
+            <tr>
+              <td><code>handoff.initiated</code></td>
+              <td>Escalation</td>
+              <td>
+                Case escalated to human &mdash; reason, department, contact
+                details
+              </td>
             </tr>
           </tbody>
         </table>
       </div>
-    </div>
+    </section>
 
-    <!-- ── 5f: Operational Ledger ── -->
-    <h3 style="margin-top:3rem;color:#1d70b8;">Operational Ledger</h3>
-    <p style="color:#505a5f;font-size:0.95rem;margin-bottom:1rem;">
-      Each service has its own ledger showing per-service KPIs (total cases, active, completed, rejected, handed-off, completion rate, handoff rate, average progress), a status distribution bar, agent vs human action ratios, bottleneck analysis, and a paginated case list. Clicking a case opens the full timeline view.
-    </p>
-
-    <div class="grid-2">
-      <div class="card card-accent card-blue">
-        <h4>Ledger KPIs</h4>
-        <p>Total, active, completed, rejected, and handed-off case counts. Completion rate and handoff rate as percentages. Average progress across all open cases.</p>
-      </div>
-      <div class="card card-accent card-green">
-        <h4>Status distribution</h4>
-        <p>Stacked horizontal bar showing the proportion of cases in each status. Gives an immediate visual sense of whether the service is healthy.</p>
-      </div>
-      <div class="card card-accent card-purple">
-        <h4>Agent vs human actions</h4>
-        <p>Side-by-side bars showing what percentage of actions were taken by the agent versus requiring human intervention.</p>
-      </div>
-      <div class="card card-accent card-orange">
-        <h4>Bottleneck analysis</h4>
-        <p>Bar chart of states ranked by how many cases are currently stuck at each state. Surfaces where the journey is breaking down.</p>
-      </div>
-    </div>
-
-    <!-- ── 5g: Personas ── -->
-    <h3 style="margin-top:3rem;color:#0b7285;">Persona Management</h3>
-    <p style="color:#505a5f;font-size:0.95rem;margin-bottom:1rem;">
-      The Personas section manages test citizens used for simulation. Each persona has structured identity data (name, DOB, NI number, employment status, income, savings), address, communication style preferences (tone, tech-savviness, reassurance needs), credentials, family details, health information, and more. Personas can be AI-generated from a scenario description or hand-crafted through the form editor.
-    </p>
-
-    <div class="callout callout-blue">
-      <strong>Why personas matter:</strong> Service definitions are tested by running simulated citizen journeys against them. A persona with edge-case attributes (over 70, medical condition, non-UK address) will exercise different branches of the policy ruleset and state model than a standard applicant.
-    </div>
-  </div>
-</section>
-
-<!-- ══════════════════════════════════════════════════════ -->
-<!-- ── Section 6: Architecture & Decoupling ── -->
-<!-- ══════════════════════════════════════════════════════ -->
-<section class="section section-alt" id="architecture">
-  <div class="container">
-    <h2>Architecture: the decoupled stack</h2>
-    <p class="section-intro">
-      The most important design decision in the stack is the separation between <em>service infrastructure</em> and <em>agent products</em>. The Studio builds the infrastructure. Agent products consume it.
-    </p>
-
-    <div class="layer-stack" style="max-width:660px;margin:0 auto 2rem;">
-      <div class="layer" style="border-left:4px solid #912b88;background:#f5eaf4;">
-        <div class="layer-label" style="color:#912b88;">Agent Products &mdash; Swappable</div>
-        <div class="layer-title">Citizen App (chatbot, voice, form)</div>
-        <div class="layer-desc">Any front-end that speaks to citizens. Can be a conversational agent, a traditional web form, a voice assistant, or a mobile app. Multiple products can consume the same services simultaneously.</div>
-      </div>
-      <div class="layer" style="border-left:4px solid #1d70b8;">
-        <div class="layer-label" style="color:#1d70b8;">Orchestration Layer</div>
-        <div class="layer-title">Orchestrator + LLM Adapter</div>
-        <div class="layer-desc">Deterministic state machine that loads artefacts, evaluates policy, manages state transitions, and only delegates language generation to the LLM. The agent proposes; the orchestrator disposes.</div>
-      </div>
-      <div class="layer" style="border-left:4px solid #00703c;background:#e6f4ea;">
-        <div class="layer-label" style="color:#00703c;">Service Infrastructure &mdash; Stable</div>
-        <div class="layer-title">Legibility Artefacts (Manifest + Policy + State Model + Consent)</div>
-        <div class="layer-desc">Machine-readable service definitions authored in the Legibility Studio. Versioned, validated, and governed independently of any agent. This is the layer that ensures legibility regardless of which product sits above it.</div>
-      </div>
-      <div class="layer" style="border-left:4px solid #f47738;">
-        <div class="layer-label" style="color:#f47738;">Evidence Layer</div>
-        <div class="layer-title">Immutable Trace Store + Receipts</div>
-        <div class="layer-desc">Append-only audit trail. Every decision, every data access, every state transition is recorded. Citizen-facing receipts are generated automatically at key states.</div>
-      </div>
-    </div>
-
-    <div class="two-col-split">
-      <div>
-        <h3>Why decoupling matters</h3>
-        <p style="color:#505a5f;font-size:0.95rem;margin-bottom:1rem;">
-          Without decoupling, every AI agent product becomes a vertically integrated silo. Each chatbot implements its own eligibility logic, its own state tracking, its own consent model. The rules diverge. Auditability becomes impossible. When policy changes, every product must be updated independently.
+    <!-- ══════════════════════════════════════════════════════ -->
+    <!-- ── Section 9: Service Typologies ── -->
+    <!-- ══════════════════════════════════════════════════════ -->
+    <section class="section" id="typologies">
+      <div class="container">
+        <h2>Service typologies</h2>
+        <p class="section-intro">
+          Every service is classified into one of eight typologies. Each
+          typology comes with a default state-model template that the generation
+          pipeline customises for the specific service.
         </p>
-        <p style="color:#505a5f;font-size:0.95rem;margin-bottom:1rem;">
-          With the decoupled stack, service definitions are infrastructure. They are authored once in the Studio, versioned, and consumed by any agent product through a standard interface. When policy changes, the artefact is updated in one place and every product inherits the change immediately.
-        </p>
-        <p style="color:#505a5f;font-size:0.95rem;">
-          This is the same principle as separating data from presentation, or separating policy from implementation. The service is not the chatbot. The service is the rules, the journey, the consent model, and the audit trail. The chatbot is just one way to access it.
-        </p>
-      </div>
-      <div>
-        <h3>The Capability Invoker</h3>
-        <p style="color:#505a5f;font-size:0.95rem;margin-bottom:1rem;">
-          Every service call &mdash; from any agent, through any channel &mdash; routes through a single choke point called the <code>CapabilityInvoker</code>. This enforces:
-        </p>
-        <div class="card" style="margin-bottom:1rem;">
-          <table style="width:100%;font-size:0.85rem;border-collapse:collapse;">
-            <tr style="border-bottom:1px solid #e0dfde;">
-              <td style="padding:0.4rem 0;font-weight:600;width:40%;">Receipt generation</td>
-              <td style="padding:0.4rem 0;color:#505a5f;">Every invocation produces a citizen receipt</td>
-            </tr>
-            <tr style="border-bottom:1px solid #e0dfde;">
-              <td style="padding:0.4rem 0;font-weight:600;">Trace emission</td>
-              <td style="padding:0.4rem 0;color:#505a5f;">Every call is logged to the immutable trace store</td>
-            </tr>
-            <tr style="border-bottom:1px solid #e0dfde;">
-              <td style="padding:0.4rem 0;font-weight:600;">Policy enforcement</td>
-              <td style="padding:0.4rem 0;color:#505a5f;">Eligibility is evaluated deterministically, not by the LLM</td>
-            </tr>
-            <tr>
-              <td style="padding:0.4rem 0;font-weight:600;">No bypasses</td>
-              <td style="padding:0.4rem 0;color:#505a5f;">There is no alternative path. Every agent goes through the same gate.</td>
-            </tr>
-          </table>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
 
-<!-- ══════════════════════════════════════════════════════ -->
-<!-- ── Section 7: How Services Reach Citizens ── -->
-<!-- ══════════════════════════════════════════════════════ -->
-<section class="section" id="runtime">
-  <div class="container">
-    <h2>How a service reaches the citizen</h2>
-    <p class="section-intro">
-      From the moment a citizen starts a conversation to the moment they receive a receipt &mdash; the full runtime pipeline.
-    </p>
-
-    <div class="flow-diagram">
-      <div class="flow-label">Citizen starts conversation</div>
-      <div class="flow-row">
-        <div class="flow-node flow-node-primary">Chat message</div>
-      </div>
-      <div class="flow-down">&darr;</div>
-      <div class="flow-row">
-        <div class="flow-node flow-node-teal">Orchestrator loads artefacts</div>
-        <div class="flow-arrow">&rarr;</div>
-        <div class="flow-node">Manifest</div>
-        <div class="flow-node">Policy</div>
-        <div class="flow-node">States</div>
-        <div class="flow-node">Consent</div>
-      </div>
-      <div class="flow-down">&darr;</div>
-      <div class="flow-row">
-        <div class="flow-node flow-node-green">Evaluate policy</div>
-        <div class="flow-arrow">&rarr;</div>
-        <div class="flow-node flow-node-green">Check state transitions</div>
-        <div class="flow-arrow">&rarr;</div>
-        <div class="flow-node flow-node-green">Track field collection</div>
-      </div>
-      <div class="flow-down">&darr;</div>
-      <div class="flow-row">
-        <div class="flow-node flow-node-purple">Build prompt with context</div>
-        <div class="flow-arrow">&rarr;</div>
-        <div class="flow-node flow-node-purple">LLM generates response</div>
-      </div>
-      <div class="flow-down">&darr;</div>
-      <div class="flow-row">
-        <div class="flow-node flow-node-green">Validate output</div>
-        <div class="flow-arrow">&rarr;</div>
-        <div class="flow-node flow-node-teal">Apply state transition</div>
-        <div class="flow-arrow">&rarr;</div>
-        <div class="flow-node flow-node-orange">Emit traces + receipt</div>
-      </div>
-      <div class="flow-down">&darr;</div>
-      <div class="flow-label">Citizen sees response, receipt, and current state</div>
-    </div>
-
-    <div class="callout callout-purple">
-      <strong>Determinism by design:</strong> The LLM's role is strictly language generation &mdash; explaining, asking questions, extracting data from natural language. All decisions about eligibility, state progression, and data access are made deterministically by the orchestrator using the artefacts authored in the Studio.
-    </div>
-  </div>
-</section>
-
-<!-- ══════════════════════════════════════════════════════ -->
-<!-- ── Section 8: Trace Event Reference ── -->
-<!-- ══════════════════════════════════════════════════════ -->
-<section class="section section-alt" id="events">
-  <div class="container">
-    <h2>Trace event types</h2>
-    <p class="section-intro">
-      Every interaction generates a sequence of typed, timestamped events in the immutable evidence store. These are the 14 event types the Studio tracks.
-    </p>
-
-    <table class="data-table">
-      <thead>
-        <tr>
-          <th>Event Type</th>
-          <th>Category</th>
-          <th>What it records</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><code>llm.request</code></td>
-          <td>LLM</td>
-          <td>System prompt, messages, model, token budget sent to Claude</td>
-        </tr>
-        <tr>
-          <td><code>llm.response</code></td>
-          <td>LLM</td>
-          <td>Response text, token counts, latency, tool calls made</td>
-        </tr>
-        <tr>
-          <td><code>capability.invoked</code></td>
-          <td>Service</td>
-          <td>Service call started &mdash; capability ID, input data, context</td>
-        </tr>
-        <tr>
-          <td><code>capability.result</code></td>
-          <td>Service</td>
-          <td>Service call completed &mdash; success/failure, duration, output</td>
-        </tr>
-        <tr>
-          <td><code>policy.evaluated</code></td>
-          <td>Policy</td>
-          <td>Eligibility check result &mdash; rules passed/failed, explanation</td>
-        </tr>
-        <tr>
-          <td><code>consent.requested</code></td>
-          <td>Consent</td>
-          <td>Consent asked for &mdash; grant ID, data fields, purpose</td>
-        </tr>
-        <tr>
-          <td><code>consent.granted</code></td>
-          <td>Consent</td>
-          <td>Citizen gave consent &mdash; grant ID, data shared, source</td>
-        </tr>
-        <tr>
-          <td><code>consent.denied</code></td>
-          <td>Consent</td>
-          <td>Citizen refused consent &mdash; grant ID, reason if given</td>
-        </tr>
-        <tr>
-          <td><code>consent.revoked</code></td>
-          <td>Consent</td>
-          <td>Citizen withdrew previously granted consent</td>
-        </tr>
-        <tr>
-          <td><code>credential.requested</code></td>
-          <td>Identity</td>
-          <td>Identity credential requested from citizen</td>
-        </tr>
-        <tr>
-          <td><code>credential.presented</code></td>
-          <td>Identity</td>
-          <td>Citizen presented credential &mdash; type, verification status</td>
-        </tr>
-        <tr>
-          <td><code>receipt.issued</code></td>
-          <td>Evidence</td>
-          <td>Citizen receipt generated &mdash; action, outcome, data summary</td>
-        </tr>
-        <tr>
-          <td><code>state.transition</code></td>
-          <td>State</td>
-          <td>State machine moved &mdash; from state, to state, trigger, condition</td>
-        </tr>
-        <tr>
-          <td><code>handoff.initiated</code></td>
-          <td>Escalation</td>
-          <td>Case escalated to human &mdash; reason, department, contact details</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-</section>
-
-<!-- ══════════════════════════════════════════════════════ -->
-<!-- ── Section 9: Service Typologies ── -->
-<!-- ══════════════════════════════════════════════════════ -->
-<section class="section" id="typologies">
-  <div class="container">
-    <h2>Service typologies</h2>
-    <p class="section-intro">
-      Every service is classified into one of eight typologies. Each typology comes with a default state-model template that the generation pipeline customises for the specific service.
-    </p>
-
-    <div class="grid-4">
-      <div class="card card-accent card-green">
-        <div class="card-tag" style="color:#166534;">&pound; Benefit</div>
-        <h4>Financial support</h4>
-        <p style="font-size:0.85rem;">Universal Credit, State Pension, Child Benefit. Eligibility-heavy with means testing.</p>
-      </div>
-      <div class="card card-accent" style="border-left-color:#059669;">
-        <div class="card-tag" style="color:#059669;">&#10003; Entitlement</div>
-        <h4>Automatic rights</h4>
-        <p style="font-size:0.85rem;">Free school meals, NHS prescriptions. Binary eligibility, minimal journey.</p>
-      </div>
-      <div class="card card-accent card-red">
-        <div class="card-tag" style="color:#991b1b;">! Obligation</div>
-        <h4>Legal duties</h4>
-        <p style="font-size:0.85rem;">Self Assessment, vehicle tax. Deadline-driven with penalties.</p>
-      </div>
-      <div class="card card-accent card-blue">
-        <div class="card-tag" style="color:#1e40af;">R Registration</div>
-        <h4>Record creation</h4>
-        <p style="font-size:0.85rem;">Register to vote, birth registration. Identity-heavy, often one-time.</p>
-      </div>
-      <div class="card card-accent" style="border-left-color:#4338ca;">
-        <div class="card-tag" style="color:#4338ca;">A Application</div>
-        <h4>Approval processes</h4>
-        <p style="font-size:0.85rem;">Passport, visa applications. Document-heavy with review stages.</p>
-      </div>
-      <div class="card card-accent card-orange">
-        <div class="card-tag" style="color:#92400e;">D Document</div>
-        <h4>Document issuance</h4>
-        <p style="font-size:0.85rem;">Driving licence renewal, EHIC. Verification then issuance.</p>
-      </div>
-      <div class="card card-accent card-purple">
-        <div class="card-tag" style="color:#912b88;">&sect; Legal Process</div>
-        <h4>Legal proceedings</h4>
-        <p style="font-size:0.85rem;">Probate, divorce. Multi-party, long-running, high-stakes.</p>
-      </div>
-      <div class="card card-accent card-teal">
-        <div class="card-tag" style="color:#0b7285;">G Grant</div>
-        <h4>Discretionary funding</h4>
-        <p style="font-size:0.85rem;">Business grants, research funding. Application + assessment cycle.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ══════════════════════════════════════════════════════ -->
-<!-- ── Section 10: Slides for Senior Leaders ── -->
-<!-- ══════════════════════════════════════════════════════ -->
-<section class="section section-dark" id="slides" style="padding:3rem 0 1.5rem;">
-  <div class="container">
-    <h2 style="color:#fff;">Key messages for senior leaders</h2>
-    <p style="color:#b1b4b6;font-size:1.1rem;max-width:700px;margin-bottom:0.5rem;">
-      Four slides that communicate the Legibility Studio to design leaders and policy makers in government.
-    </p>
-  </div>
-</section>
-
-<section class="section" id="slide-1" style="padding-top:3rem;">
-  <div class="container">
-    <!-- ── Slide 1 ── -->
-    <div class="slide-card" style="margin-bottom:3rem;">
-      <div class="slide-card-visual">
-        <div class="slide-diagram">
-          <div class="slide-layer" style="background:#f5eaf4;border-color:#912b88;color:#912b88;">Agent Product (chatbot, voice, form)</div>
-          <div class="slide-layer" style="background:#f0f6fc;border-color:#1d70b8;color:#1d70b8;">Orchestration Layer</div>
-          <div class="slide-layer" style="background:#e6f4ea;border-color:#00703c;color:#00703c;font-weight:700;">Service Infrastructure (Legibility Artefacts)</div>
-          <div class="slide-layer" style="background:#fef3e8;border-color:#f47738;color:#b85c00;">Evidence Layer (Immutable Audit Trail)</div>
-        </div>
-      </div>
-      <div class="slide-card-body">
-        <div class="slide-card-number">Slide 1 of 4</div>
-        <h3>Don't build agents as products. Build services as infrastructure.</h3>
-        <p>
-          The Legibility Studio separates <em>what a government service does</em> from <em>how citizens access it</em>. Service definitions &mdash; eligibility rules, journey state machines, consent models &mdash; are authored once and consumed by any agent product. When policy changes, one update propagates everywhere. No vertically integrated silos. No divergent rules across channels.
-        </p>
-      </div>
-    </div>
-
-    <!-- ── Slide 2 ── -->
-    <div class="slide-card" style="margin-bottom:3rem;">
-      <div class="slide-card-visual" style="flex-direction:column;gap:0.75rem;">
-        <div style="display:flex;gap:0.5rem;align-items:center;flex-wrap:wrap;justify-content:center;">
-          <div style="background:#fff;border:1px solid #1d70b8;border-radius:2px;padding:0.4rem 0.75rem;font-size:0.75rem;font-weight:600;color:#1d70b8;">Manifest</div>
-          <span style="color:#505a5f;">&rarr;</span>
-          <div style="background:#fff;border:1px solid #00703c;border-radius:2px;padding:0.4rem 0.75rem;font-size:0.75rem;font-weight:600;color:#00703c;">Policy</div>
-          <span style="color:#505a5f;">&rarr;</span>
-          <div style="background:#fff;border:1px solid #912b88;border-radius:2px;padding:0.4rem 0.75rem;font-size:0.75rem;font-weight:600;color:#912b88;">State Model</div>
-          <span style="color:#505a5f;">&rarr;</span>
-          <div style="background:#fff;border:1px solid #0b7285;border-radius:2px;padding:0.4rem 0.75rem;font-size:0.75rem;font-weight:600;color:#0b7285;">Consent</div>
-        </div>
-        <div style="font-size:0.7rem;color:#505a5f;text-align:center;max-width:320px;">Four artefacts per service. Each independently auditable, versionable, and goverable.</div>
-      </div>
-      <div class="slide-card-body">
-        <div class="slide-card-number">Slide 2 of 4</div>
-        <h3>Policy becomes machine-readable &mdash; not buried in prose.</h3>
-        <p>
-          Today, eligibility rules live in guidance documents that humans interpret. The Studio turns those documents into structured JSON: explicit conditions, clear failure explanations, edge-case handlers. An LLM reads the policy document, generates the artefacts, and the system validates them against strict schemas. The result is a service definition that machines can enforce and citizens can understand.
-        </p>
-      </div>
-    </div>
-
-    <!-- ── Slide 3 ── -->
-    <div class="slide-card" style="margin-bottom:3rem;">
-      <div class="slide-card-visual" style="flex-direction:column;gap:0.5rem;">
-        <div style="display:flex;flex-wrap:wrap;gap:0.3rem;justify-content:center;">
-          <span style="font-family:'JetBrains Mono',monospace;font-size:0.65rem;padding:0.2rem 0.5rem;border-radius:4px;background:#dcfce7;border:1px solid #86efac;color:#166534;">not-started</span>
-          <span style="color:#d1d5db;font-size:0.65rem;">&rarr;</span>
-          <span style="font-family:'JetBrains Mono',monospace;font-size:0.65rem;padding:0.2rem 0.5rem;border-radius:4px;background:#dcfce7;border:1px solid #86efac;color:#166534;">identity-verified</span>
-          <span style="color:#d1d5db;font-size:0.65rem;">&rarr;</span>
-          <span style="font-family:'JetBrains Mono',monospace;font-size:0.65rem;padding:0.2rem 0.5rem;border-radius:4px;background:#1d70b8;border:1px solid #1d70b8;color:#fff;">eligibility-checked</span>
-          <span style="color:#d1d5db;font-size:0.65rem;">&rarr;</span>
-          <span style="font-family:'JetBrains Mono',monospace;font-size:0.65rem;padding:0.2rem 0.5rem;border-radius:4px;background:#f3f4f6;border:1px solid #d1d5db;color:#9ca3af;">consent-given</span>
-          <span style="color:#d1d5db;font-size:0.65rem;">&rarr;</span>
-          <span style="font-family:'JetBrains Mono',monospace;font-size:0.65rem;padding:0.2rem 0.5rem;border-radius:4px;background:#f3f4f6;border:1px solid #d1d5db;color:#9ca3af;">completed</span>
-        </div>
-        <div style="font-size:0.7rem;color:#505a5f;text-align:center;">Every citizen journey is a visible, auditable state machine</div>
-      </div>
-      <div class="slide-card-body">
-        <div class="slide-card-number">Slide 3 of 4</div>
-        <h3>Every decision is recorded. Every step is visible.</h3>
-        <p>
-          The state machine makes agent behaviour deterministic and auditable. Citizens can see where they are in the journey. Auditors can replay any session event by event. The evidence plane records every LLM call, every policy evaluation, every consent grant, and every state transition in an append-only store. Receipts are generated automatically at key milestones. This is legibility by architecture, not by promise.
-        </p>
-      </div>
-    </div>
-
-    <!-- ── Slide 4 ── -->
-    <div class="slide-card" style="margin-bottom:2rem;">
-      <div class="slide-card-visual" style="flex-direction:column;gap:0.75rem;">
-        <div style="display:flex;gap:1.5rem;flex-wrap:wrap;justify-content:center;">
-          <div style="text-align:center;">
-            <div style="font-size:2.5rem;font-weight:700;color:#0b0c0c;">108</div>
-            <div style="font-size:0.7rem;color:#505a5f;">services</div>
+        <div class="grid-4">
+          <div class="card card-accent card-green">
+            <div class="card-tag" style="color: #166534">&pound; Benefit</div>
+            <h4>Financial support</h4>
+            <p style="font-size: 0.85rem">
+              Universal Credit, State Pension, Child Benefit. Eligibility-heavy
+              with means testing.
+            </p>
           </div>
-          <div style="text-align:center;">
-            <div style="font-size:2.5rem;font-weight:700;color:#0b0c0c;">8</div>
-            <div style="font-size:0.7rem;color:#505a5f;">typologies</div>
+          <div class="card card-accent" style="border-left-color: #059669">
+            <div class="card-tag" style="color: #059669">
+              &#10003; Entitlement
+            </div>
+            <h4>Automatic rights</h4>
+            <p style="font-size: 0.85rem">
+              Free school meals, NHS prescriptions. Binary eligibility, minimal
+              journey.
+            </p>
           </div>
-          <div style="text-align:center;">
-            <div style="font-size:2.5rem;font-weight:700;color:#0b0c0c;">4</div>
-            <div style="font-size:0.7rem;color:#505a5f;">artefacts each</div>
+          <div class="card card-accent card-red">
+            <div class="card-tag" style="color: #991b1b">! Obligation</div>
+            <h4>Legal duties</h4>
+            <p style="font-size: 0.85rem">
+              Self Assessment, vehicle tax. Deadline-driven with penalties.
+            </p>
           </div>
-          <div style="text-align:center;">
-            <div style="font-size:2.5rem;font-weight:700;color:#0b0c0c;">1</div>
-            <div style="font-size:0.7rem;color:#505a5f;">studio to govern them</div>
+          <div class="card card-accent card-blue">
+            <div class="card-tag" style="color: #1e40af">R Registration</div>
+            <h4>Record creation</h4>
+            <p style="font-size: 0.85rem">
+              Register to vote, birth registration. Identity-heavy, often
+              one-time.
+            </p>
+          </div>
+          <div class="card card-accent" style="border-left-color: #4338ca">
+            <div class="card-tag" style="color: #4338ca">A Application</div>
+            <h4>Approval processes</h4>
+            <p style="font-size: 0.85rem">
+              Passport, visa applications. Document-heavy with review stages.
+            </p>
+          </div>
+          <div class="card card-accent card-orange">
+            <div class="card-tag" style="color: #92400e">D Document</div>
+            <h4>Document issuance</h4>
+            <p style="font-size: 0.85rem">
+              Driving licence renewal, EHIC. Verification then issuance.
+            </p>
+          </div>
+          <div class="card card-accent card-purple">
+            <div class="card-tag" style="color: #912b88">
+              &sect; Legal Process
+            </div>
+            <h4>Legal proceedings</h4>
+            <p style="font-size: 0.85rem">
+              Probate, divorce. Multi-party, long-running, high-stakes.
+            </p>
+          </div>
+          <div class="card card-accent card-teal">
+            <div class="card-tag" style="color: #0b7285">G Grant</div>
+            <h4>Discretionary funding</h4>
+            <p style="font-size: 0.85rem">
+              Business grants, research funding. Application + assessment cycle.
+            </p>
           </div>
         </div>
       </div>
-      <div class="slide-card-body">
-        <div class="slide-card-number">Slide 4 of 4</div>
-        <h3>Scale through structure, not through more agents.</h3>
-        <p>
-          The Studio already manages 108 government services across 8 typologies. Adding a new service means generating four artefacts from a policy document &mdash; not building a new agent. The same infrastructure supports chatbots, voice assistants, form-filling services, and future channels we haven't imagined yet. This is how government scales AI: not by building more products, but by building better infrastructure.
+    </section>
+
+    <!-- ══════════════════════════════════════════════════════ -->
+    <!-- ── Section 10: Slides for Senior Leaders ── -->
+    <!-- ══════════════════════════════════════════════════════ -->
+    <section
+      class="section section-dark"
+      id="slides"
+      style="padding: 3rem 0 1.5rem"
+    >
+      <div class="container">
+        <h2 style="color: #fff">Key messages for senior leaders</h2>
+        <p
+          style="
+            color: #b1b4b6;
+            font-size: 1.1rem;
+            max-width: 700px;
+            margin-bottom: 0.5rem;
+          "
+        >
+          Four slides that communicate the Legibility Studio to design leaders
+          and policy makers in government.
         </p>
       </div>
-    </div>
-  </div>
-</section>
+    </section>
 
-<!-- ── Footer ── -->
-<footer class="footer">
-  <div class="container">
-    <p>Agentic Legibility Stack &mdash; Legibility Studio Briefing &middot; Generated March 2026</p>
-  </div>
-</footer>
+    <section class="section" id="slide-1" style="padding-top: 3rem">
+      <div class="container">
+        <!-- ── Slide 1 ── -->
+        <div class="slide-card" style="margin-bottom: 3rem">
+          <div class="slide-card-visual">
+            <div class="slide-diagram">
+              <div
+                class="slide-layer"
+                style="
+                  background: #f5eaf4;
+                  border-color: #912b88;
+                  color: #912b88;
+                "
+              >
+                Agent Product (chatbot, voice, form)
+              </div>
+              <div
+                class="slide-layer"
+                style="
+                  background: #f0f6fc;
+                  border-color: #1d70b8;
+                  color: #1d70b8;
+                "
+              >
+                Orchestration Layer
+              </div>
+              <div
+                class="slide-layer"
+                style="
+                  background: #e6f4ea;
+                  border-color: #00703c;
+                  color: #00703c;
+                  font-weight: 700;
+                "
+              >
+                Service Infrastructure (Legibility Artefacts)
+              </div>
+              <div
+                class="slide-layer"
+                style="
+                  background: #fef3e8;
+                  border-color: #f47738;
+                  color: #b85c00;
+                "
+              >
+                Evidence Layer (Immutable Audit Trail)
+              </div>
+            </div>
+          </div>
+          <div class="slide-card-body">
+            <div class="slide-card-number">Slide 1 of 4</div>
+            <h3>
+              Don't build agents as products. Build services as infrastructure.
+            </h3>
+            <p>
+              The Legibility Studio separates
+              <em>what a government service does</em> from
+              <em>how citizens access it</em>. Service definitions &mdash;
+              eligibility rules, journey state machines, consent models &mdash;
+              are authored once and consumed by any agent product. When policy
+              changes, one update propagates everywhere. No vertically
+              integrated silos. No divergent rules across channels.
+            </p>
+          </div>
+        </div>
 
-</body>
+        <!-- ── Slide 2 ── -->
+        <div class="slide-card" style="margin-bottom: 3rem">
+          <div
+            class="slide-card-visual"
+            style="flex-direction: column; gap: 0.75rem"
+          >
+            <div
+              style="
+                display: flex;
+                gap: 0.5rem;
+                align-items: center;
+                flex-wrap: wrap;
+                justify-content: center;
+              "
+            >
+              <div
+                style="
+                  background: #fff;
+                  border: 1px solid #1d70b8;
+                  border-radius: 2px;
+                  padding: 0.4rem 0.75rem;
+                  font-size: 0.75rem;
+                  font-weight: 600;
+                  color: #1d70b8;
+                "
+              >
+                Manifest
+              </div>
+              <span style="color: #505a5f">&rarr;</span>
+              <div
+                style="
+                  background: #fff;
+                  border: 1px solid #00703c;
+                  border-radius: 2px;
+                  padding: 0.4rem 0.75rem;
+                  font-size: 0.75rem;
+                  font-weight: 600;
+                  color: #00703c;
+                "
+              >
+                Policy
+              </div>
+              <span style="color: #505a5f">&rarr;</span>
+              <div
+                style="
+                  background: #fff;
+                  border: 1px solid #912b88;
+                  border-radius: 2px;
+                  padding: 0.4rem 0.75rem;
+                  font-size: 0.75rem;
+                  font-weight: 600;
+                  color: #912b88;
+                "
+              >
+                State Model
+              </div>
+              <span style="color: #505a5f">&rarr;</span>
+              <div
+                style="
+                  background: #fff;
+                  border: 1px solid #0b7285;
+                  border-radius: 2px;
+                  padding: 0.4rem 0.75rem;
+                  font-size: 0.75rem;
+                  font-weight: 600;
+                  color: #0b7285;
+                "
+              >
+                Consent
+              </div>
+            </div>
+            <div
+              style="
+                font-size: 0.7rem;
+                color: #505a5f;
+                text-align: center;
+                max-width: 320px;
+              "
+            >
+              Four artefacts per service. Each independently auditable,
+              versionable, and goverable.
+            </div>
+          </div>
+          <div class="slide-card-body">
+            <div class="slide-card-number">Slide 2 of 4</div>
+            <h3>
+              Policy becomes machine-readable &mdash; not buried in prose.
+            </h3>
+            <p>
+              Today, eligibility rules live in guidance documents that humans
+              interpret. The Studio turns those documents into structured JSON:
+              explicit conditions, clear failure explanations, edge-case
+              handlers. An LLM reads the policy document, generates the
+              artefacts, and the system validates them against strict schemas.
+              The result is a service definition that machines can enforce and
+              citizens can understand.
+            </p>
+          </div>
+        </div>
+
+        <!-- ── Slide 3 ── -->
+        <div class="slide-card" style="margin-bottom: 3rem">
+          <div
+            class="slide-card-visual"
+            style="flex-direction: column; gap: 0.5rem"
+          >
+            <div
+              style="
+                display: flex;
+                flex-wrap: wrap;
+                gap: 0.3rem;
+                justify-content: center;
+              "
+            >
+              <span
+                style="
+                  font-family: &quot;JetBrains Mono&quot;, monospace;
+                  font-size: 0.65rem;
+                  padding: 0.2rem 0.5rem;
+                  border-radius: 4px;
+                  background: #dcfce7;
+                  border: 1px solid #86efac;
+                  color: #166534;
+                "
+                >not-started</span
+              >
+              <span style="color: #d1d5db; font-size: 0.65rem">&rarr;</span>
+              <span
+                style="
+                  font-family: &quot;JetBrains Mono&quot;, monospace;
+                  font-size: 0.65rem;
+                  padding: 0.2rem 0.5rem;
+                  border-radius: 4px;
+                  background: #dcfce7;
+                  border: 1px solid #86efac;
+                  color: #166534;
+                "
+                >identity-verified</span
+              >
+              <span style="color: #d1d5db; font-size: 0.65rem">&rarr;</span>
+              <span
+                style="
+                  font-family: &quot;JetBrains Mono&quot;, monospace;
+                  font-size: 0.65rem;
+                  padding: 0.2rem 0.5rem;
+                  border-radius: 4px;
+                  background: #1d70b8;
+                  border: 1px solid #1d70b8;
+                  color: #fff;
+                "
+                >eligibility-checked</span
+              >
+              <span style="color: #d1d5db; font-size: 0.65rem">&rarr;</span>
+              <span
+                style="
+                  font-family: &quot;JetBrains Mono&quot;, monospace;
+                  font-size: 0.65rem;
+                  padding: 0.2rem 0.5rem;
+                  border-radius: 4px;
+                  background: #f3f4f6;
+                  border: 1px solid #d1d5db;
+                  color: #9ca3af;
+                "
+                >consent-given</span
+              >
+              <span style="color: #d1d5db; font-size: 0.65rem">&rarr;</span>
+              <span
+                style="
+                  font-family: &quot;JetBrains Mono&quot;, monospace;
+                  font-size: 0.65rem;
+                  padding: 0.2rem 0.5rem;
+                  border-radius: 4px;
+                  background: #f3f4f6;
+                  border: 1px solid #d1d5db;
+                  color: #9ca3af;
+                "
+                >completed</span
+              >
+            </div>
+            <div style="font-size: 0.7rem; color: #505a5f; text-align: center">
+              Every citizen journey is a visible, auditable state machine
+            </div>
+          </div>
+          <div class="slide-card-body">
+            <div class="slide-card-number">Slide 3 of 4</div>
+            <h3>Every decision is recorded. Every step is visible.</h3>
+            <p>
+              The state machine makes agent behaviour deterministic and
+              auditable. Citizens can see where they are in the journey.
+              Auditors can replay any session event by event. The evidence plane
+              records every LLM call, every policy evaluation, every consent
+              grant, and every state transition in an append-only store.
+              Receipts are generated automatically at key milestones. This is
+              legibility by architecture, not by promise.
+            </p>
+          </div>
+        </div>
+
+        <!-- ── Slide 4 ── -->
+        <div class="slide-card" style="margin-bottom: 2rem">
+          <div
+            class="slide-card-visual"
+            style="flex-direction: column; gap: 0.75rem"
+          >
+            <div
+              style="
+                display: flex;
+                gap: 1.5rem;
+                flex-wrap: wrap;
+                justify-content: center;
+              "
+            >
+              <div style="text-align: center">
+                <div
+                  style="font-size: 2.5rem; font-weight: 700; color: #0b0c0c"
+                >
+                  108
+                </div>
+                <div style="font-size: 0.7rem; color: #505a5f">services</div>
+              </div>
+              <div style="text-align: center">
+                <div
+                  style="font-size: 2.5rem; font-weight: 700; color: #0b0c0c"
+                >
+                  8
+                </div>
+                <div style="font-size: 0.7rem; color: #505a5f">typologies</div>
+              </div>
+              <div style="text-align: center">
+                <div
+                  style="font-size: 2.5rem; font-weight: 700; color: #0b0c0c"
+                >
+                  4
+                </div>
+                <div style="font-size: 0.7rem; color: #505a5f">
+                  artefacts each
+                </div>
+              </div>
+              <div style="text-align: center">
+                <div
+                  style="font-size: 2.5rem; font-weight: 700; color: #0b0c0c"
+                >
+                  1
+                </div>
+                <div style="font-size: 0.7rem; color: #505a5f">
+                  studio to govern them
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="slide-card-body">
+            <div class="slide-card-number">Slide 4 of 4</div>
+            <h3>Scale through structure, not through more agents.</h3>
+            <p>
+              The Studio already manages 108 government services across 8
+              typologies. Adding a new service means generating four artefacts
+              from a policy document &mdash; not building a new agent. The same
+              infrastructure supports chatbots, voice assistants, form-filling
+              services, and future channels we haven't imagined yet. This is how
+              government scales AI: not by building more products, but by
+              building better infrastructure.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Footer ── -->
+    <footer class="footer">
+      <div class="container">
+        <p>
+          Agentic Legibility Stack &mdash; Legibility Studio Briefing &middot;
+          Generated March 2026
+        </p>
+      </div>
+    </footer>
+  </body>
 </html>

@@ -46,11 +46,7 @@
     {
       "id": "bank-account-verification",
       "description": "Verify your bank account for receiving payments",
-      "data_shared": [
-        "sort_code",
-        "account_number",
-        "account_holder_name"
-      ],
+      "data_shared": ["sort_code", "account_number", "account_holder_name"],
       "source": "citizen-provided",
       "purpose": "UC payments will be made to this account",
       "duration": "until-revoked",
@@ -63,11 +59,7 @@
   },
   "delegation": {
     "agent_identity": "GOV.UK AI Agent",
-    "scopes": [
-      "read-personal-data",
-      "submit-to-dwp",
-      "check-eligibility"
-    ],
+    "scopes": ["read-personal-data", "submit-to-dwp", "check-eligibility"],
     "limitations": "Agent cannot verify bank details on your behalf. Agent cannot commit to interview times. Agent will hand off for any safeguarding concerns."
   }
 }

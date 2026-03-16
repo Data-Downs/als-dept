@@ -29,7 +29,8 @@ export const FULL_SERVICES: FullServiceData[] = [
       id: "dwp.apply-universal-credit",
       version: "1.0.0",
       name: "Apply for Universal Credit",
-      description: "Apply for Universal Credit — income-related benefit for working-age people",
+      description:
+        "Apply for Universal Credit — income-related benefit for working-age people",
       department: "DWP",
       jurisdiction: "England, Wales, Scotland",
       input_schema: {
@@ -59,10 +60,15 @@ export const FULL_SERVICES: FullServiceData[] = [
         availability: "24/7 online",
       },
       eligibility_ruleset_id: "dwp.universal-credit.eligibility",
-      consent_requirements: ["identity-verification", "income-sharing", "housing-status"],
+      consent_requirements: [
+        "identity-verification",
+        "income-sharing",
+        "housing-status",
+      ],
       evidence_requirements: ["identity-verified", "bank-account-verified"],
       redress: {
-        complaint_url: "https://www.gov.uk/government/organisations/department-for-work-pensions/about/complaints-procedure",
+        complaint_url:
+          "https://www.gov.uk/government/organisations/department-for-work-pensions/about/complaints-procedure",
         appeal_process: "Mandatory reconsideration, then appeal to tribunal",
         ombudsman: "Parliamentary and Health Service Ombudsman",
       },
@@ -84,7 +90,8 @@ export const FULL_SERVICES: FullServiceData[] = [
       rules: [
         {
           id: "age-range",
-          description: "Applicant must be 18 or over and under State Pension age",
+          description:
+            "Applicant must be 18 or over and under State Pension age",
           condition: { field: "age", operator: ">=", value: 18 },
           reason_if_failed: "You must be at least 18 to claim Universal Credit",
           evidence_source: "identity-verified",
@@ -93,26 +100,34 @@ export const FULL_SERVICES: FullServiceData[] = [
           id: "under-pension-age",
           description: "Applicant must be under State Pension age",
           condition: { field: "age", operator: "<=", value: 66 },
-          reason_if_failed: "You are at or over State Pension age. You may be eligible for Pension Credit instead.",
+          reason_if_failed:
+            "You are at or over State Pension age. You may be eligible for Pension Credit instead.",
           alternative_service: "dwp.pension-credit",
         },
         {
           id: "uk-resident",
           description: "Applicant must be living in the UK",
-          condition: { field: "jurisdiction", operator: "in", value: ["England", "Wales", "Scotland"] },
-          reason_if_failed: "You must live in England, Scotland, or Wales to claim Universal Credit",
+          condition: {
+            field: "jurisdiction",
+            operator: "in",
+            value: ["England", "Wales", "Scotland"],
+          },
+          reason_if_failed:
+            "You must live in England, Scotland, or Wales to claim Universal Credit",
         },
         {
           id: "low-savings",
           description: "Applicant's savings must be under £16,000",
           condition: { field: "savings", operator: "<=", value: 16000 },
-          reason_if_failed: "Your savings exceed £16,000. You are not eligible for Universal Credit.",
+          reason_if_failed:
+            "Your savings exceed £16,000. You are not eligible for Universal Credit.",
         },
         {
           id: "has-bank-account",
           description: "Applicant must have a bank account for payments",
           condition: { field: "bank_account", operator: "exists" },
-          reason_if_failed: "You need a bank, building society, or credit union account to receive UC payments",
+          reason_if_failed:
+            "You need a bank, building society, or credit union account to receive UC payments",
         },
       ],
       explanation_template: "Universal Credit eligibility: {outcome}",
@@ -121,19 +136,22 @@ export const FULL_SERVICES: FullServiceData[] = [
           id: "domestic-abuse",
           description: "Applicant mentions domestic abuse or coercive control",
           detection: "safeguarding_flag",
-          action: "Immediate handoff to specialist support. Do not continue automated process.",
+          action:
+            "Immediate handoff to specialist support. Do not continue automated process.",
         },
         {
           id: "homeless",
           description: "Applicant has no fixed address",
           detection: "no_fixed_address",
-          action: "Can still apply. Link with Jobcentre Plus for address support.",
+          action:
+            "Can still apply. Link with Jobcentre Plus for address support.",
         },
         {
           id: "self-employed",
           description: "Applicant is self-employed",
           detection: "self_employed",
-          action: "Minimum income floor may apply after 12 months. Additional evidence required.",
+          action:
+            "Minimum income floor may apply after 12 months. Additional evidence required.",
         },
       ],
     },
@@ -156,20 +174,79 @@ export const FULL_SERVICES: FullServiceData[] = [
         { id: "handed-off", type: "terminal", receipt: true },
       ],
       transitions: [
-        { from: "not-started", to: "identity-verified", trigger: "verify-identity" },
-        { from: "not-started", to: "eligibility-checked", trigger: "check-eligibility" },
-        { from: "identity-verified", to: "eligibility-checked", trigger: "check-eligibility" },
-        { from: "eligibility-checked", to: "consent-given", trigger: "grant-consent", condition: "eligible" },
-        { from: "eligibility-checked", to: "rejected", trigger: "reject", condition: "not-eligible" },
-        { from: "eligibility-checked", to: "handed-off", trigger: "handoff", condition: "edge-case" },
-        { from: "consent-given", to: "personal-details-collected", trigger: "collect-personal-details" },
-        { from: "personal-details-collected", to: "housing-details-collected", trigger: "collect-housing-details" },
-        { from: "housing-details-collected", to: "income-details-collected", trigger: "collect-income-details" },
-        { from: "income-details-collected", to: "bank-details-verified", trigger: "verify-bank-details" },
-        { from: "bank-details-verified", to: "claim-submitted", trigger: "submit-claim" },
-        { from: "claim-submitted", to: "awaiting-interview", trigger: "schedule-interview" },
-        { from: "awaiting-interview", to: "claim-active", trigger: "activate-claim" },
-        { from: "awaiting-interview", to: "rejected", trigger: "reject-after-interview" },
+        {
+          from: "not-started",
+          to: "identity-verified",
+          trigger: "verify-identity",
+        },
+        {
+          from: "not-started",
+          to: "eligibility-checked",
+          trigger: "check-eligibility",
+        },
+        {
+          from: "identity-verified",
+          to: "eligibility-checked",
+          trigger: "check-eligibility",
+        },
+        {
+          from: "eligibility-checked",
+          to: "consent-given",
+          trigger: "grant-consent",
+          condition: "eligible",
+        },
+        {
+          from: "eligibility-checked",
+          to: "rejected",
+          trigger: "reject",
+          condition: "not-eligible",
+        },
+        {
+          from: "eligibility-checked",
+          to: "handed-off",
+          trigger: "handoff",
+          condition: "edge-case",
+        },
+        {
+          from: "consent-given",
+          to: "personal-details-collected",
+          trigger: "collect-personal-details",
+        },
+        {
+          from: "personal-details-collected",
+          to: "housing-details-collected",
+          trigger: "collect-housing-details",
+        },
+        {
+          from: "housing-details-collected",
+          to: "income-details-collected",
+          trigger: "collect-income-details",
+        },
+        {
+          from: "income-details-collected",
+          to: "bank-details-verified",
+          trigger: "verify-bank-details",
+        },
+        {
+          from: "bank-details-verified",
+          to: "claim-submitted",
+          trigger: "submit-claim",
+        },
+        {
+          from: "claim-submitted",
+          to: "awaiting-interview",
+          trigger: "schedule-interview",
+        },
+        {
+          from: "awaiting-interview",
+          to: "claim-active",
+          trigger: "activate-claim",
+        },
+        {
+          from: "awaiting-interview",
+          to: "rejected",
+          trigger: "reject-after-interview",
+        },
       ],
     },
     consent: {
@@ -179,7 +256,11 @@ export const FULL_SERVICES: FullServiceData[] = [
         {
           id: "identity-verification",
           description: "Verify your identity using GOV.UK One Login",
-          data_shared: ["full_name", "date_of_birth", "national_insurance_number"],
+          data_shared: [
+            "full_name",
+            "date_of_birth",
+            "national_insurance_number",
+          ],
           source: "one-login",
           purpose: "DWP must verify your identity before processing your claim",
           duration: "session",
@@ -188,16 +269,28 @@ export const FULL_SERVICES: FullServiceData[] = [
         {
           id: "income-sharing",
           description: "Share your income and employment information with DWP",
-          data_shared: ["employment_status", "employer_name", "income_amount", "income_frequency"],
+          data_shared: [
+            "employment_status",
+            "employer_name",
+            "income_amount",
+            "income_frequency",
+          ],
           source: "hmrc-rti",
-          purpose: "DWP uses your income data to calculate your Universal Credit entitlement",
+          purpose:
+            "DWP uses your income data to calculate your Universal Credit entitlement",
           duration: "until-revoked",
           required: true,
         },
         {
           id: "housing-status",
-          description: "Share your housing details for housing cost calculations",
-          data_shared: ["tenure_type", "rent_amount", "landlord_name", "property_address"],
+          description:
+            "Share your housing details for housing cost calculations",
+          data_shared: [
+            "tenure_type",
+            "rent_amount",
+            "landlord_name",
+            "property_address",
+          ],
           source: "citizen-provided",
           purpose: "To calculate any housing element of your Universal Credit",
           duration: "until-revoked",
@@ -214,13 +307,16 @@ export const FULL_SERVICES: FullServiceData[] = [
         },
       ],
       revocation: {
-        mechanism: "Contact DWP UC helpline or revoke through your UC journal online",
-        effect: "Revoking income-sharing consent will suspend your claim until reinstated",
+        mechanism:
+          "Contact DWP UC helpline or revoke through your UC journal online",
+        effect:
+          "Revoking income-sharing consent will suspend your claim until reinstated",
       },
       delegation: {
         agent_identity: "GOV.UK AI Agent",
         scopes: ["read-personal-data", "submit-to-dwp", "check-eligibility"],
-        limitations: "Agent cannot verify bank details on your behalf. Agent cannot commit to interview times. Agent will hand off for any safeguarding concerns.",
+        limitations:
+          "Agent cannot verify bank details on your behalf. Agent cannot commit to interview times. Agent will hand off for any safeguarding concerns.",
       },
     },
   },
@@ -231,7 +327,8 @@ export const FULL_SERVICES: FullServiceData[] = [
       id: "dwp.check-state-pension",
       version: "1.0.0",
       name: "Check State Pension Forecast",
-      description: "Check your State Pension forecast — see how much you could get and when",
+      description:
+        "Check your State Pension forecast — see how much you could get and when",
       department: "DWP",
       jurisdiction: "England, Wales, Scotland",
       input_schema: {
@@ -260,7 +357,8 @@ export const FULL_SERVICES: FullServiceData[] = [
       consent_requirements: ["identity-verification"],
       evidence_requirements: ["identity-verified"],
       redress: {
-        complaint_url: "https://www.gov.uk/government/organisations/department-for-work-pensions/about/complaints-procedure",
+        complaint_url:
+          "https://www.gov.uk/government/organisations/department-for-work-pensions/about/complaints-procedure",
         appeal_process: "Contact the Pension Service",
         ombudsman: "Parliamentary and Health Service Ombudsman",
       },
@@ -283,13 +381,19 @@ export const FULL_SERVICES: FullServiceData[] = [
           id: "has-ni-number",
           description: "Citizen must have a National Insurance number",
           condition: { field: "national_insurance_number", operator: "exists" },
-          reason_if_failed: "You need a National Insurance number to check your State Pension forecast",
+          reason_if_failed:
+            "You need a National Insurance number to check your State Pension forecast",
         },
         {
           id: "uk-ni-record",
           description: "Citizen must have UK National Insurance contributions",
-          condition: { field: "jurisdiction", operator: "in", value: ["England", "Wales", "Scotland"] },
-          reason_if_failed: "State Pension forecasts are based on UK National Insurance contributions",
+          condition: {
+            field: "jurisdiction",
+            operator: "in",
+            value: ["England", "Wales", "Scotland"],
+          },
+          reason_if_failed:
+            "State Pension forecasts are based on UK National Insurance contributions",
         },
       ],
       explanation_template: "State Pension forecast eligibility: {outcome}",
@@ -298,13 +402,15 @@ export const FULL_SERVICES: FullServiceData[] = [
           id: "lived-abroad",
           description: "Citizen has lived or worked abroad",
           detection: "overseas_work_history",
-          action: "May have contributions from other countries. Check reciprocal agreements.",
+          action:
+            "May have contributions from other countries. Check reciprocal agreements.",
         },
         {
           id: "contracted-out",
           description: "Citizen was contracted out of additional State Pension",
           detection: "contracted_out",
-          action: "Contracted-out deductions may apply. Show adjusted forecast.",
+          action:
+            "Contracted-out deductions may apply. Show adjusted forecast.",
         },
       ],
     },
@@ -321,11 +427,32 @@ export const FULL_SERVICES: FullServiceData[] = [
         { id: "handed-off", type: "terminal", receipt: true },
       ],
       transitions: [
-        { from: "not-started", to: "identity-verified", trigger: "verify-identity" },
-        { from: "identity-verified", to: "eligibility-checked", trigger: "check-eligibility" },
-        { from: "eligibility-checked", to: "consent-given", trigger: "grant-consent" },
-        { from: "eligibility-checked", to: "handed-off", trigger: "handoff", condition: "edge-case" },
-        { from: "consent-given", to: "forecast-retrieved", trigger: "retrieve-forecast" },
+        {
+          from: "not-started",
+          to: "identity-verified",
+          trigger: "verify-identity",
+        },
+        {
+          from: "identity-verified",
+          to: "eligibility-checked",
+          trigger: "check-eligibility",
+        },
+        {
+          from: "eligibility-checked",
+          to: "consent-given",
+          trigger: "grant-consent",
+        },
+        {
+          from: "eligibility-checked",
+          to: "handed-off",
+          trigger: "handoff",
+          condition: "edge-case",
+        },
+        {
+          from: "consent-given",
+          to: "forecast-retrieved",
+          trigger: "retrieve-forecast",
+        },
         { from: "forecast-retrieved", to: "completed", trigger: "complete" },
       ],
     },
@@ -336,9 +463,14 @@ export const FULL_SERVICES: FullServiceData[] = [
         {
           id: "identity-verification",
           description: "Verify your identity to access your pension record",
-          data_shared: ["full_name", "date_of_birth", "national_insurance_number"],
+          data_shared: [
+            "full_name",
+            "date_of_birth",
+            "national_insurance_number",
+          ],
           source: "one-login",
-          purpose: "DWP must verify your identity before showing your pension forecast",
+          purpose:
+            "DWP must verify your identity before showing your pension forecast",
           duration: "session",
           required: true,
         },
@@ -350,7 +482,8 @@ export const FULL_SERVICES: FullServiceData[] = [
       delegation: {
         agent_identity: "GOV.UK AI Agent",
         scopes: ["read-personal-data", "read-pension-forecast"],
-        limitations: "Agent can only read your forecast. It cannot make changes to your pension record or National Insurance contributions.",
+        limitations:
+          "Agent can only read your forecast. It cannot make changes to your pension record or National Insurance contributions.",
       },
     },
   },
@@ -388,8 +521,15 @@ export const FULL_SERVICES: FullServiceData[] = [
         availability: "24/7 online",
       },
       eligibility_ruleset_id: "dvla.renew-licence.eligibility",
-      consent_requirements: ["identity-verification", "photo-sharing", "address-confirmation"],
-      evidence_requirements: ["driving-licence-credential", "identity-verified"],
+      consent_requirements: [
+        "identity-verification",
+        "photo-sharing",
+        "address-confirmation",
+      ],
+      evidence_requirements: [
+        "driving-licence-credential",
+        "identity-verified",
+      ],
       redress: {
         complaint_url: "https://www.gov.uk/complain-about-dvla",
         appeal_process: "Contact DVLA directly",
@@ -415,27 +555,39 @@ export const FULL_SERVICES: FullServiceData[] = [
           id: "age-minimum",
           description: "Applicant must be at least 16 years old",
           condition: { field: "age", operator: ">=", value: 16 },
-          reason_if_failed: "You must be at least 16 years old to hold a driving licence",
+          reason_if_failed:
+            "You must be at least 16 years old to hold a driving licence",
           evidence_source: "identity-verified",
         },
         {
           id: "has-licence",
           description: "Applicant must have an existing driving licence",
           condition: { field: "driving_licence_number", operator: "exists" },
-          reason_if_failed: "You need an existing driving licence to renew. Apply for a new licence instead.",
+          reason_if_failed:
+            "You need an existing driving licence to renew. Apply for a new licence instead.",
           alternative_service: "dvla.apply-provisional-licence",
         },
         {
           id: "uk-resident",
           description: "Applicant must be a UK resident",
-          condition: { field: "jurisdiction", operator: "in", value: ["England", "Wales", "Scotland"] },
-          reason_if_failed: "This service is for UK residents (England, Wales, Scotland) only",
+          condition: {
+            field: "jurisdiction",
+            operator: "in",
+            value: ["England", "Wales", "Scotland"],
+          },
+          reason_if_failed:
+            "This service is for UK residents (England, Wales, Scotland) only",
         },
         {
           id: "not-revoked",
           description: "Licence must not be currently revoked",
-          condition: { field: "licence_status", operator: "!=", value: "revoked" },
-          reason_if_failed: "Your licence has been revoked. Contact DVLA for reinstatement.",
+          condition: {
+            field: "licence_status",
+            operator: "!=",
+            value: "revoked",
+          },
+          reason_if_failed:
+            "Your licence has been revoked. Contact DVLA for reinstatement.",
           triggers_handoff: true,
         },
       ],
@@ -443,7 +595,8 @@ export const FULL_SERVICES: FullServiceData[] = [
       edge_cases: [
         {
           id: "medical-condition",
-          description: "Applicant has a medical condition that may affect driving",
+          description:
+            "Applicant has a medical condition that may affect driving",
           detection: "medical_conditions",
           action: "Route to medical assessment. DVLA form C1 required.",
         },
@@ -451,7 +604,8 @@ export const FULL_SERVICES: FullServiceData[] = [
           id: "over-70",
           description: "Applicant is over 70 (different renewal cycle)",
           detection: "over_70",
-          action: "Over-70 renewal is free but requires medical self-declaration.",
+          action:
+            "Over-70 renewal is free but requires medical self-declaration.",
         },
       ],
     },
@@ -472,15 +626,54 @@ export const FULL_SERVICES: FullServiceData[] = [
         { id: "handed-off", type: "terminal", receipt: true },
       ],
       transitions: [
-        { from: "not-started", to: "identity-verified", trigger: "verify-identity" },
-        { from: "identity-verified", to: "eligibility-checked", trigger: "check-eligibility" },
-        { from: "eligibility-checked", to: "consent-given", trigger: "grant-consent", condition: "eligible" },
-        { from: "eligibility-checked", to: "rejected", trigger: "reject", condition: "not-eligible" },
-        { from: "eligibility-checked", to: "handed-off", trigger: "handoff", condition: "edge-case" },
-        { from: "consent-given", to: "details-confirmed", trigger: "confirm-details" },
-        { from: "details-confirmed", to: "photo-submitted", trigger: "submit-photo" },
-        { from: "photo-submitted", to: "payment-made", trigger: "make-payment" },
-        { from: "payment-made", to: "application-submitted", trigger: "submit-application" },
+        {
+          from: "not-started",
+          to: "identity-verified",
+          trigger: "verify-identity",
+        },
+        {
+          from: "identity-verified",
+          to: "eligibility-checked",
+          trigger: "check-eligibility",
+        },
+        {
+          from: "eligibility-checked",
+          to: "consent-given",
+          trigger: "grant-consent",
+          condition: "eligible",
+        },
+        {
+          from: "eligibility-checked",
+          to: "rejected",
+          trigger: "reject",
+          condition: "not-eligible",
+        },
+        {
+          from: "eligibility-checked",
+          to: "handed-off",
+          trigger: "handoff",
+          condition: "edge-case",
+        },
+        {
+          from: "consent-given",
+          to: "details-confirmed",
+          trigger: "confirm-details",
+        },
+        {
+          from: "details-confirmed",
+          to: "photo-submitted",
+          trigger: "submit-photo",
+        },
+        {
+          from: "photo-submitted",
+          to: "payment-made",
+          trigger: "make-payment",
+        },
+        {
+          from: "payment-made",
+          to: "application-submitted",
+          trigger: "submit-application",
+        },
         { from: "application-submitted", to: "completed", trigger: "complete" },
       ],
     },
@@ -490,40 +683,52 @@ export const FULL_SERVICES: FullServiceData[] = [
       grants: [
         {
           id: "identity-verification",
-          description: "Verify your identity using your GOV.UK One Login credentials",
-          data_shared: ["full_name", "date_of_birth", "national_insurance_number"],
+          description:
+            "Verify your identity using your GOV.UK One Login credentials",
+          data_shared: [
+            "full_name",
+            "date_of_birth",
+            "national_insurance_number",
+          ],
           source: "one-login",
-          purpose: "To confirm you are who you say you are before processing the renewal",
+          purpose:
+            "To confirm you are who you say you are before processing the renewal",
           duration: "session",
           required: true,
         },
         {
           id: "photo-sharing",
-          description: "Share your passport photo with DVLA for the new licence",
+          description:
+            "Share your passport photo with DVLA for the new licence",
           data_shared: ["passport_photo"],
           source: "hmpo-passport-office",
-          purpose: "DVLA will use your most recent passport photo for the new licence card",
+          purpose:
+            "DVLA will use your most recent passport photo for the new licence card",
           duration: "session",
           required: true,
         },
         {
           id: "address-confirmation",
-          description: "Confirm your current address for the licence and DVLA records",
+          description:
+            "Confirm your current address for the licence and DVLA records",
           data_shared: ["address_line_1", "address_line_2", "city", "postcode"],
           source: "citizen-provided",
-          purpose: "The new licence will be posted to this address and it will appear on the licence",
+          purpose:
+            "The new licence will be posted to this address and it will appear on the licence",
           duration: "session",
           required: true,
         },
       ],
       revocation: {
         mechanism: "Contact DVLA or revoke through your GOV.UK account",
-        effect: "Application will be cancelled if consent is revoked before completion",
+        effect:
+          "Application will be cancelled if consent is revoked before completion",
       },
       delegation: {
         agent_identity: "GOV.UK AI Agent",
         scopes: ["read-personal-data", "submit-to-dvla"],
-        limitations: "Agent cannot make payment on your behalf. Agent cannot change your address without your explicit confirmation.",
+        limitations:
+          "Agent cannot make payment on your behalf. Agent cannot change your address without your explicit confirmation.",
       },
     },
   },
@@ -619,13 +824,21 @@ export const FULL_SERVICES: FullServiceData[] = [
         },
       ],
       revocation: {
-        mechanism: "Contact the Department of Robotics or revoke through your GOV.UK account",
-        effect: "Your robot transformation application will be cancelled and any scanned biometrics deleted",
+        mechanism:
+          "Contact the Department of Robotics or revoke through your GOV.UK account",
+        effect:
+          "Your robot transformation application will be cancelled and any scanned biometrics deleted",
       },
       delegation: {
         agent_identity: "GOV.UK AI Agent",
-        scopes: ["read-personal-data", "submit-to-robotics-dept", "check-eligibility", "make payment"],
-        limitations: "Agent cannot authorise the final neural upload. Agent cannot choose your robot chassis model without explicit confirmation",
+        scopes: [
+          "read-personal-data",
+          "submit-to-robotics-dept",
+          "check-eligibility",
+          "make payment",
+        ],
+        limitations:
+          "Agent cannot authorise the final neural upload. Agent cannot choose your robot chassis model without explicit confirmation",
       },
     },
   },
@@ -636,7 +849,8 @@ export const FULL_SERVICES: FullServiceData[] = [
       id: "agent.chat",
       version: "1.0.0",
       name: "AI Chat Agent",
-      description: "Core AI chat orchestrator that manages citizen conversations and routes to gov services",
+      description:
+        "Core AI chat orchestrator that manages citizen conversations and routes to gov services",
       department: "Agent",
       jurisdiction: "England, Wales, Scotland",
       input_schema: { type: "object", properties: {} },
@@ -654,7 +868,8 @@ export const FULL_SERVICES: FullServiceData[] = [
       id: "triage",
       version: "1.0.0",
       name: "Triage & Routing",
-      description: "Intake and routing agent that identifies which gov services a citizen needs",
+      description:
+        "Intake and routing agent that identifies which gov services a citizen needs",
       department: "Agent",
       jurisdiction: "England, Wales, Scotland",
       input_schema: { type: "object", properties: {} },

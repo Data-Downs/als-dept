@@ -17,6 +17,9 @@ export async function GET() {
     return jsonWithCors({ departments, total: departments.length });
   } catch (error) {
     console.error("[v1/departments] Error:", error);
-    return jsonWithCors({ error: "Failed to list departments" }, { status: 500 });
+    return jsonWithCors(
+      { error: "Failed to list departments" },
+      { status: 500 },
+    );
   }
 }

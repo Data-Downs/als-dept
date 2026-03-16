@@ -6,7 +6,12 @@
  */
 
 import Anthropic from "@anthropic-ai/sdk";
-import type { ServiceAdapter, AdapterConfig, AdapterRequest, AdapterResponse } from "./service-adapter";
+import type {
+  ServiceAdapter,
+  AdapterConfig,
+  AdapterRequest,
+  AdapterResponse,
+} from "./service-adapter";
 
 export interface AnthropicChatInput {
   systemPrompt: string;
@@ -32,9 +37,9 @@ export interface AnthropicChatOutput {
 export class AnthropicAdapter implements ServiceAdapter {
   readonly type = "anthropic";
   private client: Anthropic | null = null;
-  private model = "claude-sonnet-4-5-20250929";
-  private maxTokens = 16000;
-  private thinkingBudget = 5000;
+  private model = "claude-sonnet-4-6";
+  private maxTokens = 8192;
+  private thinkingBudget = 0;
 
   initialize(config: AdapterConfig): void {
     this.client = new Anthropic({
@@ -42,7 +47,8 @@ export class AnthropicAdapter implements ServiceAdapter {
     });
     if (config.model) this.model = config.model as string;
     if (config.maxTokens) this.maxTokens = config.maxTokens as number;
-    if (config.thinkingBudget) this.thinkingBudget = config.thinkingBudget as number;
+    if (config.thinkingBudget)
+      this.thinkingBudget = config.thinkingBudget as number;
   }
 
   isReady(): boolean {
@@ -56,17 +62,22 @@ export class AnthropicAdapter implements ServiceAdapter {
 
     const input = request.input as AnthropicChatInput;
 
+    const thinkingBudget = input.thinkingBudget ?? this.thinkingBudget;
+
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const apiParams: any = {
       model: input.model || this.model,
       max_tokens: input.maxTokens || this.maxTokens,
-      thinking: {
-        type: "enabled",
-        budget_tokens: input.thinkingBudget || this.thinkingBudget,
-      },
       system: input.systemPrompt,
       messages: input.messages,
     };
+
+    if (thinkingBudget > 0) {
+      apiParams.thinking = {
+        type: "enabled",
+        budget_tokens: thinkingBudget,
+      };
+    }
 
     if (input.tools && input.tools.length > 0) {
       apiParams.tools = input.tools;
@@ -85,7 +96,11 @@ export class AnthropicAdapter implements ServiceAdapter {
         } else if (block.type === "text") {
           responseText = (block as { text: string }).text;
         } else if (block.type === "tool_use") {
-          const toolBlock = block as { id: string; name: string; input: Record<string, unknown> };
+          const toolBlock = block as {
+            id: string;
+            name: string;
+            input: Record<string, unknown>;
+          };
           toolCalls.push({
             id: toolBlock.id,
             name: toolBlock.name,
@@ -99,7 +114,9 @@ export class AnthropicAdapter implements ServiceAdapter {
         reasoning,
         stopReason: response.stop_reason || "end_turn",
         toolCalls,
-        rawContent: response.content as unknown as Array<Record<string, unknown>>,
+        rawContent: response.content as unknown as Array<
+          Record<string, unknown>
+        >,
       };
 
       return {

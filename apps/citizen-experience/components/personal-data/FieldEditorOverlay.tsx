@@ -16,7 +16,11 @@ function formatKey(key: string): string {
 }
 
 function isSimple(val: unknown): val is string | number | boolean {
-  return typeof val === "string" || typeof val === "number" || typeof val === "boolean";
+  return (
+    typeof val === "string" ||
+    typeof val === "number" ||
+    typeof val === "boolean"
+  );
 }
 
 // ── Editable field components ──
@@ -47,7 +51,9 @@ function EditableScalar({
       <input
         type="number"
         value={value}
-        onChange={(e) => onChange(e.target.value === "" ? 0 : Number(e.target.value))}
+        onChange={(e) =>
+          onChange(e.target.value === "" ? 0 : Number(e.target.value))
+        }
         className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-govuk-blue focus:border-transparent"
       />
     );
@@ -113,7 +119,10 @@ function EditableArray({
   return (
     <div className="space-y-3">
       {items.map((item, i) => (
-        <div key={i} className="relative bg-gray-50 rounded-lg p-3 border border-gray-200">
+        <div
+          key={i}
+          className="relative bg-gray-50 rounded-lg p-3 border border-gray-200"
+        >
           <div className="flex items-center justify-between mb-2">
             <span className="text-xs font-bold text-govuk-dark-grey uppercase tracking-wide">
               Item {i + 1}
@@ -127,14 +136,20 @@ function EditableArray({
           </div>
           {isSimple(item) ? (
             <EditableScalar value={item} onChange={(v) => updateItem(i, v)} />
-          ) : typeof item === "object" && item !== null && !Array.isArray(item) ? (
+          ) : typeof item === "object" &&
+            item !== null &&
+            !Array.isArray(item) ? (
             <EditableObject
               obj={item as Record<string, unknown>}
               onChange={(v) => updateItem(i, v)}
               depth={depth + 1}
             />
           ) : Array.isArray(item) ? (
-            <EditableArray items={item} onChange={(v) => updateItem(i, v)} depth={depth + 1} />
+            <EditableArray
+              items={item}
+              onChange={(v) => updateItem(i, v)}
+              depth={depth + 1}
+            />
           ) : (
             <span className="text-sm text-gray-400 italic">null</span>
           )}
@@ -144,7 +159,14 @@ function EditableArray({
         onClick={addItem}
         className="text-xs text-govuk-blue hover:underline flex items-center gap-1"
       >
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <svg
+          width="12"
+          height="12"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+        >
           <path d="M12 5v14M5 12h14" />
         </svg>
         Add item
@@ -176,7 +198,11 @@ function EditableObject({
           {isSimple(val) ? (
             <EditableScalar value={val} onChange={(v) => updateField(key, v)} />
           ) : Array.isArray(val) ? (
-            <EditableArray items={val} onChange={(v) => updateField(key, v)} depth={depth + 1} />
+            <EditableArray
+              items={val}
+              onChange={(v) => updateField(key, v)}
+              depth={depth + 1}
+            />
           ) : typeof val === "object" && val !== null ? (
             <div className="ml-3 pl-3 border-l-2 border-govuk-blue/20">
               <EditableObject
@@ -207,7 +233,9 @@ export function FieldEditorOverlay({
   onClose: () => void;
   onSaved: () => void;
 }) {
-  const [draft, setDraft] = useState<unknown>(() => deepClone(field.fieldValue));
+  const [draft, setDraft] = useState<unknown>(() =>
+    deepClone(field.fieldValue),
+  );
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -223,7 +251,9 @@ export function FieldEditorOverlay({
   // Prevent body scroll
   useEffect(() => {
     document.body.style.overflow = "hidden";
-    return () => { document.body.style.overflow = ""; };
+    return () => {
+      document.body.style.overflow = "";
+    };
   }, []);
 
   const handleSave = useCallback(async () => {
@@ -256,7 +286,10 @@ export function FieldEditorOverlay({
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center">
       {/* Backdrop */}
-      <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose} />
+      <div
+        className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+        onClick={onClose}
+      />
 
       {/* Editor panel */}
       <div className="relative w-full max-w-2xl max-h-[90vh] mx-4 bg-white rounded-xl shadow-2xl flex flex-col overflow-hidden">
@@ -275,7 +308,16 @@ export function FieldEditorOverlay({
             className="p-2 hover:bg-gray-200 rounded-lg transition-colors"
             aria-label="Close"
           >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
               <path d="M18 6L6 18M6 6l12 12" />
             </svg>
           </button>
@@ -290,10 +332,7 @@ export function FieldEditorOverlay({
           )}
 
           {isSimple(draft) ? (
-            <EditableScalar
-              value={draft}
-              onChange={(v) => setDraft(v)}
-            />
+            <EditableScalar value={draft} onChange={(v) => setDraft(v)} />
           ) : Array.isArray(draft) ? (
             <EditableArray
               items={draft}

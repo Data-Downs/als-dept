@@ -14,7 +14,7 @@ vi.mock("@/lib/store", () => ({
       getState: () => mockStoreState,
       setState: vi.fn(),
       subscribe: vi.fn(),
-    }
+    },
   ),
 }));
 
@@ -59,7 +59,10 @@ describe("TaskCard", () => {
     const onComplete = vi.fn();
     render(<TaskCard task={baseTask} onComplete={onComplete} />);
     fireEvent.click(screen.getByText("Do this"));
-    expect(onComplete).toHaveBeenCalledWith("t1", "Please proceed with: Check eligibility");
+    expect(onComplete).toHaveBeenCalledWith(
+      "t1",
+      "Please proceed with: Check eligibility",
+    );
   });
 
   it("renders date reminder variant with calendar and dismiss buttons", () => {
@@ -84,7 +87,10 @@ describe("TaskCard", () => {
     };
     render(<TaskCard task={dateTask} onComplete={onComplete} />);
     fireEvent.click(screen.getByText("Dismiss"));
-    expect(onComplete).toHaveBeenCalledWith("t1", "Dismissed: Check eligibility");
+    expect(onComplete).toHaveBeenCalledWith(
+      "t1",
+      "Dismissed: Check eligibility",
+    );
   });
 
   it("renders checkbox options when task has options", () => {
@@ -123,13 +129,10 @@ describe("TaskCard", () => {
   });
 
   it("shows completed state with Submitted badge and Change button", () => {
-    const completion = "Email address: test@example.com\nPhone number: 07700 900000";
+    const completion =
+      "Email address: test@example.com\nPhone number: 07700 900000";
     const { container } = render(
-      <TaskCard
-        task={baseTask}
-        completion={completion}
-        onReset={vi.fn()}
-      />
+      <TaskCard task={baseTask} completion={completion} onReset={vi.fn()} />,
     );
     expect(container.textContent).toContain("Submitted");
     expect(container.textContent).toContain("Change");
@@ -140,25 +143,13 @@ describe("TaskCard", () => {
 
   it("calls onReset when Change button clicked", () => {
     const onReset = vi.fn();
-    render(
-      <TaskCard
-        task={baseTask}
-        completion="Done"
-        onReset={onReset}
-      />
-    );
+    render(<TaskCard task={baseTask} completion="Done" onReset={onReset} />);
     fireEvent.click(screen.getByText("Change"));
     expect(onReset).toHaveBeenCalledWith("t1");
   });
 
   it("hides Change button when disabled", () => {
-    render(
-      <TaskCard
-        task={baseTask}
-        completion="Done"
-        disabled
-      />
-    );
+    render(<TaskCard task={baseTask} completion="Done" disabled />);
     expect(screen.queryByText("Change")).not.toBeInTheDocument();
   });
 
@@ -170,7 +161,9 @@ describe("TaskCard", () => {
       type: "user" as const,
     };
     render(<TaskCard task={freeformTask} />);
-    expect(screen.getByPlaceholderText("Type your response here...")).toBeInTheDocument();
+    expect(
+      screen.getByPlaceholderText("Type your response here..."),
+    ).toBeInTheDocument();
     expect(screen.getByText("Submit")).toBeInTheDocument();
   });
 
@@ -194,7 +187,11 @@ describe("TaskCard", () => {
         primaryContact: { firstName: "Mary", lastName: "Summers" },
         family: {
           dependents: [
-            { firstName: "Margaret", lastName: "Evans", relationship: "Mary's mother" },
+            {
+              firstName: "Margaret",
+              lastName: "Evans",
+              relationship: "Mary's mother",
+            },
           ],
         },
       },
@@ -202,15 +199,20 @@ describe("TaskCard", () => {
     const task = {
       id: "t4",
       description: "Who is this for?",
-      detail: "Let me know if this is for yourself (Mary) or your mother Margaret",
+      detail:
+        "Let me know if this is for yourself (Mary) or your mother Margaret",
       type: "user" as const,
     };
     render(<TaskCard task={task} />);
     expect(screen.getByText("Myself (Mary Summers)")).toBeInTheDocument();
-    expect(screen.getByText("Margaret Evans (Mary's mother)")).toBeInTheDocument();
+    expect(
+      screen.getByText("Margaret Evans (Mary's mother)"),
+    ).toBeInTheDocument();
     expect(screen.getByText("Someone else")).toBeInTheDocument();
     // Should NOT show a textarea
-    expect(screen.queryByPlaceholderText("Type your response here...")).not.toBeInTheDocument();
+    expect(
+      screen.queryByPlaceholderText("Type your response here..."),
+    ).not.toBeInTheDocument();
   });
 
   it("renders Yes/No radio buttons for confirmation questions", () => {
@@ -223,7 +225,9 @@ describe("TaskCard", () => {
     render(<TaskCard task={task} />);
     expect(screen.getByText("Yes")).toBeInTheDocument();
     expect(screen.getByText("No")).toBeInTheDocument();
-    expect(screen.queryByPlaceholderText("Type your response here...")).not.toBeInTheDocument();
+    expect(
+      screen.queryByPlaceholderText("Type your response here..."),
+    ).not.toBeInTheDocument();
   });
 
   it("reveals text input when 'Someone else' is selected", () => {
@@ -232,7 +236,11 @@ describe("TaskCard", () => {
         primaryContact: { firstName: "Mary", lastName: "Summers" },
         family: {
           dependents: [
-            { firstName: "Margaret", lastName: "Evans", relationship: "Mary's mother" },
+            {
+              firstName: "Margaret",
+              lastName: "Evans",
+              relationship: "Mary's mother",
+            },
           ],
         },
       },
@@ -246,7 +254,9 @@ describe("TaskCard", () => {
     render(<TaskCard task={task} />);
     // Click "Someone else"
     fireEvent.click(screen.getByText("Someone else"));
-    expect(screen.getByPlaceholderText("Please specify...")).toBeInTheDocument();
+    expect(
+      screen.getByPlaceholderText("Please specify..."),
+    ).toBeInTheDocument();
   });
 
   it("submits smart selection with Selected: prefix", () => {
@@ -255,7 +265,11 @@ describe("TaskCard", () => {
         primaryContact: { firstName: "Mary", lastName: "Summers" },
         family: {
           dependents: [
-            { firstName: "Margaret", lastName: "Evans", relationship: "Mary's mother" },
+            {
+              firstName: "Margaret",
+              lastName: "Evans",
+              relationship: "Mary's mother",
+            },
           ],
         },
       },
@@ -271,7 +285,10 @@ describe("TaskCard", () => {
     // Select "Myself"
     fireEvent.click(screen.getByText("Myself (Mary Summers)"));
     fireEvent.click(screen.getByText("Continue"));
-    expect(onComplete).toHaveBeenCalledWith("t7", "Selected: Myself (Mary Summers)");
+    expect(onComplete).toHaveBeenCalledWith(
+      "t7",
+      "Selected: Myself (Mary Summers)",
+    );
   });
 
   it("still renders freeform textarea when no patterns match", () => {
@@ -282,7 +299,9 @@ describe("TaskCard", () => {
       type: "user" as const,
     };
     render(<TaskCard task={task} />);
-    expect(screen.getByPlaceholderText("Type your response here...")).toBeInTheDocument();
+    expect(
+      screen.getByPlaceholderText("Type your response here..."),
+    ).toBeInTheDocument();
   });
 
   // ── LLM fields tests ──
@@ -294,8 +313,18 @@ describe("TaskCard", () => {
       detail: "We need your LISA info",
       type: "user" as const,
       fields: [
-        { key: "account_holder", label: "Account holder name", type: "text" as const, prefill: "Thomas Summers" },
-        { key: "lisa_provider", label: "LISA provider", type: "text" as const, placeholder: "e.g. Hargreaves Lansdown" },
+        {
+          key: "account_holder",
+          label: "Account holder name",
+          type: "text" as const,
+          prefill: "Thomas Summers",
+        },
+        {
+          key: "lisa_provider",
+          label: "LISA provider",
+          type: "text" as const,
+          placeholder: "e.g. Hargreaves Lansdown",
+        },
       ],
     };
     render(<TaskCard task={task} />);
@@ -312,7 +341,12 @@ describe("TaskCard", () => {
       detail: "Enter the price",
       type: "user" as const,
       fields: [
-        { key: "property_price", label: "Property price", type: "currency" as const, placeholder: "e.g. 350000" },
+        {
+          key: "property_price",
+          label: "Property price",
+          type: "currency" as const,
+          placeholder: "e.g. 350000",
+        },
       ],
     };
     render(<TaskCard task={task} />);
@@ -327,7 +361,11 @@ describe("TaskCard", () => {
       detail: "Check the box",
       type: "user" as const,
       fields: [
-        { key: "first_time_buyer", label: "First-time buyer", type: "confirm" as const },
+        {
+          key: "first_time_buyer",
+          label: "First-time buyer",
+          type: "confirm" as const,
+        },
       ],
     };
     render(<TaskCard task={task} />);
@@ -368,9 +406,22 @@ describe("TaskCard", () => {
       detail: "Enter info",
       type: "user" as const,
       fields: [
-        { key: "account_holder", label: "Account holder name", type: "text" as const, prefill: "Thomas" },
-        { key: "property_price", label: "Property price", type: "currency" as const },
-        { key: "first_time_buyer", label: "First-time buyer", type: "confirm" as const },
+        {
+          key: "account_holder",
+          label: "Account holder name",
+          type: "text" as const,
+          prefill: "Thomas",
+        },
+        {
+          key: "property_price",
+          label: "Property price",
+          type: "currency" as const,
+        },
+        {
+          key: "first_time_buyer",
+          label: "First-time buyer",
+          type: "confirm" as const,
+        },
       ],
     };
     render(<TaskCard task={task} onComplete={onComplete} />);
@@ -385,9 +436,18 @@ describe("TaskCard", () => {
     fireEvent.click(checkbox);
 
     fireEvent.click(screen.getByText("Submit"));
-    expect(onComplete).toHaveBeenCalledWith("tf5", expect.stringContaining("Account holder name: Thomas"));
-    expect(onComplete).toHaveBeenCalledWith("tf5", expect.stringContaining("Property price: £350000"));
-    expect(onComplete).toHaveBeenCalledWith("tf5", expect.stringContaining("First-time buyer: Yes"));
+    expect(onComplete).toHaveBeenCalledWith(
+      "tf5",
+      expect.stringContaining("Account holder name: Thomas"),
+    );
+    expect(onComplete).toHaveBeenCalledWith(
+      "tf5",
+      expect.stringContaining("Property price: £350000"),
+    );
+    expect(onComplete).toHaveBeenCalledWith(
+      "tf5",
+      expect.stringContaining("First-time buyer: Yes"),
+    );
   });
 
   it("LLM fields take priority over options, dataNeeded, and smart inference", () => {
@@ -406,9 +466,7 @@ describe("TaskCard", () => {
         { value: "self", label: "Myself" },
         { value: "other", label: "Someone else" },
       ],
-      fields: [
-        { key: "name", label: "Full name", type: "text" as const },
-      ],
+      fields: [{ key: "name", label: "Full name", type: "text" as const }],
     };
     render(<TaskCard task={task} />);
     // LLM fields should render, not options or dataNeeded fields
@@ -428,7 +486,9 @@ describe("TaskCard", () => {
       ],
     };
     render(<TaskCard task={task} />);
-    expect(screen.queryByPlaceholderText("Type your response here...")).not.toBeInTheDocument();
+    expect(
+      screen.queryByPlaceholderText("Type your response here..."),
+    ).not.toBeInTheDocument();
     expect(screen.getByText("Extra details")).toBeInTheDocument();
   });
 
@@ -439,8 +499,18 @@ describe("TaskCard", () => {
       detail: "Check your info",
       type: "user" as const,
       fields: [
-        { key: "name", label: "Name", type: "text" as const, prefill: "John Smith" },
-        { key: "email", label: "Email", type: "email" as const, prefill: "john@example.com" },
+        {
+          key: "name",
+          label: "Name",
+          type: "text" as const,
+          prefill: "John Smith",
+        },
+        {
+          key: "email",
+          label: "Email",
+          type: "email" as const,
+          prefill: "john@example.com",
+        },
       ],
     };
     render(<TaskCard task={task} />);
@@ -454,7 +524,11 @@ describe("TaskCard", () => {
         primaryContact: { firstName: "Mary", lastName: "Summers" },
         family: {
           dependents: [
-            { firstName: "Margaret", lastName: "Evans", relationship: "Mary's mother" },
+            {
+              firstName: "Margaret",
+              lastName: "Evans",
+              relationship: "Mary's mother",
+            },
           ],
         },
       },

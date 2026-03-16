@@ -17,7 +17,10 @@ export function handleOptions(): NextResponse {
 }
 
 /** Add CORS headers to a NextResponse.json() call */
-export function jsonWithCors(data: unknown, init?: { status?: number }): NextResponse {
+export function jsonWithCors(
+  data: unknown,
+  init?: { status?: number },
+): NextResponse {
   return NextResponse.json(data, {
     status: init?.status || 200,
     headers: corsHeaders,

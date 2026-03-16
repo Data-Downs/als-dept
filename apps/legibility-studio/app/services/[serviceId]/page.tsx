@@ -42,20 +42,32 @@ interface ConsentGrant {
 // ── Policy Rules View ──
 function PolicyView({ policy }: { policy: Record<string, unknown> }) {
   const rules = (policy.rules || []) as PolicyRule[];
-  const edgeCases = (policy.edge_cases || []) as Array<{ id: string; description: string; action: string }>;
+  const edgeCases = (policy.edge_cases || []) as Array<{
+    id: string;
+    description: string;
+    action: string;
+  }>;
 
   return (
     <div className="space-y-4">
       <div>
-        <h4 className="font-bold text-sm mb-2">Eligibility Rules ({rules.length})</h4>
+        <h4 className="font-bold text-sm mb-2">
+          Eligibility Rules ({rules.length})
+        </h4>
         <div className="space-y-2">
           {rules.map((rule) => (
-            <div key={rule.id} className="border border-studio-border rounded-lg p-3 bg-white">
+            <div
+              key={rule.id}
+              className="border border-studio-border rounded-lg p-3 bg-white"
+            >
               <div className="flex items-start justify-between gap-2">
                 <div>
-                  <span className="text-sm font-medium">{rule.description}</span>
+                  <span className="text-sm font-medium">
+                    {rule.description}
+                  </span>
                   <div className="text-xs text-gray-500 mt-1 font-mono">
-                    {rule.condition.field} {rule.condition.operator} {JSON.stringify(rule.condition.value)}
+                    {rule.condition.field} {rule.condition.operator}{" "}
+                    {JSON.stringify(rule.condition.value)}
                   </div>
                 </div>
               </div>
@@ -74,10 +86,15 @@ function PolicyView({ policy }: { policy: Record<string, unknown> }) {
 
       {edgeCases.length > 0 && (
         <div>
-          <h4 className="font-bold text-sm mb-2">Edge Cases ({edgeCases.length})</h4>
+          <h4 className="font-bold text-sm mb-2">
+            Edge Cases ({edgeCases.length})
+          </h4>
           <div className="space-y-2">
             {edgeCases.map((ec) => (
-              <div key={ec.id} className="border border-orange-200 bg-orange-50 rounded-lg p-3">
+              <div
+                key={ec.id}
+                className="border border-orange-200 bg-orange-50 rounded-lg p-3"
+              >
                 <span className="text-sm font-medium">{ec.description}</span>
                 <div className="text-xs text-orange-700 mt-1">{ec.action}</div>
               </div>
@@ -90,7 +107,11 @@ function PolicyView({ policy }: { policy: Record<string, unknown> }) {
 }
 
 // ── State Model View ──
-function StateModelView({ stateModel }: { stateModel: Record<string, unknown> }) {
+function StateModelView({
+  stateModel,
+}: {
+  stateModel: Record<string, unknown>;
+}) {
   const states = (stateModel.states || []) as StateDefinition[];
   const transitions = (stateModel.transitions || []) as Transition[];
 
@@ -110,21 +131,33 @@ function StateModelView({ stateModel }: { stateModel: Record<string, unknown> })
               className={`text-xs font-mono px-3 py-1.5 rounded-full border ${stateColors[state.type || ""] || "bg-blue-50 border-blue-200 text-blue-800"}`}
             >
               {state.id}
-              {state.receipt && <span className="ml-1 opacity-60" title="Receipt required">R</span>}
+              {state.receipt && (
+                <span className="ml-1 opacity-60" title="Receipt required">
+                  R
+                </span>
+              )}
             </div>
           ))}
         </div>
       </div>
 
       <div>
-        <h4 className="font-bold text-sm mb-2">Transitions ({transitions.length})</h4>
+        <h4 className="font-bold text-sm mb-2">
+          Transitions ({transitions.length})
+        </h4>
         <div className="space-y-1">
           {transitions.map((t, i) => (
             <div key={i} className="flex items-center gap-2 text-xs">
-              <span className="font-mono bg-gray-100 px-2 py-0.5 rounded">{t.from}</span>
+              <span className="font-mono bg-gray-100 px-2 py-0.5 rounded">
+                {t.from}
+              </span>
               <span className="text-gray-400">&rarr;</span>
-              <span className="font-mono bg-gray-100 px-2 py-0.5 rounded">{t.to}</span>
-              <span className="text-studio-accent font-medium">[{t.trigger}]</span>
+              <span className="font-mono bg-gray-100 px-2 py-0.5 rounded">
+                {t.to}
+              </span>
+              <span className="text-studio-accent font-medium">
+                [{t.trigger}]
+              </span>
               {t.condition && (
                 <span className="text-orange-600 text-xs">({t.condition})</span>
               )}
@@ -138,7 +171,9 @@ function StateModelView({ stateModel }: { stateModel: Record<string, unknown> })
 
 // ── Consent View ──
 function ConsentView({ consent }: { consent: Record<string, unknown> }) {
-  const grants = (consent.grants || consent.consent_grants || []) as ConsentGrant[];
+  const grants = (consent.grants ||
+    consent.consent_grants ||
+    []) as ConsentGrant[];
   const model = consent;
 
   return (
@@ -153,7 +188,10 @@ function ConsentView({ consent }: { consent: Record<string, unknown> }) {
       {grants.length > 0 ? (
         <div className="space-y-2">
           {grants.map((grant) => (
-            <div key={grant.id} className="border border-studio-border rounded-lg p-3 bg-white">
+            <div
+              key={grant.id}
+              className="border border-studio-border rounded-lg p-3 bg-white"
+            >
               <div className="font-medium text-sm">{grant.data_category}</div>
               <div className="text-xs text-gray-500 mt-1">{grant.purpose}</div>
               {grant.duration && (
@@ -183,10 +221,13 @@ function ManifestSummary({ manifest }: { manifest: Record<string, unknown> }) {
   const inputs = manifest.input_schema as Record<string, unknown> | undefined;
   const outputs = manifest.output_schema as Record<string, unknown> | undefined;
 
-  function getFieldNames(schema: Record<string, unknown> | undefined): string[] {
+  function getFieldNames(
+    schema: Record<string, unknown> | undefined,
+  ): string[] {
     if (!schema) return [];
     if (Array.isArray(schema.required)) return schema.required as string[];
-    if (schema.properties && typeof schema.properties === "object") return Object.keys(schema.properties as Record<string, unknown>);
+    if (schema.properties && typeof schema.properties === "object")
+      return Object.keys(schema.properties as Record<string, unknown>);
     return [];
   }
 
@@ -200,7 +241,10 @@ function ManifestSummary({ manifest }: { manifest: Record<string, unknown> }) {
           <h4 className="font-bold text-sm mb-2">Required Inputs</h4>
           <div className="flex flex-wrap gap-1.5">
             {inputFields.map((field) => (
-              <span key={field} className="text-xs font-mono bg-blue-50 text-blue-700 px-2 py-1 rounded">
+              <span
+                key={field}
+                className="text-xs font-mono bg-blue-50 text-blue-700 px-2 py-1 rounded"
+              >
                 {field}
               </span>
             ))}
@@ -213,7 +257,10 @@ function ManifestSummary({ manifest }: { manifest: Record<string, unknown> }) {
           <h4 className="font-bold text-sm mb-2">Outputs</h4>
           <div className="flex flex-wrap gap-1.5">
             {outputFields.map((field) => (
-              <span key={field} className="text-xs font-mono bg-green-50 text-green-700 px-2 py-1 rounded">
+              <span
+                key={field}
+                className="text-xs font-mono bg-green-50 text-green-700 px-2 py-1 rounded"
+              >
                 {field}
               </span>
             ))}
@@ -225,18 +272,26 @@ function ManifestSummary({ manifest }: { manifest: Record<string, unknown> }) {
         <div>
           <h4 className="font-bold text-sm mb-2">Redress</h4>
           <div className="text-sm space-y-1">
-            {Object.entries(manifest.redress as Record<string, unknown>).map(([key, val]) => (
-              <div key={key} className="flex gap-2">
-                <span className="text-gray-500 capitalize">{key.replace(/_/g, " ")}:</span>
-                <span className="font-medium">{typeof val === "string" ? val : JSON.stringify(val)}</span>
-              </div>
-            ))}
+            {Object.entries(manifest.redress as Record<string, unknown>).map(
+              ([key, val]) => (
+                <div key={key} className="flex gap-2">
+                  <span className="text-gray-500 capitalize">
+                    {key.replace(/_/g, " ")}:
+                  </span>
+                  <span className="font-medium">
+                    {typeof val === "string" ? val : JSON.stringify(val)}
+                  </span>
+                </div>
+              ),
+            )}
           </div>
         </div>
       ) : null}
 
       <details className="mt-2">
-        <summary className="text-xs text-studio-accent cursor-pointer">View raw manifest JSON</summary>
+        <summary className="text-xs text-studio-accent cursor-pointer">
+          View raw manifest JSON
+        </summary>
         <pre className="text-xs overflow-auto max-h-64 whitespace-pre-wrap bg-gray-50 p-3 rounded-lg mt-2">
           {JSON.stringify(manifest, null, 2)}
         </pre>
@@ -261,7 +316,9 @@ function ArtefactSection({
     return (
       <div className="border border-red-200 bg-red-50 rounded-xl p-4">
         <h3 className="font-bold text-sm">{title}</h3>
-        <p className="text-sm text-red-600 mt-1">Not defined — this artefact is missing.</p>
+        <p className="text-sm text-red-600 mt-1">
+          Not defined — this artefact is missing.
+        </p>
       </div>
     );
   }
@@ -276,12 +333,12 @@ function ArtefactSection({
           <span className="text-green-600">&#10003;</span>
           {title}
         </h3>
-        <span className="text-xs text-gray-500">{expanded ? "Collapse" : "Expand"}</span>
+        <span className="text-xs text-gray-500">
+          {expanded ? "Collapse" : "Expand"}
+        </span>
       </button>
       {expanded && (
-        <div className="border-t border-studio-border p-4">
-          {children}
-        </div>
+        <div className="border-t border-studio-border p-4">{children}</div>
       )}
     </div>
   );
@@ -311,12 +368,19 @@ export default function ServiceDetailPage({
   }, [serviceId]);
 
   const handleDelete = useCallback(async () => {
-    if (!window.confirm(`Are you sure you want to delete "${service?.manifest?.name}"? This will permanently remove all artefact files.`)) {
+    if (
+      !window.confirm(
+        `Are you sure you want to delete "${service?.manifest?.name}"? This will permanently remove all artefact files.`,
+      )
+    ) {
       return;
     }
     setDeleting(true);
     try {
-      const response = await fetch(`/api/services/${encodeURIComponent(serviceId)}`, { method: "DELETE" });
+      const response = await fetch(
+        `/api/services/${encodeURIComponent(serviceId)}`,
+        { method: "DELETE" },
+      );
       if (response.ok) {
         router.push("/services");
       } else {
@@ -333,10 +397,15 @@ export default function ServiceDetailPage({
   const handleGenerate = useCallback(async () => {
     setGenerating(true);
     try {
-      const response = await fetch(`/api/services/${encodeURIComponent(serviceId)}/generate`, { method: "POST" });
+      const response = await fetch(
+        `/api/services/${encodeURIComponent(serviceId)}/generate`,
+        { method: "POST" },
+      );
       if (response.ok) {
         // Refresh service data
-        const data = await fetch(`/api/services/${encodeURIComponent(serviceId)}`).then((r) => r.json());
+        const data = await fetch(
+          `/api/services/${encodeURIComponent(serviceId)}`,
+        ).then((r) => r.json());
         setService(data);
       } else {
         const err = await response.json();
@@ -350,14 +419,19 @@ export default function ServiceDetailPage({
   }, [serviceId]);
 
   if (loading) {
-    return <div className="text-center py-12 text-gray-500">Loading service...</div>;
+    return (
+      <div className="text-center py-12 text-gray-500">Loading service...</div>
+    );
   }
 
   if (!service || service.error) {
     return (
       <div className="text-center py-12">
         <h1 className="text-2xl font-bold text-red-600">Service not found</h1>
-        <a href="/services" className="text-studio-accent mt-4 inline-block hover:underline">
+        <a
+          href="/services"
+          className="text-studio-accent mt-4 inline-block hover:underline"
+        >
           Back to services
         </a>
       </div>
@@ -366,7 +440,8 @@ export default function ServiceDetailPage({
 
   const gaps: GapItem[] = service.gaps || [];
   const present = gaps.filter((g: GapItem) => g.status === "present").length;
-  const completeness = gaps.length > 0 ? Math.round((present / gaps.length) * 100) : 0;
+  const completeness =
+    gaps.length > 0 ? Math.round((present / gaps.length) * 100) : 0;
 
   return (
     <div>
@@ -384,11 +459,13 @@ export default function ServiceDetailPage({
           <div className="flex items-center gap-2 mt-1">
             <p className="text-gray-500">{service.manifest.department}</p>
             {service.source && (
-              <span className={`text-[10px] font-bold uppercase px-1.5 py-0.5 rounded ${
-                service.source === "full"
-                  ? "bg-blue-100 text-blue-800"
-                  : "bg-amber-100 text-amber-800"
-              }`}>
+              <span
+                className={`text-[10px] font-bold uppercase px-1.5 py-0.5 rounded ${
+                  service.source === "full"
+                    ? "bg-blue-100 text-blue-800"
+                    : "bg-amber-100 text-amber-800"
+                }`}
+              >
                 {service.source}
               </span>
             )}
@@ -398,7 +475,10 @@ export default function ServiceDetailPage({
               </span>
             )}
             {service.generatedAt && (
-              <span className="text-[10px] font-medium text-green-700 bg-green-100 px-1.5 py-0.5 rounded" title={service.generatedAt}>
+              <span
+                className="text-[10px] font-medium text-green-700 bg-green-100 px-1.5 py-0.5 rounded"
+                title={service.generatedAt}
+              >
                 Generated
               </span>
             )}
@@ -436,7 +516,9 @@ export default function ServiceDetailPage({
           </div>
         </div>
         <div className="text-right">
-          <div className="text-3xl font-light tracking-tight">{completeness}%</div>
+          <div className="text-3xl font-light tracking-tight">
+            {completeness}%
+          </div>
           <div className="text-xs text-gray-500">artefact completeness</div>
         </div>
       </div>
@@ -449,7 +531,10 @@ export default function ServiceDetailPage({
             {gaps
               .filter((g: GapItem) => g.status !== "present")
               .map((gap: GapItem) => (
-                <div key={gap.field} className="flex items-center gap-2 text-sm">
+                <div
+                  key={gap.field}
+                  className="flex items-center gap-2 text-sm"
+                >
                   <span className="text-red-500">&#10007;</span>
                   <span className="font-mono text-xs">{gap.field}</span>
                   <span className="text-gray-500">({gap.artefact})</span>
@@ -471,20 +556,25 @@ export default function ServiceDetailPage({
           <div className="border border-studio-border rounded-xl bg-white p-3">
             <div className="text-xs text-gray-500">Fee</div>
             <div className="font-bold">
-              {service.manifest.constraints.fee.currency} {service.manifest.constraints.fee.amount}
+              {service.manifest.constraints.fee.currency}{" "}
+              {service.manifest.constraints.fee.amount}
             </div>
           </div>
         )}
         {service.manifest.handoff?.escalation_phone && (
           <div className="border border-studio-border rounded-xl bg-white p-3">
             <div className="text-xs text-gray-500">Escalation phone</div>
-            <div className="font-bold">{service.manifest.handoff.escalation_phone}</div>
+            <div className="font-bold">
+              {service.manifest.handoff.escalation_phone}
+            </div>
           </div>
         )}
         {service.manifest.audit_requirements?.lawful_basis && (
           <div className="border border-studio-border rounded-xl bg-white p-3">
             <div className="text-xs text-gray-500">Lawful basis</div>
-            <div className="font-bold">{service.manifest.audit_requirements.lawful_basis}</div>
+            <div className="font-bold">
+              {service.manifest.audit_requirements.lawful_basis}
+            </div>
           </div>
         )}
       </div>
@@ -492,7 +582,10 @@ export default function ServiceDetailPage({
       {/* Artefact views */}
       <h2 className="text-xl font-bold mb-3">Artefacts</h2>
       <div className="space-y-3">
-        <ArtefactSection title="Capability Manifest" present={!!service.manifest}>
+        <ArtefactSection
+          title="Capability Manifest"
+          present={!!service.manifest}
+        >
           <ManifestSummary manifest={service.manifest} />
         </ArtefactSection>
 
@@ -501,7 +594,9 @@ export default function ServiceDetailPage({
         </ArtefactSection>
 
         <ArtefactSection title="State Model" present={!!service.stateModel}>
-          {service.stateModel && <StateModelView stateModel={service.stateModel} />}
+          {service.stateModel && (
+            <StateModelView stateModel={service.stateModel} />
+          )}
         </ArtefactSection>
 
         <ArtefactSection title="Consent Model" present={!!service.consent}>

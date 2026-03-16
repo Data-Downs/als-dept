@@ -272,10 +272,7 @@
         "lpaType": "Health and Welfare",
         "registrationNumber": "M-0123-4567-8901",
         "registeredDate": "2022-11-15",
-        "attorneys": [
-          "Mary Elizabeth Summers",
-          "Hugo Charles Summers"
-        ],
+        "attorneys": ["Mary Elizabeth Summers", "Hugo Charles Summers"],
         "status": "Active"
       },
       {
@@ -285,10 +282,7 @@
         "lpaType": "Property and Financial Affairs",
         "registrationNumber": "M-0123-4567-8902",
         "registeredDate": "2022-11-15",
-        "attorneys": [
-          "Mary Elizabeth Summers",
-          "Hugo Charles Summers"
-        ],
+        "attorneys": ["Mary Elizabeth Summers", "Hugo Charles Summers"],
         "status": "Active"
       }
     ],

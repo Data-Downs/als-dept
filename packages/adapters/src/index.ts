@@ -1,4 +1,9 @@
-export type { ServiceAdapter, AdapterConfig, AdapterRequest, AdapterResponse } from "./service-adapter";
+export type {
+  ServiceAdapter,
+  AdapterConfig,
+  AdapterRequest,
+  AdapterResponse,
+} from "./service-adapter";
 export { AnthropicAdapter } from "./anthropic";
 export type { AnthropicChatInput, AnthropicChatOutput } from "./anthropic";
 export { GovukContentAdapter } from "./govuk-content";

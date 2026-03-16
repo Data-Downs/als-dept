@@ -1,5 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getLifeEvents, getGraphEngine, getPersonaData } from "@/lib/service-data";
+import {
+  getLifeEvents,
+  getGraphEngine,
+  getPersonaData,
+} from "@/lib/service-data";
 import { checkPersonaEligibility } from "@/lib/eligibility-filter";
 import { inferInteractionType, resolveProactivityConfig } from "@als/schemas";
 
@@ -77,7 +81,9 @@ export async function GET(request: NextRequest) {
         (edge) => remainingIds.has(edge.from) && remainingIds.has(edge.to),
       );
 
-      const filteredEntryIds = plan.entryServiceIds.filter((id) => remainingIds.has(id));
+      const filteredEntryIds = plan.entryServiceIds.filter((id) =>
+        remainingIds.has(id),
+      );
 
       filteredPlan = {
         entryServiceIds: filteredEntryIds,
@@ -90,7 +96,8 @@ export async function GET(request: NextRequest) {
       id: le.id,
       icon: le.icon,
       name: le.name,
-      desc: le.desc ?? (le as unknown as Record<string, unknown>).description ?? "",
+      desc:
+        le.desc ?? (le as unknown as Record<string, unknown>).description ?? "",
       entryNodeCount: le.entryNodes?.length ?? 0,
       totalServiceCount: services.length,
       services,

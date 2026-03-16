@@ -5,7 +5,11 @@ interface DynamicListProps<T> {
   onAdd: () => void;
   onRemove: (index: number) => void;
   onChange: (index: number, item: T) => void;
-  renderItem: (item: T, index: number, onChange: (item: T) => void) => React.ReactNode;
+  renderItem: (
+    item: T,
+    index: number,
+    onChange: (item: T) => void,
+  ) => React.ReactNode;
   addLabel?: string;
 }
 
@@ -20,7 +24,10 @@ export default function DynamicList<T>({
   return (
     <div className="space-y-3">
       {items.map((item, i) => (
-        <div key={i} className="border border-govuk-mid-grey rounded p-3 bg-white relative">
+        <div
+          key={i}
+          className="border border-govuk-mid-grey rounded p-3 bg-white relative"
+        >
           <button
             type="button"
             onClick={() => onRemove(i)}

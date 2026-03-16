@@ -4,9 +4,18 @@ import { useState } from "react";
 import { useAppStore, getTasks, saveTasks } from "@/lib/store";
 import type { StoredTask, TimelineItem } from "@/lib/types";
 import { UrgencyDot } from "../ui/UrgencyDot";
+import { formatWithPlates } from "../ui/RegPlate";
 import { DEMO_TODAY } from "@/lib/types";
 
-function generateCalendarFile(item: { title?: string; description?: string; dueDate?: string; detail?: string; dueLabel?: string; id?: string; daysUntil?: number }) {
+function generateCalendarFile(item: {
+  title?: string;
+  description?: string;
+  dueDate?: string;
+  detail?: string;
+  dueLabel?: string;
+  id?: string;
+  daysUntil?: number;
+}) {
   const dateStr = item.dueDate || item.dueLabel;
   if (!dateStr) return;
 
@@ -85,7 +94,11 @@ function generateBrief(
   const dataNeeded: string[] = [];
   const lower = `${description} ${detail}`.toLowerCase();
 
-  if (lower.includes("mot") || lower.includes("vehicle") || lower.includes("road tax")) {
+  if (
+    lower.includes("mot") ||
+    lower.includes("vehicle") ||
+    lower.includes("road tax")
+  ) {
     steps.push("Check current MOT/tax status via DVLA records");
     steps.push("Find available dates and nearby testing centres");
     steps.push("Present options for you to confirm");
@@ -100,7 +113,10 @@ function generateBrief(
       steps.push("Draft the application for your approval before submitting");
       dataNeeded.push("Confirmation of child's details");
     }
-  } else if (lower.includes("tax-free childcare") || lower.includes("childcare")) {
+  } else if (
+    lower.includes("tax-free childcare") ||
+    lower.includes("childcare")
+  ) {
     steps.push("Verify income eligibility with HMRC records");
     steps.push("Check childcare provider registration");
     steps.push("Calculate your estimated top-up amount");
@@ -123,13 +139,22 @@ function generateBrief(
   }
 
   // Dot always checks, Max only checks for high-stakes actions
-  const checksWithYou = agentName === "Dot" ? true : lower.includes("apply") || lower.includes("submit") || lower.includes("pay");
+  const checksWithYou =
+    agentName === "Dot"
+      ? true
+      : lower.includes("apply") ||
+        lower.includes("submit") ||
+        lower.includes("pay");
 
   let estimatedDue: string | null = null;
   if (dueDate) {
     const d = new Date(dueDate);
     d.setDate(d.getDate() - 3);
-    estimatedDue = d.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
+    estimatedDue = d.toLocaleDateString("en-GB", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    });
   }
 
   if (task?.dataNeeded && task.dataNeeded.length > 0) {
@@ -168,7 +193,9 @@ export function TaskDetailSheet({ data }: TaskDetailSheetProps) {
 
   // Try to find the stored task if we have a persona
   const storedTask = persona
-    ? getTasks(persona).find((t) => `task-${t.id}` === item.id || t.id === item.id)
+    ? getTasks(persona).find(
+        (t) => `task-${t.id}` === item.id || t.id === item.id,
+      )
     : null;
 
   const handleAccept = () => {
@@ -220,9 +247,11 @@ export function TaskDetailSheet({ data }: TaskDetailSheetProps) {
       <div className="space-y-4">
         {/* Header */}
         <div className="flex items-center gap-3">
-          <div className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-sm ${
-            agent === "max" ? "bg-amber-500" : "bg-govuk-blue"
-          }`}>
+          <div
+            className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-sm ${
+              agent === "max" ? "bg-amber-500" : "bg-govuk-blue"
+            }`}
+          >
             {agent === "max" ? "M" : "D"}
           </div>
           <div>
@@ -239,13 +268,17 @@ export function TaskDetailSheet({ data }: TaskDetailSheetProps) {
         <div>
           <p className="text-sm font-medium blue-ripple-text mb-2">Objective</p>
           <div className="bg-gray-50 rounded-lg p-3">
-            <p className="text-sm text-govuk-black leading-relaxed">{brief.objective}</p>
+            <p className="text-sm text-govuk-black leading-relaxed">
+              {formatWithPlates(brief.objective)}
+            </p>
           </div>
         </div>
 
         {/* Steps — stitched cards with continuous vertical timeline */}
         <div>
-          <p className="text-sm font-medium blue-ripple-text mb-2">What {agentName} will do</p>
+          <p className="text-sm font-medium blue-ripple-text mb-2">
+            What {agentName} will do
+          </p>
           <div className="rounded-lg overflow-hidden relative bg-gray-50">
             {/* Single continuous vertical line behind all circles */}
             {brief.steps.length > 1 && (
@@ -273,7 +306,9 @@ export function TaskDetailSheet({ data }: TaskDetailSheetProps) {
                 </div>
                 {/* Step text */}
                 <div className="flex-1 py-3.5 pr-4">
-                  <span className="text-sm text-govuk-black leading-snug">{step}</span>
+                  <span className="text-sm text-govuk-black leading-snug">
+                    {step}
+                  </span>
                 </div>
               </div>
             ))}
@@ -283,16 +318,28 @@ export function TaskDetailSheet({ data }: TaskDetailSheetProps) {
         {/* Data the agent will access */}
         {brief.dataUsed.length > 0 && (
           <div>
-            <p className="text-sm font-medium blue-ripple-text mb-2">Data the agent will access</p>
+            <p className="text-sm font-medium blue-ripple-text mb-2">
+              Data the agent will access
+            </p>
             <div className="rounded-lg overflow-hidden bg-gray-50">
               {brief.dataUsed.map((d, i) => (
                 <div
                   key={i}
                   className={`flex items-center gap-3 px-4 py-3 ${
-                    i < brief.dataUsed.length - 1 ? "border-b border-gray-200" : ""
+                    i < brief.dataUsed.length - 1
+                      ? "border-b border-gray-200"
+                      : ""
                   }`}
                 >
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1d70b8" strokeWidth="2" className="shrink-0">
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="#1d70b8"
+                    strokeWidth="2"
+                    className="shrink-0"
+                  >
                     <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
                     <polyline points="14 2 14 8 20 8" />
                   </svg>
@@ -307,7 +354,16 @@ export function TaskDetailSheet({ data }: TaskDetailSheetProps) {
         {brief.dataNeeded.length > 0 && (
           <div>
             <p className="text-sm font-medium text-yellow-700 mb-2 flex items-center gap-1.5">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#a16207" strokeWidth="2.5" strokeLinecap="round" className="shrink-0">
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="#a16207"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                className="shrink-0"
+              >
                 <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
                 <line x1="12" y1="9" x2="12" y2="13" />
                 <line x1="12" y1="17" x2="12.01" y2="17" />
@@ -319,16 +375,39 @@ export function TaskDetailSheet({ data }: TaskDetailSheetProps) {
                 <div
                   key={i}
                   className={`flex items-center gap-3 px-4 py-3 ${
-                    i < brief.dataNeeded.length - 1 ? "border-b border-yellow-300" : ""
+                    i < brief.dataNeeded.length - 1
+                      ? "border-b border-yellow-300"
+                      : ""
                   }`}
                 >
                   {/* Editable pencil icon */}
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#854d0e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="#854d0e"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="shrink-0"
+                  >
                     <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" />
                     <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" />
                   </svg>
-                  <span className="flex-1 text-sm text-yellow-900 font-medium">{d}</span>
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#a16207" strokeWidth="2" strokeLinecap="round" className="shrink-0">
+                  <span className="flex-1 text-sm text-yellow-900 font-medium">
+                    {d}
+                  </span>
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="#a16207"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    className="shrink-0"
+                  >
                     <path d="M9 18l6-6-6-6" />
                   </svg>
                 </div>
@@ -340,18 +419,26 @@ export function TaskDetailSheet({ data }: TaskDetailSheetProps) {
         {/* Autonomy & checking + target date */}
         <div className="flex gap-3">
           <div className="flex-1">
-            <p className="text-sm font-medium blue-ripple-text mb-2">{agentName} will check</p>
+            <p className="text-sm font-medium blue-ripple-text mb-2">
+              {agentName} will check
+            </p>
             <div className="bg-gray-50 rounded-lg p-3">
               <p className="text-sm text-govuk-black font-medium">
-                {brief.checksWithYou ? "Yes — before any action" : "Only for high-stakes steps"}
+                {brief.checksWithYou
+                  ? "Yes — before any action"
+                  : "Only for high-stakes steps"}
               </p>
             </div>
           </div>
           {brief.estimatedDue && (
             <div className="flex-1">
-              <p className="text-sm font-medium blue-ripple-text mb-2">Target date</p>
+              <p className="text-sm font-medium blue-ripple-text mb-2">
+                Target date
+              </p>
               <div className="bg-gray-50 rounded-lg p-3">
-                <p className="text-sm text-govuk-black font-medium">{brief.estimatedDue}</p>
+                <p className="text-sm text-govuk-black font-medium">
+                  {brief.estimatedDue}
+                </p>
               </div>
             </div>
           )}
@@ -382,14 +469,19 @@ export function TaskDetailSheet({ data }: TaskDetailSheetProps) {
       {/* Title and urgency */}
       <div className="flex items-start gap-3">
         {item.urgency && item.urgency !== "info" && (
-          <UrgencyDot urgency={item.urgency as "urgent" | "warning" | "ok"} size="md" />
+          <UrgencyDot
+            urgency={item.urgency as "urgent" | "warning" | "ok"}
+            size="md"
+          />
         )}
         <div className="flex-1">
           <h3 className="text-lg font-bold text-govuk-black">
-            {item.title || (storedTask?.description)}
+            {formatWithPlates(item.title || storedTask?.description || "")}
           </h3>
           {item.subtitle && (
-            <p className="text-sm text-govuk-dark-grey mt-0.5">{item.subtitle}</p>
+            <p className="text-sm text-govuk-dark-grey mt-0.5">
+              {formatWithPlates(item.subtitle)}
+            </p>
           )}
         </div>
       </div>
@@ -401,29 +493,49 @@ export function TaskDetailSheet({ data }: TaskDetailSheetProps) {
         </span>
         {(item.source === "agent" || storedTask?.type === "agent") && (
           <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-blue-100 text-xs font-bold text-blue-700">
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
+            <svg
+              width="10"
+              height="10"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="shrink-0"
+            >
               <path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
             </svg>
             Agent task
           </span>
         )}
-        {(item.source || storedTask?.type) && item.source !== "agent" && storedTask?.type !== "agent" && (
-          <span className={`px-2 py-0.5 rounded-full text-xs font-bold uppercase ${
-            item.source === "data"
-              ? "bg-green-50 text-green-700"
-              : "bg-gray-100 text-gray-600"
-          }`}>
-            {item.source === "data" ? "data" : storedTask?.type || item.source}
-          </span>
-        )}
+        {(item.source || storedTask?.type) &&
+          item.source !== "agent" &&
+          storedTask?.type !== "agent" && (
+            <span
+              className={`px-2 py-0.5 rounded-full text-xs font-bold uppercase ${
+                item.source === "data"
+                  ? "bg-green-50 text-green-700"
+                  : "bg-gray-100 text-gray-600"
+              }`}
+            >
+              {item.source === "data"
+                ? "data"
+                : storedTask?.type || item.source}
+            </span>
+          )}
         {(item.taskStatus || storedTask?.status) && (
-          <span className={`px-2 py-0.5 rounded-full text-xs font-bold uppercase ${
-            (item.taskStatus === "accepted" || storedTask?.status === "accepted")
-              ? "bg-green-50 text-green-700"
-              : (item.taskStatus === "completed" || storedTask?.status === "completed")
-                ? "bg-green-100 text-green-800"
-                : "bg-yellow-50 text-yellow-700"
-          }`}>
+          <span
+            className={`px-2 py-0.5 rounded-full text-xs font-bold uppercase ${
+              item.taskStatus === "accepted" ||
+              storedTask?.status === "accepted"
+                ? "bg-green-50 text-green-700"
+                : item.taskStatus === "completed" ||
+                    storedTask?.status === "completed"
+                  ? "bg-green-100 text-green-800"
+                  : "bg-yellow-50 text-yellow-700"
+            }`}
+          >
             {storedTask?.status || item.taskStatus}
           </span>
         )}
@@ -432,15 +544,24 @@ export function TaskDetailSheet({ data }: TaskDetailSheetProps) {
       {/* Due date */}
       {item.dueDate && (
         <div className="bg-gray-50 rounded-lg p-3">
-          <p className="text-xs font-bold text-govuk-dark-grey uppercase tracking-wide mb-1">Due date</p>
-          <p className="text-sm text-govuk-black font-medium">{formatDate(item.dueDate)}</p>
+          <p className="text-xs font-bold text-govuk-dark-grey uppercase tracking-wide mb-1">
+            Due date
+          </p>
+          <p className="text-sm text-govuk-black font-medium">
+            {formatDate(item.dueDate)}
+          </p>
           {days !== null && (
-            <p className={`text-xs font-bold mt-0.5 ${
-              days < 0 ? "text-govuk-red" :
-              days < 14 ? "text-govuk-red" :
-              days < 30 ? "text-govuk-orange" :
-              "text-govuk-dark-grey"
-            }`}>
+            <p
+              className={`text-xs font-bold mt-0.5 ${
+                days < 0
+                  ? "text-govuk-red"
+                  : days < 14
+                    ? "text-govuk-red"
+                    : days < 30
+                      ? "text-govuk-orange"
+                      : "text-govuk-dark-grey"
+              }`}
+            >
               {item.dueLabel}
             </p>
           )}
@@ -450,9 +571,11 @@ export function TaskDetailSheet({ data }: TaskDetailSheetProps) {
       {/* Detail/description */}
       {(item.detail || storedTask?.detail) && (
         <div className="bg-gray-50 rounded-lg p-3">
-          <p className="text-xs font-bold text-govuk-dark-grey uppercase tracking-wide mb-1">What the agent will do</p>
+          <p className="text-xs font-bold blue-ripple-text mb-1">
+            What the agent will do
+          </p>
           <p className="text-sm text-govuk-black leading-relaxed">
-            {item.detail || storedTask?.detail}
+            {formatWithPlates(item.detail || storedTask?.detail || "")}
           </p>
         </div>
       )}
@@ -460,11 +583,22 @@ export function TaskDetailSheet({ data }: TaskDetailSheetProps) {
       {/* Data needed */}
       {storedTask?.dataNeeded && storedTask.dataNeeded.length > 0 && (
         <div className="bg-gray-50 rounded-lg p-3">
-          <p className="text-xs font-bold text-govuk-dark-grey uppercase tracking-wide mb-2">Data needed</p>
+          <p className="text-xs font-bold blue-ripple-text mb-2">Data needed</p>
           <ul className="space-y-1">
             {storedTask.dataNeeded.map((d, i) => (
-              <li key={i} className="flex items-center gap-2 text-sm text-govuk-black">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-govuk-mid-grey shrink-0">
+              <li
+                key={i}
+                className="flex items-center gap-2 text-sm text-govuk-black"
+              >
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  className="text-govuk-mid-grey shrink-0"
+                >
                   <circle cx="12" cy="12" r="10" />
                   <path d="M12 16v-4M12 8h.01" />
                 </svg>
@@ -479,18 +613,28 @@ export function TaskDetailSheet({ data }: TaskDetailSheetProps) {
       <div className="flex flex-col gap-2 pt-2">
         {item.dueDate && (
           <button
-            onClick={() => generateCalendarFile({
-              title: item.title,
-              description: storedTask?.description,
-              dueDate: item.dueDate,
-              detail: item.detail || storedTask?.detail,
-              dueLabel: item.dueLabel,
-              id: item.id,
-              daysUntil: days ?? undefined,
-            })}
+            onClick={() =>
+              generateCalendarFile({
+                title: item.title,
+                description: storedTask?.description,
+                dueDate: item.dueDate,
+                detail: item.detail || storedTask?.detail,
+                dueLabel: item.dueLabel,
+                id: item.id,
+                daysUntil: days ?? undefined,
+              })
+            }
             className="w-full py-3 rounded-full border-2 border-govuk-blue text-govuk-blue font-bold text-sm transition-colors touch-feedback flex items-center justify-center gap-2"
           >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="shrink-0">
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              className="shrink-0"
+            >
               <rect x="3" y="4" width="18" height="18" rx="2" />
               <line x1="16" y1="2" x2="16" y2="6" />
               <line x1="8" y1="2" x2="8" y2="6" />

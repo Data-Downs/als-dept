@@ -20,18 +20,27 @@ export function TaskSummaryCard({
   onSubmit,
   isSubmitting,
 }: TaskSummaryCardProps) {
-  const agentTasks = tasks.filter((t) => t.type === "agent" && completions[t.id]);
+  const agentTasks = tasks.filter(
+    (t) => t.type === "agent" && completions[t.id],
+  );
   const userTasks = tasks.filter((t) => t.type === "user" && completions[t.id]);
 
   return (
-    <div
-      className="my-3 rounded-2xl bg-amber-50 shadow-sm"
-    >
+    <div className="my-3 rounded-2xl bg-amber-50 shadow-sm">
       <div className="px-5 py-5">
         {/* Header */}
         <div className="flex items-center gap-2.5 mb-2">
           <span className="w-7 h-7 rounded-full bg-amber-100 flex items-center justify-center shrink-0">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#b58105" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="#b58105"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
               <path d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
             </svg>
           </span>
@@ -41,10 +50,12 @@ export function TaskSummaryCard({
         </div>
 
         <p className="text-sm text-govuk-black mb-1 font-medium">
-          By continuing, the agent will submit information on your behalf to government services.
+          By continuing, the agent will submit information on your behalf to
+          government services.
         </p>
         <p className="text-sm text-govuk-dark-grey mb-4">
-          Please review what will happen next. You can change your choices before confirming.
+          Please review what will happen next. You can change your choices
+          before confirming.
         </p>
 
         {/* What the agent will do */}
@@ -54,7 +65,10 @@ export function TaskSummaryCard({
               The agent will
             </p>
             {agentTasks.map((task) => (
-              <div key={task.id} className="py-2.5 border-t border-amber-200 first:border-t-0">
+              <div
+                key={task.id}
+                className="py-2.5 border-t border-amber-200 first:border-t-0"
+              >
                 <div className="flex items-start justify-between gap-2">
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium text-govuk-black">
@@ -83,7 +97,10 @@ export function TaskSummaryCard({
               Your choices
             </p>
             {userTasks.map((task) => (
-              <div key={task.id} className="py-2.5 border-t border-amber-200 first:border-t-0">
+              <div
+                key={task.id}
+                className="py-2.5 border-t border-amber-200 first:border-t-0"
+              >
                 <div className="flex items-start justify-between gap-2">
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium text-govuk-black">

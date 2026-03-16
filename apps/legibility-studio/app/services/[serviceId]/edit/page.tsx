@@ -2,7 +2,11 @@
 
 import { useState, useEffect, use } from "react";
 import { useRouter } from "next/navigation";
-import ServiceForm, { apiDataToFormData, formDataToApiPayload, type ServiceFormData } from "@/components/forms/ServiceForm";
+import ServiceForm, {
+  apiDataToFormData,
+  formDataToApiPayload,
+  type ServiceFormData,
+} from "@/components/forms/ServiceForm";
 import Breadcrumbs from "@/components/layout/Breadcrumbs";
 import PageHeader from "@/components/ui/PageHeader";
 
@@ -41,11 +45,14 @@ export default function EditServicePage({
 
     try {
       const payload = formDataToApiPayload(data);
-      const response = await fetch(`/api/services/${encodeURIComponent(serviceId)}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
+      const response = await fetch(
+        `/api/services/${encodeURIComponent(serviceId)}`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        },
+      );
 
       if (!response.ok) {
         const err = await response.json();
@@ -60,14 +67,19 @@ export default function EditServicePage({
   }
 
   if (loading) {
-    return <div className="text-center py-12 text-gray-500">Loading service...</div>;
+    return (
+      <div className="text-center py-12 text-gray-500">Loading service...</div>
+    );
   }
 
   if (!initialData) {
     return (
       <div className="text-center py-12">
         <h1 className="text-2xl font-bold text-red-600">Service not found</h1>
-        <a href="/services" className="text-studio-accent mt-4 inline-block hover:underline">
+        <a
+          href="/services"
+          className="text-studio-accent mt-4 inline-block hover:underline"
+        >
           Back to services
         </a>
       </div>
@@ -80,14 +92,14 @@ export default function EditServicePage({
         items={[
           { label: "Dashboard", href: "/" },
           { label: "Services", href: "/services" },
-          { label: serviceId, href: `/services/${encodeURIComponent(serviceId)}` },
+          {
+            label: serviceId,
+            href: `/services/${encodeURIComponent(serviceId)}`,
+          },
           { label: "Edit" },
         ]}
       />
-      <PageHeader
-        title="Edit service"
-        subtitle={serviceId}
-      />
+      <PageHeader title="Edit service" subtitle={serviceId} />
 
       {error && (
         <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-6 text-sm text-red-800">

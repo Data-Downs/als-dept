@@ -5,7 +5,12 @@
  * Used to retrieve official guidance, service pages, and structured content.
  */
 
-import type { ServiceAdapter, AdapterConfig, AdapterRequest, AdapterResponse } from "./service-adapter";
+import type {
+  ServiceAdapter,
+  AdapterConfig,
+  AdapterRequest,
+  AdapterResponse,
+} from "./service-adapter";
 
 export interface GovukContentInput {
   path: string;
@@ -39,11 +44,16 @@ export class GovukContentAdapter implements ServiceAdapter {
 
   async execute(request: AdapterRequest): Promise<AdapterResponse> {
     if (!this.ready) {
-      return { success: false, error: "GOV.UK Content adapter not initialized" };
+      return {
+        success: false,
+        error: "GOV.UK Content adapter not initialized",
+      };
     }
 
     const input = request.input as GovukContentInput;
-    const cleanPath = input.path.startsWith("/") ? input.path : `/${input.path}`;
+    const cleanPath = input.path.startsWith("/")
+      ? input.path
+      : `/${input.path}`;
 
     try {
       const resp = await fetch(`${this.baseUrl}${cleanPath}`);

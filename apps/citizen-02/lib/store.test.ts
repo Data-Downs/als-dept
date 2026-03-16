@@ -78,9 +78,7 @@ describe("useAppStore", () => {
         currentView: "chat",
         currentService: "driving",
         serviceName: "Test",
-        viewHistory: [
-          { view: "dashboard", service: null, serviceName: null },
-        ],
+        viewHistory: [{ view: "dashboard", service: null, serviceName: null }],
       });
 
       useAppStore.getState().navigateBack();
@@ -106,7 +104,9 @@ describe("useAppStore", () => {
         activeConversationId: "conv_123",
         ucState: "some_state",
         ucStateHistory: ["prev"],
-        pendingConsent: [{ id: "c1", description: "test", data_shared: [] }] as never[],
+        pendingConsent: [
+          { id: "c1", description: "test", data_shared: [] },
+        ] as never[],
         consentDecisions: { c1: "granted" },
         consentSubmitted: true,
         lastResponseTasks: [{ id: "t1" }] as never[],
@@ -150,7 +150,9 @@ describe("useAppStore", () => {
     });
 
     it("clears a task completion", () => {
-      useAppStore.setState({ taskCompletions: { task1: "done", task2: "done" } });
+      useAppStore.setState({
+        taskCompletions: { task1: "done", task2: "done" },
+      });
       useAppStore.getState().clearTaskCompletion("task1");
       expect(useAppStore.getState().taskCompletions).toEqual({ task2: "done" });
     });
@@ -185,14 +187,15 @@ describe("useAppStore", () => {
 
       vi.stubGlobal(
         "fetch",
-        vi.fn()
+        vi
+          .fn()
           .mockResolvedValueOnce({
             ok: true,
             json: () => Promise.resolve(mockPersonaData),
           })
           .mockResolvedValueOnce({
             json: () => Promise.resolve({}),
-          })
+          }),
       );
 
       await useAppStore.getState().setPersona("emma");

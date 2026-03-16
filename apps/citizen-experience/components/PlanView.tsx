@@ -6,7 +6,14 @@ import type { ServicePlanStatus, ServiceType } from "@/lib/types";
 
 const STATUS_CONFIG: Record<
   ServicePlanStatus,
-  { icon: string; label: string; bgClass: string; textClass: string; borderClass: string; dimmed: boolean }
+  {
+    icon: string;
+    label: string;
+    bgClass: string;
+    textClass: string;
+    borderClass: string;
+    dimmed: boolean;
+  }
 > = {
   completed: {
     icon: "check",
@@ -55,7 +62,16 @@ function StatusIcon({ status }: { status: ServicePlanStatus }) {
     case "completed":
       return (
         <span className="w-6 h-6 rounded-full bg-green-600 flex items-center justify-center shrink-0">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="white"
+            strokeWidth="3"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
             <path d="M20 6L9 17l-5-5" />
           </svg>
         </span>
@@ -71,7 +87,16 @@ function StatusIcon({ status }: { status: ServicePlanStatus }) {
     case "available":
       return (
         <span className="w-6 h-6 rounded-full bg-green-100 border-2 border-green-500 flex items-center justify-center shrink-0">
-          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#16a34a" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+          <svg
+            width="10"
+            height="10"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="#16a34a"
+            strokeWidth="3"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
             <path d="M5 12h14M12 5l7 7-7 7" />
           </svg>
         </span>
@@ -79,7 +104,16 @@ function StatusIcon({ status }: { status: ServicePlanStatus }) {
     case "skipped":
       return (
         <span className="w-6 h-6 rounded-full bg-gray-200 flex items-center justify-center shrink-0">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#6b7280" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <svg
+            width="12"
+            height="12"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="#6b7280"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
             <path d="M18 6L6 18M6 6l12 12" />
           </svg>
         </span>
@@ -88,7 +122,16 @@ function StatusIcon({ status }: { status: ServicePlanStatus }) {
     default:
       return (
         <span className="w-6 h-6 rounded-full bg-gray-200 flex items-center justify-center shrink-0">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <svg
+            width="12"
+            height="12"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="#9ca3af"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
             <rect x="3" y="11" width="18" height="11" rx="2" />
             <path d="M7 11V7a5 5 0 0110 0v4" />
           </svg>
@@ -104,7 +147,9 @@ export function PlanView() {
   const startServiceFromPlan = useAppStore((s) => s.startServiceFromPlan);
   const markServiceSkipped = useAppStore((s) => s.markServiceSkipped);
 
-  const [expandedServiceId, setExpandedServiceId] = useState<string | null>(null);
+  const [expandedServiceId, setExpandedServiceId] = useState<string | null>(
+    null,
+  );
 
   if (!activePlan) {
     return (
@@ -126,7 +171,7 @@ export function PlanView() {
   // Compute progress
   const total = services.length;
   const completedCount = Object.values(serviceProgress).filter(
-    (s) => s === "completed" || s === "skipped"
+    (s) => s === "completed" || s === "skipped",
   ).length;
   const pct = total > 0 ? Math.round((completedCount / total) * 100) : 0;
 
@@ -172,7 +217,8 @@ export function PlanView() {
               {activePlan.lifeEventName}
             </h2>
             <p className="text-sm text-govuk-dark-grey">
-              {completedCount} of {total} service{total !== 1 ? "s" : ""} complete
+              {completedCount} of {total} service{total !== 1 ? "s" : ""}{" "}
+              complete
             </p>
           </div>
         </div>
@@ -194,17 +240,31 @@ export function PlanView() {
             {/* Connector arrow between groups */}
             {gi > 0 && (
               <div className="flex justify-center py-2">
-                <svg width="16" height="24" viewBox="0 0 16 24" fill="none" className="text-govuk-mid-grey">
-                  <path d="M8 0v20M4 16l4 4 4-4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                <svg
+                  width="16"
+                  height="24"
+                  viewBox="0 0 16 24"
+                  fill="none"
+                  className="text-govuk-mid-grey"
+                >
+                  <path
+                    d="M8 0v20M4 16l4 4 4-4"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
                 </svg>
               </div>
             )}
 
             {/* Group label */}
             <div className="mb-3">
-              <p className={`text-xs font-bold uppercase tracking-wide ${
-                group.depth === 0 ? "text-green-700" : "text-govuk-dark-grey"
-              }`}>
+              <p
+                className={`text-xs font-bold uppercase tracking-wide ${
+                  group.depth === 0 ? "text-green-700" : "text-govuk-dark-grey"
+                }`}
+              >
                 {group.depth === 0 ? "Start here" : group.label}
               </p>
             </div>
@@ -216,7 +276,8 @@ export function PlanView() {
                 if (!svc) return null;
                 const status = serviceProgress[svcId] || "locked";
                 const config = STATUS_CONFIG[status];
-                const clickable = status === "available" || status === "in_progress";
+                const clickable =
+                  status === "available" || status === "in_progress";
 
                 const isExpanded = expandedServiceId === svcId;
 
@@ -226,7 +287,9 @@ export function PlanView() {
                       onClick={() => handleServiceClick(svcId, status)}
                       disabled={!clickable}
                       className={`w-full text-left p-3 rounded-xl shadow-sm transition-all ${config.bgClass} ${
-                        clickable ? "hover:shadow-md cursor-pointer" : "cursor-default"
+                        clickable
+                          ? "hover:shadow-md cursor-pointer"
+                          : "cursor-default"
                       } ${config.dimmed ? "opacity-60" : ""} ${
                         isExpanded ? "rounded-b-none" : ""
                       }`}
@@ -234,20 +297,28 @@ export function PlanView() {
                       <div className="flex items-center gap-3">
                         <StatusIcon status={status} />
                         <div className="flex-1 min-w-0">
-                          <strong className={`block text-sm ${config.textClass}`}>
+                          <strong
+                            className={`block text-sm ${config.textClass}`}
+                          >
                             {svc.name}
                           </strong>
-                          <span className={`text-xs ${config.dimmed ? "text-gray-400" : "text-govuk-dark-grey"}`}>
+                          <span
+                            className={`text-xs ${config.dimmed ? "text-gray-400" : "text-govuk-dark-grey"}`}
+                          >
                             {svc.dept} &middot; {svc.serviceType}
                           </span>
                         </div>
                         {clickable && (
-                          <span className={`text-xs font-bold px-2.5 py-1 rounded-full shrink-0 ${
-                            status === "in_progress"
-                              ? "bg-blue-100 text-blue-700"
-                              : "bg-green-100 text-green-700"
-                          }`}>
-                            {status === "available" && isExpanded ? "Collapse" : config.label}
+                          <span
+                            className={`text-xs font-bold px-2.5 py-1 rounded-full shrink-0 ${
+                              status === "in_progress"
+                                ? "bg-blue-100 text-blue-700"
+                                : "bg-green-100 text-green-700"
+                            }`}
+                          >
+                            {status === "available" && isExpanded
+                              ? "Collapse"
+                              : config.label}
                           </span>
                         )}
                         {status === "completed" && (
@@ -297,7 +368,16 @@ export function PlanView() {
                             className="inline-flex items-center gap-1 text-sm text-govuk-blue underline hover:text-govuk-blue/80"
                           >
                             View on GOV.UK
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <svg
+                              width="12"
+                              height="12"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            >
                               <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3" />
                             </svg>
                           </a>

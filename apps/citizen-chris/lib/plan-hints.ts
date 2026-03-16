@@ -13,7 +13,7 @@ export interface ServiceHint {
  */
 export function computeServiceHints(
   services: LifeEventService[],
-  personaData: PersonaData | null
+  personaData: PersonaData | null,
 ): Record<string, ServiceHint> {
   if (!personaData) return {};
 
@@ -31,7 +31,7 @@ export function computeServiceHints(
 
 function computeHintForService(
   svc: LifeEventService,
-  personaData: PersonaData
+  personaData: PersonaData,
 ): ServiceHint | null {
   // Only generate hints for document-type services
   if (svc.serviceType !== "document") return null;

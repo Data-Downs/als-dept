@@ -16,7 +16,9 @@ export default function ReviewDialog({
   onClose: () => void;
 }) {
   const [reason, setReason] = useState("");
-  const [priority, setPriority] = useState<"routine" | "priority" | "urgent">("routine");
+  const [priority, setPriority] = useState<"routine" | "priority" | "urgent">(
+    "routine",
+  );
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -66,7 +68,10 @@ export default function ReviewDialog({
 
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-bold mb-1" htmlFor="review-reason">
+            <label
+              className="block text-sm font-bold mb-1"
+              htmlFor="review-reason"
+            >
               Reason for review
             </label>
             <textarea
@@ -102,9 +107,7 @@ export default function ReviewDialog({
             </div>
           </div>
 
-          {error && (
-            <p className="text-sm text-red-600">{error}</p>
-          )}
+          {error && <p className="text-sm text-red-600">{error}</p>}
         </div>
 
         <div className="flex justify-end gap-2 mt-6">

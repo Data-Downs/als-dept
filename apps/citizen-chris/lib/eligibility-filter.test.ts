@@ -10,19 +10,30 @@ import type { EligibilityInfo } from "@als/service-graph";
 
 describe("extractNumberFromText", () => {
   it("extracts £80,000 from income description", () => {
-    expect(extractNumberFromText("Household income cap up to £80,000", ["income"])).toBe(80000);
+    expect(
+      extractNumberFromText("Household income cap up to £80,000", ["income"]),
+    ).toBe(80000);
   });
 
   it("extracts £450,000 from property description", () => {
-    expect(extractNumberFromText("Property must cost £450,000 or less", ["property", "cost"])).toBe(450000);
+    expect(
+      extractNumberFromText("Property must cost £450,000 or less", [
+        "property",
+        "cost",
+      ]),
+    ).toBe(450000);
   });
 
   it("returns null when no keyword matches", () => {
-    expect(extractNumberFromText("Property must cost £450,000", ["income"])).toBeNull();
+    expect(
+      extractNumberFromText("Property must cost £450,000", ["income"]),
+    ).toBeNull();
   });
 
   it("returns null when no number found", () => {
-    expect(extractNumberFromText("Must have low income", ["income"])).toBeNull();
+    expect(
+      extractNumberFromText("Must have low income", ["income"]),
+    ).toBeNull();
   });
 });
 
@@ -60,11 +71,19 @@ const firstTimeBuyerGrant: EligibilityInfo = {
   summary: "First Homes scheme for first-time buyers",
   universal: false,
   criteria: [
-    { factor: "property", description: "First-time buyer purchasing a new-build property." },
-    { factor: "income", description: "Household income cap up to £80,000 (£90,000 in London)." },
+    {
+      factor: "property",
+      description: "First-time buyer purchasing a new-build property.",
+    },
+    {
+      factor: "income",
+      description: "Household income cap up to £80,000 (£90,000 in London).",
+    },
   ],
   keyQuestions: [],
-  exclusions: ["Not available to existing homeowners or those who have previously owned property."],
+  exclusions: [
+    "Not available to existing homeowners or those who have previously owned property.",
+  ],
   means_tested: true,
 };
 
@@ -72,8 +91,16 @@ const lisaService: EligibilityInfo = {
   summary: "Lifetime ISA for first-time buyers",
   universal: false,
   criteria: [
-    { factor: "age", description: "Must have opened the LISA before age 40, and be at least 18." },
-    { factor: "property", description: "Property must cost £450,000 or less and be the buyer's first home." },
+    {
+      factor: "age",
+      description:
+        "Must have opened the LISA before age 40, and be at least 18.",
+    },
+    {
+      factor: "property",
+      description:
+        "Property must cost £450,000 or less and be the buyer's first home.",
+    },
   ],
   keyQuestions: [],
   exclusions: ["Not available for second homes or existing property owners."],
@@ -136,7 +163,10 @@ describe("checkPersonaEligibility", () => {
       summary: "Grant for low-income households",
       universal: false,
       criteria: [
-        { factor: "income", description: "Household income must be below £30,000 per year." },
+        {
+          factor: "income",
+          description: "Household income must be below £30,000 per year.",
+        },
       ],
       keyQuestions: [],
       means_tested: true,
@@ -164,9 +194,7 @@ describe("checkPersonaEligibility", () => {
     const ageGated: EligibilityInfo = {
       summary: "Youth support grant",
       universal: false,
-      criteria: [
-        { factor: "age", description: "Must be aged 18 to 30." },
-      ],
+      criteria: [{ factor: "age", description: "Must be aged 18 to 30." }],
       keyQuestions: [],
       means_tested: false,
     };
@@ -179,9 +207,7 @@ describe("checkPersonaEligibility", () => {
     const ageGated: EligibilityInfo = {
       summary: "Youth support grant",
       universal: false,
-      criteria: [
-        { factor: "age", description: "Must be aged 18 to 30." },
-      ],
+      criteria: [{ factor: "age", description: "Must be aged 18 to 30." }],
       keyQuestions: [],
       means_tested: false,
     };
@@ -194,7 +220,11 @@ describe("checkPersonaEligibility", () => {
       summary: "Complex eligibility",
       universal: false,
       criteria: [
-        { factor: "caring", description: "Must be a registered carer for at least 35 hours per week." },
+        {
+          factor: "caring",
+          description:
+            "Must be a registered carer for at least 35 hours per week.",
+        },
       ],
       keyQuestions: [],
       means_tested: false,
@@ -226,7 +256,10 @@ describe("Mary Summers vs Buying a Home integration", () => {
 
   it("Mary should be excluded from first-time buyer services", () => {
     const excluded = buyingHomeServices
-      .filter((svc) => !checkPersonaEligibility(svc.eligibility, marySummers).eligible)
+      .filter(
+        (svc) =>
+          !checkPersonaEligibility(svc.eligibility, marySummers).eligible,
+      )
       .map((svc) => svc.id);
 
     expect(excluded).toContain("other-help-to-buy");
@@ -236,7 +269,9 @@ describe("Mary Summers vs Buying a Home integration", () => {
 
   it("Emma should see all buying-home services", () => {
     const excluded = buyingHomeServices
-      .filter((svc) => !checkPersonaEligibility(svc.eligibility, emmaParker).eligible)
+      .filter(
+        (svc) => !checkPersonaEligibility(svc.eligibility, emmaParker).eligible,
+      )
       .map((svc) => svc.id);
 
     expect(excluded).toHaveLength(0);

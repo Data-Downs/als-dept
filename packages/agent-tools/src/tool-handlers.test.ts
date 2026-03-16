@@ -19,7 +19,11 @@ function createTestContext(overrides?: Partial<ToolContext>): ToolContext {
       traceId: "trace-001",
     },
     citizenData: {
-      verified: { firstName: "Emma", lastName: "Parker", dateOfBirth: "1985-03-15" },
+      verified: {
+        firstName: "Emma",
+        lastName: "Parker",
+        dateOfBirth: "1985-03-15",
+      },
       submitted: { employmentStatus: "employed" },
       inferred: { ageGroup: "35-44" },
     },
@@ -84,13 +88,18 @@ describe("query_service_graph", () => {
     const result = await handleToolCall(
       "query_service_graph",
       { life_event_id: "bereavement" },
-      ctx
+      ctx,
     );
 
     const data = JSON.parse(result.content[0].text);
     expect(data.totalCount).toBeGreaterThan(0);
     // All bereavement services should be present
-    expect(data.services.some((s: { id: string }) => s.id.includes("bereavement") || s.id.includes("death"))).toBe(true);
+    expect(
+      data.services.some(
+        (s: { id: string }) =>
+          s.id.includes("bereavement") || s.id.includes("death"),
+      ),
+    ).toBe(true);
   });
 
   it("returns error for invalid life event", async () => {
@@ -98,7 +107,7 @@ describe("query_service_graph", () => {
     const result = await handleToolCall(
       "query_service_graph",
       { life_event_id: "nonexistent-event" },
-      ctx
+      ctx,
     );
 
     expect(result.isError).toBe(true);
@@ -112,7 +121,7 @@ describe("query_service_graph", () => {
     const result = await handleToolCall(
       "query_service_graph",
       { department: "dwp" },
-      ctx
+      ctx,
     );
 
     const data = JSON.parse(result.content[0].text);
@@ -127,7 +136,7 @@ describe("query_service_graph", () => {
     const result = await handleToolCall(
       "query_service_graph",
       { service_type: "benefit" },
-      ctx
+      ctx,
     );
 
     const data = JSON.parse(result.content[0].text);
@@ -142,7 +151,7 @@ describe("query_service_graph", () => {
     const result = await handleToolCall(
       "query_service_graph",
       { keyword: "pension" },
-      ctx
+      ctx,
     );
 
     const data = JSON.parse(result.content[0].text);
@@ -158,7 +167,7 @@ describe("query_service_graph", () => {
     const result = await handleToolCall(
       "query_service_graph",
       { service_type: "benefit", keyword: "pension" },
-      ctx
+      ctx,
     );
 
     const data = JSON.parse(result.content[0].text);
@@ -176,7 +185,7 @@ describe("get_life_event_plan", () => {
     const result = await handleToolCall(
       "get_life_event_plan",
       { life_event_id: "bereavement" },
-      ctx
+      ctx,
     );
 
     expect(result.isError).toBeFalsy();
@@ -202,7 +211,7 @@ describe("get_life_event_plan", () => {
     const result = await handleToolCall(
       "get_life_event_plan",
       { life_event_id: "fake-event" },
-      ctx
+      ctx,
     );
 
     expect(result.isError).toBe(true);
@@ -223,7 +232,7 @@ describe("get_related_services", () => {
     const result = await handleToolCall(
       "get_related_services",
       { service_id: testService.id },
-      ctx
+      ctx,
     );
 
     expect(result.isError).toBeFalsy();
@@ -238,7 +247,7 @@ describe("get_related_services", () => {
     const result = await handleToolCall(
       "get_related_services",
       { service_id: "universal-credit" },
-      ctx
+      ctx,
     );
 
     expect(result.isError).toBeFalsy();
@@ -251,7 +260,7 @@ describe("get_related_services", () => {
     const result = await handleToolCall(
       "get_related_services",
       { service_id: "nonexistent-service" },
-      ctx
+      ctx,
     );
 
     expect(result.isError).toBe(true);
@@ -275,7 +284,7 @@ describe("check_eligibility", () => {
     const result = await handleToolCall(
       "check_eligibility",
       { service_id: testService.id },
-      ctx
+      ctx,
     );
 
     expect(result.isError).toBeFalsy();
@@ -295,7 +304,7 @@ describe("check_eligibility", () => {
         service_id: allServices[0].id,
         citizen_data: { customField: "value" },
       },
-      ctx
+      ctx,
     );
 
     expect(result.isError).toBeFalsy();
@@ -306,7 +315,7 @@ describe("check_eligibility", () => {
     const result = await handleToolCall(
       "check_eligibility",
       { service_id: "totally-fake-service" },
-      ctx
+      ctx,
     );
 
     expect(result.isError).toBe(true);
@@ -355,7 +364,7 @@ describe("get_citizen_context", () => {
     const result = await handleToolCall(
       "get_citizen_context",
       { include_active_services: false },
-      ctx
+      ctx,
     );
 
     const data = JSON.parse(result.content[0].text);
@@ -386,7 +395,7 @@ describe("record_evidence", () => {
         service_id: "dwp-universal-credit",
         payload: { eligible: true, passed: 3, failed: 0 },
       },
-      ctx
+      ctx,
     );
 
     expect(result.isError).toBeFalsy();
@@ -411,7 +420,7 @@ describe("record_evidence", () => {
         service_id: "test-service",
         payload: { fromState: "a", toState: "b" },
       },
-      ctx
+      ctx,
     );
 
     const data = JSON.parse(result.content[0].text);
@@ -424,7 +433,7 @@ describe("record_evidence", () => {
     const result = await handleToolCall(
       "record_evidence",
       { event_type: "policy.evaluated" },
-      ctx
+      ctx,
     );
 
     expect(result.isError).toBe(true);

@@ -38,7 +38,11 @@ export class ConsentManager {
   }
 
   /** Record a consent decision */
-  recordDecision(grantId: string, granted: boolean, reason?: string): ConsentDecision {
+  recordDecision(
+    grantId: string,
+    granted: boolean,
+    reason?: string,
+  ): ConsentDecision {
     const decision: ConsentDecision = {
       grantId,
       granted,

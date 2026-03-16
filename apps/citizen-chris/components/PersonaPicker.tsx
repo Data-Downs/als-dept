@@ -43,7 +43,8 @@ export function PersonaPicker() {
         </svg>
         <h1 className="text-2xl font-bold mb-2">Who are you today?</h1>
         <p className="text-govuk-dark-grey">
-          Choose a persona to explore government services from their perspective.
+          Choose a persona to explore government services from their
+          perspective.
         </p>
       </div>
 
@@ -61,9 +62,7 @@ export function PersonaPicker() {
               {p.initials}
             </div>
             <div className="flex-1 min-w-0">
-              <strong className="block text-govuk-black">
-                {p.name}
-              </strong>
+              <strong className="block text-govuk-black">{p.name}</strong>
               <span className="text-sm text-govuk-dark-grey">{p.desc}</span>
             </div>
             <svg

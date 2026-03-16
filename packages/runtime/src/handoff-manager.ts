@@ -10,7 +10,11 @@
  * Creates a structured handoff package with all context.
  */
 
-import type { HandoffPackage, HandoffReason, CapabilityManifest } from "@als/schemas";
+import type {
+  HandoffPackage,
+  HandoffReason,
+  CapabilityManifest,
+} from "@als/schemas";
 import { resolveEscalationConfig } from "@als/schemas";
 
 function generateId(): string {
@@ -18,17 +22,32 @@ function generateId(): string {
 }
 
 const SAFEGUARDING_KEYWORDS = [
-  "suicide", "self-harm", "kill myself", "end my life",
-  "domestic abuse", "being hurt", "violence",
-  "child protection", "child abuse",
-  "homeless", "sleeping rough",
-  "no food", "starving", "can't eat",
+  "suicide",
+  "self-harm",
+  "kill myself",
+  "end my life",
+  "domestic abuse",
+  "being hurt",
+  "violence",
+  "child protection",
+  "child abuse",
+  "homeless",
+  "sleeping rough",
+  "no food",
+  "starving",
+  "can't eat",
 ];
 
 const HANDOFF_REQUEST_KEYWORDS = [
-  "speak to someone", "speak to a person", "talk to someone",
-  "talk to a human", "real person", "human agent",
-  "call someone", "want to complain", "make a complaint",
+  "speak to someone",
+  "speak to a person",
+  "talk to someone",
+  "talk to a human",
+  "real person",
+  "human agent",
+  "call someone",
+  "want to complain",
+  "make a complaint",
 ];
 
 export class HandoffManager {
@@ -40,7 +59,7 @@ export class HandoffManager {
    */
   evaluateTriggers(
     messageText: string,
-    context?: { failureKey?: string; policyEdgeCase?: boolean }
+    context?: { failureKey?: string; policyEdgeCase?: boolean },
   ): { triggered: boolean; reason?: HandoffReason; description?: string } {
     const textLower = messageText.toLowerCase();
 
@@ -96,7 +115,12 @@ export class HandoffManager {
     reason: HandoffReason;
     description: string;
     agentAssessment: string;
-    citizen: { name: string; preferredChannel?: string; phone?: string; email?: string };
+    citizen: {
+      name: string;
+      preferredChannel?: string;
+      phone?: string;
+      email?: string;
+    };
     service?: CapabilityManifest;
     stepsCompleted: string[];
     stepsBlocked: string[];
@@ -106,11 +130,12 @@ export class HandoffManager {
     receiptIds: string[];
     interactionType?: string;
   }): HandoffPackage {
-    const urgency = opts.reason === "safeguarding-concern"
-      ? "safeguarding"
-      : opts.reason === "repeated-failure"
-        ? "priority"
-        : "routine";
+    const urgency =
+      opts.reason === "safeguarding-concern"
+        ? "safeguarding"
+        : opts.reason === "repeated-failure"
+          ? "priority"
+          : "routine";
 
     return {
       id: `handoff_${generateId()}`,
@@ -142,13 +167,19 @@ export class HandoffManager {
 
       traceId: opts.traceId,
       receiptIds: opts.receiptIds,
-      suggestedActions: this.generateSuggestedActions(opts.reason, opts.service, opts.interactionType),
+      suggestedActions: this.generateSuggestedActions(
+        opts.reason,
+        opts.service,
+        opts.interactionType,
+      ),
 
       routing: {
         department: opts.service?.department || "Unknown",
         serviceArea: opts.service?.name || "General",
-        suggestedQueue: opts.service?.handoff?.department_queue || "general-enquiries",
-        specialistType: resolveEscalationConfig(opts.interactionType).specialistType,
+        suggestedQueue:
+          opts.service?.handoff?.department_queue || "general-enquiries",
+        specialistType: resolveEscalationConfig(opts.interactionType)
+          .specialistType,
       },
     };
   }

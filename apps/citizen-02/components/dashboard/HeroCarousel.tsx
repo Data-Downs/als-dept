@@ -15,7 +15,11 @@ interface HeroCard {
   id: string;
   title: string;
   subtitle: string;
-  stats: Array<{ label: string; value: string; urgency?: "urgent" | "warning" | "ok" }>;
+  stats: Array<{
+    label: string;
+    value: string;
+    urgency?: "urgent" | "warning" | "ok";
+  }>;
   service: string;
 }
 
@@ -59,9 +63,13 @@ export function buildHeroCards(data: PersonaData): HeroCard[] {
     cards.push({
       id: "state-pension",
       title: "State Pension",
-      subtitle: sp.type as string || "State Pension",
+      subtitle: (sp.type as string) || "State Pension",
       stats: [
-        { label: "Weekly", value: sp.weeklyAmount ? `£${sp.weeklyAmount}` : "Active", urgency: "ok" },
+        {
+          label: "Weekly",
+          value: sp.weeklyAmount ? `£${sp.weeklyAmount}` : "Active",
+          urgency: "ok",
+        },
       ],
       service: "benefits",
     });
@@ -72,9 +80,7 @@ export function buildHeroCards(data: PersonaData): HeroCard[] {
         id: `benefit-${b.type}`,
         title: b.type,
         subtitle: `£${b.amount}/${b.frequency}`,
-        stats: [
-          { label: "Amount", value: `£${b.amount}`, urgency: "ok" },
-        ],
+        stats: [{ label: "Amount", value: `£${b.amount}`, urgency: "ok" }],
         service: "benefits",
       });
     }
@@ -119,9 +125,15 @@ interface HeroCarouselProps {
   onCardTap?: (service: string) => void;
 }
 
-export function HeroCarousel({ personaData, filterService, onCardTap }: HeroCarouselProps) {
+export function HeroCarousel({
+  personaData,
+  filterService,
+  onCardTap,
+}: HeroCarouselProps) {
   const allCards = buildHeroCards(personaData);
-  const cards = filterService ? allCards.filter((c) => c.service === filterService) : allCards;
+  const cards = filterService
+    ? allCards.filter((c) => c.service === filterService)
+    : allCards;
   const scrollRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
 
@@ -151,7 +163,9 @@ export function HeroCarousel({ personaData, filterService, onCardTap }: HeroCaro
             className="min-w-[260px] max-w-[300px] flex-shrink-0 scroll-snap-item bg-white rounded-card p-4 text-left touch-feedback transition-shadow hover:shadow-md"
           >
             <div className="mb-2">
-              <h3 className="font-bold text-govuk-black text-base">{card.title}</h3>
+              <h3 className="font-bold text-govuk-black text-base">
+                {card.title}
+              </h3>
               <p className="text-sm text-govuk-dark-grey">{card.subtitle}</p>
             </div>
             {card.stats.length > 0 && (
@@ -160,12 +174,20 @@ export function HeroCarousel({ personaData, filterService, onCardTap }: HeroCaro
                   <div key={i} className="flex items-center gap-1.5">
                     {stat.urgency && <UrgencyDot urgency={stat.urgency} />}
                     <div>
-                      <p className="text-xs text-govuk-dark-grey">{stat.label}</p>
-                      <p className={`text-sm font-bold ${
-                        stat.urgency === "urgent" ? "text-govuk-red" :
-                        stat.urgency === "warning" ? "text-govuk-orange" :
-                        "text-govuk-black"
-                      }`}>{stat.value}</p>
+                      <p className="text-xs text-govuk-dark-grey">
+                        {stat.label}
+                      </p>
+                      <p
+                        className={`text-sm font-bold ${
+                          stat.urgency === "urgent"
+                            ? "text-govuk-red"
+                            : stat.urgency === "warning"
+                              ? "text-govuk-orange"
+                              : "text-govuk-black"
+                        }`}
+                      >
+                        {stat.value}
+                      </p>
                     </div>
                   </div>
                 ))}

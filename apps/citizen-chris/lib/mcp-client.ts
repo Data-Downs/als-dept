@@ -113,7 +113,7 @@ export async function connect(): Promise<boolean> {
       }));
 
     console.log(
-      `MCP: ${allTools.length} tools available, ${curatedTools.length} curated`
+      `MCP: ${allTools.length} tools available, ${curatedTools.length} curated`,
     );
     return true;
   } catch (error) {
@@ -122,7 +122,7 @@ export async function connect(): Promise<boolean> {
     transport = null;
     console.error(
       "MCP connection failed:",
-      error instanceof Error ? error.message : error
+      error instanceof Error ? error.message : error,
     );
     return false;
   }
@@ -135,13 +135,11 @@ export function getToolsForClaude(): ClaudeTool[] {
 
 async function executeTool(
   name: string,
-  args: Record<string, unknown>
+  args: Record<string, unknown>,
 ): Promise<string> {
   const result = await client!.callTool({ name, arguments: args });
   if (result.content && Array.isArray(result.content)) {
-    const textParts = (
-      result.content as Array<{ type: string; text?: string }>
-    )
+    const textParts = (result.content as Array<{ type: string; text?: string }>)
       .filter((c) => c.type === "text")
       .map((c) => c.text || "");
     return textParts.join("\n");
@@ -151,7 +149,7 @@ async function executeTool(
 
 export async function callTool(
   name: string,
-  args: Record<string, unknown> = {}
+  args: Record<string, unknown> = {},
 ): Promise<string | { error: string }> {
   if (!connected || !client) {
     console.log("MCP disconnected, attempting reconnect...");
@@ -175,8 +173,13 @@ export async function callTool(
           return await executeTool(name, args);
         } catch (retryError) {
           const retryMsg =
-            retryError instanceof Error ? retryError.message : String(retryError);
-          console.error(`Tool call failed after reconnect (${name}):`, retryMsg);
+            retryError instanceof Error
+              ? retryError.message
+              : String(retryError);
+          console.error(
+            `Tool call failed after reconnect (${name}):`,
+            retryMsg,
+          );
           return { error: `Tool call failed: ${retryMsg}` };
         }
       }
@@ -188,7 +191,7 @@ export async function callTool(
 
 export async function callToolCached(
   name: string,
-  args: Record<string, unknown> = {}
+  args: Record<string, unknown> = {},
 ): Promise<unknown> {
   const cacheKey = `${name}:${JSON.stringify(args)}`;
   const cached = cache.get(cacheKey);
@@ -211,7 +214,7 @@ function scheduleReconnect() {
   if (consecutiveFailures >= MAX_AUTO_RETRIES) {
     if (consecutiveFailures === MAX_AUTO_RETRIES) {
       console.log(
-        `MCP auto-reconnect paused after ${MAX_AUTO_RETRIES} failures`
+        `MCP auto-reconnect paused after ${MAX_AUTO_RETRIES} failures`,
       );
       consecutiveFailures++;
     }

@@ -11,14 +11,23 @@ interface PaymentCardProps {
   prefillData?: Record<string, string | number | boolean>;
 }
 
-type PaymentMethod = "apple_pay" | "debit_card" | "credit_card" | "direct_debit";
+type PaymentMethod =
+  | "apple_pay"
+  | "debit_card"
+  | "credit_card"
+  | "direct_debit";
 
 /**
  * Specialized payment card with Apple Pay simulation + card fallback.
  * Displays amount from prefillData, payment method selection, and
  * method-specific forms.
  */
-export function PaymentCard({ definition, onSubmit, disabled, prefillData }: PaymentCardProps) {
+export function PaymentCard({
+  definition,
+  onSubmit,
+  disabled,
+  prefillData,
+}: PaymentCardProps) {
   const openBottomSheet = useAppStore((s) => s.openBottomSheet);
   const [method, setMethod] = useState<PaymentMethod | null>(null);
   const [cardNumber, setCardNumber] = useState("");
@@ -27,16 +36,16 @@ export function PaymentCard({ definition, onSubmit, disabled, prefillData }: Pay
   const [processing, setProcessing] = useState(false);
 
   const amount = prefillData?.amount_due ?? "0.00";
-  const formattedAmount = typeof amount === "number"
-    ? `£${amount.toFixed(2)}`
-    : `£${amount}`;
+  const formattedAmount =
+    typeof amount === "number" ? `£${amount.toFixed(2)}` : `£${amount}`;
 
-  const methods: Array<{ value: PaymentMethod; label: string; icon?: string }> = [
-    { value: "apple_pay", label: "Apple Pay" },
-    { value: "debit_card", label: "Debit card" },
-    { value: "credit_card", label: "Credit card" },
-    { value: "direct_debit", label: "Direct debit" },
-  ];
+  const methods: Array<{ value: PaymentMethod; label: string; icon?: string }> =
+    [
+      { value: "apple_pay", label: "Apple Pay" },
+      { value: "debit_card", label: "Debit card" },
+      { value: "credit_card", label: "Credit card" },
+      { value: "direct_debit", label: "Direct debit" },
+    ];
 
   const generateRef = () =>
     `PAY-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).slice(2, 6).toUpperCase()}`;
@@ -62,7 +71,7 @@ export function PaymentCard({ definition, onSubmit, disabled, prefillData }: Pay
   };
 
   const handleCardPay = () => {
-    if (!method || (!cardNumber || !expiry || !cvv)) return;
+    if (!method || !cardNumber || !expiry || !cvv) return;
     setProcessing(true);
     // Simulate processing delay
     setTimeout(() => {
@@ -93,12 +102,16 @@ export function PaymentCard({ definition, onSubmit, disabled, prefillData }: Pay
       {/* Amount display */}
       <div className="text-center py-3 bg-white rounded-xl border border-gray-200">
         <span className="text-xs text-govuk-dark-grey block">Amount due</span>
-        <span className="text-2xl font-bold text-govuk-black">{formattedAmount}</span>
+        <span className="text-2xl font-bold text-govuk-black">
+          {formattedAmount}
+        </span>
       </div>
 
       {/* Payment method selection */}
       <div className="space-y-1.5">
-        <label className="block text-sm font-semibold text-govuk-black">Payment method</label>
+        <label className="block text-sm font-semibold text-govuk-black">
+          Payment method
+        </label>
         {methods.map((m) => {
           const isSelected = method === m.value;
           return (
@@ -115,8 +128,14 @@ export function PaymentCard({ definition, onSubmit, disabled, prefillData }: Pay
             >
               <div className="flex items-center gap-2">
                 {m.value === "apple_pay" && (
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" className="shrink-0">
-                    <path d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.48-3.24 0-1.44.62-2.2.44-3.06-.4C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.32 2.32-2.12 4.53-3.74 4.25z"/>
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    className="shrink-0"
+                  >
+                    <path d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.48-3.24 0-1.44.62-2.2.44-3.06-.4C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.32 2.32-2.12 4.53-3.74 4.25z" />
                   </svg>
                 )}
                 {m.label}
@@ -135,7 +154,7 @@ export function PaymentCard({ definition, onSubmit, disabled, prefillData }: Pay
           className="w-full flex items-center justify-center gap-2 text-sm font-semibold text-white py-3.5 rounded-xl transition-opacity disabled:opacity-40 bg-gray-950 hover:bg-black"
         >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="white">
-            <path d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.48-3.24 0-1.44.62-2.2.44-3.06-.4C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.32 2.32-2.12 4.53-3.74 4.25z"/>
+            <path d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.48-3.24 0-1.44.62-2.2.44-3.06-.4C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.32 2.32-2.12 4.53-3.74 4.25z" />
           </svg>
           Pay with Apple Pay
         </button>
@@ -147,7 +166,9 @@ export function PaymentCard({ definition, onSubmit, disabled, prefillData }: Pay
           <input
             type="text"
             value={cardNumber}
-            onChange={(e) => setCardNumber(e.target.value.replace(/\D/g, "").slice(0, 16))}
+            onChange={(e) =>
+              setCardNumber(e.target.value.replace(/\D/g, "").slice(0, 16))
+            }
             placeholder="Card number"
             disabled={disabled || processing}
             className={inputClass}
@@ -158,7 +179,9 @@ export function PaymentCard({ definition, onSubmit, disabled, prefillData }: Pay
               value={expiry}
               onChange={(e) => {
                 const raw = e.target.value.replace(/\D/g, "").slice(0, 4);
-                setExpiry(raw.length > 2 ? `${raw.slice(0, 2)}/${raw.slice(2)}` : raw);
+                setExpiry(
+                  raw.length > 2 ? `${raw.slice(0, 2)}/${raw.slice(2)}` : raw,
+                );
               }}
               placeholder="MM/YY"
               disabled={disabled || processing}
@@ -167,7 +190,9 @@ export function PaymentCard({ definition, onSubmit, disabled, prefillData }: Pay
             <input
               type="text"
               value={cvv}
-              onChange={(e) => setCvv(e.target.value.replace(/\D/g, "").slice(0, 4))}
+              onChange={(e) =>
+                setCvv(e.target.value.replace(/\D/g, "").slice(0, 4))
+              }
               placeholder="CVV"
               disabled={disabled || processing}
               className={inputClass}
@@ -189,7 +214,8 @@ export function PaymentCard({ definition, onSubmit, disabled, prefillData }: Pay
       {method === "direct_debit" && (
         <div className="space-y-3">
           <p className="text-sm text-govuk-dark-grey">
-            A direct debit will be set up with your bank. You&apos;ll receive a confirmation letter within 3 working days.
+            A direct debit will be set up with your bank. You&apos;ll receive a
+            confirmation letter within 3 working days.
           </p>
           <button
             type="button"

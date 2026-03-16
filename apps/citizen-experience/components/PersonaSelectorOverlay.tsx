@@ -31,7 +31,10 @@ export function PersonaSelectorOverlay() {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       {/* Backdrop */}
-      <div className="absolute inset-0 bg-black/50" onClick={() => setOpen(false)} />
+      <div
+        className="absolute inset-0 bg-black/50"
+        onClick={() => setOpen(false)}
+      />
 
       {/* Panel */}
       <div className="relative bg-white rounded-2xl shadow-xl max-w-md w-full mx-4 max-h-[90vh] overflow-y-auto">
@@ -43,7 +46,14 @@ export function PersonaSelectorOverlay() {
               className="p-1 text-govuk-dark-grey hover:text-govuk-black"
               aria-label="Close"
             >
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
                 <path d="M18 6L6 18M6 6l12 12" />
               </svg>
             </button>
@@ -68,14 +78,26 @@ export function PersonaSelectorOverlay() {
                   className="w-10 h-10 rounded-full flex items-center justify-center text-white text-sm font-bold shrink-0"
                   style={{ backgroundColor: p.color || "#505a5f" }}
                 >
-                  {p.initials || p.name.split(" ").map(n => n[0]).join("")}
+                  {p.initials ||
+                    p.name
+                      .split(" ")
+                      .map((n) => n[0])
+                      .join("")}
                 </span>
                 <div className="min-w-0">
                   <strong className="block text-sm">{p.name}</strong>
                   <span className="text-xs text-govuk-dark-grey">{p.desc}</span>
                 </div>
                 {persona === p.id && (
-                  <svg className="shrink-0 text-govuk-blue ml-auto" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <svg
+                    className="shrink-0 text-govuk-blue ml-auto"
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.5"
+                  >
                     <polyline points="20 6 9 17 4 12" />
                   </svg>
                 )}

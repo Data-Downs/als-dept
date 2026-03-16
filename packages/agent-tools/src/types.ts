@@ -5,7 +5,12 @@
  * letting the agent reason about services rather than having the platform decide.
  */
 
-import type { ServiceNode, Edge, LifeEvent, LifeEventPlan } from "@als/service-graph";
+import type {
+  ServiceNode,
+  Edge,
+  LifeEvent,
+  LifeEventPlan,
+} from "@als/service-graph";
 import type { ServiceArtefacts } from "@als/legibility";
 import type { PolicyResult, TransitionResult } from "@als/schemas";
 

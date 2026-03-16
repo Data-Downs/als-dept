@@ -24,7 +24,9 @@ function GrantRow({
     <div className={`px-5 py-4 ${decision === "denied" ? "opacity-60" : ""}`}>
       {/* Description + required badge */}
       <div className="flex items-start justify-between gap-2">
-        <p className={`text-base font-medium ${decision === "denied" ? "text-govuk-dark-grey" : "text-govuk-black"}`}>
+        <p
+          className={`text-base font-medium ${decision === "denied" ? "text-govuk-dark-grey" : "text-govuk-black"}`}
+        >
           {grant.description}
         </p>
         {grant.required && (
@@ -37,7 +39,9 @@ function GrantRow({
 
       {/* Data tags */}
       <div className="mt-3">
-        <p className="text-xs font-bold uppercase text-govuk-dark-grey mb-1.5">Data to be shared:</p>
+        <p className="text-xs font-bold uppercase text-govuk-dark-grey mb-1.5">
+          Data to be shared:
+        </p>
         <div className="flex flex-wrap gap-1.5">
           {grant.data_shared.map((d) => (
             <span
@@ -56,8 +60,11 @@ function GrantRow({
 
       {/* Source + duration */}
       <p className="text-xs text-govuk-dark-grey mt-2">
-        Source: <span className="font-medium">{grant.source.replace(/-/g, " ")}</span>
-        {grant.duration && <> &middot; Duration: {grant.duration.replace(/-/g, " ")}</>}
+        Source:{" "}
+        <span className="font-medium">{grant.source.replace(/-/g, " ")}</span>
+        {grant.duration && (
+          <> &middot; Duration: {grant.duration.replace(/-/g, " ")}</>
+        )}
       </p>
 
       {/* Decision controls */}
@@ -72,7 +79,17 @@ function GrantRow({
           }`}
         >
           {decision === "granted" && (
-            <svg className="inline -mt-0.5 mr-1" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+            <svg
+              className="inline -mt-0.5 mr-1"
+              width="12"
+              height="12"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="3"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
               <polyline points="20 6 9 17 4 12" />
             </svg>
           )}
@@ -100,17 +117,25 @@ export function ConsentPanel({
   onDecision,
   disabled,
 }: ConsentPanelProps) {
-  const allDecided = grants.length > 0 && grants.every((g) => decisions[g.id] !== undefined);
+  const allDecided =
+    grants.length > 0 && grants.every((g) => decisions[g.id] !== undefined);
 
   return (
-    <div
-      className="my-3 rounded-2xl bg-white shadow-sm"
-    >
+    <div className="my-3 rounded-2xl bg-white shadow-sm">
       {/* Panel header */}
       <div className="px-5 py-4 border-b border-gray-200">
         <div className="flex items-center gap-2.5">
           <span className="w-7 h-7 rounded-full bg-purple-100 flex items-center justify-center shrink-0">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#912b88" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="#912b88"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
               <path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
             </svg>
           </span>

@@ -29,11 +29,7 @@
       "condition": {
         "field": "jurisdiction",
         "operator": "in",
-        "value": [
-          "England",
-          "Wales",
-          "Scotland"
-        ]
+        "value": ["England", "Wales", "Scotland"]
       },
       "reason_if_failed": "This service is for UK residents (England, Wales, Scotland) only"
     },

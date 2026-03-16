@@ -14,7 +14,7 @@ export async function POST(req: NextRequest) {
     ) {
       return NextResponse.json(
         { error: "Scenario description must be at least 10 characters" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -25,7 +25,9 @@ export async function POST(req: NextRequest) {
     });
 
     // Determine ID
-    let id = (persona.id as string) || nameToId((persona.name as string) || "generated-persona");
+    let id =
+      (persona.id as string) ||
+      nameToId((persona.name as string) || "generated-persona");
 
     // Check for collision — append suffix if needed
     let suffix = 1;
@@ -50,7 +52,7 @@ export async function POST(req: NextRequest) {
         error:
           err instanceof Error ? err.message : "Failed to generate persona",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

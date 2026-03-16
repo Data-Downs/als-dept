@@ -34,7 +34,7 @@ export class IncidentalStore {
     key: string,
     value: unknown,
     sessionId: string,
-    confidence: IncidentalField["confidence"] = "stated"
+    confidence: IncidentalField["confidence"] = "stated",
   ): IncidentalField {
     const field: IncidentalField = {
       key,

@@ -26,7 +26,11 @@ const pensionPolicy: PolicyRuleset = {
     {
       id: "uk-jurisdiction",
       description: "UK jurisdiction required",
-      condition: { field: "jurisdiction", operator: "in", value: ["England", "Wales", "Scotland"] },
+      condition: {
+        field: "jurisdiction",
+        operator: "in",
+        value: ["England", "Wales", "Scotland"],
+      },
       reason_if_failed: "Must be in UK jurisdiction",
     },
   ],
@@ -80,12 +84,16 @@ describe("PolicyEvaluator", () => {
 
   it("handles >= operator", () => {
     const ruleset: PolicyRuleset = {
-      id: "test", version: "1.0.0",
-      rules: [{
-        id: "age-check", description: "Over 18",
-        condition: { field: "age", operator: ">=", value: 18 },
-        reason_if_failed: "Too young",
-      }],
+      id: "test",
+      version: "1.0.0",
+      rules: [
+        {
+          id: "age-check",
+          description: "Over 18",
+          condition: { field: "age", operator: ">=", value: 18 },
+          reason_if_failed: "Too young",
+        },
+      ],
     };
     expect(evaluator.evaluate(ruleset, { age: 25 }).eligible).toBe(true);
     expect(evaluator.evaluate(ruleset, { age: 18 }).eligible).toBe(true);
@@ -94,66 +102,101 @@ describe("PolicyEvaluator", () => {
 
   it("handles <= operator", () => {
     const ruleset: PolicyRuleset = {
-      id: "test", version: "1.0.0",
-      rules: [{
-        id: "savings-check", description: "Savings below threshold",
-        condition: { field: "savings", operator: "<=", value: 16000 },
-        reason_if_failed: "Savings too high",
-      }],
+      id: "test",
+      version: "1.0.0",
+      rules: [
+        {
+          id: "savings-check",
+          description: "Savings below threshold",
+          condition: { field: "savings", operator: "<=", value: 16000 },
+          reason_if_failed: "Savings too high",
+        },
+      ],
     };
     expect(evaluator.evaluate(ruleset, { savings: 5000 }).eligible).toBe(true);
-    expect(evaluator.evaluate(ruleset, { savings: 20000 }).eligible).toBe(false);
+    expect(evaluator.evaluate(ruleset, { savings: 20000 }).eligible).toBe(
+      false,
+    );
   });
 
   it("handles == operator", () => {
     const ruleset: PolicyRuleset = {
-      id: "test", version: "1.0.0",
-      rules: [{
-        id: "status", description: "Must be employed",
-        condition: { field: "status", operator: "==", value: "employed" },
-        reason_if_failed: "Not employed",
-      }],
+      id: "test",
+      version: "1.0.0",
+      rules: [
+        {
+          id: "status",
+          description: "Must be employed",
+          condition: { field: "status", operator: "==", value: "employed" },
+          reason_if_failed: "Not employed",
+        },
+      ],
     };
-    expect(evaluator.evaluate(ruleset, { status: "employed" }).eligible).toBe(true);
-    expect(evaluator.evaluate(ruleset, { status: "unemployed" }).eligible).toBe(false);
+    expect(evaluator.evaluate(ruleset, { status: "employed" }).eligible).toBe(
+      true,
+    );
+    expect(evaluator.evaluate(ruleset, { status: "unemployed" }).eligible).toBe(
+      false,
+    );
   });
 
   it("handles != operator", () => {
     const ruleset: PolicyRuleset = {
-      id: "test", version: "1.0.0",
-      rules: [{
-        id: "not-banned", description: "Not banned",
-        condition: { field: "status", operator: "!=", value: "banned" },
-        reason_if_failed: "You are banned",
-      }],
+      id: "test",
+      version: "1.0.0",
+      rules: [
+        {
+          id: "not-banned",
+          description: "Not banned",
+          condition: { field: "status", operator: "!=", value: "banned" },
+          reason_if_failed: "You are banned",
+        },
+      ],
     };
-    expect(evaluator.evaluate(ruleset, { status: "active" }).eligible).toBe(true);
-    expect(evaluator.evaluate(ruleset, { status: "banned" }).eligible).toBe(false);
+    expect(evaluator.evaluate(ruleset, { status: "active" }).eligible).toBe(
+      true,
+    );
+    expect(evaluator.evaluate(ruleset, { status: "banned" }).eligible).toBe(
+      false,
+    );
   });
 
   it("handles not-exists operator", () => {
     const ruleset: PolicyRuleset = {
-      id: "test", version: "1.0.0",
-      rules: [{
-        id: "no-ban", description: "No ban flag",
-        condition: { field: "ban_flag", operator: "not-exists" },
-        reason_if_failed: "Ban flag exists",
-      }],
+      id: "test",
+      version: "1.0.0",
+      rules: [
+        {
+          id: "no-ban",
+          description: "No ban flag",
+          condition: { field: "ban_flag", operator: "not-exists" },
+          reason_if_failed: "Ban flag exists",
+        },
+      ],
     };
     expect(evaluator.evaluate(ruleset, {}).eligible).toBe(true);
-    expect(evaluator.evaluate(ruleset, { ban_flag: true }).eligible).toBe(false);
+    expect(evaluator.evaluate(ruleset, { ban_flag: true }).eligible).toBe(
+      false,
+    );
   });
 
   it("handles nested field paths", () => {
     const ruleset: PolicyRuleset = {
-      id: "test", version: "1.0.0",
-      rules: [{
-        id: "postcode", description: "Has postcode",
-        condition: { field: "address.postcode", operator: "exists" },
-        reason_if_failed: "No postcode",
-      }],
+      id: "test",
+      version: "1.0.0",
+      rules: [
+        {
+          id: "postcode",
+          description: "Has postcode",
+          condition: { field: "address.postcode", operator: "exists" },
+          reason_if_failed: "No postcode",
+        },
+      ],
     };
-    expect(evaluator.evaluate(ruleset, { address: { postcode: "SW1A 2AA" } }).eligible).toBe(true);
+    expect(
+      evaluator.evaluate(ruleset, { address: { postcode: "SW1A 2AA" } })
+        .eligible,
+    ).toBe(true);
     expect(evaluator.evaluate(ruleset, { address: {} }).eligible).toBe(false);
     expect(evaluator.evaluate(ruleset, {}).eligible).toBe(false);
   });
@@ -174,11 +217,27 @@ const pensionStateModel: StateModelDefinition = {
     { id: "handed-off", type: "terminal", receipt: true },
   ],
   transitions: [
-    { from: "not-started", to: "identity-verified", trigger: "verify-identity" },
-    { from: "identity-verified", to: "eligibility-checked", trigger: "check-eligibility" },
-    { from: "eligibility-checked", to: "consent-given", trigger: "grant-consent" },
+    {
+      from: "not-started",
+      to: "identity-verified",
+      trigger: "verify-identity",
+    },
+    {
+      from: "identity-verified",
+      to: "eligibility-checked",
+      trigger: "check-eligibility",
+    },
+    {
+      from: "eligibility-checked",
+      to: "consent-given",
+      trigger: "grant-consent",
+    },
     { from: "eligibility-checked", to: "handed-off", trigger: "handoff" },
-    { from: "consent-given", to: "forecast-retrieved", trigger: "retrieve-forecast" },
+    {
+      from: "consent-given",
+      to: "forecast-retrieved",
+      trigger: "retrieve-forecast",
+    },
     { from: "forecast-retrieved", to: "completed", trigger: "complete" },
   ],
 };
@@ -197,7 +256,10 @@ describe("StateMachine", () => {
   it("returns allowed transitions from current state", () => {
     const transitions = sm.allowedTransitions();
     expect(transitions).toHaveLength(1);
-    expect(transitions[0]).toEqual({ to: "identity-verified", trigger: "verify-identity" });
+    expect(transitions[0]).toEqual({
+      to: "identity-verified",
+      trigger: "verify-identity",
+    });
   });
 
   it("transitions successfully with valid trigger", () => {
@@ -386,7 +448,11 @@ describe("FieldCollector", () => {
   });
 
   it("tracks required vs optional fields", () => {
-    expect(collector.getMissing()).toEqual(["national_insurance_number", "date_of_birth", "full_name"]);
+    expect(collector.getMissing()).toEqual([
+      "national_insurance_number",
+      "date_of_birth",
+      "full_name",
+    ]);
     expect(collector.isComplete()).toBe(false);
   });
 
@@ -406,11 +472,14 @@ describe("FieldCollector", () => {
   });
 
   it("recordFields adds multiple fields", () => {
-    collector.recordFields({
-      national_insurance_number: "QQ123456C",
-      date_of_birth: "1990-01-15",
-      full_name: "Alice",
-    }, "form");
+    collector.recordFields(
+      {
+        national_insurance_number: "QQ123456C",
+        date_of_birth: "1990-01-15",
+        full_name: "Alice",
+      },
+      "form",
+    );
     expect(collector.isComplete()).toBe(true);
   });
 
@@ -485,8 +554,12 @@ describe("ArtefactStore", () => {
   });
 
   it("slugFromId extracts directory name", () => {
-    expect(ArtefactStore.slugFromId("dvla.renew-driving-licence")).toBe("renew-driving-licence");
-    expect(ArtefactStore.slugFromId("dwp.check-state-pension")).toBe("check-state-pension");
+    expect(ArtefactStore.slugFromId("dvla.renew-driving-licence")).toBe(
+      "renew-driving-licence",
+    );
+    expect(ArtefactStore.slugFromId("dwp.check-state-pension")).toBe(
+      "check-state-pension",
+    );
     expect(ArtefactStore.slugFromId("simple")).toBe("simple");
   });
 

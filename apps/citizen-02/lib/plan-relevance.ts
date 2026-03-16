@@ -17,7 +17,7 @@ export interface RelevanceResult {
 type RelevanceRule = (
   svc: LifeEventService,
   persona: PersonaData,
-  raw: Record<string, unknown>
+  raw: Record<string, unknown>,
 ) => RelevanceResult | null;
 
 /**
@@ -48,7 +48,7 @@ const RULES: RelevanceRule[] = [
  */
 export function computePlanRelevance(
   services: LifeEventService[],
-  personaData: PersonaData | null
+  personaData: PersonaData | null,
 ): Record<string, RelevanceResult> {
   if (!personaData) return {};
 
@@ -76,12 +76,14 @@ function provisionaLicenceRule(
   persona: PersonaData,
 ): RelevanceResult | null {
   const nameLC = svc.name.toLowerCase();
-  if (!nameLC.includes("provisional") || !nameLC.includes("licence")) return null;
+  if (!nameLC.includes("provisional") || !nameLC.includes("licence"))
+    return null;
 
   if (persona.vehicles && persona.vehicles.length > 0) {
     return {
       relevant: false,
-      reason: "You already have a full driving licence — a provisional is not needed",
+      reason:
+        "You already have a full driving licence — a provisional is not needed",
     };
   }
   return null;
@@ -94,7 +96,8 @@ function learnerTestsRule(
 ): RelevanceResult | null {
   const nameLC = svc.name.toLowerCase();
   const isTheoryTest = nameLC.includes("theory test");
-  const isDrivingTest = nameLC.includes("driving test") && nameLC.includes("practical");
+  const isDrivingTest =
+    nameLC.includes("driving test") && nameLC.includes("practical");
 
   if (!isTheoryTest && !isDrivingTest) return null;
 
@@ -112,7 +115,8 @@ function alreadyReceivingBenefitRule(
   svc: LifeEventService,
   persona: PersonaData,
 ): RelevanceResult | null {
-  if (svc.serviceType !== "benefit" && svc.serviceType !== "entitlement") return null;
+  if (svc.serviceType !== "benefit" && svc.serviceType !== "entitlement")
+    return null;
 
   const current = persona.benefits?.currentlyReceiving;
   if (!current || current.length === 0) return null;
@@ -123,7 +127,9 @@ function alreadyReceivingBenefitRule(
     // Fuzzy match: if the benefit name is substantially contained in the service name
     if (
       svcNameLC.includes(benefitLC) ||
-      benefitLC.includes(svcNameLC.replace(/apply for |claim |register for /g, ""))
+      benefitLC.includes(
+        svcNameLC.replace(/apply for |claim |register for /g, ""),
+      )
     ) {
       return {
         relevant: false,
@@ -145,7 +151,7 @@ function ageMismatchRule(
   if (!dob) return null;
 
   const age = Math.floor(
-    (Date.now() - new Date(dob).getTime()) / (365.25 * 24 * 60 * 60 * 1000)
+    (Date.now() - new Date(dob).getTime()) / (365.25 * 24 * 60 * 60 * 1000),
   );
 
   const summary = svc.eligibility_summary.toLowerCase();
@@ -187,14 +193,15 @@ function employmentMismatchRule(
     nameLC.includes("jobseeker") ||
     nameLC.includes("job centre") ||
     nameLC.includes("work coach") ||
-    (nameLC.includes("universal credit") && svc.eligibility_summary?.toLowerCase().includes("unemployed"));
+    (nameLC.includes("universal credit") &&
+      svc.eligibility_summary?.toLowerCase().includes("unemployed"));
 
   if (!isJobSeeking) return null;
 
   const emp = persona.employment as Record<string, unknown> | undefined;
-  const status = (
-    emp?.status ?? emp?.employment_status ?? raw.employment_status
-  ) as string | undefined;
+  const status = (emp?.status ??
+    emp?.employment_status ??
+    raw.employment_status) as string | undefined;
 
   if (status && /^(employed|self-employed)$/i.test(status)) {
     return {

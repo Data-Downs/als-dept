@@ -21,7 +21,8 @@ export default function StateProgressFlow({
         const isCurrent = state.id === currentState;
 
         let bgColor = "bg-gray-200 text-gray-500";
-        if (isCompleted && !isCurrent) bgColor = "bg-green-100 text-green-800 border-green-300";
+        if (isCompleted && !isCurrent)
+          bgColor = "bg-green-100 text-green-800 border-green-300";
         if (isCurrent) bgColor = "bg-govuk-blue text-white";
 
         return (

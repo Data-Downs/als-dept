@@ -21,7 +21,10 @@ const verificationBadge: Record<string, string> = {
   none: "bg-gray-100 text-gray-500",
 };
 
-export default function DataProfile({ verified, incidentalCount }: DataProfileProps) {
+export default function DataProfile({
+  verified,
+  incidentalCount,
+}: DataProfileProps) {
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
@@ -81,8 +84,8 @@ export default function DataProfile({ verified, incidentalCount }: DataProfilePr
       {incidentalCount > 0 && (
         <div className="bg-blue-50 border border-blue-200 rounded p-3">
           <div className="text-sm text-blue-800">
-            <strong>{incidentalCount}</strong> additional data point(s) collected
-            from conversations (stored on-device only).
+            <strong>{incidentalCount}</strong> additional data point(s)
+            collected from conversations (stored on-device only).
           </div>
         </div>
       )}

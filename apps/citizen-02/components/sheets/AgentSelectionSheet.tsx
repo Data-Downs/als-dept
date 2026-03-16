@@ -17,18 +17,24 @@ const AGENTS: Array<{
     id: "dot",
     name: "DOT",
     subtitle: "Digital Online Triage",
-    description: "A careful, methodical agent that follows GOV.UK policy precisely. Asks questions one at a time and explains reasoning clearly.",
-    behaviour: "DOT walks you through each step individually, checking your eligibility against policy rules before moving on. It will always explain why it needs information and what it does with it.",
-    expectation: "Expect a slower, more thorough conversation. DOT won\u2019t skip ahead or assume anything \u2014 every action is confirmed with you first.",
+    description:
+      "A careful, methodical agent that follows GOV.UK policy precisely. Asks questions one at a time and explains reasoning clearly.",
+    behaviour:
+      "DOT walks you through each step individually, checking your eligibility against policy rules before moving on. It will always explain why it needs information and what it does with it.",
+    expectation:
+      "Expect a slower, more thorough conversation. DOT won\u2019t skip ahead or assume anything \u2014 every action is confirmed with you first.",
     traits: ["Methodical", "Policy-focused", "Step-by-step"],
   },
   {
     id: "max",
     name: "MAX",
     subtitle: "Multi-service Action eXpert",
-    description: "A proactive agent that anticipates needs and suggests related services. Gathers information efficiently and offers comprehensive guidance.",
-    behaviour: "MAX looks across multiple services at once and suggests things you might not have thought of. It gathers information upfront so it can work through several tasks in one go.",
-    expectation: "Expect a faster, more wide-ranging conversation. MAX may surface benefits or obligations you weren\u2019t aware of and will try to handle as much as possible on your behalf.",
+    description:
+      "A proactive agent that anticipates needs and suggests related services. Gathers information efficiently and offers comprehensive guidance.",
+    behaviour:
+      "MAX looks across multiple services at once and suggests things you might not have thought of. It gathers information upfront so it can work through several tasks in one go.",
+    expectation:
+      "Expect a faster, more wide-ranging conversation. MAX may surface benefits or obligations you weren\u2019t aware of and will try to handle as much as possible on your behalf.",
     traits: ["Proactive", "Efficient", "Comprehensive"],
   },
 ];
@@ -59,9 +65,11 @@ export function AgentSelectionSheet() {
           }`}
         >
           <div className="flex items-center gap-3 mb-2">
-            <div className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-sm ${
-              agent.id === "dot" ? "bg-govuk-blue" : "bg-govuk-purple"
-            }`}>
+            <div
+              className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-sm ${
+                agent.id === "dot" ? "bg-govuk-blue" : "bg-govuk-purple"
+              }`}
+            >
               {agent.id === "dot" ? "D" : "M"}
             </div>
             <div>
@@ -70,7 +78,15 @@ export function AgentSelectionSheet() {
             </div>
             {selected === agent.id && (
               <span className="ml-auto w-5 h-5 rounded-full bg-govuk-blue flex items-center justify-center">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round">
+                <svg
+                  width="12"
+                  height="12"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="white"
+                  strokeWidth="3"
+                  strokeLinecap="round"
+                >
                   <path d="M20 6L9 17l-5-5" />
                 </svg>
               </span>
@@ -80,12 +96,20 @@ export function AgentSelectionSheet() {
           {selected === agent.id && (
             <div className="space-y-2 mb-3">
               <div>
-                <p className="text-xs font-bold text-govuk-dark-grey uppercase tracking-wide mb-0.5">Behaviour</p>
-                <p className="text-sm text-govuk-dark-grey leading-relaxed">{agent.behaviour}</p>
+                <p className="text-xs font-bold text-govuk-dark-grey uppercase tracking-wide mb-0.5">
+                  Behaviour
+                </p>
+                <p className="text-sm text-govuk-dark-grey leading-relaxed">
+                  {agent.behaviour}
+                </p>
               </div>
               <div>
-                <p className="text-xs font-bold text-govuk-dark-grey uppercase tracking-wide mb-0.5">What to expect</p>
-                <p className="text-sm text-govuk-dark-grey leading-relaxed">{agent.expectation}</p>
+                <p className="text-xs font-bold text-govuk-dark-grey uppercase tracking-wide mb-0.5">
+                  What to expect
+                </p>
+                <p className="text-sm text-govuk-dark-grey leading-relaxed">
+                  {agent.expectation}
+                </p>
               </div>
             </div>
           )}

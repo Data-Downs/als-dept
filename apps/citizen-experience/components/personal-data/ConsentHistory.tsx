@@ -16,7 +16,10 @@ interface ConsentHistoryProps {
   onRevoke?: (consentId: string) => void;
 }
 
-export default function ConsentHistory({ records, onRevoke }: ConsentHistoryProps) {
+export default function ConsentHistory({
+  records,
+  onRevoke,
+}: ConsentHistoryProps) {
   if (records.length === 0) {
     return (
       <div className="text-center text-gray-400 py-6">

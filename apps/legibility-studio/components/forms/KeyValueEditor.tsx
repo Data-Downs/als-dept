@@ -11,7 +11,11 @@ interface KeyValueEditorProps {
   label?: string;
 }
 
-export default function KeyValueEditor({ fields, onChange, label }: KeyValueEditorProps) {
+export default function KeyValueEditor({
+  fields,
+  onChange,
+  label,
+}: KeyValueEditorProps) {
   function addField() {
     onChange([...fields, { name: "", type: "string" }]);
   }
@@ -22,7 +26,7 @@ export default function KeyValueEditor({ fields, onChange, label }: KeyValueEdit
 
   function updateField(index: number, key: keyof SchemaField, value: string) {
     const updated = fields.map((f, i) =>
-      i === index ? { ...f, [key]: value } : f
+      i === index ? { ...f, [key]: value } : f,
     );
     onChange(updated);
   }

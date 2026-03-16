@@ -31,7 +31,9 @@ export class VerifiedStore {
         city: user.address.city,
         postcode: user.address.postcode,
       },
-      drivingLicenceNumber: credentials.find((c) => c.type === "driving-licence")?.number,
+      drivingLicenceNumber: credentials.find(
+        (c) => c.type === "driving-licence",
+      )?.number,
       verificationLevel: hasValidCredential ? "high" : "medium",
       source: "wallet-simulator",
       verifiedAt: new Date().toISOString(),

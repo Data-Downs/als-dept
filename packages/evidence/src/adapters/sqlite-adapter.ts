@@ -43,12 +43,16 @@ export class SqliteAdapter implements DatabaseAdapter {
     this.db.exec(sql);
   }
 
-  async batch(statements: Array<{ sql: string; params: unknown[] }>): Promise<void> {
-    const tx = this.db.transaction((stmts: Array<{ sql: string; params: unknown[] }>) => {
-      for (const { sql, params } of stmts) {
-        this.db.prepare(sql).run(...params);
-      }
-    });
+  async batch(
+    statements: Array<{ sql: string; params: unknown[] }>,
+  ): Promise<void> {
+    const tx = this.db.transaction(
+      (stmts: Array<{ sql: string; params: unknown[] }>) => {
+        for (const { sql, params } of stmts) {
+          this.db.prepare(sql).run(...params);
+        }
+      },
+    );
     tx(statements);
   }
 

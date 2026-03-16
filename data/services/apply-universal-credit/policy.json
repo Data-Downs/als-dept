@@ -30,11 +30,7 @@
       "condition": {
         "field": "jurisdiction",
         "operator": "in",
-        "value": [
-          "England",
-          "Wales",
-          "Scotland"
-        ]
+        "value": ["England", "Wales", "Scotland"]
       },
       "reason_if_failed": "You must live in England, Scotland, or Wales to claim Universal Credit"
     },

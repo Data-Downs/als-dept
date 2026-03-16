@@ -50,7 +50,15 @@ interface StateModel {
   states: StateDefinition[];
 }
 
-function CheckItem({ label, checked, detail }: { label: string; checked: boolean; detail?: string }) {
+function CheckItem({
+  label,
+  checked,
+  detail,
+}: {
+  label: string;
+  checked: boolean;
+  detail?: string;
+}) {
   return (
     <div className="flex items-center gap-2 text-sm">
       <span className={checked ? "text-green-600" : "text-gray-400"}>
@@ -101,7 +109,11 @@ export default function CaseDetail({
   };
 
   const handleReset = async () => {
-    if (!confirm("Are you sure you want to reset this case? This will delete the case and all associated traces. This cannot be undone.")) {
+    if (
+      !confirm(
+        "Are you sure you want to reset this case? This will delete the case and all associated traces. This cannot be undone.",
+      )
+    ) {
       return;
     }
     setResetting(true);
@@ -130,9 +142,7 @@ export default function CaseDetail({
 
   if (loading) {
     return (
-      <div className="text-center py-12 text-gray-500">
-        Loading case...
-      </div>
+      <div className="text-center py-12 text-gray-500">Loading case...</div>
     );
   }
 
@@ -160,9 +170,9 @@ export default function CaseDetail({
             )}
           </div>
           <p className="text-sm text-gray-500">
-            Case <span className="font-mono">{caseData.caseId.slice(0, 12)}...</span>
-            {" "}&middot;{" "}
-            Started{" "}
+            Case{" "}
+            <span className="font-mono">{caseData.caseId.slice(0, 12)}...</span>{" "}
+            &middot; Started{" "}
             {new Date(caseData.startedAt).toLocaleDateString("en-GB", {
               dateStyle: "medium",
             })}
@@ -189,7 +199,9 @@ export default function CaseDetail({
       <div className="border border-studio-border rounded-xl bg-white p-4">
         <div className="flex items-center justify-between mb-3">
           <h3 className="text-sm font-bold">Journey Progress</h3>
-          <span className="text-2xl font-light tracking-tight">{caseData.progressPercent}%</span>
+          <span className="text-2xl font-light tracking-tight">
+            {caseData.progressPercent}%
+          </span>
         </div>
         <div className="w-full h-3 bg-gray-100 rounded-full overflow-hidden mb-4">
           <div
@@ -211,12 +223,30 @@ export default function CaseDetail({
         <div className="border border-studio-border rounded-xl bg-white p-4">
           <h3 className="text-sm font-bold mb-3">Checklist</h3>
           <div className="space-y-2">
-            <CheckItem label="Identity verified" checked={caseData.identityVerified} />
-            <CheckItem label="Eligibility checked" checked={caseData.eligibilityChecked}
-              detail={caseData.eligibilityResult === null ? undefined : caseData.eligibilityResult ? "eligible" : "not eligible"} />
-            <CheckItem label="Consent granted" checked={caseData.consentGranted} />
-            <CheckItem label="Handed off" checked={caseData.handedOff}
-              detail={caseData.handoffReason || undefined} />
+            <CheckItem
+              label="Identity verified"
+              checked={caseData.identityVerified}
+            />
+            <CheckItem
+              label="Eligibility checked"
+              checked={caseData.eligibilityChecked}
+              detail={
+                caseData.eligibilityResult === null
+                  ? undefined
+                  : caseData.eligibilityResult
+                    ? "eligible"
+                    : "not eligible"
+              }
+            />
+            <CheckItem
+              label="Consent granted"
+              checked={caseData.consentGranted}
+            />
+            <CheckItem
+              label="Handed off"
+              checked={caseData.handedOff}
+              detail={caseData.handoffReason || undefined}
+            />
           </div>
         </div>
 

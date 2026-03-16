@@ -49,9 +49,7 @@ export default function SchemaArraySection({
         <DynamicList
           items={items as Record<string, unknown>[]}
           addLabel={`Add ${schema.itemLabel}`}
-          onAdd={() =>
-            onChange([...items, blankItem(schema.fields)])
-          }
+          onAdd={() => onChange([...items, blankItem(schema.fields)])}
           onRemove={(i) => onChange(items.filter((_, idx) => idx !== i))}
           onChange={(i, updated) =>
             onChange(items.map((item, idx) => (idx === i ? updated : item)))
@@ -69,9 +67,7 @@ export default function SchemaArraySection({
       {count === 0 && !isStringArray && (
         <button
           type="button"
-          onClick={() =>
-            onChange([blankItem(schema.fields)])
-          }
+          onClick={() => onChange([blankItem(schema.fields)])}
           className="text-sm text-govuk-blue hover:underline"
         >
           + Add {schema.itemLabel}
@@ -94,7 +90,7 @@ function ItemFields({
 }) {
   // Show all schema fields (non-optional always, optional when value exists)
   const visibleFields = fields.filter(
-    (f) => !f.optional || item[f.key] !== undefined
+    (f) => !f.optional || item[f.key] !== undefined,
   );
 
   // Extra keys not in schema

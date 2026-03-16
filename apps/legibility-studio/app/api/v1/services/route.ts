@@ -1,5 +1,8 @@
 import { NextRequest } from "next/server";
-import { getServiceArtefactStore, getServiceGraphStore } from "@/lib/service-store-init";
+import {
+  getServiceArtefactStore,
+  getServiceGraphStore,
+} from "@/lib/service-store-init";
 import { handleOptions, jsonWithCors } from "@/lib/cors";
 
 export async function OPTIONS() {
@@ -51,18 +54,25 @@ export async function POST(request: NextRequest) {
 
     if (!name || !department || !description) {
       return jsonWithCors(
-        { error: "manifest.name, manifest.department, and manifest.description are required" },
-        { status: 400 }
+        {
+          error:
+            "manifest.name, manifest.department, and manifest.description are required",
+        },
+        { status: 400 },
       );
     }
 
     const store = await getServiceArtefactStore();
-    const serviceId = body.manifest.id || `${slugify(department)}.${slugify(name)}`;
+    const serviceId =
+      body.manifest.id || `${slugify(department)}.${slugify(name)}`;
 
     // Check collision
     const existing = await store.getService(serviceId);
     if (existing) {
-      return jsonWithCors({ error: `Service "${serviceId}" already exists` }, { status: 409 });
+      return jsonWithCors(
+        { error: `Service "${serviceId}" already exists` },
+        { status: 409 },
+      );
     }
 
     const manifest = {
@@ -88,5 +98,9 @@ export async function POST(request: NextRequest) {
 }
 
 function slugify(text: string): string {
-  return text.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+  return text
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
 }

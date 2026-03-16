@@ -16,7 +16,9 @@ export class StateMachine {
     this.definition = definition;
     // Find the initial state
     const initial = definition.states.find((s) => s.type === "initial");
-    this.currentState = initial ? initial.id : definition.states[0]?.id || "unknown";
+    this.currentState = initial
+      ? initial.id
+      : definition.states[0]?.id || "unknown";
   }
 
   /** Get the current state ID */
@@ -34,7 +36,7 @@ export class StateMachine {
   /** Attempt a state transition */
   transition(trigger: string): TransitionResult {
     const available = this.definition.transitions.find(
-      (t) => t.from === this.currentState && t.trigger === trigger
+      (t) => t.from === this.currentState && t.trigger === trigger,
     );
 
     if (!available) {
@@ -60,13 +62,17 @@ export class StateMachine {
 
   /** Check if the current state is a terminal state */
   isTerminal(): boolean {
-    const state = this.definition.states.find((s) => s.id === this.currentState);
+    const state = this.definition.states.find(
+      (s) => s.id === this.currentState,
+    );
     return state?.type === "terminal";
   }
 
   /** Check if the current state requires a receipt */
   requiresReceipt(): boolean {
-    const state = this.definition.states.find((s) => s.id === this.currentState);
+    const state = this.definition.states.find(
+      (s) => s.id === this.currentState,
+    );
     return state?.receipt === true;
   }
 
@@ -81,6 +87,8 @@ export class StateMachine {
   /** Reset to initial state */
   reset(): void {
     const initial = this.definition.states.find((s) => s.type === "initial");
-    this.currentState = initial ? initial.id : this.definition.states[0]?.id || "unknown";
+    this.currentState = initial
+      ? initial.id
+      : this.definition.states[0]?.id || "unknown";
   }
 }

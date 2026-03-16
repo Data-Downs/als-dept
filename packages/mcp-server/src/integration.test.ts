@@ -32,7 +32,8 @@ beforeAll(async () => {
   promptCount = result.promptCount;
   serviceCount = result.serviceCount;
 
-  const [serverTransport, clientTransport] = InMemoryTransport.createLinkedPair();
+  const [serverTransport, clientTransport] =
+    InMemoryTransport.createLinkedPair();
   client = new Client({ name: "test-client", version: "0.1.0" });
 
   await server.connect(serverTransport);
@@ -114,7 +115,9 @@ describe("tools — listing + annotations", () => {
 
   it("has 4 check_eligibility tools with correct annotations", async () => {
     const { tools } = await client.listTools();
-    const eligTools = tools.filter((t) => t.name.endsWith("_check_eligibility"));
+    const eligTools = tools.filter((t) =>
+      t.name.endsWith("_check_eligibility"),
+    );
     expect(eligTools).toHaveLength(4);
     for (const t of eligTools) {
       const ann = t.annotations as Record<string, unknown> | undefined;
@@ -140,10 +143,17 @@ describe("tools — check_eligibility execution", () => {
     const result = await client.callTool({
       name: "apply_universal_credit_check_eligibility",
       arguments: {
-        citizen_data: { age: 30, jurisdiction: "England", savings: 5000, bank_account: true },
+        citizen_data: {
+          age: 30,
+          jurisdiction: "England",
+          savings: 5000,
+          bank_account: true,
+        },
       },
     });
-    const data = JSON.parse((result.content as Array<{ text: string }>)[0].text);
+    const data = JSON.parse(
+      (result.content as Array<{ text: string }>)[0].text,
+    );
     expect(data.eligible).toBe(true);
     const passedIds = data.passed.map((r: { id: string }) => r.id);
     expect(passedIds).toContain("age-range");
@@ -154,10 +164,17 @@ describe("tools — check_eligibility execution", () => {
     const result = await client.callTool({
       name: "apply_universal_credit_check_eligibility",
       arguments: {
-        citizen_data: { age: 15, jurisdiction: "England", savings: 5000, bank_account: true },
+        citizen_data: {
+          age: 15,
+          jurisdiction: "England",
+          savings: 5000,
+          bank_account: true,
+        },
       },
     });
-    const data = JSON.parse((result.content as Array<{ text: string }>)[0].text);
+    const data = JSON.parse(
+      (result.content as Array<{ text: string }>)[0].text,
+    );
     expect(data.eligible).toBe(false);
     const failedIds = data.failed.map((r: { id: string }) => r.id);
     expect(failedIds).toContain("age-range");
@@ -170,7 +187,9 @@ describe("tools — advance_state execution", () => {
       name: "apply_universal_credit_advance_state",
       arguments: { current_state: "not-started", trigger: "verify-identity" },
     });
-    const data = JSON.parse((result.content as Array<{ text: string }>)[0].text);
+    const data = JSON.parse(
+      (result.content as Array<{ text: string }>)[0].text,
+    );
     expect(data.success).toBe(true);
     expect(data.fromState).toBe("not-started");
     expect(data.toState).toBe("identity-verified");
@@ -181,7 +200,9 @@ describe("tools — advance_state execution", () => {
       name: "apply_universal_credit_advance_state",
       arguments: { current_state: "not-started", trigger: "submit-claim" },
     });
-    const data = JSON.parse((result.content as Array<{ text: string }>)[0].text);
+    const data = JSON.parse(
+      (result.content as Array<{ text: string }>)[0].text,
+    );
     expect(data.success).toBe(false);
   });
 });

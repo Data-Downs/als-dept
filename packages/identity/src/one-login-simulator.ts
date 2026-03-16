@@ -27,7 +27,9 @@ export class OneLoginSimulator {
   }
 
   /** Start an auth flow — returns a session token (simulated OIDC) */
-  startAuthFlow(userId: string): { sessionToken: string; user: TestUser } | null {
+  startAuthFlow(
+    userId: string,
+  ): { sessionToken: string; user: TestUser } | null {
     const user = this.testUsers.find((u) => u.id === userId);
     if (!user) return null;
 

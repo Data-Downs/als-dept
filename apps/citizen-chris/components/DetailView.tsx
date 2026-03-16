@@ -20,16 +20,23 @@ export function DetailView() {
   if (!personaData || !currentService) return null;
 
   const conversations = persona
-    ? getConversations(persona).filter((c) => c.service === currentService).slice(0, 5)
+    ? getConversations(persona)
+        .filter((c) => c.service === currentService)
+        .slice(0, 5)
     : [];
 
   // Only show the context card when the carousel has no cards for this service
-  const hasCarouselCards = buildHeroCards(personaData).some((c) => c.service === currentService);
+  const hasCarouselCards = buildHeroCards(personaData).some(
+    (c) => c.service === currentService,
+  );
 
   // Eligible support items for benefits promo cards
-  const eligibleSupport = currentService === "benefits"
-    ? ANNA_SUPPORT.filter((s) => s.status === "eligible" || s.status === "check")
-    : [];
+  const eligibleSupport =
+    currentService === "benefits"
+      ? ANNA_SUPPORT.filter(
+          (s) => s.status === "eligible" || s.status === "check",
+        )
+      : [];
 
   const handleAskAbout = (topic: string) => {
     startNewConversation("benefits", `Check eligibility for ${topic}`);
@@ -41,7 +48,9 @@ export function DetailView() {
 
   return (
     <div className="max-w-lg mx-auto">
-      <h2 className="text-2xl font-bold text-govuk-black mb-4">{serviceName || "Details"}</h2>
+      <h2 className="text-2xl font-bold text-govuk-black mb-4">
+        {serviceName || "Details"}
+      </h2>
 
       {/* Contextual data card — shown when no carousel cards exist for this service */}
       {!hasCarouselCards && (
@@ -76,19 +85,29 @@ export function DetailView() {
                 className="w-full text-left bg-white rounded-card shadow-sm p-4 hover:shadow-md transition-all touch-feedback"
               >
                 <div className="flex items-center gap-2 mb-1">
-                  <strong className="text-sm font-bold text-govuk-black">{item.name}</strong>
-                  <span className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded-full shrink-0 ${
-                    item.status === "eligible"
-                      ? "bg-blue-100 text-blue-700"
-                      : "bg-amber-100 text-amber-700"
-                  }`}>
+                  <strong className="text-sm font-bold text-govuk-black">
+                    {item.name}
+                  </strong>
+                  <span
+                    className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded-full shrink-0 ${
+                      item.status === "eligible"
+                        ? "bg-blue-100 text-blue-700"
+                        : "bg-amber-100 text-amber-700"
+                    }`}
+                  >
                     {item.status === "eligible" ? "Eligible" : "Check"}
                   </span>
                 </div>
-                <p className="text-sm text-govuk-dark-grey mb-1">{item.description}</p>
+                <p className="text-sm text-govuk-dark-grey mb-1">
+                  {item.description}
+                </p>
                 <div className="flex items-baseline gap-1.5">
-                  <span className="text-base font-bold text-govuk-blue">{item.amount}</span>
-                  <span className="text-xs text-govuk-dark-grey">{item.frequency}</span>
+                  <span className="text-base font-bold text-govuk-blue">
+                    {item.amount}
+                  </span>
+                  <span className="text-xs text-govuk-dark-grey">
+                    {item.frequency}
+                  </span>
                 </div>
                 <span className="text-xs text-govuk-blue font-medium mt-2 inline-block">
                   Find out more →
@@ -128,7 +147,9 @@ export function DetailView() {
       {/* Conversations for this service */}
       {conversations.length > 0 && (
         <div className="mb-5">
-          <h3 className="text-base font-extrabold text-govuk-black mb-3">Conversations</h3>
+          <h3 className="text-base font-extrabold text-govuk-black mb-3">
+            Conversations
+          </h3>
           <div className="flex flex-col gap-2">
             {conversations.map((conv) => (
               <button
@@ -140,9 +161,12 @@ export function DetailView() {
                 className="flex items-center gap-3 w-full p-3 bg-white rounded-card shadow-sm hover:shadow-md transition-all text-left touch-feedback"
               >
                 <div className="flex-1 min-w-0">
-                  <span className="block text-sm font-medium truncate">{conv.title}</span>
+                  <span className="block text-sm font-medium truncate">
+                    {conv.title}
+                  </span>
                   <span className="text-xs text-govuk-dark-grey">
-                    {new Date(conv.updatedAt).toLocaleDateString("en-GB")} — {conv.messages.length} messages
+                    {new Date(conv.updatedAt).toLocaleDateString("en-GB")} —{" "}
+                    {conv.messages.length} messages
                   </span>
                 </div>
               </button>

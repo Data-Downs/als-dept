@@ -26,18 +26,14 @@ function extractChoices(text: string): string[] {
     if (!trimmed) continue;
 
     // Pattern 1: Bulleted/numbered → **bold text**
-    const bulletMatch = trimmed.match(
-      /^(?:[-*•]|\d+\.)\s*\*\*(.+?)\*\*/
-    );
+    const bulletMatch = trimmed.match(/^(?:[-*•]|\d+\.)\s*\*\*(.+?)\*\*/);
     if (bulletMatch) {
       choices.push(bulletMatch[1].trim());
       continue;
     }
 
     // Pattern 2: Line starts with **bold text** (paragraph-style options)
-    const paragraphMatch = trimmed.match(
-      /^\*\*(.+?)\*\*/
-    );
+    const paragraphMatch = trimmed.match(/^\*\*(.+?)\*\*/);
     if (paragraphMatch) {
       const label = paragraphMatch[1].trim();
       // Skip if it looks like a heading or very short emphasis (e.g., "Note:")
@@ -52,15 +48,19 @@ function extractChoices(text: string): string[] {
   // Only show quick replies if the message contains a question near the end
   // (last 5 non-empty lines). This avoids false positives on messages that
   // just happen to bold a few terms without presenting choices.
-  const nonEmpty = lines.filter(l => l.trim());
+  const nonEmpty = lines.filter((l) => l.trim());
   const tail = nonEmpty.slice(-5);
-  const hasQuestion = tail.some(l => l.includes("?"));
+  const hasQuestion = tail.some((l) => l.includes("?"));
   if (!hasQuestion) return [];
 
   return choices;
 }
 
-export function QuickReplies({ messageText, onSelect, disabled }: QuickRepliesProps) {
+export function QuickReplies({
+  messageText,
+  onSelect,
+  disabled,
+}: QuickRepliesProps) {
   const choices = extractChoices(messageText);
 
   if (choices.length === 0) return null;

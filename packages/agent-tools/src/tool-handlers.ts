@@ -47,7 +47,7 @@ export interface ToolContext {
 export async function handleToolCall(
   toolName: string,
   args: Record<string, unknown>,
-  ctx: ToolContext
+  ctx: ToolContext,
 ): Promise<ToolCallResult> {
   try {
     switch (toolName) {
@@ -76,7 +76,7 @@ export async function handleToolCall(
 
 function handleQueryServiceGraph(
   args: Record<string, unknown>,
-  ctx: ToolContext
+  ctx: ToolContext,
 ): ToolCallResult {
   const { life_event_id, department, service_type, keyword } = args as {
     life_event_id?: string;
@@ -93,7 +93,10 @@ function handleQueryServiceGraph(
     if (services.length === 0) {
       return errorResult(
         `No life event found with ID '${life_event_id}'. ` +
-          `Available: ${ctx.graph.getLifeEvents().map((le) => le.id).join(", ")}`
+          `Available: ${ctx.graph
+            .getLifeEvents()
+            .map((le) => le.id)
+            .join(", ")}`,
       );
     }
   }
@@ -101,7 +104,7 @@ function handleQueryServiceGraph(
   // Filter by department
   if (department) {
     services = services.filter(
-      (s) => s.deptKey.toLowerCase() === department.toLowerCase()
+      (s) => s.deptKey.toLowerCase() === department.toLowerCase(),
     );
   }
 
@@ -115,8 +118,7 @@ function handleQueryServiceGraph(
     const kw = keyword.toLowerCase();
     services = services.filter(
       (s) =>
-        s.name.toLowerCase().includes(kw) ||
-        s.desc.toLowerCase().includes(kw)
+        s.name.toLowerCase().includes(kw) || s.desc.toLowerCase().includes(kw),
     );
   }
 
@@ -140,7 +142,7 @@ function handleQueryServiceGraph(
 
 function handleGetLifeEventPlan(
   args: Record<string, unknown>,
-  ctx: ToolContext
+  ctx: ToolContext,
 ): ToolCallResult {
   const { life_event_id } = args as { life_event_id: string };
 
@@ -152,13 +154,18 @@ function handleGetLifeEventPlan(
   if (!lifeEvent) {
     return errorResult(
       `No life event found with ID '${life_event_id}'. ` +
-        `Available: ${ctx.graph.getLifeEvents().map((le) => le.id).join(", ")}`
+        `Available: ${ctx.graph
+          .getLifeEvents()
+          .map((le) => le.id)
+          .join(", ")}`,
     );
   }
 
   const plan = ctx.graph.getLifeEventPlan(life_event_id);
   if (!plan) {
-    return errorResult(`Could not generate plan for life event '${life_event_id}'`);
+    return errorResult(
+      `Could not generate plan for life event '${life_event_id}'`,
+    );
   }
 
   // Enrich with service details
@@ -189,7 +196,7 @@ function handleGetLifeEventPlan(
 
 function handleGetRelatedServices(
   args: Record<string, unknown>,
-  ctx: ToolContext
+  ctx: ToolContext,
 ): ToolCallResult {
   const { service_id } = args as { service_id: string };
 
@@ -233,7 +240,7 @@ function handleGetRelatedServices(
 
 function handleCheckEligibility(
   args: Record<string, unknown>,
-  ctx: ToolContext
+  ctx: ToolContext,
 ): ToolCallResult {
   const { service_id, citizen_data } = args as {
     service_id: string;
@@ -254,7 +261,7 @@ function handleCheckEligibility(
   if (!artefacts && !graphNode) {
     return errorResult(
       `No service found with ID '${service_id}'. ` +
-        `Check available services with query_service_graph.`
+        `Check available services with query_service_graph.`,
     );
   }
 
@@ -269,8 +276,8 @@ function handleCheckEligibility(
   // Evaluate policy if available
   let policyResult = null;
   if (artefacts?.policy) {
-    const evaluator = new PolicyEvaluator(artefacts.policy);
-    policyResult = evaluator.evaluate(mergedData);
+    const evaluator = new PolicyEvaluator();
+    policyResult = evaluator.evaluate(artefacts.policy, mergedData);
   }
 
   // Check state machine if available
@@ -317,7 +324,7 @@ function handleCheckEligibility(
 
 function handleGetCitizenContext(
   args: Record<string, unknown>,
-  ctx: ToolContext
+  ctx: ToolContext,
 ): ToolCallResult {
   const { include_active_services = true } = args as {
     include_active_services?: boolean;
@@ -358,7 +365,7 @@ function handleGetCitizenContext(
 
 async function handleRecordEvidence(
   args: Record<string, unknown>,
-  ctx: ToolContext
+  ctx: ToolContext,
 ): Promise<ToolCallResult> {
   const { event_type, service_id, payload } = args as {
     event_type: string;

@@ -14,7 +14,15 @@ const handoffManager = new HandoffManager();
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { message, citizenName, serviceId, traceId, stepsCompleted, stepsBlocked, dataCollected } = body;
+    const {
+      message,
+      citizenName,
+      serviceId,
+      traceId,
+      stepsCompleted,
+      stepsBlocked,
+      dataCollected,
+    } = body;
 
     // Evaluate triggers
     const evaluation = handoffManager.evaluateTriggers(message || "");
@@ -67,7 +75,7 @@ export async function POST(request: NextRequest) {
     console.error("Error in handoff:", error);
     return NextResponse.json(
       { error: "Failed to process handoff" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

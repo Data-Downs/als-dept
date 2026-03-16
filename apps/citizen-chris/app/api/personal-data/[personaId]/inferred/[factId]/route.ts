@@ -3,7 +3,7 @@ import { getInferredStore } from "@/lib/personal-data-store";
 
 export async function DELETE(
   _request: NextRequest,
-  { params }: { params: Promise<{ personaId: string; factId: string }> }
+  { params }: { params: Promise<{ personaId: string; factId: string }> },
 ) {
   const { factId } = await params;
 
@@ -12,10 +12,7 @@ export async function DELETE(
     const removed = await inferredStore.remove(factId);
 
     if (!removed) {
-      return NextResponse.json(
-        { error: "Fact not found" },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "Fact not found" }, { status: 404 });
     }
 
     return NextResponse.json({ success: true });
@@ -23,7 +20,7 @@ export async function DELETE(
     console.error("[PersonalData] DELETE inferred error:", error);
     return NextResponse.json(
       { error: "Failed to delete fact" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

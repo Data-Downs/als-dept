@@ -14,8 +14,8 @@ export type {
   LifeEvent,
   PlanGroup,
   LifeEventPlan,
-} from './types';
+} from "./types";
 
-export { NODES, EDGES, LIFE_EVENTS } from './graph-data';
-export { ServiceGraphEngine } from './graph-engine';
-export { graphNodeToManifest } from './manifest-bridge';
+export { NODES, EDGES, LIFE_EVENTS } from "./graph-data";
+export { ServiceGraphEngine } from "./graph-engine";
+export { graphNodeToManifest } from "./manifest-bridge";

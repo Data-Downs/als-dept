@@ -39,7 +39,10 @@ export default function ReceiptViewer({ receipts }: ReceiptViewerProps) {
         Your Receipts
       </h3>
       {receipts.map((receipt) => (
-        <div key={receipt.id} className="bg-white border border-gray-200 rounded-lg p-4">
+        <div
+          key={receipt.id}
+          className="bg-white border border-gray-200 rounded-lg p-4"
+        >
           <div className="flex justify-between items-start">
             <div>
               <div className="font-medium text-sm">{receipt.action}</div>
@@ -47,7 +50,9 @@ export default function ReceiptViewer({ receipts }: ReceiptViewerProps) {
                 {receipt.capabilityId}
               </div>
             </div>
-            <span className={`text-xs px-2 py-0.5 rounded font-medium ${outcomeBadge[receipt.outcome] || "bg-gray-100"}`}>
+            <span
+              className={`text-xs px-2 py-0.5 rounded font-medium ${outcomeBadge[receipt.outcome] || "bg-gray-100"}`}
+            >
               {receipt.outcome}
             </span>
           </div>
@@ -60,7 +65,10 @@ export default function ReceiptViewer({ receipts }: ReceiptViewerProps) {
             <div className="mt-2">
               <span className="text-xs text-gray-500">Data shared: </span>
               {receipt.dataShared.map((field) => (
-                <span key={field} className="text-xs bg-blue-50 border border-blue-200 px-1.5 py-0.5 rounded mr-1">
+                <span
+                  key={field}
+                  className="text-xs bg-blue-50 border border-blue-200 px-1.5 py-0.5 rounded mr-1"
+                >
                   {field.replace(/_/g, " ")}
                 </span>
               ))}

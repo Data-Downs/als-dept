@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getPersonalDataAdapter } from "@/lib/personal-data-store";
-import { getCaseStore, getTraceStore, getEvidenceAdapter } from "@/lib/evidence";
+import {
+  getCaseStore,
+  getTraceStore,
+  getEvidenceAdapter,
+} from "@/lib/evidence";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -33,16 +37,28 @@ export async function DELETE(
     // 1. Clear personal data tables
     const db = await getPersonalDataAdapter();
 
-    const submitted = await db.run("DELETE FROM submitted_data WHERE user_id = ?", decoded);
+    const submitted = await db.run(
+      "DELETE FROM submitted_data WHERE user_id = ?",
+      decoded,
+    );
     results.submitted_data = submitted?.changes ?? 0;
 
-    const inferred = await db.run("DELETE FROM inferred_data WHERE user_id = ?", decoded);
+    const inferred = await db.run(
+      "DELETE FROM inferred_data WHERE user_id = ?",
+      decoded,
+    );
     results.inferred_data = inferred?.changes ?? 0;
 
-    const access = await db.run("DELETE FROM service_access WHERE user_id = ?", decoded);
+    const access = await db.run(
+      "DELETE FROM service_access WHERE user_id = ?",
+      decoded,
+    );
     results.service_access = access?.changes ?? 0;
 
-    const updates = await db.run("DELETE FROM data_updates WHERE user_id = ?", decoded);
+    const updates = await db.run(
+      "DELETE FROM data_updates WHERE user_id = ?",
+      decoded,
+    );
     results.data_updates = updates?.changes ?? 0;
 
     // 2. Clear evidence: cases and traces
@@ -53,9 +69,10 @@ export async function DELETE(
       const traceStore = await getTraceStore();
 
       // Find all cases for this user
-      const userCases = await evidenceDb.all<{ id: string; service_id: string }>(
-        "SELECT id, service_id FROM cases WHERE user_id = ?", decoded,
-      );
+      const userCases = await evidenceDb.all<{
+        id: string;
+        service_id: string;
+      }>("SELECT id, service_id FROM cases WHERE user_id = ?", decoded);
 
       for (const c of userCases) {
         await caseStore.deleteCase(c.id);
@@ -73,11 +90,14 @@ export async function DELETE(
 
     console.log(`[Reset] Persona ${decoded} reset:`, results);
 
-    return NextResponse.json({
-      success: true,
-      personaId: decoded,
-      deleted: results,
-    }, { headers: corsHeaders });
+    return NextResponse.json(
+      {
+        success: true,
+        personaId: decoded,
+        deleted: results,
+      },
+      { headers: corsHeaders },
+    );
   } catch (error) {
     console.error("[Reset] Error:", error);
     return NextResponse.json(

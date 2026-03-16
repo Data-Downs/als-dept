@@ -70,11 +70,9 @@ export const AGENT_TOOLS: AgentToolDefinition[] = [
         life_event_id: {
           type: "string",
           description:
-            "The life event ID. Available events: bereavement, having-a-child, " +
-            "retiring, losing-a-job, becoming-disabled, moving-abroad, " +
-            "starting-a-business, buying-a-home, getting-divorced, " +
-            "leaving-prison, becoming-a-carer, reaching-state-pension-age, " +
-            "immigration, leaving-care, entering-education, death-abroad.",
+            "The life event ID. Available events: baby, bereavement, marriage, " +
+            "retirement, business, buying-home, moving, job-loss, disability, " +
+            "carer, divorce, school, immigration, driving, university, new-job.",
         },
       },
       required: ["life_event_id"],

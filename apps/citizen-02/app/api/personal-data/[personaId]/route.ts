@@ -1,12 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getSubmittedStore, getInferredStore, getServiceAccessStore } from "@/lib/personal-data-store";
+import {
+  getSubmittedStore,
+  getInferredStore,
+  getServiceAccessStore,
+} from "@/lib/personal-data-store";
 import { getPersonaData } from "@/lib/service-data";
 import { WalletSimulator, type WalletCredential } from "@als/identity";
 import { VerifiedStore } from "@als/personal-data";
 
 export async function GET(
   _request: NextRequest,
-  { params }: { params: Promise<{ personaId: string }> }
+  { params }: { params: Promise<{ personaId: string }> },
 ) {
   const { personaId } = await params;
 
@@ -56,7 +60,7 @@ export async function GET(
     console.error("[PersonalData] GET error:", error);
     return NextResponse.json(
       { error: "Failed to load personal data" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

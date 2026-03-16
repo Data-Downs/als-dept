@@ -19,7 +19,7 @@ export async function OPTIONS() {
  */
 export async function GET(
   _request: NextRequest,
-  { params }: { params: Promise<{ traceId: string }> }
+  { params }: { params: Promise<{ traceId: string }> },
 ) {
   try {
     const { traceId } = await params;
@@ -31,22 +31,25 @@ export async function GET(
     if (events.length === 0 && receipts.length === 0) {
       return NextResponse.json(
         { error: "Trace not found" },
-        { status: 404, headers: corsHeaders }
+        { status: 404, headers: corsHeaders },
       );
     }
 
-    return NextResponse.json({
-      traceId,
-      eventCount: events.length,
-      receiptCount: receipts.length,
-      events,
-      receipts,
-    }, { headers: corsHeaders });
+    return NextResponse.json(
+      {
+        traceId,
+        eventCount: events.length,
+        receiptCount: receipts.length,
+        events,
+        receipts,
+      },
+      { headers: corsHeaders },
+    );
   } catch (error) {
     console.error("Error fetching trace:", error);
     return NextResponse.json(
       { error: "Failed to fetch trace" },
-      { status: 500, headers: corsHeaders }
+      { status: 500, headers: corsHeaders },
     );
   }
 }

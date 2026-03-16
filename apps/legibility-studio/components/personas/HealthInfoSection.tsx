@@ -43,7 +43,7 @@ export default function HealthInfoSection({ data, onChange }: Props) {
         !scalarKeys.has(k) &&
         typeof health[k] === "object" &&
         health[k] !== null &&
-        !Array.isArray(health[k])
+        !Array.isArray(health[k]),
     );
 
   if (isMultiPerson) {
@@ -153,7 +153,10 @@ function HealthInfoFields({
 
       {/* Mobility Aids (string array) */}
       {(mobilityAids.length > 0 || data.mobilityAids !== undefined) && (
-        <Section title="Mobility Aids" badge={mobilityAids.length > 0 ? `${mobilityAids.length}` : undefined}>
+        <Section
+          title="Mobility Aids"
+          badge={mobilityAids.length > 0 ? `${mobilityAids.length}` : undefined}
+        >
           <DynamicList
             items={mobilityAids}
             addLabel="Add mobility aid"
@@ -166,7 +169,7 @@ function HealthInfoFields({
             onChange={(i, val) =>
               update({
                 mobilityAids: mobilityAids.map((v, idx) =>
-                  idx === i ? val : v
+                  idx === i ? val : v,
                 ),
               })
             }

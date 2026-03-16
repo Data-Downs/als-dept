@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { FieldEditorOverlay } from "./FieldEditorOverlay";
+import { formatWithPlates } from "../ui/RegPlate";
 
 interface SubmittedField {
   id: string;
@@ -28,22 +29,39 @@ const CATEGORY_LABELS: Record<string, string> = {
 };
 
 const CATEGORY_ICONS: Record<string, string> = {
-  identity: "M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 3a4 4 0 1 0 0 8 4 4 0 0 0 0-8z",
-  contact: "M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72",
+  identity:
+    "M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 3a4 4 0 1 0 0 8 4 4 0 0 0 0-8z",
+  contact:
+    "M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72",
   address: "M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z",
-  employment: "M20 7H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2zM16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16",
+  employment:
+    "M20 7H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2zM16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16",
   financial: "M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6",
-  vehicles: "M5 17h14M5 17a2 2 0 0 1-2-2V7h18v8a2 2 0 0 1-2 2M7 17a2 2 0 1 0 0 4 2 2 0 0 0 0-4zM17 17a2 2 0 1 0 0 4 2 2 0 0 0 0-4z",
+  vehicles:
+    "M5 17h14M5 17a2 2 0 0 1-2-2V7h18v8a2 2 0 0 1-2 2M7 17a2 2 0 1 0 0 4 2 2 0 0 0 0-4zM17 17a2 2 0 1 0 0 4 2 2 0 0 0 0-4z",
   health: "M22 12h-4l-3 9L9 3l-3 9H2",
-  family: "M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M23 21v-2a4 4 0 0 0-3-3.87M9 3a4 4 0 1 0 0 8 4 4 0 0 0 0-8zM16 3.13a4 4 0 0 1 0 7.75",
-  benefits: "M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2M9 5a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2M9 5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2",
-  business: "M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2zM22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z",
-  communication: "M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z",
+  family:
+    "M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M23 21v-2a4 4 0 0 0-3-3.87M9 3a4 4 0 1 0 0 8 4 4 0 0 0 0-8zM16 3.13a4 4 0 0 1 0 7.75",
+  benefits:
+    "M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2M9 5a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2M9 5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2",
+  business:
+    "M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2zM22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z",
+  communication:
+    "M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z",
 };
 
 const CATEGORY_ORDER = [
-  "identity", "contact", "address", "employment", "financial",
-  "vehicles", "health", "family", "benefits", "business", "communication",
+  "identity",
+  "contact",
+  "address",
+  "employment",
+  "financial",
+  "vehicles",
+  "health",
+  "family",
+  "benefits",
+  "business",
+  "communication",
 ];
 
 /** Pretty-print a field key for display */
@@ -57,7 +75,11 @@ function formatKey(key: string): string {
 
 /** Check if a value is a simple scalar (string, number, boolean) */
 function isSimpleValue(val: unknown): val is string | number | boolean {
-  return typeof val === "string" || typeof val === "number" || typeof val === "boolean";
+  return (
+    typeof val === "string" ||
+    typeof val === "number" ||
+    typeof val === "boolean"
+  );
 }
 
 /** Generate a short inline preview for a complex value so the dashboard doesn't look empty */
@@ -73,13 +95,21 @@ function inlineSummary(fieldKey: string, val: unknown): string {
     // e.g. vehicles: "Ford Fiesta (BG19 XYZ)"
     if (typeof first === "object" && first !== null) {
       const o = first as Record<string, unknown>;
-      const carHint = o.make || o.model
-        ? `${o.make || ""} ${o.model || ""}`.trim() + (o.registrationNumber ? ` (${o.registrationNumber})` : "")
-        : "";
-      if (carHint) return val.length > 1 ? `${carHint} +${val.length - 1} more` : carHint;
+      const carHint =
+        o.make || o.model
+          ? `${o.make || ""} ${o.model || ""}`.trim() +
+            (o.registrationNumber ? ` (${o.registrationNumber})` : "")
+          : "";
+      if (carHint)
+        return val.length > 1 ? `${carHint} +${val.length - 1} more` : carHint;
       // generic: pick first string value
-      const firstStr = Object.values(o).find((v) => typeof v === "string") as string | undefined;
-      if (firstStr) return val.length > 1 ? `${firstStr} +${val.length - 1} more` : firstStr;
+      const firstStr = Object.values(o).find((v) => typeof v === "string") as
+        | string
+        | undefined;
+      if (firstStr)
+        return val.length > 1
+          ? `${firstStr} +${val.length - 1} more`
+          : firstStr;
     }
     return `${val.length} item${val.length !== 1 ? "s" : ""}`;
   }
@@ -104,14 +134,22 @@ function inlineSummary(fieldKey: string, val: unknown): string {
     if (fieldKey === "employment" || fieldKey === "spouseEmployment") {
       const entries = Object.entries(o);
       // Nested sub-objects per person
-      if (entries.length > 0 && typeof entries[0][1] === "object" && entries[0][1] !== null) {
-        return entries.map(([name, emp]) => {
-          const e = emp as Record<string, unknown>;
-          return `${name}: ${e.jobTitle || e.role || e.status || ""}`;
-        }).join(", ");
+      if (
+        entries.length > 0 &&
+        typeof entries[0][1] === "object" &&
+        entries[0][1] !== null
+      ) {
+        return entries
+          .map(([name, emp]) => {
+            const e = emp as Record<string, unknown>;
+            return `${name}: ${e.jobTitle || e.role || e.status || ""}`;
+          })
+          .join(", ");
       }
       // Flat employment
-      const parts = [o.jobTitle || o.role, o.employer, o.status].filter(Boolean);
+      const parts = [o.jobTitle || o.role, o.employer, o.status].filter(
+        Boolean,
+      );
       if (parts.length > 0) return parts.join(" — ") as string;
     }
 
@@ -119,10 +157,12 @@ function inlineSummary(fieldKey: string, val: unknown): string {
     if (fieldKey === "healthInfo") {
       const entries = Object.entries(o);
       if (entries.length > 0 && typeof entries[0][1] === "object") {
-        return entries.map(([name, h]) => {
-          const hObj = h as Record<string, unknown>;
-          return `${name}: ${hObj.gpSurgery || ""}`;
-        }).join(", ");
+        return entries
+          .map(([name, h]) => {
+            const hObj = h as Record<string, unknown>;
+            return `${name}: ${hObj.gpSurgery || ""}`;
+          })
+          .join(", ");
       }
     }
 
@@ -138,7 +178,8 @@ function inlineSummary(fieldKey: string, val: unknown): string {
     // Benefits
     if (fieldKey === "benefits") {
       const receiving = o.currentlyReceiving as unknown[] | undefined;
-      if (receiving && receiving.length > 0) return `Receiving ${receiving.length} benefit(s)`;
+      if (receiving && receiving.length > 0)
+        return `Receiving ${receiving.length} benefit(s)`;
       return "None currently";
     }
 
@@ -148,10 +189,13 @@ function inlineSummary(fieldKey: string, val: unknown): string {
     }
 
     // Pregnancy
-    if (o.dueDate) return `Due: ${o.dueDate}${o.hospital ? ` at ${o.hospital}` : ""}`;
+    if (o.dueDate)
+      return `Due: ${o.dueDate}${o.hospital ? ` at ${o.hospital}` : ""}`;
 
     // Generic fallback: pick first few string values
-    const stringVals = Object.values(o).filter((v) => typeof v === "string").slice(0, 2) as string[];
+    const stringVals = Object.values(o)
+      .filter((v) => typeof v === "string")
+      .slice(0, 2) as string[];
     if (stringVals.length > 0) return stringVals.join(", ");
 
     return `${Object.keys(o).length} fields`;
@@ -170,13 +214,21 @@ function renderObjectSummary(obj: unknown, depth = 0): React.ReactNode[] {
     return obj.flatMap((item, i) => {
       if (isSimpleValue(item)) {
         return [
-          <div key={i} className="py-0.5 text-sm" style={{ paddingLeft: depth * 12 }}>
+          <div
+            key={i}
+            className="py-0.5 text-sm"
+            style={{ paddingLeft: depth * 12 }}
+          >
             {String(item)}
           </div>,
         ];
       }
       return [
-        <div key={`h${i}`} className="py-0.5 text-xs font-medium text-govuk-dark-grey mt-1" style={{ paddingLeft: depth * 12 }}>
+        <div
+          key={`h${i}`}
+          className="py-0.5 text-xs font-medium text-govuk-dark-grey mt-1"
+          style={{ paddingLeft: depth * 12 }}
+        >
           Item {i + 1}
         </div>,
         ...renderObjectSummary(item, depth + 1),
@@ -188,9 +240,15 @@ function renderObjectSummary(obj: unknown, depth = 0): React.ReactNode[] {
     return entries.map(([k, v]) => {
       if (isSimpleValue(v)) {
         return (
-          <div key={k} className="flex justify-between py-0.5 text-sm" style={{ paddingLeft: depth * 12 }}>
+          <div
+            key={k}
+            className="flex justify-between py-0.5 text-sm"
+            style={{ paddingLeft: depth * 12 }}
+          >
             <span className="text-govuk-dark-grey">{formatKey(k)}</span>
-            <span className="text-right ml-2 max-w-[60%] truncate">{String(v)}</span>
+            <span className="text-right ml-2 max-w-[60%] truncate">
+              {formatWithPlates(String(v))}
+            </span>
           </div>
         );
       }
@@ -242,7 +300,11 @@ export function SubmittedSection({
 
   const startEdit = (field: SubmittedField) => {
     setEditingKey(field.fieldKey);
-    setEditValue(typeof field.fieldValue === "string" ? field.fieldValue : JSON.stringify(field.fieldValue));
+    setEditValue(
+      typeof field.fieldValue === "string"
+        ? field.fieldValue
+        : JSON.stringify(field.fieldValue),
+    );
     setCascadeMessage(null);
   };
 
@@ -275,7 +337,9 @@ export function SubmittedSection({
       if (res.ok) {
         const data = await res.json();
         if (data.cascadedTo?.length > 0) {
-          setCascadeMessage(`Updated and notified ${data.cascadedTo.length} service(s)`);
+          setCascadeMessage(
+            `Updated and notified ${data.cascadedTo.length} service(s)`,
+          );
         }
         setEditingKey(null);
         onRefresh();
@@ -292,7 +356,16 @@ export function SubmittedSection({
   return (
     <div>
       <div className="flex items-center gap-2 mb-3">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1d70b8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <svg
+          width="18"
+          height="18"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="#1d70b8"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
           <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
           <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
         </svg>
@@ -313,7 +386,15 @@ export function SubmittedSection({
           return (
             <div key={cat}>
               <div className="flex items-center gap-2 mb-2">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-govuk-dark-grey">
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  className="text-govuk-dark-grey"
+                >
                   <path d={CATEGORY_ICONS[cat] || CATEGORY_ICONS.contact} />
                 </svg>
                 <span className="text-xs font-bold text-govuk-dark-grey uppercase tracking-wide">
@@ -358,8 +439,16 @@ export function SubmittedSection({
                           <div className="flex items-center gap-2 min-w-0">
                             {isComplex ? (
                               <>
-                                <span className="text-sm text-gray-600 truncate max-w-[180px]" title={inlineSummary(f.fieldKey, f.fieldValue)}>
-                                  {inlineSummary(f.fieldKey, f.fieldValue)}
+                                <span
+                                  className="text-sm text-gray-600 truncate max-w-[180px]"
+                                  title={inlineSummary(
+                                    f.fieldKey,
+                                    f.fieldValue,
+                                  )}
+                                >
+                                  {formatWithPlates(
+                                    inlineSummary(f.fieldKey, f.fieldValue),
+                                  )}
                                 </span>
                                 <button
                                   onClick={() => toggleExpanded(f.fieldKey)}
@@ -374,7 +463,9 @@ export function SubmittedSection({
                               </span>
                             )}
                             <button
-                              onClick={() => isComplex ? setOverlayField(f) : startEdit(f)}
+                              onClick={() =>
+                                isComplex ? setOverlayField(f) : startEdit(f)
+                              }
                               className="text-xs text-govuk-blue underline shrink-0"
                             >
                               Edit
@@ -395,7 +486,9 @@ export function SubmittedSection({
           );
         })}
         {fields.filter((f) => f.category !== "system").length === 0 && (
-          <p className="text-sm text-govuk-dark-grey italic">No submitted data yet.</p>
+          <p className="text-sm text-govuk-dark-grey italic">
+            No submitted data yet.
+          </p>
         )}
       </div>
 

@@ -9,7 +9,8 @@ import type { PolicyRuleset, StateModelDefinition } from "@als/schemas";
 function createMockAdapter(): LLMAdapter {
   return {
     chat: vi.fn().mockResolvedValue({
-      responseText: 'Hello citizen!\n\n```json\n{"title": null, "tasks": [], "stateTransition": null}\n```',
+      responseText:
+        'Hello citizen!\n\n```json\n{"title": null, "tasks": [], "stateTransition": null}\n```',
       reasoning: "Test reasoning",
       toolCalls: [],
       rawContent: [{ type: "text", text: "Hello citizen!" }],
@@ -134,7 +135,9 @@ describe("Orchestrator pipeline trace", () => {
       policyContext: { age: 30 },
     });
 
-    const policyStep = result.pipelineTrace!.steps.find((s) => s.id === "policy-eval");
+    const policyStep = result.pipelineTrace!.steps.find(
+      (s) => s.id === "policy-eval",
+    );
     expect(policyStep!.status).toBe("complete");
     expect(policyStep!.detail).toContain("Eligible: true");
   });
@@ -143,7 +146,9 @@ describe("Orchestrator pipeline trace", () => {
     const orchestrator = new Orchestrator({ adapter, strategy });
     const result = await orchestrator.run(journeyInput);
 
-    const stateStep = result.pipelineTrace!.steps.find((s) => s.id === "state-setup");
+    const stateStep = result.pipelineTrace!.steps.find(
+      (s) => s.id === "state-setup",
+    );
     expect(stateStep!.status).toBe("complete");
     expect(stateStep!.detail).toContain("not-started");
   });
@@ -152,11 +157,15 @@ describe("Orchestrator pipeline trace", () => {
     const orchestrator = new Orchestrator({ adapter, strategy });
 
     const journeyResult = await orchestrator.run(journeyInput);
-    const journeyLlm = journeyResult.pipelineTrace!.steps.find((s) => s.id === "llm-call");
+    const journeyLlm = journeyResult.pipelineTrace!.steps.find(
+      (s) => s.id === "llm-call",
+    );
     expect(journeyLlm!.agentName).toBe("journey");
 
     const triageResult = await orchestrator.run(triageInput);
-    const triageLlm = triageResult.pipelineTrace!.steps.find((s) => s.id === "llm-call");
+    const triageLlm = triageResult.pipelineTrace!.steps.find(
+      (s) => s.id === "llm-call",
+    );
     expect(triageLlm!.agentName).toBe("triage");
   });
 
@@ -190,19 +199,39 @@ describe("Orchestrator.selectAgent", () => {
   });
 
   it("returns triage when no state model and state is not-started", () => {
-    expect(Orchestrator.selectAgent("dwp.apply-universal-credit", undefined, "not-started")).toBe("triage");
+    expect(
+      Orchestrator.selectAgent(
+        "dwp.apply-universal-credit",
+        undefined,
+        "not-started",
+      ),
+    ).toBe("triage");
   });
 
   it("returns triage when no state model and no current state", () => {
-    expect(Orchestrator.selectAgent("dwp.apply-universal-credit")).toBe("triage");
+    expect(Orchestrator.selectAgent("dwp.apply-universal-credit")).toBe(
+      "triage",
+    );
   });
 
   it("returns journey when state model is provided", () => {
-    expect(Orchestrator.selectAgent("dwp.apply-universal-credit", testStateModel, "not-started")).toBe("journey");
+    expect(
+      Orchestrator.selectAgent(
+        "dwp.apply-universal-credit",
+        testStateModel,
+        "not-started",
+      ),
+    ).toBe("journey");
   });
 
   it("returns journey when state is beyond not-started even without model", () => {
-    expect(Orchestrator.selectAgent("dwp.apply-universal-credit", undefined, "identity-verified")).toBe("journey");
+    expect(
+      Orchestrator.selectAgent(
+        "dwp.apply-universal-credit",
+        undefined,
+        "identity-verified",
+      ),
+    ).toBe("journey");
   });
 });
 
@@ -219,7 +248,8 @@ describe("Agent-specific prompts", () => {
     const orchestrator = new Orchestrator({ adapter, strategy });
     await orchestrator.run(triageInput);
 
-    const chatCall = (adapter.chat as ReturnType<typeof vi.fn>).mock.calls[0][0];
+    const chatCall = (adapter.chat as ReturnType<typeof vi.fn>).mock
+      .calls[0][0];
     const prompt: string = chatCall.systemPrompt;
 
     expect(prompt).not.toContain("STATE MODEL JOURNEY:");
@@ -231,7 +261,8 @@ describe("Agent-specific prompts", () => {
     const orchestrator = new Orchestrator({ adapter, strategy });
     await orchestrator.run(journeyInput);
 
-    const chatCall = (adapter.chat as ReturnType<typeof vi.fn>).mock.calls[0][0];
+    const chatCall = (adapter.chat as ReturnType<typeof vi.fn>).mock
+      .calls[0][0];
     const prompt: string = chatCall.systemPrompt;
 
     expect(prompt).toContain("STATE MODEL JOURNEY:");
@@ -242,12 +273,14 @@ describe("Agent-specific prompts", () => {
     const orchestrator = new Orchestrator({ adapter, strategy });
 
     await orchestrator.run(triageInput);
-    const triageCall = (adapter.chat as ReturnType<typeof vi.fn>).mock.calls[0][0];
+    const triageCall = (adapter.chat as ReturnType<typeof vi.fn>).mock
+      .calls[0][0];
     expect(triageCall.systemPrompt).toContain("You are DOT agent.");
 
     (adapter.chat as ReturnType<typeof vi.fn>).mockClear();
     await orchestrator.run(journeyInput);
-    const journeyCall = (adapter.chat as ReturnType<typeof vi.fn>).mock.calls[0][0];
+    const journeyCall = (adapter.chat as ReturnType<typeof vi.fn>).mock
+      .calls[0][0];
     expect(journeyCall.systemPrompt).toContain("You are DOT agent.");
   });
 
@@ -255,12 +288,14 @@ describe("Agent-specific prompts", () => {
     const orchestrator = new Orchestrator({ adapter, strategy });
 
     await orchestrator.run(triageInput);
-    const triagePrompt = (adapter.chat as ReturnType<typeof vi.fn>).mock.calls[0][0].systemPrompt;
+    const triagePrompt = (adapter.chat as ReturnType<typeof vi.fn>).mock
+      .calls[0][0].systemPrompt;
     expect(triagePrompt).toContain("PERSONAL DATA EXTRACTION:");
 
     (adapter.chat as ReturnType<typeof vi.fn>).mockClear();
     await orchestrator.run(journeyInput);
-    const journeyPrompt = (adapter.chat as ReturnType<typeof vi.fn>).mock.calls[0][0].systemPrompt;
+    const journeyPrompt = (adapter.chat as ReturnType<typeof vi.fn>).mock
+      .calls[0][0].systemPrompt;
     expect(journeyPrompt).toContain("PERSONAL DATA EXTRACTION:");
   });
 

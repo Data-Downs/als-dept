@@ -7,7 +7,12 @@
 
 import { describe, it, expect } from "vitest";
 import { buildJourneyPrompt, buildEligibilityPrompt } from "./prompt-generator";
-import type { CapabilityManifest, PolicyRuleset, StateModelDefinition, ConsentModel } from "@als/schemas";
+import type {
+  CapabilityManifest,
+  PolicyRuleset,
+  StateModelDefinition,
+  ConsentModel,
+} from "@als/schemas";
 import type { ServiceArtefacts } from "@als/legibility";
 
 // ── Fixtures ──
@@ -21,9 +26,17 @@ const manifest: CapabilityManifest = {
   jurisdiction: "England",
   input_schema: { type: "object" },
   output_schema: { type: "object" },
-  constraints: { sla: "5 working days", fee: { amount: 14, currency: "GBP" }, availability: "24/7" },
+  constraints: {
+    sla: "5 working days",
+    fee: { amount: 14, currency: "GBP" },
+    availability: "24/7",
+  },
   handoff: { escalation_phone: "0800 123 456", opening_hours: "Mon-Fri 9-5" },
-  redress: { complaint_url: "https://example.gov.uk/complaints", appeal_process: "Internal review within 28 days", ombudsman: "Parliamentary Ombudsman" },
+  redress: {
+    complaint_url: "https://example.gov.uk/complaints",
+    appeal_process: "Internal review within 28 days",
+    ombudsman: "Parliamentary Ombudsman",
+  },
 };
 
 const policy: PolicyRuleset = {
@@ -39,7 +52,11 @@ const policy: PolicyRuleset = {
     {
       id: "residency",
       description: "Must be UK resident",
-      condition: { field: "jurisdiction", operator: "in", value: ["England", "Wales", "Scotland", "NI"] },
+      condition: {
+        field: "jurisdiction",
+        operator: "in",
+        value: ["England", "Wales", "Scotland", "NI"],
+      },
       reason_if_failed: "Must reside in the UK",
     },
   ],
@@ -65,7 +82,12 @@ const stateModel: StateModelDefinition = {
   transitions: [
     { from: "not-started", to: "verified", trigger: "verify" },
     { from: "verified", to: "completed", trigger: "submit" },
-    { from: "verified", to: "rejected", trigger: "reject", condition: "eligibility_failed" },
+    {
+      from: "verified",
+      to: "rejected",
+      trigger: "reject",
+      condition: "eligibility_failed",
+    },
   ],
 };
 
@@ -92,11 +114,19 @@ const consent: ConsentModel = {
       required: false,
     },
   ],
-  revocation: { mechanism: "online portal", effect: "stops data sharing immediately" },
+  revocation: {
+    mechanism: "online portal",
+    effect: "stops data sharing immediately",
+  },
   delegation: { agent_identity: "AI Agent", scopes: ["read"] },
 };
 
-const fullArtefacts: ServiceArtefacts = { manifest, policy, stateModel, consent };
+const fullArtefacts: ServiceArtefacts = {
+  manifest,
+  policy,
+  stateModel,
+  consent,
+};
 
 const minimalManifest: CapabilityManifest = {
   id: "test.minimal",
@@ -160,20 +190,26 @@ describe("buildJourneyPrompt", () => {
     const text = buildJourneyPrompt("test.full-service", fullArtefacts);
     expect(text).toContain("### Transitions");
     expect(text).toContain("not-started → verified (trigger: verify)");
-    expect(text).toContain("verified → rejected (trigger: reject) [eligibility_failed]");
+    expect(text).toContain(
+      "verified → rejected (trigger: reject) [eligibility_failed]",
+    );
   });
 
   it("includes consent grants and revocation", () => {
     const text = buildJourneyPrompt("test.full-service", fullArtefacts);
     expect(text).toContain("## Consent Requirements");
-    expect(text).toContain("**identity-check:** Share identity for verification");
+    expect(text).toContain(
+      "**identity-check:** Share identity for verification",
+    );
     expect(text).toContain("Data shared: name, date_of_birth, address");
     expect(text).toContain("Purpose: Identity verification");
     expect(text).toContain("Required: Yes");
     expect(text).toContain("**income-share:**");
     expect(text).toContain("Required: No");
     expect(text).toContain("**Revocation:** online portal");
-    expect(text).toContain("**Effect of revocation:** stops data sharing immediately");
+    expect(text).toContain(
+      "**Effect of revocation:** stops data sharing immediately",
+    );
   });
 
   it("includes handoff info", () => {
@@ -199,7 +235,11 @@ describe("buildJourneyPrompt", () => {
   });
 
   it("appends citizen context when provided", () => {
-    const text = buildJourneyPrompt("test.full-service", fullArtefacts, "Citizen is 25, lives in Wales");
+    const text = buildJourneyPrompt(
+      "test.full-service",
+      fullArtefacts,
+      "Citizen is 25, lives in Wales",
+    );
     expect(text).toContain("## Citizen Context");
     expect(text).toContain("Citizen is 25, lives in Wales");
   });
@@ -262,7 +302,11 @@ describe("buildEligibilityPrompt", () => {
 
   it("appends citizen data JSON when provided", () => {
     const citizenJson = '{"age": 25, "jurisdiction": "England"}';
-    const text = buildEligibilityPrompt("test.full-service", fullArtefacts, citizenJson);
+    const text = buildEligibilityPrompt(
+      "test.full-service",
+      fullArtefacts,
+      citizenJson,
+    );
     expect(text).toContain("## Citizen Data");
     expect(text).toContain("```json");
     expect(text).toContain(citizenJson);
@@ -288,7 +332,14 @@ describe("buildEligibilityPrompt", () => {
     const policyNoEdges: PolicyRuleset = {
       id: "test.no-edges",
       version: "1.0.0",
-      rules: [{ id: "r1", description: "Rule one", condition: { field: "x", operator: "eq", value: 1 }, reason_if_failed: "x must be 1" }],
+      rules: [
+        {
+          id: "r1",
+          description: "Rule one",
+          condition: { field: "x", operator: "eq", value: 1 },
+          reason_if_failed: "x must be 1",
+        },
+      ],
     };
     const artefacts: ServiceArtefacts = {
       manifest: minimalManifest,

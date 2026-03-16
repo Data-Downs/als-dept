@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getServiceArtefactStore, getServiceGraphStore } from "@/lib/service-store-init";
+import {
+  getServiceArtefactStore,
+  getServiceGraphStore,
+} from "@/lib/service-store-init";
 
 /**
  * GET /api/services
@@ -42,7 +45,10 @@ export async function GET() {
     });
   } catch (error) {
     console.error("Error loading services:", error);
-    return NextResponse.json({ error: "Failed to load services" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to load services" },
+      { status: 500 },
+    );
   }
 }
 
@@ -59,19 +65,23 @@ export async function POST(request: NextRequest) {
 
     if (!name || !department || !description) {
       return NextResponse.json(
-        { error: "manifest.name, manifest.department, and manifest.description are required" },
-        { status: 400 }
+        {
+          error:
+            "manifest.name, manifest.department, and manifest.description are required",
+        },
+        { status: 400 },
       );
     }
 
-    const serviceId = body.manifest.id || `${slugify(department)}.${slugify(name)}`;
+    const serviceId =
+      body.manifest.id || `${slugify(department)}.${slugify(name)}`;
 
     const store = await getServiceArtefactStore();
     const existing = await store.getService(serviceId);
     if (existing) {
       return NextResponse.json(
         { error: `Service "${serviceId}" already exists` },
-        { status: 409 }
+        { status: 409 },
       );
     }
 
@@ -93,10 +103,17 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ serviceId }, { status: 201 });
   } catch (error) {
     console.error("Error creating service:", error);
-    return NextResponse.json({ error: "Failed to create service" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to create service" },
+      { status: 500 },
+    );
   }
 }
 
 function slugify(text: string): string {
-  return text.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+  return text
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
 }

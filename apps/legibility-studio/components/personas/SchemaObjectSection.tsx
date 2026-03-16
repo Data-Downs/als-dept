@@ -32,7 +32,10 @@ export default function SchemaObjectSection({
 
   function addSubSection(subKey: string, fields: FieldDef[]) {
     const blank = Object.fromEntries(
-      fields.map((f) => [f.key, f.type === "number" ? 0 : f.type === "boolean" ? false : ""])
+      fields.map((f) => [
+        f.key,
+        f.type === "number" ? 0 : f.type === "boolean" ? false : "",
+      ]),
     );
     onChange({ ...obj, [subKey]: blank });
   }
@@ -62,7 +65,7 @@ export default function SchemaObjectSection({
         !knownKeys.has(k) &&
         typeof obj[k] === "object" &&
         obj[k] !== null &&
-        !Array.isArray(obj[k])
+        !Array.isArray(obj[k]),
     );
 
   if (isMultiPerson) {
@@ -104,7 +107,7 @@ export default function SchemaObjectSection({
 
   // Determine which fields to show: non-optional always, optional only when value exists
   const visibleFields = schema.fields.filter(
-    (f) => !f.optional || obj[f.key] !== undefined
+    (f) => !f.optional || obj[f.key] !== undefined,
   );
 
   // Collect extra keys not in schema
@@ -155,7 +158,7 @@ export default function SchemaObjectSection({
             </div>
             <FieldGrid
               fields={sub.fields.filter(
-                (f) => !f.optional || subData[f.key] !== undefined
+                (f) => !f.optional || subData[f.key] !== undefined,
               )}
               data={subData}
               onChange={(key, val) => setSubSection(sub.key, key, val)}
@@ -164,7 +167,7 @@ export default function SchemaObjectSection({
             {Object.entries(subData)
               .filter(
                 ([k, v]) =>
-                  !sub.fields.some((f) => f.key === k) && Array.isArray(v)
+                  !sub.fields.some((f) => f.key === k) && Array.isArray(v),
               )
               .map(([k, v]) => (
                 <div key={k} className="mt-2">
@@ -173,9 +176,7 @@ export default function SchemaObjectSection({
                   </label>
                   <StringArrayEditor
                     items={v as string[]}
-                    onChange={(updated) =>
-                      setSubSection(sub.key, k, updated)
-                    }
+                    onChange={(updated) => setSubSection(sub.key, k, updated)}
                   />
                 </div>
               ))}
@@ -270,7 +271,7 @@ function ExtraKeysJson({
   onChange: (updated: Record<string, unknown>) => void;
 }) {
   const extras = Object.fromEntries(
-    Object.entries(data).filter(([k]) => !knownKeys.has(k))
+    Object.entries(data).filter(([k]) => !knownKeys.has(k)),
   );
   if (Object.keys(extras).length === 0) return null;
 
@@ -282,7 +283,7 @@ function ExtraKeysJson({
         onChange={(val) => {
           // Merge back: keep known keys from original, replace extras
           const known = Object.fromEntries(
-            Object.entries(data).filter(([k]) => knownKeys.has(k))
+            Object.entries(data).filter(([k]) => knownKeys.has(k)),
           );
           onChange({ ...known, ...(val as Record<string, unknown>) });
         }}

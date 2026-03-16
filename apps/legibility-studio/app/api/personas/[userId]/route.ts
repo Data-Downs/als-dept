@@ -1,5 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getUser, updateUser, getWalletCredentialTypes } from "@/lib/persona-store";
+import {
+  getUser,
+  updateUser,
+  getWalletCredentialTypes,
+} from "@/lib/persona-store";
 
 export async function GET(
   _req: NextRequest,
@@ -10,7 +14,10 @@ export async function GET(
   try {
     const user = await getUser(userId);
     if (!user) {
-      return NextResponse.json({ error: `User "${userId}" not found` }, { status: 404 });
+      return NextResponse.json(
+        { error: `User "${userId}" not found` },
+        { status: 404 },
+      );
     }
 
     const credentialTypes = await getWalletCredentialTypes();
@@ -36,7 +43,10 @@ export async function PUT(
 
     const existing = await getUser(userId);
     if (!existing) {
-      return NextResponse.json({ error: `User "${userId}" not found` }, { status: 404 });
+      return NextResponse.json(
+        { error: `User "${userId}" not found` },
+        { status: 404 },
+      );
     }
 
     if (userUpdates) {

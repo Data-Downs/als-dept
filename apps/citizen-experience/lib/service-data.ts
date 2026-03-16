@@ -595,21 +595,30 @@ const SERVICE_DATA: Record<string, ServiceArtefacts> = {
     policy: ucPolicy as unknown as Record<string, unknown>,
     stateModel: ucStateModel as unknown as Record<string, unknown>,
     consent: ucConsent as unknown as Record<string, unknown>,
-    stateInstructions: ucStateInstructions as unknown as Record<string, unknown>,
+    stateInstructions: ucStateInstructions as unknown as Record<
+      string,
+      unknown
+    >,
   },
   "renew-driving-licence": {
     manifest: dlManifest as unknown as Record<string, unknown>,
     policy: dlPolicy as unknown as Record<string, unknown>,
     stateModel: dlStateModel as unknown as Record<string, unknown>,
     consent: dlConsent as unknown as Record<string, unknown>,
-    stateInstructions: dlStateInstructions as unknown as Record<string, unknown>,
+    stateInstructions: dlStateInstructions as unknown as Record<
+      string,
+      unknown
+    >,
   },
   "check-state-pension": {
     manifest: spManifest as unknown as Record<string, unknown>,
     policy: spPolicy as unknown as Record<string, unknown>,
     stateModel: spStateModel as unknown as Record<string, unknown>,
     consent: spConsent as unknown as Record<string, unknown>,
-    stateInstructions: spStateInstructions as unknown as Record<string, unknown>,
+    stateInstructions: spStateInstructions as unknown as Record<
+      string,
+      unknown
+    >,
   },
   "become-a-robot": {
     manifest: robotManifest as unknown as Record<string, unknown>,
@@ -676,7 +685,10 @@ export async function getServiceArtefact(
   if (remoteTypes.has(type)) {
     const client = await getServiceClient();
     if (client) {
-      const remote = await client.getServiceArtefact(serviceId, type as "manifest" | "policy" | "stateModel" | "consent");
+      const remote = await client.getServiceArtefact(
+        serviceId,
+        type as "manifest" | "policy" | "stateModel" | "consent",
+      );
       if (remote) return remote;
     }
   }
@@ -686,17 +698,21 @@ export async function getServiceArtefact(
 }
 
 /** Get card definitions (DB overrides) for a service — Studio API only, no bundled fallback */
-export async function getCardDefinitions(serviceId: string): Promise<Array<Record<string, unknown>> | null> {
+export async function getCardDefinitions(
+  serviceId: string,
+): Promise<Array<Record<string, unknown>> | null> {
   const client = await getServiceClient();
   if (!client) return null;
   const service = await client.getService(serviceId);
   if (!service) return null;
   const defs = service.cardDefinitions;
-  return Array.isArray(defs) ? defs as Array<Record<string, unknown>> : null;
+  return Array.isArray(defs) ? (defs as Array<Record<string, unknown>>) : null;
 }
 
 /** Get persona data by persona ID */
-export function getPersonaData(personaId: string): Record<string, unknown> | null {
+export function getPersonaData(
+  personaId: string,
+): Record<string, unknown> | null {
   return PERSONA_DATA[personaId] ?? null;
 }
 
@@ -737,7 +753,9 @@ for (const node of graphEngine.getServices()) {
  * Get a manifest for any service — tries Studio API first, then checks
  * full artefact services, then falls back to graph-derived manifests.
  */
-export async function getAnyManifest(serviceId: string): Promise<CapabilityManifest | null> {
+export async function getAnyManifest(
+  serviceId: string,
+): Promise<CapabilityManifest | null> {
   // Try Studio API first
   const client = await getServiceClient();
   if (client) {
@@ -748,7 +766,7 @@ export async function getAnyManifest(serviceId: string): Promise<CapabilityManif
   const slug = serviceDirSlug(serviceId);
   const fullArtefact = SERVICE_DATA[slug]?.manifest;
   if (fullArtefact) {
-    return { ...fullArtefact, source: 'full' } as unknown as CapabilityManifest;
+    return { ...fullArtefact, source: "full" } as unknown as CapabilityManifest;
   }
   // Graph service (flat ID e.g. "dwp-universal-credit")
   if (GRAPH_MANIFESTS[serviceId]) {
@@ -776,11 +794,12 @@ export async function getAllServices(): Promise<CapabilityManifest[]> {
   const full: CapabilityManifest[] = [];
   for (const [slug, artefacts] of Object.entries(SERVICE_DATA)) {
     const m = artefacts.manifest as unknown as CapabilityManifest;
-    full.push({ ...m, source: 'full' });
+    full.push({ ...m, source: "full" });
   }
   const fullSlugs = new Set(Object.keys(SERVICE_DATA));
   for (const [id, manifest] of Object.entries(GRAPH_MANIFESTS)) {
-    const matchesFull = fullSlugs.has(id) || [...fullSlugs].some((s) => id.endsWith(s));
+    const matchesFull =
+      fullSlugs.has(id) || [...fullSlugs].some((s) => id.endsWith(s));
     if (!matchesFull) {
       full.push(manifest);
     }

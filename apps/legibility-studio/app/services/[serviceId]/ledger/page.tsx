@@ -18,7 +18,10 @@ export default function ServiceLedgerPage({
         items={[
           { label: "Dashboard", href: "/" },
           { label: "Services", href: "/services" },
-          { label: serviceId, href: `/services/${encodeURIComponent(serviceId)}` },
+          {
+            label: serviceId,
+            href: `/services/${encodeURIComponent(serviceId)}`,
+          },
           { label: "Ledger" },
         ]}
       />

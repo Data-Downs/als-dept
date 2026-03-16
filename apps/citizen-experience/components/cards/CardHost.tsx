@@ -17,7 +17,11 @@ interface CardHostProps {
  * Each card submits directly to Tier 2 via /api/personal-data/[personaId]/card-submit.
  * When all cards are submitted, sends a summary message to chat.
  */
-export function CardHost({ cardRequests, onAllSubmitted, disabled }: CardHostProps) {
+export function CardHost({
+  cardRequests,
+  onAllSubmitted,
+  disabled,
+}: CardHostProps) {
   const persona = useAppStore((s) => s.persona);
   const [submissions, setSubmissions] = useState<Record<string, boolean>>({});
   const [submitting, setSubmitting] = useState<Record<string, boolean>>({});
@@ -26,7 +30,10 @@ export function CardHost({ cardRequests, onAllSubmitted, disabled }: CardHostPro
   const isCardSubmitting = (cardType: string) => submitting[cardType] === true;
 
   const handleCardSubmit = useCallback(
-    async (card: CardRequest, fields: Record<string, string | number | boolean>) => {
+    async (
+      card: CardRequest,
+      fields: Record<string, string | number | boolean>,
+    ) => {
       if (!persona) return;
 
       setSubmitting((prev) => ({ ...prev, [card.cardType]: true }));
@@ -54,10 +61,14 @@ export function CardHost({ cardRequests, onAllSubmitted, disabled }: CardHostPro
           const next = { ...prev, [card.cardType]: true };
 
           // Check if all cards are now submitted
-          const allDone = cardRequests.every((cr) => next[cr.cardType] === true);
+          const allDone = cardRequests.every(
+            (cr) => next[cr.cardType] === true,
+          );
           if (allDone) {
             // Build summary message for chat
-            const categories = [...new Set(cardRequests.map((cr) => cr.definition.dataCategory))];
+            const categories = [
+              ...new Set(cardRequests.map((cr) => cr.definition.dataCategory)),
+            ];
             const msg = `I've provided my ${categories.join(", ")} details.`;
             // Defer to avoid state update during render
             setTimeout(() => onAllSubmitted(msg), 0);
@@ -130,13 +141,17 @@ export function CardHost({ cardRequests, onAllSubmitted, disabled }: CardHostPro
                     </svg>
                   )}
                 </span>
-                <span className={`text-sm font-bold ${submitted ? "text-green-700" : "text-green-700"}`}>
+                <span
+                  className={`text-sm font-bold ${submitted ? "text-green-700" : "text-green-700"}`}
+                >
                   {submitted ? "Done" : "You"}
                 </span>
               </div>
 
               {/* Card title */}
-              <p className={`text-base font-medium ${submitted ? "text-govuk-dark-grey" : "text-govuk-black"}`}>
+              <p
+                className={`text-base font-medium ${submitted ? "text-govuk-dark-grey" : "text-govuk-black"}`}
+              >
                 {card.definition.title}
               </p>
 

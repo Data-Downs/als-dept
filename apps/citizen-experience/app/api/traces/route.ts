@@ -23,16 +23,19 @@ export async function GET() {
     const traces = await store.listTraces(100);
     const totalEvents = await store.getEventCount();
 
-    return NextResponse.json({
-      count: traces.length,
-      totalEvents,
-      traces,
-    }, { headers: corsHeaders });
+    return NextResponse.json(
+      {
+        count: traces.length,
+        totalEvents,
+        traces,
+      },
+      { headers: corsHeaders },
+    );
   } catch (error) {
     console.error("Error listing traces:", error);
     return NextResponse.json(
       { error: "Failed to list traces" },
-      { status: 500, headers: corsHeaders }
+      { status: 500, headers: corsHeaders },
     );
   }
 }

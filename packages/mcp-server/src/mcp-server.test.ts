@@ -2,7 +2,12 @@ import { describe, it, expect, beforeEach } from "vitest";
 import { generateToolsForService, generateAllTools } from "./tool-generator";
 import { handleToolCall } from "./tool-handlers";
 import { ArtefactStore } from "@als/legibility";
-import type { CapabilityManifest, PolicyRuleset, StateModelDefinition, ConsentModel } from "@als/schemas";
+import type {
+  CapabilityManifest,
+  PolicyRuleset,
+  StateModelDefinition,
+  ConsentModel,
+} from "@als/schemas";
 
 const manifest: CapabilityManifest = {
   id: "dwp.check-state-pension",
@@ -34,9 +39,7 @@ const stateModel: StateModelDefinition = {
     { id: "not-started", type: "initial" },
     { id: "completed", type: "terminal" },
   ],
-  transitions: [
-    { from: "not-started", to: "completed", trigger: "complete" },
-  ],
+  transitions: [{ from: "not-started", to: "completed", trigger: "complete" }],
 };
 
 const consent: ConsentModel = {
@@ -109,7 +112,12 @@ describe("tool-handlers", () => {
 
   beforeEach(() => {
     store = new ArtefactStore();
-    store.register("dwp.check-state-pension", { manifest, policy, stateModel, consent });
+    store.register("dwp.check-state-pension", {
+      manifest,
+      policy,
+      stateModel,
+      consent,
+    });
     const result = generateAllTools(store);
     toolMap = result.toolMap;
   });

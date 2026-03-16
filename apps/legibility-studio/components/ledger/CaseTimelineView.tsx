@@ -13,20 +13,39 @@ interface CaseTimelineEntry {
   tracePayload?: Record<string, unknown>;
 }
 
-const ACTOR_STYLES: Record<string, { icon: string; label: string; color: string }> = {
-  agent: { icon: "A", label: "Agent", color: "bg-blue-100 text-blue-800 border-blue-300" },
-  citizen: { icon: "C", label: "Citizen", color: "bg-green-100 text-green-800 border-green-300" },
-  system: { icon: "S", label: "System", color: "bg-gray-100 text-gray-600 border-gray-300" },
+const ACTOR_STYLES: Record<
+  string,
+  { icon: string; label: string; color: string }
+> = {
+  agent: {
+    icon: "A",
+    label: "Agent",
+    color: "bg-blue-100 text-blue-800 border-blue-300",
+  },
+  citizen: {
+    icon: "C",
+    label: "Citizen",
+    color: "bg-green-100 text-green-800 border-green-300",
+  },
+  system: {
+    icon: "S",
+    label: "System",
+    color: "bg-gray-100 text-gray-600 border-gray-300",
+  },
 };
 
 function PayloadView({ payload }: { payload: Record<string, unknown> }) {
   return (
     <div className="mt-2 ml-11 border border-govuk-mid-grey rounded bg-gray-50 p-3">
-      <div className="text-xs font-bold text-govuk-dark-grey mb-1.5">Trace event payload</div>
+      <div className="text-xs font-bold text-govuk-dark-grey mb-1.5">
+        Trace event payload
+      </div>
       <div className="space-y-1">
         {Object.entries(payload).map(([key, value]) => (
           <div key={key} className="flex gap-2 text-xs">
-            <span className="font-mono text-govuk-dark-grey min-w-[120px]">{key}:</span>
+            <span className="font-mono text-govuk-dark-grey min-w-[120px]">
+              {key}:
+            </span>
             <span className="font-mono break-all">
               {typeof value === "object" && value !== null
                 ? JSON.stringify(value)
@@ -42,7 +61,8 @@ function PayloadView({ payload }: { payload: Record<string, unknown> }) {
 function TimelineEntry({ entry }: { entry: CaseTimelineEntry }) {
   const [expanded, setExpanded] = useState(false);
   const style = ACTOR_STYLES[entry.actor] || ACTOR_STYLES.system;
-  const hasPayload = entry.tracePayload && Object.keys(entry.tracePayload).length > 0;
+  const hasPayload =
+    entry.tracePayload && Object.keys(entry.tracePayload).length > 0;
 
   return (
     <div>

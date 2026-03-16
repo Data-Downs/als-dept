@@ -92,7 +92,8 @@ export class CaseStore {
   /** Create or update a case when a trace event is emitted */
   async upsertCase(event: TraceEvent, totalStates?: number): Promise<void> {
     const userId = event.metadata.userId;
-    const serviceId = event.metadata.capabilityId || (event.payload.serviceId as string);
+    const serviceId =
+      event.metadata.capabilityId || (event.payload.serviceId as string);
     if (!userId || !serviceId) return;
 
     const caseId = CaseStore.caseId(userId, serviceId);
@@ -102,13 +103,18 @@ export class CaseStore {
     await this.db.run(
       `INSERT OR IGNORE INTO cases (case_id, user_id, service_id, started_at, last_activity_at)
        VALUES (?, ?, ?, ?, ?)`,
-      caseId, userId, serviceId, now, now,
+      caseId,
+      userId,
+      serviceId,
+      now,
+      now,
     );
 
     // Always update last_activity_at and event_count
     await this.db.run(
       `UPDATE cases SET last_activity_at = ?, event_count = event_count + 1 WHERE case_id = ?`,
-      now, caseId,
+      now,
+      caseId,
     );
 
     // Apply type-specific updates
@@ -121,18 +127,23 @@ export class CaseStore {
 
         // Get current states_completed
         const row = await this.db.get<{ states_completed: string }>(
-          "SELECT states_completed FROM cases WHERE case_id = ?", caseId,
+          "SELECT states_completed FROM cases WHERE case_id = ?",
+          caseId,
         );
         const visited: string[] = row ? JSON.parse(row.states_completed) : [];
         if (fromState && !visited.includes(fromState)) visited.push(fromState);
         if (toState && !visited.includes(toState)) visited.push(toState);
 
-        const progress = totalStates && totalStates > 0
-          ? Math.round((visited.length / totalStates) * 100)
-          : 0;
+        const progress =
+          totalStates && totalStates > 0
+            ? Math.round((visited.length / totalStates) * 100)
+            : 0;
 
         const isIdentityState = toState === "identity-verified";
-        const isCompleted = toState === "claim-active" || toState === "completed" || toState === "Accepted";
+        const isCompleted =
+          toState === "claim-active" ||
+          toState === "completed" ||
+          toState === "Accepted";
         const isRejected = toState === "rejected";
         const isHandedOff = toState === "handed-off";
 
@@ -157,74 +168,170 @@ export class CaseStore {
           caseId,
         );
 
-        await this.addCaseEvent(caseId, event.id, event.traceId, event.type, "system",
-          `State: ${fromState} -> ${toState}`, now);
+        await this.addCaseEvent(
+          caseId,
+          event.id,
+          event.traceId,
+          event.type,
+          "system",
+          `State: ${fromState} -> ${toState}`,
+          now,
+        );
         break;
       }
 
       case "consent.granted":
-        await this.db.run("UPDATE cases SET consent_granted = 1 WHERE case_id = ?", caseId);
-        await this.addCaseEvent(caseId, event.id, event.traceId, event.type, "citizen",
-          `Consent granted for ${payload.purpose || "data sharing"}`, now);
+        await this.db.run(
+          "UPDATE cases SET consent_granted = 1 WHERE case_id = ?",
+          caseId,
+        );
+        await this.addCaseEvent(
+          caseId,
+          event.id,
+          event.traceId,
+          event.type,
+          "citizen",
+          `Consent granted for ${payload.purpose || "data sharing"}`,
+          now,
+        );
         break;
 
       case "consent.denied":
-        await this.db.run("UPDATE cases SET consent_granted = 0 WHERE case_id = ?", caseId);
-        await this.addCaseEvent(caseId, event.id, event.traceId, event.type, "citizen",
-          "Consent denied", now);
+        await this.db.run(
+          "UPDATE cases SET consent_granted = 0 WHERE case_id = ?",
+          caseId,
+        );
+        await this.addCaseEvent(
+          caseId,
+          event.id,
+          event.traceId,
+          event.type,
+          "citizen",
+          "Consent denied",
+          now,
+        );
         break;
 
       case "policy.evaluated": {
         const eligible = payload.eligible as boolean;
         await this.db.run(
           `UPDATE cases SET eligibility_checked = 1, eligibility_result = ? WHERE case_id = ?`,
-          eligible ? 1 : 0, caseId,
+          eligible ? 1 : 0,
+          caseId,
         );
-        await this.addCaseEvent(caseId, event.id, event.traceId, event.type, "system",
-          `Eligibility: ${eligible ? "eligible" : "not eligible"}`, now);
+        await this.addCaseEvent(
+          caseId,
+          event.id,
+          event.traceId,
+          event.type,
+          "system",
+          `Eligibility: ${eligible ? "eligible" : "not eligible"}`,
+          now,
+        );
         break;
       }
 
       case "handoff.initiated":
         await this.db.run(
           `UPDATE cases SET handed_off = 1, handoff_reason = ?, status = 'handed-off' WHERE case_id = ?`,
-          (payload.reason as string) || (payload.description as string) || "Unknown", caseId,
+          (payload.reason as string) ||
+            (payload.description as string) ||
+            "Unknown",
+          caseId,
         );
-        await this.addCaseEvent(caseId, event.id, event.traceId, event.type, "system",
-          `Handed off: ${payload.reason || payload.description || "reason unknown"}`, now);
+        await this.addCaseEvent(
+          caseId,
+          event.id,
+          event.traceId,
+          event.type,
+          "system",
+          `Handed off: ${payload.reason || payload.description || "reason unknown"}`,
+          now,
+        );
         break;
 
       case "capability.invoked":
-        await this.db.run("UPDATE cases SET agent_actions = agent_actions + 1 WHERE case_id = ?", caseId);
-        await this.addCaseEvent(caseId, event.id, event.traceId, event.type, "agent",
-          `Invoked: ${payload.capabilityId || "capability"}`, now);
+        await this.db.run(
+          "UPDATE cases SET agent_actions = agent_actions + 1 WHERE case_id = ?",
+          caseId,
+        );
+        await this.addCaseEvent(
+          caseId,
+          event.id,
+          event.traceId,
+          event.type,
+          "agent",
+          `Invoked: ${payload.capabilityId || "capability"}`,
+          now,
+        );
         break;
 
       case "llm.request":
-        await this.db.run("UPDATE cases SET agent_actions = agent_actions + 1 WHERE case_id = ?", caseId);
-        await this.addCaseEvent(caseId, event.id, event.traceId, event.type, "agent",
-          `Agent processing request`, now);
+        await this.db.run(
+          "UPDATE cases SET agent_actions = agent_actions + 1 WHERE case_id = ?",
+          caseId,
+        );
+        await this.addCaseEvent(
+          caseId,
+          event.id,
+          event.traceId,
+          event.type,
+          "agent",
+          `Agent processing request`,
+          now,
+        );
         break;
 
       case "llm.response":
-        await this.addCaseEvent(caseId, event.id, event.traceId, event.type, "agent",
-          `Agent responded (${payload.toolsUsed ? (payload.toolsUsed as string[]).length + " tools" : "no tools"})`, now);
+        await this.addCaseEvent(
+          caseId,
+          event.id,
+          event.traceId,
+          event.type,
+          "agent",
+          `Agent responded (${payload.toolsUsed ? (payload.toolsUsed as string[]).length + " tools" : "no tools"})`,
+          now,
+        );
         break;
 
       case "credential.presented":
-        await this.addCaseEvent(caseId, event.id, event.traceId, event.type, "citizen",
-          `Credential presented`, now);
-        await this.db.run("UPDATE cases SET human_actions = human_actions + 1 WHERE case_id = ?", caseId);
+        await this.addCaseEvent(
+          caseId,
+          event.id,
+          event.traceId,
+          event.type,
+          "citizen",
+          `Credential presented`,
+          now,
+        );
+        await this.db.run(
+          "UPDATE cases SET human_actions = human_actions + 1 WHERE case_id = ?",
+          caseId,
+        );
         break;
 
       case "receipt.issued":
-        await this.addCaseEvent(caseId, event.id, event.traceId, event.type, "system",
-          `Receipt issued: ${payload.action || ""}`, now);
+        await this.addCaseEvent(
+          caseId,
+          event.id,
+          event.traceId,
+          event.type,
+          "system",
+          `Receipt issued: ${payload.action || ""}`,
+          now,
+        );
         break;
 
       default:
-        await this.addCaseEvent(caseId, event.id, event.traceId, event.type, "system",
-          `${event.type}`, now);
+        await this.addCaseEvent(
+          caseId,
+          event.id,
+          event.traceId,
+          event.type,
+          "system",
+          `${event.type}`,
+          now,
+        );
         break;
     }
   }
@@ -241,21 +348,31 @@ export class CaseStore {
     await this.db.run(
       `INSERT INTO case_events (case_id, trace_event_id, trace_id, event_type, actor, summary, created_at)
        VALUES (?, ?, ?, ?, ?, ?, ?)`,
-      caseId, traceEventId, traceId, eventType, actor, summary, createdAt,
+      caseId,
+      traceEventId,
+      traceId,
+      eventType,
+      actor,
+      summary,
+      createdAt,
     );
   }
 
   /** Get a single case by ID */
   async getCase(caseId: string): Promise<LedgerCase | undefined> {
     const row = await this.db.get<Record<string, unknown>>(
-      "SELECT * FROM cases WHERE case_id = ?", caseId,
+      "SELECT * FROM cases WHERE case_id = ?",
+      caseId,
     );
     if (!row) return undefined;
     return this.rowToCase(row);
   }
 
   /** Get a case by userId + serviceId */
-  async getCaseByUser(userId: string, serviceId: string): Promise<LedgerCase | undefined> {
+  async getCaseByUser(
+    userId: string,
+    serviceId: string,
+  ): Promise<LedgerCase | undefined> {
     const caseId = CaseStore.caseId(userId, serviceId);
     return this.getCase(caseId);
   }
@@ -278,20 +395,27 @@ export class CaseStore {
     }
 
     const countRow = await this.db.get<{ count: number }>(
-      `SELECT COUNT(*) as count FROM cases ${where}`, ...params,
+      `SELECT COUNT(*) as count FROM cases ${where}`,
+      ...params,
     );
     const total = countRow?.count ?? 0;
 
     const rows = await this.db.all<Record<string, unknown>>(
       `SELECT * FROM cases ${where} ORDER BY last_activity_at DESC LIMIT ? OFFSET ?`,
-      ...params, limit, offset,
+      ...params,
+      limit,
+      offset,
     );
 
-    return { cases: rows.map(r => this.rowToCase(r)), total };
+    return { cases: rows.map((r) => this.rowToCase(r)), total };
   }
 
   /** Get the timeline for a case, enriched with trace event payloads */
-  async getCaseTimeline(caseId: string): Promise<(CaseTimelineEntry & { tracePayload?: Record<string, unknown> })[]> {
+  async getCaseTimeline(
+    caseId: string,
+  ): Promise<
+    (CaseTimelineEntry & { tracePayload?: Record<string, unknown> })[]
+  > {
     const rows = await this.db.all<Record<string, unknown>>(
       `SELECT ce.*, te.payload as trace_payload, te.type as trace_type,
               te.span_id, te.trace_id as te_trace_id
@@ -302,7 +426,7 @@ export class CaseStore {
       caseId,
     );
 
-    return rows.map(r => ({
+    return rows.map((r) => ({
       caseId: r.case_id as string,
       traceEventId: r.trace_event_id as string,
       traceId: (r.trace_id as string) || (r.te_trace_id as string) || undefined,
@@ -310,14 +434,17 @@ export class CaseStore {
       actor: r.actor as "agent" | "citizen" | "system",
       summary: r.summary as string,
       createdAt: r.created_at as string,
-      tracePayload: r.trace_payload ? JSON.parse(r.trace_payload as string) : undefined,
+      tracePayload: r.trace_payload
+        ? JSON.parse(r.trace_payload as string)
+        : undefined,
     }));
   }
 
   /** Get aggregated dashboard data for a service */
   async getDashboard(serviceId: string): Promise<LedgerDashboard> {
-    const stats = await this.db.get<Record<string, number>>(
-      `SELECT
+    const stats =
+      (await this.db.get<Record<string, number>>(
+        `SELECT
         COUNT(*) as total,
         SUM(CASE WHEN status = 'in-progress' THEN 1 ELSE 0 END) as active,
         SUM(CASE WHEN status = 'completed' THEN 1 ELSE 0 END) as completed,
@@ -327,8 +454,8 @@ export class CaseStore {
         SUM(agent_actions) as agent_total,
         SUM(human_actions) as human_total
       FROM cases WHERE service_id = ?`,
-      serviceId,
-    ) ?? {} as Record<string, number>;
+        serviceId,
+      )) ?? ({} as Record<string, number>);
 
     const total = stats.total || 0;
     const completed = stats.completed || 0;
@@ -354,14 +481,15 @@ export class CaseStore {
       agentActionTotal: stats.agent_total || 0,
       humanActionTotal: stats.human_total || 0,
       bottlenecks,
-      recentCases: recentRows.map(r => this.rowToCase(r)),
+      recentCases: recentRows.map((r) => this.rowToCase(r)),
     };
   }
 
   /** Get aggregated dashboard data across ALL services */
   async getDashboardAll(): Promise<LedgerDashboard> {
-    const stats = await this.db.get<Record<string, number>>(
-      `SELECT
+    const stats =
+      (await this.db.get<Record<string, number>>(
+        `SELECT
         COUNT(*) as total,
         SUM(CASE WHEN status = 'in-progress' THEN 1 ELSE 0 END) as active,
         SUM(CASE WHEN status = 'completed' THEN 1 ELSE 0 END) as completed,
@@ -371,13 +499,16 @@ export class CaseStore {
         SUM(agent_actions) as agent_total,
         SUM(human_actions) as human_total
       FROM cases`,
-    ) ?? {} as Record<string, number>;
+      )) ?? ({} as Record<string, number>);
 
     const total = stats.total || 0;
     const completed = stats.completed || 0;
     const handedOff = stats.handed_off || 0;
 
-    const bottleneckRows = await this.db.all<{ stateId: string; caseCount: number }>(
+    const bottleneckRows = await this.db.all<{
+      stateId: string;
+      caseCount: number;
+    }>(
       `SELECT current_state as stateId, COUNT(*) as caseCount
        FROM cases
        WHERE status = 'in-progress'
@@ -402,7 +533,7 @@ export class CaseStore {
       agentActionTotal: stats.agent_total || 0,
       humanActionTotal: stats.human_total || 0,
       bottlenecks: bottleneckRows,
-      recentCases: recentRows.map(r => this.rowToCase(r)),
+      recentCases: recentRows.map((r) => this.rowToCase(r)),
     };
   }
 
@@ -425,19 +556,26 @@ export class CaseStore {
   }
 
   /** Submit a case for human review */
-  async submitReview(caseId: string, reason: string, _priority: string): Promise<void> {
+  async submitReview(
+    caseId: string,
+    reason: string,
+    _priority: string,
+  ): Promise<void> {
     await this.db.run(
       `UPDATE cases SET
         review_status = 'pending',
         review_requested_at = datetime('now'),
         review_reason = ?
       WHERE case_id = ?`,
-      reason, caseId,
+      reason,
+      caseId,
     );
   }
 
   /** Rebuild all cases from trace events (disaster recovery) */
-  async rebuildFromTraces(totalStatesMap?: Record<string, number>): Promise<number> {
+  async rebuildFromTraces(
+    totalStatesMap?: Record<string, number>,
+  ): Promise<number> {
     await this.db.exec("DELETE FROM case_events");
     await this.db.exec("DELETE FROM cases");
 
@@ -458,8 +596,10 @@ export class CaseStore {
         metadata: JSON.parse(row.metadata),
       };
 
-      const serviceId = event.metadata.capabilityId || (event.payload.serviceId as string);
-      const totalStates = serviceId && totalStatesMap ? totalStatesMap[serviceId] : undefined;
+      const serviceId =
+        event.metadata.capabilityId || (event.payload.serviceId as string);
+      const totalStates =
+        serviceId && totalStatesMap ? totalStatesMap[serviceId] : undefined;
       await this.upsertCase(event, totalStates);
       processed++;
     }
@@ -480,7 +620,10 @@ export class CaseStore {
       progressPercent: row.progress_percent as number,
       identityVerified: !!(row.identity_verified as number),
       eligibilityChecked: !!(row.eligibility_checked as number),
-      eligibilityResult: row.eligibility_result === null ? null : !!(row.eligibility_result as number),
+      eligibilityResult:
+        row.eligibility_result === null
+          ? null
+          : !!(row.eligibility_result as number),
       consentGranted: !!(row.consent_granted as number),
       handedOff: !!(row.handed_off as number),
       handoffReason: (row.handoff_reason as string) || null,

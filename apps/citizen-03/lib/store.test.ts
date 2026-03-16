@@ -142,24 +142,37 @@ describe("store - sendMessage", () => {
     global.fetch = vi.fn().mockResolvedValue({
       ok: true,
       headers: new Headers({ "content-type": "application/json" }),
-      json: () => Promise.resolve({
-        response: "Here are the services available.",
-        reasoning: "Used service graph to find...",
-        toolsUsed: ["query_service_graph", "check_eligibility"],
-        toolUseLog: [
-          { tool: "query_service_graph", input: { keyword: "pension" }, durationMs: 5 },
-          { tool: "check_eligibility", input: { service_id: "dwp-pension-credit" }, durationMs: 3 },
-        ],
-        cards: [{ type: "service", title: "Pension Credit", description: "Test" }],
-        quickReplies: ["Tell me more"],
-        conversationTitle: "Pension Credit Inquiry",
-        traceId: "trace_123",
-        iterations: 2,
-      }),
+      json: () =>
+        Promise.resolve({
+          response: "Here are the services available.",
+          reasoning: "Used service graph to find...",
+          toolsUsed: ["query_service_graph", "check_eligibility"],
+          toolUseLog: [
+            {
+              tool: "query_service_graph",
+              input: { keyword: "pension" },
+              durationMs: 5,
+            },
+            {
+              tool: "check_eligibility",
+              input: { service_id: "dwp-pension-credit" },
+              durationMs: 3,
+            },
+          ],
+          cards: [
+            { type: "service", title: "Pension Credit", description: "Test" },
+          ],
+          quickReplies: ["Tell me more"],
+          conversationTitle: "Pension Credit Inquiry",
+          traceId: "trace_123",
+          iterations: 2,
+        }),
     });
 
     useAppStore.setState({ persona: "test-user" });
-    await useAppStore.getState().sendMessage("Am I eligible for pension credit?");
+    await useAppStore
+      .getState()
+      .sendMessage("Am I eligible for pension credit?");
 
     const state = useAppStore.getState();
     expect(state.isLoading).toBe(false);
@@ -167,7 +180,10 @@ describe("store - sendMessage", () => {
     expect(state.messages[1].content).toBe("Here are the services available.");
     expect(state.reasoning).toBe("Used service graph to find...");
     expect(state.hasNewReasoning).toBe(true);
-    expect(state.lastToolsUsed).toEqual(["query_service_graph", "check_eligibility"]);
+    expect(state.lastToolsUsed).toEqual([
+      "query_service_graph",
+      "check_eligibility",
+    ]);
     expect(state.lastIterations).toBe(2);
     expect(state.cards).toHaveLength(1);
     expect(state.quickReplies).toEqual(["Tell me more"]);

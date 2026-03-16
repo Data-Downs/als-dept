@@ -13,7 +13,7 @@ export async function OPTIONS() {
  */
 export async function POST(
   _request: NextRequest,
-  { params }: { params: Promise<{ serviceId: string }> }
+  { params }: { params: Promise<{ serviceId: string }> },
 ) {
   try {
     const { serviceId } = await params;
@@ -27,7 +27,7 @@ export async function POST(
     if (!service.govukUrl) {
       return jsonWithCors(
         { error: "Service has no govuk_url — cannot generate artefacts" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -65,7 +65,7 @@ export async function POST(
     console.error("[v1/services/:id/generate] POST error:", error);
     return jsonWithCors(
       { error: error instanceof Error ? error.message : "Generation failed" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

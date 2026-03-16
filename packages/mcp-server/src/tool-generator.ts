@@ -38,7 +38,7 @@ function slugToToolPrefix(serviceId: string): string {
 
 export function generateToolsForService(
   serviceId: string,
-  artefacts: ServiceArtefacts
+  artefacts: ServiceArtefacts,
 ): McpToolDefinition[] {
   const prefix = slugToToolPrefix(serviceId);
   const serviceName = artefacts.manifest.name;
@@ -75,7 +75,7 @@ export function generateToolsForService(
       ...new Set(
         artefacts.stateModel.transitions
           .filter((t) => t.trigger)
-          .map((t) => t.trigger!)
+          .map((t) => t.trigger!),
       ),
     ];
 

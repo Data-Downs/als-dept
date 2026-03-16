@@ -10,7 +10,10 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
   return (
     <>
       <DisclaimerBanner />
-      <Sidebar collapsed={sidebarCollapsed} onToggle={() => setSidebarCollapsed(!sidebarCollapsed)} />
+      <Sidebar
+        collapsed={sidebarCollapsed}
+        onToggle={() => setSidebarCollapsed(!sidebarCollapsed)}
+      />
       <main
         className="p-8 transition-[margin-left] duration-200"
         style={{ marginLeft: sidebarCollapsed ? 56 : "var(--sidebar-width)" }}

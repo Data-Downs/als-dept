@@ -43,7 +43,16 @@ export function RelatedServicesCard({ serviceId }: RelatedServicesCardProps) {
       <div className="px-5 py-4">
         <div className="flex items-center gap-2 mb-3">
           <span className="w-6 h-6 rounded-full bg-blue-50 flex items-center justify-center shrink-0">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#1d70b8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg
+              width="12"
+              height="12"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="#1d70b8"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
               <path d="M13 7l5 5m0 0l-5 5m5-5H6" />
             </svg>
           </span>
@@ -68,7 +77,13 @@ export function RelatedServicesCard({ serviceId }: RelatedServicesCardProps) {
                     {svc.dept}
                   </p>
                 </div>
-                <svg className="w-4 h-4 text-gray-300 group-hover:text-govuk-blue shrink-0 ml-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <svg
+                  className="w-4 h-4 text-gray-300 group-hover:text-govuk-blue shrink-0 ml-2"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
                   <path d="M9 5l7 7-7 7" />
                 </svg>
               </div>

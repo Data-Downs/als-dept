@@ -26,16 +26,17 @@ export function DisclaimerBanner() {
       <div className="max-w-[1200px] mx-auto px-4 py-3 pr-12">
         <p className="font-bold">This is not a government service.</p>
         <p className="mt-0.5">
-          This is a private research project and simulator built by Chris Downs. It is
-          not affiliated with, endorsed by, or connected to the UK Government, GOV.UK,
-          or any government department. All data shown is simulated. For enquiries,
-          contact{" "}
+          This is a private research project and simulator built by Chris Downs.
+          It is not affiliated with, endorsed by, or connected to the UK
+          Government, GOV.UK, or any government department. All data shown is
+          simulated. For enquiries, contact{" "}
           <a
             href="mailto:chris@datadowns.com"
             className="underline font-medium"
           >
             chris@datadowns.com
-          </a>.
+          </a>
+          .
         </p>
       </div>
       <button

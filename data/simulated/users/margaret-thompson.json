@@ -168,15 +168,39 @@
       }
     ],
     "medications": [
-      { "name": "Metformin", "dosage": "500mg twice daily", "purpose": "Type 2 Diabetes" },
-      { "name": "Amlodipine", "dosage": "5mg once daily", "purpose": "High Blood Pressure" },
-      { "name": "Paracetamol", "dosage": "As needed", "purpose": "Arthritis pain" },
-      { "name": "Ibuprofen gel", "dosage": "Applied to joints as needed", "purpose": "Arthritis pain" }
+      {
+        "name": "Metformin",
+        "dosage": "500mg twice daily",
+        "purpose": "Type 2 Diabetes"
+      },
+      {
+        "name": "Amlodipine",
+        "dosage": "5mg once daily",
+        "purpose": "High Blood Pressure"
+      },
+      {
+        "name": "Paracetamol",
+        "dosage": "As needed",
+        "purpose": "Arthritis pain"
+      },
+      {
+        "name": "Ibuprofen gel",
+        "dosage": "Applied to joints as needed",
+        "purpose": "Arthritis pain"
+      }
     ],
     "mobilityAids": ["Walking stick (used occasionally for longer walks)"],
     "hospitalAppointments": [
-      { "type": "Rheumatology review", "frequency": "Annual", "lastAppointment": "2025-11-20" },
-      { "type": "Diabetes clinic", "frequency": "6-monthly", "lastAppointment": "2025-12-08" }
+      {
+        "type": "Rheumatology review",
+        "frequency": "Annual",
+        "lastAppointment": "2025-11-20"
+      },
+      {
+        "type": "Diabetes clinic",
+        "frequency": "6-monthly",
+        "lastAppointment": "2025-12-08"
+      }
     ]
   },
   "family": {

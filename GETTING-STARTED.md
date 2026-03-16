@@ -42,10 +42,10 @@ npm run dev
 
 This starts both applications:
 
-| App | URL | Purpose |
-|-----|-----|---------|
-| Citizen Experience | [http://localhost:3100](http://localhost:3100) | The citizen-facing chat interface |
-| Legibility Studio | [http://localhost:3101](http://localhost:3101) | The admin dashboard for services & evidence |
+| App                | URL                                            | Purpose                                     |
+| ------------------ | ---------------------------------------------- | ------------------------------------------- |
+| Citizen Experience | [http://localhost:3100](http://localhost:3100) | The citizen-facing chat interface           |
+| Legibility Studio  | [http://localhost:3101](http://localhost:3101) | The admin dashboard for services & evidence |
 
 ---
 
@@ -55,11 +55,11 @@ This starts both applications:
 
 Open [http://localhost:3100](http://localhost:3100). You'll see the **persona picker** with three options:
 
-| Persona | Description | Good for trying |
-|---------|-------------|-----------------|
-| **Emma & Liam** | Young expecting couple, first baby | Benefits, family services, driving |
-| **Rajesh** | Self-employed IT consultant, two kids | Tax, child benefit, driving |
-| **Margaret** | Retired, managing health conditions | Pension, benefits eligibility, driving |
+| Persona         | Description                           | Good for trying                        |
+| --------------- | ------------------------------------- | -------------------------------------- |
+| **Emma & Liam** | Young expecting couple, first baby    | Benefits, family services, driving     |
+| **Rajesh**      | Self-employed IT consultant, two kids | Tax, child benefit, driving            |
+| **Margaret**    | Retired, managing health conditions   | Pension, benefits eligibility, driving |
 
 **Start with Emma & Liam** — they have the richest data and most interesting scenarios.
 
@@ -87,15 +87,19 @@ The Dashboard shows:
 Tap any **service card** (e.g., "Driving") to start chatting. Try these prompts:
 
 **For Emma & Liam (driving):**
+
 > "Our car's MOT is expiring in April, what do we need to do?"
 
 **For Emma & Liam (benefits):**
+
 > "We're expecting our first baby — what benefits can we claim?"
 
 **For Margaret (benefits):**
+
 > "Can you check if I'm getting everything I'm entitled to?"
 
 **For Rajesh (driving):**
+
 > "I need to renew my driving licence"
 
 ### 5. See the Agent Think
@@ -105,6 +109,7 @@ After the agent responds, tap the **reasoning button** (bottom-right corner). Th
 ### 6. Trigger a Handoff
 
 Try typing:
+
 > "I want to speak to a real person"
 
 This triggers the **handoff system**, which creates a structured package with your conversation summary, routing info, and contact details. You'll see a notice with the appropriate department and phone number.
@@ -139,6 +144,7 @@ Go to **Evidence** to see the trace log from your chat sessions (and demo sessio
 - **Replay** — step through events chronologically
 
 Each trace includes rich event types:
+
 - `llm.request` / `llm.response` — what was sent to and received from Claude
 - `policy.evaluated` — formal eligibility check results
 - `consent.granted` — what data was shared and why
@@ -154,18 +160,18 @@ Go to **Gap Analysis** to see artefact completeness across all services — whic
 
 ## What Each Feature Demonstrates
 
-| Feature | Demonstrates |
-|---------|-------------|
-| Chat with personas | How citizens interact with government services conversationally |
-| DOT vs MAX agents | The trade-off between transparency (asking permission) and efficiency (auto-filling) |
-| Capability Manifests | How government services become machine-readable and discoverable by agents |
-| Policy Rulesets | How eligibility rules become structured, inspectable, and testable |
-| Consent recording | How data sharing stays explicit and auditable |
-| Evidence Plane | How every agent action is traced, receipted, and accountable |
-| Handoff system | How AI agents hand off to humans when things get complex |
-| Digital credentials | How identity works in an agentic context (simulated GOV.UK Wallet) |
-| State models | How service journeys have defined states and valid transitions |
-| MCP tool calling | How agents can access live government data (flood warnings, MP lookup, bank holidays) |
+| Feature              | Demonstrates                                                                          |
+| -------------------- | ------------------------------------------------------------------------------------- |
+| Chat with personas   | How citizens interact with government services conversationally                       |
+| DOT vs MAX agents    | The trade-off between transparency (asking permission) and efficiency (auto-filling)  |
+| Capability Manifests | How government services become machine-readable and discoverable by agents            |
+| Policy Rulesets      | How eligibility rules become structured, inspectable, and testable                    |
+| Consent recording    | How data sharing stays explicit and auditable                                         |
+| Evidence Plane       | How every agent action is traced, receipted, and accountable                          |
+| Handoff system       | How AI agents hand off to humans when things get complex                              |
+| Digital credentials  | How identity works in an agentic context (simulated GOV.UK Wallet)                    |
+| State models         | How service journeys have defined states and valid transitions                        |
+| MCP tool calling     | How agents can access live government data (flood warnings, MP lookup, bank holidays) |
 
 ---
 
@@ -198,6 +204,7 @@ Run `npm run seed` to populate demo trace data. Or send a few chat messages firs
 ### Port already in use
 
 The apps default to ports 3100 and 3101. If those are taken, edit the `dev` and `start` scripts in:
+
 - `apps/citizen-experience/package.json` (change `--port 3100`)
 - `apps/legibility-studio/package.json` (change `--port 3101`)
 - Also update `apps/legibility-studio/app/evidence/page.tsx` to match the citizen-experience port

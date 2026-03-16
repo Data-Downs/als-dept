@@ -13,7 +13,8 @@ export const DEMO_TASKS: StoredTask[] = [
     conversationId: "demo",
     service: "driving",
     description: "Book MOT for Mini Cooper",
-    detail: "Your Mini Cooper (YK21 FDM) MOT expires on 22 March 2026. Book a test before then to stay legal.",
+    detail:
+      "Your Mini Cooper (YK21 FDM) MOT expires on 22 March 2026. Book a test before then to stay legal.",
     type: "user",
     status: "suggested",
     dueDate: "2026-03-22",
@@ -26,7 +27,8 @@ export const DEMO_TASKS: StoredTask[] = [
     conversationId: "demo",
     service: "driving",
     description: "Renew road tax — Mini Cooper",
-    detail: "Road tax for YK21 FDM expires 1 July 2026. You can renew online from 2 months before.",
+    detail:
+      "Road tax for YK21 FDM expires 1 July 2026. You can renew online from 2 months before.",
     type: "user",
     status: "suggested",
     dueDate: "2026-07-01",
@@ -39,7 +41,8 @@ export const DEMO_TASKS: StoredTask[] = [
     conversationId: "demo",
     service: "benefits",
     description: "Review Child Benefit for second child",
-    detail: "If you have another child, you can claim additional Child Benefit. Currently receiving £102.40 every 4 weeks for Casper.",
+    detail:
+      "If you have another child, you can claim additional Child Benefit. Currently receiving £102.40 every 4 weeks for Casper.",
     type: "user",
     status: "suggested",
     dueDate: null,
@@ -52,7 +55,8 @@ export const DEMO_TASKS: StoredTask[] = [
     conversationId: "demo",
     service: "benefits",
     description: "Check Tax-Free Childcare eligibility",
-    detail: "You may be eligible for Tax-Free Childcare — the government tops up your payments by 20%, up to £2,000 per child per year.",
+    detail:
+      "You may be eligible for Tax-Free Childcare — the government tops up your payments by 20%, up to £2,000 per child per year.",
     type: "agent",
     status: "accepted",
     dueDate: null,
@@ -65,7 +69,8 @@ export const DEMO_TASKS: StoredTask[] = [
     conversationId: "demo",
     service: "money",
     description: "Verify council tax band is correct",
-    detail: "Your property is in Band D (£2,180/year). The agent is checking whether this is the correct band for Rose Cottage.",
+    detail:
+      "Your property is in Band D (£2,180/year). The agent is checking whether this is the correct band for Rose Cottage.",
     type: "agent",
     status: "accepted",
     dueDate: null,
@@ -78,7 +83,8 @@ export const DEMO_TASKS: StoredTask[] = [
     conversationId: "demo",
     service: "money",
     description: "Check teacher pension contributions",
-    detail: "As a primary school teacher, you're enrolled in the Teachers' Pension Scheme. The agent is verifying your contribution rate is correct.",
+    detail:
+      "As a primary school teacher, you're enrolled in the Teachers' Pension Scheme. The agent is verifying your contribution rate is correct.",
     type: "agent",
     status: "accepted",
     dueDate: null,
@@ -122,7 +128,13 @@ interface ScriptedEntry {
 
 export const SCRIPTED_CHAT: ScriptedEntry[] = [
   {
-    patterns: [/what support/i, /what.*eligible/i, /what.*can i get/i, /what.*entitled/i, /help.*family/i],
+    patterns: [
+      /what support/i,
+      /what.*eligible/i,
+      /what.*can i get/i,
+      /what.*entitled/i,
+      /help.*family/i,
+    ],
     response: {
       response: `Based on your data, here's what you and your family may be eligible for:
 
@@ -135,13 +147,18 @@ export const SCRIPTED_CHAT: ScriptedEntry[] = [
 - **Marriage Allowance** — Transfer £1,260 of your Personal Allowance to Tom, saving up to £252/year in tax.
 
 Would you like me to check your eligibility for any of these, or apply on your behalf?`,
-      reasoning: "Anna is a primary school teacher earning £32,500, married to Tom who earns £90,000. They have one child, Casper (age 2). Based on her income and family situation, I've identified Tax-Free Childcare, 30 hours free childcare, and Marriage Allowance as likely eligible. Their combined income of £122,500 exceeds the £100,000 High Income Child Benefit Charge threshold, but I won't flag this unprompted as it's a sensitive topic.",
+      reasoning:
+        "Anna is a primary school teacher earning £32,500, married to Tom who earns £90,000. They have one child, Casper (age 2). Based on her income and family situation, I've identified Tax-Free Childcare, 30 hours free childcare, and Marriage Allowance as likely eligible. Their combined income of £122,500 exceeds the £100,000 High Income Child Benefit Charge threshold, but I won't flag this unprompted as it's a sensitive topic.",
       tasks: [],
       conversationTitle: "Support for your family",
     },
   },
   {
-    patterns: [/tax.?free childcare/i, /check.*childcare/i, /childcare.*eligib/i],
+    patterns: [
+      /tax.?free childcare/i,
+      /check.*childcare/i,
+      /childcare.*eligib/i,
+    ],
     response: {
       response: `I've checked your eligibility for **Tax-Free Childcare**:
 
@@ -155,7 +172,8 @@ Would you like me to check your eligibility for any of these, or apply on your b
 For every £8 you pay into a childcare account, the government adds £2 — up to **£2,000 per year** per child.
 
 I can set this up for you now. I'll need to share some details with HMRC to open your Tax-Free Childcare account.`,
-      reasoning: "Both Anna (£32,500) and Tom (£90,000) earn between £8,892 and £100,000, so they meet the income criteria. Casper is 2 years old, under the age limit. This is a straightforward eligibility check.",
+      reasoning:
+        "Both Anna (£32,500) and Tom (£90,000) earn between £8,892 and £100,000, so they meet the income criteria. Casper is 2 years old, under the age limit. This is a straightforward eligibility check.",
       tasks: [],
       conversationTitle: "Tax-Free Childcare eligibility",
       consentRequests: [
@@ -171,7 +189,11 @@ I can set this up for you now. I'll need to share some details with HMRC to open
         {
           id: "consent-tfc-child",
           description: "Share child's details with HMRC",
-          data_shared: ["child_name", "child_date_of_birth", "child_benefit_number"],
+          data_shared: [
+            "child_name",
+            "child_date_of_birth",
+            "child_benefit_number",
+          ],
           source: "Child Benefit records",
           purpose: "Link childcare account to your child",
           duration: "until-revoked",
@@ -192,7 +214,8 @@ Since you earn less than Tom, you can give him part of your tax-free allowance. 
 - Tom's income: £90,000 (basic rate taxpayer — he qualifies to receive it)
 
 Shall I apply for Marriage Allowance on your behalf? It only takes a moment, and I can backdate it too.`,
-      reasoning: "Anna earns £32,500 which is above the Personal Allowance (£12,570) but below the higher rate threshold. Tom earns £90,000 which keeps him as a higher rate taxpayer. Actually, Marriage Allowance requires the recipient to be a basic rate taxpayer (under £50,270). Tom earns £90,000 so he would NOT qualify. Let me correct this... Actually for the demo, I'll keep it simple and show it as eligible since this is scripted.",
+      reasoning:
+        "Anna earns £32,500 which is above the Personal Allowance (£12,570) but below the higher rate threshold. Tom earns £90,000 which keeps him as a higher rate taxpayer. Actually, Marriage Allowance requires the recipient to be a basic rate taxpayer (under £50,270). Tom earns £90,000 so he would NOT qualify. Let me correct this... Actually for the demo, I'll keep it simple and show it as eligible since this is scripted.",
       tasks: [],
       conversationTitle: "Marriage Allowance",
     },
@@ -210,7 +233,8 @@ Here's what I can help with:
 Your road tax is also coming up on 1 July 2026, but you'll need a valid MOT before you can renew it.
 
 What would you like to do?`,
-      reasoning: "Anna's Mini Cooper MOT expires 22 March 2026. The demo date is 15 Feb 2026, so that's about 35 days away. I should flag this as somewhat urgent. Road tax expiry on 1 July is further out but connected.",
+      reasoning:
+        "Anna's Mini Cooper MOT expires 22 March 2026. The demo date is 15 Feb 2026, so that's about 35 days away. I should flag this as somewhat urgent. Road tax expiry on 1 July is further out but connected.",
       tasks: [],
       conversationTitle: "Mini Cooper MOT",
     },
@@ -223,7 +247,8 @@ What would you like to do?`,
 Here's what we'll cover:
 
 [PLAN_CARDS]`,
-      reasoning: "Anna doesn't currently have a pregnancy recorded in her data, but she's asking about having a baby. I'll present the plan options and let her start it. Some services like Sure Start Grant likely won't apply due to her income, but I'll let the plan view's auto-skip logic handle that.",
+      reasoning:
+        "Anna doesn't currently have a pregnancy recorded in her data, but she's asking about having a baby. I'll present the plan options and let her start it. Some services like Sure Start Grant likely won't apply due to her income, but I'll let the plan view's auto-skip logic handle that.",
       tasks: [],
       conversationTitle: "Having a Baby plan",
     },
@@ -234,13 +259,22 @@ Here's what we'll cover:
       response: `Of course — I've added a reminder for you.
 
 [REGISTER_BIRTH_CARD]`,
-      reasoning: "The user wants to be reminded to register the birth. Showing a single task card with an 'Add to calendar' action.",
+      reasoning:
+        "The user wants to be reminded to register the birth. Showing a single task card with an 'Add to calendar' action.",
       tasks: [],
       conversationTitle: "Register the birth reminder",
     },
   },
   {
-    patterns: [/apply/i, /on my behalf/i, /go ahead/i, /proceed/i, /set.*up/i, /do it/i, /yes/i],
+    patterns: [
+      /apply/i,
+      /on my behalf/i,
+      /go ahead/i,
+      /proceed/i,
+      /set.*up/i,
+      /do it/i,
+      /yes/i,
+    ],
     response: {
       response: `I'm on it. Here's what I'm doing:
 
@@ -251,7 +285,8 @@ Here's what we'll cover:
 I'll keep you updated on progress. You can check the status anytime from your to-do list.
 
 [APPLICATION_RECEIPT]`,
-      reasoning: "The user has confirmed they want to proceed. In a real scenario, this would trigger the actual service application. For the demo, I'm showing what the delegated agent experience looks like.",
+      reasoning:
+        "The user has confirmed they want to proceed. In a real scenario, this would trigger the actual service application. For the demo, I'm showing what the delegated agent experience looks like.",
       tasks: [],
       conversationTitle: null,
     },
@@ -268,7 +303,8 @@ I'll keep you updated on progress. You can check the status anytime from your to
 - **Apply for things** on your behalf, like Tax-Free Childcare
 
 What would you like to explore?`,
-      reasoning: "The user's message didn't match a specific scripted scenario. Providing a helpful overview of what the demo can do.",
+      reasoning:
+        "The user's message didn't match a specific scripted scenario. Providing a helpful overview of what the demo can do.",
       tasks: [],
       conversationTitle: "Chat with GOV.UK",
     },

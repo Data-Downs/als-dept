@@ -1,10 +1,7 @@
 import type { Config } from "tailwindcss";
 
 const config: Config = {
-  content: [
-    "./app/**/*.{ts,tsx}",
-    "./components/**/*.{ts,tsx}",
-  ],
+  content: ["./app/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}"],
   theme: {
     extend: {
       colors: {
@@ -58,6 +55,14 @@ const config: Config = {
           from: { opacity: "0", transform: "scale(0.95)" },
           to: { opacity: "1", transform: "scale(1)" },
         },
+        "toast-in": {
+          "0%": { opacity: "0", transform: "translateY(16px) scale(0.95)" },
+          "100%": { opacity: "1", transform: "translateY(0) scale(1)" },
+        },
+        "toast-out": {
+          "0%": { opacity: "1", transform: "translateY(0)" },
+          "100%": { opacity: "0", transform: "translateY(-8px)" },
+        },
       },
       animation: {
         "slide-up": "slide-up 0.3s cubic-bezier(0.25, 0.1, 0.25, 1.4)",
@@ -65,6 +70,8 @@ const config: Config = {
         "bounce-dot": "bounce-dot 1.4s infinite ease-in-out both",
         "slide-in-right": "slide-in-right 0.25s ease-out",
         "scale-in": "scale-in 0.15s ease-out",
+        "toast-in": "toast-in 0.3s ease-out",
+        "toast-out": "toast-out 0.2s ease-in forwards",
       },
     },
   },

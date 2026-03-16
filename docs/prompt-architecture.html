@@ -1,0 +1,2134 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Prompt Architecture &mdash; ALS Platform Briefing</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /* ── Reset & Base ── */
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        font-family: "Inter", Arial, sans-serif;
+        color: #0b0c0c;
+        line-height: 1.6;
+        background: #fff;
+        -webkit-font-smoothing: antialiased;
+      }
+      a {
+        color: #1d70b8;
+        text-decoration: none;
+      }
+      a:hover {
+        text-decoration: underline;
+        color: #003078;
+      }
+      code,
+      pre {
+        font-family: "JetBrains Mono", monospace;
+      }
+      img {
+        max-width: 100%;
+      }
+
+      /* ── Layout ── */
+      .container {
+        max-width: 960px;
+        margin: 0 auto;
+        padding: 0 1.5rem;
+      }
+      .container-wide {
+        max-width: 1120px;
+        margin: 0 auto;
+        padding: 0 1.5rem;
+      }
+      .section {
+        padding: 4rem 0;
+      }
+      .section-alt {
+        background: #f3f2f1;
+      }
+      .section-dark {
+        background: #0b0c0c;
+        color: #fff;
+      }
+      .section-dark a {
+        color: #b1b4b6;
+      }
+      .section-dark a:hover {
+        color: #fff;
+      }
+
+      h1,
+      h2,
+      h3,
+      h4 {
+        line-height: 1.2;
+      }
+      h2 {
+        font-size: 1.75rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+      }
+      h3 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+      }
+      h4 {
+        font-size: 1.05rem;
+        font-weight: 600;
+        margin-bottom: 0.4rem;
+      }
+      .section-intro {
+        font-size: 1.1rem;
+        color: #505a5f;
+        max-width: 700px;
+        margin-bottom: 2rem;
+      }
+
+      /* ── Nav ── */
+      .nav {
+        background: #fff;
+        border-bottom: 1px solid #b1b4b6;
+        padding: 0.75rem 0;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+      .nav .container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+      }
+      .nav-brand {
+        font-weight: 700;
+        font-size: 1rem;
+        color: #0b0c0c;
+        white-space: nowrap;
+      }
+      .nav-links {
+        display: flex;
+        gap: 1.25rem;
+        list-style: none;
+        flex-wrap: wrap;
+        align-items: center;
+      }
+      .nav-links a {
+        font-size: 0.85rem;
+        font-weight: 500;
+        color: #505a5f;
+      }
+      .nav-links a:hover {
+        color: #1d70b8;
+        text-decoration: none;
+      }
+
+      @media (max-width: 640px) {
+        .nav-links {
+          display: none;
+        }
+      }
+
+      /* ── Hero ── */
+      .hero {
+        padding: 5rem 0 4rem;
+      }
+      .hero-label {
+        display: inline-block;
+        background: #f3f2f1;
+        color: #505a5f;
+        font-size: 0.8rem;
+        font-weight: 600;
+        padding: 0.25rem 0.75rem;
+        border-radius: 2px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 1.25rem;
+      }
+      .hero h1 {
+        font-size: 2.75rem;
+        font-weight: 700;
+        margin-bottom: 0.75rem;
+      }
+      .hero-subtitle {
+        font-size: 1.35rem;
+        color: #505a5f;
+        font-weight: 400;
+        max-width: 640px;
+        margin-bottom: 1.5rem;
+      }
+      .hero-desc {
+        font-size: 1.05rem;
+        color: #505a5f;
+        max-width: 640px;
+        margin-bottom: 2rem;
+      }
+
+      @media (max-width: 640px) {
+        .hero h1 {
+          font-size: 2rem;
+        }
+        .hero-subtitle {
+          font-size: 1.15rem;
+        }
+      }
+
+      /* ── Cards ── */
+      .grid-2 {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
+      }
+      .grid-3 {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.5rem;
+      }
+
+      @media (max-width: 800px) {
+        .grid-3 {
+          grid-template-columns: 1fr;
+        }
+      }
+      @media (max-width: 640px) {
+        .grid-2 {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .card {
+        background: #fff;
+        border: 1px solid #b1b4b6;
+        border-radius: 2px;
+        padding: 1.5rem;
+      }
+      .card-accent {
+        border-left: 4px solid;
+      }
+      .card-blue {
+        border-left-color: #1d70b8;
+      }
+      .card-green {
+        border-left-color: #00703c;
+      }
+      .card-orange {
+        border-left-color: #f47738;
+      }
+      .card-purple {
+        border-left-color: #912b88;
+      }
+      .card-teal {
+        border-left-color: #0b7285;
+      }
+      .card-red {
+        border-left-color: #d4351c;
+      }
+      .card-navy {
+        border-left-color: #003078;
+      }
+
+      .card h3 {
+        margin-bottom: 0.5rem;
+      }
+      .card p {
+        color: #505a5f;
+        font-size: 0.95rem;
+      }
+      .card-tag {
+        display: inline-block;
+        font-size: 0.7rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: #505a5f;
+        margin-bottom: 0.75rem;
+      }
+
+      .card-alt {
+        background: #f3f2f1;
+        border: 1px solid #e0dfde;
+      }
+
+      /* ── Callout ── */
+      .callout {
+        background: #f3f2f1;
+        border-left: 4px solid #b1b4b6;
+        padding: 1rem 1.25rem;
+        margin-top: 1.5rem;
+        font-size: 0.95rem;
+        color: #505a5f;
+      }
+      .callout-blue {
+        border-left-color: #1d70b8;
+      }
+      .callout-orange {
+        border-left-color: #f47738;
+      }
+      .callout-red {
+        border-left-color: #d4351c;
+      }
+      .callout-green {
+        border-left-color: #00703c;
+      }
+      .callout-purple {
+        border-left-color: #912b88;
+      }
+      .callout strong {
+        color: #0b0c0c;
+      }
+
+      /* ── Table ── */
+      .data-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.9rem;
+      }
+      .data-table th,
+      .data-table td {
+        text-align: left;
+        padding: 0.65rem 1rem;
+        border-bottom: 1px solid #e0dfde;
+      }
+      .data-table th {
+        font-weight: 600;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: #505a5f;
+        background: #f8f8f8;
+      }
+      .data-table code {
+        font-size: 0.85rem;
+        background: #f3f2f1;
+        padding: 0.1rem 0.35rem;
+        border-radius: 2px;
+      }
+
+      @media (max-width: 640px) {
+        .data-table {
+          font-size: 0.8rem;
+        }
+        .data-table th,
+        .data-table td {
+          padding: 0.5rem;
+        }
+      }
+
+      /* ── Flow Diagram ── */
+      .flow-diagram {
+        background: #f8f8f8;
+        border: 1px solid #e0dfde;
+        border-radius: 2px;
+        padding: 2rem 1.5rem;
+        margin: 2rem 0;
+        overflow-x: auto;
+      }
+      .flow-row {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+        justify-content: center;
+        margin-bottom: 1rem;
+      }
+      .flow-row:last-child {
+        margin-bottom: 0;
+      }
+      .flow-node {
+        background: #fff;
+        border: 1px solid #b1b4b6;
+        border-radius: 2px;
+        padding: 0.5rem 0.75rem;
+        font-size: 0.8rem;
+        font-weight: 500;
+        text-align: center;
+        white-space: nowrap;
+      }
+      .flow-node-primary {
+        background: #f0f6fc;
+        border-color: #1d70b8;
+        color: #1d70b8;
+      }
+      .flow-node-green {
+        background: #e6f4ea;
+        border-color: #00703c;
+        color: #00703c;
+      }
+      .flow-node-orange {
+        background: #fef3e8;
+        border-color: #f47738;
+        color: #b85c00;
+      }
+      .flow-node-purple {
+        background: #f5eaf4;
+        border-color: #912b88;
+        color: #912b88;
+      }
+      .flow-node-teal {
+        background: #e6f5f7;
+        border-color: #0b7285;
+        color: #0b7285;
+      }
+      .flow-node-red {
+        background: #fce8e6;
+        border-color: #d4351c;
+        color: #d4351c;
+      }
+      .flow-node-navy {
+        background: #e6eaf0;
+        border-color: #003078;
+        color: #003078;
+      }
+      .flow-arrow {
+        color: #505a5f;
+        font-size: 1.1rem;
+        line-height: 1;
+      }
+      .flow-down {
+        display: flex;
+        justify-content: center;
+        color: #505a5f;
+        font-size: 1.1rem;
+        margin-bottom: 1rem;
+      }
+      .flow-label {
+        font-size: 0.7rem;
+        color: #505a5f;
+        text-align: center;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+
+      /* ── Specimen ── */
+      .specimen {
+        background: #fafafa;
+        border: 1px solid #e0dfde;
+        border-radius: 2px;
+        padding: 1.25rem;
+        margin: 1rem 0;
+        font-size: 0.85rem;
+        line-height: 1.6;
+        max-height: 280px;
+        overflow-y: auto;
+      }
+      .specimen-tall {
+        max-height: 400px;
+      }
+      .specimen-label {
+        display: inline-block;
+        font-size: 0.7rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: #fff;
+        background: #505a5f;
+        padding: 0.15rem 0.5rem;
+        border-radius: 2px;
+        margin-bottom: 0.75rem;
+      }
+      .specimen-label-blue {
+        background: #1d70b8;
+      }
+      .specimen-label-green {
+        background: #00703c;
+      }
+      .specimen-label-orange {
+        background: #b85c00;
+      }
+      .specimen-label-purple {
+        background: #912b88;
+      }
+      .specimen-label-teal {
+        background: #0b7285;
+      }
+
+      /* ── Layers ── */
+      .layer-stack {
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+      }
+      .layer {
+        border: 1px solid #b1b4b6;
+        padding: 1.25rem 1.5rem;
+        position: relative;
+      }
+      .layer:first-child {
+        border-radius: 2px 2px 0 0;
+      }
+      .layer:last-child {
+        border-radius: 0 0 2px 2px;
+      }
+      .layer + .layer {
+        border-top: none;
+      }
+      .layer-label {
+        font-size: 0.7rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        margin-bottom: 0.4rem;
+      }
+      .layer-1 {
+        background: #f0f6fc;
+      }
+      .layer-1 .layer-label {
+        color: #1d70b8;
+      }
+      .layer-2 {
+        background: #e6f4ea;
+      }
+      .layer-2 .layer-label {
+        color: #00703c;
+      }
+      .layer-3 {
+        background: #fef3e8;
+      }
+      .layer-3 .layer-label {
+        color: #b85c00;
+      }
+      .layer-4 {
+        background: #f5eaf4;
+      }
+      .layer-4 .layer-label {
+        color: #912b88;
+      }
+      .layer-5 {
+        background: #e6f5f7;
+      }
+      .layer-5 .layer-label {
+        color: #0b7285;
+      }
+      .layer-6 {
+        background: #fce8e6;
+      }
+      .layer-6 .layer-label {
+        color: #d4351c;
+      }
+
+      .layer h3 {
+        font-size: 1.1rem;
+        margin-bottom: 0.25rem;
+      }
+      .layer p {
+        font-size: 0.9rem;
+        color: #505a5f;
+        margin: 0;
+      }
+      .layer code {
+        font-size: 0.8rem;
+        background: rgba(255, 255, 255, 0.6);
+        padding: 0.1rem 0.3rem;
+        border-radius: 2px;
+      }
+
+      /* ── Split comparison ── */
+      .split {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0;
+      }
+      @media (max-width: 800px) {
+        .split {
+          grid-template-columns: 1fr;
+        }
+      }
+      .split-col {
+        padding: 2.5rem 2rem;
+        border: 1px solid #e0dfde;
+      }
+      .split-col:first-child {
+        border-right: none;
+        border-radius: 2px 0 0 2px;
+      }
+      .split-col:last-child {
+        border-radius: 0 2px 2px 0;
+      }
+      @media (max-width: 800px) {
+        .split-col:first-child {
+          border-right: 1px solid #e0dfde;
+          border-bottom: none;
+          border-radius: 2px 2px 0 0;
+        }
+        .split-col:last-child {
+          border-radius: 0 0 2px 2px;
+        }
+      }
+      .split-02 {
+        background: #f0f6fc;
+      }
+      .split-03 {
+        background: #f5eaf4;
+      }
+      .split-header {
+        font-size: 0.7rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 0.75rem;
+      }
+      .split-02 .split-header {
+        color: #1d70b8;
+      }
+      .split-03 .split-header {
+        color: #912b88;
+      }
+      .split-col h3 {
+        margin-bottom: 0.5rem;
+      }
+      .split-col p {
+        font-size: 0.92rem;
+        color: #505a5f;
+        margin-bottom: 0.75rem;
+      }
+      .split-col p:last-child {
+        margin-bottom: 0;
+      }
+
+      /* ── Pipeline steps ── */
+      .pipeline {
+        counter-reset: step;
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+      .pipeline li {
+        counter-increment: step;
+        padding: 0.6rem 0 0.6rem 2.25rem;
+        position: relative;
+        border-left: 2px solid #e0dfde;
+        margin-left: 0.75rem;
+        font-size: 0.9rem;
+      }
+      .pipeline li::before {
+        content: counter(step);
+        position: absolute;
+        left: -0.8rem;
+        top: 0.5rem;
+        width: 1.4rem;
+        height: 1.4rem;
+        font-size: 0.7rem;
+        font-weight: 600;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .pipeline-02 li::before {
+        background: #1d70b8;
+        color: #fff;
+      }
+      .pipeline-03 li::before {
+        background: #912b88;
+        color: #fff;
+      }
+      .pipeline li:last-child {
+        border-left-color: transparent;
+      }
+      .pipeline li strong {
+        display: block;
+        font-size: 0.9rem;
+      }
+      .pipeline li span {
+        color: #505a5f;
+        font-size: 0.85rem;
+      }
+      .pipeline-tag {
+        display: inline-block;
+        font-size: 0.65rem;
+        font-weight: 600;
+        padding: 0.1rem 0.4rem;
+        border-radius: 2px;
+        margin-left: 0.35rem;
+        vertical-align: middle;
+      }
+      .tag-deterministic {
+        background: #e6f4ea;
+        color: #00703c;
+      }
+      .tag-ai {
+        background: #fef3e8;
+        color: #b85c00;
+      }
+      .tag-platform {
+        background: #e6eaf0;
+        color: #003078;
+      }
+
+      /* ── Badge ── */
+      .badge {
+        display: inline-block;
+        background: #f3f2f1;
+        color: #505a5f;
+        font-size: 0.75rem;
+        font-weight: 500;
+        padding: 0.2rem 0.6rem;
+        border-radius: 2px;
+        border: 1px solid #e0dfde;
+      }
+      .badge-blue {
+        background: #f0f6fc;
+        color: #1d70b8;
+        border-color: #1d70b8;
+      }
+      .badge-green {
+        background: #e6f4ea;
+        color: #00703c;
+        border-color: #00703c;
+      }
+      .badge-orange {
+        background: #fef3e8;
+        color: #b85c00;
+        border-color: #f47738;
+      }
+      .badge-purple {
+        background: #f5eaf4;
+        color: #912b88;
+        border-color: #912b88;
+      }
+
+      /* ── Steps ── */
+      .steps {
+        counter-reset: step;
+        list-style: none;
+        padding: 0;
+      }
+      .steps li {
+        counter-increment: step;
+        padding: 0.75rem 0 0.75rem 2.5rem;
+        position: relative;
+        border-left: 2px solid #e0dfde;
+        margin-left: 0.75rem;
+      }
+      .steps li::before {
+        content: counter(step);
+        position: absolute;
+        left: -0.85rem;
+        top: 0.6rem;
+        width: 1.5rem;
+        height: 1.5rem;
+        background: #1d70b8;
+        color: #fff;
+        font-size: 0.75rem;
+        font-weight: 600;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .steps li:last-child {
+        border-left-color: transparent;
+      }
+      .steps li strong {
+        display: block;
+        margin-bottom: 0.15rem;
+      }
+      .steps li span {
+        color: #505a5f;
+        font-size: 0.9rem;
+      }
+
+      /* ── Metric row ── */
+      .metric-row {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1rem;
+        margin: 1.5rem 0;
+      }
+      @media (max-width: 640px) {
+        .metric-row {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+      .metric {
+        text-align: center;
+        padding: 1rem;
+        background: #fff;
+        border: 1px solid #e0dfde;
+        border-radius: 2px;
+      }
+      .metric-value {
+        font-size: 1.75rem;
+        font-weight: 700;
+        line-height: 1.2;
+      }
+      .metric-label {
+        font-size: 0.75rem;
+        font-weight: 500;
+        color: #505a5f;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        margin-top: 0.25rem;
+      }
+      .metric-02 .metric-value {
+        color: #1d70b8;
+      }
+      .metric-03 .metric-value {
+        color: #912b88;
+      }
+
+      /* ── Footer ── */
+      .footer {
+        background: #f3f2f1;
+        padding: 2rem 0;
+        font-size: 0.85rem;
+        color: #505a5f;
+        border-top: 1px solid #e0dfde;
+      }
+
+      /* ── Anchor link section ── */
+      .toc {
+        display: flex;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+        margin-top: 1rem;
+      }
+      .toc a {
+        font-size: 0.85rem;
+        font-weight: 500;
+        padding: 0.35rem 0.75rem;
+        background: #f3f2f1;
+        border: 1px solid #e0dfde;
+        border-radius: 2px;
+        color: #505a5f;
+      }
+      .toc a:hover {
+        background: #e0dfde;
+        text-decoration: none;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- ── Nav ── -->
+    <nav class="nav">
+      <div class="container">
+        <a class="nav-brand" href="index.html">Agentic Legibility Stack</a>
+        <ul class="nav-links">
+          <li><a href="index.html">Platform</a></li>
+          <li><a href="briefing-service-typologies.html">Typologies</a></li>
+          <li>
+            <a href="prompt-architecture.html" style="color: #1d70b8"
+              >Prompts</a
+            >
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- ── Hero ── -->
+    <section class="hero">
+      <div class="container">
+        <div class="hero-label">Platform Briefing</div>
+        <h1>Prompt Architecture</h1>
+        <p class="hero-subtitle">
+          Two apps, two philosophies, one platform. How citizen-02 and
+          citizen-03 prompt differently &mdash; and what that means for control,
+          legibility, and agent autonomy.
+        </p>
+        <p class="hero-desc">
+          citizen-02 builds a detailed, layered system prompt and relegates the
+          LLM to narration. citizen-03 gives the LLM tools and a short brief,
+          then lets it reason. Both reach Claude through the same
+          <code>AnthropicAdapter</code>, but the prompts they send could not be
+          more different.
+        </p>
+        <div class="toc">
+          <a href="#philosophy">Philosophy</a>
+          <a href="#citizen-02">citizen-02 deep dive</a>
+          <a href="#citizen-03">citizen-03 deep dive</a>
+          <a href="#side-by-side">Side-by-side</a>
+          <a href="#shared">Shared infrastructure</a>
+          <a href="#files">File map</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════════ -->
+    <!-- ── Section 1: The Two Philosophies ── -->
+    <!-- ══════════════════════════════════════════════════════ -->
+    <section class="section section-alt" id="philosophy">
+      <div class="container-wide">
+        <div class="container">
+          <h2>Two prompt philosophies</h2>
+          <p class="section-intro">
+            The same platform supports fundamentally different approaches to LLM
+            agency. The prompt is the lever.
+          </p>
+        </div>
+
+        <div class="split">
+          <div class="split-col split-02">
+            <div class="split-header">
+              citizen-02 &mdash; Orchestrator Model
+            </div>
+            <h3>"Platform decides, LLM narrates"</h3>
+            <p>
+              The orchestrator runs a 15-step deterministic pipeline. It
+              evaluates policy, manages state, builds field collectors, and
+              injects per-state instructions. The LLM receives a
+              3,000&ndash;5,000 token system prompt that tells it exactly what
+              to do in the current state, what NOT to say, and which state
+              transition to fire.
+            </p>
+            <p>
+              <strong>The LLM's job:</strong> Generate citizen-facing text and
+              propose (not decide) state transitions. The platform validates
+              everything after.
+            </p>
+            <p style="font-size: 0.85rem; margin-top: 0.5rem">
+              <code>packages/runtime/src/orchestrator.ts</code>
+            </p>
+          </div>
+          <div class="split-col split-03">
+            <div class="split-header">citizen-03 &mdash; Thin Agent Loop</div>
+            <h3>"LLM reasons with tools, platform validates"</h3>
+            <p>
+              The API route loads persona data, builds an ~800-token system
+              prompt, and hands the LLM 6 tools. The LLM runs in a loop (max 8
+              iterations), deciding which services to explore, when to check
+              eligibility, and how to guide the citizen. The platform executes
+              tool calls and returns results.
+            </p>
+            <p>
+              <strong>The LLM's job:</strong> Decide strategy, call tools,
+              synthesise results into cards and quick replies.
+            </p>
+            <p style="font-size: 0.85rem; margin-top: 0.5rem">
+              <code>apps/citizen-03/app/api/chat/route.ts</code>
+            </p>
+          </div>
+        </div>
+
+        <div class="callout callout-blue" style="margin-top: 2rem">
+          <strong>Same adapter, different prompts.</strong> Both apps import
+          <code>AnthropicAdapter</code> from <code>@als/adapters</code> and call
+          <code>execute({ systemPrompt, messages, tools? })</code>. The
+          difference is entirely in what <code>systemPrompt</code> contains and
+          whether <code>tools</code> is populated.
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════════ -->
+    <!-- ── Section 2: citizen-02 Deep Dive ── -->
+    <!-- ══════════════════════════════════════════════════════ -->
+    <section class="section" id="citizen-02">
+      <div class="container">
+        <h2 style="color: #1d70b8">citizen-02: The Orchestrator Model</h2>
+        <p class="section-intro">
+          The platform does the thinking. The LLM does the talking. Every
+          decision about which service, which state, which data to collect, and
+          which guardrails to apply is made in deterministic code
+          <em>before</em> the LLM is called.
+        </p>
+
+        <!-- ── 15-step pipeline ── -->
+        <h3 style="margin-top: 2rem">The 15-step pipeline</h3>
+        <p style="color: #505a5f; margin-bottom: 1rem">
+          Each request flows through this pipeline. Steps 1&ndash;6 and
+          8&ndash;15 are deterministic. Only step 7 touches the LLM.
+        </p>
+
+        <ol class="pipeline pipeline-02">
+          <li>
+            <strong>Policy evaluation</strong>
+            <span class="pipeline-tag tag-deterministic">deterministic</span
+            ><br /><span
+              >Evaluate eligibility rules against persona data using
+              <code>PolicyEvaluator</code></span
+            >
+          </li>
+          <li>
+            <strong>State machine setup</strong>
+            <span class="pipeline-tag tag-deterministic">deterministic</span
+            ><br /><span
+              >Initialise <code>StateMachine</code> from state-model.json, set
+              current state</span
+            >
+          </li>
+          <li>
+            <strong>Field collector</strong>
+            <span class="pipeline-tag tag-deterministic">deterministic</span
+            ><br /><span
+              >Build <code>FieldCollector</code> from manifest input schema,
+              seed with known persona data</span
+            >
+          </li>
+          <li>
+            <strong>Agent selection</strong>
+            <span class="pipeline-tag tag-deterministic">deterministic</span
+            ><br /><span
+              >Pick "triage" (no active service) or "journey" (service in
+              progress)</span
+            >
+          </li>
+          <li>
+            <strong>Strategy context</strong>
+            <span class="pipeline-tag tag-deterministic">deterministic</span
+            ><br /><span
+              >Build service context via the pluggable
+              <code>ServiceStrategy</code></span
+            >
+          </li>
+          <li>
+            <strong>System prompt assembly</strong>
+            <span class="pipeline-tag tag-deterministic">deterministic</span
+            ><br /><span
+              ><code>buildTriagePrompt()</code> or
+              <code>buildJourneyPrompt()</code> &mdash; composes 6 layers</span
+            >
+          </li>
+          <li>
+            <strong>LLM generation</strong>
+            <span class="pipeline-tag tag-ai">ai</span><br /><span
+              >Send assembled prompt + message history to Claude. Agentic loop
+              with optional tool calls.</span
+            >
+          </li>
+          <li>
+            <strong>Parse structured output</strong>
+            <span class="pipeline-tag tag-deterministic">deterministic</span
+            ><br /><span
+              >Extract JSON block (title, tasks, stateTransition,
+              extractedFacts) from response</span
+            >
+          </li>
+          <li>
+            <strong>Build tasks</strong>
+            <span class="pipeline-tag tag-deterministic">deterministic</span
+            ><br /><span
+              >Map parsed tasks to typed <code>TaskEntry</code> objects</span
+            >
+          </li>
+          <li>
+            <strong>State transition validation</strong>
+            <span class="pipeline-tag tag-deterministic">deterministic</span
+            ><br /><span
+              >Validate LLM's proposed transition, apply forced transitions,
+              match auto-transition patterns</span
+            >
+          </li>
+          <li>
+            <strong>Deterministic task injection</strong>
+            <span class="pipeline-tag tag-deterministic">deterministic</span
+            ><br /><span
+              >Override LLM tasks with platform-generated housing/bank cards at
+              specific states</span
+            >
+          </li>
+          <li>
+            <strong>Consent resolution</strong>
+            <span class="pipeline-tag tag-deterministic">deterministic</span
+            ><br /><span
+              >Surface consent grant cards at
+              <code>eligibility-checked</code> state</span
+            >
+          </li>
+          <li>
+            <strong>Handoff detection</strong>
+            <span class="pipeline-tag tag-deterministic">deterministic</span
+            ><br /><span
+              >Check for escalation triggers (edge cases, user distress)</span
+            >
+          </li>
+          <li>
+            <strong>Record extracted fields</strong>
+            <span class="pipeline-tag tag-deterministic">deterministic</span
+            ><br /><span
+              >Feed LLM-extracted facts into <code>FieldCollector</code></span
+            >
+          </li>
+          <li>
+            <strong>Version metadata</strong>
+            <span class="pipeline-tag tag-platform">platform</span><br /><span
+              >Hash the prompt, stamp ruleset + state model versions for audit
+              trail</span
+            >
+          </li>
+        </ol>
+
+        <div class="callout callout-blue">
+          <strong>Notice:</strong> The LLM runs at step 7 out of 15. Everything
+          before it is setup; everything after it is validation and override.
+          The platform has the final word on state transitions, tasks, and
+          consent.
+        </div>
+
+        <!-- ── The 6 Layers ── -->
+        <h3 style="margin-top: 2.5rem">
+          The 6 layers of a citizen-02 system prompt
+        </h3>
+        <p style="color: #505a5f; margin-bottom: 1rem">
+          Assembled by <code>buildTriagePrompt()</code> or
+          <code>buildJourneyPrompt()</code>, concatenated with
+          <code>---</code> separators.
+        </p>
+
+        <div class="layer-stack">
+          <div class="layer layer-1">
+            <div class="layer-label">Layer 1 &mdash; Agent Personality</div>
+            <h3>Who is the agent?</h3>
+            <p>
+              Static text files. <strong>DOT</strong> (cautious, asks
+              permission, formal tone) or <strong>MAX</strong> (proactive,
+              auto-fills, friendly tone). Same artefacts, different behaviour.
+            </p>
+            <p style="margin-top: 0.4rem">
+              <code>apps/citizen-02/data/prompts/dot-system.txt</code> &middot;
+              <code>max-system.txt</code>
+            </p>
+          </div>
+          <div class="layer layer-2">
+            <div class="layer-label">Layer 2 &mdash; Persona Style</div>
+            <h3>How should the agent communicate?</h3>
+            <p>
+              Text files per citizen persona &mdash; communication preferences
+              and background. Loaded by persona ID.
+            </p>
+            <p style="margin-top: 0.4rem">
+              <code>data/prompts/persona-emma-liam.txt</code> &middot;
+              <code>persona-margaret.txt</code> &middot; etc.
+            </p>
+          </div>
+          <div class="layer layer-3">
+            <div class="layer-label">Layer 3 &mdash; Scenario Context</div>
+            <h3>What service domain are we in?</h3>
+            <p>
+              Detailed background on the service: eligibility criteria, process
+              steps, key info needed. Static files or generated from manifests
+              via <code>generateScenarioPrompt()</code>.
+            </p>
+            <p style="margin-top: 0.4rem">
+              <code>data/prompts/scenario-benefits.txt</code> &middot;
+              <code>scenario-driving.txt</code> &middot; etc.
+            </p>
+          </div>
+          <div class="layer layer-4">
+            <div class="layer-label">Layer 4 &mdash; Service Artefacts</div>
+            <h3>What are the rules, states, and consent requirements?</h3>
+            <p>
+              Machine-readable JSON: <strong>policy.json</strong> (eligibility
+              rules), <strong>state-model.json</strong> (state machine),
+              <strong>consent.json</strong> (data-sharing grants). Injected as
+              structured context.
+            </p>
+            <p style="margin-top: 0.4rem">
+              <code>data/services/apply-universal-credit/policy.json</code>
+              &middot; <code>state-model.json</code> &middot;
+              <code>consent.json</code>
+            </p>
+          </div>
+          <div class="layer layer-5">
+            <div class="layer-label">Layer 5 &mdash; State Instructions</div>
+            <h3>What should the agent do in <em>this</em> state?</h3>
+            <p>
+              Per-state guidance: what to do, what to avoid, which transition to
+              fire. Hand-crafted JSON for core services; template-generated for
+              100+ graph-only services.
+            </p>
+            <p style="margin-top: 0.4rem">
+              <code>data/services/*/state-instructions.json</code> &middot;
+              <code>packages/schemas/src/state-instruction-templates.ts</code>
+            </p>
+          </div>
+          <div class="layer layer-6">
+            <div class="layer-label">
+              Layer 6 &mdash; Output Format &amp; Guardrails
+            </div>
+            <h3>How should the agent structure its response?</h3>
+            <p>
+              Reusable constants: <code>STRUCTURED_OUTPUT_INSTRUCTIONS</code>,
+              <code>TASK_INSTRUCTIONS</code>,
+              <code>FACT_EXTRACTION_INSTRUCTIONS</code>,
+              <code>ACCURACY_GUARDRAILS</code>, <code>TITLE_INSTRUCTIONS</code>.
+            </p>
+            <p style="margin-top: 0.4rem">
+              <code>packages/runtime/src/prompt-fragments.ts</code>
+            </p>
+          </div>
+        </div>
+
+        <!-- ── Agent personalities ── -->
+        <h3 style="margin-top: 2.5rem">Agent personalities: DOT vs MAX</h3>
+        <div class="grid-2" style="margin-top: 1rem">
+          <div class="card card-accent card-blue">
+            <div class="card-tag">Conservative</div>
+            <h3>DOT</h3>
+            <div class="specimen">
+              <div class="specimen-label specimen-label-blue">Excerpt</div>
+              <p>
+                <strong>Principles:</strong> Fair, Cautious, Transparent,
+                Respectful, Accurate
+              </p>
+              <p style="margin-top: 0.4rem">
+                <strong>Data:</strong> For lookups, answer directly. For
+                form-filling, confirm first. For sharing with third parties,
+                always ask permission.
+              </p>
+              <p style="margin-top: 0.4rem">
+                <em>"Better to be slow and right than fast and wrong."</em>
+              </p>
+            </div>
+          </div>
+          <div class="card card-accent card-orange">
+            <div class="card-tag">Proactive</div>
+            <h3>MAX</h3>
+            <div class="specimen">
+              <div class="specimen-label specimen-label-orange">Excerpt</div>
+              <p>
+                <strong>Principles:</strong> User first, Fast, Confident,
+                Proactive, Accurate
+              </p>
+              <p style="margin-top: 0.4rem">
+                <strong>Data:</strong> USE DATA PROACTIVELY. Never say "May I
+                use your records?" &mdash; say "I've filled in your details to
+                save you time."
+              </p>
+              <p style="margin-top: 0.4rem">
+                <em>"Be their advocate and champion."</em>
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="callout">
+          <strong>Same artefacts, different behaviour.</strong> Both agents
+          receive identical policy rules, state models, and guardrails. Only
+          Layer 1 changes. This proves the platform can serve different
+          interaction philosophies from the same service definitions.
+        </div>
+
+        <!-- ── State instructions ── -->
+        <h3 style="margin-top: 2.5rem">
+          State instructions: the per-step playbook
+        </h3>
+        <p style="color: #505a5f; margin-bottom: 1rem">
+          The most detailed and controlling part of a citizen-02 prompt. Each
+          state gets a multi-paragraph instruction with explicit DO and DO NOT
+          rules.
+        </p>
+
+        <div class="grid-2" style="margin-top: 1rem">
+          <div class="card card-accent card-navy">
+            <div class="card-tag">Hand-crafted (4 services)</div>
+            <h3>Service-specific JSON</h3>
+            <p>
+              Per-state instruction strings, plus
+              <code>forcedTransitions</code> (automatic state skips) and
+              <code>autoTransitions</code> (regex patterns that match user
+              messages to trigger transitions).
+            </p>
+            <p style="margin-top: 0.5rem; font-size: 0.85rem">
+              <code>data/services/{slug}/state-instructions.json</code>
+            </p>
+          </div>
+          <div class="card card-accent card-purple">
+            <div class="card-tag">Template-generated (100+ services)</div>
+            <h3>Interaction type templates</h3>
+            <p>
+              Four templates &mdash; <code>APPLICATION</code>,
+              <code>LICENSE</code>, <code>REGISTER</code>,
+              <code>PORTAL</code> &mdash; with placeholders
+              (<code>{serviceName}</code>, <code>{department}</code>,
+              <code>{eligibilitySummary}</code>) resolved at runtime from graph
+              node data.
+            </p>
+            <p style="margin-top: 0.5rem; font-size: 0.85rem">
+              <code>packages/schemas/src/state-instruction-templates.ts</code>
+            </p>
+          </div>
+        </div>
+
+        <div class="specimen specimen-tall" style="margin-top: 1.5rem">
+          <div class="specimen-label">
+            state-instructions.json &mdash; "eligibility-checked" state
+          </div>
+          <pre style="white-space: pre-wrap; font-size: 0.83rem">
+Eligibility has already been checked and results were presented.
+The citizen is now reviewing consent cards that appeared below your previous message.
+
+If the citizen's message contains consent decisions (granted/denied) OR indicates
+agreement to proceed (e.g. "yes", "go ahead", "I consent", "proceed"):
+  - Acknowledge their consent, thank them
+  - Present their personal details for confirmation using ACTUAL data from the
+    DATA ON FILE section: full name, DOB, NI number, address
+  - Ask "Does everything look correct?"
+  - Set "stateTransition" to "grant-consent" in the JSON block
+
+If the citizen asks a question or provides other information:
+  - Answer their question helpfully
+  - Gently remind them to review and approve the consent cards below
+  - Do NOT set a stateTransition
+
+Do NOT re-explain eligibility — it's already done.
+Do NOT mention identity verification — it's already done.
+Do NOT discuss housing, bank details, income, or any later steps yet.
+Do NOT include any tasks in the JSON block.</pre
+          >
+        </div>
+
+        <div class="callout callout-red">
+          <strong>Control pattern:</strong> Every state instruction has explicit
+          DO and DO NOT rules, specifies exactly which
+          <code>stateTransition</code> to fire, and prevents the LLM from
+          discussing future steps. Even after all this, the platform still
+          validates the proposed transition at step 10.
+        </div>
+
+        <!-- ── What the LLM sees ── -->
+        <h3 style="margin-top: 2.5rem">What the LLM actually receives</h3>
+        <p style="color: #505a5f; margin-bottom: 1rem">
+          A fully assembled prompt, approximately structured like this:
+        </p>
+
+        <div
+          class="flow-diagram"
+          style="text-align: left; font-size: 0.85rem; line-height: 1.7"
+        >
+          <code style="color: #505a5f">
+            <span style="color: #1d70b8; font-weight: 600"
+              >You are DOT, a government AI agent...</span
+            >
+            <em style="font-weight: 400; color: #b1b4b6"
+              >(~300 tokens &mdash; agent personality)</em
+            ><br />
+            ---<br />
+            <span style="color: #00703c; font-weight: 600"
+              >PERSONA: Margaret is elderly, prefers simple language...</span
+            >
+            <em style="font-weight: 400; color: #b1b4b6"
+              >(~100 tokens &mdash; persona style)</em
+            ><br />
+            ---<br />
+            <span style="color: #b85c00; font-weight: 600"
+              >SCENARIO: Universal Credit application. Eligibility
+              criteria...</span
+            >
+            <em style="font-weight: 400; color: #b1b4b6"
+              >(~400 tokens &mdash; scenario)</em
+            ><br />
+            ---<br />
+            <span style="color: #912b88; font-weight: 600"
+              >PERSONA DATA AVAILABLE: {"name": "Margaret Evans", ...}</span
+            >
+            <em style="font-weight: 400; color: #b1b4b6"
+              >(~200 tokens &mdash; persona JSON)</em
+            ><br />
+            ---<br />
+            <span style="color: #912b88; font-weight: 600"
+              >POLICY EVALUATION: Eligible. 3/3 rules passed...</span
+            >
+            <em style="font-weight: 400; color: #b1b4b6"
+              >(~150 tokens &mdash; strategy context)</em
+            ><br />
+            ---<br />
+            <span style="color: #0b7285; font-weight: 600"
+              >PERSONAL DATA EXTRACTION: When the user reveals personal
+              facts...</span
+            >
+            <em style="font-weight: 400; color: #b1b4b6"
+              >(~100 tokens &mdash; fact extraction)</em
+            ><br />
+            ---<br />
+            <span style="color: #0b7285; font-weight: 600"
+              >STATE MODEL JOURNEY: Current state: eligibility-checked...</span
+            >
+            <em style="font-weight: 400; color: #b1b4b6"
+              >(~300 tokens &mdash; state context)</em
+            ><br />
+            <span style="color: #0b7285; font-weight: 600"
+              >INSTRUCTIONS FOR THIS STATE: Eligibility has been
+              checked...</span
+            >
+            <em style="font-weight: 400; color: #b1b4b6"
+              >(~250 tokens &mdash; state instructions)</em
+            ><br />
+            <span style="color: #0b7285; font-weight: 600"
+              >DATA ON FILE: Name: Margaret Evans, DOB: 1948-03-12...</span
+            >
+            <em style="font-weight: 400; color: #b1b4b6"
+              >(~100 tokens &mdash; data on file)</em
+            ><br />
+            <span style="color: #0b7285; font-weight: 600"
+              >CONSENT REQUIREMENTS: share-ni-number: Share NI...</span
+            >
+            <em style="font-weight: 400; color: #b1b4b6"
+              >(~80 tokens &mdash; consent)</em
+            ><br />
+            ---<br />
+            <span style="color: #0b7285; font-weight: 600"
+              >FIELD COLLECTOR: Required: [...], Collected: [...]</span
+            >
+            <em style="font-weight: 400; color: #b1b4b6"
+              >(~60 tokens &mdash; field status)</em
+            ><br />
+            ---<br />
+            <span style="color: #d4351c; font-weight: 600"
+              >Remember: Stay in character as DOT agent...</span
+            >
+            <em style="font-weight: 400; color: #b1b4b6">(~30 tokens)</em><br />
+            <span style="color: #d4351c; font-weight: 600"
+              >ACCURACY GUARDRAILS — CRITICAL: Do NOT fabricate...</span
+            >
+            <em style="font-weight: 400; color: #b1b4b6">(~100 tokens)</em
+            ><br />
+            <span style="color: #d4351c; font-weight: 600"
+              >ACTIONABLE TASKS: When your response contains...</span
+            >
+            <em style="font-weight: 400; color: #b1b4b6"
+              >(~500 tokens &mdash; task format)</em
+            ><br />
+            <span style="color: #d4351c; font-weight: 600"
+              >STRUCTURED OUTPUT FORMAT — CRITICAL: At the END of every
+              response...</span
+            >
+            <em style="font-weight: 400; color: #b1b4b6"
+              >(~250 tokens &mdash; output format)</em
+            >
+          </code>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════════ -->
+    <!-- ── Section 3: citizen-03 Deep Dive ── -->
+    <!-- ══════════════════════════════════════════════════════ -->
+    <section class="section section-alt" id="citizen-03">
+      <div class="container">
+        <h2 style="color: #912b88">citizen-03: The Thin Agent Loop</h2>
+        <p class="section-intro">
+          Give the LLM tools and a short brief. Let it reason about what to do.
+          The platform executes tool calls and validates results, but the
+          strategy is the LLM's.
+        </p>
+
+        <!-- ── The loop ── -->
+        <h3 style="margin-top: 2rem">The agent loop</h3>
+        <p style="color: #505a5f; margin-bottom: 1rem">
+          A simple while loop, max 8 iterations. No state machine, no policy
+          evaluator, no field collector in the loop itself.
+        </p>
+
+        <ol class="pipeline pipeline-03">
+          <li>
+            <strong>Load context</strong>
+            <span class="pipeline-tag tag-platform">platform</span><br /><span
+              >Load persona data, initialise adapter and artefact store</span
+            >
+          </li>
+          <li>
+            <strong>Build system prompt</strong>
+            <span class="pipeline-tag tag-deterministic">deterministic</span
+            ><br /><span
+              >~800 tokens: role, response format (cards + quick replies), tool
+              usage guidelines, citizen profile</span
+            >
+          </li>
+          <li>
+            <strong>Attach 6 tools</strong>
+            <span class="pipeline-tag tag-platform">platform</span><br /><span
+              >Tool definitions from <code>@als/agent-tools</code> passed as
+              Anthropic <code>tool_use</code> specs</span
+            >
+          </li>
+          <li>
+            <strong>LLM decides + calls tools</strong>
+            <span class="pipeline-tag tag-ai">ai loop</span><br /><span
+              >LLM reasons, calls tools, gets results, calls more tools, until
+              it has a final answer</span
+            >
+          </li>
+          <li>
+            <strong>Parse cards + quick replies</strong>
+            <span class="pipeline-tag tag-deterministic">deterministic</span
+            ><br /><span
+              >Extract JSON block from response, separate display text from
+              structured data</span
+            >
+          </li>
+          <li>
+            <strong>Generate title</strong>
+            <span class="pipeline-tag tag-ai">ai (optional)</span><br /><span
+              >Separate single-turn LLM call for conversation title</span
+            >
+          </li>
+        </ol>
+
+        <div class="callout callout-purple">
+          <strong>Notice:</strong> The LLM runs at step 4 and may iterate up to
+          8 times. There is no platform-side policy evaluation, state
+          management, or task injection. The LLM uses tools to do these things
+          itself.
+        </div>
+
+        <!-- ── The 6 tools ── -->
+        <h3 style="margin-top: 2.5rem">The 6 tools the LLM gets</h3>
+        <p style="color: #505a5f; margin-bottom: 1rem">
+          Defined in <code>packages/agent-tools/src/tool-definitions.ts</code>.
+          These are Anthropic <code>tool_use</code> definitions passed alongside
+          the system prompt.
+        </p>
+
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Tool</th>
+              <th>What it does</th>
+              <th>LLM decides</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>query_service_graph</code></td>
+              <td>
+                Search 108 services by life event, department, type, or keyword
+              </td>
+              <td>Which filters to use, how many queries to make</td>
+            </tr>
+            <tr>
+              <td><code>get_life_event_plan</code></td>
+              <td>Get topologically-ordered service plan for a life event</td>
+              <td>
+                When to call it, which life event matches the citizen's
+                situation
+              </td>
+            </tr>
+            <tr>
+              <td><code>get_related_services</code></td>
+              <td>Get REQUIRES/ENABLES edges for a service</td>
+              <td>
+                Which service to explore, whether to follow the dependency chain
+              </td>
+            </tr>
+            <tr>
+              <td><code>check_eligibility</code></td>
+              <td>Evaluate policy rules against citizen data</td>
+              <td>When to check, what citizen data to pass</td>
+            </tr>
+            <tr>
+              <td><code>get_citizen_context</code></td>
+              <td>
+                Retrieve citizen's data profile (verified, submitted, inferred
+                tiers)
+              </td>
+              <td>Whether to load context at conversation start</td>
+            </tr>
+            <tr>
+              <td><code>record_evidence</code></td>
+              <td>Record a trace event in the append-only evidence store</td>
+              <td>What events to record, when to create audit trail entries</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- ── The full system prompt ── -->
+        <h3 style="margin-top: 2.5rem">What the LLM actually receives</h3>
+        <p style="color: #505a5f; margin-bottom: 1rem">
+          The entire system prompt. Not an excerpt &mdash; this is the real
+          thing.
+        </p>
+
+        <div class="specimen specimen-tall">
+          <div class="specimen-label specimen-label-purple">
+            citizen-03 system prompt (complete)
+          </div>
+          <pre style="white-space: pre-wrap; font-size: 0.83rem">
+You are a UK government services assistant helping Margaret Evans.
+
+## Your Role
+You help citizens navigate UK government services one step at a time. You have tools to search services, check eligibility, and understand service relationships.
+
+## CRITICAL: Response Format
+Your response MUST be SHORT — 2-4 sentences of conversational text, maximum. Do NOT list every service. Do NOT write walls of text.
+
+After your short text response, you MUST include a structured JSON block that provides interactive cards and suggested next actions. The UI renders these as tappable cards.
+
+```json
+{
+  "cards": [
+    { "type": "service", "id": "...", "title": "...", "urgency": "immediate" | "soon" | "later", "eligible": true | false | null },
+    { "type": "action", "title": "...", "description": "..." },
+    { "type": "info", "title": "...", "description": "..." }
+  ],
+  "quickReplies": ["...", "...", "..."]
+}
+```
+
+## Guidelines for cards
+- Show 2-4 cards maximum, not every service you found
+- Prioritise by urgency: what MUST they do first?
+- For a life event with many services, show the FIRST STEP only
+
+## How to Work
+1. Use `get_citizen_context` to understand their situation
+2. Use `get_life_event_plan` or `query_service_graph` to find services
+3. Use `check_eligibility` before saying someone qualifies
+4. Guide them ONE STEP AT A TIME — don't overwhelm
+
+## Constraints
+- Never fabricate service information
+- Check eligibility before claiming someone qualifies
+- If unsure, say so
+
+## Citizen Profile
+Name: Margaret Evans
+Location: Brighton, BN1 4GH</pre
+          >
+        </div>
+
+        <div class="callout">
+          <strong>That's it.</strong> Compare this to citizen-02's
+          ~3,000&ndash;5,000 tokens. No state machine, no per-state
+          instructions, no accuracy guardrails, no task format, no fact
+          extraction. The LLM figures out what to do by calling tools.
+        </div>
+
+        <!-- ── Streaming variant ── -->
+        <h3 style="margin-top: 2.5rem">Streaming variant</h3>
+        <p style="color: #505a5f; margin-bottom: 0.5rem">
+          citizen-03 also has a streaming endpoint
+          (<code>/api/chat/stream</code>) that uses SSE to push tool progress
+          events in real-time:
+        </p>
+        <div class="grid-2" style="margin-top: 1rem">
+          <div class="card card-alt">
+            <h3><code>tool_start</code></h3>
+            <p>
+              Fired when the LLM calls a tool. Includes a human-readable label
+              like "Searching services" or "Checking eligibility".
+            </p>
+          </div>
+          <div class="card card-alt">
+            <h3><code>tool_complete</code></h3>
+            <p>
+              Fired when a tool returns. Includes a summarised output (not the
+              full result) and duration in ms.
+            </p>
+          </div>
+          <div class="card card-alt">
+            <h3><code>reasoning</code></h3>
+            <p>
+              Streams the agent's internal reasoning text between tool
+              iterations.
+            </p>
+          </div>
+          <div class="card card-alt">
+            <h3><code>response</code></h3>
+            <p>
+              Final event with the complete response: text, cards, quick
+              replies, tool log, title.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════════ -->
+    <!-- ── Section 4: Side-by-Side ── -->
+    <!-- ══════════════════════════════════════════════════════ -->
+    <section class="section" id="side-by-side">
+      <div class="container">
+        <h2>Side-by-side comparison</h2>
+        <p class="section-intro">
+          The same question &mdash; "I've just lost my job, what benefits can I
+          get?" &mdash; produces very different internal flows.
+        </p>
+
+        <table class="data-table" style="margin-top: 1.5rem">
+          <thead>
+            <tr>
+              <th style="width: 30%">Dimension</th>
+              <th style="width: 35%">
+                <span style="color: #1d70b8">citizen-02</span>
+              </th>
+              <th style="width: 35%">
+                <span style="color: #912b88">citizen-03</span>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>System prompt size</strong></td>
+              <td>~3,000&ndash;5,000 tokens</td>
+              <td>~800&ndash;1,200 tokens</td>
+            </tr>
+            <tr>
+              <td><strong>Prompt layers</strong></td>
+              <td>
+                6 (personality + persona + scenario + artefacts + state + output
+                format)
+              </td>
+              <td>1 (role + format + constraints + profile)</td>
+            </tr>
+            <tr>
+              <td><strong>State machine</strong></td>
+              <td>
+                Injected into prompt; validated by platform after LLM response
+              </td>
+              <td>Not present; LLM navigates freely</td>
+            </tr>
+            <tr>
+              <td><strong>Per-state instructions</strong></td>
+              <td>Yes &mdash; multi-paragraph DO/DON'T rules per state</td>
+              <td>No &mdash; LLM decides what to do</td>
+            </tr>
+            <tr>
+              <td><strong>Policy evaluation</strong></td>
+              <td>
+                Platform runs <code>PolicyEvaluator</code> before LLM call;
+                results injected as context
+              </td>
+              <td>
+                LLM calls <code>check_eligibility</code> tool when it decides to
+              </td>
+            </tr>
+            <tr>
+              <td><strong>Agent personalities</strong></td>
+              <td>DOT or MAX (Layer 1 of prompt, ~300 tokens)</td>
+              <td>None &mdash; single neutral assistant voice</td>
+            </tr>
+            <tr>
+              <td><strong>Persona communication</strong></td>
+              <td>Loaded from persona-*.txt (Layer 2)</td>
+              <td>Name + location only (~20 tokens)</td>
+            </tr>
+            <tr>
+              <td><strong>Tools</strong></td>
+              <td>Optional, strategy-dependent (MCP tools or inline JSON)</td>
+              <td>Always &mdash; 6 tools from <code>@als/agent-tools</code></td>
+            </tr>
+            <tr>
+              <td><strong>LLM loop iterations</strong></td>
+              <td>Max 5 (tool use only)</td>
+              <td>Max 8 (tool use is the primary mechanism)</td>
+            </tr>
+            <tr>
+              <td><strong>Output format</strong></td>
+              <td>
+                JSON block:
+                <code
+                  >{ title, tasks[], stateTransition, extractedFacts[] }</code
+                >
+              </td>
+              <td>JSON block: <code>{ cards[], quickReplies[] }</code></td>
+            </tr>
+            <tr>
+              <td><strong>Post-LLM validation</strong></td>
+              <td>15 deterministic steps validate and override LLM output</td>
+              <td>Parse JSON, extract cards &mdash; trust LLM decisions</td>
+            </tr>
+            <tr>
+              <td><strong>Accuracy guardrails</strong></td>
+              <td>
+                Explicit <code>ACCURACY_GUARDRAILS</code> constant in prompt
+              </td>
+              <td>Single line: "Never fabricate service information"</td>
+            </tr>
+            <tr>
+              <td><strong>Fact extraction</strong></td>
+              <td>
+                LLM extracts facts into JSON; platform records in FieldCollector
+              </td>
+              <td>LLM can call <code>record_evidence</code> tool</td>
+            </tr>
+            <tr>
+              <td><strong>Consent handling</strong></td>
+              <td>Platform surfaces consent cards at specific state</td>
+              <td>Not implemented &mdash; LLM may mention consent verbally</td>
+            </tr>
+            <tr>
+              <td><strong>Handoff detection</strong></td>
+              <td>
+                Platform-side <code>HandoffManager</code> with trigger patterns
+              </td>
+              <td>"Offer human advisor connection for complex situations"</td>
+            </tr>
+            <tr>
+              <td><strong>Audit trail</strong></td>
+              <td>Version-stamped pipeline trace with prompt hash</td>
+              <td>Tool use log with duration + input/output summaries</td>
+            </tr>
+            <tr>
+              <td><strong>Title generation</strong></td>
+              <td>Inline: LLM includes title in structured JSON block</td>
+              <td>Separate LLM call after main response</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="callout callout-green" style="margin-top: 1.5rem">
+          <strong>Neither is "better".</strong> citizen-02 maximises platform
+          control and auditability &mdash; ideal for high-stakes benefit
+          applications where the platform must guarantee correctness. citizen-03
+          maximises agent flexibility &mdash; ideal for exploratory
+          conversations where the citizen's needs aren't yet clear.
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════════ -->
+    <!-- ── Section 5: Shared Infrastructure ── -->
+    <!-- ══════════════════════════════════════════════════════ -->
+    <section class="section section-alt" id="shared">
+      <div class="container">
+        <h2>Shared infrastructure</h2>
+        <p class="section-intro">
+          Despite their different prompt strategies, both apps share the same
+          packages and adapter.
+        </p>
+
+        <div class="grid-3">
+          <div class="card card-accent card-blue">
+            <h3>AnthropicAdapter</h3>
+            <p>
+              Single entry point for all LLM calls. Both apps call
+              <code>execute({ systemPrompt, messages, tools? })</code>. The
+              adapter handles API key management, request formatting, and
+              response parsing.
+            </p>
+            <p style="margin-top: 0.5rem; font-size: 0.85rem">
+              <code>packages/adapters/src/anthropic.ts</code>
+            </p>
+          </div>
+          <div class="card card-accent card-green">
+            <h3>ArtefactStore</h3>
+            <p>
+              Both apps load service manifests, policies, state models, and
+              consent definitions from the same store. citizen-02 injects them
+              into the prompt; citizen-03's tools query them.
+            </p>
+            <p style="margin-top: 0.5rem; font-size: 0.85rem">
+              <code>packages/legibility/</code>
+            </p>
+          </div>
+          <div class="card card-accent card-orange">
+            <h3>Service Graph</h3>
+            <p>
+              Both apps use the same 108-service graph. citizen-02 uses it for
+              triage routing; citizen-03 exposes it via
+              <code>query_service_graph</code> and
+              <code>get_life_event_plan</code> tools.
+            </p>
+            <p style="margin-top: 0.5rem; font-size: 0.85rem">
+              <code>packages/service-graph/</code>
+            </p>
+          </div>
+        </div>
+
+        <h3 style="margin-top: 2.5rem">Also: MCP Server prompts</h3>
+        <p style="color: #505a5f; margin-bottom: 1rem">
+          A third prompt system exists in
+          <code>packages/mcp-server/src/prompt-generator.ts</code>. It generates
+          MCP prompt registrations for external LLM consumers &mdash; two per
+          service:
+        </p>
+        <div class="grid-2" style="margin-top: 1rem">
+          <div class="card card-accent card-teal">
+            <h3><code>{prefix}_journey</code></h3>
+            <p>
+              Full journey guide: service overview, constraints, eligibility
+              rules, state flow, consent requirements, handoff info, redress
+              routes.
+            </p>
+          </div>
+          <div class="card card-accent card-teal">
+            <h3><code>{prefix}_eligibility_check</code></h3>
+            <p>
+              Focused eligibility assessment: rules to evaluate, edge cases,
+              clear instructions, optional citizen data.
+            </p>
+          </div>
+        </div>
+
+        <h3 style="margin-top: 2.5rem">Admin generator prompts</h3>
+        <p style="color: #505a5f; margin-bottom: 1rem">
+          Legibility Studio uses LLM prompts for internal generation tasks
+          &mdash; these are single-turn, not conversational.
+        </p>
+        <div class="grid-2" style="margin-top: 1rem">
+          <div class="card card-accent card-red">
+            <div class="card-tag">Legibility Studio</div>
+            <h3>Persona Generator</h3>
+            <p>
+              Generates test personas. System prompt specifies full schema with
+              required fields and edge cases.
+            </p>
+            <p style="margin-top: 0.5rem; font-size: 0.85rem">
+              <code>apps/legibility-studio/lib/persona-generator.ts</code>
+            </p>
+          </div>
+          <div class="card card-accent card-red">
+            <div class="card-tag">Legibility Studio</div>
+            <h3>Artefact Generator</h3>
+            <p>
+              Generates policy.json, state-model.json, consent.json from GOV.UK
+              content. Specifies TypeScript interfaces + few-shot examples.
+            </p>
+            <p style="margin-top: 0.5rem; font-size: 0.85rem">
+              <code>apps/legibility-studio/lib/artefact-generator.ts</code>
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════════ -->
+    <!-- ── Section 6: Complete File Map ── -->
+    <!-- ══════════════════════════════════════════════════════ -->
+    <section class="section" id="files">
+      <div class="container">
+        <h2>Complete file map</h2>
+        <p class="section-intro">
+          Every file that contains, generates, or assembles a prompt &mdash;
+          grouped by which app uses it.
+        </p>
+
+        <h3 style="margin-top: 1.5rem; color: #1d70b8">
+          citizen-02 prompt files
+        </h3>
+        <table class="data-table" style="margin-top: 0.75rem">
+          <thead>
+            <tr>
+              <th>File</th>
+              <th>Role</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>packages/runtime/src/orchestrator.ts</code></td>
+              <td>
+                Main prompt builders: <code>buildTriagePrompt()</code>,
+                <code>buildJourneyPrompt()</code>,
+                <code>buildStateContext()</code>
+              </td>
+            </tr>
+            <tr>
+              <td><code>packages/runtime/src/prompt-fragments.ts</code></td>
+              <td>
+                5 reusable constants: ACCURACY_GUARDRAILS, TITLE_INSTRUCTIONS,
+                TASK_INSTRUCTIONS, STRUCTURED_OUTPUT_INSTRUCTIONS,
+                FACT_EXTRACTION_INSTRUCTIONS
+              </td>
+            </tr>
+            <tr>
+              <td><code>apps/citizen-02/data/prompts/dot-system.txt</code></td>
+              <td>DOT agent personality (Layer 1)</td>
+            </tr>
+            <tr>
+              <td><code>apps/citizen-02/data/prompts/max-system.txt</code></td>
+              <td>MAX agent personality (Layer 1)</td>
+            </tr>
+            <tr>
+              <td><code>apps/citizen-02/data/prompts/persona-*.txt</code></td>
+              <td>Persona communication styles &mdash; 4 files (Layer 2)</td>
+            </tr>
+            <tr>
+              <td><code>apps/citizen-02/data/prompts/scenario-*.txt</code></td>
+              <td>Scenario context &mdash; 5 files (Layer 3)</td>
+            </tr>
+            <tr>
+              <td>
+                <code>apps/citizen-experience/app/api/chat/route.ts</code>
+              </td>
+              <td>
+                <code>generateScenarioPrompt()</code>,
+                <code>buildPolicyContext()</code> &mdash; dynamic Layer 3
+                generation
+              </td>
+            </tr>
+            <tr>
+              <td><code>data/services/*/state-instructions.json</code></td>
+              <td>
+                Hand-crafted per-state instructions (Layer 5) &mdash; 4 services
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <code>packages/schemas/src/state-instruction-templates.ts</code>
+              </td>
+              <td>
+                Template-generated per-state instructions (Layer 5) &mdash; 4
+                templates
+              </td>
+            </tr>
+            <tr>
+              <td><code>data/services/*/policy.json</code></td>
+              <td>Eligibility rules injected as context (Layer 4)</td>
+            </tr>
+            <tr>
+              <td><code>data/services/*/state-model.json</code></td>
+              <td>State machine definition (Layer 5)</td>
+            </tr>
+            <tr>
+              <td><code>data/services/*/consent.json</code></td>
+              <td>Consent grants injected into state context (Layer 5)</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3 style="margin-top: 2rem; color: #912b88">
+          citizen-03 prompt files
+        </h3>
+        <table class="data-table" style="margin-top: 0.75rem">
+          <thead>
+            <tr>
+              <th>File</th>
+              <th>Role</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>apps/citizen-03/app/api/chat/route.ts</code></td>
+              <td>
+                <code>buildSystemPrompt()</code> &mdash; the entire prompt
+                builder (~80 lines)
+              </td>
+            </tr>
+            <tr>
+              <td><code>apps/citizen-03/app/api/chat/stream/route.ts</code></td>
+              <td>
+                Duplicate <code>buildSystemPrompt()</code> for streaming variant
+              </td>
+            </tr>
+            <tr>
+              <td><code>packages/agent-tools/src/tool-definitions.ts</code></td>
+              <td>
+                6 tool definitions passed to Anthropic alongside the prompt
+              </td>
+            </tr>
+            <tr>
+              <td><code>packages/agent-tools/src/tool-handlers.ts</code></td>
+              <td>
+                Tool execution handlers (what runs when the LLM calls a tool)
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3 style="margin-top: 2rem">Shared / other</h3>
+        <table class="data-table" style="margin-top: 0.75rem">
+          <thead>
+            <tr>
+              <th>File</th>
+              <th>Role</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>packages/adapters/src/anthropic.ts</code></td>
+              <td>Final stop: passes assembled system prompt to Claude API</td>
+            </tr>
+            <tr>
+              <td><code>packages/mcp-server/src/prompt-generator.ts</code></td>
+              <td>MCP journey + eligibility prompt registration</td>
+            </tr>
+            <tr>
+              <td>
+                <code>apps/legibility-studio/lib/persona-generator.ts</code>
+              </td>
+              <td>Admin: LLM-based persona generation</td>
+            </tr>
+            <tr>
+              <td>
+                <code>apps/legibility-studio/lib/artefact-generator.ts</code>
+              </td>
+              <td>Admin: LLM-based service artefact generation</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════════ -->
+    <!-- ── Section 7: Design Principles ── -->
+    <!-- ══════════════════════════════════════════════════════ -->
+    <section class="section section-alt" id="principles">
+      <div class="container">
+        <h2>Prompt design principles</h2>
+        <p class="section-intro">
+          Patterns that emerge from looking at both approaches together.
+        </p>
+
+        <div class="grid-3">
+          <div class="card card-alt">
+            <h3>Control is a spectrum</h3>
+            <p>
+              citizen-02 maximises platform control. citizen-03 maximises agent
+              autonomy. The same service data powers both. The prompt is the
+              dial.
+            </p>
+          </div>
+          <div class="card card-alt">
+            <h3>Guardrails scale with stakes</h3>
+            <p>
+              citizen-02 adds <code>ACCURACY_GUARDRAILS</code>, per-state DO NOT
+              rules, and post-LLM validation for benefit applications.
+              citizen-03's guardrails are four bullet points &mdash; sufficient
+              for exploratory navigation.
+            </p>
+          </div>
+          <div class="card card-alt">
+            <h3>Tools replace prompt layers</h3>
+            <p>
+              citizen-02 injects policy results and state context into the
+              prompt. citizen-03 gives the LLM tools to fetch these itself. Same
+              information, different delivery mechanism.
+            </p>
+          </div>
+          <div class="card card-alt">
+            <h3>Personality is a layer, not a fork</h3>
+            <p>
+              citizen-02 proves that swapping 300 tokens of Layer 1 produces
+              fundamentally different agent behaviour. citizen-03 doesn't have
+              this layer yet &mdash; it's a design space waiting to be explored.
+            </p>
+          </div>
+          <div class="card card-alt">
+            <h3>Composition over monolith</h3>
+            <p>
+              citizen-02 composes from 6 layers, 5 fragments, and per-state
+              instructions. No single file contains a complete prompt. This
+              enables the same fragments to serve different agent modes.
+            </p>
+          </div>
+          <div class="card card-alt">
+            <h3>Audit via architecture</h3>
+            <p>
+              citizen-02 stamps every response with a prompt hash and version
+              metadata. citizen-03 logs every tool call with timing and I/O.
+              Both create an audit trail, but by different means.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Footer ── -->
+    <footer class="footer">
+      <div class="container">
+        <p>
+          Agentic Legibility Stack &mdash; Prompt Architecture Briefing &middot;
+          Generated March 2026
+        </p>
+      </div>
+    </footer>
+  </body>
+</html>

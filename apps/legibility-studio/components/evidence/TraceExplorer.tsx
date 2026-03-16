@@ -43,13 +43,18 @@ const typeColors: Record<string, string> = {
   "error.raised": "bg-red-100 text-red-800",
 };
 
-export default function TraceExplorer({ events, receipts, onSelectEvent }: TraceExplorerProps) {
+export default function TraceExplorer({
+  events,
+  receipts,
+  onSelectEvent,
+}: TraceExplorerProps) {
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [filter, setFilter] = useState<string>("all");
 
   const eventTypes = Array.from(new Set(events.map((e) => e.type)));
 
-  const filtered = filter === "all" ? events : events.filter((e) => e.type === filter);
+  const filtered =
+    filter === "all" ? events : events.filter((e) => e.type === filter);
 
   return (
     <div>
@@ -58,7 +63,9 @@ export default function TraceExplorer({ events, receipts, onSelectEvent }: Trace
         <button
           onClick={() => setFilter("all")}
           className={`text-xs px-2 py-1 rounded border ${
-            filter === "all" ? "bg-govuk-blue text-white border-govuk-blue" : "border-govuk-mid-grey"
+            filter === "all"
+              ? "bg-govuk-blue text-white border-govuk-blue"
+              : "border-govuk-mid-grey"
           }`}
         >
           All ({events.length})
@@ -68,7 +75,9 @@ export default function TraceExplorer({ events, receipts, onSelectEvent }: Trace
             key={type}
             onClick={() => setFilter(type)}
             className={`text-xs px-2 py-1 rounded border ${
-              filter === type ? "bg-govuk-blue text-white border-govuk-blue" : "border-govuk-mid-grey"
+              filter === type
+                ? "bg-govuk-blue text-white border-govuk-blue"
+                : "border-govuk-mid-grey"
             }`}
           >
             {type} ({events.filter((e) => e.type === type).length})
@@ -91,7 +100,9 @@ export default function TraceExplorer({ events, receipts, onSelectEvent }: Trace
             <div
               key={event.id}
               className={`border rounded transition-colors ${
-                isExpanded ? "border-govuk-blue bg-blue-50" : "border-govuk-mid-grey hover:border-govuk-blue"
+                isExpanded
+                  ? "border-govuk-blue bg-blue-50"
+                  : "border-govuk-mid-grey hover:border-govuk-blue"
               }`}
             >
               <button
@@ -101,12 +112,19 @@ export default function TraceExplorer({ events, receipts, onSelectEvent }: Trace
                 }}
                 className="w-full text-left px-3 py-2 flex items-center gap-3"
               >
-                <span className="text-xs text-govuk-dark-grey w-6 text-right">{idx + 1}</span>
-                <span className={`text-xs px-2 py-0.5 rounded font-mono ${typeColors[event.type] || "bg-gray-100"}`}>
+                <span className="text-xs text-govuk-dark-grey w-6 text-right">
+                  {idx + 1}
+                </span>
+                <span
+                  className={`text-xs px-2 py-0.5 rounded font-mono ${typeColors[event.type] || "bg-gray-100"}`}
+                >
                   {event.type}
                 </span>
                 <span className="text-xs text-govuk-dark-grey ml-auto">
-                  {new Date(event.timestamp).toLocaleTimeString("en-GB", { hour12: false, fractionalSecondDigits: 3 })}
+                  {new Date(event.timestamp).toLocaleTimeString("en-GB", {
+                    hour12: false,
+                    fractionalSecondDigits: 3,
+                  })}
                 </span>
               </button>
 

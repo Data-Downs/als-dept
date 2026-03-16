@@ -23,9 +23,9 @@ export interface MergeResult {
 export function normalizeKey(raw: string): string {
   return raw
     .toLowerCase()
-    .replace(/[\s\-]+/g, "_")  // spaces + hyphens → underscores
-    .replace(/_+/g, "_")        // collapse multiple underscores
-    .replace(/^_|_$/g, "");     // trim leading/trailing underscores
+    .replace(/[\s\-]+/g, "_") // spaces + hyphens → underscores
+    .replace(/_+/g, "_") // collapse multiple underscores
+    .replace(/^_|_$/g, ""); // trim leading/trailing underscores
 }
 
 export class InferredStore {
@@ -34,18 +34,33 @@ export class InferredStore {
   async getAll(userId: string): Promise<InferredFact[]> {
     const rows = await this.db.all<Record<string, unknown>>(
       "SELECT * FROM inferred_data WHERE user_id = ? ORDER BY created_at DESC",
-      userId
+      userId,
     );
     return rows.map(this.rowToFact);
   }
 
-  async store(userId: string, fact: Omit<InferredFact, "id" | "createdAt" | "updatedAt" | "mentions" | "supersededBy">): Promise<InferredFact> {
+  async store(
+    userId: string,
+    fact: Omit<
+      InferredFact,
+      "id" | "createdAt" | "updatedAt" | "mentions" | "supersededBy"
+    >,
+  ): Promise<InferredFact> {
     const id = `inf_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
     const now = new Date().toISOString();
     await this.db.run(
       `INSERT INTO inferred_data (id, user_id, field_key, field_value, confidence, source, session_id, extracted_from, mentions, superseded_by, created_at, updated_at)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, 1, NULL, ?, ?)`,
-      id, userId, fact.fieldKey, JSON.stringify(fact.fieldValue), fact.confidence, fact.source, fact.sessionId || null, fact.extractedFrom || null, now, now
+      id,
+      userId,
+      fact.fieldKey,
+      JSON.stringify(fact.fieldValue),
+      fact.confidence,
+      fact.source,
+      fact.sessionId || null,
+      fact.extractedFrom || null,
+      now,
+      now,
     );
     return { id, ...fact, mentions: 1, createdAt: now, updatedAt: now };
   }
@@ -61,7 +76,10 @@ export class InferredStore {
    */
   async storeOrMerge(
     userId: string,
-    fact: Omit<InferredFact, "id" | "createdAt" | "updatedAt" | "mentions" | "supersededBy">
+    fact: Omit<
+      InferredFact,
+      "id" | "createdAt" | "updatedAt" | "mentions" | "supersededBy"
+    >,
   ): Promise<MergeResult> {
     const normalizedKey = normalizeKey(fact.fieldKey);
     const now = new Date().toISOString();
@@ -69,7 +87,8 @@ export class InferredStore {
     // Look for an existing active fact with the same normalized key
     const existingRow = await this.db.get<Record<string, unknown>>(
       "SELECT * FROM inferred_data WHERE user_id = ? AND field_key = ? AND superseded_by IS NULL ORDER BY updated_at DESC LIMIT 1",
-      userId, normalizedKey
+      userId,
+      normalizedKey,
     );
 
     if (existingRow) {
@@ -79,14 +98,22 @@ export class InferredStore {
 
       if (existingValueStr === incomingValueStr) {
         // Same value → merge: bump mentions, upgrade confidence
-        const CONFIDENCE_RANK: Record<string, number> = { low: 1, medium: 2, high: 3 };
-        const newConfidence = (CONFIDENCE_RANK[fact.confidence] || 0) > (CONFIDENCE_RANK[existing.confidence] || 0)
-          ? fact.confidence
-          : existing.confidence;
+        const CONFIDENCE_RANK: Record<string, number> = {
+          low: 1,
+          medium: 2,
+          high: 3,
+        };
+        const newConfidence =
+          (CONFIDENCE_RANK[fact.confidence] || 0) >
+          (CONFIDENCE_RANK[existing.confidence] || 0)
+            ? fact.confidence
+            : existing.confidence;
 
         await this.db.run(
           "UPDATE inferred_data SET mentions = mentions + 1, confidence = ?, updated_at = ? WHERE id = ?",
-          newConfidence, now, existing.id
+          newConfidence,
+          now,
+          existing.id,
         );
 
         const merged: InferredFact = {
@@ -102,13 +129,24 @@ export class InferredStore {
         await this.db.run(
           `INSERT INTO inferred_data (id, user_id, field_key, field_value, confidence, source, session_id, extracted_from, mentions, superseded_by, created_at, updated_at)
            VALUES (?, ?, ?, ?, ?, ?, ?, ?, 1, NULL, ?, ?)`,
-          id, userId, normalizedKey, JSON.stringify(fact.fieldValue), fact.confidence, fact.source, fact.sessionId || null, fact.extractedFrom || null, now, now
+          id,
+          userId,
+          normalizedKey,
+          JSON.stringify(fact.fieldValue),
+          fact.confidence,
+          fact.source,
+          fact.sessionId || null,
+          fact.extractedFrom || null,
+          now,
+          now,
         );
 
         // Mark old fact as superseded by the new one
         await this.db.run(
           "UPDATE inferred_data SET superseded_by = ?, updated_at = ? WHERE id = ?",
-          id, now, existing.id
+          id,
+          now,
+          existing.id,
         );
 
         const newFact: InferredFact = {
@@ -137,7 +175,16 @@ export class InferredStore {
     await this.db.run(
       `INSERT INTO inferred_data (id, user_id, field_key, field_value, confidence, source, session_id, extracted_from, mentions, superseded_by, created_at, updated_at)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, 1, NULL, ?, ?)`,
-      id, userId, normalizedKey, JSON.stringify(fact.fieldValue), fact.confidence, fact.source, fact.sessionId || null, fact.extractedFrom || null, now, now
+      id,
+      userId,
+      normalizedKey,
+      JSON.stringify(fact.fieldValue),
+      fact.confidence,
+      fact.source,
+      fact.sessionId || null,
+      fact.extractedFrom || null,
+      now,
+      now,
     );
 
     const newFact: InferredFact = {
@@ -157,10 +204,12 @@ export class InferredStore {
   }
 
   /** Get contradiction pairs: old fact (superseded) + new fact that replaced it. */
-  async getContradictions(userId: string): Promise<Array<{ old: InferredFact; new: InferredFact }>> {
+  async getContradictions(
+    userId: string,
+  ): Promise<Array<{ old: InferredFact; new: InferredFact }>> {
     const supersededRows = await this.db.all<Record<string, unknown>>(
       "SELECT * FROM inferred_data WHERE user_id = ? AND superseded_by IS NOT NULL ORDER BY updated_at DESC",
-      userId
+      userId,
     );
 
     const pairs: Array<{ old: InferredFact; new: InferredFact }> = [];
@@ -171,7 +220,7 @@ export class InferredStore {
 
       const newRow = await this.db.get<Record<string, unknown>>(
         "SELECT * FROM inferred_data WHERE id = ?",
-        oldFact.supersededBy
+        oldFact.supersededBy,
       );
       if (newRow) {
         pairs.push({ old: oldFact, new: this.rowToFact(newRow) });
@@ -182,39 +231,53 @@ export class InferredStore {
   }
 
   /** Resolve a contradiction: keep one fact, delete the other. */
-  async resolveContradiction(keepId: string, deleteId: string): Promise<boolean> {
+  async resolveContradiction(
+    keepId: string,
+    deleteId: string,
+  ): Promise<boolean> {
     // Clear superseded_by on the kept fact (in case it was the old one)
     await this.db.run(
       "UPDATE inferred_data SET superseded_by = NULL, updated_at = ? WHERE id = ?",
-      new Date().toISOString(), keepId
+      new Date().toISOString(),
+      keepId,
     );
     // Delete the rejected fact
-    const result = await this.db.run("DELETE FROM inferred_data WHERE id = ?", deleteId);
+    const result = await this.db.run(
+      "DELETE FROM inferred_data WHERE id = ?",
+      deleteId,
+    );
     return result.changes > 0;
   }
 
   async remove(id: string): Promise<boolean> {
-    const result = await this.db.run("DELETE FROM inferred_data WHERE id = ?", id);
+    const result = await this.db.run(
+      "DELETE FROM inferred_data WHERE id = ?",
+      id,
+    );
     return result.changes > 0;
   }
 
   async removeByKey(userId: string, fieldKey: string): Promise<boolean> {
     const result = await this.db.run(
       "DELETE FROM inferred_data WHERE user_id = ? AND field_key = ?",
-      userId, fieldKey
+      userId,
+      fieldKey,
     );
     return result.changes > 0;
   }
 
   async clearAll(userId: string): Promise<number> {
-    const result = await this.db.run("DELETE FROM inferred_data WHERE user_id = ?", userId);
+    const result = await this.db.run(
+      "DELETE FROM inferred_data WHERE user_id = ?",
+      userId,
+    );
     return result.changes;
   }
 
   async count(userId: string): Promise<number> {
     const row = await this.db.get<{ cnt: number }>(
       "SELECT COUNT(*) as cnt FROM inferred_data WHERE user_id = ?",
-      userId
+      userId,
     );
     return row?.cnt || 0;
   }

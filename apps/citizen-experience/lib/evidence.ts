@@ -11,7 +11,13 @@
  * from tracing it into the Cloudflare Workers bundle.
  */
 
-import { TraceStore, TraceEmitter, ReceiptGenerator, CaseStore, D1Adapter } from "@als/evidence";
+import {
+  TraceStore,
+  TraceEmitter,
+  ReceiptGenerator,
+  CaseStore,
+  D1Adapter,
+} from "@als/evidence";
 import type { DatabaseAdapter } from "@als/evidence";
 
 let adapter: DatabaseAdapter | null = null;
@@ -35,7 +41,9 @@ async function ensureInit(): Promise<void> {
         const db = (env as any).DB;
         if (db) {
           adapter = new D1Adapter(db);
-          console.log("[Evidence] D1Adapter initialized via getCloudflareContext()");
+          console.log(
+            "[Evidence] D1Adapter initialized via getCloudflareContext()",
+          );
         }
       } catch {
         // Not on Cloudflare — fall through to SQLite
@@ -57,7 +65,9 @@ async function ensureInit(): Promise<void> {
       // On D1, tables are created by migrations — skip init().
       // On SQLite, init() creates tables if they don't exist.
       if (adapter instanceof D1Adapter) {
-        console.log("[Evidence] Skipping init() — tables created by D1 migration");
+        console.log(
+          "[Evidence] Skipping init() — tables created by D1 migration",
+        );
       } else {
         await store.init();
         await caseStore.init();

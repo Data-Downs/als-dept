@@ -63,40 +63,67 @@ export class ArtefactStore {
       const serviceDir = path.join(dirPath, entry.name);
 
       try {
-        const manifestRaw = await fs.readFile(path.join(serviceDir, "manifest.json"), "utf-8");
+        const manifestRaw = await fs.readFile(
+          path.join(serviceDir, "manifest.json"),
+          "utf-8",
+        );
         const manifest: CapabilityManifest = JSON.parse(manifestRaw);
 
         const artefacts: ServiceArtefacts = { manifest };
 
         // Try loading optional artefacts
         try {
-          const policyRaw = await fs.readFile(path.join(serviceDir, "policy.json"), "utf-8");
+          const policyRaw = await fs.readFile(
+            path.join(serviceDir, "policy.json"),
+            "utf-8",
+          );
           artefacts.policy = JSON.parse(policyRaw);
-        } catch { /* optional */ }
+        } catch {
+          /* optional */
+        }
 
         try {
-          const stateRaw = await fs.readFile(path.join(serviceDir, "state-model.json"), "utf-8");
+          const stateRaw = await fs.readFile(
+            path.join(serviceDir, "state-model.json"),
+            "utf-8",
+          );
           artefacts.stateModel = JSON.parse(stateRaw);
-        } catch { /* optional */ }
+        } catch {
+          /* optional */
+        }
 
         try {
-          const consentRaw = await fs.readFile(path.join(serviceDir, "consent.json"), "utf-8");
+          const consentRaw = await fs.readFile(
+            path.join(serviceDir, "consent.json"),
+            "utf-8",
+          );
           artefacts.consent = JSON.parse(consentRaw);
-        } catch { /* optional */ }
+        } catch {
+          /* optional */
+        }
 
         try {
-          const instrRaw = await fs.readFile(path.join(serviceDir, "state-instructions.json"), "utf-8");
+          const instrRaw = await fs.readFile(
+            path.join(serviceDir, "state-instructions.json"),
+            "utf-8",
+          );
           artefacts.stateInstructions = JSON.parse(instrRaw);
-        } catch { /* optional */ }
+        } catch {
+          /* optional */
+        }
 
         this.register(manifest.id, artefacts);
         loaded++;
       } catch {
-        console.warn(`[ArtefactStore] Skipping ${entry.name}: no valid manifest.json`);
+        console.warn(
+          `[ArtefactStore] Skipping ${entry.name}: no valid manifest.json`,
+        );
       }
     }
 
-    console.log(`[ArtefactStore] Loaded ${loaded} service artefact sets from ${dirPath}`);
+    console.log(
+      `[ArtefactStore] Loaded ${loaded} service artefact sets from ${dirPath}`,
+    );
     return loaded;
   }
 
@@ -125,14 +152,19 @@ export class ArtefactStore {
         policy: full.policy || undefined,
         stateModel: full.stateModel || undefined,
         consent: full.consent || undefined,
-        stateInstructions: (full as unknown as Record<string, unknown>).stateInstructions as ServiceArtefacts["stateInstructions"] || undefined,
+        stateInstructions:
+          ((full as unknown as Record<string, unknown>)
+            .stateInstructions as ServiceArtefacts["stateInstructions"]) ||
+          undefined,
       };
 
       this.register(full.id, artefacts);
       loaded++;
     }
 
-    console.log(`[ArtefactStore] Loaded ${loaded} service artefact sets from DB: ${dbPath}`);
+    console.log(
+      `[ArtefactStore] Loaded ${loaded} service artefact sets from DB: ${dbPath}`,
+    );
     return loaded;
   }
 
@@ -143,7 +175,11 @@ export class ArtefactStore {
   }
 
   /** Save a service's artefacts to disk and update in-memory map */
-  async saveService(dirPath: string, serviceId: string, artefacts: ServiceArtefacts): Promise<void> {
+  async saveService(
+    dirPath: string,
+    serviceId: string,
+    artefacts: ServiceArtefacts,
+  ): Promise<void> {
     const fs = await import("fs/promises");
     const path = await import("path");
 
@@ -156,7 +192,7 @@ export class ArtefactStore {
     await fs.writeFile(
       path.join(serviceDir, "manifest.json"),
       JSON.stringify(artefacts.manifest, null, 2),
-      "utf-8"
+      "utf-8",
     );
 
     // Write optional artefacts if present
@@ -164,7 +200,7 @@ export class ArtefactStore {
       await fs.writeFile(
         path.join(serviceDir, "policy.json"),
         JSON.stringify(artefacts.policy, null, 2),
-        "utf-8"
+        "utf-8",
       );
     }
 
@@ -172,7 +208,7 @@ export class ArtefactStore {
       await fs.writeFile(
         path.join(serviceDir, "state-model.json"),
         JSON.stringify(artefacts.stateModel, null, 2),
-        "utf-8"
+        "utf-8",
       );
     }
 
@@ -180,7 +216,7 @@ export class ArtefactStore {
       await fs.writeFile(
         path.join(serviceDir, "consent.json"),
         JSON.stringify(artefacts.consent, null, 2),
-        "utf-8"
+        "utf-8",
       );
     }
 
@@ -199,6 +235,8 @@ export class ArtefactStore {
 
     await fs.rm(serviceDir, { recursive: true, force: true });
     this.artefacts.delete(serviceId);
-    console.log(`[ArtefactStore] Deleted service ${serviceId} from ${serviceDir}`);
+    console.log(
+      `[ArtefactStore] Deleted service ${serviceId} from ${serviceDir}`,
+    );
   }
 }

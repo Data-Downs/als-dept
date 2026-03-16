@@ -12,7 +12,7 @@ export async function OPTIONS() {
  */
 export async function POST(
   _request: NextRequest,
-  { params }: { params: Promise<{ serviceId: string }> }
+  { params }: { params: Promise<{ serviceId: string }> },
 ) {
   try {
     const { serviceId } = await params;
@@ -26,6 +26,9 @@ export async function POST(
     return jsonWithCors({ promoted: newPromoted });
   } catch (error) {
     console.error("[v1/promote] Error:", error);
-    return jsonWithCors({ error: "Failed to toggle promotion" }, { status: 500 });
+    return jsonWithCors(
+      { error: "Failed to toggle promotion" },
+      { status: 500 },
+    );
   }
 }

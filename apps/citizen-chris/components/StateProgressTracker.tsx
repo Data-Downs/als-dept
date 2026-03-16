@@ -1,6 +1,9 @@
 "use client";
 
-import { getAllTerminalStateIds, generateMilestonesForType } from "@als/schemas";
+import {
+  getAllTerminalStateIds,
+  generateMilestonesForType,
+} from "@als/schemas";
 import type { InteractionType } from "@als/schemas";
 import type { ServiceType } from "@/lib/types";
 
@@ -17,14 +20,25 @@ interface Milestone {
 }
 
 // Per-service milestone definitions — derived from each state-model.json
-const SERVICE_MILESTONES: Record<string, { title: string; milestones: Milestone[] }> = {
+const SERVICE_MILESTONES: Record<
+  string,
+  { title: string; milestones: Milestone[] }
+> = {
   benefits: {
     title: "UC Application Progress",
     milestones: [
       { label: "Identity", states: ["not-started", "identity-verified"] },
       { label: "Eligibility", states: ["eligibility-checked"] },
       { label: "Consent", states: ["consent-given"] },
-      { label: "Details", states: ["personal-details-collected", "housing-details-collected", "income-details-collected", "bank-details-verified"] },
+      {
+        label: "Details",
+        states: [
+          "personal-details-collected",
+          "housing-details-collected",
+          "income-details-collected",
+          "bank-details-verified",
+        ],
+      },
       { label: "Submit", states: ["claim-submitted"] },
       { label: "Active", states: ["awaiting-interview", "claim-active"] },
     ],
@@ -76,9 +90,9 @@ const STATE_LABELS: Record<string, string> = {
   "photo-submitted": "Photo submitted",
   "payment-made": "Payment made",
   "application-submitted": "Application submitted",
-  "completed": "Complete",
+  completed: "Complete",
   // Terminal
-  "rejected": "Rejected",
+  rejected: "Rejected",
   "handed-off": "Handed off",
 };
 
@@ -97,11 +111,27 @@ function getMilestoneStatus(
   return "future";
 }
 
-const SUCCESS_TERMINALS = new Set(["claim-active", "completed", "issued", "registered", "all-steps-complete", "attended", "referred-to-service"]);
+const SUCCESS_TERMINALS = new Set([
+  "claim-active",
+  "completed",
+  "issued",
+  "registered",
+  "all-steps-complete",
+  "attended",
+  "referred-to-service",
+]);
 
-export function StateProgressTracker({ currentState, stateHistory, service, interactionType }: StateProgressProps) {
+export function StateProgressTracker({
+  currentState,
+  stateHistory,
+  service,
+  interactionType,
+}: StateProgressProps) {
   // Don't show progress for failure/handoff terminals
-  if (TERMINAL_STATES.includes(currentState) && !SUCCESS_TERMINALS.has(currentState)) {
+  if (
+    TERMINAL_STATES.includes(currentState) &&
+    !SUCCESS_TERMINALS.has(currentState)
+  ) {
     return null;
   }
 
@@ -130,9 +160,16 @@ export function StateProgressTracker({ currentState, stateHistory, service, inte
       {/* Milestone steps */}
       <div className="flex items-center gap-1">
         {config.milestones.map((milestone, idx) => {
-          const status = getMilestoneStatus(milestone, currentState, stateHistory);
+          const status = getMilestoneStatus(
+            milestone,
+            currentState,
+            stateHistory,
+          );
           return (
-            <div key={milestone.label} className="flex items-center flex-1 min-w-0">
+            <div
+              key={milestone.label}
+              className="flex items-center flex-1 min-w-0"
+            >
               {/* Step dot */}
               <div className="flex flex-col items-center">
                 <div
@@ -145,7 +182,14 @@ export function StateProgressTracker({ currentState, stateHistory, service, inte
                   }`}
                 >
                   {status === "completed" ? (
-                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+                    <svg
+                      width="10"
+                      height="10"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="3"
+                    >
                       <polyline points="20 6 9 17 4 12" />
                     </svg>
                   ) : (

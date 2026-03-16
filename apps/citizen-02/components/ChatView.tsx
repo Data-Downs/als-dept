@@ -13,7 +13,11 @@ import { StateProgressTracker } from "./StateProgressTracker";
 import { JourneyCompleteCard } from "./JourneyCompleteCard";
 import { CardHost } from "./cards/CardHost";
 import { RelatedServicesCard } from "./RelatedServicesCard";
-import { getAllTerminalStateIds, TERMINAL_STATE_CONFIG, resolveTerminalConfig } from "@als/schemas";
+import {
+  getAllTerminalStateIds,
+  TERMINAL_STATE_CONFIG,
+  resolveTerminalConfig,
+} from "@als/schemas";
 import { QuickReplies } from "./QuickReplies";
 import { PipelineTraceBar } from "./PipelineTraceBar";
 
@@ -65,19 +69,25 @@ export function ChatView() {
     .some((g) => consentDecisions[g.id] === "denied");
 
   // Derived task state
-  const allTasksCompleted = lastResponseTasks.length > 0 &&
+  const allTasksCompleted =
+    lastResponseTasks.length > 0 &&
     lastResponseTasks.every((t) => taskCompletions[t.id] !== undefined);
 
   // Derived consent state — all grants have a decision
-  const allConsentsDecided = pendingConsent.length > 0 &&
+  const allConsentsDecided =
+    pendingConsent.length > 0 &&
     pendingConsent.every((g) => consentDecisions[g.id] !== undefined);
 
   // Whether to show task cards (after the last assistant message)
-  const showTasks = !isLoading && lastResponseTasks.length > 0 && !tasksSubmitted;
+  const showTasks =
+    !isLoading && lastResponseTasks.length > 0 && !tasksSubmitted;
   // Whether to show dynamic form cards
   const showCards = !isLoading && pendingCards.length > 0 && !cardsSubmitted;
   // Whether to show consent cards (after tasks/cards are done or when none exist)
-  const showConsent = !isLoading && pendingConsent.length > 0 && !consentSubmitted &&
+  const showConsent =
+    !isLoading &&
+    pendingConsent.length > 0 &&
+    !consentSubmitted &&
     (lastResponseTasks.length === 0 || tasksSubmitted) &&
     (pendingCards.length === 0 || cardsSubmitted);
 
@@ -89,7 +99,10 @@ export function ChatView() {
       const el = lastAssistantRef.current;
       const container = chatScrollRef.current;
       if (el && container) {
-        container.scrollTo({ top: el.offsetTop - container.offsetTop, behavior: "smooth" });
+        container.scrollTo({
+          top: el.offsetTop - container.offsetTop,
+          behavior: "smooth",
+        });
       }
     });
   };
@@ -107,7 +120,15 @@ export function ChatView() {
     } else if (!isLoading) {
       scrollToLastAssistant();
     }
-  }, [conversationHistory, isLoading, activeHandoff, ucState, showTasks, showCards, showConsent]);
+  }, [
+    conversationHistory,
+    isLoading,
+    activeHandoff,
+    ucState,
+    showTasks,
+    showCards,
+    showConsent,
+  ]);
 
   useEffect(() => {
     if (allTasksCompleted && !tasksSubmitted) {
@@ -130,10 +151,13 @@ export function ChatView() {
   // Show quick replies when the last message is from the assistant and nothing
   // else is blocking (no tasks, cards, consent, loading, or terminal state)
   const lastMsg = conversationHistory[conversationHistory.length - 1];
-  const showQuickReplies = !isLoading &&
+  const showQuickReplies =
+    !isLoading &&
     lastMsg?.role === "assistant" &&
     typeof lastMsg.content === "string" &&
-    !showTasks && !showCards && !showConsent &&
+    !showTasks &&
+    !showCards &&
+    !showConsent &&
     !(ucState && TERMINAL_STATES.has(ucState));
 
   return (
@@ -186,19 +210,24 @@ export function ChatView() {
           const isUser = msg.role === "user";
           const isLastAssistant = idx === lastAssistantIdx;
           const RECEIPT_PREFIX = "[TASK_RECEIPT]\n";
-          const isTaskReceipt = isUser && msg.content.startsWith(RECEIPT_PREFIX);
+          const isTaskReceipt =
+            isUser && msg.content.startsWith(RECEIPT_PREFIX);
 
           if (isTaskReceipt) {
             return (
               <div key={idx}>
-                <TaskReceiptCard content={msg.content.slice(RECEIPT_PREFIX.length)} />
+                <TaskReceiptCard
+                  content={msg.content.slice(RECEIPT_PREFIX.length)}
+                />
               </div>
             );
           }
 
           return (
             <div key={idx} ref={isLastAssistant ? lastAssistantRef : undefined}>
-              <div className={`flex ${isUser ? "justify-end" : "justify-start"}`}>
+              <div
+                className={`flex ${isUser ? "justify-end" : "justify-start"}`}
+              >
                 <div
                   className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${
                     isUser
@@ -206,7 +235,11 @@ export function ChatView() {
                       : "text-govuk-black prose prose-sm prose-neutral max-w-none"
                   }`}
                 >
-                  {isUser ? msg.content : <ReactMarkdown>{msg.content}</ReactMarkdown>}
+                  {isUser ? (
+                    msg.content
+                  ) : (
+                    <ReactMarkdown>{msg.content}</ReactMarkdown>
+                  )}
                 </div>
               </div>
             </div>
@@ -232,7 +265,9 @@ export function ChatView() {
           <div className="max-w-[85%] mt-1">
             <CardHost
               cardRequests={pendingCards}
-              onAllSubmitted={(msg) => useAppStore.getState().submitCardsSummary(msg)}
+              onAllSubmitted={(msg) =>
+                useAppStore.getState().submitCardsSummary(msg)
+              }
               disabled={isLoading}
             />
           </div>
@@ -305,10 +340,24 @@ export function ChatView() {
         {activeHandoff && activeHandoff.triggered && (
           <div className="max-w-[85%]">
             <HandoffNotice
-              urgency={(activeHandoff.urgency as "routine" | "priority" | "urgent" | "safeguarding") || "routine"}
-              reason={activeHandoff.description || "The agent has determined you should speak to a person."}
-              department={(activeHandoff.routing?.department as string) || "Government service"}
-              phone={(activeHandoff.routing?.suggestedQueue as string) || undefined}
+              urgency={
+                (activeHandoff.urgency as
+                  | "routine"
+                  | "priority"
+                  | "urgent"
+                  | "safeguarding") || "routine"
+              }
+              reason={
+                activeHandoff.description ||
+                "The agent has determined you should speak to a person."
+              }
+              department={
+                (activeHandoff.routing?.department as string) ||
+                "Government service"
+              }
+              phone={
+                (activeHandoff.routing?.suggestedQueue as string) || undefined
+              }
               onDismiss={() => useAppStore.setState({ activeHandoff: null })}
               interactionType={interactionType ?? undefined}
             />
@@ -325,9 +374,10 @@ export function ChatView() {
               interactionType={interactionType ?? undefined}
             />
             {/* Related services — only for success terminals */}
-            {currentService && resolveTerminalConfig(ucState, interactionType).isSuccess && (
-              <RelatedServicesCard serviceId={currentService} />
-            )}
+            {currentService &&
+              resolveTerminalConfig(ucState, interactionType).isSuccess && (
+                <RelatedServicesCard serviceId={currentService} />
+              )}
           </div>
         )}
 

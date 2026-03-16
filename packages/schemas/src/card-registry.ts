@@ -65,7 +65,10 @@ const MONTHLY_RENT_FIELD: CardFieldDef = {
   placeholder: "e.g. 650",
   category: "housing",
   validation: { min: 0, max: 10000 },
-  showWhen: { field: "tenure_type", values: ["private_renter", "council_tenant"] },
+  showWhen: {
+    field: "tenure_type",
+    values: ["private_renter", "council_tenant"],
+  },
 };
 
 const SORT_CODE_FIELD: CardFieldDef = {
@@ -75,7 +78,10 @@ const SORT_CODE_FIELD: CardFieldDef = {
   required: true,
   placeholder: "e.g. 12-34-56",
   category: "financial",
-  validation: { pattern: "^\\d{2}-?\\d{2}-?\\d{2}$", message: "Enter a valid 6-digit sort code" },
+  validation: {
+    pattern: "^\\d{2}-?\\d{2}-?\\d{2}$",
+    message: "Enter a valid 6-digit sort code",
+  },
 };
 
 const ACCOUNT_NUMBER_FIELD: CardFieldDef = {
@@ -85,7 +91,10 @@ const ACCOUNT_NUMBER_FIELD: CardFieldDef = {
   required: true,
   placeholder: "e.g. 12345678",
   category: "financial",
-  validation: { pattern: "^\\d{6,8}$", message: "Enter a 6-8 digit account number" },
+  validation: {
+    pattern: "^\\d{6,8}$",
+    message: "Enter a 6-8 digit account number",
+  },
 };
 
 const BANK_NAME_FIELD: CardFieldDef = {
@@ -102,7 +111,8 @@ const BANK_NAME_FIELD: CardFieldDef = {
 const HOUSEHOLD_DETAILS_CARD: CardDefinition = {
   cardType: "household-details",
   title: "Your housing situation",
-  description: "We need to know about your housing to calculate your entitlement.",
+  description:
+    "We need to know about your housing to calculate your entitlement.",
   fields: [TENURE_FIELD, MONTHLY_RENT_FIELD],
   submitLabel: "Confirm housing details",
   dataCategory: "housing",
@@ -134,7 +144,10 @@ const FINANCIAL_DETAILS_CARD: CardDefinition = {
       placeholder: "e.g. 1200",
       category: "financial",
       validation: { min: 0 },
-      showWhen: { field: "employment_status", values: ["employed", "self_employed"] },
+      showWhen: {
+        field: "employment_status",
+        values: ["employed", "self_employed"],
+      },
     },
     {
       key: "savings_amount",
@@ -411,7 +424,8 @@ const DECISION_HELPER_CARD: CardDefinition = {
 const DOCUMENT_UPLOAD_CARD: CardDefinition = {
   cardType: "document-upload",
   title: "Upload supporting document",
-  description: "Upload a document such as a P45, photo ID, or utility bill. We'll extract the key details for you to confirm.",
+  description:
+    "Upload a document such as a P45, photo ID, or utility bill. We'll extract the key details for you to confirm.",
   fields: [
     {
       key: "document_file",
@@ -430,7 +444,8 @@ const DOCUMENT_UPLOAD_CARD: CardDefinition = {
 const INCOME_ASSESSMENT_CARD: CardDefinition = {
   cardType: "income-assessment",
   title: "Income and circumstances",
-  description: "We need to understand your financial situation to assess your benefit entitlement.",
+  description:
+    "We need to understand your financial situation to assess your benefit entitlement.",
   fields: [
     {
       key: "employment_status",
@@ -454,7 +469,10 @@ const INCOME_ASSESSMENT_CARD: CardDefinition = {
       placeholder: "e.g. 1200",
       category: "financial",
       validation: { min: 0 },
-      showWhen: { field: "employment_status", values: ["employed", "self_employed"] },
+      showWhen: {
+        field: "employment_status",
+        values: ["employed", "self_employed"],
+      },
     },
     {
       key: "housing_costs",
@@ -549,7 +567,8 @@ const EMPLOYER_VERIFICATION_CARD: CardDefinition = {
 const ENTITLEMENT_CONFIRMATION_CARD: CardDefinition = {
   cardType: "entitlement-confirmation",
   title: "Your entitlement",
-  description: "Based on the information provided, here is your statutory entitlement.",
+  description:
+    "Based on the information provided, here is your statutory entitlement.",
   fields: [
     {
       key: "entitlement_amount",
@@ -607,7 +626,8 @@ const FUNDING_CONDITIONS_CARD: CardDefinition = {
 const SOLICITOR_DETAILS_CARD: CardDefinition = {
   cardType: "solicitor-details",
   title: "Legal representative",
-  description: "If you have a solicitor or legal advisor acting on your behalf, provide their details here. This is optional.",
+  description:
+    "If you have a solicitor or legal advisor acting on your behalf, provide their details here. This is optional.",
   fields: [
     {
       key: "has_solicitor",
@@ -646,7 +666,8 @@ const SOLICITOR_DETAILS_CARD: CardDefinition = {
 const WITNESS_ATTESTATION_CARD: CardDefinition = {
   cardType: "witness-attestation",
   title: "Witness or certificate provider",
-  description: "Some legal processes require a witness or certificate provider to confirm your identity and intentions.",
+  description:
+    "Some legal processes require a witness or certificate provider to confirm your identity and intentions.",
   fields: [
     {
       key: "witness_name",
@@ -707,7 +728,10 @@ const APPLICATION_ELIGIBILITY_CARD: CardDefinition = {
       placeholder: "e.g. 1200",
       category: "financial",
       validation: { min: 0 },
-      showWhen: { field: "employment_status", values: ["employed", "self_employed"] },
+      showWhen: {
+        field: "employment_status",
+        values: ["employed", "self_employed"],
+      },
     },
   ],
   submitLabel: "Confirm details",
@@ -782,15 +806,11 @@ const TEMPLATE_CARD_REGISTRY: InteractionCardSet[] = [
   },
   {
     interactionType: "appointment_booker",
-    mappings: [
-      { stateId: "slot-selected", cards: [SLOT_PICKER_CARD] },
-    ],
+    mappings: [{ stateId: "slot-selected", cards: [SLOT_PICKER_CARD] }],
   },
   {
     interactionType: "portal",
-    mappings: [
-      { stateId: "action-performed", cards: [PORTAL_ACTION_CARD] },
-    ],
+    mappings: [{ stateId: "action-performed", cards: [PORTAL_ACTION_CARD] }],
   },
   {
     interactionType: "task_list",
@@ -821,7 +841,10 @@ const TEMPLATE_CARD_REGISTRY: InteractionCardSet[] = [
     mappings: [
       { stateId: "employer-verified", cards: [EMPLOYER_VERIFICATION_CARD] },
       { stateId: "document-submitted", cards: [DOCUMENT_UPLOAD_CARD] },
-      { stateId: "entitlement-confirmed", cards: [ENTITLEMENT_CONFIRMATION_CARD] },
+      {
+        stateId: "entitlement-confirmed",
+        cards: [ENTITLEMENT_CONFIRMATION_CARD],
+      },
     ],
   },
   {
@@ -835,7 +858,10 @@ const TEMPLATE_CARD_REGISTRY: InteractionCardSet[] = [
   {
     interactionType: "legal_process",
     mappings: [
-      { stateId: "solicitor-details-collected", cards: [SOLICITOR_DETAILS_CARD] },
+      {
+        stateId: "solicitor-details-collected",
+        cards: [SOLICITOR_DETAILS_CARD],
+      },
       { stateId: "witness-attested", cards: [WITNESS_ATTESTATION_CARD] },
       { stateId: "document-submitted", cards: [DOCUMENT_UPLOAD_CARD] },
     ],
@@ -972,92 +998,409 @@ export interface TypologyDataSchema {
 export const TYPOLOGY_DATA_SCHEMAS: Record<string, TypologyDataSchema> = {
   benefit: {
     typology: "benefit",
-    description: "Benefits require income, housing, and household data to assess entitlement and calculate payments.",
+    description:
+      "Benefits require income, housing, and household data to assess entitlement and calculate payments.",
     fields: [
-      { key: "employment_status", label: "Employment status", type: "radio", category: "employment", required: true, rationale: "Determines benefit rate and work-related requirements" },
-      { key: "monthly_income", label: "Monthly income (£)", type: "currency", category: "financial", required: true, rationale: "Income-tested benefits need gross income for assessment" },
-      { key: "savings_amount", label: "Total savings (£)", type: "currency", category: "financial", required: true, rationale: "Capital threshold affects eligibility (e.g. £16k for UC)" },
-      { key: "housing_costs", label: "Monthly housing costs (£)", type: "currency", category: "housing", required: true, rationale: "Housing element calculation" },
-      { key: "tenure_type", label: "Housing tenure", type: "radio", category: "housing", required: true, rationale: "Determines housing element eligibility" },
-      { key: "dependants", label: "Number of dependants", type: "number", category: "household", required: true, rationale: "Child element and childcare costs calculation" },
-      { key: "bank_sort_code", label: "Sort code", type: "sort-code", category: "financial", required: true, rationale: "Payment delivery", prefillFrom: "financials.sortCode" },
-      { key: "bank_account_number", label: "Account number", type: "account-number", category: "financial", required: true, rationale: "Payment delivery", prefillFrom: "financials.accountNumber" },
+      {
+        key: "employment_status",
+        label: "Employment status",
+        type: "radio",
+        category: "employment",
+        required: true,
+        rationale: "Determines benefit rate and work-related requirements",
+      },
+      {
+        key: "monthly_income",
+        label: "Monthly income (£)",
+        type: "currency",
+        category: "financial",
+        required: true,
+        rationale: "Income-tested benefits need gross income for assessment",
+      },
+      {
+        key: "savings_amount",
+        label: "Total savings (£)",
+        type: "currency",
+        category: "financial",
+        required: true,
+        rationale: "Capital threshold affects eligibility (e.g. £16k for UC)",
+      },
+      {
+        key: "housing_costs",
+        label: "Monthly housing costs (£)",
+        type: "currency",
+        category: "housing",
+        required: true,
+        rationale: "Housing element calculation",
+      },
+      {
+        key: "tenure_type",
+        label: "Housing tenure",
+        type: "radio",
+        category: "housing",
+        required: true,
+        rationale: "Determines housing element eligibility",
+      },
+      {
+        key: "dependants",
+        label: "Number of dependants",
+        type: "number",
+        category: "household",
+        required: true,
+        rationale: "Child element and childcare costs calculation",
+      },
+      {
+        key: "bank_sort_code",
+        label: "Sort code",
+        type: "sort-code",
+        category: "financial",
+        required: true,
+        rationale: "Payment delivery",
+        prefillFrom: "financials.sortCode",
+      },
+      {
+        key: "bank_account_number",
+        label: "Account number",
+        type: "account-number",
+        category: "financial",
+        required: true,
+        rationale: "Payment delivery",
+        prefillFrom: "financials.accountNumber",
+      },
     ],
   },
   entitlement: {
     typology: "entitlement",
-    description: "Entitlements require employer and earnings verification to confirm statutory rights.",
+    description:
+      "Entitlements require employer and earnings verification to confirm statutory rights.",
     fields: [
-      { key: "employer_name", label: "Employer name", type: "text", category: "employment", required: true, rationale: "Employer verification for statutory pay/leave" },
-      { key: "employer_address", label: "Employer address", type: "text", category: "employment", required: true, rationale: "Employer contact for verification" },
-      { key: "employment_start_date", label: "Employment start date", type: "date", category: "employment", required: true, rationale: "Qualifying period calculation" },
-      { key: "weekly_earnings", label: "Average weekly earnings (£)", type: "currency", category: "financial", required: true, rationale: "Lower earnings limit check and payment calculation" },
-      { key: "qualifying_event_date", label: "Date of qualifying event", type: "date", category: "entitlement", required: true, rationale: "Start date for entitlement period (e.g. baby due date, adoption date)" },
+      {
+        key: "employer_name",
+        label: "Employer name",
+        type: "text",
+        category: "employment",
+        required: true,
+        rationale: "Employer verification for statutory pay/leave",
+      },
+      {
+        key: "employer_address",
+        label: "Employer address",
+        type: "text",
+        category: "employment",
+        required: true,
+        rationale: "Employer contact for verification",
+      },
+      {
+        key: "employment_start_date",
+        label: "Employment start date",
+        type: "date",
+        category: "employment",
+        required: true,
+        rationale: "Qualifying period calculation",
+      },
+      {
+        key: "weekly_earnings",
+        label: "Average weekly earnings (£)",
+        type: "currency",
+        category: "financial",
+        required: true,
+        rationale: "Lower earnings limit check and payment calculation",
+      },
+      {
+        key: "qualifying_event_date",
+        label: "Date of qualifying event",
+        type: "date",
+        category: "entitlement",
+        required: true,
+        rationale:
+          "Start date for entitlement period (e.g. baby due date, adoption date)",
+      },
     ],
   },
   obligation: {
     typology: "obligation",
-    description: "Obligations require deadline dates, reference numbers, and amount calculations.",
+    description:
+      "Obligations require deadline dates, reference numbers, and amount calculations.",
     fields: [
-      { key: "reference_number", label: "Reference number", type: "text", category: "obligation", required: true, rationale: "Identifies the specific obligation (e.g. tax reference, vehicle registration)" },
-      { key: "deadline_date", label: "Deadline date", type: "date", category: "obligation", required: true, rationale: "Compliance deadline for the obligation" },
-      { key: "amount_due", label: "Amount due (£)", type: "currency", category: "payment", required: false, rationale: "Payment amount if obligation involves a fee" },
-      { key: "payment_method", label: "Payment method", type: "radio", category: "payment", required: false, rationale: "How the citizen wishes to pay" },
+      {
+        key: "reference_number",
+        label: "Reference number",
+        type: "text",
+        category: "obligation",
+        required: true,
+        rationale:
+          "Identifies the specific obligation (e.g. tax reference, vehicle registration)",
+      },
+      {
+        key: "deadline_date",
+        label: "Deadline date",
+        type: "date",
+        category: "obligation",
+        required: true,
+        rationale: "Compliance deadline for the obligation",
+      },
+      {
+        key: "amount_due",
+        label: "Amount due (£)",
+        type: "currency",
+        category: "payment",
+        required: false,
+        rationale: "Payment amount if obligation involves a fee",
+      },
+      {
+        key: "payment_method",
+        label: "Payment method",
+        type: "radio",
+        category: "payment",
+        required: false,
+        rationale: "How the citizen wishes to pay",
+      },
     ],
   },
   registration: {
     typology: "registration",
-    description: "Registrations require event details, dates, and participant information.",
+    description:
+      "Registrations require event details, dates, and participant information.",
     fields: [
-      { key: "event_date", label: "Date of event", type: "date", category: "registration", required: true, rationale: "The date of the event being registered (birth, death, marriage)" },
-      { key: "event_location", label: "Location of event", type: "text", category: "registration", required: true, rationale: "Where the event took place (hospital, venue, address)" },
-      { key: "participant_name", label: "Full name of person involved", type: "text", category: "registration", required: true, rationale: "Primary person for the registration record" },
-      { key: "informant_name", label: "Name of informant", type: "text", category: "registration", required: true, rationale: "Person reporting/registering the event", prefillFrom: "primaryContact.firstName" },
-      { key: "registration_district", label: "Registration district", type: "text", category: "registration", required: true, rationale: "Local register office jurisdiction" },
+      {
+        key: "event_date",
+        label: "Date of event",
+        type: "date",
+        category: "registration",
+        required: true,
+        rationale:
+          "The date of the event being registered (birth, death, marriage)",
+      },
+      {
+        key: "event_location",
+        label: "Location of event",
+        type: "text",
+        category: "registration",
+        required: true,
+        rationale: "Where the event took place (hospital, venue, address)",
+      },
+      {
+        key: "participant_name",
+        label: "Full name of person involved",
+        type: "text",
+        category: "registration",
+        required: true,
+        rationale: "Primary person for the registration record",
+      },
+      {
+        key: "informant_name",
+        label: "Name of informant",
+        type: "text",
+        category: "registration",
+        required: true,
+        rationale: "Person reporting/registering the event",
+        prefillFrom: "primaryContact.firstName",
+      },
+      {
+        key: "registration_district",
+        label: "Registration district",
+        type: "text",
+        category: "registration",
+        required: true,
+        rationale: "Local register office jurisdiction",
+      },
     ],
   },
   application: {
     typology: "application",
-    description: "Applications require identity confirmation, eligibility details, and supporting documents.",
+    description:
+      "Applications require identity confirmation, eligibility details, and supporting documents.",
     fields: [
-      { key: "full_name", label: "Full name", type: "text", category: "identity", required: true, rationale: "Identity confirmation for application", prefillFrom: "primaryContact.firstName" },
-      { key: "date_of_birth", label: "Date of birth", type: "date", category: "identity", required: true, rationale: "Identity and eligibility verification", prefillFrom: "primaryContact.dateOfBirth" },
-      { key: "address_line1", label: "Address", type: "text", category: "address", required: true, rationale: "Contact and delivery address", prefillFrom: "address.line1" },
-      { key: "postcode", label: "Postcode", type: "text", category: "address", required: true, rationale: "Address verification", prefillFrom: "address.postcode" },
-      { key: "supporting_document", label: "Supporting document", type: "file", category: "documents", required: false, rationale: "Photo ID, proof of address, or other evidence" },
+      {
+        key: "full_name",
+        label: "Full name",
+        type: "text",
+        category: "identity",
+        required: true,
+        rationale: "Identity confirmation for application",
+        prefillFrom: "primaryContact.firstName",
+      },
+      {
+        key: "date_of_birth",
+        label: "Date of birth",
+        type: "date",
+        category: "identity",
+        required: true,
+        rationale: "Identity and eligibility verification",
+        prefillFrom: "primaryContact.dateOfBirth",
+      },
+      {
+        key: "address_line1",
+        label: "Address",
+        type: "text",
+        category: "address",
+        required: true,
+        rationale: "Contact and delivery address",
+        prefillFrom: "address.line1",
+      },
+      {
+        key: "postcode",
+        label: "Postcode",
+        type: "text",
+        category: "address",
+        required: true,
+        rationale: "Address verification",
+        prefillFrom: "address.postcode",
+      },
+      {
+        key: "supporting_document",
+        label: "Supporting document",
+        type: "file",
+        category: "documents",
+        required: false,
+        rationale: "Photo ID, proof of address, or other evidence",
+      },
     ],
   },
   document: {
     typology: "document",
-    description: "Document services require identity verification and delivery preferences.",
+    description:
+      "Document services require identity verification and delivery preferences.",
     fields: [
-      { key: "document_type", label: "Document required", type: "select", category: "document", required: true, rationale: "Identifies which certificate or document is needed" },
-      { key: "full_name", label: "Full name (as it should appear)", type: "text", category: "identity", required: true, rationale: "Name for the document", prefillFrom: "primaryContact.firstName" },
-      { key: "delivery_address", label: "Delivery address", type: "text", category: "address", required: true, rationale: "Where to send the physical document", prefillFrom: "address.line1" },
-      { key: "delivery_preference", label: "Delivery speed", type: "radio", category: "delivery", required: true, rationale: "Standard vs priority delivery" },
+      {
+        key: "document_type",
+        label: "Document required",
+        type: "select",
+        category: "document",
+        required: true,
+        rationale: "Identifies which certificate or document is needed",
+      },
+      {
+        key: "full_name",
+        label: "Full name (as it should appear)",
+        type: "text",
+        category: "identity",
+        required: true,
+        rationale: "Name for the document",
+        prefillFrom: "primaryContact.firstName",
+      },
+      {
+        key: "delivery_address",
+        label: "Delivery address",
+        type: "text",
+        category: "address",
+        required: true,
+        rationale: "Where to send the physical document",
+        prefillFrom: "address.line1",
+      },
+      {
+        key: "delivery_preference",
+        label: "Delivery speed",
+        type: "radio",
+        category: "delivery",
+        required: true,
+        rationale: "Standard vs priority delivery",
+      },
     ],
   },
   legal_process: {
     typology: "legal_process",
-    description: "Legal processes require detailed personal information, legal representation details, and witness attestations.",
+    description:
+      "Legal processes require detailed personal information, legal representation details, and witness attestations.",
     fields: [
-      { key: "full_name", label: "Full legal name", type: "text", category: "identity", required: true, rationale: "Legal name for court/registry documents", prefillFrom: "primaryContact.firstName" },
-      { key: "date_of_birth", label: "Date of birth", type: "date", category: "identity", required: true, rationale: "Identity verification for legal proceedings", prefillFrom: "primaryContact.dateOfBirth" },
-      { key: "has_solicitor", label: "Do you have legal representation?", type: "radio", category: "legal", required: true, rationale: "Determines whether solicitor details are needed" },
-      { key: "solicitor_name", label: "Solicitor or firm name", type: "text", category: "legal", required: false, rationale: "Legal representative contact details" },
-      { key: "witness_name", label: "Witness / certificate provider name", type: "text", category: "legal", required: false, rationale: "Required for attestation on many legal documents" },
-      { key: "court_or_registry", label: "Court or registry", type: "text", category: "legal", required: false, rationale: "Jurisdiction for the legal process" },
+      {
+        key: "full_name",
+        label: "Full legal name",
+        type: "text",
+        category: "identity",
+        required: true,
+        rationale: "Legal name for court/registry documents",
+        prefillFrom: "primaryContact.firstName",
+      },
+      {
+        key: "date_of_birth",
+        label: "Date of birth",
+        type: "date",
+        category: "identity",
+        required: true,
+        rationale: "Identity verification for legal proceedings",
+        prefillFrom: "primaryContact.dateOfBirth",
+      },
+      {
+        key: "has_solicitor",
+        label: "Do you have legal representation?",
+        type: "radio",
+        category: "legal",
+        required: true,
+        rationale: "Determines whether solicitor details are needed",
+      },
+      {
+        key: "solicitor_name",
+        label: "Solicitor or firm name",
+        type: "text",
+        category: "legal",
+        required: false,
+        rationale: "Legal representative contact details",
+      },
+      {
+        key: "witness_name",
+        label: "Witness / certificate provider name",
+        type: "text",
+        category: "legal",
+        required: false,
+        rationale: "Required for attestation on many legal documents",
+      },
+      {
+        key: "court_or_registry",
+        label: "Court or registry",
+        type: "text",
+        category: "legal",
+        required: false,
+        rationale: "Jurisdiction for the legal process",
+      },
     ],
   },
   grant: {
     typology: "grant",
-    description: "Grants require project details, cost estimates, and acceptance of funding conditions.",
+    description:
+      "Grants require project details, cost estimates, and acceptance of funding conditions.",
     fields: [
-      { key: "project_description", label: "Project description", type: "text", category: "grant", required: true, rationale: "What the funding will be used for" },
-      { key: "estimated_cost", label: "Estimated cost (£)", type: "currency", category: "financial", required: true, rationale: "Total cost of the project or works" },
-      { key: "funding_requested", label: "Funding amount requested (£)", type: "currency", category: "financial", required: true, rationale: "How much grant funding is being sought" },
-      { key: "property_address", label: "Property address (if applicable)", type: "text", category: "address", required: false, rationale: "Location of works for property-related grants", prefillFrom: "address.line1" },
-      { key: "accept_conditions", label: "Accept grant conditions", type: "checkbox", category: "grant", required: true, rationale: "Formal acceptance of funding terms" },
+      {
+        key: "project_description",
+        label: "Project description",
+        type: "text",
+        category: "grant",
+        required: true,
+        rationale: "What the funding will be used for",
+      },
+      {
+        key: "estimated_cost",
+        label: "Estimated cost (£)",
+        type: "currency",
+        category: "financial",
+        required: true,
+        rationale: "Total cost of the project or works",
+      },
+      {
+        key: "funding_requested",
+        label: "Funding amount requested (£)",
+        type: "currency",
+        category: "financial",
+        required: true,
+        rationale: "How much grant funding is being sought",
+      },
+      {
+        key: "property_address",
+        label: "Property address (if applicable)",
+        type: "text",
+        category: "address",
+        required: false,
+        rationale: "Location of works for property-related grants",
+        prefillFrom: "address.line1",
+      },
+      {
+        key: "accept_conditions",
+        label: "Accept grant conditions",
+        type: "checkbox",
+        category: "grant",
+        required: true,
+        rationale: "Formal acceptance of funding terms",
+      },
     ],
   },
 };
@@ -1066,7 +1409,9 @@ export const TYPOLOGY_DATA_SCHEMAS: Record<string, TypologyDataSchema> = {
  * Resolve the canonical data schema for a given service typology (serviceType).
  * Returns null if no schema is defined for the type.
  */
-export function resolveTypologyDataSchema(serviceType: string | null | undefined): TypologyDataSchema | null {
+export function resolveTypologyDataSchema(
+  serviceType: string | null | undefined,
+): TypologyDataSchema | null {
   if (!serviceType) return null;
   return TYPOLOGY_DATA_SCHEMAS[serviceType.toLowerCase()] || null;
 }
@@ -1084,7 +1429,11 @@ export function getRequiredFieldsForTypology(serviceType: string): string[] {
 // ── Resolver ──
 
 /** Look up cards from a registry array */
-function findInRegistry(registry: InteractionCardSet[], interactionType: string, stateId: string): CardDefinition[] | null {
+function findInRegistry(
+  registry: InteractionCardSet[],
+  interactionType: string,
+  stateId: string,
+): CardDefinition[] | null {
   const cardSet = registry.find((cs) => cs.interactionType === interactionType);
   if (!cardSet) return null;
   const mapping = cardSet.mappings.find((m) => m.stateId === stateId);
@@ -1138,7 +1487,9 @@ export function resolveCardsWithOverrides(
  * Infer interaction type from a service's serviceType field.
  * Duplicated here to avoid cross-package dependency on legibility-studio.
  */
-export function inferInteractionType(serviceType: string | null | undefined): InteractionType {
+export function inferInteractionType(
+  serviceType: string | null | undefined,
+): InteractionType {
   if (!serviceType) return "application";
 
   const mapping: Record<string, InteractionType> = {

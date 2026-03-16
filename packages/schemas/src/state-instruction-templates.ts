@@ -58,16 +58,14 @@ Set "stateTransition" to "check-eligibility" in the JSON block.
 Do NOT skip ahead — complete this step only.
 Do NOT include any tasks in the JSON block — the eligibility check is automatic, not a task.`,
 
-  identityVerified:
-    `Identity has already been verified via GOV.UK One Login — do NOT mention identity verification again.
+  identityVerified: `Identity has already been verified via GOV.UK One Login — do NOT mention identity verification again.
 Check eligibility and present the results using the POLICY EVALUATION section above.
 If eligible, explain that consent is needed next — interactive consent cards will appear below.
 Set "stateTransition" to "check-eligibility" in the JSON block.
 Do NOT include any tasks in the JSON block.
 Do NOT discuss later steps yet.`,
 
-  eligibilityChecked:
-    `Eligibility has already been checked and results were presented.
+  eligibilityChecked: `Eligibility has already been checked and results were presented.
 The citizen is now reviewing consent cards that appeared below your previous message.
 
 If the citizen's message contains consent decisions (granted/denied) OR indicates agreement to proceed (e.g. "yes", "go ahead", "I consent", "proceed"):
@@ -94,8 +92,7 @@ Mention:
 This is the FINAL message — do NOT ask follow-up questions.
 Do NOT include any tasks in the JSON block.`,
 
-  handedOff:
-    `This case has been referred to a human advisor for further review.
+  handedOff: `This case has been referred to a human advisor for further review.
 Explain why, and provide:
 - The citizen should contact {department} directly
 - GOV.UK page for reference: {govukUrl}
@@ -127,24 +124,24 @@ Acknowledge the information the citizen provided. Summarise the key details back
 Explain that {department} will now assess their application.
 Set "stateTransition" to "begin-assessment" in the JSON block.
 Do NOT fabricate timelines or reference numbers — say "{department} will confirm."`,
-    "assessment": `The application is being assessed by {department}.
+    assessment: `The application is being assessed by {department}.
 Tell the citizen:
 - Their application has been submitted to {department} for assessment
 - They will be contacted with the outcome
 - Processing times vary — {department} will confirm the timeline
 Set "stateTransition" to "make-decision" in the JSON block.`,
-    "decision": `A decision has been made on the application.
+    decision: `A decision has been made on the application.
 If approved: Congratulate the citizen and explain next steps. Set "stateTransition" to "approve".
 If rejected: Explain the reason sympathetically. Set "stateTransition" to "reject-application".
 Do NOT fabricate specific amounts, dates, or reference numbers — say "{department} will confirm these details."`,
-    "completed": `The application has been approved! Congratulate them warmly.
+    completed: `The application has been approved! Congratulate them warmly.
 Explain:
 - {department} will confirm specific details (amounts, dates, reference numbers) directly
 - The citizen should check their email and post for official correspondence
 - They can visit {govukUrl} for more information
 This is the FINAL message — do NOT ask follow-up questions.
 Do NOT include any tasks in the JSON block.`,
-    "rejected": SHARED.rejected("application"),
+    rejected: SHARED.rejected("application"),
     "handed-off": SHARED.handedOff,
   },
   forcedTransitions: {
@@ -155,12 +152,14 @@ Do NOT include any tasks in the JSON block.`,
     {
       fromState: "eligibility-checked",
       trigger: "grant-consent",
-      pattern: "I have reviewed all consent|consent.*granted|granted.*consent|please proceed|I consent|go ahead|yes.*proceed|agree|done|let's go|ready|start|apply",
+      pattern:
+        "I have reviewed all consent|consent.*granted|granted.*consent|please proceed|I consent|go ahead|yes.*proceed|agree|done|let's go|ready|start|apply",
     },
     {
       fromState: "document-submitted",
       trigger: "submit-details",
-      pattern: "everything.*correct|looks correct|details.*correct|yes.*correct|confirm|that's right|all correct|details are correct",
+      pattern:
+        "everything.*correct|looks correct|details.*correct|yes.*correct|confirm|that's right|all correct|details are correct",
     },
   ],
 };
@@ -194,13 +193,13 @@ Explain:
 - They will be contacted with delivery details
 Set "stateTransition" to "issue-licence" in the JSON block.
 Do NOT fabricate specific dates or reference numbers.`,
-    "issued": `The licence has been issued! Congratulate them.
+    issued: `The licence has been issued! Congratulate them.
 Explain:
 - {department} will send the licence to their registered address
 - They can visit {govukUrl} to check status
 This is the FINAL message — do NOT ask follow-up questions.
 Do NOT include any tasks in the JSON block.`,
-    "refused": SHARED.rejected("licence application"),
+    refused: SHARED.rejected("licence application"),
     "handed-off": SHARED.handedOff,
   },
   forcedTransitions: {
@@ -211,12 +210,14 @@ Do NOT include any tasks in the JSON block.`,
     {
       fromState: "eligibility-checked",
       trigger: "grant-consent",
-      pattern: "I have reviewed all consent|consent.*granted|granted.*consent|please proceed|I consent|go ahead|yes.*proceed|agree|done|let's go|ready",
+      pattern:
+        "I have reviewed all consent|consent.*granted|granted.*consent|please proceed|I consent|go ahead|yes.*proceed|agree|done|let's go|ready",
     },
     {
       fromState: "document-submitted",
       trigger: "confirm-details",
-      pattern: "everything.*correct|looks correct|details.*correct|yes.*correct|confirm|that's right|all correct|details are correct",
+      pattern:
+        "everything.*correct|looks correct|details.*correct|yes.*correct|confirm|that's right|all correct|details are correct",
     },
   ],
 };
@@ -237,13 +238,13 @@ Do NOT include any tasks in the JSON block.`,
 Acknowledge the information provided. Summarise the key details back to them.
 Tell them {department} will process their registration.
 Set "stateTransition" to "confirm-registration" in the JSON block.`,
-    "registered": `The registration is complete! Confirm their {serviceName} registration.
+    registered: `The registration is complete! Confirm their {serviceName} registration.
 Explain:
 - {department} will send confirmation to their registered details
 - They can visit {govukUrl} for more information
 This is the FINAL message — do NOT ask follow-up questions.
 Do NOT include any tasks in the JSON block.`,
-    "rejected": SHARED.rejected("registration"),
+    rejected: SHARED.rejected("registration"),
     "handed-off": SHARED.handedOff,
   },
   forcedTransitions: {
@@ -254,12 +255,14 @@ Do NOT include any tasks in the JSON block.`,
     {
       fromState: "eligibility-checked",
       trigger: "grant-consent",
-      pattern: "I have reviewed all consent|consent.*granted|granted.*consent|please proceed|I consent|go ahead|yes.*proceed|agree|done|let's go|ready",
+      pattern:
+        "I have reviewed all consent|consent.*granted|granted.*consent|please proceed|I consent|go ahead|yes.*proceed|agree|done|let's go|ready",
     },
     {
       fromState: "consent-given",
       trigger: "submit-details",
-      pattern: "everything.*correct|looks correct|details.*correct|yes.*correct|confirm|that's right|all correct",
+      pattern:
+        "everything.*correct|looks correct|details.*correct|yes.*correct|confirm|that's right|all correct",
     },
   ],
 };
@@ -295,7 +298,7 @@ Help them perform the action they selected. Provide relevant information from th
 When the action is complete, set "stateTransition" to "perform-action" in the JSON block.`,
     "action-performed": `The action has been performed. Confirm what was done.
 Ask if there's anything else they'd like to do, or set "stateTransition" to "complete".`,
-    "completed": `All actions are complete.
+    completed: `All actions are complete.
 Summarise what was done in this session.
 This is the FINAL message — do NOT ask follow-up questions.
 Do NOT include any tasks in the JSON block.`,
@@ -334,7 +337,7 @@ Thank the citizen. Explain:
 - {department} will send a confirmation receipt
 - They can visit {govukUrl} for reference
 Set "stateTransition" to "complete" in the JSON block.`,
-    "completed": `Payment is complete! Confirm the payment.
+    completed: `Payment is complete! Confirm the payment.
 Explain:
 - {department} will send official confirmation
 - They can visit {govukUrl} for more information
@@ -350,7 +353,8 @@ Do NOT include any tasks in the JSON block.`,
     {
       fromState: "eligibility-checked",
       trigger: "grant-consent",
-      pattern: "I have reviewed all consent|consent.*granted|please proceed|I consent|go ahead|yes.*proceed|agree|done|ready",
+      pattern:
+        "I have reviewed all consent|consent.*granted|please proceed|I consent|go ahead|yes.*proceed|agree|done|ready",
     },
   ],
 };
@@ -379,10 +383,10 @@ Tell the citizen:
 - {department} will send a confirmation
 Set "stateTransition" to "attend" when the appointment is attended.
 Do NOT include any tasks in the JSON block.`,
-    "attended": `The appointment has been attended.
+    attended: `The appointment has been attended.
 Confirm that their {serviceName} appointment is complete.
 This is the FINAL message — do NOT ask follow-up questions.`,
-    "cancelled": `The appointment has been cancelled.
+    cancelled: `The appointment has been cancelled.
 Confirm the cancellation and explain how to rebook if needed.
 This is the FINAL message — do NOT ask follow-up questions.`,
     "handed-off": SHARED.handedOff,
@@ -395,7 +399,8 @@ This is the FINAL message — do NOT ask follow-up questions.`,
     {
       fromState: "eligibility-checked",
       trigger: "grant-consent",
-      pattern: "I have reviewed all consent|consent.*granted|please proceed|I consent|go ahead|yes.*proceed|agree|done|ready",
+      pattern:
+        "I have reviewed all consent|consent.*granted|please proceed|I consent|go ahead|yes.*proceed|agree|done|ready",
     },
     {
       fromState: "slot-selected",
@@ -476,7 +481,7 @@ WHAT TO DO:
 
 Set "stateTransition" to "start-browsing" in the JSON block.
 Do NOT include any tasks in the JSON block.`,
-    "browsing": `The citizen is browsing information about {serviceName}.
+    browsing: `The citizen is browsing information about {serviceName}.
 Answer their questions using the information available.
 When you've provided the key information they need, set "stateTransition" to "provide-information" in the JSON block.
 If they need a specific transactional service, mention it and offer to refer them.`,
@@ -488,7 +493,7 @@ If they're satisfied: set "stateTransition" to "complete".`,
 Explain which service they should use and how to access it.
 Provide the relevant GOV.UK link.
 This is the FINAL message — do NOT ask follow-up questions.`,
-    "completed": `The information session is complete.
+    completed: `The information session is complete.
 Summarise the key points discussed.
 Remind them they can visit {govukUrl} for the full official guidance.
 This is the FINAL message — do NOT ask follow-up questions.`,
@@ -524,11 +529,12 @@ export interface TerminalStateConfig {
 
 export const TERMINAL_STATE_CONFIG: Record<string, TerminalStateConfig> = {
   // ── Success terminals ──
-  "completed": {
+  completed: {
     icon: "M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z",
     title: "Service complete",
     description: "Your request has been processed successfully.",
-    nextSteps: "You will receive official confirmation from the relevant department.",
+    nextSteps:
+      "You will receive official confirmation from the relevant department.",
     borderColor: "#00703c",
     borderClass: "border-green-200",
     shadowStyle: "0 2px 8px rgba(0,112,60,0.08)",
@@ -540,7 +546,8 @@ export const TERMINAL_STATE_CONFIG: Record<string, TerminalStateConfig> = {
     icon: "M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z",
     title: "Application complete",
     description: "Your claim is now active and being processed.",
-    nextSteps: "DWP will contact you with next steps. Check your journal regularly.",
+    nextSteps:
+      "DWP will contact you with next steps. Check your journal regularly.",
     borderColor: "#00703c",
     borderClass: "border-green-200",
     shadowStyle: "0 2px 8px rgba(0,112,60,0.08)",
@@ -548,7 +555,7 @@ export const TERMINAL_STATE_CONFIG: Record<string, TerminalStateConfig> = {
     titleClass: "text-green-700",
     isSuccess: true,
   },
-  "issued": {
+  issued: {
     icon: "M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z",
     title: "Licence issued",
     description: "Your licence has been issued successfully.",
@@ -560,7 +567,7 @@ export const TERMINAL_STATE_CONFIG: Record<string, TerminalStateConfig> = {
     titleClass: "text-green-700",
     isSuccess: true,
   },
-  "registered": {
+  registered: {
     icon: "M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z",
     title: "Registration complete",
     description: "Your registration has been confirmed.",
@@ -584,7 +591,7 @@ export const TERMINAL_STATE_CONFIG: Record<string, TerminalStateConfig> = {
     titleClass: "text-green-700",
     isSuccess: true,
   },
-  "attended": {
+  attended: {
     icon: "M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z",
     title: "Appointment complete",
     description: "Your appointment has been attended successfully.",
@@ -600,7 +607,8 @@ export const TERMINAL_STATE_CONFIG: Record<string, TerminalStateConfig> = {
     icon: "M13 7l5 5m0 0l-5 5m5-5H6",
     title: "Referred to service",
     description: "You have been referred to the appropriate service.",
-    nextSteps: "Follow the link provided to continue with the referred service.",
+    nextSteps:
+      "Follow the link provided to continue with the referred service.",
     borderColor: "#1d70b8",
     borderClass: "border-blue-200",
     shadowStyle: "0 2px 8px rgba(29,112,184,0.08)",
@@ -609,11 +617,12 @@ export const TERMINAL_STATE_CONFIG: Record<string, TerminalStateConfig> = {
     isSuccess: true,
   },
   // ── Failure/rejection terminals ──
-  "rejected": {
+  rejected: {
     icon: "M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z",
     title: "Application unsuccessful",
     description: "Unfortunately your application was not successful.",
-    nextSteps: "You may be able to request a review of the decision or contact the department directly.",
+    nextSteps:
+      "You may be able to request a review of the decision or contact the department directly.",
     borderColor: "#d4351c",
     borderClass: "border-red-200",
     shadowStyle: "0 2px 8px rgba(212,53,28,0.08)",
@@ -621,11 +630,12 @@ export const TERMINAL_STATE_CONFIG: Record<string, TerminalStateConfig> = {
     titleClass: "text-red-700",
     isSuccess: false,
   },
-  "refused": {
+  refused: {
     icon: "M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z",
     title: "Licence refused",
     description: "Your licence application was not successful.",
-    nextSteps: "You may be able to request a review of the decision or contact the department directly.",
+    nextSteps:
+      "You may be able to request a review of the decision or contact the department directly.",
     borderColor: "#d4351c",
     borderClass: "border-red-200",
     shadowStyle: "0 2px 8px rgba(212,53,28,0.08)",
@@ -633,7 +643,7 @@ export const TERMINAL_STATE_CONFIG: Record<string, TerminalStateConfig> = {
     titleClass: "text-red-700",
     isSuccess: false,
   },
-  "cancelled": {
+  cancelled: {
     icon: "M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z",
     title: "Appointment cancelled",
     description: "Your appointment has been cancelled.",
@@ -650,7 +660,8 @@ export const TERMINAL_STATE_CONFIG: Record<string, TerminalStateConfig> = {
     icon: "M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z",
     title: "Benefit active",
     description: "Your benefit claim is now active and payments will begin.",
-    nextSteps: "The department will confirm your payment amounts and schedule. Report any changes in circumstances promptly.",
+    nextSteps:
+      "The department will confirm your payment amounts and schedule. Report any changes in circumstances promptly.",
     borderColor: "#00703c",
     borderClass: "border-green-200",
     shadowStyle: "0 2px 8px rgba(0,112,60,0.08)",
@@ -658,11 +669,12 @@ export const TERMINAL_STATE_CONFIG: Record<string, TerminalStateConfig> = {
     titleClass: "text-green-700",
     isSuccess: true,
   },
-  "confirmed": {
+  confirmed: {
     icon: "M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z",
     title: "Entitlement confirmed",
     description: "Your statutory entitlement has been confirmed.",
-    nextSteps: "Official confirmation will be sent to you and your employer where applicable.",
+    nextSteps:
+      "Official confirmation will be sent to you and your employer where applicable.",
     borderColor: "#00703c",
     borderClass: "border-green-200",
     shadowStyle: "0 2px 8px rgba(0,112,60,0.08)",
@@ -670,11 +682,12 @@ export const TERMINAL_STATE_CONFIG: Record<string, TerminalStateConfig> = {
     titleClass: "text-green-700",
     isSuccess: true,
   },
-  "approved": {
+  approved: {
     icon: "M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z",
     title: "Grant approved",
     description: "Your grant application has been approved.",
-    nextSteps: "The department will confirm the grant amount and disbursement schedule. The conditions you accepted remain in effect.",
+    nextSteps:
+      "The department will confirm the grant amount and disbursement schedule. The conditions you accepted remain in effect.",
     borderColor: "#00703c",
     borderClass: "border-green-200",
     shadowStyle: "0 2px 8px rgba(0,112,60,0.08)",
@@ -686,8 +699,10 @@ export const TERMINAL_STATE_CONFIG: Record<string, TerminalStateConfig> = {
   "handed-off": {
     icon: "M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z",
     title: "Referred to advisor",
-    description: "This case has been referred to a human advisor for further review.",
-    nextSteps: "A member of staff will be in touch. Please have your reference number ready.",
+    description:
+      "This case has been referred to a human advisor for further review.",
+    nextSteps:
+      "A member of staff will be in touch. Please have your reference number ready.",
     borderColor: "#f47738",
     borderClass: "border-orange-200",
     shadowStyle: "0 2px 8px rgba(244,119,56,0.08)",
@@ -704,84 +719,108 @@ export const TERMINAL_STATE_CONFIG: Record<string, TerminalStateConfig> = {
  * When an interaction type has an override for a terminal state,
  * it replaces the generic config from TERMINAL_STATE_CONFIG.
  */
-export const TERMINAL_CONFIG_OVERRIDES: Partial<Record<InteractionType, Partial<Record<string, Partial<TerminalStateConfig>>>>> = {
+export const TERMINAL_CONFIG_OVERRIDES: Partial<
+  Record<InteractionType, Partial<Record<string, Partial<TerminalStateConfig>>>>
+> = {
   benefit: {
     "benefit-active": {
       title: "Benefit active",
-      description: "Your benefit claim is now active and payments will begin shortly.",
-      nextSteps: "The department will confirm your exact payment amounts and schedule. Remember to report any changes in circumstances promptly — this protects your payments.",
+      description:
+        "Your benefit claim is now active and payments will begin shortly.",
+      nextSteps:
+        "The department will confirm your exact payment amounts and schedule. Remember to report any changes in circumstances promptly — this protects your payments.",
     },
-    "rejected": {
+    rejected: {
       title: "Claim unsuccessful",
-      description: "Unfortunately your benefit claim was not successful at this time.",
-      nextSteps: "You have the right to request a mandatory reconsideration within one month. If still unhappy, you can appeal to an independent tribunal. Contact your local Citizens Advice for free support.",
+      description:
+        "Unfortunately your benefit claim was not successful at this time.",
+      nextSteps:
+        "You have the right to request a mandatory reconsideration within one month. If still unhappy, you can appeal to an independent tribunal. Contact your local Citizens Advice for free support.",
     },
     "handed-off": {
       title: "Referred to caseworker",
-      description: "Your case has been referred to a dedicated caseworker who will support you personally.",
-      nextSteps: "A caseworker will contact you — this is a real person, not a bot. Have your National Insurance number ready. You can also contact the department directly.",
+      description:
+        "Your case has been referred to a dedicated caseworker who will support you personally.",
+      nextSteps:
+        "A caseworker will contact you — this is a real person, not a bot. Have your National Insurance number ready. You can also contact the department directly.",
     },
   },
   entitlement: {
-    "confirmed": {
+    confirmed: {
       title: "Entitlement confirmed",
-      description: "Your statutory entitlement has been verified and confirmed.",
-      nextSteps: "Official confirmation will be sent to you. Your employer will be notified where applicable. You do not need to take any further action.",
+      description:
+        "Your statutory entitlement has been verified and confirmed.",
+      nextSteps:
+        "Official confirmation will be sent to you. Your employer will be notified where applicable. You do not need to take any further action.",
     },
-    "rejected": {
+    rejected: {
       title: "Entitlement not confirmed",
-      description: "Based on the information provided, your entitlement could not be confirmed.",
-      nextSteps: "Check if you qualify under alternative criteria. You may wish to contact the department or seek advice from Citizens Advice. Your employer's HR department may also be able to help.",
+      description:
+        "Based on the information provided, your entitlement could not be confirmed.",
+      nextSteps:
+        "Check if you qualify under alternative criteria. You may wish to contact the department or seek advice from Citizens Advice. Your employer's HR department may also be able to help.",
     },
   },
   grant: {
-    "approved": {
+    approved: {
       title: "Grant approved",
-      description: "Your grant application has been approved and funding will be arranged.",
-      nextSteps: "The department will confirm the grant amount and disbursement schedule. The conditions you accepted remain in effect throughout the grant period. Keep all receipts for audit purposes.",
+      description:
+        "Your grant application has been approved and funding will be arranged.",
+      nextSteps:
+        "The department will confirm the grant amount and disbursement schedule. The conditions you accepted remain in effect throughout the grant period. Keep all receipts for audit purposes.",
     },
-    "rejected": {
+    rejected: {
       title: "Grant application unsuccessful",
       description: "Unfortunately your grant application was not successful.",
-      nextSteps: "You may be able to reapply if your circumstances change. Contact the department for feedback on your application. Alternative funding sources may be available — ask your local council.",
+      nextSteps:
+        "You may be able to reapply if your circumstances change. Contact the department for feedback on your application. Alternative funding sources may be available — ask your local council.",
     },
   },
   legal_process: {
-    "completed": {
+    completed: {
       title: "Legal process complete",
-      description: "Your legal process has been completed successfully. All documentation will be filed officially.",
-      nextSteps: "Official documents will be sent to your registered address and to your solicitor (if appointed). Keep all paperwork in a safe place — you may need it in future. If you have questions, consult your solicitor or contact the relevant court.",
+      description:
+        "Your legal process has been completed successfully. All documentation will be filed officially.",
+      nextSteps:
+        "Official documents will be sent to your registered address and to your solicitor (if appointed). Keep all paperwork in a safe place — you may need it in future. If you have questions, consult your solicitor or contact the relevant court.",
     },
-    "rejected": {
+    rejected: {
       title: "Application not accepted",
-      description: "Your legal application was not accepted. This does not prevent you from reapplying.",
-      nextSteps: "You have the right to appeal through the appropriate court or tribunal — time limits are strict, so seek legal advice promptly. Free legal advice is available from Citizens Advice, Law Centres, or the Legal Aid helpline.",
+      description:
+        "Your legal application was not accepted. This does not prevent you from reapplying.",
+      nextSteps:
+        "You have the right to appeal through the appropriate court or tribunal — time limits are strict, so seek legal advice promptly. Free legal advice is available from Citizens Advice, Law Centres, or the Legal Aid helpline.",
     },
     "handed-off": {
       title: "Referred for specialist review",
-      description: "Your case requires specialist legal review and has been referred accordingly.",
-      nextSteps: "A specialist advisor will review your case. If you have a solicitor, they will be notified. For free legal advice: Citizens Advice (0800 144 8848), Law Centres Network, or the Legal Aid helpline.",
+      description:
+        "Your case requires specialist legal review and has been referred accordingly.",
+      nextSteps:
+        "A specialist advisor will review your case. If you have a solicitor, they will be notified. For free legal advice: Citizens Advice (0800 144 8848), Law Centres Network, or the Legal Aid helpline.",
     },
   },
   payment_service: {
-    "completed": {
+    completed: {
       title: "Payment complete",
       description: "Your payment has been processed successfully.",
-      nextSteps: "A confirmation receipt will be sent to you. Keep this for your records. If you believe the amount was incorrect, contact the department within 30 days.",
+      nextSteps:
+        "A confirmation receipt will be sent to you. Keep this for your records. If you believe the amount was incorrect, contact the department within 30 days.",
     },
   },
   license: {
-    "issued": {
+    issued: {
       title: "Licence issued",
       description: "Your licence has been issued successfully.",
-      nextSteps: "Your licence will be sent to your registered address. You can check delivery status on GOV.UK. Remember to renew before it expires.",
+      nextSteps:
+        "Your licence will be sent to your registered address. You can check delivery status on GOV.UK. Remember to renew before it expires.",
     },
   },
   register: {
-    "registered": {
+    registered: {
       title: "Registration complete",
       description: "Your registration has been confirmed and recorded.",
-      nextSteps: "An official certificate or confirmation will be sent to you. Keep this safe — you may need it as proof of registration.",
+      nextSteps:
+        "An official certificate or confirmation will be sent to you. Keep this safe — you may need it as proof of registration.",
     },
   },
 };
@@ -794,11 +833,13 @@ export function resolveTerminalConfig(
   stateId: string,
   interactionType?: string | null,
 ): TerminalStateConfig {
-  const baseConfig = TERMINAL_STATE_CONFIG[stateId] || TERMINAL_STATE_CONFIG["completed"];
+  const baseConfig =
+    TERMINAL_STATE_CONFIG[stateId] || TERMINAL_STATE_CONFIG["completed"];
 
   if (!interactionType) return baseConfig;
 
-  const typeOverrides = TERMINAL_CONFIG_OVERRIDES[interactionType as InteractionType];
+  const typeOverrides =
+    TERMINAL_CONFIG_OVERRIDES[interactionType as InteractionType];
   if (!typeOverrides) return baseConfig;
 
   const override = typeOverrides[stateId];
@@ -823,54 +864,71 @@ export interface ConsentFraming {
 const DEFAULT_CONSENT_FRAMING: ConsentFraming = {
   panelTitle: "Consent Required",
   panelDescription: "Review and grant consent for your application.",
-  requiredDenialWarning: "You have declined one or more required consents. Your application cannot proceed without these. Please change your decisions above to continue.",
+  requiredDenialWarning:
+    "You have declined one or more required consents. Your application cannot proceed without these. Please change your decisions above to continue.",
   requiredDenialTitle: "Required consents declined",
 };
 
 /**
  * Type-specific consent framing — adjusts language to match the citizen experience lens.
  */
-export const TYPOLOGY_CONSENT_FRAMING: Partial<Record<InteractionType, ConsentFraming>> = {
+export const TYPOLOGY_CONSENT_FRAMING: Partial<
+  Record<InteractionType, ConsentFraming>
+> = {
   benefit: {
     panelTitle: "Data Sharing Consent",
-    panelDescription: "To assess your benefit entitlement, we need your permission to access and share some of your information.",
-    requiredDenialWarning: "These consents are needed to assess your benefit claim. Without them, we cannot check what support you may be entitled to. You can change your mind at any time.",
+    panelDescription:
+      "To assess your benefit entitlement, we need your permission to access and share some of your information.",
+    requiredDenialWarning:
+      "These consents are needed to assess your benefit claim. Without them, we cannot check what support you may be entitled to. You can change your mind at any time.",
     requiredDenialTitle: "Required consents not yet given",
   },
   entitlement: {
     panelTitle: "Verification Consent",
-    panelDescription: "To confirm your statutory entitlement, we need to verify some information with your employer and relevant departments.",
-    requiredDenialWarning: "These consents are needed to verify your statutory entitlement. Without verification, your right cannot be confirmed. You can change your mind at any time.",
+    panelDescription:
+      "To confirm your statutory entitlement, we need to verify some information with your employer and relevant departments.",
+    requiredDenialWarning:
+      "These consents are needed to verify your statutory entitlement. Without verification, your right cannot be confirmed. You can change your mind at any time.",
     requiredDenialTitle: "Required verifications not yet authorised",
   },
   grant: {
     panelTitle: "Data Sharing Consent",
-    panelDescription: "To process your grant application, we need your permission to share information with the funding body.",
-    requiredDenialWarning: "These consents are required for your grant application. The funding body needs this information to assess your application.",
+    panelDescription:
+      "To process your grant application, we need your permission to share information with the funding body.",
+    requiredDenialWarning:
+      "These consents are required for your grant application. The funding body needs this information to assess your application.",
     requiredDenialTitle: "Required consents not yet given",
   },
   legal_process: {
     panelTitle: "Information Sharing Consent",
-    panelDescription: "Legal processes require certain information to be shared with the court or relevant authority. Review each item carefully — you may wish to consult a solicitor.",
-    requiredDenialWarning: "These consents are legally required to progress your case. Without them, the process cannot continue. If you are unsure, we recommend seeking legal advice before deciding.",
+    panelDescription:
+      "Legal processes require certain information to be shared with the court or relevant authority. Review each item carefully — you may wish to consult a solicitor.",
+    requiredDenialWarning:
+      "These consents are legally required to progress your case. Without them, the process cannot continue. If you are unsure, we recommend seeking legal advice before deciding.",
     requiredDenialTitle: "Required consents not yet given",
   },
   payment_service: {
     panelTitle: "Data Access Consent",
-    panelDescription: "To process your payment, we need to access your records and verify the amount due.",
-    requiredDenialWarning: "These consents are needed to calculate and process your payment. Without them, your payment cannot be processed through this service.",
+    panelDescription:
+      "To process your payment, we need to access your records and verify the amount due.",
+    requiredDenialWarning:
+      "These consents are needed to calculate and process your payment. Without them, your payment cannot be processed through this service.",
     requiredDenialTitle: "Required consents declined",
   },
   license: {
     panelTitle: "Consent Required",
-    panelDescription: "To process your licence application, we need your permission to verify your details and share information with the issuing authority.",
-    requiredDenialWarning: "These consents are required for your licence application to proceed.",
+    panelDescription:
+      "To process your licence application, we need your permission to verify your details and share information with the issuing authority.",
+    requiredDenialWarning:
+      "These consents are required for your licence application to proceed.",
     requiredDenialTitle: "Required consents declined",
   },
   register: {
     panelTitle: "Consent Required",
-    panelDescription: "To complete your registration, we need your permission to record and share certain information.",
-    requiredDenialWarning: "These consents are required for your registration to proceed.",
+    panelDescription:
+      "To complete your registration, we need your permission to record and share certain information.",
+    requiredDenialWarning:
+      "These consents are required for your registration to proceed.",
     requiredDenialTitle: "Required consents declined",
   },
 };
@@ -879,9 +937,14 @@ export const TYPOLOGY_CONSENT_FRAMING: Partial<Record<InteractionType, ConsentFr
  * Resolve consent framing for a given interaction type.
  * Falls back to generic framing if no type-specific framing exists.
  */
-export function resolveConsentFraming(interactionType?: string | null): ConsentFraming {
+export function resolveConsentFraming(
+  interactionType?: string | null,
+): ConsentFraming {
   if (!interactionType) return DEFAULT_CONSENT_FRAMING;
-  return TYPOLOGY_CONSENT_FRAMING[interactionType as InteractionType] || DEFAULT_CONSENT_FRAMING;
+  return (
+    TYPOLOGY_CONSENT_FRAMING[interactionType as InteractionType] ||
+    DEFAULT_CONSENT_FRAMING
+  );
 }
 
 // ── Proposal D: Type-Specific Escalation Paths ──
@@ -902,7 +965,8 @@ export interface EscalationConfig {
 const DEFAULT_ESCALATION_CONFIG: EscalationConfig = {
   specialistType: "advisor",
   noticeLabel: "Handoff to human agent",
-  citizenGuidance: "A summary of your conversation will be shared with the advisor so you don't have to repeat yourself.",
+  citizenGuidance:
+    "A summary of your conversation will be shared with the advisor so you don't have to repeat yourself.",
   resources: [],
   suggestedActions: [
     "Review conversation summary before connecting",
@@ -910,14 +974,24 @@ const DEFAULT_ESCALATION_CONFIG: EscalationConfig = {
   ],
 };
 
-export const TYPOLOGY_ESCALATION_CONFIG: Partial<Record<InteractionType, EscalationConfig>> = {
+export const TYPOLOGY_ESCALATION_CONFIG: Partial<
+  Record<InteractionType, EscalationConfig>
+> = {
   benefit: {
     specialistType: "caseworker",
     noticeLabel: "Referred to a caseworker",
-    citizenGuidance: "A dedicated caseworker will review your case. They are a real person who can help with your benefit claim. Have your National Insurance number ready when they contact you.",
+    citizenGuidance:
+      "A dedicated caseworker will review your case. They are a real person who can help with your benefit claim. Have your National Insurance number ready when they contact you.",
     resources: [
-      { label: "Citizens Advice", detail: "Free, confidential advice — citizensadvice.org.uk or 0800 144 8848" },
-      { label: "Turn2us", detail: "Benefits calculator and grants — turn2us.org.uk" },
+      {
+        label: "Citizens Advice",
+        detail:
+          "Free, confidential advice — citizensadvice.org.uk or 0800 144 8848",
+      },
+      {
+        label: "Turn2us",
+        detail: "Benefits calculator and grants — turn2us.org.uk",
+      },
     ],
     suggestedActions: [
       "Review income assessment and eligibility data collected",
@@ -929,10 +1003,17 @@ export const TYPOLOGY_ESCALATION_CONFIG: Partial<Record<InteractionType, Escalat
   entitlement: {
     specialistType: "entitlement specialist",
     noticeLabel: "Referred to an entitlement specialist",
-    citizenGuidance: "A specialist will verify your statutory entitlement. Your employer may also be contacted to confirm details. You do not need to do anything further at this stage.",
+    citizenGuidance:
+      "A specialist will verify your statutory entitlement. Your employer may also be contacted to confirm details. You do not need to do anything further at this stage.",
     resources: [
-      { label: "ACAS", detail: "Employment rights advice — acas.org.uk or 0300 123 1100" },
-      { label: "GOV.UK", detail: "Check your employment rights — gov.uk/employment-status" },
+      {
+        label: "ACAS",
+        detail: "Employment rights advice — acas.org.uk or 0300 123 1100",
+      },
+      {
+        label: "GOV.UK",
+        detail: "Check your employment rights — gov.uk/employment-status",
+      },
     ],
     suggestedActions: [
       "Verify employer details and earnings against RTI records",
@@ -943,9 +1024,14 @@ export const TYPOLOGY_ESCALATION_CONFIG: Partial<Record<InteractionType, Escalat
   grant: {
     specialistType: "funding advisor",
     noticeLabel: "Referred to a funding advisor",
-    citizenGuidance: "A funding advisor will review your grant application and help you understand the conditions. They can also suggest alternative funding sources if this grant isn't suitable.",
+    citizenGuidance:
+      "A funding advisor will review your grant application and help you understand the conditions. They can also suggest alternative funding sources if this grant isn't suitable.",
     resources: [
-      { label: "Local council", detail: "Your local council may offer additional grants or funding support" },
+      {
+        label: "Local council",
+        detail:
+          "Your local council may offer additional grants or funding support",
+      },
     ],
     suggestedActions: [
       "Review project details and cost estimates submitted",
@@ -956,10 +1042,17 @@ export const TYPOLOGY_ESCALATION_CONFIG: Partial<Record<InteractionType, Escalat
   legal_process: {
     specialistType: "legal advisor",
     noticeLabel: "Referred for legal guidance",
-    citizenGuidance: "Your case needs specialist legal attention. If you have a solicitor, they will be notified. If you don't have legal representation, free advice is available from the organisations listed below.",
+    citizenGuidance:
+      "Your case needs specialist legal attention. If you have a solicitor, they will be notified. If you don't have legal representation, free advice is available from the organisations listed below.",
     resources: [
-      { label: "Citizens Advice", detail: "Free legal guidance — citizensadvice.org.uk or 0800 144 8848" },
-      { label: "Law Centres Network", detail: "Free legal advice in your area — lawcentres.org.uk" },
+      {
+        label: "Citizens Advice",
+        detail: "Free legal guidance — citizensadvice.org.uk or 0800 144 8848",
+      },
+      {
+        label: "Law Centres Network",
+        detail: "Free legal advice in your area — lawcentres.org.uk",
+      },
       { label: "Legal Aid", detail: "Check if you qualify — gov.uk/legal-aid" },
       { label: "Court helpline", detail: "HMCTS — 0300 123 1024" },
     ],
@@ -974,7 +1067,8 @@ export const TYPOLOGY_ESCALATION_CONFIG: Partial<Record<InteractionType, Escalat
   payment_service: {
     specialistType: "payment support",
     noticeLabel: "Referred to payment support",
-    citizenGuidance: "A payment specialist will help resolve your issue. If there is a dispute about the amount owed, they can review the calculation.",
+    citizenGuidance:
+      "A payment specialist will help resolve your issue. If there is a dispute about the amount owed, they can review the calculation.",
     resources: [
       { label: "HMRC helpline", detail: "Tax queries — 0300 200 3300" },
     ],
@@ -987,7 +1081,8 @@ export const TYPOLOGY_ESCALATION_CONFIG: Partial<Record<InteractionType, Escalat
   license: {
     specialistType: "licensing support",
     noticeLabel: "Referred to licensing support",
-    citizenGuidance: "A licensing specialist will review your application. If additional documents are needed, they will let you know.",
+    citizenGuidance:
+      "A licensing specialist will review your application. If additional documents are needed, they will let you know.",
     resources: [],
     suggestedActions: [
       "Review submitted documents and photo/identity verification",
@@ -997,7 +1092,8 @@ export const TYPOLOGY_ESCALATION_CONFIG: Partial<Record<InteractionType, Escalat
   register: {
     specialistType: "registration officer",
     noticeLabel: "Referred to a registration officer",
-    citizenGuidance: "A registration officer will complete your registration. You may need to attend in person — they will advise you.",
+    citizenGuidance:
+      "A registration officer will complete your registration. You may need to attend in person — they will advise you.",
     resources: [],
     suggestedActions: [
       "Review event details and supporting documentation",
@@ -1009,9 +1105,14 @@ export const TYPOLOGY_ESCALATION_CONFIG: Partial<Record<InteractionType, Escalat
 /**
  * Resolve escalation config for a given interaction type.
  */
-export function resolveEscalationConfig(interactionType?: string | null): EscalationConfig {
+export function resolveEscalationConfig(
+  interactionType?: string | null,
+): EscalationConfig {
   if (!interactionType) return DEFAULT_ESCALATION_CONFIG;
-  return TYPOLOGY_ESCALATION_CONFIG[interactionType as InteractionType] || DEFAULT_ESCALATION_CONFIG;
+  return (
+    TYPOLOGY_ESCALATION_CONFIG[interactionType as InteractionType] ||
+    DEFAULT_ESCALATION_CONFIG
+  );
 }
 
 // ── Proposal E: Type-Aware Proactivity Rules ──
@@ -1040,7 +1141,9 @@ const DEFAULT_PROACTIVITY_CONFIG: ProactivityConfig = {
   accentColor: "#1d70b8",
 };
 
-export const TYPOLOGY_PROACTIVITY_CONFIG: Partial<Record<InteractionType, ProactivityConfig>> = {
+export const TYPOLOGY_PROACTIVITY_CONFIG: Partial<
+  Record<InteractionType, ProactivityConfig>
+> = {
   benefit: {
     mode: "suggest",
     framingPrefix: "Based on your circumstances, you may be entitled to",
@@ -1118,9 +1221,14 @@ export const TYPOLOGY_PROACTIVITY_CONFIG: Partial<Record<InteractionType, Proact
 /**
  * Resolve proactivity config for a given interaction type.
  */
-export function resolveProactivityConfig(interactionType?: string | null): ProactivityConfig {
+export function resolveProactivityConfig(
+  interactionType?: string | null,
+): ProactivityConfig {
   if (!interactionType) return DEFAULT_PROACTIVITY_CONFIG;
-  return TYPOLOGY_PROACTIVITY_CONFIG[interactionType as InteractionType] || DEFAULT_PROACTIVITY_CONFIG;
+  return (
+    TYPOLOGY_PROACTIVITY_CONFIG[interactionType as InteractionType] ||
+    DEFAULT_PROACTIVITY_CONFIG
+  );
 }
 
 // ── Proposal H: Typology-Level Policy Rules ──
@@ -1159,7 +1267,11 @@ export const TYPOLOGY_POLICY_RULES: Record<string, TypologyPolicySet> = {
       {
         id: "typo-benefit-uk-resident",
         description: "All benefit claimants must be UK residents",
-        condition: { field: "jurisdiction", operator: "in", value: ["England", "Wales", "Scotland", "Northern Ireland"] },
+        condition: {
+          field: "jurisdiction",
+          operator: "in",
+          value: ["England", "Wales", "Scotland", "Northern Ireland"],
+        },
         reason_if_failed: "You must be living in the UK to claim this benefit",
         overridable: false,
       },
@@ -1174,7 +1286,8 @@ export const TYPOLOGY_POLICY_RULES: Record<string, TypologyPolicySet> = {
         id: "typo-benefit-income-declared",
         description: "Benefits require income declaration",
         condition: { field: "income_declared", operator: "exists" },
-        reason_if_failed: "You must declare your income to proceed with a benefit claim",
+        reason_if_failed:
+          "You must declare your income to proceed with a benefit claim",
         overridable: true,
       },
       {
@@ -1194,21 +1307,25 @@ export const TYPOLOGY_POLICY_RULES: Record<string, TypologyPolicySet> = {
         id: "typo-entitlement-employed",
         description: "Most entitlements require current or recent employment",
         condition: { field: "employment_status", operator: "exists" },
-        reason_if_failed: "Your employment status must be confirmed to check statutory entitlement",
+        reason_if_failed:
+          "Your employment status must be confirmed to check statutory entitlement",
         overridable: true,
       },
       {
         id: "typo-entitlement-earnings-threshold",
         description: "Statutory entitlements require minimum earnings",
         condition: { field: "weekly_earnings", operator: ">=", value: 123 },
-        reason_if_failed: "Your average weekly earnings must meet the lower earnings limit (currently £123/week)",
+        reason_if_failed:
+          "Your average weekly earnings must meet the lower earnings limit (currently £123/week)",
         overridable: true,
       },
       {
         id: "typo-entitlement-qualifying-period",
-        description: "Most entitlements require a qualifying period of employment",
+        description:
+          "Most entitlements require a qualifying period of employment",
         condition: { field: "qualifying_weeks", operator: ">=", value: 26 },
-        reason_if_failed: "You must have been employed for at least 26 weeks to qualify",
+        reason_if_failed:
+          "You must have been employed for at least 26 weeks to qualify",
         overridable: true,
       },
     ],
@@ -1228,7 +1345,8 @@ export const TYPOLOGY_POLICY_RULES: Record<string, TypologyPolicySet> = {
         id: "typo-obligation-not-overdue",
         description: "Check whether the obligation is overdue",
         condition: { field: "days_until_deadline", operator: ">=", value: 0 },
-        reason_if_failed: "This obligation is overdue — late penalties may apply",
+        reason_if_failed:
+          "This obligation is overdue — late penalties may apply",
         overridable: true,
       },
     ],
@@ -1241,14 +1359,17 @@ export const TYPOLOGY_POLICY_RULES: Record<string, TypologyPolicySet> = {
         id: "typo-registration-event-date",
         description: "Registrations require an event date",
         condition: { field: "event_date", operator: "exists" },
-        reason_if_failed: "You must provide the date of the event you wish to register",
+        reason_if_failed:
+          "You must provide the date of the event you wish to register",
         overridable: true,
       },
       {
         id: "typo-registration-within-deadline",
-        description: "Most registrations must be completed within a statutory deadline",
+        description:
+          "Most registrations must be completed within a statutory deadline",
         condition: { field: "days_since_event", operator: "<=", value: 42 },
-        reason_if_failed: "The registration deadline may have passed — contact the register office for guidance",
+        reason_if_failed:
+          "The registration deadline may have passed — contact the register office for guidance",
         overridable: true,
       },
     ],
@@ -1261,7 +1382,8 @@ export const TYPOLOGY_POLICY_RULES: Record<string, TypologyPolicySet> = {
         id: "typo-application-identity",
         description: "Applications require identity verification",
         condition: { field: "identity_verified", operator: "==", value: true },
-        reason_if_failed: "Your identity must be verified before submitting an application",
+        reason_if_failed:
+          "Your identity must be verified before submitting an application",
         overridable: false,
       },
     ],
@@ -1274,7 +1396,8 @@ export const TYPOLOGY_POLICY_RULES: Record<string, TypologyPolicySet> = {
         id: "typo-document-identity",
         description: "Document requests require identity verification",
         condition: { field: "identity_verified", operator: "==", value: true },
-        reason_if_failed: "Your identity must be verified to request official documents",
+        reason_if_failed:
+          "Your identity must be verified to request official documents",
         overridable: false,
       },
       {
@@ -1294,14 +1417,16 @@ export const TYPOLOGY_POLICY_RULES: Record<string, TypologyPolicySet> = {
         id: "typo-legal-identity",
         description: "Legal processes require verified identity",
         condition: { field: "identity_verified", operator: "==", value: true },
-        reason_if_failed: "Your identity must be verified for legal proceedings",
+        reason_if_failed:
+          "Your identity must be verified for legal proceedings",
         overridable: false,
       },
       {
         id: "typo-legal-age-minimum",
         description: "Legal capacity requires being 18+",
         condition: { field: "age", operator: ">=", value: 18 },
-        reason_if_failed: "You must be at least 18 to initiate this legal process",
+        reason_if_failed:
+          "You must be at least 18 to initiate this legal process",
         overridable: true,
       },
     ],
@@ -1313,7 +1438,11 @@ export const TYPOLOGY_POLICY_RULES: Record<string, TypologyPolicySet> = {
       {
         id: "typo-grant-uk-resident",
         description: "Grants are typically available to UK residents only",
-        condition: { field: "jurisdiction", operator: "in", value: ["England", "Wales", "Scotland", "Northern Ireland"] },
+        condition: {
+          field: "jurisdiction",
+          operator: "in",
+          value: ["England", "Wales", "Scotland", "Northern Ireland"],
+        },
         reason_if_failed: "This grant is only available to UK residents",
         overridable: true,
       },
@@ -1321,7 +1450,8 @@ export const TYPOLOGY_POLICY_RULES: Record<string, TypologyPolicySet> = {
         id: "typo-grant-not-duplicate",
         description: "Cannot claim the same grant twice",
         condition: { field: "previous_grant_claim", operator: "not-exists" },
-        reason_if_failed: "Records show a previous claim for this grant — duplicate claims are not permitted",
+        reason_if_failed:
+          "Records show a previous claim for this grant — duplicate claims are not permitted",
         overridable: true,
       },
     ],
@@ -1415,10 +1545,10 @@ Do NOT include any tasks in the JSON block.`,
 Summarise the key information back to the citizen. Explain that {department} will now assess their claim.
 Set "stateTransition" to "begin-assessment" in the JSON block.
 Do NOT fabricate timelines — say "{department} will confirm."`,
-    "assessment": `The benefit claim is being assessed by {department}.
+    assessment: `The benefit claim is being assessed by {department}.
 Tell the citizen their claim has been submitted for assessment.
 Set "stateTransition" to "make-decision" in the JSON block.`,
-    "decision": `A decision has been made on the benefit claim.
+    decision: `A decision has been made on the benefit claim.
 If approved: Congratulate the citizen warmly. Explain they need to set up payment details. Set "stateTransition" to "approve".
 If rejected: Explain sympathetically. Mention mandatory reconsideration and appeal rights. Set "stateTransition" to "reject-claim".
 Do NOT fabricate amounts — say "{department} will confirm."`,
@@ -1433,7 +1563,7 @@ Explain:
 - If they need help, they can contact {department} or speak to a caseworker
 This is the FINAL message — do NOT ask follow-up questions.
 Do NOT include any tasks in the JSON block.`,
-    "rejected": `The benefit claim was not successful. Explain why clearly and sympathetically.
+    rejected: `The benefit claim was not successful. Explain why clearly and sympathetically.
 IMPORTANT — mention the citizen's rights:
 - They have the right to request a MANDATORY RECONSIDERATION within one month
 - If still unhappy, they can appeal to an independent tribunal
@@ -1458,12 +1588,14 @@ Do NOT include any tasks in the JSON block.`,
     {
       fromState: "eligibility-checked",
       trigger: "grant-consent",
-      pattern: "I have reviewed all consent|consent.*granted|granted.*consent|please proceed|I consent|go ahead|yes.*proceed|agree|done|let's go|ready|start|apply",
+      pattern:
+        "I have reviewed all consent|consent.*granted|granted.*consent|please proceed|I consent|go ahead|yes.*proceed|agree|done|let's go|ready|start|apply",
     },
     {
       fromState: "document-submitted",
       trigger: "submit-details",
-      pattern: "everything.*correct|looks correct|details.*correct|yes.*correct|confirm|that's right|all correct|details are correct",
+      pattern:
+        "everything.*correct|looks correct|details.*correct|yes.*correct|confirm|that's right|all correct|details are correct",
     },
   ],
 };
@@ -1513,14 +1645,14 @@ Present the entitlement details to the citizen (amount, period, conditions).
 An entitlement confirmation card will appear below for them to accept.
 Set "stateTransition" to "confirm-entitlement" in the JSON block.
 Do NOT fabricate specific amounts — say "{department} will confirm exact figures."`,
-    "confirmed": `The entitlement has been confirmed! Tell the citizen clearly:
+    confirmed: `The entitlement has been confirmed! Tell the citizen clearly:
 - Their statutory entitlement to {serviceName} has been confirmed
 - {department} will send official confirmation
 - They can visit {govukUrl} for more information
 - Their employer will be notified where applicable
 This is the FINAL message — do NOT ask follow-up questions.
 Do NOT include any tasks in the JSON block.`,
-    "rejected": `The entitlement claim was not successful. Explain clearly and sympathetically.
+    rejected: `The entitlement claim was not successful. Explain clearly and sympathetically.
 Mention:
 - The citizen may be able to request a review
 - They should check if they qualify under alternative criteria
@@ -1544,12 +1676,14 @@ Do NOT include any tasks in the JSON block.`,
     {
       fromState: "eligibility-checked",
       trigger: "grant-consent",
-      pattern: "I have reviewed all consent|consent.*granted|granted.*consent|please proceed|I consent|go ahead|yes.*proceed|agree|done|let's go|ready",
+      pattern:
+        "I have reviewed all consent|consent.*granted|granted.*consent|please proceed|I consent|go ahead|yes.*proceed|agree|done|let's go|ready",
     },
     {
       fromState: "document-submitted",
       trigger: "confirm-entitlement",
-      pattern: "everything.*correct|looks correct|details.*correct|yes.*correct|confirm|that's right|all correct",
+      pattern:
+        "everything.*correct|looks correct|details.*correct|yes.*correct|confirm|that's right|all correct",
     },
   ],
 };
@@ -1597,21 +1731,21 @@ Set "stateTransition" to "review-conditions" in the JSON block.`,
     "conditions-reviewed": `The grant conditions have been reviewed and accepted.
 Confirm the conditions accepted. Explain that {department} will now assess the application.
 Set "stateTransition" to "begin-assessment" in the JSON block.`,
-    "assessment": `The grant application is being assessed by {department}.
+    assessment: `The grant application is being assessed by {department}.
 Tell the citizen their application has been submitted. Processing times vary.
 Set "stateTransition" to "make-decision" in the JSON block.`,
-    "decision": `A decision has been made on the grant application.
+    decision: `A decision has been made on the grant application.
 If approved: Congratulate the citizen. Explain the grant terms and next steps. Set "stateTransition" to "approve".
 If rejected: Explain sympathetically. Set "stateTransition" to "reject-application".
 Do NOT fabricate specific amounts.`,
-    "approved": `The grant has been approved! Congratulate them.
+    approved: `The grant has been approved! Congratulate them.
 Explain:
 - {department} will confirm the grant amount and disbursement schedule
 - The conditions accepted earlier remain in effect
 - They can visit {govukUrl} for more information
 This is the FINAL message — do NOT ask follow-up questions.
 Do NOT include any tasks in the JSON block.`,
-    "rejected": SHARED.rejected("grant application"),
+    rejected: SHARED.rejected("grant application"),
     "handed-off": SHARED.handedOff,
   },
   forcedTransitions: {
@@ -1622,12 +1756,14 @@ Do NOT include any tasks in the JSON block.`,
     {
       fromState: "eligibility-checked",
       trigger: "grant-consent",
-      pattern: "I have reviewed all consent|consent.*granted|granted.*consent|please proceed|I consent|go ahead|yes.*proceed|agree|done|let's go|ready",
+      pattern:
+        "I have reviewed all consent|consent.*granted|granted.*consent|please proceed|I consent|go ahead|yes.*proceed|agree|done|let's go|ready",
     },
     {
       fromState: "document-submitted",
       trigger: "submit-details",
-      pattern: "everything.*correct|looks correct|details.*correct|yes.*correct|confirm|that's right|all correct",
+      pattern:
+        "everything.*correct|looks correct|details.*correct|yes.*correct|confirm|that's right|all correct",
     },
   ],
 };
@@ -1687,18 +1823,18 @@ Summarise the full submission back to the citizen clearly.
 Explain that {department} will now review the submission. This may take some time for legal processes.
 Set "stateTransition" to "begin-review" in the JSON block.
 Do NOT fabricate timelines.`,
-    "review": `The submission is being reviewed by {department}.
+    review: `The submission is being reviewed by {department}.
 Tell the citizen:
 - Their submission is with {department} for review
 - Legal processes can take longer than standard applications — this is normal
 - They will be contacted if further information is needed
 - Their solicitor (if appointed) will also be notified
 Set "stateTransition" to "make-decision" in the JSON block.`,
-    "decision": `A decision has been made.
+    decision: `A decision has been made.
 If approved: Explain the outcome clearly. Set "stateTransition" to "approve".
 If referred: Explain that further legal steps are needed. Set "stateTransition" to "handoff".
 If rejected: Explain sympathetically and mention appeal rights. Set "stateTransition" to "reject".`,
-    "completed": `The legal process is complete.
+    completed: `The legal process is complete.
 Explain:
 - {department} will send official documentation
 - The citizen should keep all paperwork safe
@@ -1707,7 +1843,7 @@ Explain:
 - If they need further legal guidance, they should consult their solicitor or a legal advice service
 This is the FINAL message — do NOT ask follow-up questions.
 Do NOT include any tasks in the JSON block.`,
-    "rejected": `The legal process was not successful. Explain clearly and sympathetically.
+    rejected: `The legal process was not successful. Explain clearly and sympathetically.
 IMPORTANT — legal processes have specific appeal mechanisms:
 - The citizen has the right to appeal through the appropriate court or tribunal
 - They should seek legal advice before deciding whether to appeal
@@ -1734,19 +1870,24 @@ Do NOT include any tasks in the JSON block.`,
     {
       fromState: "eligibility-checked",
       trigger: "grant-consent",
-      pattern: "I have reviewed all consent|consent.*granted|granted.*consent|please proceed|I consent|go ahead|yes.*proceed|agree|done|let's go|ready",
+      pattern:
+        "I have reviewed all consent|consent.*granted|granted.*consent|please proceed|I consent|go ahead|yes.*proceed|agree|done|let's go|ready",
     },
     {
       fromState: "document-submitted",
       trigger: "submit-details",
-      pattern: "everything.*correct|looks correct|details.*correct|yes.*correct|confirm|that's right|all correct",
+      pattern:
+        "everything.*correct|looks correct|details.*correct|yes.*correct|confirm|that's right|all correct",
     },
   ],
 };
 
 // ── Registry: interaction type → template ──
 
-export const INSTRUCTION_TEMPLATE_REGISTRY: Record<InteractionType, StateInstructionTemplate> = {
+export const INSTRUCTION_TEMPLATE_REGISTRY: Record<
+  InteractionType,
+  StateInstructionTemplate
+> = {
   application: APPLICATION_TEMPLATE,
   license: LICENSE_TEMPLATE,
   register: REGISTER_TEMPLATE,
@@ -1765,8 +1906,17 @@ export const INSTRUCTION_TEMPLATE_REGISTRY: Record<InteractionType, StateInstruc
 // ── State model templates (mirrored from legibility-studio/lib/interaction-types.ts) ──
 
 interface StateModelTemplate {
-  states: Array<{ id: string; type?: "initial" | "terminal"; receipt?: boolean }>;
-  transitions: Array<{ from: string; to: string; trigger: string; condition?: string }>;
+  states: Array<{
+    id: string;
+    type?: "initial" | "terminal";
+    receipt?: boolean;
+  }>;
+  transitions: Array<{
+    from: string;
+    to: string;
+    trigger: string;
+    condition?: string;
+  }>;
 }
 
 const STATE_MODEL_TEMPLATES: Record<InteractionType, StateModelTemplate> = {
@@ -1785,14 +1935,49 @@ const STATE_MODEL_TEMPLATES: Record<InteractionType, StateModelTemplate> = {
       { id: "handed-off", type: "terminal", receipt: true },
     ],
     transitions: [
-      { from: "not-started", to: "identity-verified", trigger: "verify-identity" },
-      { from: "identity-verified", to: "eligibility-checked", trigger: "check-eligibility" },
-      { from: "eligibility-checked", to: "consent-given", trigger: "grant-consent", condition: "eligible" },
-      { from: "eligibility-checked", to: "rejected", trigger: "reject", condition: "not-eligible" },
-      { from: "eligibility-checked", to: "handed-off", trigger: "handoff", condition: "edge-case" },
-      { from: "consent-given", to: "document-submitted", trigger: "upload-document" },
-      { from: "document-submitted", to: "details-submitted", trigger: "submit-details" },
-      { from: "details-submitted", to: "assessment", trigger: "begin-assessment" },
+      {
+        from: "not-started",
+        to: "identity-verified",
+        trigger: "verify-identity",
+      },
+      {
+        from: "identity-verified",
+        to: "eligibility-checked",
+        trigger: "check-eligibility",
+      },
+      {
+        from: "eligibility-checked",
+        to: "consent-given",
+        trigger: "grant-consent",
+        condition: "eligible",
+      },
+      {
+        from: "eligibility-checked",
+        to: "rejected",
+        trigger: "reject",
+        condition: "not-eligible",
+      },
+      {
+        from: "eligibility-checked",
+        to: "handed-off",
+        trigger: "handoff",
+        condition: "edge-case",
+      },
+      {
+        from: "consent-given",
+        to: "document-submitted",
+        trigger: "upload-document",
+      },
+      {
+        from: "document-submitted",
+        to: "details-submitted",
+        trigger: "submit-details",
+      },
+      {
+        from: "details-submitted",
+        to: "assessment",
+        trigger: "begin-assessment",
+      },
       { from: "assessment", to: "decision", trigger: "make-decision" },
       { from: "decision", to: "completed", trigger: "approve" },
       { from: "decision", to: "rejected", trigger: "reject-application" },
@@ -1812,14 +1997,49 @@ const STATE_MODEL_TEMPLATES: Record<InteractionType, StateModelTemplate> = {
       { id: "handed-off", type: "terminal", receipt: true },
     ],
     transitions: [
-      { from: "not-started", to: "identity-verified", trigger: "verify-identity" },
-      { from: "identity-verified", to: "eligibility-checked", trigger: "check-eligibility" },
-      { from: "eligibility-checked", to: "consent-given", trigger: "grant-consent", condition: "eligible" },
-      { from: "eligibility-checked", to: "refused", trigger: "reject", condition: "not-eligible" },
-      { from: "eligibility-checked", to: "handed-off", trigger: "handoff", condition: "edge-case" },
-      { from: "consent-given", to: "document-submitted", trigger: "upload-document" },
-      { from: "document-submitted", to: "details-confirmed", trigger: "confirm-details" },
-      { from: "details-confirmed", to: "payment-made", trigger: "make-payment" },
+      {
+        from: "not-started",
+        to: "identity-verified",
+        trigger: "verify-identity",
+      },
+      {
+        from: "identity-verified",
+        to: "eligibility-checked",
+        trigger: "check-eligibility",
+      },
+      {
+        from: "eligibility-checked",
+        to: "consent-given",
+        trigger: "grant-consent",
+        condition: "eligible",
+      },
+      {
+        from: "eligibility-checked",
+        to: "refused",
+        trigger: "reject",
+        condition: "not-eligible",
+      },
+      {
+        from: "eligibility-checked",
+        to: "handed-off",
+        trigger: "handoff",
+        condition: "edge-case",
+      },
+      {
+        from: "consent-given",
+        to: "document-submitted",
+        trigger: "upload-document",
+      },
+      {
+        from: "document-submitted",
+        to: "details-confirmed",
+        trigger: "confirm-details",
+      },
+      {
+        from: "details-confirmed",
+        to: "payment-made",
+        trigger: "make-payment",
+      },
       { from: "payment-made", to: "issued", trigger: "issue-licence" },
     ],
   },
@@ -1835,13 +2055,44 @@ const STATE_MODEL_TEMPLATES: Record<InteractionType, StateModelTemplate> = {
       { id: "handed-off", type: "terminal", receipt: true },
     ],
     transitions: [
-      { from: "not-started", to: "identity-verified", trigger: "verify-identity" },
-      { from: "identity-verified", to: "eligibility-checked", trigger: "check-eligibility" },
-      { from: "eligibility-checked", to: "consent-given", trigger: "grant-consent", condition: "eligible" },
-      { from: "eligibility-checked", to: "rejected", trigger: "reject", condition: "not-eligible" },
-      { from: "eligibility-checked", to: "handed-off", trigger: "handoff", condition: "edge-case" },
-      { from: "consent-given", to: "details-submitted", trigger: "submit-details" },
-      { from: "details-submitted", to: "registered", trigger: "confirm-registration" },
+      {
+        from: "not-started",
+        to: "identity-verified",
+        trigger: "verify-identity",
+      },
+      {
+        from: "identity-verified",
+        to: "eligibility-checked",
+        trigger: "check-eligibility",
+      },
+      {
+        from: "eligibility-checked",
+        to: "consent-given",
+        trigger: "grant-consent",
+        condition: "eligible",
+      },
+      {
+        from: "eligibility-checked",
+        to: "rejected",
+        trigger: "reject",
+        condition: "not-eligible",
+      },
+      {
+        from: "eligibility-checked",
+        to: "handed-off",
+        trigger: "handoff",
+        condition: "edge-case",
+      },
+      {
+        from: "consent-given",
+        to: "details-submitted",
+        trigger: "submit-details",
+      },
+      {
+        from: "details-submitted",
+        to: "registered",
+        trigger: "confirm-registration",
+      },
     ],
   },
   portal: {
@@ -1855,12 +2106,33 @@ const STATE_MODEL_TEMPLATES: Record<InteractionType, StateModelTemplate> = {
       { id: "handed-off", type: "terminal", receipt: true },
     ],
     transitions: [
-      { from: "not-started", to: "identity-verified", trigger: "verify-identity" },
-      { from: "identity-verified", to: "consent-given", trigger: "grant-consent" },
-      { from: "consent-given", to: "account-accessed", trigger: "access-account" },
-      { from: "account-accessed", to: "action-performed", trigger: "perform-action" },
+      {
+        from: "not-started",
+        to: "identity-verified",
+        trigger: "verify-identity",
+      },
+      {
+        from: "identity-verified",
+        to: "consent-given",
+        trigger: "grant-consent",
+      },
+      {
+        from: "consent-given",
+        to: "account-accessed",
+        trigger: "access-account",
+      },
+      {
+        from: "account-accessed",
+        to: "action-performed",
+        trigger: "perform-action",
+      },
       { from: "action-performed", to: "completed", trigger: "complete" },
-      { from: "account-accessed", to: "handed-off", trigger: "handoff", condition: "edge-case" },
+      {
+        from: "account-accessed",
+        to: "handed-off",
+        trigger: "handoff",
+        condition: "edge-case",
+      },
     ],
   },
   payment_service: {
@@ -1875,12 +2147,38 @@ const STATE_MODEL_TEMPLATES: Record<InteractionType, StateModelTemplate> = {
       { id: "handed-off", type: "terminal", receipt: true },
     ],
     transitions: [
-      { from: "not-started", to: "identity-verified", trigger: "verify-identity" },
-      { from: "identity-verified", to: "eligibility-checked", trigger: "check-eligibility" },
-      { from: "eligibility-checked", to: "consent-given", trigger: "grant-consent", condition: "eligible" },
-      { from: "eligibility-checked", to: "handed-off", trigger: "handoff", condition: "not-eligible" },
-      { from: "consent-given", to: "amount-calculated", trigger: "calculate-amount" },
-      { from: "amount-calculated", to: "payment-made", trigger: "make-payment" },
+      {
+        from: "not-started",
+        to: "identity-verified",
+        trigger: "verify-identity",
+      },
+      {
+        from: "identity-verified",
+        to: "eligibility-checked",
+        trigger: "check-eligibility",
+      },
+      {
+        from: "eligibility-checked",
+        to: "consent-given",
+        trigger: "grant-consent",
+        condition: "eligible",
+      },
+      {
+        from: "eligibility-checked",
+        to: "handed-off",
+        trigger: "handoff",
+        condition: "not-eligible",
+      },
+      {
+        from: "consent-given",
+        to: "amount-calculated",
+        trigger: "calculate-amount",
+      },
+      {
+        from: "amount-calculated",
+        to: "payment-made",
+        trigger: "make-payment",
+      },
       { from: "payment-made", to: "completed", trigger: "complete" },
     ],
   },
@@ -1897,12 +2195,34 @@ const STATE_MODEL_TEMPLATES: Record<InteractionType, StateModelTemplate> = {
       { id: "handed-off", type: "terminal", receipt: true },
     ],
     transitions: [
-      { from: "not-started", to: "identity-verified", trigger: "verify-identity" },
-      { from: "identity-verified", to: "eligibility-checked", trigger: "check-eligibility" },
-      { from: "eligibility-checked", to: "consent-given", trigger: "grant-consent", condition: "eligible" },
-      { from: "eligibility-checked", to: "handed-off", trigger: "handoff", condition: "not-eligible" },
+      {
+        from: "not-started",
+        to: "identity-verified",
+        trigger: "verify-identity",
+      },
+      {
+        from: "identity-verified",
+        to: "eligibility-checked",
+        trigger: "check-eligibility",
+      },
+      {
+        from: "eligibility-checked",
+        to: "consent-given",
+        trigger: "grant-consent",
+        condition: "eligible",
+      },
+      {
+        from: "eligibility-checked",
+        to: "handed-off",
+        trigger: "handoff",
+        condition: "not-eligible",
+      },
       { from: "consent-given", to: "slot-selected", trigger: "select-slot" },
-      { from: "slot-selected", to: "booking-confirmed", trigger: "confirm-booking" },
+      {
+        from: "slot-selected",
+        to: "booking-confirmed",
+        trigger: "confirm-booking",
+      },
       { from: "booking-confirmed", to: "attended", trigger: "attend" },
       { from: "booking-confirmed", to: "cancelled", trigger: "cancel" },
     ],
@@ -1919,13 +2239,38 @@ const STATE_MODEL_TEMPLATES: Record<InteractionType, StateModelTemplate> = {
       { id: "handed-off", type: "terminal", receipt: true },
     ],
     transitions: [
-      { from: "not-started", to: "identity-verified", trigger: "verify-identity" },
-      { from: "identity-verified", to: "consent-given", trigger: "grant-consent" },
-      { from: "consent-given", to: "step-1-complete", trigger: "complete-step-1" },
-      { from: "step-1-complete", to: "step-2-complete", trigger: "complete-step-2" },
-      { from: "step-2-complete", to: "step-3-complete", trigger: "complete-step-3" },
+      {
+        from: "not-started",
+        to: "identity-verified",
+        trigger: "verify-identity",
+      },
+      {
+        from: "identity-verified",
+        to: "consent-given",
+        trigger: "grant-consent",
+      },
+      {
+        from: "consent-given",
+        to: "step-1-complete",
+        trigger: "complete-step-1",
+      },
+      {
+        from: "step-1-complete",
+        to: "step-2-complete",
+        trigger: "complete-step-2",
+      },
+      {
+        from: "step-2-complete",
+        to: "step-3-complete",
+        trigger: "complete-step-3",
+      },
       { from: "step-3-complete", to: "all-steps-complete", trigger: "finish" },
-      { from: "consent-given", to: "handed-off", trigger: "handoff", condition: "edge-case" },
+      {
+        from: "consent-given",
+        to: "handed-off",
+        trigger: "handoff",
+        condition: "edge-case",
+      },
     ],
   },
   informational_hub: {
@@ -1938,8 +2283,16 @@ const STATE_MODEL_TEMPLATES: Record<InteractionType, StateModelTemplate> = {
     ],
     transitions: [
       { from: "not-started", to: "browsing", trigger: "start-browsing" },
-      { from: "browsing", to: "information-provided", trigger: "provide-information" },
-      { from: "information-provided", to: "referred-to-service", trigger: "refer-to-service" },
+      {
+        from: "browsing",
+        to: "information-provided",
+        trigger: "provide-information",
+      },
+      {
+        from: "information-provided",
+        to: "referred-to-service",
+        trigger: "refer-to-service",
+      },
       { from: "information-provided", to: "completed", trigger: "complete" },
     ],
   },
@@ -1961,19 +2314,62 @@ const STATE_MODEL_TEMPLATES: Record<InteractionType, StateModelTemplate> = {
       { id: "handed-off", type: "terminal", receipt: true },
     ],
     transitions: [
-      { from: "not-started", to: "identity-verified", trigger: "verify-identity" },
-      { from: "identity-verified", to: "eligibility-checked", trigger: "check-eligibility" },
-      { from: "eligibility-checked", to: "consent-given", trigger: "grant-consent", condition: "eligible" },
-      { from: "eligibility-checked", to: "rejected", trigger: "reject", condition: "not-eligible" },
-      { from: "eligibility-checked", to: "handed-off", trigger: "handoff", condition: "edge-case" },
-      { from: "consent-given", to: "income-assessed", trigger: "assess-income" },
-      { from: "income-assessed", to: "document-submitted", trigger: "upload-document" },
-      { from: "document-submitted", to: "details-submitted", trigger: "submit-details" },
-      { from: "details-submitted", to: "assessment", trigger: "begin-assessment" },
+      {
+        from: "not-started",
+        to: "identity-verified",
+        trigger: "verify-identity",
+      },
+      {
+        from: "identity-verified",
+        to: "eligibility-checked",
+        trigger: "check-eligibility",
+      },
+      {
+        from: "eligibility-checked",
+        to: "consent-given",
+        trigger: "grant-consent",
+        condition: "eligible",
+      },
+      {
+        from: "eligibility-checked",
+        to: "rejected",
+        trigger: "reject",
+        condition: "not-eligible",
+      },
+      {
+        from: "eligibility-checked",
+        to: "handed-off",
+        trigger: "handoff",
+        condition: "edge-case",
+      },
+      {
+        from: "consent-given",
+        to: "income-assessed",
+        trigger: "assess-income",
+      },
+      {
+        from: "income-assessed",
+        to: "document-submitted",
+        trigger: "upload-document",
+      },
+      {
+        from: "document-submitted",
+        to: "details-submitted",
+        trigger: "submit-details",
+      },
+      {
+        from: "details-submitted",
+        to: "assessment",
+        trigger: "begin-assessment",
+      },
       { from: "assessment", to: "decision", trigger: "make-decision" },
       { from: "decision", to: "payment-details-collected", trigger: "approve" },
       { from: "decision", to: "rejected", trigger: "reject-claim" },
-      { from: "payment-details-collected", to: "benefit-active", trigger: "activate-benefit" },
+      {
+        from: "payment-details-collected",
+        to: "benefit-active",
+        trigger: "activate-benefit",
+      },
     ],
   },
   entitlement: {
@@ -1990,15 +2386,54 @@ const STATE_MODEL_TEMPLATES: Record<InteractionType, StateModelTemplate> = {
       { id: "handed-off", type: "terminal", receipt: true },
     ],
     transitions: [
-      { from: "not-started", to: "identity-verified", trigger: "verify-identity" },
-      { from: "identity-verified", to: "eligibility-checked", trigger: "check-eligibility" },
-      { from: "eligibility-checked", to: "consent-given", trigger: "grant-consent", condition: "eligible" },
-      { from: "eligibility-checked", to: "rejected", trigger: "reject", condition: "not-eligible" },
-      { from: "eligibility-checked", to: "handed-off", trigger: "handoff", condition: "edge-case" },
-      { from: "consent-given", to: "employer-verified", trigger: "verify-employer" },
-      { from: "employer-verified", to: "document-submitted", trigger: "upload-document" },
-      { from: "document-submitted", to: "entitlement-confirmed", trigger: "confirm-entitlement" },
-      { from: "entitlement-confirmed", to: "confirmed", trigger: "accept-entitlement" },
+      {
+        from: "not-started",
+        to: "identity-verified",
+        trigger: "verify-identity",
+      },
+      {
+        from: "identity-verified",
+        to: "eligibility-checked",
+        trigger: "check-eligibility",
+      },
+      {
+        from: "eligibility-checked",
+        to: "consent-given",
+        trigger: "grant-consent",
+        condition: "eligible",
+      },
+      {
+        from: "eligibility-checked",
+        to: "rejected",
+        trigger: "reject",
+        condition: "not-eligible",
+      },
+      {
+        from: "eligibility-checked",
+        to: "handed-off",
+        trigger: "handoff",
+        condition: "edge-case",
+      },
+      {
+        from: "consent-given",
+        to: "employer-verified",
+        trigger: "verify-employer",
+      },
+      {
+        from: "employer-verified",
+        to: "document-submitted",
+        trigger: "upload-document",
+      },
+      {
+        from: "document-submitted",
+        to: "entitlement-confirmed",
+        trigger: "confirm-entitlement",
+      },
+      {
+        from: "entitlement-confirmed",
+        to: "confirmed",
+        trigger: "accept-entitlement",
+      },
     ],
   },
   grant: {
@@ -2017,15 +2452,54 @@ const STATE_MODEL_TEMPLATES: Record<InteractionType, StateModelTemplate> = {
       { id: "handed-off", type: "terminal", receipt: true },
     ],
     transitions: [
-      { from: "not-started", to: "identity-verified", trigger: "verify-identity" },
-      { from: "identity-verified", to: "eligibility-checked", trigger: "check-eligibility" },
-      { from: "eligibility-checked", to: "consent-given", trigger: "grant-consent", condition: "eligible" },
-      { from: "eligibility-checked", to: "rejected", trigger: "reject", condition: "not-eligible" },
-      { from: "eligibility-checked", to: "handed-off", trigger: "handoff", condition: "edge-case" },
-      { from: "consent-given", to: "document-submitted", trigger: "upload-document" },
-      { from: "document-submitted", to: "details-submitted", trigger: "submit-details" },
-      { from: "details-submitted", to: "conditions-reviewed", trigger: "review-conditions" },
-      { from: "conditions-reviewed", to: "assessment", trigger: "begin-assessment" },
+      {
+        from: "not-started",
+        to: "identity-verified",
+        trigger: "verify-identity",
+      },
+      {
+        from: "identity-verified",
+        to: "eligibility-checked",
+        trigger: "check-eligibility",
+      },
+      {
+        from: "eligibility-checked",
+        to: "consent-given",
+        trigger: "grant-consent",
+        condition: "eligible",
+      },
+      {
+        from: "eligibility-checked",
+        to: "rejected",
+        trigger: "reject",
+        condition: "not-eligible",
+      },
+      {
+        from: "eligibility-checked",
+        to: "handed-off",
+        trigger: "handoff",
+        condition: "edge-case",
+      },
+      {
+        from: "consent-given",
+        to: "document-submitted",
+        trigger: "upload-document",
+      },
+      {
+        from: "document-submitted",
+        to: "details-submitted",
+        trigger: "submit-details",
+      },
+      {
+        from: "details-submitted",
+        to: "conditions-reviewed",
+        trigger: "review-conditions",
+      },
+      {
+        from: "conditions-reviewed",
+        to: "assessment",
+        trigger: "begin-assessment",
+      },
       { from: "assessment", to: "decision", trigger: "make-decision" },
       { from: "decision", to: "approved", trigger: "approve" },
       { from: "decision", to: "rejected", trigger: "reject-application" },
@@ -2048,15 +2522,54 @@ const STATE_MODEL_TEMPLATES: Record<InteractionType, StateModelTemplate> = {
       { id: "handed-off", type: "terminal", receipt: true },
     ],
     transitions: [
-      { from: "not-started", to: "identity-verified", trigger: "verify-identity" },
-      { from: "identity-verified", to: "eligibility-checked", trigger: "check-eligibility" },
-      { from: "eligibility-checked", to: "consent-given", trigger: "grant-consent", condition: "eligible" },
-      { from: "eligibility-checked", to: "rejected", trigger: "reject", condition: "not-eligible" },
-      { from: "eligibility-checked", to: "handed-off", trigger: "handoff", condition: "edge-case" },
-      { from: "consent-given", to: "solicitor-details-collected", trigger: "collect-solicitor-details" },
-      { from: "solicitor-details-collected", to: "witness-attested", trigger: "collect-witness" },
-      { from: "witness-attested", to: "document-submitted", trigger: "upload-document" },
-      { from: "document-submitted", to: "details-submitted", trigger: "submit-details" },
+      {
+        from: "not-started",
+        to: "identity-verified",
+        trigger: "verify-identity",
+      },
+      {
+        from: "identity-verified",
+        to: "eligibility-checked",
+        trigger: "check-eligibility",
+      },
+      {
+        from: "eligibility-checked",
+        to: "consent-given",
+        trigger: "grant-consent",
+        condition: "eligible",
+      },
+      {
+        from: "eligibility-checked",
+        to: "rejected",
+        trigger: "reject",
+        condition: "not-eligible",
+      },
+      {
+        from: "eligibility-checked",
+        to: "handed-off",
+        trigger: "handoff",
+        condition: "edge-case",
+      },
+      {
+        from: "consent-given",
+        to: "solicitor-details-collected",
+        trigger: "collect-solicitor-details",
+      },
+      {
+        from: "solicitor-details-collected",
+        to: "witness-attested",
+        trigger: "collect-witness",
+      },
+      {
+        from: "witness-attested",
+        to: "document-submitted",
+        trigger: "upload-document",
+      },
+      {
+        from: "document-submitted",
+        to: "details-submitted",
+        trigger: "submit-details",
+      },
       { from: "details-submitted", to: "review", trigger: "begin-review" },
       { from: "review", to: "decision", trigger: "make-decision" },
       { from: "decision", to: "completed", trigger: "approve" },
@@ -2152,19 +2665,19 @@ const TEMPLATE_STATE_LABELS: Record<string, string> = {
   "document-submitted": "Document",
   "details-submitted": "Details",
   "details-confirmed": "Details",
-  "assessment": "Assessment",
-  "decision": "Decision",
-  "completed": "Complete",
-  "registered": "Registered",
-  "issued": "Issued",
+  assessment: "Assessment",
+  decision: "Decision",
+  completed: "Complete",
+  registered: "Registered",
+  issued: "Issued",
   "payment-made": "Payment",
   "amount-calculated": "Amount",
   "slot-selected": "Slot",
   "booking-confirmed": "Booked",
-  "attended": "Attended",
+  attended: "Attended",
   "account-accessed": "Account",
   "action-performed": "Action",
-  "browsing": "Browsing",
+  browsing: "Browsing",
   "information-provided": "Info",
   "step-1-complete": "Step 1",
   "step-2-complete": "Step 2",
@@ -2180,19 +2693,21 @@ const TEMPLATE_STATE_LABELS: Record<string, string> = {
   "benefit-active": "Active",
   "employer-verified": "Employer",
   "entitlement-confirmed": "Entitlement",
-  "confirmed": "Confirmed",
+  confirmed: "Confirmed",
   "conditions-reviewed": "Conditions",
-  "approved": "Approved",
+  approved: "Approved",
   "solicitor-details-collected": "Legal Rep",
   "witness-attested": "Witness",
-  "review": "Review",
+  review: "Review",
 };
 
 /**
  * Generate milestone config for a StateProgressTracker from an interaction type template.
  * Groups non-terminal states into labeled milestones.
  */
-export function generateMilestonesForType(interactionType: InteractionType): ServiceMilestoneConfig {
+export function generateMilestonesForType(
+  interactionType: InteractionType,
+): ServiceMilestoneConfig {
   const template = STATE_MODEL_TEMPLATES[interactionType];
   if (!template) {
     return {
@@ -2205,7 +2720,12 @@ export function generateMilestonesForType(interactionType: InteractionType): Ser
   }
 
   const terminalIds = new Set<string>();
-  const failureTerminals = new Set(["rejected", "refused", "cancelled", "handed-off"]);
+  const failureTerminals = new Set([
+    "rejected",
+    "refused",
+    "cancelled",
+    "handed-off",
+  ]);
   for (const s of template.states) {
     if (s.type === "terminal" && failureTerminals.has(s.id)) {
       terminalIds.add(s.id);
@@ -2216,7 +2736,9 @@ export function generateMilestonesForType(interactionType: InteractionType): Ser
   for (const s of template.states) {
     // Skip failure/handoff terminals — they don't appear as progress milestones
     if (terminalIds.has(s.id)) continue;
-    const label = TEMPLATE_STATE_LABELS[s.id] || s.id.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+    const label =
+      TEMPLATE_STATE_LABELS[s.id] ||
+      s.id.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
     milestones.push({ label, states: [s.id] });
   }
 

@@ -1,5 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getLedgerStore, loadStateModel, normalizeLedgerServiceId } from "@/lib/ledger";
+import {
+  getLedgerStore,
+  loadStateModel,
+  normalizeLedgerServiceId,
+} from "@/lib/ledger";
 import { CaseStore } from "@als/evidence";
 
 const corsHeaders = {
@@ -18,7 +22,9 @@ export async function GET(
 ) {
   try {
     const { serviceId: rawId, userId } = await params;
-    const decodedService = await normalizeLedgerServiceId(decodeURIComponent(rawId));
+    const decodedService = await normalizeLedgerServiceId(
+      decodeURIComponent(rawId),
+    );
     const decodedUser = decodeURIComponent(userId);
 
     const store = await getLedgerStore();
@@ -33,13 +39,18 @@ export async function GET(
     }
 
     const timeline = await store.getCaseTimeline(caseId);
-    const stateModel = await loadStateModel(decodedService) ?? await loadStateModel(decodeURIComponent(rawId));
+    const stateModel =
+      (await loadStateModel(decodedService)) ??
+      (await loadStateModel(decodeURIComponent(rawId)));
 
-    return NextResponse.json({
-      case: ledgerCase,
-      timeline,
-      stateModel,
-    }, { headers: corsHeaders });
+    return NextResponse.json(
+      {
+        case: ledgerCase,
+        timeline,
+        stateModel,
+      },
+      { headers: corsHeaders },
+    );
   } catch (error) {
     console.error("[Ledger] Case detail error:", error);
     return NextResponse.json(

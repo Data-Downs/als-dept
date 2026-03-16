@@ -60,7 +60,9 @@ export class ServiceRegistry {
         loaded++;
       } catch {
         // Skip directories without a valid manifest.json
-        console.warn(`[ServiceRegistry] Skipping ${entry.name}: no valid manifest.json`);
+        console.warn(
+          `[ServiceRegistry] Skipping ${entry.name}: no valid manifest.json`,
+        );
       }
     }
 

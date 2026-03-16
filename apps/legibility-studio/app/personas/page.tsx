@@ -66,8 +66,8 @@ export default function PersonasPage() {
           {/* Info banner */}
           <div className="border border-blue-200 rounded-lg bg-blue-50 px-4 py-3 mb-6">
             <p className="text-xs text-blue-800">
-              Changes to persona data require restarting the citizen-experience dev server to take
-              effect in the chat UI.
+              Changes to persona data require restarting the citizen-experience
+              dev server to take effect in the chat UI.
             </p>
           </div>
 

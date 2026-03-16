@@ -7,7 +7,7 @@ import { getServiceArtefactStore } from "@/lib/service-store-init";
  */
 export async function GET(
   _request: NextRequest,
-  { params }: { params: Promise<{ serviceId: string }> }
+  { params }: { params: Promise<{ serviceId: string }> },
 ) {
   try {
     const { serviceId } = await params;
@@ -34,7 +34,10 @@ export async function GET(
     });
   } catch (error) {
     console.error("Error loading service:", error);
-    return NextResponse.json({ error: "Failed to load service" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to load service" },
+      { status: 500 },
+    );
   }
 }
 
@@ -44,7 +47,7 @@ export async function GET(
  */
 export async function PUT(
   request: NextRequest,
-  { params }: { params: Promise<{ serviceId: string }> }
+  { params }: { params: Promise<{ serviceId: string }> },
 ) {
   try {
     const { serviceId } = await params;
@@ -65,7 +68,10 @@ export async function PUT(
     return NextResponse.json({ serviceId, updated: true });
   } catch (error) {
     console.error("Error updating service:", error);
-    return NextResponse.json({ error: "Failed to update service" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to update service" },
+      { status: 500 },
+    );
   }
 }
 
@@ -74,7 +80,7 @@ export async function PUT(
  */
 export async function DELETE(
   _request: NextRequest,
-  { params }: { params: Promise<{ serviceId: string }> }
+  { params }: { params: Promise<{ serviceId: string }> },
 ) {
   try {
     const { serviceId } = await params;
@@ -88,6 +94,9 @@ export async function DELETE(
     return NextResponse.json({ deleted: true });
   } catch (error) {
     console.error("Error deleting service:", error);
-    return NextResponse.json({ error: "Failed to delete service" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to delete service" },
+      { status: 500 },
+    );
   }
 }

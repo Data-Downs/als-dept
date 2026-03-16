@@ -23,7 +23,13 @@ import { getAllTerminalStateIds } from "@als/schemas";
 
 const TERMINAL_STATES = getAllTerminalStateIds();
 
-function TabButton({ label, icon, active, onClick, disabled }: {
+function TabButton({
+  label,
+  icon,
+  active,
+  onClick,
+  disabled,
+}: {
   label: string;
   icon: React.ReactNode;
   active: boolean;
@@ -62,13 +68,26 @@ function BottomTabBar() {
       <div className="max-w-[960px] mx-auto flex">
         <TabButton
           label="Home"
-          active={currentView === "dashboard" || currentView === "detail" || currentView === "plan"}
+          active={
+            currentView === "dashboard" ||
+            currentView === "detail" ||
+            currentView === "plan"
+          }
           onClick={() => {
             startNewConversation(null);
             navigateTo("dashboard");
           }}
           icon={
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+            <svg
+              width="22"
+              height="22"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.8"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
               <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
               <polyline points="9 22 9 12 15 12 15 22" />
             </svg>
@@ -86,7 +105,16 @@ function BottomTabBar() {
             navigateTo("chat");
           }}
           icon={
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+            <svg
+              width="22"
+              height="22"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.8"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
               <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
             </svg>
           }
@@ -96,7 +124,16 @@ function BottomTabBar() {
           active={currentView === "tasks"}
           onClick={() => navigateTo("tasks")}
           icon={
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+            <svg
+              width="22"
+              height="22"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.8"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
               <path d="M9 11l3 3L22 4" />
               <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11" />
             </svg>
@@ -108,7 +145,16 @@ function BottomTabBar() {
           onClick={() => {}}
           disabled
           icon={
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+            <svg
+              width="22"
+              height="22"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.8"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
               <circle cx="12" cy="12" r="10" />
               <path d="M12 16v-4M12 8h.01" />
             </svg>
@@ -179,7 +225,10 @@ export function AppShell() {
 
   // Auto-load Anna Cotton on mount (demo mode — skip persona picker)
   useEffect(() => {
-    const savedAgent = sessionStorage.getItem("c02_agent") as "dot" | "max" | null;
+    const savedAgent = sessionStorage.getItem("c02_agent") as
+      | "dot"
+      | "max"
+      | null;
     if (savedAgent) {
       setAgent(savedAgent);
     }
@@ -197,7 +246,10 @@ export function AppShell() {
 
     const update = () => {
       const offset = window.innerHeight - vv.height;
-      document.documentElement.style.setProperty("--keyboard-offset", `${offset}px`);
+      document.documentElement.style.setProperty(
+        "--keyboard-offset",
+        `${offset}px`,
+      );
     };
 
     vv.addEventListener("resize", update);

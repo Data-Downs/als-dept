@@ -14,7 +14,8 @@ const REQUIRED_ARTEFACTS = [
   "consent.json",
 ];
 
-const SERVICE_DIRS = fs.readdirSync(SERVICES_DIR, { withFileTypes: true })
+const SERVICE_DIRS = fs
+  .readdirSync(SERVICES_DIR, { withFileTypes: true })
   .filter((d) => d.isDirectory())
   .map((d) => d.name);
 
@@ -36,7 +37,10 @@ describe("Data integrity — services", () => {
       }
 
       it("manifest.json is valid JSON with required fields", () => {
-        const raw = fs.readFileSync(path.join(SERVICES_DIR, svc, "manifest.json"), "utf-8");
+        const raw = fs.readFileSync(
+          path.join(SERVICES_DIR, svc, "manifest.json"),
+          "utf-8",
+        );
         const manifest = JSON.parse(raw);
         expect(manifest.id).toBeTruthy();
         expect(typeof manifest.id).toBe("string");
@@ -47,7 +51,10 @@ describe("Data integrity — services", () => {
       });
 
       it("policy.json is valid JSON with rules array", () => {
-        const raw = fs.readFileSync(path.join(SERVICES_DIR, svc, "policy.json"), "utf-8");
+        const raw = fs.readFileSync(
+          path.join(SERVICES_DIR, svc, "policy.json"),
+          "utf-8",
+        );
         const policy = JSON.parse(raw);
         expect(typeof policy.id).toBe("string");
         expect(Array.isArray(policy.rules)).toBe(true);
@@ -62,7 +69,10 @@ describe("Data integrity — services", () => {
       });
 
       it("state-model.json has states and transitions", () => {
-        const raw = fs.readFileSync(path.join(SERVICES_DIR, svc, "state-model.json"), "utf-8");
+        const raw = fs.readFileSync(
+          path.join(SERVICES_DIR, svc, "state-model.json"),
+          "utf-8",
+        );
         const model = JSON.parse(raw);
         expect(Array.isArray(model.states)).toBe(true);
         expect(model.states.length).toBeGreaterThan(0);
@@ -70,8 +80,12 @@ describe("Data integrity — services", () => {
         expect(model.transitions.length).toBeGreaterThan(0);
 
         // Must have initial and terminal states
-        const hasInitial = model.states.some((s: { type?: string }) => s.type === "initial");
-        const hasTerminal = model.states.some((s: { type?: string }) => s.type === "terminal");
+        const hasInitial = model.states.some(
+          (s: { type?: string }) => s.type === "initial",
+        );
+        const hasTerminal = model.states.some(
+          (s: { type?: string }) => s.type === "terminal",
+        );
         expect(hasInitial).toBe(true);
         expect(hasTerminal).toBe(true);
 
@@ -84,7 +98,10 @@ describe("Data integrity — services", () => {
       });
 
       it("consent.json has grants array", () => {
-        const raw = fs.readFileSync(path.join(SERVICES_DIR, svc, "consent.json"), "utf-8");
+        const raw = fs.readFileSync(
+          path.join(SERVICES_DIR, svc, "consent.json"),
+          "utf-8",
+        );
         const consent = JSON.parse(raw);
         expect(typeof consent.id).toBe("string");
         expect(Array.isArray(consent.grants)).toBe(true);
@@ -122,7 +139,7 @@ describe("Data integrity — simulated personas", () => {
 
       it("has required identity fields", () => {
         const persona = JSON.parse(
-          fs.readFileSync(path.join(USERS_DIR, file), "utf-8")
+          fs.readFileSync(path.join(USERS_DIR, file), "utf-8"),
         );
         expect(persona.id).toBeTruthy();
         expect(persona.name).toBeTruthy();
@@ -132,7 +149,7 @@ describe("Data integrity — simulated personas", () => {
 
       it("has address with required fields", () => {
         const persona = JSON.parse(
-          fs.readFileSync(path.join(USERS_DIR, file), "utf-8")
+          fs.readFileSync(path.join(USERS_DIR, file), "utf-8"),
         );
         expect(persona.address).toBeDefined();
         expect(persona.address.line_1).toBeTruthy();
@@ -142,13 +159,15 @@ describe("Data integrity — simulated personas", () => {
 
       it("has credentials array", () => {
         const persona = JSON.parse(
-          fs.readFileSync(path.join(USERS_DIR, file), "utf-8")
+          fs.readFileSync(path.join(USERS_DIR, file), "utf-8"),
         );
         expect(Array.isArray(persona.credentials)).toBe(true);
         for (const cred of persona.credentials) {
           expect(cred.type).toBeTruthy();
           expect(cred.issuer).toBeTruthy();
-          expect(["valid", "expired", "revoked", "suspended"]).toContain(cred.status);
+          expect(["valid", "expired", "revoked", "suspended"]).toContain(
+            cred.status,
+          );
         }
       });
     });
@@ -166,7 +185,7 @@ describe("Data integrity — cross-references", () => {
   it("wallet credential types are valid JSON", () => {
     const raw = fs.readFileSync(
       path.join(SIMULATED_DIR, "wallet-credentials.json"),
-      "utf-8"
+      "utf-8",
     );
     const data = JSON.parse(raw);
     expect(data.credential_types).toBeDefined();
@@ -180,11 +199,11 @@ describe("Data integrity — cross-references", () => {
   it("manifest eligibility_ruleset_id matches policy id", () => {
     for (const svc of SERVICE_DIRS) {
       const manifest = JSON.parse(
-        fs.readFileSync(path.join(SERVICES_DIR, svc, "manifest.json"), "utf-8")
+        fs.readFileSync(path.join(SERVICES_DIR, svc, "manifest.json"), "utf-8"),
       );
       if (manifest.eligibility_ruleset_id) {
         const policy = JSON.parse(
-          fs.readFileSync(path.join(SERVICES_DIR, svc, "policy.json"), "utf-8")
+          fs.readFileSync(path.join(SERVICES_DIR, svc, "policy.json"), "utf-8"),
         );
         expect(policy.id).toBe(manifest.eligibility_ruleset_id);
       }
@@ -194,7 +213,10 @@ describe("Data integrity — cross-references", () => {
   it("state-model transition states all exist in states array", () => {
     for (const svc of SERVICE_DIRS) {
       const model = JSON.parse(
-        fs.readFileSync(path.join(SERVICES_DIR, svc, "state-model.json"), "utf-8")
+        fs.readFileSync(
+          path.join(SERVICES_DIR, svc, "state-model.json"),
+          "utf-8",
+        ),
       );
       const stateIds = new Set(model.states.map((s: { id: string }) => s.id));
       for (const t of model.transitions) {

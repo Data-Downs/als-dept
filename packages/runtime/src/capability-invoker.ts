@@ -24,7 +24,7 @@ import type {
 
 type ServiceHandler = (
   input: unknown,
-  context: InvocationContext
+  context: InvocationContext,
 ) => Promise<unknown>;
 
 function generateId(): string {
@@ -35,7 +35,7 @@ function createTraceEvent(
   type: TraceEventType,
   context: InvocationContext,
   capabilityId: string,
-  payload: Record<string, unknown>
+  payload: Record<string, unknown>,
 ): TraceEvent {
   return {
     id: `evt_${generateId()}`,
@@ -76,7 +76,7 @@ export class CapabilityInvoker {
   async invoke(
     capabilityId: string,
     input: unknown,
-    context: InvocationContext
+    context: InvocationContext,
   ): Promise<InvocationResult> {
     const traceEvents: TraceEvent[] = [];
     const startTime = Date.now();
@@ -85,12 +85,13 @@ export class CapabilityInvoker {
     traceEvents.push(
       createTraceEvent("capability.invoked", context, capabilityId, {
         capabilityId,
-        inputSummary: typeof input === "object" ? Object.keys(input || {}) : typeof input,
-      })
+        inputSummary:
+          typeof input === "object" ? Object.keys(input || {}) : typeof input,
+      }),
     );
 
     console.log(
-      `[CapabilityInvoker] Invoking: ${capabilityId} (session: ${context.sessionId})`
+      `[CapabilityInvoker] Invoking: ${capabilityId} (session: ${context.sessionId})`,
     );
 
     try {
@@ -101,7 +102,7 @@ export class CapabilityInvoker {
         traceEvents.push(
           createTraceEvent("error.raised", context, capabilityId, {
             error,
-          })
+          }),
         );
         return {
           success: false,
@@ -120,7 +121,7 @@ export class CapabilityInvoker {
         createTraceEvent("capability.result", context, capabilityId, {
           success: true,
           durationMs: duration,
-        })
+        }),
       );
 
       // Generate receipt
@@ -140,11 +141,11 @@ export class CapabilityInvoker {
       traceEvents.push(
         createTraceEvent("receipt.issued", context, capabilityId, {
           receiptId: receipt.id,
-        })
+        }),
       );
 
       console.log(
-        `[CapabilityInvoker] Complete: ${capabilityId} (${duration}ms)`
+        `[CapabilityInvoker] Complete: ${capabilityId} (${duration}ms)`,
       );
 
       return {
@@ -163,11 +164,11 @@ export class CapabilityInvoker {
         createTraceEvent("error.raised", context, capabilityId, {
           error: errorMessage,
           durationMs: duration,
-        })
+        }),
       );
 
       console.error(
-        `[CapabilityInvoker] Error: ${capabilityId} — ${errorMessage}`
+        `[CapabilityInvoker] Error: ${capabilityId} — ${errorMessage}`,
       );
 
       return {

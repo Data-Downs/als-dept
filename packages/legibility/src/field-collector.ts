@@ -89,7 +89,8 @@ export class FieldCollector {
     if (collectedEntries.length > 0) {
       lines.push("FIELDS COLLECTED:");
       for (const [key, { value, source }] of collectedEntries) {
-        const display = typeof value === "object" ? JSON.stringify(value) : String(value);
+        const display =
+          typeof value === "object" ? JSON.stringify(value) : String(value);
         lines.push(`  - ${key}: ${display} (source: ${source})`);
       }
     }
@@ -99,8 +100,12 @@ export class FieldCollector {
       lines.push("");
       lines.push("FIELDS STILL REQUIRED:");
       for (const key of missing) {
-        const schemaProp = this.schema.properties?.[key] as Record<string, unknown> | undefined;
-        const desc = schemaProp?.description ? ` — ${schemaProp.description}` : "";
+        const schemaProp = this.schema.properties?.[key] as
+          | Record<string, unknown>
+          | undefined;
+        const desc = schemaProp?.description
+          ? ` — ${schemaProp.description}`
+          : "";
         lines.push(`  - ${key}${desc}`);
       }
     }
@@ -114,7 +119,12 @@ export class FieldCollector {
   }
 
   /** Summary stats for trace metadata */
-  toStats(): { collected: number; required: number; missing: number; complete: boolean } {
+  toStats(): {
+    collected: number;
+    required: number;
+    missing: number;
+    complete: boolean;
+  } {
     return {
       collected: this.collected.size,
       required: this.requiredFields.length,

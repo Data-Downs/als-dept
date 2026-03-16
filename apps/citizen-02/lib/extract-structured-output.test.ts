@@ -76,11 +76,13 @@ describe("extractStructuredOutput", () => {
     const text = [
       "```json",
       JSON.stringify({
-        tasks: [{
-          description: "A".repeat(100),
-          detail: "B".repeat(200),
-          type: "agent",
-        }],
+        tasks: [
+          {
+            description: "A".repeat(100),
+            detail: "B".repeat(200),
+            type: "agent",
+          },
+        ],
       }),
       "```",
     ].join("\n");
@@ -93,12 +95,14 @@ describe("extractStructuredOutput", () => {
     const text = [
       "```json",
       JSON.stringify({
-        tasks: [{
-          description: "Do thing",
-          detail: "Detail here",
-          type: "user",
-          dueDate: "2026-03-15",
-        }],
+        tasks: [
+          {
+            description: "Do thing",
+            detail: "Detail here",
+            type: "user",
+            dueDate: "2026-03-15",
+          },
+        ],
       }),
       "```",
     ].join("\n");
@@ -110,12 +114,14 @@ describe("extractStructuredOutput", () => {
     const text = [
       "```json",
       JSON.stringify({
-        tasks: [{
-          description: "Do thing",
-          detail: "Detail here",
-          type: "user",
-          dueDate: "March 15",
-        }],
+        tasks: [
+          {
+            description: "Do thing",
+            detail: "Detail here",
+            type: "user",
+            dueDate: "March 15",
+          },
+        ],
       }),
       "```",
     ].join("\n");
@@ -127,12 +133,14 @@ describe("extractStructuredOutput", () => {
     const text = [
       "```json",
       JSON.stringify({
-        tasks: [{
-          description: "Do thing",
-          detail: "Detail here",
-          type: "user",
-          dataNeeded: ["email", 42, "phone", "", null],
-        }],
+        tasks: [
+          {
+            description: "Do thing",
+            detail: "Detail here",
+            type: "user",
+            dataNeeded: ["email", 42, "phone", "", null],
+          },
+        ],
       }),
       "```",
     ].join("\n");
@@ -163,7 +171,12 @@ describe("extractStructuredOutput", () => {
       "```json",
       JSON.stringify({
         extractedFacts: [
-          { key: "name", value: "Alice", confidence: "high", source_snippet: "She said Alice" },
+          {
+            key: "name",
+            value: "Alice",
+            confidence: "high",
+            source_snippet: "She said Alice",
+          },
           { key: "age", value: 30 }, // missing confidence → defaults to medium
           { key: "", value: "ignored" }, // empty key → skipped
           { key: "missing_value" }, // undefined value → skipped
@@ -197,12 +210,14 @@ describe("extractStructuredOutput", () => {
     const text = [
       "```json",
       JSON.stringify({
-        extractedFacts: [{
-          key: "test",
-          value: true,
-          confidence: "low",
-          source_snippet: "X".repeat(300),
-        }],
+        extractedFacts: [
+          {
+            key: "test",
+            value: true,
+            confidence: "low",
+            source_snippet: "X".repeat(300),
+          },
+        ],
       }),
       "```",
     ].join("\n");
@@ -237,15 +252,17 @@ describe("extractStructuredOutput", () => {
     const text = [
       "```json",
       JSON.stringify({
-        tasks: [{
-          description: "Who is this for?",
-          detail: "Choose a person",
-          type: "user",
-          options: [
-            { value: "self", label: "Myself" },
-            { value: "other", label: "Someone else" },
-          ],
-        }],
+        tasks: [
+          {
+            description: "Who is this for?",
+            detail: "Choose a person",
+            type: "user",
+            options: [
+              { value: "self", label: "Myself" },
+              { value: "other", label: "Someone else" },
+            ],
+          },
+        ],
       }),
       "```",
     ].join("\n");
@@ -260,20 +277,22 @@ describe("extractStructuredOutput", () => {
     const text = [
       "```json",
       JSON.stringify({
-        tasks: [{
-          description: "Pick one",
-          detail: "Choose wisely",
-          type: "user",
-          options: [
-            { value: "a", label: "Good" },
-            { value: "", label: "Empty value" },
-            { value: "b" },
-            { label: "No value" },
-            42,
-            null,
-            { value: "c", label: "Also good" },
-          ],
-        }],
+        tasks: [
+          {
+            description: "Pick one",
+            detail: "Choose wisely",
+            type: "user",
+            options: [
+              { value: "a", label: "Good" },
+              { value: "", label: "Empty value" },
+              { value: "b" },
+              { label: "No value" },
+              42,
+              null,
+              { value: "c", label: "Also good" },
+            ],
+          },
+        ],
       }),
       "```",
     ].join("\n");
@@ -292,12 +311,14 @@ describe("extractStructuredOutput", () => {
     const text = [
       "```json",
       JSON.stringify({
-        tasks: [{
-          description: "Pick one",
-          detail: "Choose wisely",
-          type: "user",
-          options,
-        }],
+        tasks: [
+          {
+            description: "Pick one",
+            detail: "Choose wisely",
+            type: "user",
+            options,
+          },
+        ],
       }),
       "```",
     ].join("\n");
@@ -311,25 +332,55 @@ describe("extractStructuredOutput", () => {
     const text = [
       "```json",
       JSON.stringify({
-        tasks: [{
-          description: "Provide LISA details",
-          detail: "Enter your LISA info",
-          type: "user",
-          fields: [
-            { key: "account_holder", label: "Account holder", type: "text", prefill: "Thomas" },
-            { key: "property_price", label: "Property price", type: "currency", placeholder: "350000" },
-            { key: "first_time_buyer", label: "First-time buyer", type: "confirm" },
-          ],
-        }],
+        tasks: [
+          {
+            description: "Provide LISA details",
+            detail: "Enter your LISA info",
+            type: "user",
+            fields: [
+              {
+                key: "account_holder",
+                label: "Account holder",
+                type: "text",
+                prefill: "Thomas",
+              },
+              {
+                key: "property_price",
+                label: "Property price",
+                type: "currency",
+                placeholder: "350000",
+              },
+              {
+                key: "first_time_buyer",
+                label: "First-time buyer",
+                type: "confirm",
+              },
+            ],
+          },
+        ],
       }),
       "```",
     ].join("\n");
     const result = extractStructuredOutput(text);
     const fields = result.parsed!.tasks![0].fields!;
     expect(fields).toHaveLength(3);
-    expect(fields[0]).toEqual({ key: "account_holder", label: "Account holder", type: "text", prefill: "Thomas" });
-    expect(fields[1]).toEqual({ key: "property_price", label: "Property price", type: "currency", placeholder: "350000" });
-    expect(fields[2]).toEqual({ key: "first_time_buyer", label: "First-time buyer", type: "confirm" });
+    expect(fields[0]).toEqual({
+      key: "account_holder",
+      label: "Account holder",
+      type: "text",
+      prefill: "Thomas",
+    });
+    expect(fields[1]).toEqual({
+      key: "property_price",
+      label: "Property price",
+      type: "currency",
+      placeholder: "350000",
+    });
+    expect(fields[2]).toEqual({
+      key: "first_time_buyer",
+      label: "First-time buyer",
+      type: "confirm",
+    });
   });
 
   it("caps fields at 8", () => {
@@ -341,12 +392,14 @@ describe("extractStructuredOutput", () => {
     const text = [
       "```json",
       JSON.stringify({
-        tasks: [{
-          description: "Many fields",
-          detail: "Too many fields",
-          type: "user",
-          fields,
-        }],
+        tasks: [
+          {
+            description: "Many fields",
+            detail: "Too many fields",
+            type: "user",
+            fields,
+          },
+        ],
       }),
       "```",
     ].join("\n");
@@ -358,16 +411,18 @@ describe("extractStructuredOutput", () => {
     const text = [
       "```json",
       JSON.stringify({
-        tasks: [{
-          description: "Bad fields",
-          detail: "Invalid type",
-          type: "user",
-          fields: [
-            { key: "valid", label: "Valid", type: "text" },
-            { key: "invalid", label: "Invalid", type: "slider" },
-            { key: "also_valid", label: "Also Valid", type: "email" },
-          ],
-        }],
+        tasks: [
+          {
+            description: "Bad fields",
+            detail: "Invalid type",
+            type: "user",
+            fields: [
+              { key: "valid", label: "Valid", type: "text" },
+              { key: "invalid", label: "Invalid", type: "slider" },
+              { key: "also_valid", label: "Also Valid", type: "email" },
+            ],
+          },
+        ],
       }),
       "```",
     ].join("\n");
@@ -382,16 +437,18 @@ describe("extractStructuredOutput", () => {
     const text = [
       "```json",
       JSON.stringify({
-        tasks: [{
-          description: "Bad fields",
-          detail: "Missing props",
-          type: "user",
-          fields: [
-            { key: "", label: "No key", type: "text" },
-            { key: "no_label", label: "", type: "text" },
-            { key: "valid", label: "Valid", type: "text" },
-          ],
-        }],
+        tasks: [
+          {
+            description: "Bad fields",
+            detail: "Missing props",
+            type: "user",
+            fields: [
+              { key: "", label: "No key", type: "text" },
+              { key: "no_label", label: "", type: "text" },
+              { key: "valid", label: "Valid", type: "text" },
+            ],
+          },
+        ],
       }),
       "```",
     ].join("\n");
@@ -405,22 +462,24 @@ describe("extractStructuredOutput", () => {
     const text = [
       "```json",
       JSON.stringify({
-        tasks: [{
-          description: "Choose provider",
-          detail: "Select ISA provider",
-          type: "user",
-          fields: [
-            {
-              key: "provider",
-              label: "ISA provider",
-              type: "select",
-              options: [
-                { value: "hl", label: "Hargreaves Lansdown" },
-                { value: "aj", label: "AJ Bell" },
-              ],
-            },
-          ],
-        }],
+        tasks: [
+          {
+            description: "Choose provider",
+            detail: "Select ISA provider",
+            type: "user",
+            fields: [
+              {
+                key: "provider",
+                label: "ISA provider",
+                type: "select",
+                options: [
+                  { value: "hl", label: "Hargreaves Lansdown" },
+                  { value: "aj", label: "AJ Bell" },
+                ],
+              },
+            ],
+          },
+        ],
       }),
       "```",
     ].join("\n");

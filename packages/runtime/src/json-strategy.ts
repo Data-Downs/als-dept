@@ -6,11 +6,17 @@
  * only receives govmcp tools (live GOV.UK data) and generates language.
  */
 
-import type { ServiceStrategy, ServiceStrategyContext, ToolDefinition } from "./service-strategy";
+import type {
+  ServiceStrategy,
+  ServiceStrategyContext,
+  ToolDefinition,
+} from "./service-strategy";
 
 export class JsonServiceStrategy implements ServiceStrategy {
   private govmcpTools: ToolDefinition[];
-  private toolDispatcher: ((name: string, input: unknown) => Promise<string>) | null;
+  private toolDispatcher:
+    | ((name: string, input: unknown) => Promise<string>)
+    | null;
 
   constructor(opts?: {
     govmcpTools?: ToolDefinition[];
@@ -54,31 +60,52 @@ export class JsonServiceStrategy implements ServiceStrategy {
         for (const e of pr.edgeCases) {
           lines.push(`  - ${e.description}: ${e.action}`);
         }
-        lines.push("IMPORTANT: Mention relevant edge cases to the user and explain any implications.");
+        lines.push(
+          "IMPORTANT: Mention relevant edge cases to the user and explain any implications.",
+        );
       }
     }
 
     // Tool instructions (govmcp only)
     if (this.govmcpTools.length > 0) {
-      const postcode = (ctx.personaData.address as Record<string, unknown>)?.postcode || "";
+      const postcode =
+        (ctx.personaData.address as Record<string, unknown>)?.postcode || "";
       lines.push("");
       lines.push("LIVE GOV.UK DATA TOOLS:");
-      lines.push("You have access to tools that can look up real, current UK government data.");
-      lines.push("Use these when the user asks questions that benefit from real, up-to-date information.");
+      lines.push(
+        "You have access to tools that can look up real, current UK government data.",
+      );
+      lines.push(
+        "Use these when the user asks questions that benefit from real, up-to-date information.",
+      );
       lines.push(`For example:`);
-      lines.push(`- search_govuk to find official guidance on benefits, driving, parenting, tax`);
+      lines.push(
+        `- search_govuk to find official guidance on benefits, driving, parenting, tax`,
+      );
       lines.push(`- govuk_content to fetch a specific GOV.UK page by its path`);
-      lines.push(`- find_mp to look up the user's MP (their postcode is ${postcode})`);
-      lines.push(`- lookup_postcode for local council and constituency info (their postcode is ${postcode})`);
+      lines.push(
+        `- find_mp to look up the user's MP (their postcode is ${postcode})`,
+      );
+      lines.push(
+        `- lookup_postcode for local council and constituency info (their postcode is ${postcode})`,
+      );
       lines.push(`- ea_current_floods to check flood warnings in their area`);
       lines.push(`- get_bank_holidays for upcoming bank holidays`);
-      lines.push(`- search_hansard to find what Parliament has discussed on a topic`);
+      lines.push(
+        `- search_hansard to find what Parliament has discussed on a topic`,
+      );
       lines.push(`- find_courts to find nearby courts`);
       lines.push(`- fsa_food_alerts_search for current food safety alerts`);
       lines.push("");
-      lines.push("When you use these tools, present the information naturally as part of your response.");
-      lines.push('Do NOT mention "tools" or "MCP" to the user — just weave the real data into your answer.');
-      lines.push("Always prefer real data from tools over making up or guessing information.");
+      lines.push(
+        "When you use these tools, present the information naturally as part of your response.",
+      );
+      lines.push(
+        'Do NOT mention "tools" or "MCP" to the user — just weave the real data into your answer.',
+      );
+      lines.push(
+        "Always prefer real data from tools over making up or guessing information.",
+      );
     }
 
     return lines.join("\n");
@@ -92,7 +119,7 @@ export class JsonServiceStrategy implements ServiceStrategy {
   }
 
   extractStateTransitions(
-    _loopMessages: Array<{ role: string; content: unknown }>
+    _loopMessages: Array<{ role: string; content: unknown }>,
   ): Array<{ fromState: string; toState: string; trigger: string }> {
     // JSON mode: state transitions come from structured output, not tool results
     return [];

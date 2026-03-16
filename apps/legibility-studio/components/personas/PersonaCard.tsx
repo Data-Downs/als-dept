@@ -46,7 +46,8 @@ function avatarColor(id: string): string {
 }
 
 export default function PersonaCard({ user }: { user: PersonaCardUser }) {
-  const empStyle = EMPLOYMENT_COLORS[user.employment_status] ?? "bg-gray-100 text-gray-700";
+  const empStyle =
+    EMPLOYMENT_COLORS[user.employment_status] ?? "bg-gray-100 text-gray-700";
 
   return (
     <a
@@ -62,14 +63,18 @@ export default function PersonaCard({ user }: { user: PersonaCardUser }) {
             {initials(user.name)}
           </div>
           <div className="flex-1 min-w-0">
-            <h3 className="text-sm font-bold text-gray-900 truncate">{user.personaName}</h3>
+            <h3 className="text-sm font-bold text-gray-900 truncate">
+              {user.personaName}
+            </h3>
             <p className="text-xs text-gray-500">Age {user.age}</p>
           </div>
         </div>
 
         {/* Description */}
         {user.description && (
-          <p className="text-xs text-gray-500 mb-3 line-clamp-2">{user.description}</p>
+          <p className="text-xs text-gray-500 mb-3 line-clamp-2">
+            {user.description}
+          </p>
         )}
 
         {/* Details */}
@@ -82,7 +87,9 @@ export default function PersonaCard({ user }: { user: PersonaCardUser }) {
           </div>
           <div className="flex items-center gap-2">
             <Briefcase size={13} className="text-gray-400 flex-shrink-0" />
-            <span className={`inline-block px-1.5 py-0.5 rounded text-[11px] font-medium ${empStyle}`}>
+            <span
+              className={`inline-block px-1.5 py-0.5 rounded text-[11px] font-medium ${empStyle}`}
+            >
               {user.employment_status}
             </span>
             {user.income > 0 && (
@@ -95,7 +102,8 @@ export default function PersonaCard({ user }: { user: PersonaCardUser }) {
           <div className="flex items-center gap-2">
             <Shield size={13} className="text-gray-400 flex-shrink-0" />
             <span>
-              {user.credentialCount} credential{user.credentialCount !== 1 ? "s" : ""}
+              {user.credentialCount} credential
+              {user.credentialCount !== 1 ? "s" : ""}
             </span>
           </div>
         </div>

@@ -31,10 +31,7 @@
         "type": "object"
       }
     },
-    "required": [
-      "national_insurance_number",
-      "date_of_birth"
-    ]
+    "required": ["national_insurance_number", "date_of_birth"]
   },
   "output_schema": {
     "type": "object",
@@ -64,10 +61,7 @@
     "income-sharing",
     "housing-status"
   ],
-  "evidence_requirements": [
-    "identity-verified",
-    "bank-account-verified"
-  ],
+  "evidence_requirements": ["identity-verified", "bank-account-verified"],
   "redress": {
     "complaint_url": "https://www.gov.uk/government/organisations/department-for-work-pensions/about/complaints-procedure",
     "appeal_process": "Mandatory reconsideration, then appeal to tribunal",

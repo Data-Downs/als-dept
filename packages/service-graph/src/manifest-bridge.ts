@@ -3,8 +3,8 @@
  * CapabilityManifest for compatibility with the existing runtime.
  */
 
-import type { CapabilityManifest } from '@als/schemas';
-import type { ServiceNode } from './types';
+import type { CapabilityManifest } from "@als/schemas";
+import type { ServiceNode } from "./types";
 
 /**
  * Convert a graph ServiceNode into a CapabilityManifest.
@@ -14,16 +14,16 @@ import type { ServiceNode } from './types';
 export function graphNodeToManifest(node: ServiceNode): CapabilityManifest {
   return {
     id: node.id,
-    version: '1.0.0',
+    version: "1.0.0",
     name: node.name,
     description: node.desc,
     department: node.dept,
 
-    input_schema: { type: 'object' },
-    output_schema: { type: 'object' },
+    input_schema: { type: "object" },
+    output_schema: { type: "object" },
 
     // Graph-specific optional fields
-    source: 'graph',
+    source: "graph",
     serviceType: node.serviceType,
     govuk_url: node.govuk_url,
     eligibility_summary: node.eligibility.summary,

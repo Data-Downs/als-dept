@@ -21,7 +21,9 @@ export function GenericFormCard({
   readonlyFields,
 }: GenericFormCardProps) {
   const readonlySet = new Set(readonlyFields || []);
-  const [values, setValues] = useState<Record<string, string | number | boolean>>(() => {
+  const [values, setValues] = useState<
+    Record<string, string | number | boolean>
+  >(() => {
     const initial: Record<string, string | number | boolean> = {};
     for (const field of definition.fields) {
       initial[field.key] = prefillData?.[field.key] ?? "";
@@ -29,11 +31,16 @@ export function GenericFormCard({
     return initial;
   });
 
-  const handleChange = useCallback((key: string, value: string | number | boolean) => {
-    setValues((prev) => ({ ...prev, [key]: value }));
-  }, []);
+  const handleChange = useCallback(
+    (key: string, value: string | number | boolean) => {
+      setValues((prev) => ({ ...prev, [key]: value }));
+    },
+    [],
+  );
 
-  const isFieldVisible = (field: typeof definition.fields[number]): boolean => {
+  const isFieldVisible = (
+    field: (typeof definition.fields)[number],
+  ): boolean => {
     if (!field.showWhen) return true;
     const depValue = String(values[field.showWhen.field] ?? "");
     return field.showWhen.values.includes(depValue);
@@ -51,7 +58,11 @@ export function GenericFormCard({
     // Only include visible fields
     const submittable: Record<string, string | number | boolean> = {};
     for (const field of definition.fields) {
-      if (isFieldVisible(field) && values[field.key] !== "" && values[field.key] !== undefined) {
+      if (
+        isFieldVisible(field) &&
+        values[field.key] !== "" &&
+        values[field.key] !== undefined
+      ) {
         submittable[field.key] = values[field.key];
       }
     }
@@ -87,7 +98,9 @@ export function GenericFormCard({
           <div key={field.key}>
             <label className="block text-sm font-semibold text-govuk-black mb-1.5">
               {field.label}
-              {field.required && !isReadonly && <span className="text-red-500 ml-0.5">*</span>}
+              {field.required && !isReadonly && (
+                <span className="text-red-500 ml-0.5">*</span>
+              )}
               {isReadonly && (
                 <span className="ml-2 inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-blue-100 text-blue-700">
                   Verified

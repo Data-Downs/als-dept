@@ -36,7 +36,15 @@ export function MessageInput() {
       textareaRef.current.style.height = "auto";
     }
     await sendMessage(trimmed);
-  }, [text, isLoading, currentView, currentService, sendMessage, navigateTo, startNewConversation]);
+  }, [
+    text,
+    isLoading,
+    currentView,
+    currentService,
+    sendMessage,
+    navigateTo,
+    startNewConversation,
+  ]);
 
   const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
@@ -54,9 +62,7 @@ export function MessageInput() {
   };
 
   return (
-    <div
-      className="border-t border-gray-200 bg-white px-4 py-3 w-full"
-    >
+    <div className="border-t border-gray-200 bg-white px-4 py-3 w-full">
       <form
         onSubmit={(e) => {
           e.preventDefault();

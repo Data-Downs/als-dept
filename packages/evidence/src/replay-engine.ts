@@ -14,7 +14,8 @@ export class ReplayEngine {
   /** Load events for replay (must be sorted by timestamp) */
   load(events: TraceEvent[]): void {
     this.events = [...events].sort(
-      (a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
+      (a, b) =>
+        new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime(),
     );
     this.currentIndex = -1;
   }
@@ -42,7 +43,9 @@ export class ReplayEngine {
   }
 
   /** Jump to a specific event index */
-  jumpTo(index: number): { event: TraceEvent; index: number; total: number } | null {
+  jumpTo(
+    index: number,
+  ): { event: TraceEvent; index: number; total: number } | null {
     if (index < 0 || index >= this.events.length) return null;
     this.currentIndex = index;
     return {
@@ -54,7 +57,8 @@ export class ReplayEngine {
 
   /** Get the current event */
   current(): TraceEvent | null {
-    if (this.currentIndex < 0 || this.currentIndex >= this.events.length) return null;
+    if (this.currentIndex < 0 || this.currentIndex >= this.events.length)
+      return null;
     return this.events[this.currentIndex];
   }
 

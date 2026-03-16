@@ -24,7 +24,9 @@ export default function NewPersonaPage() {
 
   async function handleGenerate() {
     if (!scenario.trim() || scenario.trim().length < 10) {
-      setError("Please describe the persona scenario (at least 10 characters).");
+      setError(
+        "Please describe the persona scenario (at least 10 characters).",
+      );
       return;
     }
 

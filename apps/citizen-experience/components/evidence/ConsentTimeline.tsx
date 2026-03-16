@@ -14,10 +14,25 @@ interface ConsentTimelineProps {
   records: ConsentRecord[];
 }
 
-const actionStyles: Record<string, { bg: string; icon: string; label: string }> = {
-  granted: { bg: "bg-green-100 border-green-300", icon: "\u2713", label: "Consent given" },
-  denied: { bg: "bg-red-100 border-red-300", icon: "\u2717", label: "Consent denied" },
-  revoked: { bg: "bg-yellow-100 border-yellow-300", icon: "\u21A9", label: "Consent revoked" },
+const actionStyles: Record<
+  string,
+  { bg: string; icon: string; label: string }
+> = {
+  granted: {
+    bg: "bg-green-100 border-green-300",
+    icon: "\u2713",
+    label: "Consent given",
+  },
+  denied: {
+    bg: "bg-red-100 border-red-300",
+    icon: "\u2717",
+    label: "Consent denied",
+  },
+  revoked: {
+    bg: "bg-yellow-100 border-yellow-300",
+    icon: "\u21A9",
+    label: "Consent revoked",
+  },
 };
 
 export default function ConsentTimeline({ records }: ConsentTimelineProps) {
@@ -43,7 +58,9 @@ export default function ConsentTimeline({ records }: ConsentTimelineProps) {
           const style = actionStyles[record.action] || actionStyles.granted;
           return (
             <div key={record.id} className="relative pl-8 py-2">
-              <div className={`absolute left-1 top-3 w-5 h-5 rounded-full border ${style.bg} flex items-center justify-center text-xs`}>
+              <div
+                className={`absolute left-1 top-3 w-5 h-5 rounded-full border ${style.bg} flex items-center justify-center text-xs`}
+              >
                 {style.icon}
               </div>
               <div>
@@ -59,7 +76,10 @@ export default function ConsentTimeline({ records }: ConsentTimelineProps) {
                 {record.dataShared && record.dataShared.length > 0 && (
                   <div className="mt-1 flex flex-wrap gap-1">
                     {record.dataShared.map((field) => (
-                      <span key={field} className="text-xs bg-blue-50 border border-blue-200 px-1.5 py-0.5 rounded">
+                      <span
+                        key={field}
+                        className="text-xs bg-blue-50 border border-blue-200 px-1.5 py-0.5 rounded"
+                      >
                         {field.replace(/_/g, " ")}
                       </span>
                     ))}

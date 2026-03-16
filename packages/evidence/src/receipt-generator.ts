@@ -24,7 +24,7 @@ export class ReceiptGenerator {
   async fromInvocationResult(
     result: InvocationResult,
     citizen: { id: string; name?: string },
-    traceId: string
+    traceId: string,
   ): Promise<Receipt> {
     const receipt: Receipt = {
       id: `rcpt_${generateId()}`,

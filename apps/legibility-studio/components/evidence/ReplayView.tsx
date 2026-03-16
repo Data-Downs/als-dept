@@ -26,9 +26,12 @@ export default function ReplayView({ events }: ReplayViewProps) {
     setPosition((p) => (p > 0 ? p - 1 : p));
   }, []);
 
-  const jumpTo = useCallback((idx: number) => {
-    if (idx >= 0 && idx < total) setPosition(idx);
-  }, [total]);
+  const jumpTo = useCallback(
+    (idx: number) => {
+      if (idx >= 0 && idx < total) setPosition(idx);
+    },
+    [total],
+  );
 
   const reset = useCallback(() => setPosition(-1), []);
 
@@ -98,8 +101,8 @@ export default function ReplayView({ events }: ReplayViewProps) {
                   isActive
                     ? "bg-govuk-blue text-white"
                     : isVisible
-                    ? "bg-blue-50 border border-blue-200"
-                    : "bg-gray-50 border border-gray-200 opacity-50"
+                      ? "bg-blue-50 border border-blue-200"
+                      : "bg-gray-50 border border-gray-200 opacity-50"
                 }`}
               >
                 <span className="w-5 text-right opacity-60">{idx + 1}</span>
@@ -126,8 +129,12 @@ export default function ReplayView({ events }: ReplayViewProps) {
             </div>
           ) : (
             <div className="border border-gray-200 rounded p-8 text-center">
-              <p className="text-govuk-dark-grey text-sm">Click &ldquo;Step&rdquo; to begin replay</p>
-              <p className="text-xs text-govuk-dark-grey mt-1">{total} events to replay</p>
+              <p className="text-govuk-dark-grey text-sm">
+                Click &ldquo;Step&rdquo; to begin replay
+              </p>
+              <p className="text-xs text-govuk-dark-grey mt-1">
+                {total} events to replay
+              </p>
             </div>
           )}
 
@@ -139,8 +146,10 @@ export default function ReplayView({ events }: ReplayViewProps) {
                 visibleEvents.reduce<Record<string, number>>((acc, e) => {
                   acc[e.type] = (acc[e.type] || 0) + 1;
                   return acc;
-                }, {})
-              ).map(([type, count]) => `${type} (${count})`).join(", ")}
+                }, {}),
+              )
+                .map(([type, count]) => `${type} (${count})`)
+                .join(", ")}
             </div>
           )}
         </div>

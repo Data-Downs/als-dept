@@ -30,7 +30,7 @@ export async function GET() {
     console.error("Error loading capabilities:", error);
     return NextResponse.json(
       { error: "Failed to load capabilities" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

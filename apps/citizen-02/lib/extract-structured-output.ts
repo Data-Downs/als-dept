@@ -8,14 +8,31 @@ export interface ExtractedFact {
 export interface LLMTaskField {
   key: string;
   label: string;
-  type: "text" | "email" | "tel" | "currency" | "date" | "number" | "confirm" | "select";
+  type:
+    | "text"
+    | "email"
+    | "tel"
+    | "currency"
+    | "date"
+    | "number"
+    | "confirm"
+    | "select";
   placeholder?: string;
   options?: Array<{ value: string; label: string }>;
   prefill?: string;
   required?: boolean;
 }
 
-const VALID_FIELD_TYPES = new Set(["text", "email", "tel", "currency", "date", "number", "confirm", "select"]);
+const VALID_FIELD_TYPES = new Set([
+  "text",
+  "email",
+  "tel",
+  "currency",
+  "date",
+  "number",
+  "confirm",
+  "select",
+]);
 
 export interface LLMStructuredOutput {
   title?: string;
@@ -44,7 +61,9 @@ const ISO_DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
  * Always strips the matched block from display text (even if JSON is malformed).
  * Returns { parsed: null, cleanText: original } if no block found.
  */
-export function extractStructuredOutput(responseText: string): ExtractionResult {
+export function extractStructuredOutput(
+  responseText: string,
+): ExtractionResult {
   // Find the last ```json ... ``` block
   const fencePattern = /```json\s*\n([\s\S]*?)```/g;
   let lastMatch: RegExpExecArray | null = null;
@@ -81,7 +100,10 @@ export function extractStructuredOutput(responseText: string): ExtractionResult 
   }
 
   // State transition
-  if (typeof raw.stateTransition === "string" && raw.stateTransition.trim().length > 0) {
+  if (
+    typeof raw.stateTransition === "string" &&
+    raw.stateTransition.trim().length > 0
+  ) {
     output.stateTransition = raw.stateTransition.trim();
   }
 
@@ -92,15 +114,14 @@ export function extractStructuredOutput(responseText: string): ExtractionResult 
       if (typeof t !== "object" || t === null) continue;
       const task = t as Record<string, unknown>;
 
-      const description = typeof task.description === "string"
-        ? task.description.trim().slice(0, 60)
-        : "";
-      const detail = typeof task.detail === "string"
-        ? task.detail.trim().slice(0, 150)
-        : "";
-      const type = task.type === "agent" || task.type === "user"
-        ? task.type
-        : null;
+      const description =
+        typeof task.description === "string"
+          ? task.description.trim().slice(0, 60)
+          : "";
+      const detail =
+        typeof task.detail === "string" ? task.detail.trim().slice(0, 150) : "";
+      const type =
+        task.type === "agent" || task.type === "user" ? task.type : null;
 
       if (!description || !detail || !type) continue;
 
@@ -123,11 +144,22 @@ export function extractStructuredOutput(responseText: string): ExtractionResult 
 
       if (Array.isArray(task.options)) {
         const validOptions = task.options
-          .filter((o): o is Record<string, unknown> => typeof o === "object" && o !== null)
-          .filter((o) => typeof o.value === "string" && typeof o.label === "string"
-            && o.value.toString().trim().length > 0 && o.label.toString().trim().length > 0)
+          .filter(
+            (o): o is Record<string, unknown> =>
+              typeof o === "object" && o !== null,
+          )
+          .filter(
+            (o) =>
+              typeof o.value === "string" &&
+              typeof o.label === "string" &&
+              o.value.toString().trim().length > 0 &&
+              o.label.toString().trim().length > 0,
+          )
           .slice(0, 5)
-          .map((o) => ({ value: String(o.value).trim(), label: String(o.label).trim() }));
+          .map((o) => ({
+            value: String(o.value).trim(),
+            label: String(o.label).trim(),
+          }));
         if (validOptions.length > 0) {
           entry.options = validOptions;
         }
@@ -139,20 +171,30 @@ export function extractStructuredOutput(responseText: string): ExtractionResult 
           if (typeof f !== "object" || f === null) continue;
           const field = f as Record<string, unknown>;
           const key = typeof field.key === "string" ? field.key.trim() : "";
-          const label = typeof field.label === "string" ? field.label.trim() : "";
+          const label =
+            typeof field.label === "string" ? field.label.trim() : "";
           const ftype = typeof field.type === "string" ? field.type.trim() : "";
           if (!key || !label || !VALID_FIELD_TYPES.has(ftype)) continue;
-          const parsed: LLMTaskField = { key, label, type: ftype as LLMTaskField["type"] };
-          if (typeof field.placeholder === "string") parsed.placeholder = field.placeholder.trim();
-          if (typeof field.prefill === "string") parsed.prefill = field.prefill.trim();
-          if (typeof field.required === "boolean") parsed.required = field.required;
+          const parsed: LLMTaskField = {
+            key,
+            label,
+            type: ftype as LLMTaskField["type"],
+          };
+          if (typeof field.placeholder === "string")
+            parsed.placeholder = field.placeholder.trim();
+          if (typeof field.prefill === "string")
+            parsed.prefill = field.prefill.trim();
+          if (typeof field.required === "boolean")
+            parsed.required = field.required;
           if (ftype === "select" && Array.isArray(field.options)) {
             const selOpts: Array<{ value: string; label: string }> = [];
             for (const so of field.options.slice(0, 6)) {
               if (typeof so !== "object" || so === null) continue;
               const sopt = so as Record<string, unknown>;
-              const sv = typeof sopt.value === "string" ? sopt.value.trim() : "";
-              const sl = typeof sopt.label === "string" ? sopt.label.trim() : "";
+              const sv =
+                typeof sopt.value === "string" ? sopt.value.trim() : "";
+              const sl =
+                typeof sopt.label === "string" ? sopt.label.trim() : "";
               if (sv && sl) selOpts.push({ value: sv, label: sl });
             }
             if (selOpts.length > 0) parsed.options = selOpts;
@@ -178,12 +220,23 @@ export function extractStructuredOutput(responseText: string): ExtractionResult 
       if (typeof f !== "object" || f === null) continue;
       const fact = f as Record<string, unknown>;
       const key = typeof fact.key === "string" ? fact.key.trim() : "";
-      const confidence = (fact.confidence === "high" || fact.confidence === "medium" || fact.confidence === "low")
-        ? fact.confidence
-        : "medium";
-      const sourceSnippet = typeof fact.source_snippet === "string" ? fact.source_snippet.trim().slice(0, 200) : "";
+      const confidence =
+        fact.confidence === "high" ||
+        fact.confidence === "medium" ||
+        fact.confidence === "low"
+          ? fact.confidence
+          : "medium";
+      const sourceSnippet =
+        typeof fact.source_snippet === "string"
+          ? fact.source_snippet.trim().slice(0, 200)
+          : "";
       if (!key || fact.value === undefined) continue;
-      validFacts.push({ key, value: fact.value, confidence, source_snippet: sourceSnippet });
+      validFacts.push({
+        key,
+        value: fact.value,
+        confidence,
+        source_snippet: sourceSnippet,
+      });
     }
     if (validFacts.length > 0) {
       output.extractedFacts = validFacts;

@@ -5,7 +5,11 @@
 
 import { D1Adapter } from "@als/evidence";
 import type { DatabaseAdapter } from "@als/evidence";
-import { SubmittedStore, InferredStore, ServiceAccessStore } from "@als/personal-data";
+import {
+  SubmittedStore,
+  InferredStore,
+  ServiceAccessStore,
+} from "@als/personal-data";
 
 let adapter: DatabaseAdapter | null = null;
 let submittedStore: SubmittedStore | null = null;
@@ -96,11 +100,19 @@ async function ensureInit(): Promise<void> {
 
         // Migration: add mentions + superseded_by columns for existing DBs
         try {
-          await adapter.run("ALTER TABLE inferred_data ADD COLUMN mentions INTEGER NOT NULL DEFAULT 1");
-        } catch { /* column already exists */ }
+          await adapter.run(
+            "ALTER TABLE inferred_data ADD COLUMN mentions INTEGER NOT NULL DEFAULT 1",
+          );
+        } catch {
+          /* column already exists */
+        }
         try {
-          await adapter.run("ALTER TABLE inferred_data ADD COLUMN superseded_by TEXT");
-        } catch { /* column already exists */ }
+          await adapter.run(
+            "ALTER TABLE inferred_data ADD COLUMN superseded_by TEXT",
+          );
+        } catch {
+          /* column already exists */
+        }
       }
 
       submittedStore = new SubmittedStore(adapter);

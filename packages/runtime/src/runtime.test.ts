@@ -23,7 +23,11 @@ describe("CapabilityInvoker", () => {
       return { result: "ok", input };
     });
 
-    const result = await invoker.invoke("test.service", { key: "value" }, context);
+    const result = await invoker.invoke(
+      "test.service",
+      { key: "value" },
+      context,
+    );
     expect(result.success).toBe(true);
     expect(result.capabilityId).toBe("test.service");
     expect(result.output).toEqual({ result: "ok", input: { key: "value" } });
@@ -38,13 +42,17 @@ describe("CapabilityInvoker", () => {
     expect(result.success).toBe(false);
     expect(result.error).toContain("No handler registered");
     expect(result.receipt).toBeUndefined();
-    expect(result.traceEvents.some((e) => e.type === "error.raised")).toBe(true);
+    expect(result.traceEvents.some((e) => e.type === "error.raised")).toBe(
+      true,
+    );
   });
 
   it("emits capability.invoked trace event", async () => {
     invoker.registerHandler("svc", async () => "done");
     const result = await invoker.invoke("svc", {}, context);
-    const invokedEvent = result.traceEvents.find((e) => e.type === "capability.invoked");
+    const invokedEvent = result.traceEvents.find(
+      (e) => e.type === "capability.invoked",
+    );
     expect(invokedEvent).toBeDefined();
     expect(invokedEvent!.payload.capabilityId).toBe("svc");
   });
@@ -52,7 +60,9 @@ describe("CapabilityInvoker", () => {
   it("emits capability.result on success", async () => {
     invoker.registerHandler("svc", async () => "done");
     const result = await invoker.invoke("svc", {}, context);
-    const resultEvent = result.traceEvents.find((e) => e.type === "capability.result");
+    const resultEvent = result.traceEvents.find(
+      (e) => e.type === "capability.result",
+    );
     expect(resultEvent).toBeDefined();
     expect(resultEvent!.payload.success).toBe(true);
   });
@@ -60,7 +70,9 @@ describe("CapabilityInvoker", () => {
   it("emits receipt.issued trace event on success", async () => {
     invoker.registerHandler("svc", async () => "done");
     const result = await invoker.invoke("svc", {}, context);
-    const receiptEvent = result.traceEvents.find((e) => e.type === "receipt.issued");
+    const receiptEvent = result.traceEvents.find(
+      (e) => e.type === "receipt.issued",
+    );
     expect(receiptEvent).toBeDefined();
   });
 
@@ -71,7 +83,9 @@ describe("CapabilityInvoker", () => {
     const result = await invoker.invoke("failing", {}, context);
     expect(result.success).toBe(false);
     expect(result.error).toBe("Service unavailable");
-    expect(result.traceEvents.some((e) => e.type === "error.raised")).toBe(true);
+    expect(result.traceEvents.some((e) => e.type === "error.raised")).toBe(
+      true,
+    );
   });
 
   it("routes through the full pipeline: trace → receipt", async () => {
@@ -79,7 +93,11 @@ describe("CapabilityInvoker", () => {
       return { processed: true, sessionId: ctx.sessionId };
     });
 
-    const result = await invoker.invoke("full-pipeline", { data: "test" }, context);
+    const result = await invoker.invoke(
+      "full-pipeline",
+      { data: "test" },
+      context,
+    );
     expect(result.success).toBe(true);
 
     // Check trace events in order
@@ -108,11 +126,19 @@ describe("HandoffManager", () => {
 
   describe("safeguarding keywords", () => {
     const keywords = [
-      "suicide", "self-harm", "kill myself", "end my life",
-      "domestic abuse", "being hurt", "violence",
-      "child protection", "child abuse",
-      "homeless", "sleeping rough",
-      "no food", "starving",
+      "suicide",
+      "self-harm",
+      "kill myself",
+      "end my life",
+      "domestic abuse",
+      "being hurt",
+      "violence",
+      "child protection",
+      "child abuse",
+      "homeless",
+      "sleeping rough",
+      "no food",
+      "starving",
     ];
 
     for (const keyword of keywords) {
@@ -132,8 +158,12 @@ describe("HandoffManager", () => {
 
   describe("citizen request keywords", () => {
     const keywords = [
-      "speak to someone", "talk to a human", "real person",
-      "human agent", "want to complain", "make a complaint",
+      "speak to someone",
+      "talk to a human",
+      "real person",
+      "human agent",
+      "want to complain",
+      "make a complaint",
     ];
 
     for (const keyword of keywords) {
@@ -146,7 +176,9 @@ describe("HandoffManager", () => {
   });
 
   it("does not trigger on normal messages", () => {
-    const result = manager.evaluateTriggers("I want to check my pension forecast");
+    const result = manager.evaluateTriggers(
+      "I want to check my pension forecast",
+    );
     expect(result.triggered).toBe(false);
   });
 

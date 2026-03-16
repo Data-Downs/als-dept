@@ -26,7 +26,8 @@ export default function ConsentDialog({
       <div className="border-b border-gray-200 pb-3">
         <h3 className="font-bold text-lg">Data sharing consent</h3>
         <p className="text-sm text-gray-600 mt-1">
-          <strong>{serviceName}</strong> needs your permission to access the following data.
+          <strong>{serviceName}</strong> needs your permission to access the
+          following data.
         </p>
       </div>
 

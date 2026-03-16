@@ -5,7 +5,11 @@
     {
       "id": "identity-verification",
       "description": "Verify your identity to access your pension record",
-      "data_shared": ["full_name", "date_of_birth", "national_insurance_number"],
+      "data_shared": [
+        "full_name",
+        "date_of_birth",
+        "national_insurance_number"
+      ],
       "source": "one-login",
       "purpose": "DWP must verify your identity before showing your pension forecast",
       "duration": "session",

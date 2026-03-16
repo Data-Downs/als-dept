@@ -48,8 +48,12 @@ export class ServiceGraphStore {
 
   /** Get all life events with their entry-node service IDs */
   async getLifeEvents(): Promise<LifeEventWithServices[]> {
-    const events = await this.db.all<LifeEventRow>("SELECT * FROM life_events ORDER BY name ASC");
-    const mappings = await this.db.all<LifeEventServiceRow>("SELECT * FROM life_event_services");
+    const events = await this.db.all<LifeEventRow>(
+      "SELECT * FROM life_events ORDER BY name ASC",
+    );
+    const mappings = await this.db.all<LifeEventServiceRow>(
+      "SELECT * FROM life_event_services",
+    );
 
     const serviceMap = new Map<string, string[]>();
     for (const m of mappings) {
@@ -70,13 +74,13 @@ export class ServiceGraphStore {
   async getLifeEvent(id: string): Promise<LifeEventWithServices | undefined> {
     const event = await this.db.get<LifeEventRow>(
       "SELECT * FROM life_events WHERE id = ?",
-      id
+      id,
     );
     if (!event) return undefined;
 
     const mappings = await this.db.all<LifeEventServiceRow>(
       "SELECT * FROM life_event_services WHERE life_event_id = ?",
-      id
+      id,
     );
 
     return {
@@ -92,7 +96,7 @@ export class ServiceGraphStore {
   async getEdgesFrom(serviceId: string): Promise<EdgeRow[]> {
     return this.db.all<EdgeRow>(
       "SELECT * FROM edges WHERE from_service_id = ?",
-      serviceId
+      serviceId,
     );
   }
 
@@ -100,7 +104,7 @@ export class ServiceGraphStore {
   async getRequiredServices(serviceId: string): Promise<string[]> {
     const rows = await this.db.all<{ from_service_id: string }>(
       "SELECT from_service_id FROM edges WHERE to_service_id = ? AND edge_type = 'REQUIRES'",
-      serviceId
+      serviceId,
     );
     return rows.map((r) => r.from_service_id);
   }
@@ -109,7 +113,7 @@ export class ServiceGraphStore {
   async getEnabledServices(serviceId: string): Promise<string[]> {
     const rows = await this.db.all<{ to_service_id: string }>(
       "SELECT to_service_id FROM edges WHERE from_service_id = ? AND edge_type = 'ENABLES'",
-      serviceId
+      serviceId,
     );
     return rows.map((r) => r.to_service_id);
   }
@@ -148,7 +152,7 @@ export class ServiceGraphStore {
       department: string;
       cnt: number;
     }>(
-      "SELECT department_key, department, COUNT(*) as cnt FROM services GROUP BY department_key ORDER BY department ASC"
+      "SELECT department_key, department, COUNT(*) as cnt FROM services GROUP BY department_key ORDER BY department ASC",
     );
 
     return rows.map((r) => ({

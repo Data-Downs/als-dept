@@ -69,9 +69,7 @@ describe("@als/schemas — type compilation", () => {
         { id: "start", type: "initial" },
         { id: "done", type: "terminal", receipt: true },
       ],
-      transitions: [
-        { from: "start", to: "done", trigger: "complete" },
-      ],
+      transitions: [{ from: "start", to: "done", trigger: "complete" }],
     };
     const result: TransitionResult = {
       success: true,
@@ -105,11 +103,20 @@ describe("@als/schemas — type compilation", () => {
 
   it("TraceEvent compiles with all event types", () => {
     const eventTypes: TraceEventType[] = [
-      "llm.request", "llm.response", "plan.created",
-      "capability.invoked", "capability.result", "policy.evaluated",
-      "consent.requested", "consent.granted", "consent.denied",
-      "receipt.issued", "state.transition", "handoff.initiated",
-      "error.raised", "redress.offered",
+      "llm.request",
+      "llm.response",
+      "plan.created",
+      "capability.invoked",
+      "capability.result",
+      "policy.evaluated",
+      "consent.requested",
+      "consent.granted",
+      "consent.denied",
+      "receipt.issued",
+      "state.transition",
+      "handoff.initiated",
+      "error.raised",
+      "redress.offered",
     ];
 
     for (const type of eventTypes) {
@@ -127,7 +134,12 @@ describe("@als/schemas — type compilation", () => {
   });
 
   it("Receipt compiles with all outcome types", () => {
-    const outcomes: Receipt["outcome"][] = ["success", "failure", "partial", "handoff"];
+    const outcomes: Receipt["outcome"][] = [
+      "success",
+      "failure",
+      "partial",
+      "handoff",
+    ];
     for (const outcome of outcomes) {
       const receipt: Receipt = {
         id: "rcpt-1",
@@ -160,8 +172,12 @@ describe("@als/schemas — type compilation", () => {
 
   it("HandoffPackage compiles with all urgency and reason types", () => {
     const reasons: HandoffReason[] = [
-      "complexity-exceeded", "repeated-failure", "citizen-requested",
-      "safeguarding-concern", "dispute-or-complaint", "technical-failure",
+      "complexity-exceeded",
+      "repeated-failure",
+      "citizen-requested",
+      "safeguarding-concern",
+      "dispute-or-complaint",
+      "technical-failure",
       "policy-edge-case",
     ];
     for (const reason of reasons) {
@@ -170,7 +186,11 @@ describe("@als/schemas — type compilation", () => {
         createdAt: new Date().toISOString(),
         urgency: "routine",
         citizen: { name: "Test", contactDetails: {} },
-        reason: { category: reason, description: "test", agentAssessment: "test" },
+        reason: {
+          category: reason,
+          description: "test",
+          agentAssessment: "test",
+        },
         conversationSummary: {},
         traceId: "trace-1",
         receiptIds: [],
@@ -182,7 +202,13 @@ describe("@als/schemas — type compilation", () => {
   });
 
   it("LedgerCase compiles with all status types", () => {
-    const statuses: CaseStatus[] = ["in-progress", "completed", "rejected", "handed-off", "abandoned"];
+    const statuses: CaseStatus[] = [
+      "in-progress",
+      "completed",
+      "rejected",
+      "handed-off",
+      "abandoned",
+    ];
     for (const status of statuses) {
       const c: LedgerCase = {
         caseId: "case-1",
@@ -229,7 +255,10 @@ describe("@als/schemas — card-registry functions", () => {
   });
 
   it("inferInteractionType returns a string for known patterns", () => {
-    const result = inferInteractionType("identity-verified", "eligibility-checked");
+    const result = inferInteractionType(
+      "identity-verified",
+      "eligibility-checked",
+    );
     expect(typeof result).toBe("string");
   });
 

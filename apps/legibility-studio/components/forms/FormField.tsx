@@ -8,7 +8,13 @@ interface FormFieldProps {
   children: React.ReactNode;
 }
 
-export default function FormField({ label, hint, error, required, children }: FormFieldProps) {
+export default function FormField({
+  label,
+  hint,
+  error,
+  required,
+  children,
+}: FormFieldProps) {
   return (
     <div className="mb-4">
       <label className="block text-sm font-bold mb-1">

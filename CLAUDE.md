@@ -1,6 +1,7 @@
 # Agentic Legibility Stack
 
 ## What is this project?
+
 A Turborepo monorepo implementing a reference architecture for UK government services accessed through AI agents. It demonstrates how citizens can interact with gov services via chat while maintaining full transparency and auditability.
 
 ## Project structure
@@ -28,12 +29,14 @@ data/
 ```
 
 ## Commands
+
 - `npm run dev` — start both apps in dev mode
 - `npm run build` — build everything
 - `npm test` — run tests across all packages (vitest via turbo)
 - `npm run seed` — seed the traces database
 
 ## Architecture rules — IMPORTANT
+
 - ALL service calls route through `CapabilityInvoker` in `@als/runtime` (single choke point)
 - ALL LLM calls go through `AnthropicAdapter` in `@als/adapters` — zero direct Anthropic SDK usage elsewhere
 - `@anthropic-ai/sdk` lives in `@als/adapters` ONLY
@@ -41,11 +44,13 @@ data/
 - legibility-studio fetches evidence from citizen-experience API (`http://localhost:3000/api/traces`) — it does NOT import `@als/evidence` directly
 
 ## Build gotchas — READ BEFORE CHANGING DEPENDENCIES
+
 - `serverExternalPackages: ["better-sqlite3"]` is required in BOTH Next.js configs — do not remove
 - Do NOT add `@als/evidence` as a dependency of legibility-studio — it causes lru-cache/native module crashes. Studio fetches via HTTP instead.
 - MCP tool types need `as unknown as Array<Record<string, unknown>>` cast for the adapter interface
 
 ## Testing — IMPORTANT
+
 - After making changes to any package, run `npm test` before considering the work done.
 - Tests use Vitest with workspace configuration — each package has its own `vitest.config.ts`
 - Never make real API calls in tests — mock external dependencies (Anthropic SDK, databases)
@@ -57,6 +62,7 @@ data/
   - E2E: `cd apps/citizen-02 && npx playwright test` (requires dev server on port 3102)
 
 ## Environment
+
 - Requires `ANTHROPIC_API_KEY` env variable for LLM functionality
 - Node.js with npm workspaces
 - Package manager: npm

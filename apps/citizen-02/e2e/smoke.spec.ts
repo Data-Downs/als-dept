@@ -7,7 +7,9 @@ test.describe("Smoke tests", () => {
     await expect(page.locator("body")).toContainText("Emma");
   });
 
-  test("selecting persona navigates to dashboard with topics", async ({ page }) => {
+  test("selecting persona navigates to dashboard with topics", async ({
+    page,
+  }) => {
     await page.goto("/");
     // Click on a persona (Emma Parker)
     const emmaButton = page.locator("text=Emma").first();

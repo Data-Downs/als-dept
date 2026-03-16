@@ -45,7 +45,9 @@ let localTools: ClaudeTool[] = [];
 export async function connectLocal(): Promise<boolean> {
   // MCP mode uses StdioClientTransport which spawns a child process — not possible on Workers
   if (process.env.CF_PAGES || process.env.__NEXT_ON_PAGES__) {
-    console.warn("MCP mode unavailable in production (no child process spawning on Cloudflare Workers)");
+    console.warn(
+      "MCP mode unavailable in production (no child process spawning on Cloudflare Workers)",
+    );
     return false;
   }
   if (connected && client) return true;
@@ -56,7 +58,7 @@ export async function connectLocal(): Promise<boolean> {
 
     const serverScript = path.resolve(
       process.cwd(),
-      "../../packages/mcp-server/src/index.ts"
+      "../../packages/mcp-server/src/index.ts",
     );
     const servicesDir = path.resolve(process.cwd(), "../../data/services");
 
@@ -89,7 +91,7 @@ export async function connectLocal(): Promise<boolean> {
     }));
 
     console.log(
-      `Local MCP: connected, ${localTools.length} service tools available`
+      `Local MCP: connected, ${localTools.length} service tools available`,
     );
     return true;
   } catch (error) {
@@ -99,7 +101,7 @@ export async function connectLocal(): Promise<boolean> {
     localTools = [];
     console.error(
       "Local MCP connection failed:",
-      error instanceof Error ? error.message : error
+      error instanceof Error ? error.message : error,
     );
     return false;
   }
@@ -112,7 +114,7 @@ export function getLocalToolsForClaude(): ClaudeTool[] {
 
 export async function callLocalTool(
   name: string,
-  args: Record<string, unknown> = {}
+  args: Record<string, unknown> = {},
 ): Promise<string | { error: string }> {
   if (!connected || !client) {
     console.log("Local MCP disconnected, attempting reconnect...");
@@ -176,7 +178,10 @@ export async function listLocalResources(): Promise<McpResource[]> {
       mimeType: r.mimeType,
     }));
   } catch (error) {
-    console.error("Local MCP listResources failed:", error instanceof Error ? error.message : error);
+    console.error(
+      "Local MCP listResources failed:",
+      error instanceof Error ? error.message : error,
+    );
     return [];
   }
 }
@@ -194,7 +199,10 @@ export async function readLocalResource(uri: string): Promise<string | null> {
     }
     return null;
   } catch (error) {
-    console.error(`Local MCP readResource failed (${uri}):`, error instanceof Error ? error.message : error);
+    console.error(
+      `Local MCP readResource failed (${uri}):`,
+      error instanceof Error ? error.message : error,
+    );
     return null;
   }
 }
@@ -216,14 +224,17 @@ export async function listLocalPrompts(): Promise<McpPrompt[]> {
       })),
     }));
   } catch (error) {
-    console.error("Local MCP listPrompts failed:", error instanceof Error ? error.message : error);
+    console.error(
+      "Local MCP listPrompts failed:",
+      error instanceof Error ? error.message : error,
+    );
     return [];
   }
 }
 
 export async function getLocalPrompt(
   name: string,
-  args?: Record<string, string>
+  args?: Record<string, string>,
 ): Promise<{ messages: McpPromptMessage[] } | null> {
   if (!connected || !client) return null;
 
@@ -235,7 +246,10 @@ export async function getLocalPrompt(
     }));
     return { messages };
   } catch (error) {
-    console.error(`Local MCP getPrompt failed (${name}):`, error instanceof Error ? error.message : error);
+    console.error(
+      `Local MCP getPrompt failed (${name}):`,
+      error instanceof Error ? error.message : error,
+    );
     return null;
   }
 }

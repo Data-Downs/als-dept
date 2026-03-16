@@ -21,11 +21,7 @@ interface DashboardData {
   recentCases: Array<Record<string, unknown>>;
 }
 
-export default function LedgerDashboard({
-  serviceId,
-}: {
-  serviceId: string;
-}) {
+export default function LedgerDashboard({ serviceId }: { serviceId: string }) {
   const [dashboard, setDashboard] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -76,7 +72,9 @@ export default function LedgerDashboard({
         <h3 className="text-lg font-bold mb-2">No cases yet</h3>
         <p className="text-sm text-gray-500">
           Cases will appear here once citizens start interacting with this
-          service. Run <code className="bg-gray-100 px-1 rounded">npm run seed:ledger</code> to populate demo data.
+          service. Run{" "}
+          <code className="bg-gray-100 px-1 rounded">npm run seed:ledger</code>{" "}
+          to populate demo data.
         </p>
       </div>
     );
@@ -114,7 +112,9 @@ export default function LedgerDashboard({
                 sub={`${dashboard.handedOffCases} handed off`}
               />
             </div>
-            <span className={`ml-4 text-gray-400 transition-transform ${metricsOpen ? "rotate-180" : ""}`}>
+            <span
+              className={`ml-4 text-gray-400 transition-transform ${metricsOpen ? "rotate-180" : ""}`}
+            >
               &#9662;
             </span>
           </div>
@@ -129,58 +129,90 @@ export default function LedgerDashboard({
                 {dashboard.completedCases > 0 && (
                   <div
                     className="bg-govuk-blue"
-                    style={{ width: `${(dashboard.completedCases / dashboard.totalCases) * 100}%` }}
+                    style={{
+                      width: `${(dashboard.completedCases / dashboard.totalCases) * 100}%`,
+                    }}
                     title={`${dashboard.completedCases} completed`}
                   />
                 )}
                 {dashboard.activeCases > 0 && (
                   <div
                     className="bg-govuk-blue/70"
-                    style={{ width: `${(dashboard.activeCases / dashboard.totalCases) * 100}%` }}
+                    style={{
+                      width: `${(dashboard.activeCases / dashboard.totalCases) * 100}%`,
+                    }}
                     title={`${dashboard.activeCases} active`}
                   />
                 )}
                 {dashboard.handedOffCases > 0 && (
                   <div
                     className="bg-govuk-blue/45"
-                    style={{ width: `${(dashboard.handedOffCases / dashboard.totalCases) * 100}%` }}
+                    style={{
+                      width: `${(dashboard.handedOffCases / dashboard.totalCases) * 100}%`,
+                    }}
                     title={`${dashboard.handedOffCases} handed off`}
                   />
                 )}
                 {dashboard.rejectedCases > 0 && (
                   <div
                     className="bg-govuk-blue/25"
-                    style={{ width: `${(dashboard.rejectedCases / dashboard.totalCases) * 100}%` }}
+                    style={{
+                      width: `${(dashboard.rejectedCases / dashboard.totalCases) * 100}%`,
+                    }}
                     title={`${dashboard.rejectedCases} rejected`}
                   />
                 )}
               </div>
               <div className="flex gap-4 mt-2 text-xs text-gray-500">
-                <span className="flex items-center gap-1"><span className="w-2 h-2 bg-govuk-blue rounded-full inline-block" /> Completed</span>
-                <span className="flex items-center gap-1"><span className="w-2 h-2 bg-govuk-blue/70 rounded-full inline-block" /> Active</span>
-                <span className="flex items-center gap-1"><span className="w-2 h-2 bg-govuk-blue/45 rounded-full inline-block" /> Handed off</span>
-                <span className="flex items-center gap-1"><span className="w-2 h-2 bg-govuk-blue/25 rounded-full inline-block" /> Rejected</span>
+                <span className="flex items-center gap-1">
+                  <span className="w-2 h-2 bg-govuk-blue rounded-full inline-block" />{" "}
+                  Completed
+                </span>
+                <span className="flex items-center gap-1">
+                  <span className="w-2 h-2 bg-govuk-blue/70 rounded-full inline-block" />{" "}
+                  Active
+                </span>
+                <span className="flex items-center gap-1">
+                  <span className="w-2 h-2 bg-govuk-blue/45 rounded-full inline-block" />{" "}
+                  Handed off
+                </span>
+                <span className="flex items-center gap-1">
+                  <span className="w-2 h-2 bg-govuk-blue/25 rounded-full inline-block" />{" "}
+                  Rejected
+                </span>
               </div>
             </div>
 
             {/* Second row: Agent vs Human + Avg Progress */}
             <div className="grid grid-cols-2 gap-4">
               <div className="border border-studio-border rounded-xl bg-white p-4">
-                <h3 className="text-sm font-bold mb-2">Agent vs Human Actions</h3>
+                <h3 className="text-sm font-bold mb-2">
+                  Agent vs Human Actions
+                </h3>
                 <div className="flex items-center gap-4">
                   <div className="flex-1">
                     <div className="flex h-3 rounded-full overflow-hidden bg-gray-100">
-                      <div className="bg-govuk-blue rounded-l-full" style={{ width: `${agentPct}%` }} />
-                      <div className="bg-govuk-blue/25 rounded-r-full" style={{ width: `${100 - agentPct}%` }} />
+                      <div
+                        className="bg-govuk-blue rounded-l-full"
+                        style={{ width: `${agentPct}%` }}
+                      />
+                      <div
+                        className="bg-govuk-blue/25 rounded-r-full"
+                        style={{ width: `${100 - agentPct}%` }}
+                      />
                     </div>
                     <div className="flex justify-between text-xs mt-1 text-gray-500">
                       <span>Agent: {dashboard.agentActionTotal}</span>
                       <span>Human: {dashboard.humanActionTotal}</span>
                     </div>
                   </div>
-                  <div className="text-3xl font-light tracking-tight">{agentPct}%</div>
+                  <div className="text-3xl font-light tracking-tight">
+                    {agentPct}%
+                  </div>
                 </div>
-                <p className="text-xs text-gray-400 mt-1">of actions performed by agent</p>
+                <p className="text-xs text-gray-400 mt-1">
+                  of actions performed by agent
+                </p>
               </div>
 
               <div className="border border-studio-border rounded-xl bg-white p-4">
@@ -192,9 +224,13 @@ export default function LedgerDashboard({
                       style={{ width: `${dashboard.avgProgress}%` }}
                     />
                   </div>
-                  <div className="text-3xl font-light tracking-tight">{dashboard.avgProgress}%</div>
+                  <div className="text-3xl font-light tracking-tight">
+                    {dashboard.avgProgress}%
+                  </div>
                 </div>
-                <p className="text-xs text-gray-400 mt-1">of active cases through their journey</p>
+                <p className="text-xs text-gray-400 mt-1">
+                  of active cases through their journey
+                </p>
               </div>
             </div>
 

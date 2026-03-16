@@ -62,11 +62,14 @@ export async function POST(
     // Update the case review status
     await store.submitReview(caseId, reason, priority || "routine");
 
-    return NextResponse.json({
-      success: true,
-      caseId,
-      reviewStatus: "pending",
-    }, { headers: corsHeaders });
+    return NextResponse.json(
+      {
+        success: true,
+        caseId,
+        reviewStatus: "pending",
+      },
+      { headers: corsHeaders },
+    );
   } catch (error) {
     console.error("[Ledger] Review submission error:", error);
     return NextResponse.json(

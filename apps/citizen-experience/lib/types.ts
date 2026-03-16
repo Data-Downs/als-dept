@@ -197,19 +197,24 @@ export type ViewType =
   | "tasks"
   | "plan";
 
-export type ServicePlanStatus = "locked" | "available" | "in_progress" | "completed" | "skipped";
+export type ServicePlanStatus =
+  | "locked"
+  | "available"
+  | "in_progress"
+  | "completed"
+  | "skipped";
 
 export interface ActivePlan {
-  id: string;                    // "plan_retiring_1709472000000"
-  lifeEventId: string;           // "retiring"
+  id: string; // "plan_retiring_1709472000000"
+  lifeEventId: string; // "retiring"
   lifeEventName: string;
   lifeEventIcon: string;
   startedAt: string;
   updatedAt: string;
   serviceProgress: Record<string, ServicePlanStatus>;
-  serviceConversations: Record<string, string>;  // serviceId → conversationId
-  plan: LifeEventPlan;           // snapshot of groups/edges
-  services: LifeEventService[];  // snapshot of service metadata
+  serviceConversations: Record<string, string>; // serviceId → conversationId
+  plan: LifeEventPlan; // snapshot of groups/edges
+  services: LifeEventService[]; // snapshot of service metadata
 }
 
 export const PERSONA_NAMES: Record<string, string> = {
@@ -252,7 +257,7 @@ export interface PlanGroup {
 export interface LifeEventPlan {
   entryServiceIds: string[];
   groups: PlanGroup[];
-  edges: Array<{ from: string; to: string; type: 'REQUIRES' | 'ENABLES' }>;
+  edges: Array<{ from: string; to: string; type: "REQUIRES" | "ENABLES" }>;
 }
 
 /** A life event from the service graph */
@@ -279,7 +284,6 @@ export interface LifeEventService {
   govuk_url: string;
   eligibility_summary: string;
 }
-
 
 // Simulated "today" for demo — makes upcoming dates interesting
 export const DEMO_TODAY = new Date("2026-02-15");

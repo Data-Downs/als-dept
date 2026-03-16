@@ -9,7 +9,9 @@ export default function DataDownload({ traceId }: DataDownloadProps) {
     try {
       const resp = await fetch(`/api/traces/${traceId}`);
       const data = await resp.json();
-      const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+      const blob = new Blob([JSON.stringify(data, null, 2)], {
+        type: "application/json",
+      });
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
@@ -27,8 +29,8 @@ export default function DataDownload({ traceId }: DataDownloadProps) {
         Your Data
       </h3>
       <p className="text-xs text-gray-500 mb-3">
-        Download a complete record of everything that happened during this session,
-        including all data shared and decisions made on your behalf.
+        Download a complete record of everything that happened during this
+        session, including all data shared and decisions made on your behalf.
       </p>
       <button
         onClick={handleDownload}

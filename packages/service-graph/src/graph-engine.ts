@@ -2,8 +2,14 @@
  * ServiceGraphEngine — traversal and lookup for the UK Gov Service Graph.
  */
 
-import type { ServiceNode, Edge, LifeEvent, LifeEventPlan, PlanGroup } from './types';
-import { NODES, EDGES, LIFE_EVENTS } from './graph-data';
+import type {
+  ServiceNode,
+  Edge,
+  LifeEvent,
+  LifeEventPlan,
+  PlanGroup,
+} from "./types";
+import { NODES, EDGES, LIFE_EVENTS } from "./graph-data";
 
 export class ServiceGraphEngine {
   private nodes: Record<string, ServiceNode>;
@@ -77,16 +83,14 @@ export class ServiceGraphEngine {
       }
     }
 
-    return [...visited]
-      .map((id) => this.nodes[id])
-      .filter(Boolean);
+    return [...visited].map((id) => this.nodes[id]).filter(Boolean);
   }
 
   /** Get prerequisite services (incoming REQUIRES edges) */
   getRequiredServices(serviceId: string): ServiceNode[] {
     const incoming = this.inEdges.get(serviceId) || [];
     return incoming
-      .filter((e) => e.type === 'REQUIRES')
+      .filter((e) => e.type === "REQUIRES")
       .map((e) => this.nodes[e.from])
       .filter(Boolean);
   }
@@ -95,7 +99,7 @@ export class ServiceGraphEngine {
   getEnabledServices(serviceId: string): ServiceNode[] {
     const outgoing = this.outEdges.get(serviceId) || [];
     return outgoing
-      .filter((e) => e.type === 'ENABLES')
+      .filter((e) => e.type === "ENABLES")
       .map((e) => this.nodes[e.to])
       .filter(Boolean);
   }
@@ -110,7 +114,9 @@ export class ServiceGraphEngine {
     // Exact match first
     if (this.nodes[slug]) return this.nodes[slug];
     // Suffix match (e.g. 'register-birth' → 'gro-register-birth')
-    return Object.values(this.nodes).find((n) => n.id.endsWith(`-${slug}`) || n.id.endsWith(slug));
+    return Object.values(this.nodes).find(
+      (n) => n.id.endsWith(`-${slug}`) || n.id.endsWith(slug),
+    );
   }
 
   /**
@@ -136,7 +142,7 @@ export class ServiceGraphEngine {
 
     // Collect scoped edges (both endpoints in the visited set)
     const scopedEdges = this.edges.filter(
-      (e) => visited.has(e.from) && visited.has(e.to)
+      (e) => visited.has(e.from) && visited.has(e.to),
     );
 
     // Compute max-depth for each node (entry=0, others=max(parent depths)+1)
@@ -213,24 +219,24 @@ export class ServiceGraphEngine {
   private generateGroupLabel(
     depth: number,
     prereqIds: string[],
-    serviceIds: string[]
+    serviceIds: string[],
   ): string {
-    if (depth === 0) return 'Start here';
+    if (depth === 0) return "Start here";
 
     // Check if all services in this group are legal_process
     const allLegal = serviceIds.every(
-      (id) => this.nodes[id]?.serviceType === 'legal_process'
+      (id) => this.nodes[id]?.serviceType === "legal_process",
     );
-    if (allLegal) return 'If you need to challenge a decision';
+    if (allLegal) return "If you need to challenge a decision";
 
     if (prereqIds.length === 1) {
       const node = this.nodes[prereqIds[0]];
-      if (!node) return 'After completing the previous step';
+      if (!node) return "After completing the previous step";
       // Use a short label: for documents use "After your {name}", otherwise "After {name}"
       const name = node.name;
-      if (node.serviceType === 'document') {
+      if (node.serviceType === "document") {
         // Strip "Obtain " prefix if present to avoid "After your Obtain P45..."
-        const shortName = name.replace(/^Obtain\s+/i, '');
+        const shortName = name.replace(/^Obtain\s+/i, "");
         return `After obtaining your ${shortName}`;
       }
       return `After ${name}`;
@@ -240,6 +246,6 @@ export class ServiceGraphEngine {
       const name2 = this.nodes[prereqIds[1]]?.name;
       return `After ${name1} or ${name2}`;
     }
-    return 'Once receiving benefits';
+    return "Once receiving benefits";
   }
 }

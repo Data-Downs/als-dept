@@ -14,10 +14,20 @@ let initPromise: Promise<void> | null = null;
 
 async function init(): Promise<void> {
   if (testUsers) return;
-  if (initPromise) { await initPromise; return; }
+  if (initPromise) {
+    await initPromise;
+    return;
+  }
 
   initPromise = (async () => {
-    const usersDir = path.join(process.cwd(), "..", "..", "data", "simulated", "users");
+    const usersDir = path.join(
+      process.cwd(),
+      "..",
+      "..",
+      "data",
+      "simulated",
+      "users",
+    );
     const files = await fs.readdir(usersDir);
     const jsonFiles = files.filter((f) => f.endsWith(".json"));
     const loaded: TestUser[] = [];

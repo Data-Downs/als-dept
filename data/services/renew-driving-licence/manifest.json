@@ -22,9 +22,7 @@
         "format": "uri"
       }
     },
-    "required": [
-      "driving_licence_number"
-    ]
+    "required": ["driving_licence_number"]
   },
   "output_schema": {
     "type": "object",
@@ -55,10 +53,7 @@
     "photo-sharing",
     "address-confirmation"
   ],
-  "evidence_requirements": [
-    "driving-licence-credential",
-    "identity-verified"
-  ],
+  "evidence_requirements": ["driving-licence-credential", "identity-verified"],
   "redress": {
     "complaint_url": "https://www.gov.uk/complain-about-dvla",
     "appeal_process": "Contact DVLA directly",

@@ -36,17 +36,26 @@ export class D1Adapter implements DatabaseAdapter {
   }
 
   async run(sql: string, ...params: unknown[]): Promise<{ changes: number }> {
-    const result = await this.db.prepare(sql).bind(...params).run();
+    const result = await this.db
+      .prepare(sql)
+      .bind(...params)
+      .run();
     return { changes: result.meta.changes_out ?? result.meta.changes_in ?? 0 };
   }
 
   async get<T>(sql: string, ...params: unknown[]): Promise<T | undefined> {
-    const row = await this.db.prepare(sql).bind(...params).first<T>();
+    const row = await this.db
+      .prepare(sql)
+      .bind(...params)
+      .first<T>();
     return row ?? undefined;
   }
 
   async all<T>(sql: string, ...params: unknown[]): Promise<T[]> {
-    const result = await this.db.prepare(sql).bind(...params).all<T>();
+    const result = await this.db
+      .prepare(sql)
+      .bind(...params)
+      .all<T>();
     return result.results;
   }
 
@@ -54,9 +63,11 @@ export class D1Adapter implements DatabaseAdapter {
     await this.db.exec(sql);
   }
 
-  async batch(statements: Array<{ sql: string; params: unknown[] }>): Promise<void> {
+  async batch(
+    statements: Array<{ sql: string; params: unknown[] }>,
+  ): Promise<void> {
     const prepared = statements.map(({ sql, params }) =>
-      this.db.prepare(sql).bind(...params)
+      this.db.prepare(sql).bind(...params),
     );
     await this.db.batch(prepared);
   }

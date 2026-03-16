@@ -31,7 +31,11 @@ export function AccessControlSection({
   const [view, setView] = useState<"by-service" | "by-field">("by-service");
   const [revoking, setRevoking] = useState<string | null>(null);
 
-  const revokeAccess = async (opts: { grantId?: string; serviceId?: string; fieldKey?: string }) => {
+  const revokeAccess = async (opts: {
+    grantId?: string;
+    serviceId?: string;
+    fieldKey?: string;
+  }) => {
     const key = opts.grantId || opts.serviceId || opts.fieldKey || "";
     setRevoking(key);
     try {
@@ -54,7 +58,10 @@ export function AccessControlSection({
   const hasAccess = services.length > 0;
 
   // Build field-centric view
-  const byField: Record<string, { serviceId: string; grant: ServiceAccessGrant }[]> = {};
+  const byField: Record<
+    string,
+    { serviceId: string; grant: ServiceAccessGrant }[]
+  > = {};
   for (const [serviceId, grants] of Object.entries(accessMap)) {
     for (const grant of grants) {
       if (!byField[grant.fieldKey]) byField[grant.fieldKey] = [];
@@ -65,7 +72,16 @@ export function AccessControlSection({
   return (
     <div>
       <div className="flex items-center gap-2 mb-3">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#d4351c" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <svg
+          width="18"
+          height="18"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="#d4351c"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
           <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
         </svg>
         <h3 className="font-bold text-sm">Data access control</h3>
@@ -82,7 +98,9 @@ export function AccessControlSection({
             <button
               onClick={() => setView("by-service")}
               className={`flex-1 text-xs py-1.5 rounded-md transition-all ${
-                view === "by-service" ? "bg-white shadow-sm font-bold" : "text-govuk-dark-grey"
+                view === "by-service"
+                  ? "bg-white shadow-sm font-bold"
+                  : "text-govuk-dark-grey"
               }`}
             >
               By service
@@ -90,7 +108,9 @@ export function AccessControlSection({
             <button
               onClick={() => setView("by-field")}
               className={`flex-1 text-xs py-1.5 rounded-md transition-all ${
-                view === "by-field" ? "bg-white shadow-sm font-bold" : "text-govuk-dark-grey"
+                view === "by-field"
+                  ? "bg-white shadow-sm font-bold"
+                  : "text-govuk-dark-grey"
               }`}
             >
               By field
@@ -102,7 +122,10 @@ export function AccessControlSection({
               {services.map((serviceId) => {
                 const grants = accessMap[serviceId];
                 return (
-                  <div key={serviceId} className="border border-gray-200 rounded-lg p-3">
+                  <div
+                    key={serviceId}
+                    className="border border-gray-200 rounded-lg p-3"
+                  >
                     <div className="flex items-center justify-between mb-2">
                       <span className="text-sm font-medium">
                         {SERVICE_LABELS[serviceId] || serviceId}
@@ -128,7 +151,14 @@ export function AccessControlSection({
                             className="text-govuk-dark-grey hover:text-govuk-red"
                             aria-label={`Revoke ${g.fieldKey}`}
                           >
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <svg
+                              width="12"
+                              height="12"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                            >
                               <path d="M18 6L6 18M6 6l12 12" />
                             </svg>
                           </button>
@@ -142,11 +172,17 @@ export function AccessControlSection({
           ) : (
             <div className="space-y-2">
               {Object.entries(byField).map(([fieldKey, entries]) => (
-                <div key={fieldKey} className="flex items-center justify-between py-2 border-b border-gray-100">
+                <div
+                  key={fieldKey}
+                  className="flex items-center justify-between py-2 border-b border-gray-100"
+                >
                   <div>
-                    <span className="text-sm font-medium">{fieldKey.replace(/_/g, " ")}</span>
+                    <span className="text-sm font-medium">
+                      {fieldKey.replace(/_/g, " ")}
+                    </span>
                     <span className="text-xs text-govuk-dark-grey ml-2">
-                      ({entries.length} service{entries.length !== 1 ? "s" : ""})
+                      ({entries.length} service{entries.length !== 1 ? "s" : ""}
+                      )
                     </span>
                   </div>
                   <button

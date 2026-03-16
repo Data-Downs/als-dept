@@ -14,7 +14,12 @@ vi.mock("@anthropic-ai/sdk", () => {
           content: [
             { type: "thinking", thinking: "I should help the user" },
             { type: "text", text: "Here is your answer" },
-            { type: "tool_use", id: "tool-1", name: "check_eligibility", input: { age: 25 } },
+            {
+              type: "tool_use",
+              id: "tool-1",
+              name: "check_eligibility",
+              input: { age: 25 },
+            },
           ],
           stop_reason: "end_turn",
           model: "claude-sonnet-4-5-20250929",
@@ -56,9 +61,9 @@ describe("AnthropicAdapter", () => {
     // Override mock to throw
     const Anthropic = (await import("@anthropic-ai/sdk")).default;
     const instance = new Anthropic();
-    (instance.messages.create as ReturnType<typeof vi.fn>).mockRejectedValueOnce(
-      new Error("API rate limit exceeded")
-    );
+    (
+      instance.messages.create as ReturnType<typeof vi.fn>
+    ).mockRejectedValueOnce(new Error("API rate limit exceeded"));
 
     // Create a fresh adapter and inject the failing mock
     const failAdapter = new AnthropicAdapter();

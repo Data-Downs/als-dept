@@ -39,9 +39,13 @@ async function getAdapter(): Promise<AnthropicAdapter> {
     if (!apiKey) {
       try {
         const { getCloudflareContext } = await import("@opennextjs/cloudflare");
-        const { env } = getCloudflareContext() as { env: Record<string, string> };
+        const { env } = getCloudflareContext() as {
+          env: Record<string, string>;
+        };
         apiKey = env?.ANTHROPIC_API_KEY;
-      } catch { /* Not on Cloudflare */ }
+      } catch {
+        /* Not on Cloudflare */
+      }
     }
     adapter = new AnthropicAdapter();
     adapter.initialize({ apiKey });
@@ -71,7 +75,9 @@ async function getArtefactStore(): Promise<ArtefactStore> {
       try {
         const count = await store.loadFromDirectory(base);
         if (count > 0) break;
-      } catch { continue; }
+      } catch {
+        continue;
+      }
     }
     artefactStore = store;
     return store;
@@ -79,16 +85,23 @@ async function getArtefactStore(): Promise<ArtefactStore> {
   return artefactStorePromise;
 }
 
-async function loadPersonaData(personaId: string): Promise<Record<string, unknown>> {
+async function loadPersonaData(
+  personaId: string,
+): Promise<Record<string, unknown>> {
   const fs = await import("fs/promises");
   for (const base of [
     path.join(process.cwd(), "..", "..", "data", "simulated", "users"),
     path.join(process.cwd(), "data", "simulated", "users"),
   ]) {
     try {
-      const raw = await fs.readFile(path.join(base, `${personaId}.json`), "utf-8");
+      const raw = await fs.readFile(
+        path.join(base, `${personaId}.json`),
+        "utf-8",
+      );
       return JSON.parse(raw);
-    } catch { continue; }
+    } catch {
+      continue;
+    }
   }
   return { name: personaId };
 }
@@ -106,13 +119,18 @@ const TOOL_LABELS: Record<string, string> = {
 
 // ── Summarize tool output ──
 
-function summarizeToolOutput(toolName: string, raw: Record<string, unknown>): Record<string, unknown> {
+function summarizeToolOutput(
+  toolName: string,
+  raw: Record<string, unknown>,
+): Record<string, unknown> {
   switch (toolName) {
     case "query_service_graph": {
       const services = (raw.services || []) as Array<Record<string, unknown>>;
       return {
         totalCount: raw.totalCount,
-        services: services.slice(0, 6).map((s) => ({ id: s.id, name: s.name, serviceType: s.serviceType })),
+        services: services
+          .slice(0, 6)
+          .map((s) => ({ id: s.id, name: s.name, serviceType: s.serviceType })),
         truncated: services.length > 6,
       };
     }
@@ -123,7 +141,10 @@ function summarizeToolOutput(toolName: string, raw: Record<string, unknown>): Re
       return {
         lifeEvent: le?.name,
         groupCount: groups.length,
-        groups: groups.map((g) => ({ label: g.label, serviceCount: (g.serviceIds as string[])?.length || 0 })),
+        groups: groups.map((g) => ({
+          label: g.label,
+          serviceCount: (g.serviceIds as string[])?.length || 0,
+        })),
         totalServices: (raw.serviceDetails as unknown[])?.length || 0,
       };
     }
@@ -144,16 +165,25 @@ function summarizeToolOutput(toolName: string, raw: Record<string, unknown>): Re
       return {
         service: raw.serviceName,
         eligible: pr?.eligible,
-        explanation: typeof pr?.explanation === "string" ? pr.explanation.slice(0, 200) : undefined,
+        explanation:
+          typeof pr?.explanation === "string"
+            ? pr.explanation.slice(0, 200)
+            : undefined,
         hasPolicy: (raw.artefacts as Record<string, unknown>)?.hasPolicy,
       };
     }
     case "get_citizen_context":
       return {
         name: raw.name,
-        verifiedFieldCount: Object.keys(raw.verifiedData as Record<string, unknown> || {}).length,
-        submittedFieldCount: Object.keys(raw.submittedData as Record<string, unknown> || {}).length,
-        inferredFieldCount: Object.keys(raw.inferredData as Record<string, unknown> || {}).length,
+        verifiedFieldCount: Object.keys(
+          (raw.verifiedData as Record<string, unknown>) || {},
+        ).length,
+        submittedFieldCount: Object.keys(
+          (raw.submittedData as Record<string, unknown>) || {},
+        ).length,
+        inferredFieldCount: Object.keys(
+          (raw.inferredData as Record<string, unknown>) || {},
+        ).length,
       };
     case "record_evidence":
       return { eventType: raw.eventType, recorded: raw.recorded };
@@ -165,7 +195,8 @@ function summarizeToolOutput(toolName: string, raw: Record<string, unknown>): Re
 // ── System prompt (same as main route) ──
 
 function buildSystemPrompt(personaData: Record<string, unknown>): string {
-  const name = (personaData.name as string) ||
+  const name =
+    (personaData.name as string) ||
     `${(personaData.primaryContact as Record<string, string>)?.firstName || ""} ${(personaData.primaryContact as Record<string, string>)?.lastName || ""}`.trim() ||
     "the citizen";
 
@@ -211,6 +242,30 @@ Your short conversational text here (2-4 sentences only).
     "Check my eligibility for Bereavement Support Payment",
     "Tell me about registering the death",
     "What documents will I need?"
+  ],
+  "tasks": [
+    {
+      "id": "unique-task-id",
+      "description": "Short task title",
+      "detail": "What to do and why",
+      "type": "user",
+      "dueDate": "2026-04-01" or null,
+      "dataNeeded": ["email", "phone", "national_insurance_number"],
+      "fields": [
+        { "key": "email", "label": "Email address", "type": "email", "placeholder": "e.g. name@email.com", "prefill": "known-value-or-empty" }
+      ]
+    }
+  ],
+  "consentRequests": [
+    {
+      "id": "consent-id",
+      "description": "Share your income data with HMRC",
+      "data_shared": ["income", "employment_status"],
+      "source": "dwp",
+      "purpose": "To verify your benefit eligibility",
+      "duration": "6 months",
+      "required": true
+    }
   ]
 }
 \`\`\`
@@ -224,6 +279,22 @@ Your short conversational text here (2-4 sentences only).
 - "action" cards are for things the citizen needs to do
 - "info" cards are for important context
 - Quick replies should be 2-4 natural follow-up questions
+
+## Guidelines for tasks
+
+- Emit tasks when the citizen needs to provide specific data (bank details, address, NI number, etc.)
+- Use "user" type for data the citizen must provide, "agent" type for things the system will handle
+- Include "fields" array with structured field definitions when you know the exact data needed
+- Known field keys: email, phone, full_name, date_of_birth, national_insurance_number, address, sort_code, account_number, tenure_type, monthly_rent, employer_name, employment_status, employment_end_date, income_amount, landlord_name, landlord_address
+- Pre-fill field values from citizen context when available
+- Set dueDate when there's a real deadline
+
+## Guidelines for consent requests
+
+- Emit consentRequests when data sharing between government departments is needed
+- Mark as required: true when the service cannot proceed without this consent
+- Be specific about what data is shared and why
+- Include the source department and purpose
 
 ## How to Work
 
@@ -246,7 +317,7 @@ ${personaData.address ? `Location: ${(personaData.address as Record<string, stri
 // ── SSE helpers ──
 
 function sseEvent(type: string, data: unknown): string {
-  return `data: ${JSON.stringify({ type, ...data as object })}\n\n`;
+  return `data: ${JSON.stringify({ type, ...(data as object) })}\n\n`;
 }
 
 // ── The Streaming Agent Loop ──
@@ -267,7 +338,7 @@ export async function POST(request: NextRequest) {
     if (!persona || !messages) {
       return new Response(
         JSON.stringify({ error: "Missing required fields: persona, messages" }),
-        { status: 400, headers: { "Content-Type": "application/json" } }
+        { status: 400, headers: { "Content-Type": "application/json" } },
       );
     }
 
@@ -284,17 +355,29 @@ export async function POST(request: NextRequest) {
             getArtefactStore(),
           ]);
 
-          const session: CitizenSession = { userId: persona, sessionId, traceId };
+          const session: CitizenSession = {
+            userId: persona,
+            sessionId,
+            traceId,
+          };
           const toolContext: ToolContext = {
             graph: getGraph(),
             artefactStore: store,
             session,
             citizenData: {
               verified: {
-                firstName: (personaData.primaryContact as Record<string, unknown>)?.firstName,
-                lastName: (personaData.primaryContact as Record<string, unknown>)?.lastName,
-                dateOfBirth: (personaData.primaryContact as Record<string, unknown>)?.dateOfBirth,
-                nationalInsuranceNumber: (personaData.primaryContact as Record<string, unknown>)?.nationalInsuranceNumber,
+                firstName: (
+                  personaData.primaryContact as Record<string, unknown>
+                )?.firstName,
+                lastName: (
+                  personaData.primaryContact as Record<string, unknown>
+                )?.lastName,
+                dateOfBirth: (
+                  personaData.primaryContact as Record<string, unknown>
+                )?.dateOfBirth,
+                nationalInsuranceNumber: (
+                  personaData.primaryContact as Record<string, unknown>
+                )?.nationalInsuranceNumber,
               },
               submitted: {
                 address: personaData.address,
@@ -338,7 +421,9 @@ export async function POST(request: NextRequest) {
             const adapterInput: AnthropicChatInput = {
               systemPrompt,
               messages: currentMessages,
-              tools: anthropicTools as unknown as Array<Record<string, unknown>>,
+              tools: anthropicTools as unknown as Array<
+                Record<string, unknown>
+              >,
             };
 
             const result = await llmAdapter.execute({
@@ -346,7 +431,8 @@ export async function POST(request: NextRequest) {
               context: { sessionId, traceId, userId: persona },
             });
 
-            if (!result.success) throw new Error(result.error || "LLM call failed");
+            if (!result.success)
+              throw new Error(result.error || "LLM call failed");
 
             const output = result.output as AnthropicChatOutput;
             reasoning = output.reasoning || reasoning;
@@ -365,17 +451,21 @@ export async function POST(request: NextRequest) {
 
               for (const toolCall of output.toolCalls) {
                 // Stream: tool starting
-                controller.enqueue(encoder.encode(sseEvent("tool_start", {
-                  tool: toolCall.name,
-                  label: TOOL_LABELS[toolCall.name] || toolCall.name,
-                  iteration: iterations,
-                })));
+                controller.enqueue(
+                  encoder.encode(
+                    sseEvent("tool_start", {
+                      tool: toolCall.name,
+                      label: TOOL_LABELS[toolCall.name] || toolCall.name,
+                      iteration: iterations,
+                    }),
+                  ),
+                );
 
                 const start = Date.now();
                 const toolResult = await handleToolCall(
                   toolCall.name,
                   toolCall.input as Record<string, unknown>,
-                  toolContext
+                  toolContext,
                 );
                 const durationMs = Date.now() - start;
 
@@ -383,7 +473,9 @@ export async function POST(request: NextRequest) {
                 try {
                   const raw = JSON.parse(toolResult.content[0].text);
                   parsedOutput = summarizeToolOutput(toolCall.name, raw);
-                } catch { /* non-JSON */ }
+                } catch {
+                  /* non-JSON */
+                }
 
                 const record: ToolRecord = {
                   tool: toolCall.name,
@@ -395,13 +487,17 @@ export async function POST(request: NextRequest) {
                 toolUseLog.push(record);
 
                 // Stream: tool complete
-                controller.enqueue(encoder.encode(sseEvent("tool_complete", {
-                  tool: toolCall.name,
-                  label: TOOL_LABELS[toolCall.name] || toolCall.name,
-                  summary: parsedOutput,
-                  durationMs,
-                  isError: record.isError,
-                })));
+                controller.enqueue(
+                  encoder.encode(
+                    sseEvent("tool_complete", {
+                      tool: toolCall.name,
+                      label: TOOL_LABELS[toolCall.name] || toolCall.name,
+                      summary: parsedOutput,
+                      durationMs,
+                      isError: record.isError,
+                    }),
+                  ),
+                );
 
                 toolResults.push({
                   type: "tool_result",
@@ -417,7 +513,9 @@ export async function POST(request: NextRequest) {
 
               // Stream: reasoning update
               if (reasoning) {
-                controller.enqueue(encoder.encode(sseEvent("reasoning", { text: reasoning })));
+                controller.enqueue(
+                  encoder.encode(sseEvent("reasoning", { text: reasoning })),
+                );
               }
 
               continue;
@@ -430,6 +528,8 @@ export async function POST(request: NextRequest) {
           // ── Parse structured output ──
           let cards: Array<Record<string, unknown>> = [];
           let quickReplies: string[] = [];
+          let tasks: Array<Record<string, unknown>> = [];
+          let consentRequests: Array<Record<string, unknown>> = [];
           let cleanResponse = finalResponse;
 
           const jsonMatch = finalResponse.match(/```json\s*([\s\S]*?)```/);
@@ -438,13 +538,20 @@ export async function POST(request: NextRequest) {
               const parsed = JSON.parse(jsonMatch[1]);
               cards = parsed.cards || [];
               quickReplies = parsed.quickReplies || [];
-              cleanResponse = finalResponse.replace(/```json\s*[\s\S]*?```/, "").trim();
-            } catch { /* malformed */ }
+              tasks = parsed.tasks || [];
+              consentRequests = parsed.consentRequests || [];
+              cleanResponse = finalResponse
+                .replace(/```json\s*[\s\S]*?```/, "")
+                .trim();
+            } catch {
+              /* malformed */
+            }
           }
           finalResponse = cleanResponse;
 
           if (!finalResponse && iterations >= MAX_TOOL_ITERATIONS) {
-            finalResponse = "I've been exploring your options. Could you tell me more about your specific situation?";
+            finalResponse =
+              "I've been exploring your options. Could you tell me more about your specific situation?";
           }
 
           // ── Generate title ──
@@ -453,39 +560,59 @@ export async function POST(request: NextRequest) {
             try {
               const titleResult = await llmAdapter.execute({
                 input: {
-                  systemPrompt: "Generate a concise 3-6 word title for this conversation. Return only the title, nothing else.",
+                  systemPrompt:
+                    "Generate a concise 3-6 word title for this conversation. Return only the title, nothing else.",
                   messages: [
-                    { role: "user", content: messages[messages.length - 1]?.content || "" },
+                    {
+                      role: "user",
+                      content: messages[messages.length - 1]?.content || "",
+                    },
                     { role: "assistant", content: finalResponse },
                   ],
                 },
                 context: { sessionId, traceId, userId: persona },
               });
               if (titleResult.success) {
-                conversationTitle = (titleResult.output as AnthropicChatOutput).responseText.replace(/["']/g, "").trim();
+                conversationTitle = (
+                  titleResult.output as AnthropicChatOutput
+                ).responseText
+                  .replace(/["']/g, "")
+                  .trim();
               }
-            } catch { /* non-critical */ }
+            } catch {
+              /* non-critical */
+            }
           }
 
           // ── Stream final response ──
-          controller.enqueue(encoder.encode(sseEvent("response", {
-            response: finalResponse,
-            reasoning,
-            toolsUsed: toolUseLog.map((t) => t.tool),
-            toolUseLog,
-            cards,
-            quickReplies,
-            conversationTitle,
-            traceId,
-            iterations,
-          })));
+          controller.enqueue(
+            encoder.encode(
+              sseEvent("response", {
+                response: finalResponse,
+                reasoning,
+                toolsUsed: toolUseLog.map((t) => t.tool),
+                toolUseLog,
+                cards,
+                quickReplies,
+                tasks,
+                consentRequests,
+                conversationTitle,
+                traceId,
+                iterations,
+              }),
+            ),
+          );
 
           controller.enqueue(encoder.encode("data: [DONE]\n\n"));
           controller.close();
         } catch (error) {
-          controller.enqueue(encoder.encode(sseEvent("error", {
-            message: error instanceof Error ? error.message : String(error),
-          })));
+          controller.enqueue(
+            encoder.encode(
+              sseEvent("error", {
+                message: error instanceof Error ? error.message : String(error),
+              }),
+            ),
+          );
           controller.enqueue(encoder.encode("data: [DONE]\n\n"));
           controller.close();
         }
@@ -501,8 +628,11 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     return new Response(
-      JSON.stringify({ error: "Failed to start stream", details: error instanceof Error ? error.message : String(error) }),
-      { status: 500, headers: { "Content-Type": "application/json" } }
+      JSON.stringify({
+        error: "Failed to start stream",
+        details: error instanceof Error ? error.message : String(error),
+      }),
+      { status: 500, headers: { "Content-Type": "application/json" } },
     );
   }
 }

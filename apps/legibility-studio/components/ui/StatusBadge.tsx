@@ -9,7 +9,9 @@ const STATUS_STYLES: Record<string, { label: string; color: string }> = {
 export default function StatusBadge({ status }: { status: string }) {
   const style = STATUS_STYLES[status] || STATUS_STYLES.abandoned;
   return (
-    <span className={`inline-block px-2 py-0.5 text-xs rounded-full font-medium ${style.color}`}>
+    <span
+      className={`inline-block px-2 py-0.5 text-xs rounded-full font-medium ${style.color}`}
+    >
       {style.label}
     </span>
   );

@@ -52,7 +52,7 @@ export class ConsentLedger {
       consent.purpose,
       consent.timestamp,
       consent.sessionId,
-      consent.revokedAt || null
+      consent.revokedAt || null,
     );
   }
 
@@ -60,7 +60,8 @@ export class ConsentLedger {
   async revoke(consentId: string): Promise<void> {
     await this.db.run(
       "UPDATE consent_records SET revoked_at = ? WHERE id = ?",
-      new Date().toISOString(), consentId
+      new Date().toISOString(),
+      consentId,
     );
   }
 
@@ -68,25 +69,35 @@ export class ConsentLedger {
   async getByUser(userId: string): Promise<ConsentRecord[]> {
     const rows = await this.db.all<Record<string, unknown>>(
       "SELECT * FROM consent_records WHERE user_id = ? ORDER BY timestamp DESC",
-      userId
+      userId,
     );
     return rows.map(this.rowToRecord);
   }
 
   /** Get consent records for a specific service */
-  async getByService(userId: string, serviceId: string): Promise<ConsentRecord[]> {
+  async getByService(
+    userId: string,
+    serviceId: string,
+  ): Promise<ConsentRecord[]> {
     const rows = await this.db.all<Record<string, unknown>>(
       "SELECT * FROM consent_records WHERE user_id = ? AND service_id = ? ORDER BY timestamp DESC",
-      userId, serviceId
+      userId,
+      serviceId,
     );
     return rows.map(this.rowToRecord);
   }
 
   /** Check if a specific consent is currently active (granted and not revoked) */
-  async isActive(userId: string, grantId: string, serviceId: string): Promise<boolean> {
+  async isActive(
+    userId: string,
+    grantId: string,
+    serviceId: string,
+  ): Promise<boolean> {
     const row = await this.db.get<Record<string, unknown>>(
       "SELECT * FROM consent_records WHERE user_id = ? AND grant_id = ? AND service_id = ? AND granted = 1 AND revoked_at IS NULL ORDER BY timestamp DESC LIMIT 1",
-      userId, grantId, serviceId
+      userId,
+      grantId,
+      serviceId,
     );
     return !!row;
   }

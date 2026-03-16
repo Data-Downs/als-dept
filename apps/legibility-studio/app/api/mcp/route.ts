@@ -15,7 +15,8 @@ import { createMcpServerFromD1 } from "../../../lib/mcp-server";
 const CORS_HEADERS = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "GET, POST, DELETE, OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type, Accept, mcp-session-id, Last-Event-ID, mcp-protocol-version",
+  "Access-Control-Allow-Headers":
+    "Content-Type, Accept, mcp-session-id, Last-Event-ID, mcp-protocol-version",
   "Access-Control-Expose-Headers": "mcp-session-id, mcp-protocol-version",
 };
 

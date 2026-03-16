@@ -34,10 +34,12 @@ class InMemoryAdapter implements DatabaseAdapter {
       // Simple WHERE clause matching
       const whereMatch = sql.match(/WHERE\s+(.+)/i);
       if (whereMatch && params.length > 0) {
-        this.tables[tableName] = (this.tables[tableName] || []).filter((row) => {
-          // Match first param against any column value
-          return !Object.values(row).includes(String(params[0]));
-        });
+        this.tables[tableName] = (this.tables[tableName] || []).filter(
+          (row) => {
+            // Match first param against any column value
+            return !Object.values(row).includes(String(params[0]));
+          },
+        );
       }
       return { changes: before - (this.tables[tableName] || []).length };
     }
@@ -57,10 +59,14 @@ class InMemoryAdapter implements DatabaseAdapter {
     let paramIdx = 0;
 
     // Only apply WHERE filtering if there's a WHERE clause
-    const whereClause = sql.match(/WHERE\s+(.+?)(?:\s+GROUP\s+|\s+ORDER\s+|\s+LIMIT\s+|$)/i);
+    const whereClause = sql.match(
+      /WHERE\s+(.+?)(?:\s+GROUP\s+|\s+ORDER\s+|\s+LIMIT\s+|$)/i,
+    );
     if (whereClause) {
       if (sql.includes("json_extract")) {
-        const jsonPathMatch = sql.match(/json_extract\((\w+),\s*'(\$\.\w+)'\)\s*=\s*\?/i);
+        const jsonPathMatch = sql.match(
+          /json_extract\((\w+),\s*'(\$\.\w+)'\)\s*=\s*\?/i,
+        );
         if (jsonPathMatch && params.length > 0) {
           const [, col, jsonPath] = jsonPathMatch;
           const key = jsonPath.replace("$.", "");
@@ -108,7 +114,9 @@ class InMemoryAdapter implements DatabaseAdapter {
       // ORDER BY ASC within groups for MIN
       const result: unknown[] = [];
       for (const [traceId, group] of grouped) {
-        const sorted = group.sort((a, b) => a.timestamp.localeCompare(b.timestamp));
+        const sorted = group.sort((a, b) =>
+          a.timestamp.localeCompare(b.timestamp),
+        );
         result.push({
           traceId,
           firstEvent: sorted[0].timestamp,
@@ -119,7 +127,10 @@ class InMemoryAdapter implements DatabaseAdapter {
       // LIMIT on grouped results
       const limitMatch = sql.match(/LIMIT\s+(\?|\d+)/i);
       if (limitMatch) {
-        const limit = limitMatch[1] === "?" ? Number(params[paramIdx] ?? params[params.length - 1]) : Number(limitMatch[1]);
+        const limit =
+          limitMatch[1] === "?"
+            ? Number(params[paramIdx] ?? params[params.length - 1])
+            : Number(limitMatch[1]);
         return result.slice(0, limit) as T[];
       }
       return result as T[];
@@ -133,14 +144,19 @@ class InMemoryAdapter implements DatabaseAdapter {
     // LIMIT support
     const limitMatch = sql.match(/LIMIT\s+(\?|\d+)/i);
     if (limitMatch) {
-      const limit = limitMatch[1] === "?" ? Number(params[paramIdx] ?? params[params.length - 1]) : Number(limitMatch[1]);
+      const limit =
+        limitMatch[1] === "?"
+          ? Number(params[paramIdx] ?? params[params.length - 1])
+          : Number(limitMatch[1]);
       rows = rows.slice(0, limit);
     }
 
     return rows as unknown as T[];
   }
 
-  async batch(statements: Array<{ sql: string; params: unknown[] }>): Promise<void> {
+  async batch(
+    statements: Array<{ sql: string; params: unknown[] }>,
+  ): Promise<void> {
     for (const { sql, params } of statements) {
       await this.run(sql, ...params);
     }
@@ -153,7 +169,11 @@ class InMemoryAdapter implements DatabaseAdapter {
     return match ? match[1] : null;
   }
 
-  private buildRow(tableName: string, sql: string, params: unknown[]): Record<string, string> {
+  private buildRow(
+    tableName: string,
+    sql: string,
+    params: unknown[],
+  ): Record<string, string> {
     const colMatch = sql.match(/\(([^)]+)\)\s*VALUES/i);
     if (!colMatch) return {};
     const cols = colMatch[1].split(",").map((c) => c.trim());
@@ -234,7 +254,9 @@ describe("TraceStore", () => {
     await store.append(makeTraceEvent({ id: "e2", traceId: "t1" }));
     await store.append(makeTraceEvent({ id: "e3", traceId: "t2" }));
     // Verify raw data is correct
-    const all = await adapter.all<Record<string, string>>("SELECT * FROM trace_events");
+    const all = await adapter.all<Record<string, string>>(
+      "SELECT * FROM trace_events",
+    );
     expect(all).toHaveLength(3);
     const traces = await store.listTraces();
     expect(traces.length).toBe(2);
@@ -280,7 +302,7 @@ describe("TraceStore", () => {
     // Verify TraceStore has no update method
     const methods = Object.getOwnPropertyNames(Object.getPrototypeOf(store));
     const updateMethods = methods.filter(
-      (m) => m.includes("update") || m.includes("Update")
+      (m) => m.includes("update") || m.includes("Update"),
     );
     // Only deleteTracesByUser exists for GDPR compliance, not general update
     expect(updateMethods).toEqual([]);

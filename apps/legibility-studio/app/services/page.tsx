@@ -25,20 +25,77 @@ interface Service {
 
 // ── Typology configuration ──
 
-const TYPOLOGY_CONFIG: Record<string, { label: string; color: string; bgColor: string; borderColor: string; icon: string }> = {
-  benefit: { label: "Benefit", color: "text-green-800", bgColor: "bg-green-50", borderColor: "border-green-200", icon: "£" },
-  entitlement: { label: "Entitlement", color: "text-emerald-800", bgColor: "bg-emerald-50", borderColor: "border-emerald-200", icon: "✓" },
-  obligation: { label: "Obligation", color: "text-red-800", bgColor: "bg-red-50", borderColor: "border-red-200", icon: "!" },
-  registration: { label: "Registration", color: "text-blue-800", bgColor: "bg-blue-50", borderColor: "border-blue-200", icon: "R" },
-  application: { label: "Application", color: "text-indigo-800", bgColor: "bg-indigo-50", borderColor: "border-indigo-200", icon: "A" },
-  document: { label: "Document", color: "text-amber-800", bgColor: "bg-amber-50", borderColor: "border-amber-200", icon: "D" },
-  legal_process: { label: "Legal Process", color: "text-purple-800", bgColor: "bg-purple-50", borderColor: "border-purple-200", icon: "§" },
-  grant: { label: "Grant", color: "text-teal-800", bgColor: "bg-teal-50", borderColor: "border-teal-200", icon: "G" },
+const TYPOLOGY_CONFIG: Record<
+  string,
+  {
+    label: string;
+    color: string;
+    bgColor: string;
+    borderColor: string;
+    icon: string;
+  }
+> = {
+  benefit: {
+    label: "Benefit",
+    color: "text-green-800",
+    bgColor: "bg-green-50",
+    borderColor: "border-green-200",
+    icon: "£",
+  },
+  entitlement: {
+    label: "Entitlement",
+    color: "text-emerald-800",
+    bgColor: "bg-emerald-50",
+    borderColor: "border-emerald-200",
+    icon: "✓",
+  },
+  obligation: {
+    label: "Obligation",
+    color: "text-red-800",
+    bgColor: "bg-red-50",
+    borderColor: "border-red-200",
+    icon: "!",
+  },
+  registration: {
+    label: "Registration",
+    color: "text-blue-800",
+    bgColor: "bg-blue-50",
+    borderColor: "border-blue-200",
+    icon: "R",
+  },
+  application: {
+    label: "Application",
+    color: "text-indigo-800",
+    bgColor: "bg-indigo-50",
+    borderColor: "border-indigo-200",
+    icon: "A",
+  },
+  document: {
+    label: "Document",
+    color: "text-amber-800",
+    bgColor: "bg-amber-50",
+    borderColor: "border-amber-200",
+    icon: "D",
+  },
+  legal_process: {
+    label: "Legal Process",
+    color: "text-purple-800",
+    bgColor: "bg-purple-50",
+    borderColor: "border-purple-200",
+    icon: "§",
+  },
+  grant: {
+    label: "Grant",
+    color: "text-teal-800",
+    bgColor: "bg-teal-50",
+    borderColor: "border-teal-200",
+    icon: "G",
+  },
 };
 
 interface TypologySummary {
   type: string;
-  config: typeof TYPOLOGY_CONFIG[string];
+  config: (typeof TYPOLOGY_CONFIG)[string];
   count: number;
   fullCount: number;
   graphCount: number;
@@ -47,7 +104,15 @@ interface TypologySummary {
   withConsent: number;
 }
 
-function TypologyDashboard({ services, onSelectType, activeType }: { services: Service[]; onSelectType: (type: string) => void; activeType: string }) {
+function TypologyDashboard({
+  services,
+  onSelectType,
+  activeType,
+}: {
+  services: Service[];
+  onSelectType: (type: string) => void;
+  activeType: string;
+}) {
   const [expanded, setExpanded] = useState(false);
 
   const summaries = useMemo(() => {
@@ -73,13 +138,22 @@ function TypologyDashboard({ services, onSelectType, activeType }: { services: S
       });
     }
 
-    const unknownGroup = services.filter((s) => !s.serviceType || !TYPOLOGY_CONFIG[s.serviceType]);
+    const unknownGroup = services.filter(
+      (s) => !s.serviceType || !TYPOLOGY_CONFIG[s.serviceType],
+    );
     if (unknownGroup.length > 0) {
       result.push({
         type: "unknown",
-        config: { label: "Uncategorised", color: "text-gray-800", bgColor: "bg-gray-50", borderColor: "border-gray-200", icon: "?" },
+        config: {
+          label: "Uncategorised",
+          color: "text-gray-800",
+          bgColor: "bg-gray-50",
+          borderColor: "border-gray-200",
+          icon: "?",
+        },
         count: unknownGroup.length,
-        fullCount: unknownGroup.filter((s) => (s.source || "full") === "full").length,
+        fullCount: unknownGroup.filter((s) => (s.source || "full") === "full")
+          .length,
         graphCount: unknownGroup.filter((s) => s.source === "graph").length,
         withPolicy: unknownGroup.filter((s) => s.hasPolicy).length,
         withStateModel: unknownGroup.filter((s) => s.hasStateModel).length,
@@ -107,7 +181,11 @@ function TypologyDashboard({ services, onSelectType, activeType }: { services: S
             stroke="currentColor"
             strokeWidth={2}
           >
-            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M9 5l7 7-7 7"
+            />
           </svg>
           Service Typologies
         </button>
@@ -134,27 +212,41 @@ function TypologyDashboard({ services, onSelectType, activeType }: { services: S
       {expanded && (
         <div className="border-t border-studio-border px-5 py-4">
           <p className="text-xs text-gray-500 mb-3">
-            {services.length} services across {activeSummaries.length} typologies. Click a typology to filter.
+            {services.length} services across {activeSummaries.length}{" "}
+            typologies. Click a typology to filter.
           </p>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             {activeSummaries.map((s) => {
-              const completeness = s.count > 0
-                ? Math.round(((s.withPolicy + s.withStateModel + s.withConsent) / (s.count * 3)) * 100)
-                : 0;
+              const completeness =
+                s.count > 0
+                  ? Math.round(
+                      ((s.withPolicy + s.withStateModel + s.withConsent) /
+                        (s.count * 3)) *
+                        100,
+                    )
+                  : 0;
 
               return (
                 <button
                   key={s.type}
                   onClick={() => onSelectType(s.type)}
                   className={`${s.config.bgColor} ${s.config.borderColor} border rounded-xl p-4 text-left hover:shadow-md transition-shadow ${
-                    activeType === s.type ? "ring-2 ring-offset-1 ring-current" : ""
+                    activeType === s.type
+                      ? "ring-2 ring-offset-1 ring-current"
+                      : ""
                   }`}
                 >
                   <div className="flex items-center gap-2 mb-2">
-                    <span className={`text-lg font-bold ${s.config.color}`}>{s.config.icon}</span>
-                    <span className={`text-sm font-bold ${s.config.color}`}>{s.config.label}</span>
+                    <span className={`text-lg font-bold ${s.config.color}`}>
+                      {s.config.icon}
+                    </span>
+                    <span className={`text-sm font-bold ${s.config.color}`}>
+                      {s.config.label}
+                    </span>
                   </div>
-                  <div className="text-2xl font-light tracking-tight mb-1">{s.count}</div>
+                  <div className="text-2xl font-light tracking-tight mb-1">
+                    {s.count}
+                  </div>
                   <div className="text-xs text-gray-500 space-y-0.5">
                     <div className="flex justify-between">
                       <span>Full: {s.fullCount}</span>
@@ -167,7 +259,9 @@ function TypologyDashboard({ services, onSelectType, activeType }: { services: S
                           style={{ width: `${completeness}%` }}
                         />
                       </div>
-                      <span className="text-[10px] font-medium">{completeness}%</span>
+                      <span className="text-[10px] font-medium">
+                        {completeness}%
+                      </span>
                     </div>
                     <div className="text-[10px] text-gray-400">
                       artefact completeness
@@ -246,37 +340,57 @@ function AllServicesDashboard({ dashboard }: { dashboard: DashboardData }) {
           {dashboard.completedCases > 0 && (
             <div
               className="bg-govuk-blue"
-              style={{ width: `${(dashboard.completedCases / dashboard.totalCases) * 100}%` }}
+              style={{
+                width: `${(dashboard.completedCases / dashboard.totalCases) * 100}%`,
+              }}
               title={`${dashboard.completedCases} completed`}
             />
           )}
           {dashboard.activeCases > 0 && (
             <div
               className="bg-govuk-blue/70"
-              style={{ width: `${(dashboard.activeCases / dashboard.totalCases) * 100}%` }}
+              style={{
+                width: `${(dashboard.activeCases / dashboard.totalCases) * 100}%`,
+              }}
               title={`${dashboard.activeCases} active`}
             />
           )}
           {dashboard.handedOffCases > 0 && (
             <div
               className="bg-govuk-blue/45"
-              style={{ width: `${(dashboard.handedOffCases / dashboard.totalCases) * 100}%` }}
+              style={{
+                width: `${(dashboard.handedOffCases / dashboard.totalCases) * 100}%`,
+              }}
               title={`${dashboard.handedOffCases} handed off`}
             />
           )}
           {dashboard.rejectedCases > 0 && (
             <div
               className="bg-govuk-blue/25"
-              style={{ width: `${(dashboard.rejectedCases / dashboard.totalCases) * 100}%` }}
+              style={{
+                width: `${(dashboard.rejectedCases / dashboard.totalCases) * 100}%`,
+              }}
               title={`${dashboard.rejectedCases} rejected`}
             />
           )}
         </div>
         <div className="flex gap-4 mt-2 text-xs text-gray-500">
-          <span className="flex items-center gap-1"><span className="w-2 h-2 bg-govuk-blue rounded-full inline-block" /> Completed</span>
-          <span className="flex items-center gap-1"><span className="w-2 h-2 bg-govuk-blue/70 rounded-full inline-block" /> Active</span>
-          <span className="flex items-center gap-1"><span className="w-2 h-2 bg-govuk-blue/45 rounded-full inline-block" /> Handed off</span>
-          <span className="flex items-center gap-1"><span className="w-2 h-2 bg-govuk-blue/25 rounded-full inline-block" /> Rejected</span>
+          <span className="flex items-center gap-1">
+            <span className="w-2 h-2 bg-govuk-blue rounded-full inline-block" />{" "}
+            Completed
+          </span>
+          <span className="flex items-center gap-1">
+            <span className="w-2 h-2 bg-govuk-blue/70 rounded-full inline-block" />{" "}
+            Active
+          </span>
+          <span className="flex items-center gap-1">
+            <span className="w-2 h-2 bg-govuk-blue/45 rounded-full inline-block" />{" "}
+            Handed off
+          </span>
+          <span className="flex items-center gap-1">
+            <span className="w-2 h-2 bg-govuk-blue/25 rounded-full inline-block" />{" "}
+            Rejected
+          </span>
         </div>
       </div>
 
@@ -287,17 +401,27 @@ function AllServicesDashboard({ dashboard }: { dashboard: DashboardData }) {
           <div className="flex items-center gap-4">
             <div className="flex-1">
               <div className="flex h-3 rounded-full overflow-hidden bg-gray-100">
-                <div className="bg-govuk-blue rounded-l-full" style={{ width: `${agentPct}%` }} />
-                <div className="bg-govuk-blue/25 rounded-r-full" style={{ width: `${100 - agentPct}%` }} />
+                <div
+                  className="bg-govuk-blue rounded-l-full"
+                  style={{ width: `${agentPct}%` }}
+                />
+                <div
+                  className="bg-govuk-blue/25 rounded-r-full"
+                  style={{ width: `${100 - agentPct}%` }}
+                />
               </div>
               <div className="flex justify-between text-xs mt-1 text-gray-500">
                 <span>Agent: {dashboard.agentActionTotal}</span>
                 <span>Human: {dashboard.humanActionTotal}</span>
               </div>
             </div>
-            <div className="text-3xl font-light tracking-tight">{agentPct}%</div>
+            <div className="text-3xl font-light tracking-tight">
+              {agentPct}%
+            </div>
           </div>
-          <p className="text-xs text-gray-400 mt-1">of actions performed by agent</p>
+          <p className="text-xs text-gray-400 mt-1">
+            of actions performed by agent
+          </p>
         </div>
 
         <div className="border border-studio-border rounded-xl p-4">
@@ -309,9 +433,13 @@ function AllServicesDashboard({ dashboard }: { dashboard: DashboardData }) {
                 style={{ width: `${dashboard.avgProgress}%` }}
               />
             </div>
-            <div className="text-3xl font-light tracking-tight">{dashboard.avgProgress}%</div>
+            <div className="text-3xl font-light tracking-tight">
+              {dashboard.avgProgress}%
+            </div>
           </div>
-          <p className="text-xs text-gray-400 mt-1">of active cases through their journey</p>
+          <p className="text-xs text-gray-400 mt-1">
+            of active cases through their journey
+          </p>
         </div>
       </div>
     </div>
@@ -323,7 +451,9 @@ export default function ServicesPage() {
   const [dashboard, setDashboard] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
   const [togglingId, setTogglingId] = useState<string | null>(null);
-  const [sourceFilter, setSourceFilter] = useState<"all" | "full" | "graph">("all");
+  const [sourceFilter, setSourceFilter] = useState<"all" | "full" | "graph">(
+    "all",
+  );
   const [deptFilter, setDeptFilter] = useState<string>("all");
   const [typologyFilter, setTypologyFilter] = useState<string>("all");
   const [lifeEventFilter, setLifeEventFilter] = useState<string>("all");
@@ -331,20 +461,33 @@ export default function ServicesPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [generatingId, setGeneratingId] = useState<string | null>(null);
   const [batchGenerating, setBatchGenerating] = useState(false);
-  const [batchResult, setBatchResult] = useState<{ succeeded: number; failed: number } | null>(null);
+  const [batchResult, setBatchResult] = useState<{
+    succeeded: number;
+    failed: number;
+  } | null>(null);
 
   useEffect(() => {
     Promise.all([
       fetch("/api/services").then((r) => r.json()),
-      fetch(`${process.env.NEXT_PUBLIC_CITIZEN_API || "http://localhost:3100"}/api/ledger/dashboard`).then((r) => r.json()).catch(() => null),
-    ]).then(([servicesData, dashboardData]) => {
-      setServices(servicesData.services || []);
-      setLifeEvents(servicesData.lifeEvents || []);
-      if (dashboardData && !dashboardData.error && dashboardData.totalCases > 0) {
-        setDashboard(dashboardData);
-      }
-      setLoading(false);
-    }).catch(() => setLoading(false));
+      fetch(
+        `${process.env.NEXT_PUBLIC_CITIZEN_API || "http://localhost:3100"}/api/ledger/dashboard`,
+      )
+        .then((r) => r.json())
+        .catch(() => null),
+    ])
+      .then(([servicesData, dashboardData]) => {
+        setServices(servicesData.services || []);
+        setLifeEvents(servicesData.lifeEvents || []);
+        if (
+          dashboardData &&
+          !dashboardData.error &&
+          dashboardData.totalCases > 0
+        ) {
+          setDashboard(dashboardData);
+        }
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
   }, []);
 
   const departments = useMemo(() => {
@@ -362,7 +505,9 @@ export default function ServicesPage() {
     }
     if (typologyFilter !== "all") {
       if (typologyFilter === "unknown") {
-        filtered = filtered.filter((s) => !s.serviceType || !TYPOLOGY_CONFIG[s.serviceType]);
+        filtered = filtered.filter(
+          (s) => !s.serviceType || !TYPOLOGY_CONFIG[s.serviceType],
+        );
       } else {
         filtered = filtered.filter((s) => s.serviceType === typologyFilter);
       }
@@ -380,35 +525,60 @@ export default function ServicesPage() {
         (s) =>
           s.name.toLowerCase().includes(q) ||
           s.description.toLowerCase().includes(q) ||
-          s.id.toLowerCase().includes(q)
+          s.id.toLowerCase().includes(q),
       );
     }
     return filtered;
-  }, [services, sourceFilter, deptFilter, typologyFilter, lifeEventFilter, lifeEvents, searchQuery]);
+  }, [
+    services,
+    sourceFilter,
+    deptFilter,
+    typologyFilter,
+    lifeEventFilter,
+    lifeEvents,
+    searchQuery,
+  ]);
 
-  const agentServices = useMemo(() => filteredServices.filter((s) => s.department === "Agent"), [filteredServices]);
-  const govServices = useMemo(() => filteredServices.filter((s) => s.department !== "Agent"), [filteredServices]);
+  const agentServices = useMemo(
+    () => filteredServices.filter((s) => s.department === "Agent"),
+    [filteredServices],
+  );
+  const govServices = useMemo(
+    () => filteredServices.filter((s) => s.department !== "Agent"),
+    [filteredServices],
+  );
 
-  const fullCount = services.filter((s) => (s.source || "full") === "full").length;
+  const fullCount = services.filter(
+    (s) => (s.source || "full") === "full",
+  ).length;
   const graphCount = services.filter((s) => s.source === "graph").length;
 
   const togglePromote = useCallback(async (serviceId: string) => {
     setTogglingId(serviceId);
     setServices((prev) =>
-      prev.map((s) => (s.id === serviceId ? { ...s, promoted: !s.promoted } : s))
+      prev.map((s) =>
+        s.id === serviceId ? { ...s, promoted: !s.promoted } : s,
+      ),
     );
     try {
-      const res = await fetch(`/api/services/${encodeURIComponent(serviceId)}/promote`, {
-        method: "POST",
-      });
+      const res = await fetch(
+        `/api/services/${encodeURIComponent(serviceId)}/promote`,
+        {
+          method: "POST",
+        },
+      );
       if (!res.ok) {
         setServices((prev) =>
-          prev.map((s) => (s.id === serviceId ? { ...s, promoted: !s.promoted } : s))
+          prev.map((s) =>
+            s.id === serviceId ? { ...s, promoted: !s.promoted } : s,
+          ),
         );
       }
     } catch {
       setServices((prev) =>
-        prev.map((s) => (s.id === serviceId ? { ...s, promoted: !s.promoted } : s))
+        prev.map((s) =>
+          s.id === serviceId ? { ...s, promoted: !s.promoted } : s,
+        ),
       );
     } finally {
       setTogglingId(null);
@@ -418,15 +588,26 @@ export default function ServicesPage() {
   const generateService = useCallback(async (serviceId: string) => {
     setGeneratingId(serviceId);
     try {
-      const res = await fetch(`/api/services/${encodeURIComponent(serviceId)}/generate`, { method: "POST" });
+      const res = await fetch(
+        `/api/services/${encodeURIComponent(serviceId)}/generate`,
+        { method: "POST" },
+      );
       if (res.ok) {
         const data = await res.json();
         setServices((prev) =>
           prev.map((s) =>
             s.id === serviceId
-              ? { ...s, source: "full" as const, hasPolicy: true, hasStateModel: true, hasConsent: true, generatedAt: data.generatedAt, interactionType: data.interactionType }
-              : s
-          )
+              ? {
+                  ...s,
+                  source: "full" as const,
+                  hasPolicy: true,
+                  hasStateModel: true,
+                  hasConsent: true,
+                  generatedAt: data.generatedAt,
+                  interactionType: data.interactionType,
+                }
+              : s,
+          ),
         );
       } else {
         const err = await res.json();
@@ -440,7 +621,12 @@ export default function ServicesPage() {
   }, []);
 
   const handleBatchGenerate = useCallback(async () => {
-    if (!window.confirm("Generate artefacts for up to 10 graph-only services? This uses the LLM API and may take a few minutes.")) return;
+    if (
+      !window.confirm(
+        "Generate artefacts for up to 10 graph-only services? This uses the LLM API and may take a few minutes.",
+      )
+    )
+      return;
     setBatchGenerating(true);
     setBatchResult(null);
     try {
@@ -465,15 +651,21 @@ export default function ServicesPage() {
     }
   }, []);
 
-  const graphOnlyCount = services.filter((s) => s.source === "graph" && s.govuk_url).length;
+  const graphOnlyCount = services.filter(
+    (s) => s.source === "graph" && s.govuk_url,
+  ).length;
 
   if (loading) {
-    return <div className="text-center py-12 text-gray-500">Loading services...</div>;
+    return (
+      <div className="text-center py-12 text-gray-500">Loading services...</div>
+    );
   }
 
   return (
     <div>
-      <Breadcrumbs items={[{ label: "Dashboard", href: "/" }, { label: "Services" }]} />
+      <Breadcrumbs
+        items={[{ label: "Dashboard", href: "/" }, { label: "Services" }]}
+      />
       <PageHeader
         title="Services"
         subtitle={`${services.length} service(s) registered — ${fullCount} full, ${graphCount} from graph.`}
@@ -485,7 +677,9 @@ export default function ServicesPage() {
                 disabled={batchGenerating}
                 className="bg-purple-600 text-white px-4 py-2 rounded-lg font-bold text-sm hover:bg-purple-700 disabled:opacity-50"
               >
-                {batchGenerating ? "Generating..." : `Generate missing (${graphOnlyCount})`}
+                {batchGenerating
+                  ? "Generating..."
+                  : `Generate missing (${graphOnlyCount})`}
               </button>
             )}
             <a
@@ -500,8 +694,14 @@ export default function ServicesPage() {
 
       {batchResult && (
         <div className="bg-green-50 border border-green-200 rounded-lg p-3 mb-4 text-sm">
-          Batch complete: {batchResult.succeeded} succeeded, {batchResult.failed} failed.
-          <button onClick={() => setBatchResult(null)} className="ml-2 text-green-700 underline">Dismiss</button>
+          Batch complete: {batchResult.succeeded} succeeded,{" "}
+          {batchResult.failed} failed.
+          <button
+            onClick={() => setBatchResult(null)}
+            className="ml-2 text-green-700 underline"
+          >
+            Dismiss
+          </button>
         </div>
       )}
 
@@ -512,7 +712,9 @@ export default function ServicesPage() {
       <TypologyDashboard
         services={services}
         activeType={typologyFilter}
-        onSelectType={(type) => setTypologyFilter((prev) => (prev === type ? "all" : type))}
+        onSelectType={(type) =>
+          setTypologyFilter((prev) => (prev === type ? "all" : type))
+        }
       />
 
       {/* Filters */}
@@ -530,7 +732,11 @@ export default function ServicesPage() {
                   : "bg-white text-gray-600 border-gray-300 hover:border-govuk-blue"
               }`}
             >
-              {f === "all" ? `All (${services.length})` : f === "full" ? `Full (${fullCount})` : `Graph (${graphCount})`}
+              {f === "all"
+                ? `All (${services.length})`
+                : f === "full"
+                  ? `Full (${fullCount})`
+                  : `Graph (${graphCount})`}
             </button>
           ))}
         </div>
@@ -540,12 +746,16 @@ export default function ServicesPage() {
           value={typologyFilter}
           onChange={(e) => setTypologyFilter(e.target.value)}
           className={`text-sm border rounded-lg px-2.5 py-1 ${
-            typologyFilter !== "all" ? "border-govuk-blue bg-blue-50 font-medium" : "border-gray-300"
+            typologyFilter !== "all"
+              ? "border-govuk-blue bg-blue-50 font-medium"
+              : "border-gray-300"
           }`}
         >
           <option value="all">All typologies</option>
           {Object.entries(TYPOLOGY_CONFIG).map(([key, cfg]) => (
-            <option key={key} value={key}>{cfg.icon} {cfg.label}</option>
+            <option key={key} value={key}>
+              {cfg.icon} {cfg.label}
+            </option>
           ))}
           <option value="unknown">? Uncategorised</option>
         </select>
@@ -558,7 +768,9 @@ export default function ServicesPage() {
         >
           <option value="all">All departments</option>
           {departments.map((d) => (
-            <option key={d} value={d}>{d}</option>
+            <option key={d} value={d}>
+              {d}
+            </option>
           ))}
         </select>
 
@@ -571,7 +783,9 @@ export default function ServicesPage() {
           >
             <option value="all">All life events</option>
             {lifeEvents.map((le) => (
-              <option key={le.id} value={le.id}>{le.icon} {le.name} ({le.serviceIds.length})</option>
+              <option key={le.id} value={le.id}>
+                {le.icon} {le.name} ({le.serviceIds.length})
+              </option>
             ))}
           </select>
         )}
@@ -608,7 +822,10 @@ export default function ServicesPage() {
                 key={service.id}
                 className="border border-indigo-200 rounded-xl bg-indigo-50/30 hover:shadow-sm transition-shadow"
               >
-                <a href={`/services/${encodeURIComponent(service.id)}`} className="block p-5">
+                <a
+                  href={`/services/${encodeURIComponent(service.id)}`}
+                  className="block p-5"
+                >
                   <div className="flex justify-between items-start">
                     <div>
                       <div className="flex items-center gap-2 mb-1">
@@ -617,8 +834,12 @@ export default function ServicesPage() {
                           Agent
                         </span>
                       </div>
-                      <p className="text-sm text-indigo-600 mt-0.5">{service.department}</p>
-                      <p className="text-sm mt-2 text-gray-700">{service.description}</p>
+                      <p className="text-sm text-indigo-600 mt-0.5">
+                        {service.department}
+                      </p>
+                      <p className="text-sm mt-2 text-gray-700">
+                        {service.description}
+                      </p>
                     </div>
                   </div>
                 </a>
@@ -657,11 +878,13 @@ export default function ServicesPage() {
                 <div>
                   <div className="flex items-center gap-2 mb-1">
                     <h2 className="text-lg font-bold">{service.name}</h2>
-                    <span className={`text-[10px] font-bold uppercase px-1.5 py-0.5 rounded ${
-                      (service.source || "full") === "full"
-                        ? "bg-blue-100 text-blue-800"
-                        : "bg-amber-100 text-amber-800"
-                    }`}>
+                    <span
+                      className={`text-[10px] font-bold uppercase px-1.5 py-0.5 rounded ${
+                        (service.source || "full") === "full"
+                          ? "bg-blue-100 text-blue-800"
+                          : "bg-amber-100 text-amber-800"
+                      }`}
+                    >
                       {(service.source || "full") === "full" ? "Full" : "Graph"}
                     </span>
                     {service.interactionType && (
@@ -670,25 +893,42 @@ export default function ServicesPage() {
                       </span>
                     )}
                     {service.generatedAt && (
-                      <span className="text-[10px] font-medium text-green-700 bg-green-100 px-1.5 py-0.5 rounded" title={service.generatedAt}>
+                      <span
+                        className="text-[10px] font-medium text-green-700 bg-green-100 px-1.5 py-0.5 rounded"
+                        title={service.generatedAt}
+                      >
                         Generated
                       </span>
                     )}
-                    {service.serviceType && TYPOLOGY_CONFIG[service.serviceType] && (
-                      <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${TYPOLOGY_CONFIG[service.serviceType].bgColor} ${TYPOLOGY_CONFIG[service.serviceType].color}`}>
-                        {TYPOLOGY_CONFIG[service.serviceType].icon} {TYPOLOGY_CONFIG[service.serviceType].label}
-                      </span>
-                    )}
-                    {service.serviceType && !service.interactionType && !TYPOLOGY_CONFIG[service.serviceType] && (
-                      <span className="text-[10px] font-medium text-gray-500 uppercase">{service.serviceType}</span>
-                    )}
+                    {service.serviceType &&
+                      TYPOLOGY_CONFIG[service.serviceType] && (
+                        <span
+                          className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${TYPOLOGY_CONFIG[service.serviceType].bgColor} ${TYPOLOGY_CONFIG[service.serviceType].color}`}
+                        >
+                          {TYPOLOGY_CONFIG[service.serviceType].icon}{" "}
+                          {TYPOLOGY_CONFIG[service.serviceType].label}
+                        </span>
+                      )}
+                    {service.serviceType &&
+                      !service.interactionType &&
+                      !TYPOLOGY_CONFIG[service.serviceType] && (
+                        <span className="text-[10px] font-medium text-gray-500 uppercase">
+                          {service.serviceType}
+                        </span>
+                      )}
                   </div>
-                  <p className="text-sm text-gray-500 mt-0.5">{service.department}</p>
-                  <p className="text-sm mt-2 text-gray-700">{service.description}</p>
+                  <p className="text-sm text-gray-500 mt-0.5">
+                    {service.department}
+                  </p>
+                  <p className="text-sm mt-2 text-gray-700">
+                    {service.description}
+                  </p>
                 </div>
                 {(service.source || "full") === "full" && (
                   <div className="text-right">
-                    <div className="text-3xl font-light tracking-tight">{service.completeness}%</div>
+                    <div className="text-3xl font-light tracking-tight">
+                      {service.completeness}%
+                    </div>
                     <div className="text-xs text-gray-500">complete</div>
                     {service.gapCount > 0 && (
                       <div className="text-xs text-red-600 mt-1">
@@ -788,7 +1028,9 @@ export default function ServicesPage() {
                           disabled={generatingId === service.id}
                           className="text-sm font-semibold text-purple-600 hover:underline disabled:opacity-50"
                         >
-                          {generatingId === service.id ? "Generating..." : "Generate"}
+                          {generatingId === service.id
+                            ? "Generating..."
+                            : "Generate"}
                         </button>
                       </>
                     )}
@@ -801,7 +1043,9 @@ export default function ServicesPage() {
                   <>
                     <span className="text-sm text-gray-500">
                       {service.promoted ? (
-                        <span className="text-green-700 font-medium">Promoted</span>
+                        <span className="text-green-700 font-medium">
+                          Promoted
+                        </span>
                       ) : (
                         "Not promoted"
                       )}

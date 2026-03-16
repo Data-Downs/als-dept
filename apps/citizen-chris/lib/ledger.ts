@@ -17,7 +17,9 @@ function serviceDirSlug(serviceId: string): string {
 }
 
 /** Load a state model definition for a service */
-export async function loadStateModel(serviceId: string): Promise<StateModelDefinition | null> {
+export async function loadStateModel(
+  serviceId: string,
+): Promise<StateModelDefinition | null> {
   // Try bundled data first (works on Cloudflare, now async with Studio fallback)
   const bundled = await getServiceArtefact(serviceId, "stateModel");
   if (bundled) return bundled as unknown as StateModelDefinition;
@@ -28,7 +30,10 @@ export async function loadStateModel(serviceId: string): Promise<StateModelDefin
     path.join(process.cwd(), "data", "services"),
   ]) {
     try {
-      const raw = fs.readFileSync(path.join(base, slug, "state-model.json"), "utf-8");
+      const raw = fs.readFileSync(
+        path.join(base, slug, "state-model.json"),
+        "utf-8",
+      );
       return JSON.parse(raw);
     } catch {
       continue;
@@ -63,7 +68,9 @@ const SERVICE_STORE_TO_LEGACY: Record<string, string> = {
  * (e.g. "dwp-universal-credit") while the cases table uses legacy dot-separated IDs
  * (e.g. "dwp.apply-universal-credit"). This tries the input first, then the legacy mapping.
  */
-export async function normalizeLedgerServiceId(serviceId: string): Promise<string> {
+export async function normalizeLedgerServiceId(
+  serviceId: string,
+): Promise<string> {
   const store = await getLedgerStore();
   // Try as-is first
   const dashboard = await store.getDashboard(serviceId);

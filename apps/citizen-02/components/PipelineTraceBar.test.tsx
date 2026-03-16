@@ -7,7 +7,7 @@ import type { PipelineTrace, PipelineStep } from "@als/schemas";
 vi.mock("@/lib/store", () => ({
   useAppStore: Object.assign(
     (selector: (s: Record<string, unknown>) => unknown) => selector({}),
-    { getState: () => ({}), setState: vi.fn(), subscribe: vi.fn() }
+    { getState: () => ({}), setState: vi.fn(), subscribe: vi.fn() },
   ),
 }));
 
@@ -27,9 +27,29 @@ function makeTrace(overrides: Partial<PipelineTrace> = {}): PipelineTrace {
   return {
     traceId: "trace-1",
     steps: [
-      makeStep({ id: "policy-eval", name: "PolicyEvaluator", type: "deterministic", label: "Policy evaluation", durationMs: 2 }),
-      makeStep({ id: "llm-call", name: "LanguageAgent", type: "ai", label: "LLM generation", durationMs: 1200, agentName: "unified" }),
-      makeStep({ id: "state-transition", name: "StateValidator", type: "deterministic", label: "State validation", status: "skipped", durationMs: 0 }),
+      makeStep({
+        id: "policy-eval",
+        name: "PolicyEvaluator",
+        type: "deterministic",
+        label: "Policy evaluation",
+        durationMs: 2,
+      }),
+      makeStep({
+        id: "llm-call",
+        name: "LanguageAgent",
+        type: "ai",
+        label: "LLM generation",
+        durationMs: 1200,
+        agentName: "unified",
+      }),
+      makeStep({
+        id: "state-transition",
+        name: "StateValidator",
+        type: "deterministic",
+        label: "State validation",
+        status: "skipped",
+        durationMs: 0,
+      }),
     ],
     totalDurationMs: 1202,
     agentUsed: "unified",
@@ -56,7 +76,9 @@ describe("PipelineTraceBar", () => {
     render(<PipelineTraceBar trace={makeTrace()} />);
 
     // Initially collapsed
-    expect(screen.queryByTestId("pipeline-trace-expanded")).not.toBeInTheDocument();
+    expect(
+      screen.queryByTestId("pipeline-trace-expanded"),
+    ).not.toBeInTheDocument();
 
     // Expand
     fireEvent.click(screen.getByRole("button"));
@@ -66,7 +88,9 @@ describe("PipelineTraceBar", () => {
 
     // Collapse
     fireEvent.click(screen.getByRole("button"));
-    expect(screen.queryByTestId("pipeline-trace-expanded")).not.toBeInTheDocument();
+    expect(
+      screen.queryByTestId("pipeline-trace-expanded"),
+    ).not.toBeInTheDocument();
   });
 
   it("renders correct badges for AI and deterministic steps", () => {
@@ -91,7 +115,15 @@ describe("PipelineTraceBar", () => {
 
   it("renders error status icon", () => {
     const trace = makeTrace({
-      steps: [makeStep({ id: "llm-call", name: "LanguageAgent", type: "ai", status: "error", durationMs: 0 })],
+      steps: [
+        makeStep({
+          id: "llm-call",
+          name: "LanguageAgent",
+          type: "ai",
+          status: "error",
+          durationMs: 0,
+        }),
+      ],
     });
     render(<PipelineTraceBar trace={trace} />);
     fireEvent.click(screen.getByRole("button"));

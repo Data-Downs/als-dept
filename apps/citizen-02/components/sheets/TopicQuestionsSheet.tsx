@@ -61,7 +61,15 @@ export function TopicQuestionsSheet({ data }: TopicQuestionsSheetProps) {
             <span className="flex-1 text-sm text-govuk-black leading-snug">
               {question}
             </span>
-            <svg className="shrink-0 text-govuk-mid-grey" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <svg
+              className="shrink-0 text-govuk-mid-grey"
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
               <path d="M9 18l6-6-6-6" />
             </svg>
           </button>

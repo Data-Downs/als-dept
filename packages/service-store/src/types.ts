@@ -2,7 +2,13 @@
  * Types for the service store — DB-backed service artefact storage.
  */
 
-import type { CapabilityManifest, PolicyRuleset, StateModelDefinition, ConsentModel, StateCardMapping } from "@als/schemas";
+import type {
+  CapabilityManifest,
+  PolicyRuleset,
+  StateModelDefinition,
+  ConsentModel,
+  StateCardMapping,
+} from "@als/schemas";
 
 /** A row in the services table */
 export interface ServiceRow {

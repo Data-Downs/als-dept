@@ -10,7 +10,7 @@ export async function POST(req: NextRequest) {
     if (!name || typeof name !== "string" || name.trim().length < 2) {
       return NextResponse.json(
         { error: "Please enter a name (at least 2 characters)" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
     if (!id) {
       return NextResponse.json(
         { error: "Could not generate a valid ID from the name" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -46,7 +46,7 @@ export async function POST(req: NextRequest) {
       {
         error: err instanceof Error ? err.message : "Failed to create persona",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

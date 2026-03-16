@@ -86,11 +86,14 @@ describe("chat route - agent loop", () => {
       output: {
         responseText: "",
         reasoning: "Looking up citizen data",
-        toolCalls: [
-          { id: "tool_1", name: "get_citizen_context", input: {} },
-        ],
+        toolCalls: [{ id: "tool_1", name: "get_citizen_context", input: {} }],
         rawContent: [
-          { type: "tool_use", id: "tool_1", name: "get_citizen_context", input: {} },
+          {
+            type: "tool_use",
+            id: "tool_1",
+            name: "get_citizen_context",
+            input: {},
+          },
         ],
         stopReason: "tool_use",
       },
@@ -138,11 +141,25 @@ describe("chat route - agent loop", () => {
         responseText: "",
         toolCalls: [
           { id: "t1", name: "get_citizen_context", input: {} },
-          { id: "t2", name: "query_service_graph", input: { keyword: "pension" } },
+          {
+            id: "t2",
+            name: "query_service_graph",
+            input: { keyword: "pension" },
+          },
         ],
         rawContent: [
-          { type: "tool_use", id: "t1", name: "get_citizen_context", input: {} },
-          { type: "tool_use", id: "t2", name: "query_service_graph", input: { keyword: "pension" } },
+          {
+            type: "tool_use",
+            id: "t1",
+            name: "get_citizen_context",
+            input: {},
+          },
+          {
+            type: "tool_use",
+            id: "t2",
+            name: "query_service_graph",
+            input: { keyword: "pension" },
+          },
         ],
         stopReason: "tool_use",
       },
@@ -154,10 +171,19 @@ describe("chat route - agent loop", () => {
       output: {
         responseText: "",
         toolCalls: [
-          { id: "t3", name: "check_eligibility", input: { service_id: "dwp-pension-credit" } },
+          {
+            id: "t3",
+            name: "check_eligibility",
+            input: { service_id: "dwp-pension-credit" },
+          },
         ],
         rawContent: [
-          { type: "tool_use", id: "t3", name: "check_eligibility", input: { service_id: "dwp-pension-credit" } },
+          {
+            type: "tool_use",
+            id: "t3",
+            name: "check_eligibility",
+            input: { service_id: "dwp-pension-credit" },
+          },
         ],
         stopReason: "tool_use",
       },
@@ -180,7 +206,9 @@ describe("chat route - agent loop", () => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         persona: "emma-parker",
-        messages: [{ role: "user", content: "Am I eligible for pension credit?" }],
+        messages: [
+          { role: "user", content: "Am I eligible for pension credit?" },
+        ],
       }),
     });
 

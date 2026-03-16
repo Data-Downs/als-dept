@@ -1,5 +1,8 @@
 import { NextRequest } from "next/server";
-import { getServiceGraphStore, getServiceArtefactStore } from "@/lib/service-store-init";
+import {
+  getServiceGraphStore,
+  getServiceArtefactStore,
+} from "@/lib/service-store-init";
 import { handleOptions, jsonWithCors } from "@/lib/cors";
 
 export async function OPTIONS() {
@@ -12,7 +15,7 @@ export async function OPTIONS() {
  */
 export async function GET(
   _request: NextRequest,
-  { params }: { params: Promise<{ eventId: string }> }
+  { params }: { params: Promise<{ eventId: string }> },
 ) {
   try {
     const { eventId } = await params;
@@ -24,7 +27,8 @@ export async function GET(
     }
 
     // Get all reachable services via BFS
-    const reachableIds = await graphStore.getLifeEventReachableServices(eventId);
+    const reachableIds =
+      await graphStore.getLifeEventReachableServices(eventId);
 
     // Resolve service summaries
     const artefactStore = await getServiceArtefactStore();
@@ -39,6 +43,9 @@ export async function GET(
     });
   } catch (error) {
     console.error("[v1/life-events/:id] Error:", error);
-    return jsonWithCors({ error: "Failed to load life event" }, { status: 500 });
+    return jsonWithCors(
+      { error: "Failed to load life event" },
+      { status: 500 },
+    );
   }
 }

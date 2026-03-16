@@ -16,7 +16,11 @@ export async function POST(request: Request) {
       if (!db) throw new Error("SERVICE_STORE_DB binding not found");
     } catch (err) {
       return NextResponse.json(
-        { error: "D1 not available: " + (err instanceof Error ? err.message : String(err)) },
+        {
+          error:
+            "D1 not available: " +
+            (err instanceof Error ? err.message : String(err)),
+        },
         { status: 500 },
       );
     }
@@ -24,13 +28,18 @@ export async function POST(request: Request) {
     const body = await request.json();
     const personas: Array<Record<string, unknown>> = body.personas;
     if (!Array.isArray(personas) || personas.length === 0) {
-      return NextResponse.json({ error: "Body must contain a non-empty 'personas' array" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Body must contain a non-empty 'personas' array" },
+        { status: 400 },
+      );
     }
 
     // Ensure table exists
-    await db.prepare(
-      "CREATE TABLE IF NOT EXISTS personas (id TEXT PRIMARY KEY, data TEXT NOT NULL, updated_at TEXT NOT NULL DEFAULT (datetime('now')))"
-    ).run();
+    await db
+      .prepare(
+        "CREATE TABLE IF NOT EXISTS personas (id TEXT PRIMARY KEY, data TEXT NOT NULL, updated_at TEXT NOT NULL DEFAULT (datetime('now')))",
+      )
+      .run();
 
     let upserted = 0;
     for (const persona of personas) {
@@ -38,7 +47,9 @@ export async function POST(request: Request) {
       if (!id) continue;
       const json = JSON.stringify(persona);
       await db
-        .prepare("INSERT OR REPLACE INTO personas (id, data, updated_at) VALUES (?, ?, datetime('now'))")
+        .prepare(
+          "INSERT OR REPLACE INTO personas (id, data, updated_at) VALUES (?, ?, datetime('now'))",
+        )
         .bind(id, json)
         .run();
       upserted++;

@@ -30,13 +30,16 @@ export async function GET(
       limit,
     });
 
-    return NextResponse.json({
-      cases: result.cases,
-      total: result.total,
-      page,
-      limit,
-      totalPages: Math.ceil(result.total / limit),
-    }, { headers: corsHeaders });
+    return NextResponse.json(
+      {
+        cases: result.cases,
+        total: result.total,
+        page,
+        limit,
+        totalPages: Math.ceil(result.total / limit),
+      },
+      { headers: corsHeaders },
+    );
   } catch (error) {
     console.error("[Ledger] Cases list error:", error);
     return NextResponse.json(

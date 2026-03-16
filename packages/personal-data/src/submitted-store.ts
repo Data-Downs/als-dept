@@ -43,28 +43,39 @@ export class SubmittedStore {
   async getAll(userId: string): Promise<SubmittedField[]> {
     const rows = await this.db.all<Record<string, unknown>>(
       "SELECT * FROM submitted_data WHERE user_id = ? ORDER BY category, field_key",
-      userId
+      userId,
     );
     return rows.map(this.rowToField);
   }
 
-  async getByCategory(userId: string, category: string): Promise<SubmittedField[]> {
+  async getByCategory(
+    userId: string,
+    category: string,
+  ): Promise<SubmittedField[]> {
     const rows = await this.db.all<Record<string, unknown>>(
       "SELECT * FROM submitted_data WHERE user_id = ? AND category = ? ORDER BY field_key",
-      userId, category
+      userId,
+      category,
     );
     return rows.map(this.rowToField);
   }
 
-  async get(userId: string, fieldKey: string): Promise<SubmittedField | undefined> {
+  async get(
+    userId: string,
+    fieldKey: string,
+  ): Promise<SubmittedField | undefined> {
     const row = await this.db.get<Record<string, unknown>>(
       "SELECT * FROM submitted_data WHERE user_id = ? AND field_key = ?",
-      userId, fieldKey
+      userId,
+      fieldKey,
     );
     return row ? this.rowToField(row) : undefined;
   }
 
-  async upsert(userId: string, field: Omit<SubmittedField, "id" | "createdAt" | "updatedAt">): Promise<SubmittedField> {
+  async upsert(
+    userId: string,
+    field: Omit<SubmittedField, "id" | "createdAt" | "updatedAt">,
+  ): Promise<SubmittedField> {
     const id = `sub_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
     const now = new Date().toISOString();
     await this.db.run(
@@ -75,7 +86,14 @@ export class SubmittedStore {
          category = excluded.category,
          source = excluded.source,
          updated_at = excluded.updated_at`,
-      id, userId, field.fieldKey, JSON.stringify(field.fieldValue), field.category, field.source, now, now
+      id,
+      userId,
+      field.fieldKey,
+      JSON.stringify(field.fieldValue),
+      field.category,
+      field.source,
+      now,
+      now,
     );
     return { id, ...field, createdAt: now, updatedAt: now };
   }
@@ -83,7 +101,8 @@ export class SubmittedStore {
   async remove(userId: string, fieldKey: string): Promise<boolean> {
     const result = await this.db.run(
       "DELETE FROM submitted_data WHERE user_id = ? AND field_key = ?",
-      userId, fieldKey
+      userId,
+      fieldKey,
     );
     return result.changes > 0;
   }
@@ -95,27 +114,31 @@ export class SubmittedStore {
    * Seed versioning: if old flat-field format exists (v1), clears persona-sourced
    * rows and re-seeds in the new format with _seed_version=2.
    */
-  async seedFromPersona(userId: string, personaData: Record<string, unknown>): Promise<void> {
+  async seedFromPersona(
+    userId: string,
+    personaData: Record<string, unknown>,
+  ): Promise<void> {
     // Check seed version marker
     const versionRow = await this.get(userId, "_seed_version");
     if (versionRow) {
-      const ver = typeof versionRow.fieldValue === "number"
-        ? versionRow.fieldValue
-        : Number(versionRow.fieldValue);
+      const ver =
+        typeof versionRow.fieldValue === "number"
+          ? versionRow.fieldValue
+          : Number(versionRow.fieldValue);
       if (ver >= SEED_VERSION) return; // Already seeded at current version
     }
 
     // Check if old v1 data exists (flat fields like address_line1)
     const existing = await this.getAll(userId);
     const hasOldFormat = existing.some(
-      (f) => f.source === "persona" && f.fieldKey !== "_seed_version"
+      (f) => f.source === "persona" && f.fieldKey !== "_seed_version",
     );
 
     if (hasOldFormat) {
       // Clear old persona-sourced rows to re-seed
       await this.db.run(
         "DELETE FROM submitted_data WHERE user_id = ? AND source = 'persona'",
-        userId
+        userId,
       );
     } else if (existing.length > 0 && !versionRow) {
       // Has non-persona data but no version marker — skip seeding, just set marker
@@ -154,7 +177,9 @@ export class SubmittedStore {
    * Since field keys match the original JSON property names,
    * the result has the same shape as the persona JSON files.
    */
-  async reconstructPersonaData(userId: string): Promise<Record<string, unknown> | null> {
+  async reconstructPersonaData(
+    userId: string,
+  ): Promise<Record<string, unknown> | null> {
     const fields = await this.getAll(userId);
     if (fields.length === 0) return null;
 

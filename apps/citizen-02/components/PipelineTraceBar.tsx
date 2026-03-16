@@ -13,9 +13,14 @@ export function PipelineTraceBar({ trace }: PipelineTraceBarProps) {
   if (!trace) return null;
 
   const aiSteps = trace.steps.filter((s) => s.type === "ai");
-  const deterministicSteps = trace.steps.filter((s) => s.type === "deterministic");
+  const deterministicSteps = trace.steps.filter(
+    (s) => s.type === "deterministic",
+  );
   const totalSeconds = (trace.totalDurationMs / 1000).toFixed(1);
-  const agentLabel = trace.agentUsed !== "unified" ? `${capitalize(trace.agentUsed)} Agent · ` : "";
+  const agentLabel =
+    trace.agentUsed !== "unified"
+      ? `${capitalize(trace.agentUsed)} Agent · `
+      : "";
 
   return (
     <div className="mx-4 mt-1 mb-2" data-testid="pipeline-trace-bar">
@@ -34,13 +39,18 @@ export function PipelineTraceBar({ trace }: PipelineTraceBarProps) {
           <path d="M4 2l4 4-4 4V2z" />
         </svg>
         <span>
-          {agentLabel}{trace.steps.length} steps · {totalSeconds}s · {aiSteps.length} AI + {deterministicSteps.length} rule-based
+          {agentLabel}
+          {trace.steps.length} steps · {totalSeconds}s · {aiSteps.length} AI +{" "}
+          {deterministicSteps.length} rule-based
         </span>
       </button>
 
       {/* Expanded step list */}
       {expanded && (
-        <div className="mt-2 border border-gray-200 rounded-lg bg-white overflow-hidden" data-testid="pipeline-trace-expanded">
+        <div
+          className="mt-2 border border-gray-200 rounded-lg bg-white overflow-hidden"
+          data-testid="pipeline-trace-expanded"
+        >
           {trace.steps.map((step) => (
             <div
               key={step.id}
@@ -48,15 +58,23 @@ export function PipelineTraceBar({ trace }: PipelineTraceBarProps) {
             >
               {/* Status icon */}
               <span className="mt-0.5 flex-shrink-0" aria-label={step.status}>
-                {step.status === "complete" && <span className="text-green-600">✓</span>}
-                {step.status === "skipped" && <span className="text-gray-400">—</span>}
-                {step.status === "error" && <span className="text-red-500">✗</span>}
+                {step.status === "complete" && (
+                  <span className="text-green-600">✓</span>
+                )}
+                {step.status === "skipped" && (
+                  <span className="text-gray-400">—</span>
+                )}
+                {step.status === "error" && (
+                  <span className="text-red-500">✗</span>
+                )}
               </span>
 
               {/* Name and label */}
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
-                  <span className="font-medium text-govuk-black">{step.name}</span>
+                  <span className="font-medium text-govuk-black">
+                    {step.name}
+                  </span>
                   <span
                     className={`inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium ${
                       step.type === "ai"
@@ -70,7 +88,9 @@ export function PipelineTraceBar({ trace }: PipelineTraceBarProps) {
                 </div>
                 <div className="text-govuk-dark-grey">{step.label}</div>
                 {step.detail && (
-                  <div className="text-govuk-mid-grey mt-0.5">{step.detail}</div>
+                  <div className="text-govuk-mid-grey mt-0.5">
+                    {step.detail}
+                  </div>
                 )}
               </div>
 

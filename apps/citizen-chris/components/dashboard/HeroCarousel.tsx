@@ -4,7 +4,6 @@ import { useRef, useState, useCallback } from "react";
 import type { PersonaData } from "@/lib/types";
 import { DEMO_TODAY } from "@/lib/types";
 
-
 function daysUntil(dateStr: string): number {
   const target = new Date(dateStr);
   const diff = target.getTime() - DEMO_TODAY.getTime();
@@ -24,7 +23,12 @@ interface HeroCard {
   id: string;
   title: string;
   subtitle: string;
-  stats: Array<{ label: string; value: string; urgency?: "urgent" | "warning" | "ok"; action?: string }>;
+  stats: Array<{
+    label: string;
+    value: string;
+    urgency?: "urgent" | "warning" | "ok";
+    action?: string;
+  }>;
   service: string;
   registration?: string;
 }
@@ -72,9 +76,13 @@ export function buildHeroCards(data: PersonaData): HeroCard[] {
     cards.push({
       id: "state-pension",
       title: "State Pension",
-      subtitle: sp.type as string || "State Pension",
+      subtitle: (sp.type as string) || "State Pension",
       stats: [
-        { label: "Weekly", value: sp.weeklyAmount ? `£${sp.weeklyAmount}` : "Active", urgency: "ok" },
+        {
+          label: "Weekly",
+          value: sp.weeklyAmount ? `£${sp.weeklyAmount}` : "Active",
+          urgency: "ok",
+        },
       ],
       service: "benefits",
     });
@@ -85,9 +93,7 @@ export function buildHeroCards(data: PersonaData): HeroCard[] {
         id: `benefit-${b.type}`,
         title: b.type,
         subtitle: `£${b.amount}/${b.frequency}`,
-        stats: [
-          { label: "Amount", value: `£${b.amount}`, urgency: "ok" },
-        ],
+        stats: [{ label: "Amount", value: `£${b.amount}`, urgency: "ok" }],
         service: "benefits",
       });
     }
@@ -97,7 +103,10 @@ export function buildHeroCards(data: PersonaData): HeroCard[] {
   const employment = data.employment as Record<string, unknown> | undefined;
   if (employment) {
     const entries = Object.values(employment).filter(
-      (v) => v && typeof v === "object" && "jobTitle" in (v as Record<string, unknown>),
+      (v) =>
+        v &&
+        typeof v === "object" &&
+        "jobTitle" in (v as Record<string, unknown>),
     ) as Array<Record<string, unknown>>;
     for (const entry of entries) {
       const jobTitle = String(entry.jobTitle ?? "").toLowerCase();
@@ -156,9 +165,15 @@ interface HeroCarouselProps {
   onCardTap?: (service: string) => void;
 }
 
-export function HeroCarousel({ personaData, filterService, onCardTap }: HeroCarouselProps) {
+export function HeroCarousel({
+  personaData,
+  filterService,
+  onCardTap,
+}: HeroCarouselProps) {
   const allCards = buildHeroCards(personaData);
-  const cards = filterService ? allCards.filter((c) => c.service === filterService) : allCards;
+  const cards = filterService
+    ? allCards.filter((c) => c.service === filterService)
+    : allCards;
   const scrollRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
 
@@ -191,11 +206,17 @@ export function HeroCarousel({ personaData, filterService, onCardTap }: HeroCaro
             >
               {/* Top section: make, model, reg plate */}
               <div className="p-4 pb-3">
-                <h3 className="font-bold text-govuk-black text-xl leading-tight">{card.title}</h3>
-                <p className="text-sm text-govuk-dark-grey mt-0.5">{card.subtitle}</p>
+                <h3 className="font-bold text-govuk-black text-xl leading-tight">
+                  {card.title}
+                </h3>
+                <p className="text-sm text-govuk-dark-grey mt-0.5">
+                  {card.subtitle}
+                </p>
                 {/* UK registration plate */}
                 <div className="mt-3 w-full bg-[#F5C332] rounded-xl py-[9px] flex items-center justify-center">
-                  <span className="font-plate text-black text-[2.5rem] tracking-[0.01em] leading-none">{card.registration}</span>
+                  <span className="font-plate text-black text-[2.5rem] tracking-[0.01em] leading-none uppercase">
+                    {card.registration}
+                  </span>
                 </div>
               </div>
               {/* Bottom section: stats in two columns with dividers */}
@@ -204,14 +225,22 @@ export function HeroCarousel({ personaData, filterService, onCardTap }: HeroCaro
                   {card.stats.map((stat, i) => (
                     <div key={i} className="p-3">
                       <p className="text-xs text-govuk-dark-grey">
-                        <span className="font-bold text-govuk-black">{stat.label}</span>{" "}
+                        <span className="font-bold text-govuk-black">
+                          {stat.label}
+                        </span>{" "}
                         {stat.label === "MOT" ? "valid for" : "due in"}
                       </p>
-                      <p className={`text-2xl font-bold leading-tight mt-0.5 ${
-                        stat.urgency === "urgent" ? "text-govuk-red" :
-                        stat.urgency === "warning" ? "text-govuk-black" :
-                        "text-govuk-black"
-                      }`}>{stat.value}</p>
+                      <p
+                        className={`text-2xl font-bold leading-tight mt-0.5 ${
+                          stat.urgency === "urgent"
+                            ? "text-govuk-red"
+                            : stat.urgency === "warning"
+                              ? "text-govuk-black"
+                              : "text-govuk-black"
+                        }`}
+                      >
+                        {stat.value}
+                      </p>
                       {stat.action && (
                         <span className="inline-block mt-2 bg-govuk-green text-white text-xs font-bold px-3 py-1.5 rounded">
                           {stat.action}
@@ -230,29 +259,43 @@ export function HeroCarousel({ personaData, filterService, onCardTap }: HeroCaro
               className="min-w-[280px] max-w-[320px] flex-shrink-0 scroll-snap-item bg-white rounded-2xl text-left touch-feedback transition-shadow hover:shadow-md overflow-hidden"
             >
               <div className="p-4 pb-3">
-                <h3 className="font-bold text-govuk-black text-xl leading-tight">{card.title}</h3>
-                <p className="text-sm text-govuk-dark-grey mt-0.5">{card.subtitle}</p>
+                <h3 className="font-bold text-govuk-black text-xl leading-tight">
+                  {card.title}
+                </h3>
+                <p className="text-sm text-govuk-dark-grey mt-0.5">
+                  {card.subtitle}
+                </p>
               </div>
               {card.stats.length > 0 && (
-                <div className={`border-t border-gray-200 grid divide-x divide-gray-200 ${
-                  card.stats.length === 1 ? "grid-cols-1" : "grid-cols-2"
-                }`}>
+                <div
+                  className={`border-t border-gray-200 grid divide-x divide-gray-200 ${
+                    card.stats.length === 1 ? "grid-cols-1" : "grid-cols-2"
+                  }`}
+                >
                   {card.stats.map((stat, i) => (
                     <div key={i} className="p-3">
                       <p className="text-xs text-govuk-dark-grey">
-                        <span className="font-bold text-govuk-black">{stat.label}</span>
+                        <span className="font-bold text-govuk-black">
+                          {stat.label}
+                        </span>
                       </p>
-                      <p className={`text-2xl font-bold leading-tight mt-0.5 ${
-                        stat.urgency === "urgent" ? "text-govuk-red" :
-                        stat.urgency === "warning" ? "text-govuk-black" :
-                        "text-govuk-black"
-                      }`}>{stat.value}</p>
+                      <p
+                        className={`text-2xl font-bold leading-tight mt-0.5 ${
+                          stat.urgency === "urgent"
+                            ? "text-govuk-red"
+                            : stat.urgency === "warning"
+                              ? "text-govuk-black"
+                              : "text-govuk-black"
+                        }`}
+                      >
+                        {stat.value}
+                      </p>
                     </div>
                   ))}
                 </div>
               )}
             </button>
-          )
+          ),
         )}
       </div>
 

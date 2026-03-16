@@ -30,7 +30,10 @@ export default function CasesList({ serviceId }: { serviceId: string }) {
   const fetchCases = useCallback(async () => {
     setLoading(true);
     try {
-      const params = new URLSearchParams({ page: String(page), limit: String(limit) });
+      const params = new URLSearchParams({
+        page: String(page),
+        limit: String(limit),
+      });
       if (statusFilter) params.set("status", statusFilter);
 
       const res = await fetch(
@@ -65,21 +68,22 @@ export default function CasesList({ serviceId }: { serviceId: string }) {
       {/* Filters */}
       <div className="flex items-center gap-2 mb-4">
         <span className="text-sm font-bold">Filter:</span>
-        {["", "in-progress", "completed", "rejected", "handed-off"].map(
-          (s) => (
-            <button
-              key={s}
-              onClick={() => { setStatusFilter(s); setPage(1); }}
-              className={`px-3 py-1 text-xs rounded-lg border transition-colors ${
-                statusFilter === s
-                  ? "bg-studio-accent text-white border-studio-accent"
-                  : "bg-white border-studio-border hover:bg-gray-50"
-              }`}
-            >
-              {filterLabels[s]}
-            </button>
-          ),
-        )}
+        {["", "in-progress", "completed", "rejected", "handed-off"].map((s) => (
+          <button
+            key={s}
+            onClick={() => {
+              setStatusFilter(s);
+              setPage(1);
+            }}
+            className={`px-3 py-1 text-xs rounded-lg border transition-colors ${
+              statusFilter === s
+                ? "bg-studio-accent text-white border-studio-accent"
+                : "bg-white border-studio-border hover:bg-gray-50"
+            }`}
+          >
+            {filterLabels[s]}
+          </button>
+        ))}
       </div>
 
       {loading ? (
@@ -92,12 +96,24 @@ export default function CasesList({ serviceId }: { serviceId: string }) {
             <table className="w-full text-sm">
               <thead>
                 <tr className="text-left">
-                  <th className="py-3 px-4 font-semibold sticky top-0 bg-gray-50 z-10 border-b border-studio-border">User</th>
-                  <th className="py-3 px-4 font-semibold sticky top-0 bg-gray-50 z-10 border-b border-studio-border">Status</th>
-                  <th className="py-3 px-4 font-semibold sticky top-0 bg-gray-50 z-10 border-b border-studio-border">Current State</th>
-                  <th className="py-3 px-4 font-semibold sticky top-0 bg-gray-50 z-10 border-b border-studio-border text-right">Progress</th>
-                  <th className="py-3 px-4 font-semibold sticky top-0 bg-gray-50 z-10 border-b border-studio-border text-right">Events</th>
-                  <th className="py-3 px-4 font-semibold sticky top-0 bg-gray-50 z-10 border-b border-studio-border">Last Activity</th>
+                  <th className="py-3 px-4 font-semibold sticky top-0 bg-gray-50 z-10 border-b border-studio-border">
+                    User
+                  </th>
+                  <th className="py-3 px-4 font-semibold sticky top-0 bg-gray-50 z-10 border-b border-studio-border">
+                    Status
+                  </th>
+                  <th className="py-3 px-4 font-semibold sticky top-0 bg-gray-50 z-10 border-b border-studio-border">
+                    Current State
+                  </th>
+                  <th className="py-3 px-4 font-semibold sticky top-0 bg-gray-50 z-10 border-b border-studio-border text-right">
+                    Progress
+                  </th>
+                  <th className="py-3 px-4 font-semibold sticky top-0 bg-gray-50 z-10 border-b border-studio-border text-right">
+                    Events
+                  </th>
+                  <th className="py-3 px-4 font-semibold sticky top-0 bg-gray-50 z-10 border-b border-studio-border">
+                    Last Activity
+                  </th>
                   <th className="py-3 px-4 sticky top-0 bg-gray-50 z-10 border-b border-studio-border"></th>
                 </tr>
               </thead>
@@ -116,7 +132,9 @@ export default function CasesList({ serviceId }: { serviceId: string }) {
                         </span>
                       )}
                     </td>
-                    <td className="py-3 px-4 font-mono text-xs">{c.currentState}</td>
+                    <td className="py-3 px-4 font-mono text-xs">
+                      {c.currentState}
+                    </td>
                     <td className="py-3 px-4 text-right">
                       <div className="flex items-center justify-end gap-2">
                         <div className="w-16 h-2 bg-gray-200 rounded-full overflow-hidden">
@@ -130,7 +148,9 @@ export default function CasesList({ serviceId }: { serviceId: string }) {
                         </span>
                       </div>
                     </td>
-                    <td className="py-3 px-4 text-right text-xs">{c.eventCount}</td>
+                    <td className="py-3 px-4 text-right text-xs">
+                      {c.eventCount}
+                    </td>
                     <td className="py-3 px-4 text-xs text-gray-500">
                       {new Date(c.lastActivityAt).toLocaleDateString("en-GB", {
                         day: "numeric",

@@ -19,10 +19,18 @@ const mockOpenBottomSheet = vi.fn();
 const mockPersonaData = {
   personaId: "emma",
   personaName: "Emma Parker",
-  primaryContact: { firstName: "Emma", lastName: "Parker", dateOfBirth: "1992-03-15" },
+  primaryContact: {
+    firstName: "Emma",
+    lastName: "Parker",
+    dateOfBirth: "1992-03-15",
+  },
   address: { line1: "12 Maple Road", city: "Manchester", postcode: "M1 4BH" },
   vehicles: [{ make: "Ford", model: "Fiesta", registration: "AB12 CDE" }],
-  benefits: { currentlyReceiving: [{ type: "Child Benefit", amount: 96.2, frequency: "weekly" }] },
+  benefits: {
+    currentlyReceiving: [
+      { type: "Child Benefit", amount: 96.2, frequency: "weekly" },
+    ],
+  },
   employment: { status: "employed", employer: "TechCo" },
   financials: { monthlyRent: 650 },
 };
@@ -48,7 +56,7 @@ vi.mock("@/lib/store", () => ({
       }),
       setState: vi.fn(),
       subscribe: vi.fn(),
-    }
+    },
   ),
   getConversations: vi.fn().mockReturnValue([]),
   getActivePlans: vi.fn().mockReturnValue([]),
@@ -62,9 +70,12 @@ describe("Dashboard", () => {
     localStorage.clear();
 
     // Mock fetch for life-events
-    vi.stubGlobal("fetch", vi.fn().mockResolvedValue({
-      json: () => Promise.resolve({ lifeEvents: [] }),
-    }));
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        json: () => Promise.resolve({ lifeEvents: [] }),
+      }),
+    );
   });
 
   afterEach(() => {
@@ -107,12 +118,18 @@ describe("Dashboard", () => {
     expect(screen.getByText(/Add topics to your homepage/)).toBeInTheDocument();
 
     fireEvent.click(screen.getByText("Back"));
-    expect(screen.queryByText(/Add topics to your homepage/)).not.toBeInTheDocument();
+    expect(
+      screen.queryByText(/Add topics to your homepage/),
+    ).not.toBeInTheDocument();
   });
 
   it("navigates to detail view when topic clicked", () => {
     render(<Dashboard />);
     fireEvent.click(screen.getByText("Driving & Transport"));
-    expect(mockNavigateTo).toHaveBeenCalledWith("detail", "driving", "Driving & Transport");
+    expect(mockNavigateTo).toHaveBeenCalledWith(
+      "detail",
+      "driving",
+      "Driving & Transport",
+    );
   });
 });

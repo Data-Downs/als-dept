@@ -36,7 +36,15 @@ export function MessageInput() {
       textareaRef.current.style.height = "auto";
     }
     await sendMessage(trimmed);
-  }, [text, isLoading, currentView, currentService, sendMessage, navigateTo, startNewConversation]);
+  }, [
+    text,
+    isLoading,
+    currentView,
+    currentService,
+    sendMessage,
+    navigateTo,
+    startNewConversation,
+  ]);
 
   const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {

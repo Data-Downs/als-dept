@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getSubmittedStore, getPersonalDataAdapter } from "@/lib/personal-data-store";
+import {
+  getSubmittedStore,
+  getPersonalDataAdapter,
+} from "@/lib/personal-data-store";
 import type { CardSubmission } from "@als/schemas";
 
 /**
@@ -10,7 +13,7 @@ import type { CardSubmission } from "@als/schemas";
  */
 export async function POST(
   request: NextRequest,
-  { params }: { params: Promise<{ personaId: string }> }
+  { params }: { params: Promise<{ personaId: string }> },
 ) {
   const { personaId } = await params;
 
@@ -21,7 +24,7 @@ export async function POST(
     if (!cardType || !fields || typeof fields !== "object") {
       return NextResponse.json(
         { error: "Missing required fields: cardType, fields" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -30,7 +33,8 @@ export async function POST(
     let fieldsWritten = 0;
 
     for (const [fieldKey, fieldValue] of Object.entries(fields)) {
-      if (fieldValue === undefined || fieldValue === null || fieldValue === "") continue;
+      if (fieldValue === undefined || fieldValue === null || fieldValue === "")
+        continue;
 
       // Determine category from the card type
       const category = inferCategory(cardType, fieldKey);
@@ -54,7 +58,7 @@ export async function POST(
         JSON.stringify(fieldValue),
         "card_submit",
         JSON.stringify([serviceId]),
-        new Date().toISOString()
+        new Date().toISOString(),
       );
 
       fieldsWritten++;
@@ -71,7 +75,7 @@ export async function POST(
     console.error("[PersonalData] POST card-submit error:", error);
     return NextResponse.json(
       { error: "Failed to submit card data" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
