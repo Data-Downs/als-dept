@@ -556,7 +556,8 @@
           <span class="badge">StreamableHTTP</span>
           <span class="badge">110 Services</span>
           <span class="badge">220 Tools</span>
-          <span class="badge">440 Resources</span>
+          <span class="badge">449 Resources</span>
+          <span class="badge">9 Personas</span>
           <span class="badge">220 Prompts</span>
           <span class="badge">Cloudflare Workers</span>
           <span class="badge">Open CORS</span>
@@ -803,6 +804,46 @@ service://dwp-universal-credit/policy
 service://dvla-renew-driving-licence/state-model
 service://gro-register-birth/consent</code></pre>
         </div>
+
+        <h3 style="margin-top: 2.5rem">9 Persona Resources</h3>
+        <p style="color: #505a5f; font-size: 0.95rem; margin-bottom: 1rem">
+          Each citizen persona is available as a JSON resource via
+          <code>persona://</code> URIs. Profiles include identity, address,
+          credentials, employment, financials, family, health, and communication
+          style.
+        </p>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Resource</th>
+              <th>URI Pattern</th>
+              <th>What It Contains</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Profile</td>
+              <td><code>persona://{personaId}/profile</code></td>
+              <td>
+                Full citizen persona with identity, credentials, financials,
+                family, and communication style
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <p style="color: #505a5f; font-size: 0.95rem; margin-top: 1rem">
+          <strong>Example URIs:</strong>
+        </p>
+        <div class="code-block">
+          <pre><code>persona://anna-cotton/profile
+persona://david-evans/profile
+persona://margaret-thompson/profile</code></pre>
+        </div>
+        <p style="color: #505a5f; font-size: 0.9rem; margin-top: 0.75rem">
+          <strong>Available personas:</strong> anna-cotton, david-evans,
+          emma-parker, helen-pitt, margaret-thompson, mary-summers,
+          priya-sharma, rajesh-patel, rebecca-shortland.
+        </p>
 
         <h3 style="margin-top: 2.5rem">220 Prompts (2 per service)</h3>
         <div class="grid-2" style="margin-top: 1rem">

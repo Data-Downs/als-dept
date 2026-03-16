@@ -3,6 +3,7 @@
 A public MCP server exposing 110 UK government services as structured tools, resources, and prompts. No API key required.
 
 **Endpoint:**
+
 ```
 https://als-studio.chris-8ab.workers.dev/api/mcp
 ```
@@ -53,7 +54,7 @@ import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/
 
 const client = new Client({ name: "my-app", version: "1.0" });
 const transport = new StreamableHTTPClientTransport(
-  new URL("https://als-studio.chris-8ab.workers.dev/api/mcp")
+  new URL("https://als-studio.chris-8ab.workers.dev/api/mcp"),
 );
 await client.connect(transport);
 
@@ -63,7 +64,7 @@ console.log(`${tools.length} tools available`);
 
 // Call a tool
 const result = await client.callTool("dwp_universal_credit_check_eligibility", {
-  citizen_data: { age: 28, employment_status: "unemployed", savings: 2400 }
+  citizen_data: { age: 28, employment_status: "unemployed", savings: 2400 },
 });
 console.log(result);
 ```
@@ -111,6 +112,7 @@ Responses are in SSE format: `event: message\ndata: {JSON}\n\n`
 - Mutating, not idempotent
 
 Example tool names:
+
 ```
 dwp_universal_credit_check_eligibility
 dwp_universal_credit_advance_state
@@ -124,20 +126,39 @@ gro_register_birth_advance_state
 
 Each service has 4 JSON resources accessible via `service://` URIs:
 
-| Resource | URI Pattern | What It Contains |
-|----------|-------------|------------------|
-| Manifest | `service://{id}/manifest` | Service identity, inputs/outputs, fees, SLAs, redress pathways |
-| Policy | `service://{id}/policy` | Eligibility rules with conditions, failure messages, alternatives |
-| State Model | `service://{id}/state-model` | Valid states and transitions, terminal states, receipt triggers |
-| Consent | `service://{id}/consent` | Data sharing requirements, purposes, revocation mechanisms |
+| Resource    | URI Pattern                  | What It Contains                                                  |
+| ----------- | ---------------------------- | ----------------------------------------------------------------- |
+| Manifest    | `service://{id}/manifest`    | Service identity, inputs/outputs, fees, SLAs, redress pathways    |
+| Policy      | `service://{id}/policy`      | Eligibility rules with conditions, failure messages, alternatives |
+| State Model | `service://{id}/state-model` | Valid states and transitions, terminal states, receipt triggers   |
+| Consent     | `service://{id}/consent`     | Data sharing requirements, purposes, revocation mechanisms        |
 
 Example:
+
 ```
 service://dwp-universal-credit/manifest
 service://dwp-universal-credit/policy
 service://dvla-renew-driving-licence/state-model
 service://gro-register-birth/consent
 ```
+
+### 9 Persona Resources
+
+Each citizen persona is available as a JSON resource via `persona://` URIs:
+
+| Resource | URI Pattern                     | What It Contains                                                                                                  |
+| -------- | ------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| Profile  | `persona://{personaId}/profile` | Full citizen profile: identity, address, credentials, employment, financials, family, health, communication style |
+
+Example:
+
+```
+persona://anna-cotton/profile
+persona://david-evans/profile
+persona://margaret-thompson/profile
+```
+
+Available personas: anna-cotton, david-evans, emma-parker, helen-pitt, margaret-thompson, mary-summers, priya-sharma, rajesh-patel, rebecca-shortland.
 
 ### 220 Prompts (2 per service)
 
@@ -164,19 +185,33 @@ Call the `dwp_universal_credit_check_eligibility` tool with citizen data:
 ```
 
 Response (abbreviated):
+
 ```json
 {
   "eligible": false,
   "passed": [
-    { "id": "age-range", "description": "Applicant must be 18 or over and under State Pension age" },
-    { "id": "under-pension-age", "description": "Applicant must be under State Pension age" },
+    {
+      "id": "age-range",
+      "description": "Applicant must be 18 or over and under State Pension age"
+    },
+    {
+      "id": "under-pension-age",
+      "description": "Applicant must be under State Pension age"
+    },
     { "id": "uk-resident", "description": "Applicant must be living in the UK" }
   ],
   "failed": [
-    { "id": "capital-limit", "description": "Savings must be under £16,000", "reason_if_failed": "..." }
+    {
+      "id": "capital-limit",
+      "description": "Savings must be under £16,000",
+      "reason_if_failed": "..."
+    }
   ],
   "edge_cases": [
-    { "id": "student-exception", "description": "Students may qualify in certain circumstances" }
+    {
+      "id": "student-exception",
+      "description": "Students may qualify in certain circumstances"
+    }
   ],
   "explanation": "Based on the rules evaluated..."
 }
@@ -194,6 +229,7 @@ Call `dwp_universal_credit_advance_state`:
 ```
 
 Response:
+
 ```json
 {
   "success": true,
@@ -210,18 +246,18 @@ Response:
 
 110 services across 15 UK government departments:
 
-| Department | Count | Examples |
-|------------|-------|---------|
-| HMRC | 27 | Child Benefit, Self Assessment, Tax-Free Childcare, Stamp Duty |
-| DWP | 21 | Universal Credit, PIP, State Pension, Carer's Allowance |
-| Local Authority | 14 | Council Tax, School Admissions, Planning Permission |
-| Home Office | 6 | UK Visa, Settled Status, Passport |
-| HMCTS | 6 | Probate, Divorce, Employment Tribunal |
-| NHS | 5 | GP Registration, Healthy Start, NHS Prescriptions |
-| GRO | 5 | Register Birth, Register Death, Marriage Certificate |
-| DVLA | 5 | Driving Licence, Vehicle Tax, SORN |
-| DVSA | 2 | Theory Test, Driving Test |
-| OPG | 2 | Lasting Power of Attorney |
+| Department      | Count | Examples                                                       |
+| --------------- | ----- | -------------------------------------------------------------- |
+| HMRC            | 27    | Child Benefit, Self Assessment, Tax-Free Childcare, Stamp Duty |
+| DWP             | 21    | Universal Credit, PIP, State Pension, Carer's Allowance        |
+| Local Authority | 14    | Council Tax, School Admissions, Planning Permission            |
+| Home Office     | 6     | UK Visa, Settled Status, Passport                              |
+| HMCTS           | 6     | Probate, Divorce, Employment Tribunal                          |
+| NHS             | 5     | GP Registration, Healthy Start, NHS Prescriptions              |
+| GRO             | 5     | Register Birth, Register Death, Marriage Certificate           |
+| DVLA            | 5     | Driving Licence, Vehicle Tax, SORN                             |
+| DVSA            | 2     | Theory Test, Driving Test                                      |
+| OPG             | 2     | Lasting Power of Attorney                                      |
 
 Plus Companies House, Land Registry, SLC, ICO, and FCA.
 

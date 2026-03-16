@@ -16,9 +16,10 @@ import { fileURLToPath } from "url";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { createServer } from "./server";
 
-const __dirname = typeof import.meta.dirname === "string"
-  ? import.meta.dirname
-  : path.dirname(fileURLToPath(import.meta.url));
+const __dirname =
+  typeof import.meta.dirname === "string"
+    ? import.meta.dirname
+    : path.dirname(fileURLToPath(import.meta.url));
 
 async function main() {
   const servicesDir =
@@ -31,18 +32,35 @@ async function main() {
     path.resolve(__dirname, "../../../data/services.db");
 
   const dbExists = fs.existsSync(dbPath);
-  console.error(`[MCP Server] Loading services from: ${dbExists ? `DB (${dbPath})` : servicesDir}`);
-
-  const { server, toolCount, resourceCount, promptCount, serviceCount } = await createServer(
-    servicesDir,
-    dbExists ? { dbPath } : undefined
+  console.error(
+    `[MCP Server] Loading services from: ${dbExists ? `DB (${dbPath})` : servicesDir}`,
   );
+
+  // Load personas from filesystem
+  const personasDir = path.resolve(__dirname, "../../../data/simulated/users");
+  let personas: Record<string, unknown>[] = [];
+  if (fs.existsSync(personasDir)) {
+    const files = fs
+      .readdirSync(personasDir)
+      .filter((f) => f.endsWith(".json"))
+      .sort();
+    personas = files.map((f) =>
+      JSON.parse(fs.readFileSync(path.join(personasDir, f), "utf-8")),
+    );
+    console.error(`[MCP Server] Loaded ${personas.length} personas`);
+  }
+
+  const { server, toolCount, resourceCount, promptCount, serviceCount } =
+    await createServer(servicesDir, {
+      ...(dbExists ? { dbPath } : {}),
+      personas,
+    });
 
   const transport = new StdioServerTransport();
   await server.connect(transport);
 
   console.error(
-    `[MCP Server] Running on stdio — ${serviceCount} services, ${resourceCount} resources, ${toolCount} tools, ${promptCount} prompts`
+    `[MCP Server] Running on stdio — ${serviceCount} services, ${resourceCount} resources, ${toolCount} tools, ${promptCount} prompts`,
   );
 }
 

@@ -14,17 +14,23 @@ import { ArtefactStore } from "@als/legibility";
 import type { ServiceArtefacts } from "@als/legibility";
 import { generateAllTools } from "@als/mcp-server/src/tool-generator";
 import { handleToolCall } from "@als/mcp-server/src/tool-handlers";
-import { registerAllResources } from "@als/mcp-server/src/resource-generator";
+import {
+  registerAllResources,
+  registerAllPersonaResources,
+} from "@als/mcp-server/src/resource-generator";
 import { registerAllPrompts } from "@als/mcp-server/src/prompt-generator";
 import { getServiceArtefactStore } from "./service-store-init";
 import type { ServiceWithArtefacts } from "./service-store-imports";
+import { getAllUsers } from "./persona-store";
 
 /** Zod input shapes for tool registration (mirrored from @als/mcp-server/src/server.ts) */
 const TOOL_ZOD_SCHEMAS: Record<string, Record<string, z.ZodType>> = {
   check_eligibility: {
-    citizen_data: z.record(z.string(), z.unknown()).describe(
-      "Citizen context data for policy evaluation (e.g. age, jurisdiction, employment_status, savings, etc.)"
-    ),
+    citizen_data: z
+      .record(z.string(), z.unknown())
+      .describe(
+        "Citizen context data for policy evaluation (e.g. age, jurisdiction, employment_status, savings, etc.)",
+      ),
   },
   advance_state: {
     current_state: z.string().describe("Current state ID"),
@@ -71,11 +77,21 @@ export async function createMcpServerFromD1(): Promise<{
   // 3. Create McpServer
   const mcpServer = new McpServer(
     { name: "als-gov-services", version: "0.3.0" },
-    { capabilities: { resources: {}, tools: {}, prompts: {} } }
+    { capabilities: { resources: {}, tools: {}, prompts: {} } },
   );
 
   // 4. Register resources
-  const resourceCount = registerAllResources(mcpServer, store);
+  let resourceCount = registerAllResources(mcpServer, store);
+
+  // 4b. Register persona resources
+  try {
+    const personas = await getAllUsers();
+    const personaCount = registerAllPersonaResources(mcpServer, personas);
+    resourceCount += personaCount;
+    console.log(`[MCP/D1] Registered ${personaCount} persona resources`);
+  } catch (err) {
+    console.log("[MCP/D1] Failed to load personas:", (err as Error).message);
+  }
 
   // 5. Register tools
   const { tools, toolMap } = generateAllTools(store);
@@ -97,7 +113,7 @@ export async function createMcpServerFromD1(): Promise<{
       (args: Record<string, unknown>) => {
         const result = handleToolCall(tool.name, args, store, toolMap);
         return result as CallToolResult;
-      }
+      },
     );
   }
 
@@ -105,7 +121,7 @@ export async function createMcpServerFromD1(): Promise<{
   const promptCount = registerAllPrompts(mcpServer, store);
 
   console.log(
-    `[MCP/D1] Server ready: ${serviceCount} services, ${resourceCount} resources, ${tools.length} tools, ${promptCount} prompts`
+    `[MCP/D1] Server ready: ${serviceCount} services, ${resourceCount} resources, ${tools.length} tools, ${promptCount} prompts`,
   );
 
   return {

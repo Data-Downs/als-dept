@@ -6,6 +6,9 @@
  *   - service://{serviceId}/policy      → eligibility rules
  *   - service://{serviceId}/consent     → consent model
  *   - service://{serviceId}/state-model → state machine definition
+ *
+ * Personas get 1 resource each:
+ *   - persona://{personaId}/profile     → full persona JSON
  */
 
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
@@ -19,7 +22,7 @@ function slugToPrefix(serviceId: string): string {
 export function registerResourcesForService(
   mcpServer: McpServer,
   serviceId: string,
-  artefacts: ServiceArtefacts
+  artefacts: ServiceArtefacts,
 ): number {
   const prefix = slugToPrefix(serviceId);
   const serviceName = artefacts.manifest.name;
@@ -29,13 +32,18 @@ export function registerResourcesForService(
   mcpServer.resource(
     `${prefix}-manifest`,
     `service://${serviceId}/manifest`,
-    { description: `Service metadata for ${serviceName}`, mimeType: "application/json" },
+    {
+      description: `Service metadata for ${serviceName}`,
+      mimeType: "application/json",
+    },
     () => ({
-      contents: [{
-        uri: `service://${serviceId}/manifest`,
-        text: JSON.stringify(artefacts.manifest, null, 2),
-      }],
-    })
+      contents: [
+        {
+          uri: `service://${serviceId}/manifest`,
+          text: JSON.stringify(artefacts.manifest, null, 2),
+        },
+      ],
+    }),
   );
   count++;
 
@@ -44,13 +52,18 @@ export function registerResourcesForService(
     mcpServer.resource(
       `${prefix}-policy`,
       `service://${serviceId}/policy`,
-      { description: `Eligibility rules for ${serviceName}`, mimeType: "application/json" },
+      {
+        description: `Eligibility rules for ${serviceName}`,
+        mimeType: "application/json",
+      },
       () => ({
-        contents: [{
-          uri: `service://${serviceId}/policy`,
-          text: JSON.stringify(artefacts.policy, null, 2),
-        }],
-      })
+        contents: [
+          {
+            uri: `service://${serviceId}/policy`,
+            text: JSON.stringify(artefacts.policy, null, 2),
+          },
+        ],
+      }),
     );
     count++;
   }
@@ -60,13 +73,18 @@ export function registerResourcesForService(
     mcpServer.resource(
       `${prefix}-consent`,
       `service://${serviceId}/consent`,
-      { description: `Consent model for ${serviceName}`, mimeType: "application/json" },
+      {
+        description: `Consent model for ${serviceName}`,
+        mimeType: "application/json",
+      },
       () => ({
-        contents: [{
-          uri: `service://${serviceId}/consent`,
-          text: JSON.stringify(artefacts.consent, null, 2),
-        }],
-      })
+        contents: [
+          {
+            uri: `service://${serviceId}/consent`,
+            text: JSON.stringify(artefacts.consent, null, 2),
+          },
+        ],
+      }),
     );
     count++;
   }
@@ -76,13 +94,18 @@ export function registerResourcesForService(
     mcpServer.resource(
       `${prefix}-state-model`,
       `service://${serviceId}/state-model`,
-      { description: `State machine for ${serviceName}`, mimeType: "application/json" },
+      {
+        description: `State machine for ${serviceName}`,
+        mimeType: "application/json",
+      },
       () => ({
-        contents: [{
-          uri: `service://${serviceId}/state-model`,
-          text: JSON.stringify(artefacts.stateModel, null, 2),
-        }],
-      })
+        contents: [
+          {
+            uri: `service://${serviceId}/state-model`,
+            text: JSON.stringify(artefacts.stateModel, null, 2),
+          },
+        ],
+      }),
     );
     count++;
   }
@@ -90,7 +113,10 @@ export function registerResourcesForService(
   return count;
 }
 
-export function registerAllResources(mcpServer: McpServer, store: ArtefactStore): number {
+export function registerAllResources(
+  mcpServer: McpServer,
+  store: ArtefactStore,
+): number {
   let total = 0;
   for (const serviceId of store.listServices()) {
     const artefacts = store.get(serviceId);
@@ -98,4 +124,50 @@ export function registerAllResources(mcpServer: McpServer, store: ArtefactStore)
     total += registerResourcesForService(mcpServer, serviceId, artefacts);
   }
   return total;
+}
+
+/**
+ * Register a single persona as an MCP resource.
+ * URI: persona://{personaId}/profile
+ */
+export function registerPersonaResource(
+  mcpServer: McpServer,
+  personaId: string,
+  persona: Record<string, unknown>,
+): void {
+  const name = (persona.name as string) ?? personaId;
+  mcpServer.resource(
+    `persona-${personaId}`,
+    `persona://${personaId}/profile`,
+    {
+      description: `Citizen persona: ${name}`,
+      mimeType: "application/json",
+    },
+    () => ({
+      contents: [
+        {
+          uri: `persona://${personaId}/profile`,
+          text: JSON.stringify(persona, null, 2),
+        },
+      ],
+    }),
+  );
+}
+
+/**
+ * Register all personas from an array of persona objects.
+ * Each persona must have an `id` field.
+ */
+export function registerAllPersonaResources(
+  mcpServer: McpServer,
+  personas: Record<string, unknown>[],
+): number {
+  let count = 0;
+  for (const persona of personas) {
+    const id = persona.id as string | undefined;
+    if (!id) continue;
+    registerPersonaResource(mcpServer, id, persona);
+    count++;
+  }
+  return count;
 }
