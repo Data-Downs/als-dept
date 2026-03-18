@@ -1,0 +1,1111 @@
+<!doctype html>
+<html lang="en-GB">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Department Demo Briefing — Agentic Legibility Stack</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --gov-blue: #1d70b8;
+        --ink: #0b0c0c;
+        --ink-secondary: #505a5f;
+        --ink-tertiary: #8a9099;
+        --surface: #ffffff;
+        --surface-warm: #f8f7f5;
+        --rule: #d2d5d8;
+        --accent-warm: #f47738;
+        --accent-green: #00703c;
+        --accent-red: #d4351c;
+        --font-display: "DM Serif Display", Georgia, serif;
+        --font-body:
+          "Instrument Sans", -apple-system, BlinkMacSystemFont, sans-serif;
+      }
+
+      *,
+      *::before,
+      *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      html {
+        font-size: 17px;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      body {
+        font-family: var(--font-body);
+        color: var(--ink);
+        background: var(--surface);
+        line-height: 1.6;
+      }
+
+      body::before {
+        content: "";
+        display: block;
+        height: 5px;
+        background: var(--gov-blue);
+      }
+
+      .container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 0 2rem;
+      }
+
+      /* Header */
+      .doc-header {
+        padding: 2.5rem 0 1.5rem;
+        border-bottom: 1px solid var(--rule);
+      }
+      .doc-header .overline {
+        font-size: 0.7rem;
+        font-weight: 600;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--gov-blue);
+        margin-bottom: 0.5rem;
+      }
+      .doc-header h1 {
+        font-family: var(--font-display);
+        font-weight: 400;
+        font-size: 2.2rem;
+        line-height: 1.15;
+        margin-bottom: 0.5rem;
+      }
+      .doc-header .subtitle {
+        color: var(--ink-secondary);
+        font-size: 0.95rem;
+        max-width: 36rem;
+      }
+      .doc-meta {
+        margin-top: 1rem;
+        display: flex;
+        gap: 2rem;
+        font-size: 0.78rem;
+        color: var(--ink-tertiary);
+      }
+      .doc-meta strong {
+        color: var(--ink-secondary);
+      }
+
+      /* Sections */
+      .section {
+        padding: 2.5rem 0 2rem;
+        border-bottom: 1px solid var(--rule);
+      }
+      .section:last-of-type {
+        border-bottom: none;
+      }
+
+      .section-number {
+        font-family: var(--font-display);
+        font-size: 2rem;
+        color: var(--gov-blue);
+        opacity: 0.3;
+        margin-bottom: 0.25rem;
+      }
+
+      .section h2 {
+        font-family: var(--font-display);
+        font-weight: 400;
+        font-size: 1.6rem;
+        margin-bottom: 0.75rem;
+      }
+
+      .section-intro {
+        color: var(--ink-secondary);
+        font-size: 0.9rem;
+        max-width: 34rem;
+        margin-bottom: 1.5rem;
+        line-height: 1.6;
+      }
+
+      /* Department cards */
+      .dept-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1.25rem;
+      }
+
+      .dept-card {
+        border: 1px solid var(--rule);
+        padding: 1.5rem;
+      }
+
+      .dept-card h3 {
+        font-family: var(--font-display);
+        font-size: 1.15rem;
+        font-weight: 400;
+        margin-bottom: 0.75rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .dept-order {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 24px;
+        height: 24px;
+        background: var(--gov-blue);
+        color: white;
+        font-family: var(--font-body);
+        font-size: 0.7rem;
+        font-weight: 700;
+        flex-shrink: 0;
+      }
+
+      .dept-fields {
+        display: grid;
+        grid-template-columns: 140px 1fr;
+        gap: 0.5rem 1rem;
+        font-size: 0.85rem;
+      }
+
+      .dept-fields dt {
+        font-weight: 600;
+        color: var(--ink);
+      }
+
+      .dept-fields dd {
+        color: var(--ink-secondary);
+      }
+
+      .field-empty {
+        color: var(--ink-tertiary);
+        font-style: italic;
+      }
+
+      .field-empty::before {
+        content: "→ ";
+        color: var(--accent-warm);
+      }
+
+      /* Scenario cards */
+      .scenario-card {
+        border: 1px solid var(--rule);
+        padding: 1.5rem;
+        margin-bottom: 1rem;
+      }
+
+      .scenario-card h3 {
+        font-family: var(--font-display);
+        font-size: 1.1rem;
+        font-weight: 400;
+        margin-bottom: 0.5rem;
+      }
+
+      .scenario-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+        margin-top: 1rem;
+      }
+
+      .scenario-half {
+        padding: 1rem;
+        font-size: 0.85rem;
+      }
+
+      .scenario-half.nightmare {
+        background: #fef3f0;
+        border-left: 3px solid var(--accent-red);
+      }
+
+      .scenario-half.solution {
+        background: #f0f7f3;
+        border-left: 3px solid var(--accent-green);
+      }
+
+      .scenario-half h4 {
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        margin-bottom: 0.5rem;
+      }
+
+      .scenario-half.nightmare h4 {
+        color: var(--accent-red);
+      }
+      .scenario-half.solution h4 {
+        color: var(--accent-green);
+      }
+
+      .scenario-half p {
+        color: var(--ink-secondary);
+        line-height: 1.55;
+      }
+
+      /* Artefact checklist */
+      .artefact-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.85rem;
+        margin-top: 1rem;
+      }
+
+      .artefact-table th {
+        text-align: left;
+        padding: 0.6rem 0.75rem;
+        border-bottom: 2px solid var(--ink);
+        font-weight: 600;
+        font-size: 0.75rem;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+      }
+
+      .artefact-table td {
+        padding: 0.6rem 0.75rem;
+        border-bottom: 1px solid var(--rule);
+        color: var(--ink-secondary);
+      }
+
+      .artefact-table td:first-child {
+        color: var(--ink);
+        font-weight: 500;
+      }
+
+      /* Handout section */
+      .handout-spec {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+        margin-top: 1rem;
+      }
+
+      .handout-item {
+        padding: 1.25rem;
+        background: var(--surface-warm);
+        border-left: 3px solid var(--gov-blue);
+      }
+
+      .handout-item h4 {
+        font-family: var(--font-body);
+        font-size: 0.8rem;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        margin-bottom: 0.5rem;
+      }
+
+      .handout-item p {
+        font-size: 0.85rem;
+        color: var(--ink-secondary);
+        line-height: 1.55;
+      }
+
+      /* Narrative section */
+      .narrative-steps {
+        counter-reset: step;
+        list-style: none;
+        margin-top: 1rem;
+      }
+
+      .narrative-steps li {
+        counter-increment: step;
+        padding: 1rem 0 1rem 3rem;
+        border-bottom: 1px solid var(--rule);
+        position: relative;
+        font-size: 0.9rem;
+      }
+
+      .narrative-steps li::before {
+        content: counter(step);
+        position: absolute;
+        left: 0;
+        top: 1rem;
+        width: 28px;
+        height: 28px;
+        background: var(--gov-blue);
+        color: white;
+        font-size: 0.75rem;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .narrative-steps li strong {
+        display: block;
+        margin-bottom: 0.25rem;
+      }
+
+      .narrative-steps li p {
+        color: var(--ink-secondary);
+        font-size: 0.85rem;
+      }
+
+      /* Success criteria */
+      .criteria-list {
+        list-style: none;
+        margin-top: 0.5rem;
+      }
+
+      .criteria-list li {
+        padding: 0.6rem 0 0.6rem 1.5rem;
+        border-bottom: 1px solid var(--rule);
+        font-size: 0.88rem;
+        color: var(--ink-secondary);
+        position: relative;
+      }
+
+      .criteria-list li::before {
+        content: "□";
+        position: absolute;
+        left: 0;
+        color: var(--gov-blue);
+        font-size: 1rem;
+      }
+
+      /* Timeline */
+      .timeline-bar {
+        display: flex;
+        margin-top: 1rem;
+        border: 1px solid var(--rule);
+        overflow: hidden;
+      }
+
+      .timeline-block {
+        flex: 1;
+        padding: 0.75rem;
+        text-align: center;
+        font-size: 0.75rem;
+        border-right: 1px solid var(--rule);
+      }
+
+      .timeline-block:last-child {
+        border-right: none;
+      }
+
+      .timeline-block strong {
+        display: block;
+        font-size: 0.7rem;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        margin-bottom: 0.25rem;
+      }
+
+      .timeline-block.active {
+        background: var(--gov-blue);
+        color: white;
+      }
+
+      .timeline-block.upcoming {
+        background: var(--surface-warm);
+      }
+
+      /* Print */
+      @media print {
+        body::before {
+          height: 3px;
+        }
+        .container {
+          max-width: 100%;
+          padding: 0 1cm;
+        }
+        .section {
+          page-break-inside: avoid;
+        }
+        .dept-card,
+        .scenario-card {
+          page-break-inside: avoid;
+        }
+      }
+
+      /* Responsive */
+      @media (max-width: 680px) {
+        .scenario-grid,
+        .handout-spec,
+        .dept-fields {
+          grid-template-columns: 1fr;
+        }
+        .doc-meta {
+          flex-direction: column;
+          gap: 0.25rem;
+        }
+      }
+
+      /* Animations */
+      @keyframes fade-up {
+        from {
+          opacity: 0;
+          transform: translateY(12px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .section {
+        animation: fade-up 0.5s ease-out both;
+      }
+      .section:nth-of-type(2) {
+        animation-delay: 0.05s;
+      }
+      .section:nth-of-type(3) {
+        animation-delay: 0.1s;
+      }
+      .section:nth-of-type(4) {
+        animation-delay: 0.15s;
+      }
+      .section:nth-of-type(5) {
+        animation-delay: 0.2s;
+      }
+      .section:nth-of-type(6) {
+        animation-delay: 0.25s;
+      }
+      .section:nth-of-type(7) {
+        animation-delay: 0.3s;
+      }
+    </style>
+  </head>
+  <body>
+    <header class="doc-header">
+      <div class="container">
+        <p class="overline">Working Document</p>
+        <h1>Department Demo Briefing</h1>
+        <p class="subtitle">
+          Structured brief for preparing permanent secretary demos. Fill in each
+          section as information arrives from Leanne, Tina, and the team.
+        </p>
+        <div class="doc-meta">
+          <span><strong>Target:</strong> End March / Early April 2026</span>
+          <span
+            ><strong>Format:</strong> Physical handouts (not screen
+            presentations)</span
+          >
+          <span
+            ><strong>Status:</strong> Awaiting persona briefs from Leanne</span
+          >
+        </div>
+      </div>
+    </header>
+
+    <!-- 0. Timeline -->
+    <section class="section">
+      <div class="container">
+        <div class="section-number">0</div>
+        <h2>Timeline &amp; Sequence</h2>
+        <p class="section-intro">
+          Rolling individual sessions with permanent secretaries. Emma arranging
+          one-by-one. Coordinate with Alonzo's pitch deck — avoid duplicate
+          artefacts.
+        </p>
+        <div class="timeline-bar">
+          <div class="timeline-block active">
+            <strong>Now</strong>
+            Briefing &amp; scenarios
+          </div>
+          <div class="timeline-block active">
+            <strong>W/C 24 Mar</strong>
+            Build &amp; iterate
+          </div>
+          <div class="timeline-block upcoming">
+            <strong>W/C 31 Mar</strong>
+            Review with Chris PS &amp; Emran
+          </div>
+          <div class="timeline-block upcoming">
+            <strong>April</strong>
+            Department sessions begin
+          </div>
+          <div class="timeline-block upcoming">
+            <strong>April</strong>
+            HMRC deep dive
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 1. Department Profiles -->
+    <section class="section">
+      <div class="container">
+        <div class="section-number">1</div>
+        <h2>Department Profiles</h2>
+        <p class="section-intro">
+          For each target department: who is the permanent secretary, what are
+          their priorities, what citizen services do they run, and what's the
+          "so what" that will make them care?
+        </p>
+
+        <div class="dept-grid">
+          <!-- MOJ -->
+          <div class="dept-card">
+            <h3><span class="dept-order">1</span> Ministry of Justice</h3>
+            <dl class="dept-fields">
+              <dt>Perm Sec</dt>
+              <dd class="field-empty">To confirm</dd>
+              <dt>Key services</dt>
+              <dd>
+                Probate, court fees, legal aid eligibility, victim
+                notifications, prison visits booking
+              </dd>
+              <dt>Known priorities</dt>
+              <dd class="field-empty">
+                To research — digital courts programme?
+              </dd>
+              <dt>Why they care</dt>
+              <dd class="field-empty">
+                What's the specific value prop for MoJ?
+              </dd>
+              <dt>Persona focus</dt>
+              <dd class="field-empty">Awaiting brief from Leanne</dd>
+            </dl>
+          </div>
+
+          <!-- DWP -->
+          <div class="dept-card">
+            <h3>
+              <span class="dept-order">2</span> Department for Work &amp;
+              Pensions
+            </h3>
+            <dl class="dept-fields">
+              <dt>Perm Sec</dt>
+              <dd class="field-empty">To confirm</dd>
+              <dt>Key services</dt>
+              <dd>
+                Universal Credit, PIP, State Pension, Carer's Allowance, Child
+                Benefit, Jobseeker's
+              </dd>
+              <dt>Known priorities</dt>
+              <dd class="field-empty">
+                Benefit fraud reduction? Digital journeys?
+              </dd>
+              <dt>Why they care</dt>
+              <dd>
+                Already have 2 services in prototype (UC, State Pension).
+                Highest volume citizen interactions in government.
+              </dd>
+              <dt>Persona focus</dt>
+              <dd class="field-empty">Awaiting brief from Leanne</dd>
+            </dl>
+          </div>
+
+          <!-- HMRC -->
+          <div class="dept-card">
+            <h3><span class="dept-order">3</span> HM Revenue &amp; Customs</h3>
+            <dl class="dept-fields">
+              <dt>Perm Sec</dt>
+              <dd class="field-empty">To confirm</dd>
+              <dt>Key services</dt>
+              <dd>
+                Self Assessment, tax code updates, tax credits, VAT
+                registration, PAYE, Child Benefit (admin)
+              </dd>
+              <dt>Known priorities</dt>
+              <dd>Requesting separate deep dive session in April</dd>
+              <dt>Why they care</dt>
+              <dd class="field-empty">
+                What's the specific value prop for HMRC?
+              </dd>
+              <dt>Persona focus</dt>
+              <dd class="field-empty">Awaiting brief from Leanne</dd>
+            </dl>
+          </div>
+
+          <!-- DFE -->
+          <div class="dept-card">
+            <h3><span class="dept-order">4</span> Department for Education</h3>
+            <dl class="dept-fields">
+              <dt>Perm Sec</dt>
+              <dd class="field-empty">To confirm</dd>
+              <dt>Key services</dt>
+              <dd>
+                Free school meals, student finance, childcare entitlements,
+                school admissions, teacher training
+              </dd>
+              <dt>Known priorities</dt>
+              <dd class="field-empty">To research</dd>
+              <dt>Why they care</dt>
+              <dd class="field-empty">
+                What's the specific value prop for DfE?
+              </dd>
+              <dt>Persona focus</dt>
+              <dd class="field-empty">Awaiting brief from Leanne</dd>
+            </dl>
+          </div>
+
+          <!-- Home Office -->
+          <div class="dept-card">
+            <h3><span class="dept-order">5</span> Home Office</h3>
+            <dl class="dept-fields">
+              <dt>Perm Sec</dt>
+              <dd class="field-empty">To confirm</dd>
+              <dt>Key services</dt>
+              <dd>
+                Passport applications/renewals, visa applications, settled
+                status, right to work checks, DBS checks
+              </dd>
+              <dt>Known priorities</dt>
+              <dd class="field-empty">
+                To research — immigration casework backlog?
+              </dd>
+              <dt>Why they care</dt>
+              <dd class="field-empty">
+                What's the specific value prop for Home Office?
+              </dd>
+              <dt>Persona focus</dt>
+              <dd class="field-empty">Awaiting brief from Leanne</dd>
+            </dl>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. Demo Scenarios -->
+    <section class="section">
+      <div class="container">
+        <div class="section-number">2</div>
+        <h2>Demo Scenarios</h2>
+        <p class="section-intro">
+          5 persona/user journey briefs from Leanne. Each needs: department
+          focus, persona type, situation context, nightmare scenario (today),
+          and agent solution (future). These drive the handout content and
+          prototype data.
+        </p>
+
+        <!-- Template scenario - duplicate for each -->
+        <div class="scenario-card">
+          <h3>
+            Scenario 1 —
+            <span
+              class="field-empty"
+              style="font-family: var(--font-body); font-size: 0.85rem"
+              >Department &amp; persona TBC</span
+            >
+          </h3>
+          <dl class="dept-fields">
+            <dt>Department</dt>
+            <dd class="field-empty">Awaiting Leanne's brief</dd>
+            <dt>Persona type</dt>
+            <dd class="field-empty">
+              Who is this person? Age, situation, context
+            </dd>
+            <dt>Life event</dt>
+            <dd class="field-empty">What happened to trigger this journey?</dd>
+            <dt>Services touched</dt>
+            <dd class="field-empty">
+              Which services across which departments?
+            </dd>
+          </dl>
+          <div class="scenario-grid">
+            <div class="scenario-half nightmare">
+              <h4>Today's nightmare</h4>
+              <p class="field-empty">
+                What goes wrong for this citizen today? How many forms, calls,
+                departments, weeks does it take?
+              </p>
+            </div>
+            <div class="scenario-half solution">
+              <h4>Agent solution</h4>
+              <p class="field-empty">
+                How does the agent handle this? What's different? How long does
+                it take? What's the citizen experience?
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="scenario-card">
+          <h3>
+            Scenario 2 —
+            <span
+              class="field-empty"
+              style="font-family: var(--font-body); font-size: 0.85rem"
+              >TBC</span
+            >
+          </h3>
+          <dl class="dept-fields">
+            <dt>Department</dt>
+            <dd class="field-empty">Awaiting brief</dd>
+            <dt>Persona type</dt>
+            <dd class="field-empty">TBC</dd>
+            <dt>Life event</dt>
+            <dd class="field-empty">TBC</dd>
+            <dt>Services touched</dt>
+            <dd class="field-empty">TBC</dd>
+          </dl>
+          <div class="scenario-grid">
+            <div class="scenario-half nightmare">
+              <h4>Today's nightmare</h4>
+              <p class="field-empty">TBC</p>
+            </div>
+            <div class="scenario-half solution">
+              <h4>Agent solution</h4>
+              <p class="field-empty">TBC</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="scenario-card">
+          <h3>
+            Scenario 3 —
+            <span
+              class="field-empty"
+              style="font-family: var(--font-body); font-size: 0.85rem"
+              >TBC</span
+            >
+          </h3>
+          <dl class="dept-fields">
+            <dt>Department</dt>
+            <dd class="field-empty">Awaiting brief</dd>
+            <dt>Persona type</dt>
+            <dd class="field-empty">TBC</dd>
+            <dt>Life event</dt>
+            <dd class="field-empty">TBC</dd>
+            <dt>Services touched</dt>
+            <dd class="field-empty">TBC</dd>
+          </dl>
+          <div class="scenario-grid">
+            <div class="scenario-half nightmare">
+              <h4>Today's nightmare</h4>
+              <p class="field-empty">TBC</p>
+            </div>
+            <div class="scenario-half solution">
+              <h4>Agent solution</h4>
+              <p class="field-empty">TBC</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="scenario-card">
+          <h3>
+            Scenario 4 —
+            <span
+              class="field-empty"
+              style="font-family: var(--font-body); font-size: 0.85rem"
+              >TBC</span
+            >
+          </h3>
+          <dl class="dept-fields">
+            <dt>Department</dt>
+            <dd class="field-empty">Awaiting brief</dd>
+            <dt>Persona type</dt>
+            <dd class="field-empty">TBC</dd>
+            <dt>Life event</dt>
+            <dd class="field-empty">TBC</dd>
+            <dt>Services touched</dt>
+            <dd class="field-empty">TBC</dd>
+          </dl>
+          <div class="scenario-grid">
+            <div class="scenario-half nightmare">
+              <h4>Today's nightmare</h4>
+              <p class="field-empty">TBC</p>
+            </div>
+            <div class="scenario-half solution">
+              <h4>Agent solution</h4>
+              <p class="field-empty">TBC</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="scenario-card">
+          <h3>
+            Scenario 5 —
+            <span
+              class="field-empty"
+              style="font-family: var(--font-body); font-size: 0.85rem"
+              >TBC</span
+            >
+          </h3>
+          <dl class="dept-fields">
+            <dt>Department</dt>
+            <dd class="field-empty">Awaiting brief</dd>
+            <dt>Persona type</dt>
+            <dd class="field-empty">TBC</dd>
+            <dt>Life event</dt>
+            <dd class="field-empty">TBC</dd>
+            <dt>Services touched</dt>
+            <dd class="field-empty">TBC</dd>
+          </dl>
+          <div class="scenario-grid">
+            <div class="scenario-half nightmare">
+              <h4>Today's nightmare</h4>
+              <p class="field-empty">TBC</p>
+            </div>
+            <div class="scenario-half solution">
+              <h4>Agent solution</h4>
+              <p class="field-empty">TBC</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. Service Artefact Requirements -->
+    <section class="section">
+      <div class="container">
+        <div class="section-number">3</div>
+        <h2>Service Artefact Requirements</h2>
+        <p class="section-intro">
+          For each new service needed in the demo, what artefacts must be
+          authored? Map from the data requirements spreadsheet. This table will
+          be populated once scenarios are confirmed.
+        </p>
+
+        <table class="artefact-table">
+          <thead>
+            <tr>
+              <th>Service</th>
+              <th>Dept</th>
+              <th>Manifest</th>
+              <th>Policy</th>
+              <th>State Model</th>
+              <th>Consent</th>
+              <th>Instructions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Apply Universal Credit</td>
+              <td>DWP</td>
+              <td style="color: var(--accent-green)">✓</td>
+              <td style="color: var(--accent-green)">✓</td>
+              <td style="color: var(--accent-green)">✓</td>
+              <td style="color: var(--accent-green)">✓</td>
+              <td style="color: var(--accent-green)">✓</td>
+            </tr>
+            <tr>
+              <td>Check State Pension</td>
+              <td>DWP</td>
+              <td style="color: var(--accent-green)">✓</td>
+              <td style="color: var(--accent-green)">✓</td>
+              <td style="color: var(--accent-green)">✓</td>
+              <td style="color: var(--accent-green)">✓</td>
+              <td style="color: var(--accent-green)">✓</td>
+            </tr>
+            <tr>
+              <td>Renew Driving Licence</td>
+              <td>DVLA</td>
+              <td style="color: var(--accent-green)">✓</td>
+              <td style="color: var(--accent-green)">✓</td>
+              <td style="color: var(--accent-green)">✓</td>
+              <td style="color: var(--accent-green)">✓</td>
+              <td style="color: var(--accent-green)">✓</td>
+            </tr>
+            <tr>
+              <td
+                colspan="7"
+                style="
+                  color: var(--ink-tertiary);
+                  text-align: center;
+                  padding: 1rem;
+                  font-style: italic;
+                "
+              >
+                Additional services will be added here once scenarios are
+                confirmed
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 4. Physical Handout Specification -->
+    <section class="section">
+      <div class="container">
+        <div class="section-number">4</div>
+        <h2>Physical Handout Design</h2>
+        <p class="section-intro">
+          Physical handouts, not screen presentations. This is the proven
+          approach. Each department gets a tailored set. Coordinate with
+          Alonzo's pitch deck to avoid duplication.
+        </p>
+
+        <div class="handout-spec">
+          <div class="handout-item">
+            <h4>Page 1 — The Citizen Problem</h4>
+            <p>
+              Department-specific nightmare scenario. Real numbers: how many
+              forms, how many departments, how many weeks. Make the pain
+              tangible. Include cost figures (X envelopes + X stamps = Y cost).
+            </p>
+          </div>
+          <div class="handout-item">
+            <h4>Page 2 — The Agent Experience</h4>
+            <p>
+              Screenshots of the citizen-dept prototype showing the journey.
+              Annotated: what the agent does at each step, what data it uses,
+              what the citizen sees. Before/after contrast.
+            </p>
+          </div>
+          <div class="handout-item">
+            <h4>Page 3 — What We Need From You</h4>
+            <p>
+              The legibility requirements: which artefacts your department needs
+              to publish (manifest, policy, state model, consent). What exists
+              today vs what's needed. Gap analysis from the studio.
+            </p>
+          </div>
+          <div class="handout-item">
+            <h4>Page 4 — The Cost-Benefit Case</h4>
+            <p>
+              Interactive examples made static: processing costs saved, call
+              centre volume reduction, faster outcomes for citizens.
+              Department-specific numbers where possible.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. Demo Narrative -->
+    <section class="section">
+      <div class="container">
+        <div class="section-number">5</div>
+        <h2>Demo Narrative Structure</h2>
+        <p class="section-intro">
+          The two-act structure: "this is what citizens get" then "this is what
+          we need from you." The handout walks through this — the conversation
+          follows the same arc.
+        </p>
+
+        <ol class="narrative-steps">
+          <li>
+            <strong>The citizen's problem</strong>
+            <p>
+              Open with the nightmare scenario. Make it personal, specific to
+              this department. "Sarah just lost her husband. Here's what she has
+              to do right now, across your department and four others."
+            </p>
+          </li>
+          <li>
+            <strong>Show the agent experience</strong>
+            <p>
+              Walk through the handout screenshots. "Here's what Sarah sees
+              instead. One conversation. The agent handles the complexity."
+              Point out: consent, transparency, audit trail.
+            </p>
+          </li>
+          <li>
+            <strong>The legibility studio reveal</strong>
+            <p>
+              "Here's what happened under the hood." Show the evidence trail,
+              the artefact structure, the gap analysis. "Your department's
+              services need these artefacts to be legible to agents."
+            </p>
+          </li>
+          <li>
+            <strong>The cost-benefit case</strong>
+            <p>
+              Hard numbers. Processing costs, call volumes, citizen time saved.
+              "This isn't just better for citizens — it's cheaper for you."
+            </p>
+          </li>
+          <li>
+            <strong>The ask</strong>
+            <p>
+              "Here's specifically what we need from your department. These are
+              the artefacts. This is the work. Here's how we help you get
+              there." Leave the handout. Follow up in a week.
+            </p>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- 6. Success Criteria -->
+    <section class="section">
+      <div class="container">
+        <div class="section-number">6</div>
+        <h2>Success Criteria</h2>
+        <p class="section-intro">
+          What does "this went well" look like for each meeting?
+        </p>
+
+        <ul class="criteria-list">
+          <li>
+            Perm sec understands what an agentic citizen experience looks like
+            for their department
+          </li>
+          <li>
+            Perm sec understands what their department needs to publish
+            (artefacts) to enable it
+          </li>
+          <li>
+            Perm sec sees the cost-benefit case and agrees it's worth
+            investigating
+          </li>
+          <li>
+            Perm sec agrees to a follow-up working session with their
+            digital/data team
+          </li>
+          <li>Perm sec identifies a specific service to pilot first</li>
+          <li>
+            No confusion about what this is vs existing GOV.UK / GDS work —
+            complementary, not competing
+          </li>
+          <li class="field-empty" style="padding-left: 1.5rem">
+            Add more criteria as they emerge
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 7. Open Questions -->
+    <section class="section">
+      <div class="container">
+        <div class="section-number">7</div>
+        <h2>Open Questions</h2>
+        <p class="section-intro">Things to resolve before building.</p>
+
+        <ul class="criteria-list">
+          <li>
+            Where is the data requirements spreadsheet? Needs mapping into
+            backend architecture
+          </li>
+          <li>
+            What format should the physical handouts be? A4 printed? Booklet?
+            Card stock?
+          </li>
+          <li>
+            How does this relate to Alonzo's pitch deck? What content do they
+            cover vs what we cover?
+          </li>
+          <li>
+            Does each department get identical prototype with different data, or
+            do we customise the UI per department?
+          </li>
+          <li>
+            Do we need the prototype running live during meetings, or are
+            printed screenshots sufficient?
+          </li>
+          <li>
+            Cabinet Office — are they still a target, or has DfE replaced them
+            in the sequence?
+          </li>
+          <li>
+            Who reviews the handouts before they go to perm secs? Chris PS →
+            Emran → ?
+          </li>
+          <li>
+            What existing GOV.UK analytics / service performance data can we
+            reference for cost-benefit?
+          </li>
+          <li class="field-empty" style="padding-left: 1.5rem">
+            Add questions as they arise
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <footer style="padding: 1.5rem 0; border-top: 1px solid var(--rule)">
+      <div class="container">
+        <p style="font-size: 0.72rem; color: var(--ink-tertiary)">
+          Working document — last updated March 2026. Fill in sections as
+          information arrives from Leanne, Tina, and the team.
+        </p>
+      </div>
+    </footer>
+  </body>
+</html>
