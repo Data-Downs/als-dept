@@ -568,10 +568,10 @@ describe("ArtefactStore", () => {
     const path = await import("path");
     const servicesDir = path.resolve(__dirname, "../../../data/services");
     const count = await store.loadFromDirectory(servicesDir);
-    expect(count).toBeGreaterThanOrEqual(4);
+    expect(count).toBeGreaterThanOrEqual(3);
 
     const services = store.listServices();
-    expect(services.length).toBeGreaterThanOrEqual(4);
+    expect(services.length).toBeGreaterThanOrEqual(3);
 
     // Every loaded service should have a manifest
     for (const id of services) {

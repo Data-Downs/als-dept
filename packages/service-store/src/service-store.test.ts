@@ -9,15 +9,14 @@ const SERVICES = fs
   .map((d) => d.name);
 
 describe("Service manifest loading from data/services/", () => {
-  it("has at least 4 services", () => {
-    expect(SERVICES.length).toBeGreaterThanOrEqual(4);
+  it("has at least 3 services", () => {
+    expect(SERVICES.length).toBeGreaterThanOrEqual(3);
   });
 
   const expectedServices = [
     "renew-driving-licence",
     "apply-universal-credit",
     "check-state-pension",
-    "become-a-robot",
   ];
 
   for (const svc of expectedServices) {

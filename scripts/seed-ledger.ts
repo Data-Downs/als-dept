@@ -9,7 +9,6 @@
  * apply-universal-credit  (~160 cases)
  * renew-driving-licence   (~120 cases)
  * check-state-pension     (~100 cases)
- * become-a-robot          (~20 cases)
  */
 
 import Database from "better-sqlite3";
@@ -274,22 +273,6 @@ const SERVICES: ServiceDef[] = [
     ],
     rejectionReasons: ["Under minimum age for pension forecast"],
   },
-  {
-    id: "department-of-interspecies-fun.become-a-robot",
-    totalStates: 2,
-    happyPath: [{ from: "Applying", to: "Accepted", trigger: "accept" }],
-    rejectedAt: { from: "Applying", to: "Accepted", trigger: "accept" },
-    handoffAt: { from: "Applying", to: "Accepted", trigger: "accept" },
-    stallPoints: [0],
-    consentPurpose: "Robot transformation consent",
-    handoffReasons: [
-      {
-        reason: "citizen-requested",
-        description: "Citizen unsure about irreversibility of robotification",
-      },
-    ],
-    rejectionReasons: ["Already a robot"],
-  },
 ];
 
 // ── Name generation ──
@@ -510,12 +493,6 @@ const OUTCOME_WEIGHTS: Record<string, OutcomeWeights> = {
     "in-progress": 20,
     rejected: 5,
     "handed-off": 15,
-  },
-  "department-of-interspecies-fun.become-a-robot": {
-    completed: 70,
-    "in-progress": 20,
-    rejected: 0,
-    "handed-off": 10,
   },
 };
 
@@ -826,7 +803,6 @@ async function seed(dbPath: string) {
     "dwp.apply-universal-credit": 160,
     "dvla.renew-driving-licence": 120,
     "dwp.check-state-pension": 100,
-    "department-of-interspecies-fun.become-a-robot": 20,
   };
 
   // Generate unique user IDs

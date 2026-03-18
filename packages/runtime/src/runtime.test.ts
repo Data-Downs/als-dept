@@ -306,7 +306,7 @@ describe("ServiceRegistry", () => {
     const path = await import("path");
     const servicesDir = path.resolve(__dirname, "../../../data/services");
     const count = await registry.loadFromDirectory(servicesDir);
-    expect(count).toBeGreaterThanOrEqual(4);
-    expect(registry.size).toBeGreaterThanOrEqual(4);
+    expect(count).toBeGreaterThanOrEqual(3);
+    expect(registry.size).toBeGreaterThanOrEqual(3);
   });
 });

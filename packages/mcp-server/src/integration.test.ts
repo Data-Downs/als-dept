@@ -47,17 +47,17 @@ afterAll(async () => {
 
 describe("server creation counts", () => {
   it("loads expected number of services, tools, resources, and prompts", () => {
-    expect(serviceCount).toBe(4);
-    expect(toolCount).toBe(8);
-    expect(resourceCount).toBe(16);
-    expect(promptCount).toBe(8);
+    expect(serviceCount).toBe(3);
+    expect(toolCount).toBe(6);
+    expect(resourceCount).toBe(12);
+    expect(promptCount).toBe(6);
   });
 });
 
 describe("resources — listing", () => {
-  it("lists all 16 resources", async () => {
+  it("lists all 12 resources", async () => {
     const { resources } = await client.listResources();
-    expect(resources).toHaveLength(16);
+    expect(resources).toHaveLength(12);
   });
 
   it("includes UC manifest, policy, consent, state-model resources", async () => {
@@ -102,7 +102,7 @@ describe("resources — reading", () => {
 describe("tools — listing + annotations", () => {
   it("lists 8 tools total", async () => {
     const { tools } = await client.listTools();
-    expect(tools).toHaveLength(8);
+    expect(tools).toHaveLength(6);
   });
 
   it("has no legacy tool types (migrated to resources)", async () => {
@@ -118,7 +118,7 @@ describe("tools — listing + annotations", () => {
     const eligTools = tools.filter((t) =>
       t.name.endsWith("_check_eligibility"),
     );
-    expect(eligTools).toHaveLength(4);
+    expect(eligTools).toHaveLength(3);
     for (const t of eligTools) {
       const ann = t.annotations as Record<string, unknown> | undefined;
       expect(ann?.readOnlyHint).toBe(true);
@@ -129,7 +129,7 @@ describe("tools — listing + annotations", () => {
   it("has 4 advance_state tools with correct annotations", async () => {
     const { tools } = await client.listTools();
     const stateTools = tools.filter((t) => t.name.endsWith("_advance_state"));
-    expect(stateTools).toHaveLength(4);
+    expect(stateTools).toHaveLength(3);
     for (const t of stateTools) {
       const ann = t.annotations as Record<string, unknown> | undefined;
       expect(ann?.readOnlyHint).toBe(false);
@@ -210,7 +210,7 @@ describe("tools — advance_state execution", () => {
 describe("prompts — listing + execution", () => {
   it("lists 8 prompts total", async () => {
     const { prompts } = await client.listPrompts();
-    expect(prompts).toHaveLength(8);
+    expect(prompts).toHaveLength(6);
   });
 
   it("includes expected prompt names", async () => {
