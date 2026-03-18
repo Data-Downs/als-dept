@@ -7,225 +7,351 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
       rel="stylesheet"
     />
     <style>
-      :root {
-        --gov-blue: #1d70b8;
-        --ink: #0b0c0c;
-        --ink-secondary: #505a5f;
-        --ink-tertiary: #8a9099;
-        --surface: #ffffff;
-        --surface-warm: #f8f7f5;
-        --rule: #d2d5d8;
-        --accent-warm: #f47738;
-        --accent-green: #00703c;
-        --accent-red: #d4351c;
-        --font-display: "DM Serif Display", Georgia, serif;
-        --font-body:
-          "Instrument Sans", -apple-system, BlinkMacSystemFont, sans-serif;
-      }
-
+      /* ── Reset & Base ── */
       *,
       *::before,
       *::after {
+        box-sizing: border-box;
         margin: 0;
         padding: 0;
-        box-sizing: border-box;
       }
-
       html {
-        font-size: 17px;
+        scroll-behavior: smooth;
+      }
+      body {
+        font-family: "Inter", Arial, sans-serif;
+        color: #0b0c0c;
+        line-height: 1.6;
+        background: #fff;
         -webkit-font-smoothing: antialiased;
       }
-
-      body {
-        font-family: var(--font-body);
-        color: var(--ink);
-        background: var(--surface);
-        line-height: 1.6;
+      a {
+        color: #1d70b8;
+        text-decoration: none;
+      }
+      a:hover {
+        text-decoration: underline;
+        color: #003078;
+      }
+      code,
+      pre {
+        font-family: "JetBrains Mono", monospace;
       }
 
-      body::before {
-        content: "";
-        display: block;
-        height: 5px;
-        background: var(--gov-blue);
-      }
-
+      /* ── Layout ── */
       .container {
-        max-width: 900px;
+        max-width: 960px;
         margin: 0 auto;
-        padding: 0 2rem;
+        padding: 0 1.5rem;
       }
-
-      /* Header */
-      .doc-header {
-        padding: 2.5rem 0 1.5rem;
-        border-bottom: 1px solid var(--rule);
-      }
-      .doc-header .overline {
-        font-size: 0.7rem;
-        font-weight: 600;
-        letter-spacing: 0.14em;
-        text-transform: uppercase;
-        color: var(--gov-blue);
-        margin-bottom: 0.5rem;
-      }
-      .doc-header h1 {
-        font-family: var(--font-display);
-        font-weight: 400;
-        font-size: 2.2rem;
-        line-height: 1.15;
-        margin-bottom: 0.5rem;
-      }
-      .doc-header .subtitle {
-        color: var(--ink-secondary);
-        font-size: 0.95rem;
-        max-width: 36rem;
-      }
-      .doc-meta {
-        margin-top: 1rem;
-        display: flex;
-        gap: 2rem;
-        font-size: 0.78rem;
-        color: var(--ink-tertiary);
-      }
-      .doc-meta strong {
-        color: var(--ink-secondary);
-      }
-
-      /* Sections */
       .section {
-        padding: 2.5rem 0 2rem;
-        border-bottom: 1px solid var(--rule);
+        padding: 3rem 0;
+        border-bottom: 1px solid #e0dfde;
       }
       .section:last-of-type {
         border-bottom: none;
       }
 
-      .section-number {
-        font-family: var(--font-display);
-        font-size: 2rem;
-        color: var(--gov-blue);
-        opacity: 0.3;
-        margin-bottom: 0.25rem;
+      h2 {
+        font-size: 1.6rem;
+        font-weight: 700;
+        margin-bottom: 0.75rem;
+        line-height: 1.2;
+      }
+      .section-heading h2 {
+        margin-bottom: 0;
+      }
+      h3 {
+        font-size: 1.15rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        line-height: 1.2;
+      }
+      .section-intro {
+        font-size: 1rem;
+        color: #505a5f;
+        max-width: 640px;
+        margin-bottom: 1.5rem;
       }
 
-      .section h2 {
-        font-family: var(--font-display);
-        font-weight: 400;
-        font-size: 1.6rem;
+      /* ── Nav ── */
+      .nav {
+        background: #fff;
+        border-bottom: 1px solid #b1b4b6;
+        padding: 0.75rem 0;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+      .nav .container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+      }
+      .nav-brand {
+        font-weight: 700;
+        font-size: 1rem;
+        color: #0b0c0c;
+        white-space: nowrap;
+      }
+      .nav-right {
+        display: flex;
+        gap: 1.25rem;
+        align-items: center;
+      }
+      .nav-links {
+        display: flex;
+        gap: 1.25rem;
+        list-style: none;
+        flex-wrap: wrap;
+        align-items: center;
+      }
+      .nav-links a {
+        font-size: 0.85rem;
+        font-weight: 500;
+        color: #505a5f;
+      }
+      .nav-links a:hover {
+        color: #1d70b8;
+        text-decoration: none;
+      }
+      @media (max-width: 640px) {
+        .nav-links {
+          display: none;
+        }
+      }
+
+      /* ── Mode toggle ── */
+      .mode-toggle {
+        display: flex;
+        border: 1px solid #b1b4b6;
+        border-radius: 2px;
+        overflow: hidden;
+        font-size: 0.78rem;
+        font-weight: 600;
+        cursor: pointer;
+        user-select: none;
+        flex-shrink: 0;
+      }
+      .mode-toggle span {
+        padding: 0.3rem 0.75rem;
+        transition: all 0.15s;
+        color: #505a5f;
+      }
+      .mode-toggle span.active {
+        background: #0b0c0c;
+        color: #fff;
+      }
+      .mode-toggle span:not(.active):hover {
+        background: #f3f2f1;
+      }
+
+      /* ── Save indicator ── */
+      .save-indicator {
+        font-size: 0.72rem;
+        color: #b1b4b6;
+        font-weight: 500;
+        transition: opacity 0.3s;
+        white-space: nowrap;
+      }
+      .save-indicator.visible {
+        color: #00703c;
+      }
+
+      /* ── Hero / Header ── */
+      .hero {
+        padding: 4rem 0 3rem;
+        border-bottom: 1px solid #b1b4b6;
+      }
+      .hero-label {
+        display: inline-block;
+        background: #f3f2f1;
+        color: #505a5f;
+        font-size: 0.8rem;
+        font-weight: 600;
+        padding: 0.25rem 0.75rem;
+        border-radius: 2px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 1.25rem;
+      }
+      .hero h1 {
+        font-size: 2.25rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        line-height: 1.2;
+      }
+      .hero-subtitle {
+        font-size: 1.1rem;
+        color: #505a5f;
+        max-width: 640px;
+        margin-bottom: 1.5rem;
+      }
+      .hero-meta {
+        display: flex;
+        gap: 2rem;
+        font-size: 0.8rem;
+        color: #505a5f;
+        flex-wrap: wrap;
+      }
+      .hero-meta strong {
+        color: #0b0c0c;
+      }
+      @media (max-width: 640px) {
+        .hero h1 {
+          font-size: 1.75rem;
+        }
+        .hero-meta {
+          flex-direction: column;
+          gap: 0.25rem;
+        }
+      }
+
+      /* ── Section heading ── */
+      .section-heading {
+        display: flex;
+        align-items: baseline;
+        gap: 0.75rem;
         margin-bottom: 0.75rem;
       }
-
-      .section-intro {
-        color: var(--ink-secondary);
-        font-size: 0.9rem;
-        max-width: 34rem;
-        margin-bottom: 1.5rem;
-        line-height: 1.6;
+      .section-number {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #1d70b8;
+        opacity: 0.3;
+        line-height: 1;
+        flex-shrink: 0;
       }
 
-      /* Department cards */
+      /* ── Timeline ── */
+      .timeline-bar {
+        display: flex;
+        margin-top: 1rem;
+        border: 1px solid #b1b4b6;
+        border-radius: 2px;
+        overflow: hidden;
+      }
+      .timeline-block {
+        flex: 1;
+        padding: 0.75rem;
+        text-align: center;
+        font-size: 0.75rem;
+        border-right: 1px solid #b1b4b6;
+        color: #505a5f;
+      }
+      .timeline-block:last-child {
+        border-right: none;
+      }
+      .timeline-block strong {
+        display: block;
+        font-size: 0.7rem;
+        font-weight: 600;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        margin-bottom: 0.25rem;
+      }
+      .timeline-block.active {
+        background: #1d70b8;
+        color: #fff;
+      }
+      .timeline-block.active strong {
+        color: #fff;
+      }
+      .timeline-block.upcoming {
+        background: #f3f2f1;
+      }
+
+      /* ── Department cards ── */
       .dept-grid {
         display: grid;
         grid-template-columns: 1fr;
         gap: 1.25rem;
       }
-
       .dept-card {
-        border: 1px solid var(--rule);
+        border: 1px solid #b1b4b6;
+        border-radius: 2px;
         padding: 1.5rem;
+        border-left: 4px solid #1d70b8;
       }
-
       .dept-card h3 {
-        font-family: var(--font-display);
-        font-size: 1.15rem;
-        font-weight: 400;
+        font-size: 1.1rem;
+        font-weight: 600;
         margin-bottom: 0.75rem;
         display: flex;
         align-items: center;
         gap: 0.5rem;
       }
-
       .dept-order {
         display: inline-flex;
         align-items: center;
         justify-content: center;
         width: 24px;
         height: 24px;
-        background: var(--gov-blue);
+        background: #1d70b8;
         color: white;
-        font-family: var(--font-body);
         font-size: 0.7rem;
         font-weight: 700;
+        border-radius: 2px;
         flex-shrink: 0;
       }
-
       .dept-fields {
         display: grid;
         grid-template-columns: 140px 1fr;
         gap: 0.5rem 1rem;
         font-size: 0.85rem;
       }
-
       .dept-fields dt {
         font-weight: 600;
-        color: var(--ink);
+        color: #0b0c0c;
       }
-
       .dept-fields dd {
-        color: var(--ink-secondary);
+        color: #505a5f;
       }
-
       .field-empty {
-        color: var(--ink-tertiary);
+        color: #b1b4b6;
         font-style: italic;
       }
-
       .field-empty::before {
-        content: "→ ";
-        color: var(--accent-warm);
+        content: "\2192\00a0";
+        color: #f47738;
       }
 
-      /* Scenario cards */
+      /* ── Scenario cards ── */
       .scenario-card {
-        border: 1px solid var(--rule);
+        border: 1px solid #b1b4b6;
+        border-radius: 2px;
         padding: 1.5rem;
         margin-bottom: 1rem;
       }
-
       .scenario-card h3 {
-        font-family: var(--font-display);
         font-size: 1.1rem;
-        font-weight: 400;
+        font-weight: 600;
         margin-bottom: 0.5rem;
       }
-
       .scenario-grid {
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: 1rem;
         margin-top: 1rem;
       }
-
       .scenario-half {
         padding: 1rem;
         font-size: 0.85rem;
+        border-radius: 2px;
       }
-
       .scenario-half.nightmare {
         background: #fef3f0;
-        border-left: 3px solid var(--accent-red);
+        border-left: 3px solid #d4351c;
       }
-
       .scenario-half.solution {
         background: #f0f7f3;
-        border-left: 3px solid var(--accent-green);
+        border-left: 3px solid #00703c;
       }
-
       .scenario-half h4 {
         font-size: 0.72rem;
         font-weight: 700;
@@ -233,92 +359,95 @@
         text-transform: uppercase;
         margin-bottom: 0.5rem;
       }
-
       .scenario-half.nightmare h4 {
-        color: var(--accent-red);
+        color: #d4351c;
       }
       .scenario-half.solution h4 {
-        color: var(--accent-green);
+        color: #00703c;
       }
-
       .scenario-half p {
-        color: var(--ink-secondary);
+        color: #505a5f;
         line-height: 1.55;
       }
 
-      /* Artefact checklist */
+      /* ── Artefact table ── */
       .artefact-table {
         width: 100%;
         border-collapse: collapse;
         font-size: 0.85rem;
         margin-top: 1rem;
       }
-
       .artefact-table th {
         text-align: left;
-        padding: 0.6rem 0.75rem;
-        border-bottom: 2px solid var(--ink);
+        padding: 0.65rem 0.75rem;
+        border-bottom: 2px solid #0b0c0c;
         font-weight: 600;
         font-size: 0.75rem;
         letter-spacing: 0.04em;
         text-transform: uppercase;
+        color: #505a5f;
+        background: #f8f8f8;
       }
-
       .artefact-table td {
-        padding: 0.6rem 0.75rem;
-        border-bottom: 1px solid var(--rule);
-        color: var(--ink-secondary);
+        padding: 0.65rem 0.75rem;
+        border-bottom: 1px solid #e0dfde;
+        color: #505a5f;
       }
-
       .artefact-table td:first-child {
-        color: var(--ink);
+        color: #0b0c0c;
         font-weight: 500;
       }
+      .artefact-table .tick {
+        color: #00703c;
+        font-weight: 600;
+      }
+      .artefact-table .cross {
+        color: #d4351c;
+        font-weight: 600;
+      }
+      .artefact-table .pending {
+        color: #b1b4b6;
+      }
 
-      /* Handout section */
+      /* ── Handout spec ── */
       .handout-spec {
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: 1.5rem;
         margin-top: 1rem;
       }
-
       .handout-item {
         padding: 1.25rem;
-        background: var(--surface-warm);
-        border-left: 3px solid var(--gov-blue);
+        background: #f3f2f1;
+        border-left: 4px solid #1d70b8;
+        border-radius: 2px;
       }
-
       .handout-item h4 {
-        font-family: var(--font-body);
         font-size: 0.8rem;
         font-weight: 700;
         letter-spacing: 0.04em;
         text-transform: uppercase;
         margin-bottom: 0.5rem;
       }
-
       .handout-item p {
         font-size: 0.85rem;
-        color: var(--ink-secondary);
+        color: #505a5f;
         line-height: 1.55;
       }
 
-      /* Narrative section */
+      /* ── Narrative steps ── */
       .narrative-steps {
         counter-reset: step;
         list-style: none;
         margin-top: 1rem;
       }
-
       .narrative-steps li {
         counter-increment: step;
         padding: 1rem 0 1rem 3rem;
-        border-bottom: 1px solid var(--rule);
+        border-bottom: 1px solid #e0dfde;
         position: relative;
         font-size: 0.9rem;
       }
-
       .narrative-steps li::before {
         content: counter(step);
         position: absolute;
@@ -326,88 +455,187 @@
         top: 1rem;
         width: 28px;
         height: 28px;
-        background: var(--gov-blue);
+        background: #1d70b8;
         color: white;
         font-size: 0.75rem;
         font-weight: 700;
         display: flex;
         align-items: center;
         justify-content: center;
+        border-radius: 2px;
       }
-
       .narrative-steps li strong {
         display: block;
         margin-bottom: 0.25rem;
       }
-
       .narrative-steps li p {
-        color: var(--ink-secondary);
+        color: #505a5f;
         font-size: 0.85rem;
       }
 
-      /* Success criteria */
+      /* ── Criteria list ── */
       .criteria-list {
         list-style: none;
         margin-top: 0.5rem;
       }
-
       .criteria-list li {
         padding: 0.6rem 0 0.6rem 1.5rem;
-        border-bottom: 1px solid var(--rule);
+        border-bottom: 1px solid #e0dfde;
         font-size: 0.88rem;
-        color: var(--ink-secondary);
+        color: #505a5f;
         position: relative;
       }
-
       .criteria-list li::before {
-        content: "□";
+        content: "\25A1";
         position: absolute;
         left: 0;
-        color: var(--gov-blue);
+        color: #1d70b8;
         font-size: 1rem;
       }
 
-      /* Timeline */
-      .timeline-bar {
-        display: flex;
-        margin-top: 1rem;
-        border: 1px solid var(--rule);
-        overflow: hidden;
+      /* ── Footer ── */
+      .footer {
+        background: #0b0c0c;
+        color: #fff;
+        padding: 2rem 0;
+        margin-top: 0;
+      }
+      .footer p {
+        font-size: 0.8rem;
+        color: #b1b4b6;
+        line-height: 1.5;
       }
 
-      .timeline-block {
-        flex: 1;
-        padding: 0.75rem;
-        text-align: center;
-        font-size: 0.75rem;
-        border-right: 1px solid var(--rule);
+      /* ── Edit mode styles ── */
+      body.editing [data-e] {
+        outline: none;
+        background: rgba(29, 112, 184, 0.04);
+        box-shadow: inset 0 -1px 0 0 rgba(29, 112, 184, 0.25);
+        border-radius: 2px;
+        padding: 2px 4px;
+        margin: -2px -4px;
+        min-height: 1.2em;
+        transition:
+          background 0.15s,
+          box-shadow 0.15s;
+      }
+      body.editing [data-e]:hover {
+        background: rgba(29, 112, 184, 0.07);
+      }
+      body.editing [data-e]:focus {
+        background: rgba(29, 112, 184, 0.08);
+        box-shadow: inset 0 -2px 0 0 #1d70b8;
       }
 
-      .timeline-block:last-child {
-        border-right: none;
+      /* Hide the field-empty arrow in edit mode so it doesn't interfere */
+      body.editing .field-empty::before {
+        display: none;
+      }
+      body.editing .field-empty {
+        color: #505a5f;
+        font-style: normal;
       }
 
-      .timeline-block strong {
+      /* Editable table cells in edit mode */
+      body.editing .artefact-table td[data-e] {
+        padding: 0.65rem 0.75rem;
+      }
+      body.editing .artefact-status {
+        cursor: pointer;
+        user-select: none;
+      }
+      body.editing .artefact-status:hover {
+        background: rgba(29, 112, 184, 0.1) !important;
+      }
+
+      /* Add-item button */
+      .add-item {
+        display: none;
+        padding: 0.5rem 0 0.5rem 1.5rem;
+        font-size: 0.82rem;
+        color: #1d70b8;
+        cursor: pointer;
+        font-weight: 500;
+        border: none;
+        background: none;
+        font-family: inherit;
+        position: relative;
+      }
+      .add-item::before {
+        content: "+";
+        position: absolute;
+        left: 0.15rem;
+        font-size: 1rem;
+        font-weight: 700;
+        color: #1d70b8;
+      }
+      .add-item:hover {
+        color: #003078;
+      }
+      body.editing .add-item {
         display: block;
-        font-size: 0.7rem;
-        letter-spacing: 0.06em;
-        text-transform: uppercase;
-        margin-bottom: 0.25rem;
       }
 
-      .timeline-block.active {
-        background: var(--gov-blue);
-        color: white;
+      /* Add-row button for table */
+      .add-row {
+        display: none;
+        margin-top: 0.75rem;
+        padding: 0.4rem 0.85rem;
+        font-size: 0.8rem;
+        color: #1d70b8;
+        cursor: pointer;
+        font-weight: 500;
+        border: 1px dashed #b1b4b6;
+        background: none;
+        font-family: inherit;
+        border-radius: 2px;
+      }
+      .add-row:hover {
+        background: #f3f2f1;
+        border-color: #1d70b8;
+      }
+      body.editing .add-row {
+        display: inline-block;
       }
 
-      .timeline-block.upcoming {
-        background: var(--surface-warm);
+      /* Remove button for dynamically added items */
+      .remove-item {
+        display: none;
+        position: absolute;
+        right: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        color: #d4351c;
+        cursor: pointer;
+        font-size: 0.85rem;
+        padding: 0.25rem 0.5rem;
+        opacity: 0;
+        transition: opacity 0.15s;
+      }
+      body.editing .remove-item {
+        display: block;
+      }
+      body.editing li:hover .remove-item,
+      body.editing tr:hover .remove-item {
+        opacity: 0.6;
+      }
+      body.editing li:hover .remove-item:hover,
+      body.editing tr:hover .remove-item:hover {
+        opacity: 1;
       }
 
-      /* Print */
+      /* Make list items relative for remove button positioning */
+      .criteria-list li {
+        position: relative;
+        padding-right: 2rem;
+      }
+
+      /* ── Print ── */
       @media print {
-        body::before {
-          height: 3px;
+        .nav {
+          display: none;
         }
         .container {
           max-width: 100%;
@@ -420,118 +648,117 @@
         .scenario-card {
           page-break-inside: avoid;
         }
+        .add-item,
+        .add-row,
+        .remove-item {
+          display: none !important;
+        }
       }
 
-      /* Responsive */
+      /* ── Responsive ── */
       @media (max-width: 680px) {
         .scenario-grid,
         .handout-spec,
         .dept-fields {
           grid-template-columns: 1fr;
         }
-        .doc-meta {
-          flex-direction: column;
-          gap: 0.25rem;
-        }
-      }
-
-      /* Animations */
-      @keyframes fade-up {
-        from {
-          opacity: 0;
-          transform: translateY(12px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-      .section {
-        animation: fade-up 0.5s ease-out both;
-      }
-      .section:nth-of-type(2) {
-        animation-delay: 0.05s;
-      }
-      .section:nth-of-type(3) {
-        animation-delay: 0.1s;
-      }
-      .section:nth-of-type(4) {
-        animation-delay: 0.15s;
-      }
-      .section:nth-of-type(5) {
-        animation-delay: 0.2s;
-      }
-      .section:nth-of-type(6) {
-        animation-delay: 0.25s;
-      }
-      .section:nth-of-type(7) {
-        animation-delay: 0.3s;
       }
     </style>
   </head>
   <body>
-    <header class="doc-header">
+    <nav class="nav">
       <div class="container">
-        <p class="overline">Working Document</p>
+        <span class="nav-brand">Agentic Legibility Stack</span>
+        <div class="nav-right">
+          <ul class="nav-links">
+            <li><a href="index.html">Overview</a></li>
+            <li><a href="#departments">Departments</a></li>
+            <li><a href="#scenarios">Scenarios</a></li>
+            <li><a href="#narrative">Narrative</a></li>
+          </ul>
+          <span class="save-indicator" id="saveIndicator">Saved</span>
+          <div class="mode-toggle" id="modeToggle">
+            <span class="active" data-mode="view">View</span>
+            <span data-mode="edit">Edit</span>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <section class="hero">
+      <div class="container">
+        <span class="hero-label">Working Document</span>
         <h1>Department Demo Briefing</h1>
-        <p class="subtitle">
+        <p class="hero-subtitle" data-e="hero-subtitle">
           Structured brief for preparing permanent secretary demos. Fill in each
           section as information arrives from Leanne, Tina, and the team.
         </p>
-        <div class="doc-meta">
-          <span><strong>Target:</strong> End March / Early April 2026</span>
+        <div class="hero-meta">
           <span
-            ><strong>Format:</strong> Physical handouts (not screen
-            presentations)</span
+            ><strong>Target:</strong>
+            <span data-e="meta-target">End March / Early April 2026</span></span
           >
           <span
-            ><strong>Status:</strong> Awaiting persona briefs from Leanne</span
+            ><strong>Format:</strong>
+            <span data-e="meta-format"
+              >Physical handouts (not screen presentations)</span
+            ></span
+          >
+          <span
+            ><strong>Status:</strong>
+            <span data-e="meta-status"
+              >Awaiting persona briefs from Leanne</span
+            ></span
           >
         </div>
       </div>
-    </header>
+    </section>
 
     <!-- 0. Timeline -->
     <section class="section">
       <div class="container">
-        <div class="section-number">0</div>
-        <h2>Timeline &amp; Sequence</h2>
-        <p class="section-intro">
+        <div class="section-heading">
+          <div class="section-number">0</div>
+          <h2>Timeline &amp; Sequence</h2>
+        </div>
+        <p class="section-intro" data-e="s0-intro">
           Rolling individual sessions with permanent secretaries. Emma arranging
           one-by-one. Coordinate with Alonzo's pitch deck — avoid duplicate
           artefacts.
         </p>
         <div class="timeline-bar">
           <div class="timeline-block active">
-            <strong>Now</strong>
-            Briefing &amp; scenarios
+            <strong data-e="tl-0-label">Now</strong>
+            <span data-e="tl-0-desc">Briefing &amp; scenarios</span>
           </div>
           <div class="timeline-block active">
-            <strong>W/C 24 Mar</strong>
-            Build &amp; iterate
+            <strong data-e="tl-1-label">W/C 24 Mar</strong>
+            <span data-e="tl-1-desc">Build &amp; iterate</span>
           </div>
           <div class="timeline-block upcoming">
-            <strong>W/C 31 Mar</strong>
-            Review with Chris PS &amp; Emran
+            <strong data-e="tl-2-label">W/C 31 Mar</strong>
+            <span data-e="tl-2-desc">Review with Chris PS &amp; Emran</span>
           </div>
           <div class="timeline-block upcoming">
-            <strong>April</strong>
-            Department sessions begin
+            <strong data-e="tl-3-label">April</strong>
+            <span data-e="tl-3-desc">Department sessions begin</span>
           </div>
           <div class="timeline-block upcoming">
-            <strong>April</strong>
-            HMRC deep dive
+            <strong data-e="tl-4-label">April</strong>
+            <span data-e="tl-4-desc">HMRC deep dive</span>
           </div>
         </div>
       </div>
     </section>
 
     <!-- 1. Department Profiles -->
-    <section class="section">
+    <section class="section" id="departments">
       <div class="container">
-        <div class="section-number">1</div>
-        <h2>Department Profiles</h2>
-        <p class="section-intro">
+        <div class="section-heading">
+          <div class="section-number">1</div>
+          <h2>Department Profiles</h2>
+        </div>
+        <p class="section-intro" data-e="s1-intro">
           For each target department: who is the permanent secretary, what are
           their priorities, what citizen services do they run, and what's the
           "so what" that will make them care?
@@ -543,22 +770,24 @@
             <h3><span class="dept-order">1</span> Ministry of Justice</h3>
             <dl class="dept-fields">
               <dt>Perm Sec</dt>
-              <dd class="field-empty">To confirm</dd>
+              <dd class="field-empty" data-e="moj-permsec">To confirm</dd>
               <dt>Key services</dt>
-              <dd>
+              <dd data-e="moj-services">
                 Probate, court fees, legal aid eligibility, victim
                 notifications, prison visits booking
               </dd>
               <dt>Known priorities</dt>
-              <dd class="field-empty">
+              <dd class="field-empty" data-e="moj-priorities">
                 To research — digital courts programme?
               </dd>
               <dt>Why they care</dt>
-              <dd class="field-empty">
+              <dd class="field-empty" data-e="moj-why">
                 What's the specific value prop for MoJ?
               </dd>
               <dt>Persona focus</dt>
-              <dd class="field-empty">Awaiting brief from Leanne</dd>
+              <dd class="field-empty" data-e="moj-persona">
+                Awaiting brief from Leanne
+              </dd>
             </dl>
           </div>
 
@@ -570,23 +799,39 @@
             </h3>
             <dl class="dept-fields">
               <dt>Perm Sec</dt>
-              <dd class="field-empty">To confirm</dd>
+              <dd data-e="dwp-permsec">
+                Sir Peter Schofield KCB (stepping down July 2026). DG Finance at
+                DWP, HM Treasury background. Priorities: technology in service
+                design, going 'further and faster' with tech, IT modernisation.
+              </dd>
               <dt>Key services</dt>
-              <dd>
-                Universal Credit, PIP, State Pension, Carer's Allowance, Child
-                Benefit, Jobseeker's
+              <dd data-e="dwp-services">
+                Universal Credit (7.3m claimants), PIP (3.9m claimants, 66%
+                appeal success rate), State Pension (13.2m recipients), Carer's
+                Allowance (1.4m, 10-12+ week processing), Attendance Allowance
+                (1.9m), Pension Credit (1.4m), Bereavement Support Payment (47k)
               </dd>
               <dt>Known priorities</dt>
-              <dd class="field-empty">
-                Benefit fraud reduction? Digital journeys?
+              <dd data-e="dwp-priorities">
+                Technology in service delivery; £312m Service Modernisation
+                Programme (2022-33); Route 101 contact centre contract
+                (£200-265m); legacy benefits migration to UC (deadline March
+                2026). 5.3m calls abandoned in 2023-24. PIP processing crisis:
+                median 15 weeks, 392k review backlog (~10 years to clear).
               </dd>
               <dt>Why they care</dt>
-              <dd>
-                Already have 2 services in prototype (UC, State Pension).
-                Highest volume citizen interactions in government.
+              <dd data-e="dwp-why">
+                Highest volume citizen interactions in government. £268.5bn in
+                benefit payments, £9.5bn in overpayments (3.3%). UC costs
+                £195/claim but PIP appeals succeed 66% of the time — suggesting
+                flawed initial assessments. ESA calls: 26min avg wait, only 50%
+                answered. An agent could reduce failure demand, improve initial
+                assessment accuracy, and cut the £200m+ contact centre cost.
               </dd>
               <dt>Persona focus</dt>
-              <dd class="field-empty">Awaiting brief from Leanne</dd>
+              <dd class="field-empty" data-e="dwp-persona">
+                Awaiting brief from Leanne
+              </dd>
             </dl>
           </div>
 
@@ -595,20 +840,46 @@
             <h3><span class="dept-order">3</span> HM Revenue &amp; Customs</h3>
             <dl class="dept-fields">
               <dt>Perm Sec</dt>
-              <dd class="field-empty">To confirm</dd>
+              <dd data-e="hmrc-permsec">
+                John-Paul (JP) Marks CB (appointed April 2025). Previously PS to
+                Scottish Government; DWP DG Work and Health Services; HM
+                Treasury. Predecessor: Sir Jim Harra. Priorities: Transformation
+                Roadmap, Making Tax Digital, digital-first services, tax gap
+                closure.
+              </dd>
               <dt>Key services</dt>
-              <dd>
-                Self Assessment, tax code updates, tax credits, VAT
-                registration, PAYE, Child Benefit (admin)
+              <dd data-e="hmrc-services">
+                Self Assessment (11.48m returns, 97.25% online), PAYE &amp; Tax
+                Codes (~33m employees), Child Benefit (millions of households),
+                Marriage Allowance, VAT Registration (10 working days), Student
+                Loan Repayments. Tax Credits closed April 2025 — legacy
+                migration to UC. HMRC app: 7.18m users, 136m+ logins.
               </dd>
               <dt>Known priorities</dt>
-              <dd>Requesting separate deep dive session in April</dd>
+              <dd data-e="hmrc-priorities">
+                Making Tax Digital for ITSA launching April 2026 (income
+                &gt;£50k). Transformation Roadmap (July 2025). Target: 90%
+                digital by 2029-30 (currently 79.6%). £886m efficiency savings
+                target by 2028-29. Requesting separate deep dive session in
+                April. 76% of calls are avoidable failure demand (~28m calls,
+                est. £140-196m waste). 5.6m taxpayers overpaid £3.5bn through
+                PAYE errors.
+              </dd>
               <dt>Why they care</dt>
-              <dd class="field-empty">
-                What's the specific value prop for HMRC?
+              <dd data-e="hmrc-why">
+                £875.9bn revenue collected at 0.5p per pound. But 76% of 37m
+                annual calls are avoidable — that's ~28m unnecessary calls
+                costing £140-196m/year. An agent could eliminate failure demand
+                by guiding citizens through Self Assessment, explaining tax
+                codes, and handling routine queries. 475k people file SA on
+                deadline day — an agent could proactively prompt them earlier.
+                MTD readiness is amber with 1/5 APIs untested — legible services
+                would accelerate this.
               </dd>
               <dt>Persona focus</dt>
-              <dd class="field-empty">Awaiting brief from Leanne</dd>
+              <dd class="field-empty" data-e="hmrc-persona">
+                Awaiting brief from Leanne
+              </dd>
             </dl>
           </div>
 
@@ -617,20 +888,48 @@
             <h3><span class="dept-order">4</span> Department for Education</h3>
             <dl class="dept-fields">
               <dt>Perm Sec</dt>
-              <dd class="field-empty">To confirm</dd>
+              <dd data-e="dfe-permsec">
+                Susan Acland-Hood (since December 2020). Previously CE of HM
+                Courts &amp; Tribunals Service; HM Treasury; 10 Downing Street;
+                Home Office. Priorities: Skills England, AI in education
+                (safety-by-design), SEND reform (2029-2035), ESFA integration.
+              </dd>
               <dt>Key services</dt>
-              <dd>
-                Free school meals, student finance, childcare entitlements,
-                school admissions, teacher training
+              <dd data-e="dfe-services">
+                Free School Meals (2.1m children eligible), Student Finance
+                (~400k+ new entrants/year), 30 Hours Childcare (expanded Sept
+                2025), Tax-Free Childcare (via HMRC), School Admissions (98.3%
+                primary top 3), Teacher Training (secondary shortfall), School
+                Place Appeals (8,999 primary + 29,640 secondary heard), EHCPs
+                for SEND (638,700 children, up 10.8% YoY)
               </dd>
               <dt>Known priorities</dt>
-              <dd class="field-empty">To research</dd>
+              <dd data-e="dfe-priorities">
+                EHCP crisis: only 46.4% meet 20-week deadline; 250% demand
+                increase since 2014; 13,700 tribunal appeals (all-time high).
+                Childcare expansion: only 46% of LAs have sufficient under-2
+                places; 84,500 more places needed; spending forecast £1bn over
+                budget. Free school meals: data-sharing barriers with DWP;
+                digital divide. DfE Connect personalised dashboard launched
+                2025. Cross-dept dependencies with HMRC (Tax-Free Childcare) and
+                DWP (benefits-based eligibility).
+              </dd>
               <dt>Why they care</dt>
-              <dd class="field-empty">
-                What's the specific value prop for DfE?
+              <dd data-e="dfe-why">
+                DfE services are uniquely cross-departmental: free school meals
+                depend on DWP benefit data, Tax-Free Childcare runs through
+                HMRC, EHCPs need NHS health assessments. An agent could bridge
+                these gaps — automatically checking benefit eligibility for free
+                school meals via DWP data, linking childcare entitlements across
+                DfE/HMRC, and coordinating EHCP assessments. The EHCP tribunal
+                crisis (13,700 appeals) suggests initial assessments need
+                improvement — an agent could ensure completeness before
+                submission.
               </dd>
               <dt>Persona focus</dt>
-              <dd class="field-empty">Awaiting brief from Leanne</dd>
+              <dd class="field-empty" data-e="dfe-persona">
+                Awaiting brief from Leanne
+              </dd>
             </dl>
           </div>
 
@@ -639,22 +938,52 @@
             <h3><span class="dept-order">5</span> Home Office</h3>
             <dl class="dept-fields">
               <dt>Perm Sec</dt>
-              <dd class="field-empty">To confirm</dd>
+              <dd data-e="ho-permsec">
+                Acting: Simon Ridley CB (Second PS, Migration and Borders).
+                Previously COVID-19 Taskforce head; Brexit DG roles; Planning
+                Inspectorate CE; HM Treasury. Previous PS: Dame Antonia Romeo
+                (April 2025–Feb 2026, now Cabinet Secretary). Priorities: secure
+                borders, Immigration White Paper, eVisa rollout, illegal working
+                enforcement.
+              </dd>
               <dt>Key services</dt>
-              <dd>
-                Passport applications/renewals, visa applications, settled
-                status, right to work checks, DBS checks
+              <dd data-e="ho-services">
+                Passports (2.4m+ applications, 99.7% within 3 weeks), Visa
+                Applications (study: 411k, skilled worker: 54.9k), EU Settlement
+                Scheme (8.78m applications total), Right to Work Checks (all job
+                hires), DBS Checks (7.27m certificates), Asylum (82.1k
+                applications, 166.3k pending), Citizenship (269k+ granted),
+                Travel Documents (digital from Feb 2026)
               </dd>
               <dt>Known priorities</dt>
-              <dd class="field-empty">
-                To research — immigration casework backlog?
+              <dd data-e="ho-priorities">
+                eVisa transition live Feb 2026 — all new visas digital-only. ETA
+                required for non-visa nationals. Asylum backlog: 166,300
+                pending, 68% waiting &gt;6 months, costing £4bn/year (hotels:
+                £2.1bn for 32k people at £119/night — 6x costlier than
+                alternatives). Visa processing exceeds 12-week target.
+                Citizenship surge: 44% increase Q4 2025 due to Earned Settlement
+                speculation. Skilled Worker visa costs £12,500 over 5 years
+                (1,000% higher than comparable countries).
               </dd>
               <dt>Why they care</dt>
-              <dd class="field-empty">
-                What's the specific value prop for Home Office?
+              <dd data-e="ho-why">
+                £27.8bn department, £7.3bn in fee income. The eVisa transition
+                is the biggest digital change in HO history — but
+                cross-departmental friction persists: settled status ↔ DWP
+                benefit eligibility, right to work ↔ employer compliance,
+                auto-upgrades depend on HMRC/DWP data quality. An agent could
+                bridge these gaps — helping citizens check visa status,
+                understand right to work requirements, navigate the BRP-to-eVisa
+                transition, and coordinate between HO and DWP/HMRC for status
+                verification. PAC found immigration enforcement decisions based
+                on 'anecdote and prejudice' — legible services would bring
+                transparency.
               </dd>
               <dt>Persona focus</dt>
-              <dd class="field-empty">Awaiting brief from Leanne</dd>
+              <dd class="field-empty" data-e="ho-persona">
+                Awaiting brief from Leanne
+              </dd>
             </dl>
           </div>
         </div>
@@ -662,52 +991,55 @@
     </section>
 
     <!-- 2. Demo Scenarios -->
-    <section class="section">
+    <section class="section" id="scenarios">
       <div class="container">
-        <div class="section-number">2</div>
-        <h2>Demo Scenarios</h2>
-        <p class="section-intro">
+        <div class="section-heading">
+          <div class="section-number">2</div>
+          <h2>Demo Scenarios</h2>
+        </div>
+        <p class="section-intro" data-e="s2-intro">
           5 persona/user journey briefs from Leanne. Each needs: department
           focus, persona type, situation context, nightmare scenario (today),
           and agent solution (future). These drive the handout content and
           prototype data.
         </p>
 
-        <!-- Template scenario - duplicate for each -->
         <div class="scenario-card">
           <h3>
             Scenario 1 —
-            <span
-              class="field-empty"
-              style="font-family: var(--font-body); font-size: 0.85rem"
+            <span class="field-empty" data-e="sc1-title"
               >Department &amp; persona TBC</span
             >
           </h3>
           <dl class="dept-fields">
             <dt>Department</dt>
-            <dd class="field-empty">Awaiting Leanne's brief</dd>
+            <dd class="field-empty" data-e="sc1-dept">
+              Awaiting Leanne's brief
+            </dd>
             <dt>Persona type</dt>
-            <dd class="field-empty">
+            <dd class="field-empty" data-e="sc1-persona">
               Who is this person? Age, situation, context
             </dd>
             <dt>Life event</dt>
-            <dd class="field-empty">What happened to trigger this journey?</dd>
+            <dd class="field-empty" data-e="sc1-event">
+              What happened to trigger this journey?
+            </dd>
             <dt>Services touched</dt>
-            <dd class="field-empty">
+            <dd class="field-empty" data-e="sc1-services">
               Which services across which departments?
             </dd>
           </dl>
           <div class="scenario-grid">
             <div class="scenario-half nightmare">
               <h4>Today's nightmare</h4>
-              <p class="field-empty">
+              <p class="field-empty" data-e="sc1-nightmare">
                 What goes wrong for this citizen today? How many forms, calls,
                 departments, weeks does it take?
               </p>
             </div>
             <div class="scenario-half solution">
               <h4>Agent solution</h4>
-              <p class="field-empty">
+              <p class="field-empty" data-e="sc1-solution">
                 How does the agent handle this? What's different? How long does
                 it take? What's the citizen experience?
               </p>
@@ -717,124 +1049,104 @@
 
         <div class="scenario-card">
           <h3>
-            Scenario 2 —
-            <span
-              class="field-empty"
-              style="font-family: var(--font-body); font-size: 0.85rem"
-              >TBC</span
-            >
+            Scenario 2 — <span class="field-empty" data-e="sc2-title">TBC</span>
           </h3>
           <dl class="dept-fields">
             <dt>Department</dt>
-            <dd class="field-empty">Awaiting brief</dd>
+            <dd class="field-empty" data-e="sc2-dept">Awaiting brief</dd>
             <dt>Persona type</dt>
-            <dd class="field-empty">TBC</dd>
+            <dd class="field-empty" data-e="sc2-persona">TBC</dd>
             <dt>Life event</dt>
-            <dd class="field-empty">TBC</dd>
+            <dd class="field-empty" data-e="sc2-event">TBC</dd>
             <dt>Services touched</dt>
-            <dd class="field-empty">TBC</dd>
+            <dd class="field-empty" data-e="sc2-services">TBC</dd>
           </dl>
           <div class="scenario-grid">
             <div class="scenario-half nightmare">
               <h4>Today's nightmare</h4>
-              <p class="field-empty">TBC</p>
+              <p class="field-empty" data-e="sc2-nightmare">TBC</p>
             </div>
             <div class="scenario-half solution">
               <h4>Agent solution</h4>
-              <p class="field-empty">TBC</p>
+              <p class="field-empty" data-e="sc2-solution">TBC</p>
             </div>
           </div>
         </div>
 
         <div class="scenario-card">
           <h3>
-            Scenario 3 —
-            <span
-              class="field-empty"
-              style="font-family: var(--font-body); font-size: 0.85rem"
-              >TBC</span
-            >
+            Scenario 3 — <span class="field-empty" data-e="sc3-title">TBC</span>
           </h3>
           <dl class="dept-fields">
             <dt>Department</dt>
-            <dd class="field-empty">Awaiting brief</dd>
+            <dd class="field-empty" data-e="sc3-dept">Awaiting brief</dd>
             <dt>Persona type</dt>
-            <dd class="field-empty">TBC</dd>
+            <dd class="field-empty" data-e="sc3-persona">TBC</dd>
             <dt>Life event</dt>
-            <dd class="field-empty">TBC</dd>
+            <dd class="field-empty" data-e="sc3-event">TBC</dd>
             <dt>Services touched</dt>
-            <dd class="field-empty">TBC</dd>
+            <dd class="field-empty" data-e="sc3-services">TBC</dd>
           </dl>
           <div class="scenario-grid">
             <div class="scenario-half nightmare">
               <h4>Today's nightmare</h4>
-              <p class="field-empty">TBC</p>
+              <p class="field-empty" data-e="sc3-nightmare">TBC</p>
             </div>
             <div class="scenario-half solution">
               <h4>Agent solution</h4>
-              <p class="field-empty">TBC</p>
+              <p class="field-empty" data-e="sc3-solution">TBC</p>
             </div>
           </div>
         </div>
 
         <div class="scenario-card">
           <h3>
-            Scenario 4 —
-            <span
-              class="field-empty"
-              style="font-family: var(--font-body); font-size: 0.85rem"
-              >TBC</span
-            >
+            Scenario 4 — <span class="field-empty" data-e="sc4-title">TBC</span>
           </h3>
           <dl class="dept-fields">
             <dt>Department</dt>
-            <dd class="field-empty">Awaiting brief</dd>
+            <dd class="field-empty" data-e="sc4-dept">Awaiting brief</dd>
             <dt>Persona type</dt>
-            <dd class="field-empty">TBC</dd>
+            <dd class="field-empty" data-e="sc4-persona">TBC</dd>
             <dt>Life event</dt>
-            <dd class="field-empty">TBC</dd>
+            <dd class="field-empty" data-e="sc4-event">TBC</dd>
             <dt>Services touched</dt>
-            <dd class="field-empty">TBC</dd>
+            <dd class="field-empty" data-e="sc4-services">TBC</dd>
           </dl>
           <div class="scenario-grid">
             <div class="scenario-half nightmare">
               <h4>Today's nightmare</h4>
-              <p class="field-empty">TBC</p>
+              <p class="field-empty" data-e="sc4-nightmare">TBC</p>
             </div>
             <div class="scenario-half solution">
               <h4>Agent solution</h4>
-              <p class="field-empty">TBC</p>
+              <p class="field-empty" data-e="sc4-solution">TBC</p>
             </div>
           </div>
         </div>
 
         <div class="scenario-card">
           <h3>
-            Scenario 5 —
-            <span
-              class="field-empty"
-              style="font-family: var(--font-body); font-size: 0.85rem"
-              >TBC</span
-            >
+            Scenario 5 — <span class="field-empty" data-e="sc5-title">TBC</span>
           </h3>
           <dl class="dept-fields">
             <dt>Department</dt>
-            <dd class="field-empty">Awaiting brief</dd>
+            <dd class="field-empty" data-e="sc5-dept">Awaiting brief</dd>
             <dt>Persona type</dt>
-            <dd class="field-empty">TBC</dd>
+            <dd class="field-empty" data-e="sc5-persona">TBC</dd>
             <dt>Life event</dt>
-            <dd class="field-empty">TBC</dd>
+            <dd class="field-empty" data-e="sc5-event">TBC</dd>
             <dt>Services touched</dt>
-            <dd class="field-empty">TBC</dd>
+            <dd class="field-empty" data-e="sc5-services">TBC</dd>
           </dl>
           <div class="scenario-grid">
             <div class="scenario-half nightmare">
               <h4>Today's nightmare</h4>
-              <p class="field-empty">TBC</p>
+              <p class="field-empty" data-e="sc5-nightmare">TBC</p>
             </div>
             <div class="scenario-half solution">
               <h4>Agent solution</h4>
-              <p class="field-empty">TBC</p>
+              <p class="field-empty" data-e="sc5-solution">TBC</p>
             </div>
           </div>
         </div>
@@ -844,15 +1156,17 @@
     <!-- 3. Service Artefact Requirements -->
     <section class="section">
       <div class="container">
-        <div class="section-number">3</div>
-        <h2>Service Artefact Requirements</h2>
-        <p class="section-intro">
+        <div class="section-heading">
+          <div class="section-number">3</div>
+          <h2>Service Artefact Requirements</h2>
+        </div>
+        <p class="section-intro" data-e="s3-intro">
           For each new service needed in the demo, what artefacts must be
           authored? Map from the data requirements spreadsheet. This table will
           be populated once scenarios are confirmed.
         </p>
 
-        <table class="artefact-table">
+        <table class="artefact-table" id="artefactTable">
           <thead>
             <tr>
               <th>Service</th>
@@ -866,57 +1180,136 @@
           </thead>
           <tbody>
             <tr>
-              <td>Apply Universal Credit</td>
-              <td>DWP</td>
-              <td style="color: var(--accent-green)">✓</td>
-              <td style="color: var(--accent-green)">✓</td>
-              <td style="color: var(--accent-green)">✓</td>
-              <td style="color: var(--accent-green)">✓</td>
-              <td style="color: var(--accent-green)">✓</td>
-            </tr>
-            <tr>
-              <td>Check State Pension</td>
-              <td>DWP</td>
-              <td style="color: var(--accent-green)">✓</td>
-              <td style="color: var(--accent-green)">✓</td>
-              <td style="color: var(--accent-green)">✓</td>
-              <td style="color: var(--accent-green)">✓</td>
-              <td style="color: var(--accent-green)">✓</td>
-            </tr>
-            <tr>
-              <td>Renew Driving Licence</td>
-              <td>DVLA</td>
-              <td style="color: var(--accent-green)">✓</td>
-              <td style="color: var(--accent-green)">✓</td>
-              <td style="color: var(--accent-green)">✓</td>
-              <td style="color: var(--accent-green)">✓</td>
-              <td style="color: var(--accent-green)">✓</td>
-            </tr>
-            <tr>
+              <td data-e="art-0-service">Apply Universal Credit</td>
+              <td data-e="art-0-dept">DWP</td>
               <td
-                colspan="7"
-                style="
-                  color: var(--ink-tertiary);
-                  text-align: center;
-                  padding: 1rem;
-                  font-style: italic;
-                "
+                class="artefact-status tick"
+                data-e="art-0-manifest"
+                data-status="tick"
               >
-                Additional services will be added here once scenarios are
-                confirmed
+                &#10003;
+              </td>
+              <td
+                class="artefact-status tick"
+                data-e="art-0-policy"
+                data-status="tick"
+              >
+                &#10003;
+              </td>
+              <td
+                class="artefact-status tick"
+                data-e="art-0-state"
+                data-status="tick"
+              >
+                &#10003;
+              </td>
+              <td
+                class="artefact-status tick"
+                data-e="art-0-consent"
+                data-status="tick"
+              >
+                &#10003;
+              </td>
+              <td
+                class="artefact-status tick"
+                data-e="art-0-instr"
+                data-status="tick"
+              >
+                &#10003;
+              </td>
+            </tr>
+            <tr>
+              <td data-e="art-1-service">Check State Pension</td>
+              <td data-e="art-1-dept">DWP</td>
+              <td
+                class="artefact-status tick"
+                data-e="art-1-manifest"
+                data-status="tick"
+              >
+                &#10003;
+              </td>
+              <td
+                class="artefact-status tick"
+                data-e="art-1-policy"
+                data-status="tick"
+              >
+                &#10003;
+              </td>
+              <td
+                class="artefact-status tick"
+                data-e="art-1-state"
+                data-status="tick"
+              >
+                &#10003;
+              </td>
+              <td
+                class="artefact-status tick"
+                data-e="art-1-consent"
+                data-status="tick"
+              >
+                &#10003;
+              </td>
+              <td
+                class="artefact-status tick"
+                data-e="art-1-instr"
+                data-status="tick"
+              >
+                &#10003;
+              </td>
+            </tr>
+            <tr>
+              <td data-e="art-2-service">Renew Driving Licence</td>
+              <td data-e="art-2-dept">DVLA</td>
+              <td
+                class="artefact-status tick"
+                data-e="art-2-manifest"
+                data-status="tick"
+              >
+                &#10003;
+              </td>
+              <td
+                class="artefact-status tick"
+                data-e="art-2-policy"
+                data-status="tick"
+              >
+                &#10003;
+              </td>
+              <td
+                class="artefact-status tick"
+                data-e="art-2-state"
+                data-status="tick"
+              >
+                &#10003;
+              </td>
+              <td
+                class="artefact-status tick"
+                data-e="art-2-consent"
+                data-status="tick"
+              >
+                &#10003;
+              </td>
+              <td
+                class="artefact-status tick"
+                data-e="art-2-instr"
+                data-status="tick"
+              >
+                &#10003;
               </td>
             </tr>
           </tbody>
         </table>
+        <button class="add-row" id="addArtefactRow">+ Add service row</button>
       </div>
     </section>
 
     <!-- 4. Physical Handout Specification -->
     <section class="section">
       <div class="container">
-        <div class="section-number">4</div>
-        <h2>Physical Handout Design</h2>
-        <p class="section-intro">
+        <div class="section-heading">
+          <div class="section-number">4</div>
+          <h2>Physical Handout Design</h2>
+        </div>
+        <p class="section-intro" data-e="s4-intro">
           Physical handouts, not screen presentations. This is the proven
           approach. Each department gets a tailored set. Coordinate with
           Alonzo's pitch deck to avoid duplication.
@@ -925,7 +1318,7 @@
         <div class="handout-spec">
           <div class="handout-item">
             <h4>Page 1 — The Citizen Problem</h4>
-            <p>
+            <p data-e="handout-1">
               Department-specific nightmare scenario. Real numbers: how many
               forms, how many departments, how many weeks. Make the pain
               tangible. Include cost figures (X envelopes + X stamps = Y cost).
@@ -933,7 +1326,7 @@
           </div>
           <div class="handout-item">
             <h4>Page 2 — The Agent Experience</h4>
-            <p>
+            <p data-e="handout-2">
               Screenshots of the citizen-dept prototype showing the journey.
               Annotated: what the agent does at each step, what data it uses,
               what the citizen sees. Before/after contrast.
@@ -941,7 +1334,7 @@
           </div>
           <div class="handout-item">
             <h4>Page 3 — What We Need From You</h4>
-            <p>
+            <p data-e="handout-3">
               The legibility requirements: which artefacts your department needs
               to publish (manifest, policy, state model, consent). What exists
               today vs what's needed. Gap analysis from the studio.
@@ -949,7 +1342,7 @@
           </div>
           <div class="handout-item">
             <h4>Page 4 — The Cost-Benefit Case</h4>
-            <p>
+            <p data-e="handout-4">
               Interactive examples made static: processing costs saved, call
               centre volume reduction, faster outcomes for citizens.
               Department-specific numbers where possible.
@@ -960,11 +1353,13 @@
     </section>
 
     <!-- 5. Demo Narrative -->
-    <section class="section">
+    <section class="section" id="narrative">
       <div class="container">
-        <div class="section-number">5</div>
-        <h2>Demo Narrative Structure</h2>
-        <p class="section-intro">
+        <div class="section-heading">
+          <div class="section-number">5</div>
+          <h2>Demo Narrative Structure</h2>
+        </div>
+        <p class="section-intro" data-e="s5-intro">
           The two-act structure: "this is what citizens get" then "this is what
           we need from you." The handout walks through this — the conversation
           follows the same arc.
@@ -972,39 +1367,39 @@
 
         <ol class="narrative-steps">
           <li>
-            <strong>The citizen's problem</strong>
-            <p>
+            <strong data-e="narr-1-title">The citizen's problem</strong>
+            <p data-e="narr-1-desc">
               Open with the nightmare scenario. Make it personal, specific to
               this department. "Sarah just lost her husband. Here's what she has
               to do right now, across your department and four others."
             </p>
           </li>
           <li>
-            <strong>Show the agent experience</strong>
-            <p>
+            <strong data-e="narr-2-title">Show the agent experience</strong>
+            <p data-e="narr-2-desc">
               Walk through the handout screenshots. "Here's what Sarah sees
               instead. One conversation. The agent handles the complexity."
               Point out: consent, transparency, audit trail.
             </p>
           </li>
           <li>
-            <strong>The legibility studio reveal</strong>
-            <p>
+            <strong data-e="narr-3-title">The legibility studio reveal</strong>
+            <p data-e="narr-3-desc">
               "Here's what happened under the hood." Show the evidence trail,
               the artefact structure, the gap analysis. "Your department's
               services need these artefacts to be legible to agents."
             </p>
           </li>
           <li>
-            <strong>The cost-benefit case</strong>
-            <p>
+            <strong data-e="narr-4-title">The cost-benefit case</strong>
+            <p data-e="narr-4-desc">
               Hard numbers. Processing costs, call volumes, citizen time saved.
               "This isn't just better for citizens — it's cheaper for you."
             </p>
           </li>
           <li>
-            <strong>The ask</strong>
-            <p>
+            <strong data-e="narr-5-title">The ask</strong>
+            <p data-e="narr-5-desc">
               "Here's specifically what we need from your department. These are
               the artefacts. This is the work. Here's how we help you get
               there." Leave the handout. Follow up in a week.
@@ -1017,95 +1412,442 @@
     <!-- 6. Success Criteria -->
     <section class="section">
       <div class="container">
-        <div class="section-number">6</div>
-        <h2>Success Criteria</h2>
-        <p class="section-intro">
+        <div class="section-heading">
+          <div class="section-number">6</div>
+          <h2>Success Criteria</h2>
+        </div>
+        <p class="section-intro" data-e="s6-intro">
           What does "this went well" look like for each meeting?
         </p>
 
-        <ul class="criteria-list">
+        <ul class="criteria-list" id="criteriaList">
           <li>
-            Perm sec understands what an agentic citizen experience looks like
-            for their department
+            <span data-e="crit-0"
+              >Perm sec understands what an agentic citizen experience looks
+              like for their department</span
+            >
           </li>
           <li>
-            Perm sec understands what their department needs to publish
-            (artefacts) to enable it
+            <span data-e="crit-1"
+              >Perm sec understands what their department needs to publish
+              (artefacts) to enable it</span
+            >
           </li>
           <li>
-            Perm sec sees the cost-benefit case and agrees it's worth
-            investigating
+            <span data-e="crit-2"
+              >Perm sec sees the cost-benefit case and agrees it's worth
+              investigating</span
+            >
           </li>
           <li>
-            Perm sec agrees to a follow-up working session with their
-            digital/data team
+            <span data-e="crit-3"
+              >Perm sec agrees to a follow-up working session with their
+              digital/data team</span
+            >
           </li>
-          <li>Perm sec identifies a specific service to pilot first</li>
           <li>
-            No confusion about what this is vs existing GOV.UK / GDS work —
-            complementary, not competing
+            <span data-e="crit-4"
+              >Perm sec identifies a specific service to pilot first</span
+            >
           </li>
-          <li class="field-empty" style="padding-left: 1.5rem">
-            Add more criteria as they emerge
+          <li>
+            <span data-e="crit-5"
+              >No confusion about what this is vs existing GOV.UK / GDS work —
+              complementary, not competing</span
+            >
           </li>
         </ul>
+        <button class="add-item" data-list="criteriaList" data-prefix="crit">
+          Add criterion
+        </button>
       </div>
     </section>
 
     <!-- 7. Open Questions -->
     <section class="section">
       <div class="container">
-        <div class="section-number">7</div>
-        <h2>Open Questions</h2>
-        <p class="section-intro">Things to resolve before building.</p>
+        <div class="section-heading">
+          <div class="section-number">7</div>
+          <h2>Open Questions</h2>
+        </div>
+        <p class="section-intro" data-e="s7-intro">
+          Things to resolve before building.
+        </p>
 
-        <ul class="criteria-list">
+        <ul class="criteria-list" id="questionsList">
           <li>
-            Where is the data requirements spreadsheet? Needs mapping into
-            backend architecture
+            <span data-e="q-0"
+              >Where is the data requirements spreadsheet? Needs mapping into
+              backend architecture</span
+            >
           </li>
           <li>
-            What format should the physical handouts be? A4 printed? Booklet?
-            Card stock?
+            <span data-e="q-1"
+              >What format should the physical handouts be? A4 printed? Booklet?
+              Card stock?</span
+            >
           </li>
           <li>
-            How does this relate to Alonzo's pitch deck? What content do they
-            cover vs what we cover?
+            <span data-e="q-2"
+              >How does this relate to Alonzo's pitch deck? What content do they
+              cover vs what we cover?</span
+            >
           </li>
           <li>
-            Does each department get identical prototype with different data, or
-            do we customise the UI per department?
+            <span data-e="q-3"
+              >Does each department get identical prototype with different data,
+              or do we customise the UI per department?</span
+            >
           </li>
           <li>
-            Do we need the prototype running live during meetings, or are
-            printed screenshots sufficient?
+            <span data-e="q-4"
+              >Do we need the prototype running live during meetings, or are
+              printed screenshots sufficient?</span
+            >
           </li>
           <li>
-            Cabinet Office — are they still a target, or has DfE replaced them
-            in the sequence?
+            <span data-e="q-5"
+              >Cabinet Office — are they still a target, or has DfE replaced
+              them in the sequence?</span
+            >
           </li>
           <li>
-            Who reviews the handouts before they go to perm secs? Chris PS →
-            Emran → ?
+            <span data-e="q-6"
+              >Who reviews the handouts before they go to perm secs? Chris PS →
+              Emran → ?</span
+            >
           </li>
           <li>
-            What existing GOV.UK analytics / service performance data can we
-            reference for cost-benefit?
-          </li>
-          <li class="field-empty" style="padding-left: 1.5rem">
-            Add questions as they arise
+            <span data-e="q-7"
+              >What existing GOV.UK analytics / service performance data can we
+              reference for cost-benefit?</span
+            >
           </li>
         </ul>
+        <button class="add-item" data-list="questionsList" data-prefix="q">
+          Add question
+        </button>
       </div>
     </section>
 
-    <footer style="padding: 1.5rem 0; border-top: 1px solid var(--rule)">
+    <footer class="footer">
       <div class="container">
-        <p style="font-size: 0.72rem; color: var(--ink-tertiary)">
-          Working document — last updated March 2026. Fill in sections as
+        <p>
+          Working document — last updated
+          <span data-e="footer-date">March 2026</span>. Fill in sections as
           information arrives from Leanne, Tina, and the team.
         </p>
       </div>
     </footer>
+
+    <script>
+      (function () {
+        const STORAGE_KEY = "als-dept-briefing";
+        const toggle = document.getElementById("modeToggle");
+        const saveIndicator = document.getElementById("saveIndicator");
+        let isEditing = false;
+        let saveTimeout = null;
+
+        // ── Persistence ──
+
+        function loadData() {
+          try {
+            return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
+          } catch {
+            return {};
+          }
+        }
+
+        function saveData() {
+          const data = {};
+          document.querySelectorAll("[data-e]").forEach(function (el) {
+            if (el.classList.contains("artefact-status")) {
+              data[el.dataset.e] = el.dataset.status;
+            } else {
+              data[el.dataset.e] = el.innerHTML.trim();
+            }
+          });
+          // Also save dynamic list item counts
+          data._dynamicLists = {};
+          document.querySelectorAll(".add-item").forEach(function (btn) {
+            const list = document.getElementById(btn.dataset.list);
+            if (list) {
+              data._dynamicLists[btn.dataset.list] = list.children.length;
+            }
+          });
+          // Save artefact row count
+          const tbody = document.querySelector("#artefactTable tbody");
+          if (tbody) {
+            data._artefactRows = tbody.children.length;
+          }
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+          flashSave();
+        }
+
+        function restoreData() {
+          const data = loadData();
+          if (!data || Object.keys(data).length === 0) return;
+
+          // Restore dynamic list items first (so the elements exist)
+          if (data._dynamicLists) {
+            Object.keys(data._dynamicLists).forEach(function (listId) {
+              const count = data._dynamicLists[listId];
+              const list = document.getElementById(listId);
+              const btn = document.querySelector(
+                '.add-item[data-list="' + listId + '"]',
+              );
+              if (list && btn) {
+                const currentCount = list.children.length;
+                for (let i = currentCount; i < count; i++) {
+                  addListItem(list, btn.dataset.prefix, i);
+                }
+              }
+            });
+          }
+
+          // Restore dynamic artefact rows
+          if (data._artefactRows) {
+            const tbody = document.querySelector("#artefactTable tbody");
+            if (tbody) {
+              const currentCount = tbody.children.length;
+              for (let i = currentCount; i < data._artefactRows; i++) {
+                addArtefactRowAt(i);
+              }
+            }
+          }
+
+          // Now restore all content
+          document.querySelectorAll("[data-e]").forEach(function (el) {
+            const val = data[el.dataset.e];
+            if (val === undefined) return;
+            if (el.classList.contains("artefact-status")) {
+              setStatusCell(el, val);
+            } else {
+              el.innerHTML = val;
+            }
+          });
+
+          // Update field-empty classes based on restored content
+          updateFieldEmptyStates();
+        }
+
+        function flashSave() {
+          saveIndicator.textContent = "Saved";
+          saveIndicator.classList.add("visible");
+          clearTimeout(saveTimeout);
+          saveTimeout = setTimeout(function () {
+            saveIndicator.classList.remove("visible");
+          }, 2000);
+        }
+
+        function debouncedSave() {
+          clearTimeout(saveTimeout);
+          saveTimeout = setTimeout(saveData, 600);
+        }
+
+        // ── Field-empty management ──
+
+        function updateFieldEmptyStates() {
+          // Elements that were originally field-empty: check if they still
+          // have placeholder-like content. We track originals via data-placeholder.
+          document.querySelectorAll("[data-e]").forEach(function (el) {
+            if (!el.dataset.placeholder) return;
+            const text = el.textContent.trim();
+            if (
+              text === el.dataset.placeholder ||
+              text === "" ||
+              text === "TBC"
+            ) {
+              el.classList.add("field-empty");
+            } else {
+              el.classList.remove("field-empty");
+            }
+          });
+        }
+
+        // Store original placeholder text for field-empty elements
+        document
+          .querySelectorAll(".field-empty[data-e]")
+          .forEach(function (el) {
+            el.dataset.placeholder = el.textContent.trim();
+          });
+
+        // ── Edit mode toggle ──
+
+        function enterEditMode() {
+          isEditing = true;
+          document.body.classList.add("editing");
+          document.querySelectorAll("[data-e]").forEach(function (el) {
+            if (!el.classList.contains("artefact-status")) {
+              el.contentEditable = "true";
+            }
+          });
+          toggle.querySelector('[data-mode="edit"]').classList.add("active");
+          toggle.querySelector('[data-mode="view"]').classList.remove("active");
+        }
+
+        function exitEditMode() {
+          isEditing = false;
+          document.body.classList.remove("editing");
+          document.querySelectorAll("[data-e]").forEach(function (el) {
+            el.contentEditable = "false";
+          });
+          toggle.querySelector('[data-mode="view"]').classList.add("active");
+          toggle.querySelector('[data-mode="edit"]').classList.remove("active");
+          updateFieldEmptyStates();
+          saveData();
+        }
+
+        toggle.addEventListener("click", function (e) {
+          const span = e.target.closest("[data-mode]");
+          if (!span) return;
+          if (span.dataset.mode === "edit" && !isEditing) {
+            enterEditMode();
+          } else if (span.dataset.mode === "view" && isEditing) {
+            exitEditMode();
+          }
+        });
+
+        // Keyboard shortcut: Cmd/Ctrl+E to toggle
+        document.addEventListener("keydown", function (e) {
+          if ((e.metaKey || e.ctrlKey) && e.key === "e") {
+            e.preventDefault();
+            if (isEditing) exitEditMode();
+            else enterEditMode();
+          }
+        });
+
+        // ── Auto-save on input ──
+
+        document.addEventListener("input", function (e) {
+          if (e.target.closest("[data-e]")) {
+            debouncedSave();
+          }
+        });
+
+        // Strip formatting on paste — plain text only
+        document.addEventListener("paste", function (e) {
+          if (e.target.closest("[data-e]")) {
+            e.preventDefault();
+            var text = (e.clipboardData || window.clipboardData).getData(
+              "text/plain",
+            );
+            document.execCommand("insertText", false, text);
+          }
+        });
+
+        // ── Artefact status toggle (tick/cross/pending) ──
+
+        var statusCycle = ["tick", "cross", "pending"];
+        var statusDisplay = {
+          tick: "\u2713",
+          cross: "\u2717",
+          pending: "\u2013",
+        };
+
+        function setStatusCell(el, status) {
+          el.dataset.status = status;
+          el.textContent = statusDisplay[status] || statusDisplay.pending;
+          el.className = "artefact-status " + status;
+        }
+
+        document.addEventListener("click", function (e) {
+          if (!isEditing) return;
+          var cell = e.target.closest(".artefact-status");
+          if (!cell) return;
+          var current = cell.dataset.status || "pending";
+          var idx = statusCycle.indexOf(current);
+          var next = statusCycle[(idx + 1) % statusCycle.length];
+          setStatusCell(cell, next);
+          debouncedSave();
+        });
+
+        // ── Add list items ──
+
+        function addListItem(list, prefix, index) {
+          var li = document.createElement("li");
+          var span = document.createElement("span");
+          var key = prefix + "-" + index;
+          span.dataset.e = key;
+          span.textContent = "";
+          if (isEditing) {
+            span.contentEditable = "true";
+          }
+          li.appendChild(span);
+
+          // Add remove button
+          var removeBtn = document.createElement("button");
+          removeBtn.className = "remove-item";
+          removeBtn.textContent = "\u00d7";
+          removeBtn.title = "Remove item";
+          removeBtn.addEventListener("click", function () {
+            li.remove();
+            debouncedSave();
+          });
+          li.appendChild(removeBtn);
+          list.appendChild(li);
+          return span;
+        }
+
+        document.querySelectorAll(".add-item").forEach(function (btn) {
+          btn.addEventListener("click", function () {
+            var list = document.getElementById(btn.dataset.list);
+            var index = list.children.length;
+            var span = addListItem(list, btn.dataset.prefix, index);
+            span.focus();
+            debouncedSave();
+          });
+        });
+
+        // ── Add artefact table rows ──
+
+        var artefactRowCount = 3; // Initial rows
+
+        function addArtefactRowAt(index) {
+          var tbody = document.querySelector("#artefactTable tbody");
+          var tr = document.createElement("tr");
+
+          var tdService = document.createElement("td");
+          tdService.dataset.e = "art-" + index + "-service";
+          tdService.textContent = "";
+          if (isEditing) tdService.contentEditable = "true";
+
+          var tdDept = document.createElement("td");
+          tdDept.dataset.e = "art-" + index + "-dept";
+          tdDept.textContent = "";
+          if (isEditing) tdDept.contentEditable = "true";
+
+          tr.appendChild(tdService);
+          tr.appendChild(tdDept);
+
+          var cols = ["manifest", "policy", "state", "consent", "instr"];
+          cols.forEach(function (col) {
+            var td = document.createElement("td");
+            td.className = "artefact-status pending";
+            td.dataset.e = "art-" + index + "-" + col;
+            td.dataset.status = "pending";
+            td.textContent = "\u2013";
+            tr.appendChild(td);
+          });
+
+          tbody.appendChild(tr);
+          artefactRowCount = Math.max(artefactRowCount, index + 1);
+          return tdService;
+        }
+
+        document
+          .getElementById("addArtefactRow")
+          .addEventListener("click", function () {
+            var tbody = document.querySelector("#artefactTable tbody");
+            var index = tbody.children.length;
+            var firstCell = addArtefactRowAt(index);
+            if (isEditing) firstCell.focus();
+            debouncedSave();
+          });
+
+        // ── Init ──
+        restoreData();
+      })();
+    </script>
   </body>
 </html>
