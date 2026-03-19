@@ -205,13 +205,25 @@
         border-top: 1px solid #d2d5d8;
       }
       .dept-header {
+        margin-top: 1.5rem;
         margin-bottom: 2.5rem;
+      }
+      .dept-sticky-title {
+        position: sticky;
+        top: 49px; /* height of nav */
+        z-index: 90;
+        background: #fff;
+        border-bottom: 1px solid #d2d5d8;
+        padding: 0.75rem 0;
+        margin: 0 -1.5rem;
+        padding-left: 1.5rem;
+        padding-right: 1.5rem;
       }
       .dept-name-bar {
         display: flex;
         align-items: center;
         gap: 1rem;
-        margin-bottom: 0.75rem;
+        margin-bottom: 0;
       }
       .dept-icon {
         width: 48px;
@@ -503,14 +515,16 @@
     <!-- ════════════════════════════════════════════════════════════ -->
     <section id="moj" class="dept-section">
       <div class="container">
-        <div class="dept-header">
+        <div class="dept-sticky-title">
           <div class="dept-name-bar">
             <div class="dept-icon" style="background:#912b88;">MoJ</div>
             <div>
-              <h2 style="margin-bottom:0.25rem;">Ministry of Justice</h2>
-              <div class="dept-meta">Permanent Secretary: Dr Josephine Farrar CB OBE (since July 2025)</div>
+              <h2 style="margin-bottom:0;">Ministry of Justice</h2>
             </div>
           </div>
+        </div>
+        <div class="dept-header">
+          <div class="dept-meta">Permanent Secretary: Dr Josephine Farrar CB OBE (since July 2025)</div>
           <div class="dept-scale">&pound;15.5bn department</div>
           <p style="font-size:1rem; color:#505a5f; max-width:700px; margin-top:0.75rem;">
             Justice services carry some of the highest stakes in government. Citizens arrive
@@ -730,14 +744,16 @@
     <!-- ════════════════════════════════════════════════════════════ -->
     <section id="dwp" class="dept-section">
       <div class="container">
-        <div class="dept-header">
+        <div class="dept-sticky-title">
           <div class="dept-name-bar">
             <div class="dept-icon" style="background:#1d70b8;">DWP</div>
             <div>
-              <h2 style="margin-bottom:0.25rem;">Department for Work &amp; Pensions</h2>
-              <div class="dept-meta">Permanent Secretary: Sir Peter Schofield KCB (stepping down July 2026)</div>
+              <h2 style="margin-bottom:0;">Department for Work &amp; Pensions</h2>
             </div>
           </div>
+        </div>
+        <div class="dept-header">
+          <div class="dept-meta">Permanent Secretary: Sir Peter Schofield KCB (stepping down July 2026)</div>
           <div class="dept-scale">&pound;268.5bn in benefit payments &middot; 7.3m UC claimants</div>
           <p style="font-size:1rem; color:#505a5f; max-width:700px; margin-top:0.75rem;">
             DWP has the highest volume of citizen interactions in government. Every one of
@@ -1093,14 +1109,16 @@
     <!-- ════════════════════════════════════════════════════════════ -->
     <section id="hmrc" class="dept-section">
       <div class="container">
-        <div class="dept-header">
+        <div class="dept-sticky-title">
           <div class="dept-name-bar">
             <div class="dept-icon" style="background:#00703c;">HMRC</div>
             <div>
-              <h2 style="margin-bottom:0.25rem;">HM Revenue &amp; Customs</h2>
-              <div class="dept-meta">Permanent Secretary: John-Paul Marks CB (appointed April 2025)</div>
+              <h2 style="margin-bottom:0;">HM Revenue &amp; Customs</h2>
             </div>
           </div>
+        </div>
+        <div class="dept-header">
+          <div class="dept-meta">Permanent Secretary: John-Paul Marks CB (appointed April 2025)</div>
           <div class="dept-scale">&pound;875.9bn revenue collected at 0.5p per pound</div>
           <p style="font-size:1rem; color:#505a5f; max-width:700px; margin-top:0.75rem;">
             HMRC processes the highest monetary value of any department. Its transformation
@@ -1349,14 +1367,16 @@
     <!-- ════════════════════════════════════════════════════════════ -->
     <section id="dfe" class="dept-section">
       <div class="container">
-        <div class="dept-header">
+        <div class="dept-sticky-title">
           <div class="dept-name-bar">
             <div class="dept-icon" style="background:#f47738;">DfE</div>
             <div>
-              <h2 style="margin-bottom:0.25rem;">Department for Education</h2>
-              <div class="dept-meta">Permanent Secretary: Susan Acland-Hood (since December 2020)</div>
+              <h2 style="margin-bottom:0;">Department for Education</h2>
             </div>
           </div>
+        </div>
+        <div class="dept-header">
+          <div class="dept-meta">Permanent Secretary: Susan Acland-Hood (since December 2020)</div>
           <div class="dept-scale">2.1m children eligible for FSM &middot; 638,700 with EHCPs</div>
           <p style="font-size:1rem; color:#505a5f; max-width:700px; margin-top:0.75rem;">
             DfE services are uniquely cross-departmental. Free school meals depend on DWP benefit
@@ -1605,14 +1625,16 @@
     <!-- ════════════════════════════════════════════════════════════ -->
     <section id="ho" class="dept-section">
       <div class="container">
-        <div class="dept-header">
+        <div class="dept-sticky-title">
           <div class="dept-name-bar">
             <div class="dept-icon" style="background:#d4351c;">HO</div>
             <div>
-              <h2 style="margin-bottom:0.25rem;">Home Office</h2>
-              <div class="dept-meta">Acting Permanent Secretary: Simon Ridley CB (Second PS, Migration and Borders)</div>
+              <h2 style="margin-bottom:0;">Home Office</h2>
             </div>
           </div>
+        </div>
+        <div class="dept-header">
+          <div class="dept-meta">Acting Permanent Secretary: Simon Ridley CB (Second PS, Migration and Borders)</div>
           <div class="dept-scale">&pound;27.8bn department &middot; &pound;7.3bn in fee income</div>
           <p style="font-size:1rem; color:#505a5f; max-width:700px; margin-top:0.75rem;">
             The Home Office is in the middle of its biggest digital transformation: the eVisa
@@ -1827,14 +1849,16 @@
     <!-- ════════════════════════════════════════════════════════════ -->
     <section id="dvla" class="dept-section">
       <div class="container">
-        <div class="dept-header">
+        <div class="dept-sticky-title">
           <div class="dept-name-bar">
             <div class="dept-icon" style="background:#4c6272;">DVLA</div>
             <div>
-              <h2 style="margin-bottom:0.25rem;">Driver and Vehicle Licensing Agency</h2>
-              <div class="dept-meta">Executive Agency of the Department for Transport</div>
+              <h2 style="margin-bottom:0;">Driver and Vehicle Licensing Agency</h2>
             </div>
           </div>
+        </div>
+        <div class="dept-header">
+          <div class="dept-meta">Executive Agency of the Department for Transport</div>
           <div class="dept-scale">High-volume transactional services</div>
           <p style="font-size:1rem; color:#505a5f; max-width:700px; margin-top:0.75rem;">
             DVLA handles some of the most routine government transactions &mdash; licence renewals,
