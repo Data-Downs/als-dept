@@ -201,7 +201,7 @@ export interface StoredTask {
   updatedAt: string;
 }
 
-export type AgentType = "dot" | "max";
+export type AgentType = "dot" | "max" | "none";
 export type ServiceMode = "json" | "mcp";
 export type ServiceType = "driving" | "benefits" | "family" | (string & {});
 export type ViewType =
@@ -210,7 +210,8 @@ export type ViewType =
   | "detail"
   | "chat"
   | "tasks"
-  | "plan";
+  | "plan"
+  | "services";
 
 export type ServicePlanStatus =
   | "locked"

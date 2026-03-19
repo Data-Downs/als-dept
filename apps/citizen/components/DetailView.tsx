@@ -13,9 +13,12 @@ export function DetailView() {
   const persona = useAppStore((s) => s.persona);
   const currentService = useAppStore((s) => s.currentService);
   const serviceName = useAppStore((s) => s.serviceName);
+  const agent = useAppStore((s) => s.agent);
   const navigateTo = useAppStore((s) => s.navigateTo);
   const startNewConversation = useAppStore((s) => s.startNewConversation);
   const openBottomSheet = useAppStore((s) => s.openBottomSheet);
+  const lifeEvents = useAppStore((s) => s.lifeEvents);
+  const isManualMode = agent === "none";
 
   if (!personaData || !currentService) return null;
 
@@ -120,15 +123,32 @@ export function DetailView() {
 
       {/* CTA block */}
       <div className="bg-white rounded-card shadow-sm p-4 mb-5">
-        <button
-          onClick={() => {
-            startNewConversation(currentService, serviceName);
-            navigateTo("chat", currentService, serviceName);
-          }}
-          className="w-full py-3 rounded-full font-bold text-sm text-white bg-govuk-blue  transition-colors touch-feedback"
-        >
-          Ask about {serviceName || currentService}
-        </button>
+        {isManualMode ? (
+          <button
+            onClick={() => {
+              // Find the govuk_url for this service from lifeEvents
+              const svc = lifeEvents
+                .flatMap((le) => le.services)
+                .find((s) => s.id === currentService);
+              const url =
+                svc?.govuk_url || `https://www.gov.uk/browse/${currentService}`;
+              window.open(url, "_blank");
+            }}
+            className="w-full py-3 rounded-full font-bold text-sm text-white bg-govuk-blue transition-colors touch-feedback"
+          >
+            View on GOV.UK
+          </button>
+        ) : (
+          <button
+            onClick={() => {
+              startNewConversation(currentService, serviceName);
+              navigateTo("chat", currentService, serviceName);
+            }}
+            className="w-full py-3 rounded-full font-bold text-sm text-white bg-govuk-blue transition-colors touch-feedback"
+          >
+            Ask about {serviceName || currentService}
+          </button>
+        )}
       </div>
 
       {/* Topic list */}
@@ -144,8 +164,8 @@ export function DetailView() {
         onSeeAll={() => navigateTo("tasks")}
       />
 
-      {/* Conversations for this service */}
-      {conversations.length > 0 && (
+      {/* Conversations for this service — hidden in manual mode */}
+      {!isManualMode && conversations.length > 0 && (
         <div className="mb-5">
           <h3 className="text-base font-extrabold text-govuk-black mb-3">
             Conversations

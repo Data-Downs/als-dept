@@ -48,6 +48,28 @@ const AGENT_CONTENT = {
     circleText: "text-gray-900",
     letter: "M",
   },
+  none: {
+    title: "You're in control",
+    features: [
+      "Direct links to GOV.UK",
+      "No data shared with AI",
+      "Browse services at your own pace",
+    ],
+    description:
+      "You'll access government services directly through GOV.UK. No AI agent will act on your behalf. You can switch to an agent at any time from settings.",
+    bg: "bg-gray-100",
+    textPrimary: "text-gray-900",
+    textSecondary: "text-gray-600",
+    divider: "bg-gray-300",
+    bulletBg: "bg-gray-200",
+    bulletText: "text-gray-700",
+    btnBg: "bg-gray-900",
+    btnText: "text-white",
+    linkText: "text-gray-500 hover:text-gray-900",
+    circleBg: "bg-gray-300",
+    circleText: "text-gray-700",
+    letter: "—",
+  },
 } as const;
 
 export function AgentIntroScreen() {
@@ -131,7 +153,9 @@ export function AgentIntroScreen() {
         <p
           className={`text-sm font-semibold ${content.textSecondary} mb-2 uppercase tracking-wide`}
         >
-          How {agent === "dot" ? "Dot" : "Max"} works
+          How{" "}
+          {agent === "dot" ? "Dot" : agent === "max" ? "Max" : "manual mode"}{" "}
+          works
         </p>
         <p className={`text-sm leading-relaxed ${content.textSecondary}`}>
           {content.description}

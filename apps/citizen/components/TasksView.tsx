@@ -118,7 +118,9 @@ export function TasksView() {
   const personaData = useAppStore((s) => s.personaData);
   const openBottomSheet = useAppStore((s) => s.openBottomSheet);
   const showToast = useAppStore((s) => s.showToast);
+  const agent = useAppStore((s) => s.agent);
   const taskVersion = useAppStore((s) => s.taskVersion);
+  const isManualMode = agent === "none";
   const [activeFilter, setActiveFilter] = useState<FilterTab>("all");
   const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set());
   const [, forceUpdate] = useState(0);
@@ -378,7 +380,8 @@ export function TasksView() {
     );
   };
 
-  const hasNoTasks = yourGroups.length === 0 && agentGroups.length === 0;
+  const hasNoTasks =
+    yourGroups.length === 0 && (isManualMode || agentGroups.length === 0);
 
   return (
     <div className="max-w-lg mx-auto pb-20">
@@ -425,17 +428,19 @@ export function TasksView() {
           <h3 className="text-base font-extrabold text-govuk-black mb-2">
             Your to-dos ({yourTasks.length})
           </h3>
-          <p className="text-xs text-govuk-dark-grey mb-2">
-            Swipe right to delegate to agent
-          </p>
+          {!isManualMode && (
+            <p className="text-xs text-govuk-dark-grey mb-2">
+              Swipe right to delegate to agent
+            </p>
+          )}
           <div className="bg-white rounded-card shadow-sm divide-y divide-gray-100 overflow-hidden">
-            {yourGroups.map((g) => renderGroup(g, true))}
+            {yourGroups.map((g) => renderGroup(g, !isManualMode))}
           </div>
         </div>
       )}
 
-      {/* Agent to-dos */}
-      {agentGroups.length > 0 && (
+      {/* Agent to-dos — hidden in manual mode */}
+      {!isManualMode && agentGroups.length > 0 && (
         <div className="mb-5">
           <h3 className="text-base font-extrabold blue-ripple-text mb-2">
             Agent to-dos ({agentTasks.length})

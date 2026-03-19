@@ -255,13 +255,20 @@ export function UnifiedTimeline({
     });
   };
 
+  // In manual mode, treat all items as the user's own
+  const isManualMode = useAppStore((s) => s.agent) === "none";
+
   // Split into user/data vs agent items
-  const yourItems = items.filter(
-    (item) => item.source !== "agent" && item.taskType !== "agent",
-  );
-  const agentItems = items.filter(
-    (item) => item.source === "agent" || item.taskType === "agent",
-  );
+  const yourItems = isManualMode
+    ? items
+    : items.filter(
+        (item) => item.source !== "agent" && item.taskType !== "agent",
+      );
+  const agentItems = isManualMode
+    ? []
+    : items.filter(
+        (item) => item.source === "agent" || item.taskType === "agent",
+      );
 
   // Group items by object (e.g. vehicle)
   const yourGroups = groupTimelineItems(yourItems, personaData);

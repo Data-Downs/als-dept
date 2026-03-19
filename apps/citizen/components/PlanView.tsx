@@ -48,6 +48,7 @@ export function PlanView() {
   const agent = useAppStore((s) => s.agent);
   const persona = useAppStore((s) => s.persona);
   const agentName = agent === "max" ? "Max" : "Dot";
+  const isManualMode = agent === "none";
 
   const [expandedServiceId, setExpandedServiceId] = useState<string | null>(
     null,
@@ -330,12 +331,25 @@ export function PlanView() {
                                     >
                                       {hint.uploadLabel}
                                     </button>
-                                    <button
-                                      onClick={() => handleStartService(svcId)}
-                                      className="w-full py-2.5 rounded-full bg-white border border-gray-300 text-govuk-black text-sm font-bold hover:bg-gray-50 transition-colors touch-feedback"
-                                    >
-                                      {hint.chatLabel}
-                                    </button>
+                                    {isManualMode ? (
+                                      <button
+                                        onClick={() =>
+                                          window.open(svc.govuk_url, "_blank")
+                                        }
+                                        className="w-full py-2.5 rounded-full bg-white border border-gray-300 text-govuk-black text-sm font-bold hover:bg-gray-50 transition-colors touch-feedback"
+                                      >
+                                        Open on GOV.UK
+                                      </button>
+                                    ) : (
+                                      <button
+                                        onClick={() =>
+                                          handleStartService(svcId)
+                                        }
+                                        className="w-full py-2.5 rounded-full bg-white border border-gray-300 text-govuk-black text-sm font-bold hover:bg-gray-50 transition-colors touch-feedback"
+                                      >
+                                        {hint.chatLabel}
+                                      </button>
+                                    )}
                                     <button
                                       onClick={() => handleSkipService(svcId)}
                                       className="text-sm text-govuk-dark-grey underline hover:text-govuk-black transition-colors mt-1"
@@ -411,7 +425,16 @@ export function PlanView() {
                                 )}
 
                                 <div className="flex items-center gap-3 pt-1">
-                                  {agentLed ? (
+                                  {isManualMode ? (
+                                    <button
+                                      onClick={() =>
+                                        window.open(svc.govuk_url, "_blank")
+                                      }
+                                      className="flex-1 py-2.5 rounded-full bg-govuk-blue text-white text-sm font-bold transition-colors touch-feedback"
+                                    >
+                                      Open on GOV.UK
+                                    </button>
+                                  ) : agentLed ? (
                                     delegated[svcId] ? (
                                       <span className="flex-1 py-2.5 rounded-full bg-govuk-green text-white text-sm font-bold text-center inline-flex items-center justify-center gap-1.5">
                                         <svg

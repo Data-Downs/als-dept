@@ -9,6 +9,7 @@ import { DetailView } from "./DetailView";
 import { ChatView } from "./ChatView";
 import { PlanView } from "./PlanView";
 import { TasksView } from "./TasksView";
+import { ServicesView } from "./ServicesView";
 import { MessageInput } from "./MessageInput";
 import { PersonaSelectorOverlay } from "./PersonaSelectorOverlay";
 import { PersonalDataDashboard } from "./personal-data/PersonalDataDashboard";
@@ -94,32 +95,57 @@ function BottomTabBar() {
             </svg>
           }
         />
-        <TabButton
-          label={agent === "max" ? "Max" : "Dot"}
-          active={currentView === "chat"}
-          onClick={() => {
-            // Start a fresh conversation so the demo auto-type triggers
-            const state = useAppStore.getState();
-            if (state.conversationHistory.length > 0) {
-              state.startNewConversation(null, null);
+        {agent === "none" ? (
+          <TabButton
+            label="Services"
+            active={currentView === "services"}
+            onClick={() => navigateTo("services")}
+            icon={
+              <svg
+                width="22"
+                height="22"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.8"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <rect x="3" y="3" width="7" height="7" />
+                <rect x="14" y="3" width="7" height="7" />
+                <rect x="3" y="14" width="7" height="7" />
+                <rect x="14" y="14" width="7" height="7" />
+              </svg>
             }
-            navigateTo("chat");
-          }}
-          icon={
-            <svg
-              width="22"
-              height="22"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.8"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
-            </svg>
-          }
-        />
+          />
+        ) : (
+          <TabButton
+            label={agent === "max" ? "Max" : "Dot"}
+            active={currentView === "chat"}
+            onClick={() => {
+              // Start a fresh conversation so the demo auto-type triggers
+              const state = useAppStore.getState();
+              if (state.conversationHistory.length > 0) {
+                state.startNewConversation(null, null);
+              }
+              navigateTo("chat");
+            }}
+            icon={
+              <svg
+                width="22"
+                height="22"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.8"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
+              </svg>
+            }
+          />
+        )}
         <TabButton
           label="To do"
           active={currentView === "tasks"}
@@ -221,15 +247,18 @@ export function AppShell() {
   const setAgent = useAppStore((s) => s.setAgent);
   const settingsPaneOpen = useAppStore((s) => s.settingsPaneOpen);
   const personaSelectorOpen = useAppStore((s) => s.personaSelectorOpen);
+  const agent = useAppStore((s) => s.agent);
   const agentIntroVisible = useAppStore((s) => s.agentIntroVisible);
 
   const journeyComplete = !!(ucState && TERMINAL_STATES.has(ucState));
+  const isManualMode = agent === "none";
 
   // Auto-load Anna Cotton on mount (demo mode — skip persona picker)
   useEffect(() => {
     const savedAgent = sessionStorage.getItem("c02_agent") as
       | "dot"
       | "max"
+      | "none"
       | null;
     if (savedAgent) {
       setAgent(savedAgent);
@@ -260,9 +289,11 @@ export function AppShell() {
 
   const showInput =
     persona &&
+    !isManualMode &&
     currentView !== "persona-picker" &&
     currentView !== "plan" &&
     currentView !== "tasks" &&
+    currentView !== "services" &&
     !journeyComplete;
 
   return (
@@ -289,7 +320,9 @@ export function AppShell() {
           {currentView === "persona-picker" && <PersonaPicker />}
           {currentView === "dashboard" && <Dashboard />}
           {currentView === "detail" && <DetailView />}
-          {currentView === "chat" && <ChatView />}
+          {currentView === "chat" &&
+            (isManualMode ? <Dashboard /> : <ChatView />)}
+          {currentView === "services" && <ServicesView />}
           {currentView === "plan" && <PlanView />}
           {currentView === "tasks" && <TasksView />}
         </div>

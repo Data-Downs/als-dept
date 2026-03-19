@@ -27,6 +27,14 @@ const AGENTS: Array<{
       "Acts on your behalf and handles tasks in the background. Gets things done quickly.",
     traits: ["Proactive", "Autonomous", "Fast"],
   },
+  {
+    id: "none",
+    name: "NO AGENT",
+    subtitle: "Manual mode",
+    description:
+      "Browse services and visit GOV.UK directly. No AI, no chat, no automation.",
+    traits: ["Manual", "Direct links", "You do everything"],
+  },
 ];
 
 export function AgentSelectionSheet() {
@@ -47,12 +55,25 @@ export function AgentSelectionSheet() {
       {AGENTS.map((agent) => {
         const isDot = agent.id === "dot";
         const isMax = agent.id === "max";
+        const isNone = agent.id === "none";
         const isSelected = selected === agent.id;
 
-        // Dot: pale blue (safe). Max: pale amber (caution).
-        const baseBg = isDot ? "bg-blue-50/70" : "bg-amber-50/70";
-        const selectedBorder = isDot ? "border-govuk-blue" : "border-amber-500";
-        const unselectedBorder = isDot ? "border-blue-200" : "border-amber-200";
+        // Dot: pale blue (safe). Max: pale amber (caution). None: neutral grey.
+        const baseBg = isDot
+          ? "bg-blue-50/70"
+          : isMax
+            ? "bg-amber-50/70"
+            : "bg-gray-50/70";
+        const selectedBorder = isDot
+          ? "border-govuk-blue"
+          : isMax
+            ? "border-amber-500"
+            : "border-gray-500";
+        const unselectedBorder = isDot
+          ? "border-blue-200"
+          : isMax
+            ? "border-amber-200"
+            : "border-gray-200";
 
         return (
           <button
@@ -67,10 +88,32 @@ export function AgentSelectionSheet() {
             <div className="flex items-center gap-2.5 mb-1">
               <div
                 className={`w-8 h-8 rounded-full flex items-center justify-center text-white font-bold text-xs ${
-                  isDot ? "bg-govuk-blue" : "bg-amber-500"
+                  isDot
+                    ? "bg-govuk-blue"
+                    : isMax
+                      ? "bg-amber-500"
+                      : "bg-gray-500"
                 }`}
               >
-                {isDot ? "D" : "M"}
+                {isDot ? (
+                  "D"
+                ) : isMax ? (
+                  "M"
+                ) : (
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="white"
+                    strokeWidth="2.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                    <line x1="8" y1="8" x2="16" y2="16" />
+                  </svg>
+                )}
               </div>
               <div className="flex-1 min-w-0">
                 <strong className="text-sm text-govuk-black">
@@ -83,7 +126,11 @@ export function AgentSelectionSheet() {
               {isSelected && (
                 <span
                   className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 ${
-                    isDot ? "bg-govuk-blue" : "bg-amber-500"
+                    isDot
+                      ? "bg-govuk-blue"
+                      : isMax
+                        ? "bg-amber-500"
+                        : "bg-gray-500"
                   }`}
                 >
                   <svg
@@ -149,6 +196,28 @@ export function AgentSelectionSheet() {
               </div>
             )}
 
+            {/* No AI notice */}
+            {isNone && (
+              <div className="flex items-center gap-1.5 mb-1.5 px-2 py-1 rounded-md bg-gray-100/80 w-fit">
+                <svg
+                  className="shrink-0"
+                  width="12"
+                  height="12"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="#4b5563"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                >
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                  <line x1="8" y1="8" x2="16" y2="16" />
+                </svg>
+                <span className="text-[11px] font-medium text-gray-700">
+                  No AI — you browse GOV.UK directly
+                </span>
+              </div>
+            )}
+
             <div className="flex gap-1.5">
               {agent.traits.map((trait) => (
                 <span
@@ -156,7 +225,9 @@ export function AgentSelectionSheet() {
                   className={`px-2 py-0.5 rounded-full text-[11px] font-medium ${
                     isDot
                       ? "bg-blue-100 text-govuk-blue"
-                      : "bg-amber-100 text-amber-800"
+                      : isMax
+                        ? "bg-amber-100 text-amber-800"
+                        : "bg-gray-100 text-gray-700"
                   }`}
                 >
                   {trait}
