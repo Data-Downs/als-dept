@@ -7,399 +7,354 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
       rel="stylesheet"
     />
     <style>
-      :root {
-        --gov-blue: #1d70b8;
-        --gov-blue-light: #e8f0f8;
-        --gov-blue-mid: #b4cde6;
-        --ink: #0b0c0c;
-        --ink-secondary: #505a5f;
-        --ink-tertiary: #8a9099;
-        --surface: #ffffff;
-        --surface-warm: #f8f7f5;
-        --rule: #d2d5d8;
-        --accent-warm: #f47738;
-        --font-display: "DM Serif Display", Georgia, "Times New Roman", serif;
-        --font-body:
-          "Instrument Sans", -apple-system, BlinkMacSystemFont, "Segoe UI",
-          sans-serif;
-      }
-
+      /* ── Reset & Base ── */
       *,
       *::before,
       *::after {
+        box-sizing: border-box;
         margin: 0;
         padding: 0;
-        box-sizing: border-box;
       }
-
       html {
-        font-size: 18px;
         scroll-behavior: smooth;
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
       }
-
       body {
-        font-family: var(--font-body);
-        color: var(--ink);
-        background: var(--surface);
+        font-family: "Inter", Arial, sans-serif;
+        color: #0b0c0c;
         line-height: 1.6;
+        background: #fff;
+        -webkit-font-smoothing: antialiased;
+      }
+      a {
+        color: #1d70b8;
+        text-decoration: none;
+      }
+      a:hover {
+        text-decoration: underline;
+        color: #003078;
+      }
+      code,
+      pre {
+        font-family: "JetBrains Mono", monospace;
       }
 
-      /* ─── Top rule ─── */
-      body::before {
-        content: "";
-        display: block;
-        height: 6px;
-        background: var(--gov-blue);
-      }
-
-      /* ─── Layout ─── */
+      /* ── Layout ── */
       .container {
         max-width: 960px;
         margin: 0 auto;
-        padding: 0 2rem;
+        padding: 0 1.5rem;
+      }
+      .section {
+        padding: 4rem 0;
+      }
+      .section-alt {
+        background: #f3f2f1;
       }
 
-      /* ─── Header ─── */
-      .site-header {
-        padding: 2.5rem 0 2rem;
-        border-bottom: 1px solid var(--rule);
+      h1,
+      h2,
+      h3 {
+        line-height: 1.2;
       }
-
-      .site-header .overline {
-        font-family: var(--font-body);
-        font-size: 0.72rem;
+      h2 {
+        font-size: 1.75rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+      }
+      h3 {
+        font-size: 1.25rem;
         font-weight: 600;
-        letter-spacing: 0.14em;
-        text-transform: uppercase;
-        color: var(--gov-blue);
-        margin-bottom: 0.75rem;
-      }
-
-      .site-header h1 {
-        font-family: var(--font-display);
-        font-weight: 400;
-        font-size: 2.8rem;
-        line-height: 1.1;
-        color: var(--ink);
         margin-bottom: 0.5rem;
       }
-
-      .site-header h1 em {
-        font-style: italic;
-        color: var(--gov-blue);
+      .section-intro {
+        font-size: 1.1rem;
+        color: #505a5f;
+        max-width: 700px;
+        margin-bottom: 2rem;
       }
 
-      .site-header .subtitle {
-        font-size: 1.05rem;
-        color: var(--ink-secondary);
-        max-width: 38rem;
-        line-height: 1.55;
+      /* ── Nav ── */
+      .nav {
+        background: #fff;
+        border-bottom: 1px solid #b1b4b6;
+        padding: 0.75rem 0;
+        position: sticky;
+        top: 0;
+        z-index: 100;
       }
-
-      /* ─── Introduction ─── */
-      .introduction {
-        padding: 3rem 0;
-        border-bottom: 1px solid var(--rule);
-      }
-
-      .intro-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 3rem;
-      }
-
-      .intro-grid p {
-        font-size: 0.95rem;
-        color: var(--ink-secondary);
-        line-height: 1.7;
-      }
-
-      .intro-grid p strong {
-        color: var(--ink);
-        font-weight: 600;
-      }
-
-      .intro-lead {
-        font-family: var(--font-display);
-        font-size: 1.35rem !important;
-        color: var(--ink) !important;
-        line-height: 1.45 !important;
-        grid-column: 1 / -1;
-      }
-
-      /* ─── Sections ─── */
-      .section {
-        padding: 4rem 0 3.5rem;
-      }
-
-      .section + .section {
-        border-top: 1px solid var(--rule);
-      }
-
-      .section-label {
-        display: inline-flex;
+      .nav .container {
+        display: flex;
         align-items: center;
-        gap: 0.6rem;
-        font-size: 0.7rem;
+        justify-content: space-between;
+        gap: 1rem;
+      }
+      .nav-brand {
+        font-weight: 700;
+        font-size: 1rem;
+        color: #0b0c0c;
+        white-space: nowrap;
+      }
+      .nav-links {
+        display: flex;
+        gap: 1.25rem;
+        list-style: none;
+        flex-wrap: wrap;
+        align-items: center;
+      }
+      .nav-links a {
+        font-size: 0.85rem;
+        font-weight: 500;
+        color: #505a5f;
+      }
+      .nav-links a:hover {
+        color: #1d70b8;
+        text-decoration: none;
+      }
+      @media (max-width: 640px) {
+        .nav-links {
+          display: none;
+        }
+      }
+
+      /* ── Hero ── */
+      .hero {
+        padding: 5rem 0 4rem;
+      }
+      .hero-label {
+        display: inline-block;
+        background: #f3f2f1;
+        color: #505a5f;
+        font-size: 0.8rem;
         font-weight: 600;
-        letter-spacing: 0.14em;
+        padding: 0.25rem 0.75rem;
+        border-radius: 2px;
         text-transform: uppercase;
-        color: var(--gov-blue);
+        letter-spacing: 0.05em;
         margin-bottom: 1.25rem;
       }
-
-      .section-label::before {
-        content: "";
-        display: block;
-        width: 24px;
-        height: 2px;
-        background: var(--gov-blue);
-      }
-
-      .section h2 {
-        font-family: var(--font-display);
-        font-weight: 400;
-        font-size: 2.1rem;
-        line-height: 1.15;
-        margin-bottom: 1rem;
-        max-width: 28rem;
-      }
-
-      .section-intro {
-        font-size: 1.05rem;
-        color: var(--ink-secondary);
-        max-width: 36rem;
-        line-height: 1.6;
-        margin-bottom: 2.5rem;
-      }
-
-      /* ─── Detail grid ─── */
-      .detail-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 1.5rem 3rem;
-      }
-
-      .detail-block {
-        padding: 1.5rem 0;
-        border-top: 2px solid var(--ink);
-      }
-
-      .detail-block h3 {
-        font-family: var(--font-body);
-        font-size: 0.82rem;
-        font-weight: 600;
-        letter-spacing: 0.06em;
-        text-transform: uppercase;
-        color: var(--ink);
-        margin-bottom: 0.6rem;
-      }
-
-      .detail-block p {
-        font-size: 0.9rem;
-        color: var(--ink-secondary);
-        line-height: 1.65;
-      }
-
-      /* ─── Artefact strip ─── */
-      .artefact-strip {
-        margin-top: 2.5rem;
-        padding: 1.75rem 2rem;
-        background: var(--surface-warm);
-        border-left: 3px solid var(--gov-blue);
-      }
-
-      .artefact-strip h3 {
-        font-family: var(--font-display);
-        font-size: 1.1rem;
+      .hero h1 {
+        font-size: 2.75rem;
+        font-weight: 700;
         margin-bottom: 0.75rem;
       }
+      .hero-subtitle {
+        font-size: 1.35rem;
+        color: #505a5f;
+        font-weight: 400;
+        max-width: 640px;
+        margin-bottom: 1.5rem;
+      }
+      .hero-desc {
+        font-size: 1.05rem;
+        color: #505a5f;
+        max-width: 640px;
+        margin-bottom: 2rem;
+      }
+      @media (max-width: 640px) {
+        .hero h1 {
+          font-size: 2rem;
+        }
+        .hero-subtitle {
+          font-size: 1.15rem;
+        }
+      }
 
+      /* ── Cards ── */
+      .grid-2 {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
+      }
+      @media (max-width: 640px) {
+        .grid-2 {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .card {
+        background: #fff;
+        border: 1px solid #b1b4b6;
+        border-radius: 2px;
+        padding: 1.5rem;
+      }
+      .card-accent {
+        border-left: 4px solid;
+      }
+      .card-blue {
+        border-left-color: #1d70b8;
+      }
+      .card-green {
+        border-left-color: #00703c;
+      }
+      .card-orange {
+        border-left-color: #f47738;
+      }
+      .card-purple {
+        border-left-color: #912b88;
+      }
+      .card h3 {
+        margin-bottom: 0.5rem;
+      }
+      .card p {
+        color: #505a5f;
+        font-size: 0.95rem;
+      }
+      .card-tag {
+        display: inline-block;
+        font-size: 0.7rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: #505a5f;
+        margin-bottom: 0.75rem;
+      }
+      .card-alt {
+        background: #f3f2f1;
+        border: 1px solid #e0dfde;
+      }
+
+      /* ── Callout ── */
+      .callout {
+        background: #f3f2f1;
+        border-left: 4px solid #b1b4b6;
+        padding: 1rem 1.25rem;
+        margin-top: 1.5rem;
+        font-size: 0.95rem;
+        color: #505a5f;
+      }
+      .callout-blue {
+        background: #0b0c0c;
+        border-left-color: #1d70b8;
+        color: rgba(255, 255, 255, 0.9);
+      }
+
+      /* ── Artefact strip ── */
+      .artefact-strip {
+        margin-top: 2rem;
+        padding: 1.5rem;
+        background: #f3f2f1;
+        border-left: 4px solid #1d70b8;
+        border-radius: 2px;
+      }
+      .artefact-strip h3 {
+        margin-bottom: 0.75rem;
+      }
       .artefact-list {
         display: flex;
         flex-wrap: wrap;
         gap: 0.5rem;
         list-style: none;
       }
-
       .artefact-list li {
         font-size: 0.78rem;
         font-weight: 500;
         letter-spacing: 0.03em;
         padding: 0.35rem 0.85rem;
-        background: var(--surface);
-        border: 1px solid var(--rule);
-        color: var(--ink);
+        background: #fff;
+        border: 1px solid #b1b4b6;
+        border-radius: 2px;
+        color: #0b0c0c;
       }
 
-      /* ─── Vision callout ─── */
-      .vision-callout {
-        margin-top: 2.5rem;
-        padding: 2rem 2rem 2rem 2.25rem;
-        background: var(--gov-blue);
-        color: white;
-        position: relative;
+      /* ── Footer ── */
+      .footer {
+        background: #0b0c0c;
+        color: #fff;
+        padding: 2.5rem 0;
+        margin-top: 0;
       }
-
-      .vision-callout::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(
-          135deg,
-          transparent 60%,
-          rgba(255, 255, 255, 0.04) 100%
-        );
-        pointer-events: none;
-      }
-
-      .vision-callout p {
-        font-family: var(--font-display);
-        font-size: 1.15rem;
-        line-height: 1.5;
-        color: rgba(255, 255, 255, 0.95);
-        position: relative;
-      }
-
-      /* ─── Footer ─── */
-      .site-footer {
-        padding: 2rem 0;
-        border-top: 1px solid var(--rule);
-        margin-top: 1rem;
-      }
-
       .footer-inner {
         display: flex;
         justify-content: space-between;
         align-items: baseline;
       }
-
-      .site-footer p {
-        font-size: 0.75rem;
-        color: var(--ink-tertiary);
-        line-height: 1.5;
+      .footer p {
+        font-size: 0.85rem;
+        color: #b1b4b6;
       }
-
       .footer-tag {
-        font-size: 0.65rem;
+        font-size: 0.7rem;
         font-weight: 600;
-        letter-spacing: 0.1em;
+        letter-spacing: 0.08em;
         text-transform: uppercase;
-        color: var(--ink-tertiary);
+        color: #b1b4b6;
         padding: 0.3rem 0.65rem;
-        border: 1px solid var(--rule);
+        border: 1px solid #505a5f;
+        border-radius: 2px;
       }
-
-      /* ─── Responsive ─── */
-      @media (max-width: 680px) {
-        html {
-          font-size: 16px;
-        }
-
-        .site-header h1 {
-          font-size: 2rem;
-        }
-
-        .intro-grid,
-        .detail-grid {
-          grid-template-columns: 1fr;
-          gap: 1.5rem;
-        }
-
-        .section h2 {
-          font-size: 1.7rem;
-        }
-
+      @media (max-width: 640px) {
         .footer-inner {
           flex-direction: column;
           gap: 0.75rem;
         }
       }
-
-      /* ─── Entrance animations ─── */
-      @keyframes fade-up {
-        from {
-          opacity: 0;
-          transform: translateY(16px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-
-      .site-header,
-      .introduction,
-      .section,
-      .site-footer {
-        animation: fade-up 0.6s ease-out both;
-      }
-
-      .introduction {
-        animation-delay: 0.1s;
-      }
-      .section:nth-of-type(1) {
-        animation-delay: 0.15s;
-      }
-      .section:nth-of-type(2) {
-        animation-delay: 0.2s;
-      }
-      .site-footer {
-        animation-delay: 0.25s;
-      }
     </style>
   </head>
   <body>
-    <header class="site-header">
+    <nav class="nav">
       <div class="container">
-        <p class="overline">Reference Architecture &amp; Prototype</p>
-        <h1>Agentic <em>Legibility</em> Stack</h1>
-        <p class="subtitle">
+        <span class="nav-brand">Agentic Legibility Stack</span>
+        <ul class="nav-links">
+          <li><a href="#legibility-studio">Legibility Studio</a></li>
+          <li><a href="#citizen-experience">Citizen Experience</a></li>
+          <li><a href="briefing.html">Briefing</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <section class="hero">
+      <div class="container">
+        <span class="hero-label"
+          >Department Demo &mdash; Reference Architecture</span
+        >
+        <h1>Agentic Legibility Stack</h1>
+        <p class="hero-subtitle">
           A working prototype demonstrating how UK government services could be
-          delivered through AI agents — with full transparency, auditability,
-          and citizen control.
+          delivered through AI agents &mdash; with full transparency,
+          auditability, and citizen control.
+        </p>
+        <p class="hero-desc">
+          This project addresses a fundamental question: how should government
+          services work in a world where citizens interact through AI agents
+          rather than web forms?
         </p>
       </div>
-    </header>
+    </section>
 
-    <section class="introduction">
+    <section class="section section-alt">
       <div class="container">
-        <div class="intro-grid">
-          <p class="intro-lead">
-            This project addresses a fundamental question: how should government
-            services work in a world where citizens interact through AI agents
-            rather than web forms?
-          </p>
-          <p>
-            <strong>The challenge is twofold.</strong> Citizens need a better
-            way to navigate the complexity of government — one that works across
-            departments, anticipates their needs, and handles the bureaucratic
-            burden on their behalf. And departments need a clear framework for
-            making their services accessible to AI agents safely and
-            transparently.
-          </p>
-          <p>
-            <strong>This stack provides both sides.</strong> A citizen-facing
-            prototype shows how the future of GOV.UK could feel. An
-            administrative studio shows departments exactly what they need to
-            publish — and what happens when they do.
-          </p>
+        <div class="grid-2">
+          <div class="card card-alt">
+            <p style="font-size: 0.95rem; color: #505a5f; line-height: 1.7">
+              <strong style="color: #0b0c0c">The challenge is twofold.</strong>
+              Citizens need a better way to navigate the complexity of
+              government &mdash; one that works across departments, anticipates
+              their needs, and handles the bureaucratic burden on their behalf.
+              And departments need a clear framework for making their services
+              accessible to AI agents safely and transparently.
+            </p>
+          </div>
+          <div class="card card-alt">
+            <p style="font-size: 0.95rem; color: #505a5f; line-height: 1.7">
+              <strong style="color: #0b0c0c"
+                >This stack provides both sides.</strong
+              >
+              A citizen-facing prototype shows how the future of GOV.UK could
+              feel. An administrative studio shows departments exactly what they
+              need to publish &mdash; and what happens when they do.
+            </p>
+          </div>
         </div>
       </div>
     </section>
 
     <section class="section" id="legibility-studio">
       <div class="container">
-        <p class="section-label">Platform One</p>
+        <span class="hero-label">Platform One</span>
         <h2>Legibility Studio</h2>
         <p class="section-intro">
           An administrative platform that helps government departments make
@@ -408,17 +363,19 @@
           machine-readable artefacts.
         </p>
 
-        <div class="detail-grid">
-          <div class="detail-block">
+        <div class="grid-2">
+          <div class="card card-accent card-blue">
+            <p class="card-tag">Inventory</p>
             <h3>Service Inventory</h3>
             <p>
               A complete catalogue of government services, classified by
-              typology — benefits, entitlements, registrations, obligations,
-              applications — with their current readiness for agentic
-              interaction.
+              typology &mdash; benefits, entitlements, registrations,
+              obligations, applications &mdash; with their current readiness for
+              agentic interaction.
             </p>
           </div>
-          <div class="detail-block">
+          <div class="card card-accent card-green">
+            <p class="card-tag">Completeness</p>
             <h3>Artefact Completeness</h3>
             <p>
               Each service requires four artefacts to be legible: a manifest, a
@@ -427,22 +384,24 @@
               authored.
             </p>
           </div>
-          <div class="detail-block">
+          <div class="card card-accent card-orange">
+            <p class="card-tag">Analysis</p>
             <h3>Gap Analysis</h3>
             <p>
               A department-level view showing how ready each service is for
-              agentic delivery. Identifies precisely what work remains — which
-              artefacts are missing, which rules are incomplete, which journeys
-              lack consent models.
+              agentic delivery. Identifies precisely what work remains &mdash;
+              which artefacts are missing, which rules are incomplete, which
+              journeys lack consent models.
             </p>
           </div>
-          <div class="detail-block">
+          <div class="card card-accent card-purple">
+            <p class="card-tag">Audit</p>
             <h3>Evidence &amp; Audit</h3>
             <p>
               Every interaction between an agent and a government service
               generates an immutable evidence trail. The studio provides full
-              replay capability — what happened, when, what data was shared, and
-              what decisions were made.
+              replay capability &mdash; what happened, when, what data was
+              shared, and what decisions were made.
             </p>
           </div>
         </div>
@@ -460,27 +419,29 @@
       </div>
     </section>
 
-    <section class="section" id="citizen-experience">
+    <section class="section section-alt" id="citizen-experience">
       <div class="container">
-        <p class="section-label">Platform Two</p>
+        <span class="hero-label">Platform Two</span>
         <h2>Citizen Experience</h2>
         <p class="section-intro">
           A prototype of how the future GOV.UK app could work through agentic
-          technology — where citizens interact conversationally with an AI agent
-          that navigates government services on their behalf.
+          technology &mdash; where citizens interact conversationally with an AI
+          agent that navigates government services on their behalf.
         </p>
 
-        <div class="detail-grid">
-          <div class="detail-block">
+        <div class="grid-2">
+          <div class="card">
+            <p class="card-tag">Interaction</p>
             <h3>Conversational Interaction</h3>
             <p>
               Citizens describe their situation in plain language. The agent
               understands what services are relevant, checks eligibility,
-              collects the necessary information, and submits applications —
-              explaining every step as it goes.
+              collects the necessary information, and submits applications
+              &mdash; explaining every step as it goes.
             </p>
           </div>
-          <div class="detail-block">
+          <div class="card">
+            <p class="card-tag">Orchestration</p>
             <h3>Cross-Department Orchestration</h3>
             <p>
               Life events rarely respect departmental boundaries. A bereavement,
@@ -489,37 +450,42 @@
               single conversation.
             </p>
           </div>
-          <div class="detail-block">
+          <div class="card">
+            <p class="card-tag">Proactive</p>
             <h3>Proactive Notifications</h3>
             <p>
               Rather than requiring citizens to know which services exist, the
               agent identifies relevant entitlements and obligations based on
-              their circumstances — surfacing what matters before the citizen
-              has to search for it.
+              their circumstances &mdash; surfacing what matters before the
+              citizen has to search for it.
             </p>
           </div>
-          <div class="detail-block">
+          <div class="card">
+            <p class="card-tag">Transparency</p>
             <h3>Full Transparency</h3>
             <p>
-              Every action the agent takes is visible to the citizen — what data
-              was shared, with whom, why, and what the outcome was. Citizens
-              maintain control throughout, with the ability to revoke consent at
-              any point.
+              Every action the agent takes is visible to the citizen &mdash;
+              what data was shared, with whom, why, and what the outcome was.
+              Citizens maintain control throughout, with the ability to revoke
+              consent at any point.
             </p>
           </div>
         </div>
 
-        <div class="vision-callout">
-          <p>
+        <div
+          class="callout callout-blue"
+          style="margin-top: 2rem; padding: 1.5rem 1.75rem; border-radius: 2px"
+        >
+          <p style="font-size: 1.05rem; line-height: 1.6">
             The vision is a single, personalised interface to all of government
-            — where an agent handles the complexity of navigating between
+            &mdash; where an agent handles the complexity of navigating between
             departments, and the citizen simply describes what they need.
           </p>
         </div>
       </div>
     </section>
 
-    <footer class="site-footer">
+    <footer class="footer">
       <div class="container">
         <div class="footer-inner">
           <p>

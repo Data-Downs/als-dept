@@ -1,0 +1,1062 @@
+<!doctype html>
+<html lang="en-GB">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Department Demo Personas — Design &amp; Scripts</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /* ── Reset & Base ── */
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        font-family: "Inter", Arial, sans-serif;
+        color: #0b0c0c;
+        line-height: 1.6;
+        background: #fff;
+        -webkit-font-smoothing: antialiased;
+      }
+      a {
+        color: #1d70b8;
+        text-decoration: none;
+      }
+      a:hover {
+        text-decoration: underline;
+        color: #003078;
+      }
+      code,
+      pre {
+        font-family: "JetBrains Mono", monospace;
+      }
+
+      /* ── Layout ── */
+      .container {
+        max-width: 960px;
+        margin: 0 auto;
+        padding: 0 1.5rem;
+      }
+      .section {
+        padding: 4rem 0;
+      }
+      .section-alt {
+        background: #f3f2f1;
+      }
+
+      h1,
+      h2,
+      h3,
+      h4 {
+        line-height: 1.2;
+      }
+      h2 {
+        font-size: 1.75rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+      }
+      h3 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+      }
+      h4 {
+        font-size: 1.05rem;
+        font-weight: 600;
+        margin-bottom: 0.35rem;
+      }
+      .section-intro {
+        font-size: 1.1rem;
+        color: #505a5f;
+        max-width: 700px;
+        margin-bottom: 2rem;
+      }
+
+      /* ── Nav ── */
+      .nav {
+        background: #fff;
+        border-bottom: 1px solid #b1b4b6;
+        padding: 0.75rem 0;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+      .nav .container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+      }
+      .nav-brand {
+        font-weight: 700;
+        font-size: 1rem;
+        color: #0b0c0c;
+        white-space: nowrap;
+      }
+      .nav-links {
+        display: flex;
+        gap: 1.25rem;
+        list-style: none;
+        flex-wrap: wrap;
+        align-items: center;
+      }
+      .nav-links a {
+        font-size: 0.85rem;
+        font-weight: 500;
+        color: #505a5f;
+      }
+      .nav-links a:hover {
+        color: #1d70b8;
+        text-decoration: none;
+      }
+      @media (max-width: 640px) {
+        .nav-links {
+          display: none;
+        }
+      }
+
+      /* ── Hero ── */
+      .hero {
+        padding: 5rem 0 4rem;
+      }
+      .hero-label {
+        display: inline-block;
+        background: #f3f2f1;
+        color: #505a5f;
+        font-size: 0.8rem;
+        font-weight: 600;
+        padding: 0.25rem 0.75rem;
+        border-radius: 2px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 1.25rem;
+      }
+      .hero h1 {
+        font-size: 2.75rem;
+        font-weight: 700;
+        margin-bottom: 0.75rem;
+      }
+      .hero-subtitle {
+        font-size: 1.35rem;
+        color: #505a5f;
+        font-weight: 400;
+        max-width: 640px;
+        margin-bottom: 1.5rem;
+      }
+      @media (max-width: 640px) {
+        .hero h1 {
+          font-size: 2rem;
+        }
+        .hero-subtitle {
+          font-size: 1.15rem;
+        }
+      }
+
+      /* ── Persona Cards ── */
+      .persona-card {
+        background: #fff;
+        border: 1px solid #b1b4b6;
+        border-radius: 2px;
+        border-left: 5px solid;
+        margin-bottom: 2.5rem;
+        overflow: hidden;
+      }
+      .persona-header {
+        padding: 1.5rem 2rem 1rem;
+        display: flex;
+        align-items: flex-start;
+        gap: 1.25rem;
+      }
+      .persona-avatar {
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 1.25rem;
+        color: #fff;
+        flex-shrink: 0;
+      }
+      .persona-title {
+        flex: 1;
+      }
+      .persona-title h3 {
+        font-size: 1.35rem;
+        margin-bottom: 0.15rem;
+      }
+      .persona-subtitle {
+        font-size: 0.95rem;
+        color: #505a5f;
+        font-style: italic;
+        margin-bottom: 0.5rem;
+      }
+      .dept-tags {
+        display: flex;
+        gap: 0.4rem;
+        flex-wrap: wrap;
+      }
+      .dept-tag {
+        display: inline-block;
+        font-size: 0.7rem;
+        font-weight: 600;
+        padding: 0.15rem 0.5rem;
+        border-radius: 2px;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+      .dept-moj { background: #f3e8ff; color: #6b21a8; }
+      .dept-dwp { background: #dbeafe; color: #1e40af; }
+      .dept-hmrc { background: #dcfce7; color: #166534; }
+      .dept-dfe { background: #fef3c7; color: #92400e; }
+      .dept-ho { background: #fee2e2; color: #991b1b; }
+
+      .persona-body {
+        padding: 0 2rem 1.5rem;
+      }
+      .persona-section {
+        margin-bottom: 1.25rem;
+      }
+      .persona-section h4 {
+        color: #0b0c0c;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 0.5rem;
+        padding-bottom: 0.35rem;
+        border-bottom: 1px solid #e5e5e5;
+      }
+      .persona-section p,
+      .persona-section li {
+        font-size: 0.95rem;
+        color: #353535;
+      }
+      .persona-section ul {
+        padding-left: 1.25rem;
+        margin: 0;
+      }
+      .persona-section li {
+        margin-bottom: 0.25rem;
+      }
+
+      .nightmare-box {
+        background: #fef2f2;
+        border-left: 3px solid #d4351c;
+        padding: 1rem 1.25rem;
+        border-radius: 0 2px 2px 0;
+        margin-bottom: 1.25rem;
+      }
+      .nightmare-box h4 {
+        color: #d4351c;
+        border: none;
+        padding: 0;
+        margin-bottom: 0.4rem;
+      }
+      .solution-box {
+        background: #f0fdf4;
+        border-left: 3px solid #00703c;
+        padding: 1rem 1.25rem;
+        border-radius: 0 2px 2px 0;
+      }
+      .solution-box h4 {
+        color: #00703c;
+        border: none;
+        padding: 0;
+        margin-bottom: 0.4rem;
+      }
+
+      .detail-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.75rem 2rem;
+      }
+      @media (max-width: 640px) {
+        .detail-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+      .detail-item {
+        font-size: 0.9rem;
+      }
+      .detail-label {
+        color: #505a5f;
+        font-weight: 500;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+      }
+      .detail-value {
+        color: #0b0c0c;
+      }
+
+      /* ── Matrix Table ── */
+      .matrix-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.9rem;
+        margin-bottom: 1.5rem;
+      }
+      .matrix-table th,
+      .matrix-table td {
+        padding: 0.6rem 0.75rem;
+        text-align: left;
+        border-bottom: 1px solid #d5d8da;
+      }
+      .matrix-table th {
+        background: #f3f2f1;
+        font-weight: 600;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: #505a5f;
+      }
+      .matrix-table td {
+        vertical-align: top;
+      }
+      .matrix-primary {
+        font-weight: 600;
+        color: #0b0c0c;
+      }
+      .matrix-secondary {
+        color: #505a5f;
+        font-size: 0.85rem;
+      }
+
+      /* ── Data Fields ── */
+      .field-card {
+        background: #fff;
+        border: 1px solid #b1b4b6;
+        border-radius: 2px;
+        padding: 1.25rem 1.5rem;
+        margin-bottom: 1rem;
+      }
+      .field-card h4 {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.95rem;
+        color: #1d70b8;
+        margin-bottom: 0.25rem;
+      }
+      .field-persona {
+        font-size: 0.8rem;
+        color: #505a5f;
+        margin-bottom: 0.5rem;
+      }
+      .field-desc {
+        font-size: 0.9rem;
+        color: #353535;
+      }
+
+      /* ── Opening line ── */
+      .opening-line {
+        background: #f8f8f8;
+        border: 1px solid #e0e0e0;
+        border-radius: 2px;
+        padding: 0.75rem 1rem;
+        font-style: italic;
+        font-size: 0.95rem;
+        color: #353535;
+        margin-top: 0.75rem;
+      }
+      .opening-line::before {
+        content: "\201C";
+        font-size: 1.5rem;
+        color: #b1b4b6;
+        margin-right: 0.25rem;
+        vertical-align: -0.15em;
+      }
+
+      /* ── Print ── */
+      @media print {
+        .nav { display: none; }
+        .persona-card { break-inside: avoid; }
+        body { font-size: 11pt; }
+      }
+    </style>
+  </head>
+  <body>
+
+    <!-- Nav -->
+    <nav class="nav">
+      <div class="container">
+        <div class="nav-brand">ALS &mdash; Department Demos</div>
+        <ul class="nav-links">
+          <li><a href="#summary">Summary</a></li>
+          <li><a href="#personas">Personas</a></li>
+          <li><a href="#matrix">Coverage</a></li>
+          <li><a href="#data-fields">Data Fields</a></li>
+          <li><a href="index.html">Project Overview</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- Hero -->
+    <header class="hero">
+      <div class="container">
+        <div class="hero-label">Persona Design &amp; Demo Scripts</div>
+        <h1>Department Demo Personas</h1>
+        <p class="hero-subtitle">
+          6 citizens, 5 departments, every cross-government friction point surfaced.
+        </p>
+        <p style="font-size:1.05rem; color:#505a5f; max-width:640px;">
+          Each persona naturally encounters multi-department complexity &mdash; the kind of
+          bureaucratic nightmare that makes the case for agentic services. Designed for
+          permanent secretary demos across MoJ, DWP, HMRC, DfE, and Home Office.
+        </p>
+      </div>
+    </header>
+
+    <!-- ════════════════════════════════════════ -->
+    <!-- SCENARIO SUMMARY                          -->
+    <!-- ════════════════════════════════════════ -->
+    <section id="summary" class="section">
+      <div class="container">
+        <h2>Scenario Summary</h2>
+        <p class="section-intro">
+          Each cell shows the contextual scenario that persona triggers within that department.
+        </p>
+
+        <div style="overflow-x:auto;">
+          <table class="matrix-table" style="font-size:0.85rem;">
+            <thead>
+              <tr>
+                <th style="min-width:140px;">Persona</th>
+                <th>MoJ</th>
+                <th>DWP</th>
+                <th>HMRC</th>
+                <th>DfE</th>
+                <th>Home Office</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Sarah Okafor</strong><br /><span class="matrix-secondary">Bereaved Spouse, 58</span></td>
+                <td>Online probate application as named executor; grant of probate for &pound;645k estate</td>
+                <td>Stop deceased's State Pension; apply for Bereavement Support Payment (&pound;3,500 + 18 monthly payments)</td>
+                <td>Inheritance tax calculation &amp; payment before probate; survivor's tax code update from married to single</td>
+                <td class="matrix-secondary">&mdash;</td>
+                <td class="matrix-secondary">&mdash;</td>
+              </tr>
+              <tr>
+                <td><strong>Amina Hassan</strong><br /><span class="matrix-secondary">Asylum Seeker, 34</span></td>
+                <td class="matrix-secondary">&mdash;</td>
+                <td>NI number application (6-week wait); Universal Credit claim blocked until NI arrives</td>
+                <td>New taxpayer registration for future employment</td>
+                <td>In-year school place for Yusuf (age 6) via local authority admissions</td>
+                <td>BRP-to-eVisa transition (2026 deadline); right-to-work &amp; right-to-rent verification</td>
+              </tr>
+              <tr>
+                <td><strong>Marcus Taylor</strong><br /><span class="matrix-secondary">Prison Leaver, 29</span></td>
+                <td>Probation compliance &mdash; fortnightly reporting, licence conditions, 12 months remaining</td>
+                <td>UC claim with temporary hostel address; housing register application before 6-week deadline</td>
+                <td class="matrix-secondary">&mdash;</td>
+                <td class="matrix-secondary">&mdash;</td>
+                <td>DBS disclosure guidance &mdash; which roles require basic vs enhanced checks for spent convictions</td>
+              </tr>
+              <tr>
+                <td><strong>Priya Anand</strong><br /><span class="matrix-secondary">New Mum, 31</span></td>
+                <td class="matrix-secondary">&mdash;</td>
+                <td>UC top-up eligibility check on &pound;38.7k combined income; Child Benefit claim for Arjun</td>
+                <td>Tax-Free Childcare account setup (saves &pound;2,000/yr); 30-hour code confirmation for childcare</td>
+                <td>Free school meals for Meera (depends on UC status); school registration for September intake</td>
+                <td class="matrix-secondary">&mdash;</td>
+              </tr>
+              <tr>
+                <td><strong>James Whitfield</strong><br /><span class="matrix-secondary">Disabled Appellant, 42</span></td>
+                <td>PIP tribunal appeal (scored 4, needs 8 for enhanced mobility); SEND tribunal if EHCP refused</td>
+                <td>PIP mandatory reconsideration; ESA support group continuation; Motability car at risk</td>
+                <td class="matrix-secondary">&mdash;</td>
+                <td>EHCP application for Owen (ADHD) &mdash; week 18 of 20, no decision yet; statutory deadline breach</td>
+                <td class="matrix-secondary">&mdash;</td>
+              </tr>
+              <tr>
+                <td><strong>Daniel Obi</strong><br /><span class="matrix-secondary">Self-Employed, 37</span></td>
+                <td>Civil money claim for &pound;4,200 unpaid invoice (3 months overdue)</td>
+                <td>UC eligibility during income dips &mdash; self-employed minimum income floor rules</td>
+                <td>MTD compliance from April 2026 (quarterly digital records); &pound;1,800 tax refund chase; Self Assessment</td>
+                <td class="matrix-secondary">&mdash;</td>
+                <td class="matrix-secondary">&mdash;</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════ -->
+    <!-- PERSONAS                                 -->
+    <!-- ════════════════════════════════════════ -->
+    <section id="personas" class="section section-alt">
+      <div class="container">
+        <h2>The 6 Personas</h2>
+        <p class="section-intro">
+          Each persona crosses at least 2 departments. Every department is hit by at least 2 personas.
+        </p>
+
+        <!-- ── 1. Sarah Okafor ── -->
+        <article class="persona-card" style="border-left-color:#912b88;">
+          <div class="persona-header">
+            <div class="persona-avatar" style="background:#912b88;">SO</div>
+            <div class="persona-title">
+              <h3>Sarah Okafor</h3>
+              <div class="persona-subtitle">"The Bereaved Spouse"</div>
+              <div class="dept-tags">
+                <span class="dept-tag dept-moj">MoJ &mdash; Probate</span>
+                <span class="dept-tag dept-hmrc">HMRC &mdash; IHT / Tax code</span>
+                <span class="dept-tag dept-dwp">DWP &mdash; Bereavement / Pension</span>
+              </div>
+            </div>
+          </div>
+          <div class="persona-body">
+            <div class="persona-section">
+              <h4>Background</h4>
+              <div class="detail-grid">
+                <div class="detail-item"><span class="detail-label">Age</span><br /><span class="detail-value">58, widowed 3 weeks ago</span></div>
+                <div class="detail-item"><span class="detail-label">Location</span><br /><span class="detail-value">Chelmsford, Essex</span></div>
+                <div class="detail-item"><span class="detail-label">Employment</span><br /><span class="detail-value">Part-time library assistant, &pound;18,500/yr</span></div>
+                <div class="detail-item"><span class="detail-label">Tech level</span><br /><span class="detail-value">Basic &mdash; overwhelmed by grief and bureaucracy</span></div>
+                <div class="detail-item"><span class="detail-label">Deceased</span><br /><span class="detail-value">Husband David (62), sudden heart attack. Main earner &pound;52k, recently retired</span></div>
+                <div class="detail-item"><span class="detail-label">Estate</span><br /><span class="detail-value">Joint property (~&pound;420k), pension &pound;180k, ISA &pound;45k, car. Will names Sarah as executor</span></div>
+                <div class="detail-item"><span class="detail-label">Family</span><br /><span class="detail-value">Two adult children (28, 25), neither at home</span></div>
+              </div>
+            </div>
+
+            <div class="nightmare-box">
+              <h4>The Nightmare (Today)</h4>
+              <p>
+                Sarah has to: register the death (registrar), notify DWP to stop David's State Pension,
+                apply for Bereavement Support Payment (DWP), contact HMRC about David's tax affairs and
+                her changed tax code, apply for probate through HMCTS (MoJ), pay inheritance tax to HMRC
+                <em>before</em> probate is granted, notify David's workplace pension provider, deal with
+                bank accounts, insurance, utility companies. That's <strong>6+ departments/organisations,
+                dozens of forms, 12+ weeks minimum</strong>. Tell Us Once helps with some notifications but
+                doesn't cover probate, tax, or pensions. Paper probate takes 12.3 weeks vs 4.9 online &mdash;
+                but Sarah doesn't know this.
+              </p>
+            </div>
+
+            <div class="solution-box">
+              <h4>The Agent Solution</h4>
+              <p>
+                Sarah tells the agent: <em>"My husband died three weeks ago. I don't know what to do."</em>
+                The agent identifies all relevant services across MoJ, DWP, and HMRC. It checks David's
+                estate details, confirms Sarah is named executor, explains probate step by step, files the
+                online application (4.9 weeks vs 12.3), coordinates inheritance tax payment that must happen
+                before probate, applies for Bereavement Support Payment, and updates her tax code.
+                <strong>One conversation, every department handled.</strong>
+              </p>
+            </div>
+
+            <div class="opening-line">My husband died three weeks ago. I don't know what to do.</div>
+          </div>
+        </article>
+
+        <!-- ── 2. Amina Hassan ── -->
+        <article class="persona-card" style="border-left-color:#d4351c;">
+          <div class="persona-header">
+            <div class="persona-avatar" style="background:#d4351c;">AH</div>
+            <div class="persona-title">
+              <h3>Amina Hassan</h3>
+              <div class="persona-subtitle">"The Asylum Seeker Starting Over"</div>
+              <div class="dept-tags">
+                <span class="dept-tag dept-ho">Home Office &mdash; Asylum / eVisa</span>
+                <span class="dept-tag dept-dwp">DWP &mdash; UC / NI number</span>
+                <span class="dept-tag dept-hmrc">HMRC &mdash; Tax setup</span>
+                <span class="dept-tag dept-dfe">DfE &mdash; School place</span>
+              </div>
+            </div>
+          </div>
+          <div class="persona-body">
+            <div class="persona-section">
+              <h4>Background</h4>
+              <div class="detail-grid">
+                <div class="detail-item"><span class="detail-label">Age</span><br /><span class="detail-value">34, originally from Sudan</span></div>
+                <div class="detail-item"><span class="detail-label">Location</span><br /><span class="detail-value">Dispersal accommodation, Bradford</span></div>
+                <div class="detail-item"><span class="detail-label">Status</span><br /><span class="detail-value">Granted refugee status Jan 2025 (2.5yr wait, 166k backlog)</span></div>
+                <div class="detail-item"><span class="detail-label">Language</span><br /><span class="detail-value">Intermediate English (learned in accommodation)</span></div>
+                <div class="detail-item"><span class="detail-label">Family</span><br /><span class="detail-value">Son Yusuf, age 6 (born in Sudan)</span></div>
+                <div class="detail-item"><span class="detail-label">Qualifications</span><br /><span class="detail-value">Pharmacy degree, University of Khartoum</span></div>
+                <div class="detail-item"><span class="detail-label">ID</span><br /><span class="detail-value">Biometric Residence Permit (migrating to eVisa 2026). No driving licence. No UK bank account</span></div>
+                <div class="detail-item"><span class="detail-label">Income</span><br /><span class="detail-value">&pound;49.18/week asylum support. No NI number yet</span></div>
+              </div>
+            </div>
+
+            <div class="nightmare-box">
+              <h4>The Nightmare (Today)</h4>
+              <p>
+                Amina has refugee status but the real journey is just starting. She needs: an NI number
+                (DWP/HMRC &mdash; 6+ week wait), a bank account (needs proof of address and right to work),
+                Universal Credit (DWP &mdash; requires NI number she doesn't have yet), eVisa transition
+                understanding (Home Office &mdash; BRP expires 2026), GP registration, school place for Yusuf
+                (DfE/local authority), pharmacy qualification recognition. <strong>Each step depends on the
+                previous one</strong> &mdash; without an NI number she can't claim UC, without a bank account
+                she can't receive UC, without UC she can't afford private housing. A dependency chain across 3 departments.
+              </p>
+            </div>
+
+            <div class="solution-box">
+              <h4>The Agent Solution</h4>
+              <p>
+                Amina tells the agent: <em>"I just got my refugee status. What do I need to do?"</em>
+                The agent maps the dependency chain: NI number application first (DWP), bank account
+                guidance in parallel, UC application queued for when NI arrives, eVisa transition
+                explained with her BRP details, school place application for Yusuf, GP registration
+                by postcode. <strong>The agent handles the sequencing</strong> &mdash; what can happen now,
+                what's blocked, what to expect. It pre-fills applications with data she's already provided
+                to one department.
+              </p>
+            </div>
+
+            <div class="opening-line">I just got my refugee status. What do I need to do?</div>
+          </div>
+        </article>
+
+        <!-- ── 3. Marcus Taylor ── -->
+        <article class="persona-card" style="border-left-color:#f47738;">
+          <div class="persona-header">
+            <div class="persona-avatar" style="background:#f47738;">MT</div>
+            <div class="persona-title">
+              <h3>Marcus Taylor</h3>
+              <div class="persona-subtitle">"The Prison Leaver"</div>
+              <div class="dept-tags">
+                <span class="dept-tag dept-moj">MoJ &mdash; Probation</span>
+                <span class="dept-tag dept-dwp">DWP &mdash; UC / Housing</span>
+                <span class="dept-tag dept-ho">Home Office &mdash; DBS</span>
+              </div>
+            </div>
+          </div>
+          <div class="persona-body">
+            <div class="persona-section">
+              <h4>Background</h4>
+              <div class="detail-grid">
+                <div class="detail-item"><span class="detail-label">Age</span><br /><span class="detail-value">29, released from HMP Leeds 6 weeks ago</span></div>
+                <div class="detail-item"><span class="detail-label">Location</span><br /><span class="detail-value">Approved premises (hostel), Huddersfield</span></div>
+                <div class="detail-item"><span class="detail-label">Sentence</span><br /><span class="detail-value">18 months for drug supply (non-violent). On licence, 12 months remaining</span></div>
+                <div class="detail-item"><span class="detail-label">Probation</span><br /><span class="detail-value">Reports fortnightly. Officer at 100%+ caseload capacity</span></div>
+                <div class="detail-item"><span class="detail-label">Education</span><br /><span class="detail-value">GCSEs. Previously worked in construction</span></div>
+                <div class="detail-item"><span class="detail-label">Financial</span><br /><span class="detail-value">No savings. No bank account (closed during sentence). Driving licence expired</span></div>
+                <div class="detail-item"><span class="detail-label">Family</span><br /><span class="detail-value">Daughter Chloe (4), lives with ex-partner in Wakefield</span></div>
+                <div class="detail-item"><span class="detail-label">Deadline</span><br /><span class="detail-value">6 weeks before approved premises time runs out</span></div>
+              </div>
+            </div>
+
+            <div class="nightmare-box">
+              <h4>The Nightmare (Today)</h4>
+              <p>
+                Marcus needs to: sign on for UC (DWP &mdash; no fixed address complicates claims),
+                find employment (needs DBS check revealing his record &mdash; Home Office), renew driving
+                licence (DVLA &mdash; needs address), find permanent housing (local authority/DWP housing element),
+                maintain probation compliance (MoJ &mdash; reporting, conditions), arrange contact with his
+                daughter (family courts if contested &mdash; MoJ). The prison had <strong>1 DWP Work Coach
+                for the entire facility</strong>. Nobody coordinates across departments.
+                He has 6 weeks before approved premises time runs out.
+              </p>
+            </div>
+
+            <div class="solution-box">
+              <h4>The Agent Solution</h4>
+              <p>
+                Marcus tells the agent: <em>"I've just been released from prison and I need to sort everything out."</em>
+                The agent understands his licence conditions, prioritises: UC claim with temporary address,
+                bank account application, housing register, employment support with honest DBS disclosure
+                guidance. It sequences everything around his probation schedule. It explains which roles
+                require enhanced DBS and which don't, so he doesn't waste time applying for jobs he's barred from.
+              </p>
+            </div>
+
+            <div class="opening-line">I've just been released from prison and I need to sort everything out.</div>
+          </div>
+        </article>
+
+        <!-- ── 4. Priya Anand ── -->
+        <article class="persona-card" style="border-left-color:#1d70b8;">
+          <div class="persona-header">
+            <div class="persona-avatar" style="background:#1d70b8;">PA</div>
+            <div class="persona-title">
+              <h3>Priya Anand</h3>
+              <div class="persona-subtitle">"The Overwhelmed New Mum"</div>
+              <div class="dept-tags">
+                <span class="dept-tag dept-dfe">DfE &mdash; Childcare / FSM / School</span>
+                <span class="dept-tag dept-dwp">DWP &mdash; Child Benefit / UC</span>
+                <span class="dept-tag dept-hmrc">HMRC &mdash; Tax-Free Childcare</span>
+              </div>
+            </div>
+          </div>
+          <div class="persona-body">
+            <div class="persona-section">
+              <h4>Background</h4>
+              <div class="detail-grid">
+                <div class="detail-item"><span class="detail-label">Age</span><br /><span class="detail-value">31, lives in Slough with partner Dev (33)</span></div>
+                <div class="detail-item"><span class="detail-label">Children</span><br /><span class="detail-value">Arjun (9 months), Meera (4, starting school September)</span></div>
+                <div class="detail-item"><span class="detail-label">Employment</span><br /><span class="detail-value">Part-time teaching assistant &pound;14,200/yr. Dev: delivery driver &pound;24,500/yr</span></div>
+                <div class="detail-item"><span class="detail-label">Combined income</span><br /><span class="detail-value">&pound;38,700/yr. Rent &pound;1,100/month. Savings &pound;2,800</span></div>
+                <div class="detail-item"><span class="detail-label">Childcare</span><br /><span class="detail-value">Paying &pound;800/month for Arjun's nursery. Doesn't know about Sep 2025 expansion for under-2s</span></div>
+                <div class="detail-item"><span class="detail-label">Unclaimed</span><br /><span class="detail-value">Has never claimed Tax-Free Childcare &mdash; doesn't know it exists</span></div>
+              </div>
+            </div>
+
+            <div class="nightmare-box">
+              <h4>The Nightmare (Today)</h4>
+              <p>
+                Priya needs to: check UC top-up eligibility (DWP), apply for Tax-Free Childcare
+                (HMRC &mdash; saves up to &pound;2,000/year but she's never heard of it), check 30-hour
+                free childcare for Arjun (DfE &mdash; requires HMRC confirmation), apply for free school
+                meals for Meera (DfE &mdash; depends on UC status), register Meera for school.
+                <strong>Each entitlement has different eligibility rules across different departments.</strong>
+                She doesn't know what she's entitled to. Data-sharing barriers between DWP and DfE
+                mean she proves benefit status separately to each.
+              </p>
+            </div>
+
+            <div class="solution-box">
+              <h4>The Agent Solution</h4>
+              <p>
+                Priya tells the agent: <em>"I've got a baby and a 4-year-old starting school, and I'm
+                struggling with money."</em> The agent runs eligibility checks across all three departments
+                simultaneously: UC top-up (DWP), Tax-Free Childcare (HMRC &mdash; she qualifies, saving
+                &pound;2,000/year), 30-hour free childcare for Arjun (DfE), free school meals for Meera.
+                It finds she's entitled to <strong>~&pound;5,000/year in support she's not claiming</strong>.
+                One conversation, three departments, every entitlement surfaced proactively.
+              </p>
+            </div>
+
+            <div class="opening-line">I've got a baby and a 4-year-old starting school, and I'm struggling with money.</div>
+          </div>
+        </article>
+
+        <!-- ── 5. James Whitfield ── -->
+        <article class="persona-card" style="border-left-color:#00703c;">
+          <div class="persona-header">
+            <div class="persona-avatar" style="background:#00703c;">JW</div>
+            <div class="persona-title">
+              <h3>James Whitfield</h3>
+              <div class="persona-subtitle">"The Disabled Appellant"</div>
+              <div class="dept-tags">
+                <span class="dept-tag dept-dwp">DWP &mdash; PIP / ESA</span>
+                <span class="dept-tag dept-moj">MoJ &mdash; PIP Tribunal / SEND Tribunal</span>
+                <span class="dept-tag dept-dfe">DfE &mdash; EHCP</span>
+              </div>
+            </div>
+          </div>
+          <div class="persona-body">
+            <div class="persona-section">
+              <h4>Background</h4>
+              <div class="detail-grid">
+                <div class="detail-item"><span class="detail-label">Age</span><br /><span class="detail-value">42, lives in Rotherham with wife Claire (40) and son Owen (8)</span></div>
+                <div class="detail-item"><span class="detail-label">Condition</span><br /><span class="detail-value">Multiple sclerosis (diagnosed 2019, relapsing-remitting). Currently in relapse</span></div>
+                <div class="detail-item"><span class="detail-label">Employment</span><br /><span class="detail-value">Former warehouse supervisor &pound;28k. Now on ESA (support group) since 2023</span></div>
+                <div class="detail-item"><span class="detail-label">Benefits</span><br /><span class="detail-value">PIP standard daily living, no mobility component. Claire works part-time &pound;12,800/yr</span></div>
+                <div class="detail-item"><span class="detail-label">PIP Appeal</span><br /><span class="detail-value">Applied for enhanced mobility &mdash; scored 4 points (needs 8). Told to appeal. 66% of PIP appeals succeed</span></div>
+                <div class="detail-item"><span class="detail-label">Son's EHCP</span><br /><span class="detail-value">Owen has ADHD. School applied for EHCP &mdash; 18 weeks with no decision (statutory limit: 20 weeks, only 46.4% met nationally)</span></div>
+                <div class="detail-item"><span class="detail-label">Financial</span><br /><span class="detail-value">Savings &pound;1,200. Mortgage &pound;680/month. Motability car at risk if PIP appeal fails</span></div>
+              </div>
+            </div>
+
+            <div class="nightmare-box">
+              <h4>The Nightmare (Today)</h4>
+              <p>
+                James is fighting on two fronts: his <strong>PIP appeal</strong> (MoJ tribunal &mdash;
+                66% success rate suggests his initial assessment was likely wrong) and <strong>Owen's EHCP</strong>
+                (DfE &mdash; approaching 20-week deadline with no health professional response). For PIP:
+                mandatory reconsideration (DWP), then tribunal appeal (MoJ), medical evidence gathering,
+                legal representation (legal aid almost non-existent &mdash; 40% fewer firms). For Owen:
+                chase local authority, understand rights if deadline missed, potentially SEND tribunal (MoJ).
+                He's doing this while in an MS relapse, on phone lines with <strong>26-minute average waits</strong>
+                and only 50% of calls answered.
+              </p>
+            </div>
+
+            <div class="solution-box">
+              <h4>The Agent Solution</h4>
+              <p>
+                James tells the agent: <em>"My PIP was turned down and my son's EHCP is stuck."</em>
+                The agent handles both: for PIP, mandatory reconsideration first (DWP), medical evidence
+                checklist, tribunal appeal paperwork (MoJ), legal aid eligibility check. For Owen's EHCP,
+                statutory timeline check, formal complaint draft if 20-week deadline is breached, SEND
+                tribunal rights explanation. <strong>Every interaction documented, every step tracked,
+                every deadline flagged</strong> &mdash; without sitting on hold for 26 minutes.
+              </p>
+            </div>
+
+            <div class="opening-line">My PIP was turned down and my son's EHCP is stuck.</div>
+          </div>
+        </article>
+
+        <!-- ── 6. Daniel Obi ── -->
+        <article class="persona-card" style="border-left-color:#4c6272;">
+          <div class="persona-header">
+            <div class="persona-avatar" style="background:#4c6272;">DO</div>
+            <div class="persona-title">
+              <h3>Daniel Obi</h3>
+              <div class="persona-subtitle">"The Self-Employed Tax Nightmare"</div>
+              <div class="dept-tags">
+                <span class="dept-tag dept-hmrc">HMRC &mdash; SA / MTD / Refund</span>
+                <span class="dept-tag dept-dwp">DWP &mdash; UC income dip</span>
+                <span class="dept-tag dept-moj">MoJ &mdash; Civil claims</span>
+              </div>
+            </div>
+          </div>
+          <div class="persona-body">
+            <div class="persona-section">
+              <h4>Background</h4>
+              <div class="detail-grid">
+                <div class="detail-item"><span class="detail-label">Age</span><br /><span class="detail-value">37, self-employed plumber in Birmingham. Sole trader, 8 years</span></div>
+                <div class="detail-item"><span class="detail-label">Income</span><br /><span class="detail-value">Turnover &pound;58,000. Net profit ~&pound;36,000 (variable)</span></div>
+                <div class="detail-item"><span class="detail-label">Housing</span><br /><span class="detail-value">Rented flat &pound;750/month. Lives alone. One van (business use)</span></div>
+                <div class="detail-item"><span class="detail-label">Tax issue</span><br /><span class="detail-value">Tax code error last year &mdash; overpaid &pound;1,800, still waiting for refund</span></div>
+                <div class="detail-item"><span class="detail-label">Unpaid invoice</span><br /><span class="detail-value">Client owes &pound;4,200 for completed work (3 months overdue)</span></div>
+                <div class="detail-item"><span class="detail-label">MTD</span><br /><span class="detail-value">Making Tax Digital applies from April 2026 (income &gt;&pound;50k). He has no idea</span></div>
+                <div class="detail-item"><span class="detail-label">Missed UC</span><br /><span class="detail-value">Had 3 quiet months last winter. Didn't know he could claim UC during income dip</span></div>
+                <div class="detail-item"><span class="detail-label">Books</span><br /><span class="detail-value">No accountant. Spreadsheet. Files Self Assessment on deadline day</span></div>
+              </div>
+            </div>
+
+            <div class="nightmare-box">
+              <h4>The Nightmare (Today)</h4>
+              <p>
+                Daniel faces: <strong>MTD compliance from April 2026</strong> (HMRC &mdash; needs compatible
+                software, quarterly reporting, 1/5 of APIs not fully tested), a &pound;1,800 tax refund stuck
+                in processing (HMRC &mdash; 5-6 weeks at peak), a &pound;4,200 unpaid invoice to recover
+                (MoJ civil money claims &mdash; 1.94m claims, 14% increase), and he didn't know he could
+                have claimed UC during his winter income dip (DWP &mdash; self-employed minimum income floor
+                rules are complex). He's one of the 475,722 people who'll file on deadline day. When he calls
+                HMRC, he waits <strong>13.5 minutes on average</strong> &mdash; 76% of calls are avoidable.
+              </p>
+            </div>
+
+            <div class="solution-box">
+              <h4>The Agent Solution</h4>
+              <p>
+                Daniel tells the agent: <em>"I'm self-employed and I'm confused about my tax and I've got
+                a client who won't pay."</em> The agent: explains MTD requirements and timeline (April 2026,
+                quarterly digital records), helps choose compatible software (19 providers), chases the
+                &pound;1,800 refund status, walks through civil money claims for the &pound;4,200 debt (MoJ),
+                and proactively flags UC eligibility during future income dips (DWP). It also flags early SA
+                filing &mdash; and can pre-fill from digital records once MTD is set up.
+              </p>
+            </div>
+
+            <div class="opening-line">I'm self-employed and I'm confused about my tax and I've got a client who won't pay.</div>
+          </div>
+        </article>
+
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════ -->
+    <!-- COVERAGE MATRIX                          -->
+    <!-- ════════════════════════════════════════ -->
+    <section id="matrix" class="section">
+      <div class="container">
+        <h2>Department Coverage Matrix</h2>
+        <p class="section-intro">
+          Every department is hit by at least 2 personas. Every persona crosses at least 2 departments.
+        </p>
+
+        <div style="overflow-x:auto;">
+          <table class="matrix-table">
+            <thead>
+              <tr>
+                <th>Persona</th>
+                <th>MoJ</th>
+                <th>DWP</th>
+                <th>HMRC</th>
+                <th>DfE</th>
+                <th>Home Office</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Sarah</strong> (bereaved)</td>
+                <td class="matrix-primary">Probate</td>
+                <td class="matrix-primary">Bereavement / Pension</td>
+                <td class="matrix-primary">IHT / Tax code</td>
+                <td class="matrix-secondary">&mdash;</td>
+                <td class="matrix-secondary">&mdash;</td>
+              </tr>
+              <tr>
+                <td><strong>Amina</strong> (asylum)</td>
+                <td class="matrix-secondary">&mdash;</td>
+                <td class="matrix-primary">UC / NI number</td>
+                <td class="matrix-primary">Tax setup</td>
+                <td class="matrix-secondary">School place</td>
+                <td class="matrix-primary">Asylum / eVisa</td>
+              </tr>
+              <tr>
+                <td><strong>Marcus</strong> (prison leaver)</td>
+                <td class="matrix-primary">Probation</td>
+                <td class="matrix-primary">UC / Housing</td>
+                <td class="matrix-secondary">&mdash;</td>
+                <td class="matrix-secondary">&mdash;</td>
+                <td class="matrix-primary">DBS</td>
+              </tr>
+              <tr>
+                <td><strong>Priya</strong> (new mum)</td>
+                <td class="matrix-secondary">&mdash;</td>
+                <td class="matrix-primary">UC / Child Benefit</td>
+                <td class="matrix-primary">Tax-Free Childcare</td>
+                <td class="matrix-primary">FSM / Childcare / School</td>
+                <td class="matrix-secondary">&mdash;</td>
+              </tr>
+              <tr>
+                <td><strong>James</strong> (disabled)</td>
+                <td class="matrix-primary">PIP tribunal / SEND</td>
+                <td class="matrix-primary">PIP / ESA</td>
+                <td class="matrix-secondary">&mdash;</td>
+                <td class="matrix-primary">EHCP</td>
+                <td class="matrix-secondary">&mdash;</td>
+              </tr>
+              <tr>
+                <td><strong>Daniel</strong> (self-employed)</td>
+                <td class="matrix-primary">Civil claims</td>
+                <td class="matrix-primary">UC income dip</td>
+                <td class="matrix-primary">SA / MTD / Refund</td>
+                <td class="matrix-secondary">&mdash;</td>
+                <td class="matrix-secondary">&mdash;</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════ -->
+    <!-- NEW DATA FIELDS                          -->
+    <!-- ════════════════════════════════════════ -->
+    <section id="data-fields" class="section section-alt">
+      <div class="container">
+        <h2>New Data Fields Required</h2>
+        <p class="section-intro">
+          Extensions to the persona JSON schema and <code>PersonaData</code> TypeScript type in
+          <code>apps/citizen/lib/types.ts</code>.
+        </p>
+
+        <div class="field-card">
+          <h4>bereavement</h4>
+          <div class="field-persona">Used by: Sarah Okafor</div>
+          <p class="field-desc">
+            Deceased details (name, date of death, relationship), estate status (property, pensions, savings, will),
+            executor information, immediate needs (Tell Us Once ref, probate status), financial impact on survivor.
+          </p>
+        </div>
+
+        <div class="field-card">
+          <h4>immigration</h4>
+          <div class="field-persona">Used by: Amina Hassan</div>
+          <p class="field-desc">
+            Immigration status, Home Office reference, BRP details (number, expiry, eVisa migration date),
+            right to work/rent status, language proficiency, accommodation type, legal representation details.
+          </p>
+        </div>
+
+        <div class="field-card">
+          <h4>justiceHistory</h4>
+          <div class="field-persona">Used by: Marcus Taylor</div>
+          <p class="field-desc">
+            Release date, sentence details, licence conditions and end date, probation officer details,
+            reporting schedule, restrictions (travel, curfew), DBS disclosure status, offence category,
+            approved premises deadline.
+          </p>
+        </div>
+
+        <div class="field-card">
+          <h4>childcare</h4>
+          <div class="field-persona">Used by: Priya Anand</div>
+          <p class="field-desc">
+            Current nursery/childcare costs, provider details, entitlement status (30-hour code, Tax-Free Childcare account),
+            free school meals eligibility, school registration status.
+          </p>
+        </div>
+
+        <div class="field-card">
+          <h4>appeals</h4>
+          <div class="field-persona">Used by: James Whitfield</div>
+          <p class="field-desc">
+            PIP mandatory reconsideration status and date, tribunal appeal reference and hearing date,
+            EHCP application date and statutory deadline, SEND tribunal status, legal aid eligibility,
+            evidence gathering checklist.
+          </p>
+        </div>
+
+        <div class="field-card">
+          <h4>selfEmployment</h4>
+          <div class="field-persona">Used by: Daniel Obi</div>
+          <p class="field-desc">
+            Trading name, UTR number, turnover and expenses, MTD status and compliance deadline,
+            outstanding invoices (amounts, debtors, dates), quarterly reporting dates,
+            Self Assessment filing history.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════ -->
+    <!-- IMPLEMENTATION                           -->
+    <!-- ════════════════════════════════════════ -->
+    <section id="implementation" class="section">
+      <div class="container">
+        <h2>Implementation Checklist</h2>
+        <p class="section-intro">Files to create and modify for the citizen-dept prototype.</p>
+
+        <div style="margin-bottom:1.5rem;">
+          <h4 style="margin-bottom:0.75rem;">New persona JSON files</h4>
+          <ul style="padding-left:1.25rem; font-size:0.95rem; color:#353535;">
+            <li><code>data/simulated/users/sarah-okafor.json</code></li>
+            <li><code>data/simulated/users/amina-hassan.json</code></li>
+            <li><code>data/simulated/users/marcus-taylor.json</code></li>
+            <li><code>data/simulated/users/priya-anand.json</code></li>
+            <li><code>data/simulated/users/james-whitfield.json</code></li>
+            <li><code>data/simulated/users/daniel-obi.json</code></li>
+          </ul>
+        </div>
+
+        <div style="margin-bottom:1.5rem;">
+          <h4 style="margin-bottom:0.75rem;">Metadata &amp; types</h4>
+          <ul style="padding-left:1.25rem; font-size:0.95rem; color:#353535;">
+            <li><code>apps/citizen/lib/persona-meta.ts</code> &mdash; add 6 new persona entries with colours and descriptions</li>
+            <li><code>apps/citizen/lib/types.ts</code> &mdash; extend <code>PersonaData</code> with new field types</li>
+            <li><code>apps/citizen/lib/service-data.ts</code> &mdash; import new persona JSON files</li>
+          </ul>
+        </div>
+
+        <div style="margin-bottom:1.5rem;">
+          <h4 style="margin-bottom:0.75rem;">Dashboard relevance</h4>
+          <ul style="padding-left:1.25rem; font-size:0.95rem; color:#353535;">
+            <li><code>apps/citizen/components/Dashboard.tsx</code> &mdash; update <code>isServiceRelevant()</code> to check <code>immigration</code>, <code>justiceHistory</code>, <code>bereavement</code>, <code>selfEmployment</code></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 style="margin-bottom:0.75rem;">Verification</h4>
+          <ol style="padding-left:1.25rem; font-size:0.95rem; color:#353535;">
+            <li>Each new persona loads correctly in the persona picker</li>
+            <li>Dashboard shows relevant topics based on persona's situation</li>
+            <li>Chat route accepts the persona and orchestrator can work with it</li>
+            <li><code>npm test</code> passes</li>
+            <li>Each persona's "nightmare &rarr; solution" script works end-to-end in conversation</li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer style="background:#0b0c0c; color:#b1b4b6; padding:2rem 0; font-size:0.85rem;">
+      <div class="container">
+        <p>Agentic Legibility Stack &mdash; Department Demo Personas</p>
+        <p style="margin-top:0.25rem; color:#6b7280;">For permanent secretary demonstrations. MoJ &middot; DWP &middot; HMRC &middot; DfE &middot; Home Office</p>
+      </div>
+    </footer>
+
+  </body>
+</html>
