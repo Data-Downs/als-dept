@@ -108,7 +108,7 @@ export async function POST(request: NextRequest) {
       policy: body.policy || null,
       stateModel: body.stateModel || null,
       consent: body.consent || null,
-      source: body.policy ? "full" : "graph",
+      source: body.policy ? "full" : "catalogue",
     });
 
     return NextResponse.json({ serviceId }, { status: 201 });

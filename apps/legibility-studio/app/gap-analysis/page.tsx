@@ -15,7 +15,7 @@ interface Service {
   hasPolicy: boolean;
   hasStateModel: boolean;
   hasConsent: boolean;
-  source?: "full" | "graph" | "catalogue";
+  source?: "full" | "catalogue";
   priority?: "demo" | "transactional" | "reference";
   govuk_url?: string;
 }
@@ -25,9 +25,7 @@ interface DeptSummary {
   department: string;
   total: number;
   full: number;
-  graph: number;
   catalogue: number;
-  withArtefacts: number;
   coverage: number;
   demoCount: number;
   transactionalCount: number;
@@ -91,19 +89,15 @@ export default function GapAnalysisPage() {
         const full = svcs.filter(
           (s) => (s.source || "full") === "full",
         ).length;
-        const graph = svcs.filter((s) => s.source === "graph").length;
         const catalogue = svcs.filter(
           (s) => s.source === "catalogue",
         ).length;
-        const withArtefacts = full + graph;
         return {
           key,
           department: displayNames[key] || key,
           total: svcs.length,
           full,
-          graph,
           catalogue,
-          withArtefacts,
           coverage:
             svcs.length > 0 ? Math.round((full / svcs.length) * 100) : 0,
           demoCount: svcs.filter((s) => s.priority === "demo").length,
@@ -129,7 +123,7 @@ export default function GapAnalysisPage() {
     // Sort: demo first, then transactional, then reference. Within each: full > graph > catalogue
     return filtered.sort((a, b) => {
       const priorityOrder = { demo: 0, transactional: 1, reference: 2 };
-      const sourceOrder = { full: 0, graph: 1, catalogue: 2 };
+      const sourceOrder = { full: 0, catalogue: 1 };
       const pa = priorityOrder[a.priority || "reference"] ?? 2;
       const pb = priorityOrder[b.priority || "reference"] ?? 2;
       if (pa !== pb) return pa - pb;
@@ -223,15 +217,6 @@ export default function GapAnalysisPage() {
                   {dept.full}
                 </span>{" "}
                 full
-                {dept.graph > 0 && (
-                  <>
-                    {" / "}
-                    <span className="font-bold text-amber-600">
-                      {dept.graph}
-                    </span>{" "}
-                    graph
-                  </>
-                )}
                 {dept.catalogue > 0 && (
                   <>
                     {" / "}
@@ -362,16 +347,12 @@ export default function GapAnalysisPage() {
                     className={`text-[10px] font-bold uppercase px-1.5 py-0.5 rounded ${
                       service.source === "catalogue"
                         ? "bg-gray-100 text-gray-500"
-                        : (service.source || "full") === "full"
-                          ? "bg-blue-100 text-blue-800"
-                          : "bg-amber-100 text-amber-800"
+                        : "bg-blue-100 text-blue-800"
                     }`}
                   >
                     {service.source === "catalogue"
                       ? "Cat"
-                      : (service.source || "full") === "full"
-                        ? "Full"
-                        : "Graph"}
+                      : "Full"}
                   </span>
                 </td>
                 <td className="py-3 px-4 text-center">

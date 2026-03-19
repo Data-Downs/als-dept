@@ -355,7 +355,6 @@ export default function ServiceDetailPage({
   const [service, setService] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [deleting, setDeleting] = useState(false);
-  const [generating, setGenerating] = useState(false);
 
   useEffect(() => {
     fetch(`/api/services/${encodeURIComponent(serviceId)}`)
@@ -393,30 +392,6 @@ export default function ServiceDetailPage({
       setDeleting(false);
     }
   }, [serviceId, service, router]);
-
-  const handleGenerate = useCallback(async () => {
-    setGenerating(true);
-    try {
-      const response = await fetch(
-        `/api/services/${encodeURIComponent(serviceId)}/generate`,
-        { method: "POST" },
-      );
-      if (response.ok) {
-        // Refresh service data
-        const data = await fetch(
-          `/api/services/${encodeURIComponent(serviceId)}`,
-        ).then((r) => r.json());
-        setService(data);
-      } else {
-        const err = await response.json();
-        alert(err.error || "Generation failed");
-      }
-    } catch {
-      alert("Failed to generate artefacts");
-    } finally {
-      setGenerating(false);
-    }
-  }, [serviceId]);
 
   if (loading) {
     return (
@@ -461,12 +436,12 @@ export default function ServiceDetailPage({
             {service.source && (
               <span
                 className={`text-[10px] font-bold uppercase px-1.5 py-0.5 rounded ${
-                  service.source === "full"
-                    ? "bg-blue-100 text-blue-800"
-                    : "bg-amber-100 text-amber-800"
+                  service.source === "catalogue"
+                    ? "bg-gray-100 text-gray-600"
+                    : "bg-blue-100 text-blue-800"
                 }`}
               >
-                {service.source}
+                {service.source === "catalogue" ? "Catalogue" : "Full"}
               </span>
             )}
             {service.interactionType && (
@@ -497,15 +472,6 @@ export default function ServiceDetailPage({
             >
               Edit service
             </a>
-            {service.source === "graph" && service.govukUrl && (
-              <button
-                onClick={handleGenerate}
-                disabled={generating}
-                className="bg-purple-600 text-white px-4 py-1.5 rounded-lg text-sm font-bold hover:bg-purple-700 disabled:opacity-50"
-              >
-                {generating ? "Generating..." : "Generate from GOV.UK"}
-              </button>
-            )}
             <button
               onClick={handleDelete}
               disabled={deleting}

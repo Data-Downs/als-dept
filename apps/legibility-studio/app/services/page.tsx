@@ -16,7 +16,7 @@ interface Service {
   promoted: boolean;
   completeness: number;
   gapCount: number;
-  source?: "full" | "graph" | "catalogue";
+  source?: "full" | "catalogue";
   serviceType?: string;
   govuk_url?: string;
   generatedAt?: string;
@@ -100,7 +100,6 @@ interface TypologySummary {
   config: (typeof TYPOLOGY_CONFIG)[string];
   count: number;
   fullCount: number;
-  graphCount: number;
   withPolicy: number;
   withStateModel: number;
   withConsent: number;
@@ -133,7 +132,6 @@ function TypologyDashboard({
         config,
         count: group.length,
         fullCount: group.filter((s) => (s.source || "full") === "full").length,
-        graphCount: group.filter((s) => s.source === "graph").length,
         withPolicy: group.filter((s) => s.hasPolicy).length,
         withStateModel: group.filter((s) => s.hasStateModel).length,
         withConsent: group.filter((s) => s.hasConsent).length,
@@ -156,7 +154,6 @@ function TypologyDashboard({
         count: unknownGroup.length,
         fullCount: unknownGroup.filter((s) => (s.source || "full") === "full")
           .length,
-        graphCount: unknownGroup.filter((s) => s.source === "graph").length,
         withPolicy: unknownGroup.filter((s) => s.hasPolicy).length,
         withStateModel: unknownGroup.filter((s) => s.hasStateModel).length,
         withConsent: unknownGroup.filter((s) => s.hasConsent).length,
@@ -252,7 +249,7 @@ function TypologyDashboard({
                   <div className="text-xs text-gray-500 space-y-0.5">
                     <div className="flex justify-between">
                       <span>Full: {s.fullCount}</span>
-                      <span>Graph: {s.graphCount}</span>
+                      <span>Catalogue: {s.count - s.fullCount}</span>
                     </div>
                     <div className="flex items-center gap-1.5 mt-1.5">
                       <div className="flex-1 h-1.5 bg-gray-200 rounded-full overflow-hidden">
@@ -293,7 +290,7 @@ export default function ServicesPage() {
   const [loading, setLoading] = useState(true);
   const [togglingId, setTogglingId] = useState<string | null>(null);
   const [sourceFilter, setSourceFilter] = useState<
-    "all" | "full" | "graph" | "catalogue"
+    "all" | "full" | "catalogue"
   >("all");
   const [deptFilter, setDeptFilter] = useState<string>("all");
   const [typologyFilter, setTypologyFilter] = useState<string>("all");
@@ -301,11 +298,6 @@ export default function ServicesPage() {
   const [lifeEvents, setLifeEvents] = useState<LifeEventFilter[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [generatingId, setGeneratingId] = useState<string | null>(null);
-  const [batchGenerating, setBatchGenerating] = useState(false);
-  const [batchResult, setBatchResult] = useState<{
-    succeeded: number;
-    failed: number;
-  } | null>(null);
 
   useEffect(() => {
     fetch("/api/services")
@@ -379,7 +371,6 @@ export default function ServicesPage() {
   const fullCount = services.filter(
     (s) => (s.source || "full") === "full",
   ).length;
-  const graphCount = services.filter((s) => s.source === "graph").length;
   const catalogueCount = services.filter(
     (s) => s.source === "catalogue",
   ).length;
@@ -451,41 +442,6 @@ export default function ServicesPage() {
     }
   }, []);
 
-  const handleBatchGenerate = useCallback(async () => {
-    if (
-      !window.confirm(
-        "Generate artefacts for up to 10 graph-only services? This uses the LLM API and may take a few minutes.",
-      )
-    )
-      return;
-    setBatchGenerating(true);
-    setBatchResult(null);
-    try {
-      const res = await fetch("/api/v1/generate-batch", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ limit: 10 }),
-      });
-      if (res.ok) {
-        const data = await res.json();
-        setBatchResult({ succeeded: data.succeeded, failed: data.failed });
-        // Refresh service list
-        const refreshed = await fetch("/api/services").then((r) => r.json());
-        setServices(refreshed.services || []);
-      } else {
-        alert("Batch generation failed");
-      }
-    } catch {
-      alert("Batch generation failed");
-    } finally {
-      setBatchGenerating(false);
-    }
-  }, []);
-
-  const graphOnlyCount = services.filter(
-    (s) => s.source === "graph" && s.govuk_url,
-  ).length;
-
   if (loading) {
     return (
       <div className="text-center py-12 text-gray-500">Loading services...</div>
@@ -499,43 +455,16 @@ export default function ServicesPage() {
       />
       <PageHeader
         title="Services"
-        subtitle={`${services.length} service(s) registered — ${fullCount} full, ${graphCount} from graph.`}
+        subtitle={`${services.length} service(s) registered — ${fullCount} full, ${catalogueCount} catalogue.`}
         actions={
-          <div className="flex gap-2">
-            {graphOnlyCount > 0 && (
-              <button
-                onClick={handleBatchGenerate}
-                disabled={batchGenerating}
-                className="bg-purple-600 text-white px-4 py-2 rounded-lg font-bold text-sm hover:bg-purple-700 disabled:opacity-50"
-              >
-                {batchGenerating
-                  ? "Generating..."
-                  : `Generate missing (${graphOnlyCount})`}
-              </button>
-            )}
-            <a
-              href="/services/new"
-              className="bg-govuk-green text-white px-4 py-2 rounded-lg font-bold text-sm hover:opacity-90"
-            >
-              + Create new service
-            </a>
-          </div>
+          <a
+            href="/services/new"
+            className="bg-govuk-green text-white px-4 py-2 rounded-lg font-bold text-sm hover:opacity-90"
+          >
+            + Create new service
+          </a>
         }
       />
-
-      {batchResult && (
-        <div className="bg-green-50 border border-green-200 rounded-lg p-3 mb-4 text-sm">
-          Batch complete: {batchResult.succeeded} succeeded,{" "}
-          {batchResult.failed} failed.
-          <button
-            onClick={() => setBatchResult(null)}
-            className="ml-2 text-green-700 underline"
-          >
-            Dismiss
-          </button>
-        </div>
-      )}
-
 
       {/* Typology Dashboard — collapsible summary */}
       <TypologyDashboard
@@ -551,23 +480,19 @@ export default function ServicesPage() {
         {/* Source filter */}
         <div className="flex items-center gap-1.5">
           <span className="text-sm text-gray-500">Source:</span>
-          {(["all", "full", "graph", "catalogue"] as const).map((f) => {
+          {(["all", "full", "catalogue"] as const).map((f) => {
             const count =
               f === "all"
                 ? services.length
                 : f === "full"
                   ? fullCount
-                  : f === "graph"
-                    ? graphCount
-                    : catalogueCount;
+                  : catalogueCount;
             const label =
               f === "all"
                 ? "All"
                 : f === "full"
                   ? "Full"
-                  : f === "graph"
-                    ? "Graph"
-                    : "Catalogue";
+                  : "Catalogue";
             return (
               <button
                 key={f}
@@ -727,16 +652,12 @@ export default function ServicesPage() {
                       className={`text-[10px] font-bold uppercase px-1.5 py-0.5 rounded ${
                         service.source === "catalogue"
                           ? "bg-gray-100 text-gray-600"
-                          : (service.source || "full") === "full"
-                            ? "bg-blue-100 text-blue-800"
-                            : "bg-amber-100 text-amber-800"
+                          : "bg-blue-100 text-blue-800"
                       }`}
                     >
                       {service.source === "catalogue"
                         ? "Catalogue"
-                        : (service.source || "full") === "full"
-                          ? "Full"
-                          : "Graph"}
+                        : "Full"}
                     </span>
                     {service.priority === "demo" && (
                       <span className="text-[10px] font-bold uppercase px-1.5 py-0.5 rounded bg-purple-100 text-purple-800">
@@ -871,9 +792,7 @@ export default function ServicesPage() {
                 ) : (
                   <div className="flex items-center gap-3">
                     <span className="text-sm text-gray-500">
-                      {service.source === "catalogue"
-                        ? "Catalogue — no artefacts yet"
-                        : "Graph-only — needs artefacts for full integration"}
+                      Catalogue — no artefacts yet
                     </span>
                     {service.govuk_url && (
                       <>
