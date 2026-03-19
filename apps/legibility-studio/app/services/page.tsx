@@ -286,171 +286,11 @@ interface LifeEventFilter {
   serviceIds: string[];
 }
 
-interface DashboardData {
-  totalCases: number;
-  activeCases: number;
-  completedCases: number;
-  rejectedCases: number;
-  handedOffCases: number;
-  completionRate: number;
-  handoffRate: number;
-  avgProgress: number;
-  agentActionTotal: number;
-  humanActionTotal: number;
-  bottlenecks: Array<{ stateId: string; caseCount: number }>;
-}
-
-function AllServicesDashboard({ dashboard }: { dashboard: DashboardData }) {
-  const agentPct =
-    dashboard.agentActionTotal + dashboard.humanActionTotal > 0
-      ? Math.round(
-          (dashboard.agentActionTotal /
-            (dashboard.agentActionTotal + dashboard.humanActionTotal)) *
-            100,
-        )
-      : 0;
-
-  return (
-    <div className="border border-studio-border rounded-xl bg-white p-6 mb-8 space-y-6">
-      <div>
-        <h2 className="text-lg font-bold mb-1">All Services Dashboard</h2>
-        <p className="text-sm text-gray-500">
-          Aggregated operational metrics across all services.
-        </p>
-      </div>
-
-      {/* KPI Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <KPICard label="Total Cases" value={dashboard.totalCases} />
-        <KPICard label="Active Cases" value={dashboard.activeCases} />
-        <KPICard
-          label="Completion Rate"
-          value={`${dashboard.completionRate}%`}
-          sub={`${dashboard.completedCases} completed`}
-        />
-        <KPICard
-          label="Handoff Rate"
-          value={`${dashboard.handoffRate}%`}
-          sub={`${dashboard.handedOffCases} handed off`}
-        />
-      </div>
-
-      {/* Status bar */}
-      <div>
-        <h3 className="text-sm font-bold mb-2">Status Breakdown</h3>
-        <div className="flex h-4 rounded-full overflow-hidden">
-          {dashboard.completedCases > 0 && (
-            <div
-              className="bg-govuk-blue"
-              style={{
-                width: `${(dashboard.completedCases / dashboard.totalCases) * 100}%`,
-              }}
-              title={`${dashboard.completedCases} completed`}
-            />
-          )}
-          {dashboard.activeCases > 0 && (
-            <div
-              className="bg-govuk-blue/70"
-              style={{
-                width: `${(dashboard.activeCases / dashboard.totalCases) * 100}%`,
-              }}
-              title={`${dashboard.activeCases} active`}
-            />
-          )}
-          {dashboard.handedOffCases > 0 && (
-            <div
-              className="bg-govuk-blue/45"
-              style={{
-                width: `${(dashboard.handedOffCases / dashboard.totalCases) * 100}%`,
-              }}
-              title={`${dashboard.handedOffCases} handed off`}
-            />
-          )}
-          {dashboard.rejectedCases > 0 && (
-            <div
-              className="bg-govuk-blue/25"
-              style={{
-                width: `${(dashboard.rejectedCases / dashboard.totalCases) * 100}%`,
-              }}
-              title={`${dashboard.rejectedCases} rejected`}
-            />
-          )}
-        </div>
-        <div className="flex gap-4 mt-2 text-xs text-gray-500">
-          <span className="flex items-center gap-1">
-            <span className="w-2 h-2 bg-govuk-blue rounded-full inline-block" />{" "}
-            Completed
-          </span>
-          <span className="flex items-center gap-1">
-            <span className="w-2 h-2 bg-govuk-blue/70 rounded-full inline-block" />{" "}
-            Active
-          </span>
-          <span className="flex items-center gap-1">
-            <span className="w-2 h-2 bg-govuk-blue/45 rounded-full inline-block" />{" "}
-            Handed off
-          </span>
-          <span className="flex items-center gap-1">
-            <span className="w-2 h-2 bg-govuk-blue/25 rounded-full inline-block" />{" "}
-            Rejected
-          </span>
-        </div>
-      </div>
-
-      {/* Agent vs Human + Avg Progress */}
-      <div className="grid grid-cols-2 gap-4">
-        <div className="border border-studio-border rounded-xl p-4">
-          <h3 className="text-sm font-bold mb-2">Agent vs Human Actions</h3>
-          <div className="flex items-center gap-4">
-            <div className="flex-1">
-              <div className="flex h-3 rounded-full overflow-hidden bg-gray-100">
-                <div
-                  className="bg-govuk-blue rounded-l-full"
-                  style={{ width: `${agentPct}%` }}
-                />
-                <div
-                  className="bg-govuk-blue/25 rounded-r-full"
-                  style={{ width: `${100 - agentPct}%` }}
-                />
-              </div>
-              <div className="flex justify-between text-xs mt-1 text-gray-500">
-                <span>Agent: {dashboard.agentActionTotal}</span>
-                <span>Human: {dashboard.humanActionTotal}</span>
-              </div>
-            </div>
-            <div className="text-3xl font-light tracking-tight">
-              {agentPct}%
-            </div>
-          </div>
-          <p className="text-xs text-gray-400 mt-1">
-            of actions performed by agent
-          </p>
-        </div>
-
-        <div className="border border-studio-border rounded-xl p-4">
-          <h3 className="text-sm font-bold mb-2">Average Progress</h3>
-          <div className="flex items-center gap-4">
-            <div className="flex-1 h-3 bg-gray-100 rounded-full overflow-hidden">
-              <div
-                className="h-full bg-govuk-blue/70 rounded-full"
-                style={{ width: `${dashboard.avgProgress}%` }}
-              />
-            </div>
-            <div className="text-3xl font-light tracking-tight">
-              {dashboard.avgProgress}%
-            </div>
-          </div>
-          <p className="text-xs text-gray-400 mt-1">
-            of active cases through their journey
-          </p>
-        </div>
-      </div>
-    </div>
-  );
+// AllServicesDashboard removed — operational metrics belong on the evidence page
 }
 
 export default function ServicesPage() {
   const [services, setServices] = useState<Service[]>([]);
-  const [dashboard, setDashboard] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
   const [togglingId, setTogglingId] = useState<string | null>(null);
   const [sourceFilter, setSourceFilter] = useState<
@@ -469,24 +309,11 @@ export default function ServicesPage() {
   } | null>(null);
 
   useEffect(() => {
-    Promise.all([
-      fetch("/api/services").then((r) => r.json()),
-      fetch(
-        `${process.env.NEXT_PUBLIC_CITIZEN_API || "http://localhost:3100"}/api/ledger/dashboard`,
-      )
-        .then((r) => r.json())
-        .catch(() => null),
-    ])
-      .then(([servicesData, dashboardData]) => {
+    fetch("/api/services")
+      .then((r) => r.json())
+      .then((servicesData) => {
         setServices(servicesData.services || []);
         setLifeEvents(servicesData.lifeEvents || []);
-        if (
-          dashboardData &&
-          !dashboardData.error &&
-          dashboardData.totalCases > 0
-        ) {
-          setDashboard(dashboardData);
-        }
         setLoading(false);
       })
       .catch(() => setLoading(false));
@@ -710,8 +537,6 @@ export default function ServicesPage() {
         </div>
       )}
 
-      {/* All-services dashboard — top level */}
-      {dashboard && <AllServicesDashboard dashboard={dashboard} />}
 
       {/* Typology Dashboard — collapsible summary */}
       <TypologyDashboard
