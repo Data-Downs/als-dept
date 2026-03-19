@@ -195,29 +195,86 @@ export default function DataSourcesSection({ fieldSources, onChange }: Props) {
               </div>
               <div className="bg-white rounded-lg border border-studio-border divide-y divide-gray-100">
                 {fields.map(({ path, attr }) => (
-                  <div
-                    key={path}
-                    className="flex items-center gap-3 px-3 py-2 text-sm"
-                  >
-                    <span className="flex-1 font-mono text-xs text-gray-700 truncate">
-                      {path}
-                    </span>
-                    <span
-                      className={`shrink-0 text-[10px] font-semibold px-1.5 py-0.5 rounded ${getTierBadge(attr.tier)}`}
-                    >
-                      {attr.tier}
-                    </span>
-                    <span className="shrink-0 text-[10px] text-gray-400">
-                      {attr.topic}
-                    </span>
-                    <button
-                      onClick={() =>
-                        setEditingField(editingField === path ? null : path)
-                      }
-                      className="shrink-0 text-xs text-studio-accent hover:underline"
-                    >
-                      {editingField === path ? "done" : "edit"}
-                    </button>
+                  <div key={path} className="px-3 py-2">
+                    <div className="flex items-center gap-3 text-sm">
+                      <span className="flex-1 font-mono text-xs text-gray-700 truncate">
+                        {path}
+                      </span>
+                      <span
+                        className={`shrink-0 text-[10px] font-semibold px-1.5 py-0.5 rounded ${getTierBadge(attr.tier)}`}
+                      >
+                        {attr.tier}
+                      </span>
+                      <span className="shrink-0 text-[10px] text-gray-400">
+                        {attr.topic}
+                      </span>
+                      <button
+                        onClick={() =>
+                          setEditingField(editingField === path ? null : path)
+                        }
+                        className="shrink-0 text-xs text-studio-accent hover:underline"
+                      >
+                        {editingField === path ? "done" : "edit"}
+                      </button>
+                    </div>
+                    {editingField === path && (
+                      <div className="flex gap-3 mt-2">
+                        <div>
+                          <label className="block text-[10px] font-semibold text-gray-500 mb-0.5">
+                            Source
+                          </label>
+                          <select
+                            className={selectClass}
+                            value={attr.source}
+                            onChange={(e) =>
+                              updateField(path, "source", e.target.value)
+                            }
+                          >
+                            {ALL_SOURCES.map((s) => (
+                              <option key={s} value={s}>
+                                {s}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                        <div>
+                          <label className="block text-[10px] font-semibold text-gray-500 mb-0.5">
+                            Tier
+                          </label>
+                          <select
+                            className={selectClass}
+                            value={attr.tier}
+                            onChange={(e) =>
+                              updateField(path, "tier", e.target.value)
+                            }
+                          >
+                            {TIER_OPTIONS.map((t) => (
+                              <option key={t} value={t}>
+                                {t}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                        <div>
+                          <label className="block text-[10px] font-semibold text-gray-500 mb-0.5">
+                            Topic
+                          </label>
+                          <select
+                            className={selectClass}
+                            value={attr.topic}
+                            onChange={(e) =>
+                              updateField(path, "topic", e.target.value)
+                            }
+                          >
+                            {TOPIC_OPTIONS.map((t) => (
+                              <option key={t} value={t}>
+                                {t}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
