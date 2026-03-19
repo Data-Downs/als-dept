@@ -51,6 +51,15 @@ export type {
 // Relationship store
 export { RelationshipStore } from "./relationship-store";
 
+// Persona–Department mapping
+export type { DepartmentCode, DepartmentInfo } from "./persona-departments";
+export {
+  DEPARTMENTS,
+  PERSONA_DEPARTMENTS,
+  getPersonasByDepartment,
+  getDepartmentsForPersona,
+} from "./persona-departments";
+
 // Field registry
 export {
   FIELD_REGISTRY,

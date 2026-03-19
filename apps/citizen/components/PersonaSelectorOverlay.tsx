@@ -1,8 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useAppStore } from "@/lib/store";
 import { BottomSheet } from "./ui/BottomSheet";
+import {
+  DEPARTMENTS,
+  PERSONA_DEPARTMENTS,
+  type DepartmentCode,
+} from "@als/personal-data";
 
 interface PersonaItem {
   id: string;
@@ -21,6 +26,7 @@ export function PersonaSelectorOverlay() {
   const setServiceMode = useAppStore((s) => s.setServiceMode);
   const setOpen = useAppStore((s) => s.setPersonaSelectorOpen);
   const [personas, setPersonas] = useState<PersonaItem[]>([]);
+  const [activeDept, setActiveDept] = useState<DepartmentCode | null>(null);
 
   useEffect(() => {
     fetch("/api/personas")
@@ -31,15 +37,59 @@ export function PersonaSelectorOverlay() {
       .catch(() => {});
   }, []);
 
+  const filtered = useMemo(() => {
+    if (!activeDept) return personas;
+    const deptPersonaIds = new Set(
+      Object.entries(PERSONA_DEPARTMENTS)
+        .filter(([, depts]) => depts.includes(activeDept))
+        .map(([id]) => id),
+    );
+    return personas.filter((p) => deptPersonaIds.has(p.id));
+  }, [personas, activeDept]);
+
   return (
     <BottomSheet
       open={true}
       onClose={() => setOpen(false)}
       title="Switch persona"
     >
+      {/* Department filter pills */}
+      <div className="flex gap-1.5 overflow-x-auto pb-1 mb-4 -mx-1 px-1 no-scrollbar">
+        <button
+          onClick={() => setActiveDept(null)}
+          className={`shrink-0 px-2.5 py-1 rounded-full text-[11px] font-semibold transition-colors ${
+            activeDept === null
+              ? "bg-govuk-black text-white"
+              : "bg-gray-100 text-govuk-dark-grey"
+          }`}
+        >
+          All
+        </button>
+        {DEPARTMENTS.map((dept) => (
+          <button
+            key={dept.code}
+            onClick={() =>
+              setActiveDept(activeDept === dept.code ? null : dept.code)
+            }
+            className={`shrink-0 px-2.5 py-1 rounded-full text-[11px] font-semibold transition-colors ${
+              activeDept === dept.code
+                ? "text-white"
+                : "bg-gray-100 text-govuk-dark-grey"
+            }`}
+            style={
+              activeDept === dept.code
+                ? { backgroundColor: dept.color }
+                : undefined
+            }
+          >
+            {dept.code}
+          </button>
+        ))}
+      </div>
+
       {/* Persona cards */}
       <div className="space-y-3 mb-6">
-        {personas.map((p) => (
+        {filtered.map((p) => (
           <button
             key={p.id}
             onClick={() => {
