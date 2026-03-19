@@ -1,0 +1,2097 @@
+<!doctype html>
+<html lang="en-GB">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Department Presentations — Agentic Legibility Stack</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /* ── Reset & Base ── */
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        font-family: "Inter", Arial, sans-serif;
+        color: #0b0c0c;
+        line-height: 1.6;
+        background: #fff;
+        -webkit-font-smoothing: antialiased;
+      }
+      a {
+        color: #1d70b8;
+        text-decoration: none;
+      }
+      a:hover {
+        text-decoration: underline;
+        color: #003078;
+      }
+      code {
+        font-family: "JetBrains Mono", monospace;
+      }
+
+      /* ── Layout ── */
+      .container {
+        max-width: 960px;
+        margin: 0 auto;
+        padding: 0 1.5rem;
+      }
+      .section {
+        padding: 4rem 0;
+      }
+      .section-alt {
+        background: #f3f2f1;
+      }
+
+      h1, h2, h3, h4 {
+        line-height: 1.2;
+      }
+      h2 {
+        font-size: 1.75rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+      }
+      h3 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+      }
+      h4 {
+        font-size: 1.05rem;
+        font-weight: 600;
+        margin-bottom: 0.35rem;
+      }
+      .section-intro {
+        font-size: 1.1rem;
+        color: #505a5f;
+        max-width: 700px;
+        margin-bottom: 2rem;
+      }
+
+      /* ── Nav ── */
+      .nav {
+        background: #fff;
+        border-bottom: 1px solid #b1b4b6;
+        padding: 0.75rem 0;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+      .nav .container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+      }
+      .nav-brand {
+        font-weight: 700;
+        font-size: 1rem;
+        color: #0b0c0c;
+        white-space: nowrap;
+      }
+      .nav-links {
+        display: flex;
+        gap: 1.25rem;
+        list-style: none;
+        flex-wrap: wrap;
+        align-items: center;
+      }
+      .nav-links a {
+        font-size: 0.85rem;
+        font-weight: 500;
+        color: #505a5f;
+      }
+      .nav-links a:hover {
+        color: #1d70b8;
+        text-decoration: none;
+      }
+      @media (max-width: 640px) {
+        .nav-links {
+          display: none;
+        }
+      }
+
+      /* ── Hero ── */
+      .hero {
+        padding: 5rem 0 4rem;
+      }
+      .hero-label {
+        display: inline-block;
+        background: #f3f2f1;
+        color: #505a5f;
+        font-size: 0.8rem;
+        font-weight: 600;
+        padding: 0.25rem 0.75rem;
+        border-radius: 2px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 1.25rem;
+      }
+      .hero h1 {
+        font-size: 2.75rem;
+        font-weight: 700;
+        margin-bottom: 0.75rem;
+      }
+      .hero-subtitle {
+        font-size: 1.35rem;
+        color: #505a5f;
+        font-weight: 400;
+        max-width: 640px;
+        margin-bottom: 1.5rem;
+      }
+      @media (max-width: 640px) {
+        .hero h1 { font-size: 2rem; }
+        .hero-subtitle { font-size: 1.15rem; }
+      }
+
+      /* ── Department Directory Cards ── */
+      .dept-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.25rem;
+        margin-bottom: 1.5rem;
+      }
+      @media (max-width: 768px) {
+        .dept-grid { grid-template-columns: repeat(2, 1fr); }
+      }
+      @media (max-width: 480px) {
+        .dept-grid { grid-template-columns: 1fr; }
+      }
+      .dept-dir-card {
+        background: #fff;
+        border: 1px solid #b1b4b6;
+        border-left: 5px solid;
+        border-radius: 2px;
+        padding: 1.25rem 1.5rem;
+        transition: box-shadow 0.15s ease;
+        display: block;
+        color: inherit;
+      }
+      .dept-dir-card:hover {
+        text-decoration: none;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      }
+      .dept-dir-card h3 {
+        font-size: 1.1rem;
+        margin-bottom: 0.25rem;
+      }
+      .dept-dir-card .dept-stat {
+        font-size: 0.85rem;
+        color: #505a5f;
+        margin-bottom: 0.5rem;
+      }
+      .dept-dir-card .dept-persona-count {
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: #505a5f;
+      }
+
+      /* ── Department Sections ── */
+      .dept-section {
+        padding: 4rem 0;
+        border-top: 1px solid #d2d5d8;
+      }
+      .dept-header {
+        margin-bottom: 2.5rem;
+      }
+      .dept-name-bar {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 0.75rem;
+      }
+      .dept-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 1rem;
+        color: #fff;
+        flex-shrink: 0;
+      }
+      .dept-meta {
+        font-size: 0.9rem;
+        color: #505a5f;
+        margin-bottom: 0.25rem;
+      }
+      .dept-scale {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #0b0c0c;
+      }
+
+      /* ── Challenge Cards ── */
+      .challenge-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+        margin-bottom: 2.5rem;
+      }
+      @media (max-width: 640px) {
+        .challenge-grid { grid-template-columns: 1fr; }
+      }
+      .challenge-card {
+        background: #fff;
+        border: 1px solid #b1b4b6;
+        border-radius: 2px;
+        padding: 1.25rem 1.5rem;
+      }
+      .challenge-card .stat {
+        font-size: 1.75rem;
+        font-weight: 700;
+        line-height: 1.1;
+        margin-bottom: 0.35rem;
+      }
+      .challenge-card .stat-label {
+        font-size: 0.8rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: #505a5f;
+        margin-bottom: 0.5rem;
+      }
+      .challenge-card p {
+        font-size: 0.9rem;
+        color: #505a5f;
+      }
+
+      /* ── Agent Value ── */
+      .agent-value {
+        background: #0b0c0c;
+        border-radius: 2px;
+        padding: 1.75rem 2rem;
+        margin-bottom: 2.5rem;
+      }
+      .agent-value h3 {
+        color: #fff;
+        font-size: 1.15rem;
+        margin-bottom: 1rem;
+      }
+      .agent-value-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+      }
+      @media (max-width: 640px) {
+        .agent-value-grid { grid-template-columns: 1fr; }
+      }
+      .agent-value-item {
+        border-left: 3px solid;
+        padding-left: 1rem;
+      }
+      .agent-value-item h4 {
+        color: #fff;
+        font-size: 0.9rem;
+        margin-bottom: 0.25rem;
+      }
+      .agent-value-item p {
+        color: rgba(255,255,255,0.7);
+        font-size: 0.85rem;
+        line-height: 1.5;
+      }
+
+      /* ── Journey Cards ── */
+      .journey-card {
+        background: #fff;
+        border: 1px solid #b1b4b6;
+        border-radius: 2px;
+        margin-bottom: 1.5rem;
+        overflow: hidden;
+      }
+      .journey-header {
+        padding: 1.25rem 1.5rem 1rem;
+        display: flex;
+        align-items: flex-start;
+        gap: 1rem;
+        border-bottom: 1px solid #e5e5e5;
+      }
+      .journey-avatar {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 0.9rem;
+        color: #fff;
+        flex-shrink: 0;
+      }
+      .journey-title h4 {
+        font-size: 1.1rem;
+        margin-bottom: 0.15rem;
+      }
+      .journey-subtitle {
+        font-size: 0.9rem;
+        color: #505a5f;
+        font-style: italic;
+      }
+      .journey-opening {
+        background: #f8f8f8;
+        border-left: 3px solid #b1b4b6;
+        padding: 0.75rem 1rem;
+        margin: 1rem 1.5rem;
+        font-style: italic;
+        font-size: 0.95rem;
+        color: #353535;
+      }
+      .journey-opening::before {
+        content: "\201C";
+        font-size: 1.5rem;
+        color: #b1b4b6;
+        margin-right: 0.25rem;
+        vertical-align: -0.15em;
+      }
+      .journey-body {
+        padding: 0 1.5rem 1.5rem;
+      }
+      .journey-columns {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+        margin-top: 1rem;
+      }
+      @media (max-width: 640px) {
+        .journey-columns { grid-template-columns: 1fr; }
+      }
+      .journey-col h5 {
+        font-size: 0.8rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 0.75rem;
+        padding-bottom: 0.35rem;
+        border-bottom: 1px solid #e5e5e5;
+      }
+      .journey-col-today h5 {
+        color: #d4351c;
+      }
+      .journey-col-agent h5 {
+        color: #00703c;
+      }
+      .journey-col ol, .journey-col ul {
+        padding-left: 1.25rem;
+        margin: 0;
+      }
+      .journey-col li {
+        font-size: 0.88rem;
+        color: #353535;
+        margin-bottom: 0.4rem;
+        line-height: 1.45;
+      }
+
+      /* ── Back to top ── */
+      .back-to-top {
+        display: inline-block;
+        font-size: 0.85rem;
+        font-weight: 500;
+        color: #505a5f;
+        margin-top: 2rem;
+      }
+
+      /* ── Print ── */
+      @media print {
+        .nav { display: none; }
+        .dept-section { break-before: page; }
+        .journey-card { break-inside: avoid; }
+        body { font-size: 11pt; }
+      }
+    </style>
+  </head>
+  <body>
+
+    <!-- Nav -->
+    <nav class="nav">
+      <div class="container">
+        <div class="nav-brand">ALS &mdash; Department Presentations</div>
+        <ul class="nav-links">
+          <li><a href="#directory">Departments</a></li>
+          <li><a href="#moj">MoJ</a></li>
+          <li><a href="#dwp">DWP</a></li>
+          <li><a href="#hmrc">HMRC</a></li>
+          <li><a href="#dfe">DfE</a></li>
+          <li><a href="#ho">Home Office</a></li>
+          <li><a href="#dvla">DVLA</a></li>
+          <li><a href="index.html">Overview</a></li>
+          <li><a href="personas.html">Personas</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- Hero -->
+    <header class="hero">
+      <div class="container">
+        <div class="hero-label">Permanent Secretary Presentations</div>
+        <h1>Department Briefings</h1>
+        <p class="hero-subtitle">
+          Tailored presentations for each department &mdash; their challenges,
+          where agents help, and what the new citizen experience looks like.
+        </p>
+        <p style="font-size:1.05rem; color:#505a5f; max-width:640px;">
+          Each briefing draws on real departmental data and maps specific citizen
+          personas to the services that department owns. The goal: show each
+          permanent secretary exactly how agentic technology transforms their
+          highest-friction citizen interactions.
+        </p>
+      </div>
+    </header>
+
+    <!-- ════════════════════════════════════════ -->
+    <!-- DEPARTMENT DIRECTORY                      -->
+    <!-- ════════════════════════════════════════ -->
+    <section id="directory" class="section section-alt">
+      <div class="container">
+        <h2>The Six Departments</h2>
+        <p class="section-intro">
+          Each department faces distinct challenges. Each has citizens falling through
+          the cracks of its current service model. Select a department to see the full briefing.
+        </p>
+        <div class="dept-grid">
+          <a href="#moj" class="dept-dir-card" style="border-left-color:#912b88;">
+            <h3>Ministry of Justice</h3>
+            <div class="dept-stat">&pound;15.5bn department</div>
+            <div class="dept-persona-count">4 personas</div>
+          </a>
+          <a href="#dwp" class="dept-dir-card" style="border-left-color:#1d70b8;">
+            <h3>Department for Work &amp; Pensions</h3>
+            <div class="dept-stat">&pound;268.5bn in benefit payments</div>
+            <div class="dept-persona-count">8 personas &mdash; all</div>
+          </a>
+          <a href="#hmrc" class="dept-dir-card" style="border-left-color:#00703c;">
+            <h3>HM Revenue &amp; Customs</h3>
+            <div class="dept-stat">&pound;875.9bn revenue collected</div>
+            <div class="dept-persona-count">6 personas</div>
+          </a>
+          <a href="#dfe" class="dept-dir-card" style="border-left-color:#f47738;">
+            <h3>Department for Education</h3>
+            <div class="dept-stat">638,700 children with EHCPs</div>
+            <div class="dept-persona-count">5 personas</div>
+          </a>
+          <a href="#ho" class="dept-dir-card" style="border-left-color:#d4351c;">
+            <h3>Home Office</h3>
+            <div class="dept-stat">&pound;27.8bn department</div>
+            <div class="dept-persona-count">4 personas</div>
+          </a>
+          <a href="#dvla" class="dept-dir-card" style="border-left-color:#4c6272;">
+            <h3>DVLA</h3>
+            <div class="dept-stat">High-volume transactional</div>
+            <div class="dept-persona-count">5 personas</div>
+          </a>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ════════════════════════════════════════════════════════════ -->
+    <!-- MINISTRY OF JUSTICE                                         -->
+    <!-- ════════════════════════════════════════════════════════════ -->
+    <section id="moj" class="dept-section">
+      <div class="container">
+        <div class="dept-header">
+          <div class="dept-name-bar">
+            <div class="dept-icon" style="background:#912b88;">MoJ</div>
+            <div>
+              <h2 style="margin-bottom:0.25rem;">Ministry of Justice</h2>
+              <div class="dept-meta">Permanent Secretary: Dr Josephine Farrar CB OBE (since July 2025)</div>
+            </div>
+          </div>
+          <div class="dept-scale">&pound;15.5bn department</div>
+          <p style="font-size:1rem; color:#505a5f; max-width:700px; margin-top:0.75rem;">
+            Justice services carry some of the highest stakes in government. Citizens arrive
+            at their most vulnerable &mdash; bereaved, appealing a benefits decision,
+            recovering from prison, chasing an unpaid debt. The complexity of the system
+            often compounds their distress.
+          </p>
+        </div>
+
+        <!-- Challenges -->
+        <h3 style="margin-bottom:1rem;">Key Challenges</h3>
+        <div class="challenge-grid">
+          <div class="challenge-card">
+            <div class="stat" style="color:#912b88;">76,957</div>
+            <div class="stat-label">Open Crown Court cases</div>
+            <p>The backlog means citizens wait longer for resolution, increasing anxiety and cost for all parties.</p>
+          </div>
+          <div class="challenge-card">
+            <div class="stat" style="color:#912b88;">40%</div>
+            <div class="stat-label">Fewer legal aid firms since 2013</div>
+            <p>Citizens who need legal representation increasingly cannot access it, particularly outside London.</p>
+          </div>
+          <div class="challenge-card">
+            <div class="stat" style="color:#912b88;">199%</div>
+            <div class="stat-label">Increase in LPA rejections</div>
+            <p>Form complexity leads to errors. Applications are rejected and must be resubmitted, adding months.</p>
+          </div>
+          <div class="challenge-card">
+            <div class="stat" style="color:#912b88;">&pound;6.62 vs &pound;0.22</div>
+            <div class="stat-label">Post vs digital transaction cost</div>
+            <p>Probate is 2.5x faster online (4.9 weeks vs 12.3), yet 24% of the population is digitally excluded from justice services.</p>
+          </div>
+        </div>
+
+        <!-- Agent Value -->
+        <div class="agent-value">
+          <h3>Where Agents Help</h3>
+          <div class="agent-value-grid">
+            <div class="agent-value-item" style="border-left-color:#912b88;">
+              <h4>Probate automation</h4>
+              <p>Guides executors through online probate, cutting processing from 12.3 weeks to 4.9. Pre-fills from death certificate data. Coordinates with HMRC for inheritance tax payment that must happen before probate is granted.</p>
+            </div>
+            <div class="agent-value-item" style="border-left-color:#912b88;">
+              <h4>Tribunal guidance</h4>
+              <p>66% of PIP appeals succeed at tribunal &mdash; suggesting initial assessments are frequently wrong. The agent helps citizens understand their rights, gather medical evidence, and navigate the appeals process.</p>
+            </div>
+            <div class="agent-value-item" style="border-left-color:#912b88;">
+              <h4>Civil claims access</h4>
+              <p>Walks self-employed citizens through civil money claims for unpaid invoices, handling the 1.94m claims process that saw a 14% increase last year.</p>
+            </div>
+            <div class="agent-value-item" style="border-left-color:#912b88;">
+              <h4>Probation coordination</h4>
+              <p>Helps prison leavers understand licence conditions, reporting schedules, and restrictions &mdash; relieving pressure on probation officers at 100%+ caseload capacity.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Personas & Journeys -->
+        <h3 style="margin-bottom:1rem;">Relevant Personas &amp; New User Journeys</h3>
+
+        <!-- Sarah → MoJ -->
+        <article class="journey-card">
+          <div class="journey-header">
+            <div class="journey-avatar" style="background:#912b88;">SO</div>
+            <div class="journey-title">
+              <h4>Sarah Okafor</h4>
+              <div class="journey-subtitle">The Bereaved Spouse &mdash; Probate</div>
+            </div>
+          </div>
+          <div class="journey-opening">My husband died three weeks ago. I don't know what to do.</div>
+          <div class="journey-body">
+            <div class="journey-columns">
+              <div class="journey-col journey-col-today">
+                <h5>Today's Process</h5>
+                <ol>
+                  <li>Research probate process online or visit Citizens Advice</li>
+                  <li>Download PA1P form (12 pages) or find the online service</li>
+                  <li>Calculate estate value across property, pensions, savings</li>
+                  <li>Contact HMRC separately for inheritance tax calculation</li>
+                  <li>Pay IHT before probate can be granted</li>
+                  <li>Submit probate application and wait 4.9 weeks (online) or 12.3 weeks (paper)</li>
+                  <li>Receive grant, then contact each institution individually</li>
+                </ol>
+              </div>
+              <div class="journey-col journey-col-agent">
+                <h5>With the Agent</h5>
+                <ol>
+                  <li>Sarah says her husband has died. The agent identifies probate as the primary MoJ service</li>
+                  <li>Confirms Sarah is named executor from will details she provides</li>
+                  <li>Gathers estate information conversationally &mdash; property, pensions, ISA, car</li>
+                  <li>Coordinates with HMRC for IHT calculation (cross-department)</li>
+                  <li>Files the online probate application, ensuring the faster 4.9-week track</li>
+                  <li>Tracks progress and notifies Sarah when the grant is issued</li>
+                </ol>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Marcus → MoJ -->
+        <article class="journey-card">
+          <div class="journey-header">
+            <div class="journey-avatar" style="background:#f47738;">MT</div>
+            <div class="journey-title">
+              <h4>Marcus Taylor</h4>
+              <div class="journey-subtitle">The Prison Leaver &mdash; Probation Compliance</div>
+            </div>
+          </div>
+          <div class="journey-opening">I've just been released from prison and I need to sort everything out.</div>
+          <div class="journey-body">
+            <div class="journey-columns">
+              <div class="journey-col journey-col-today">
+                <h5>Today's Process</h5>
+                <ol>
+                  <li>Receives licence conditions on release &mdash; legal language, no plain-English summary</li>
+                  <li>Must remember fortnightly reporting dates or face recall</li>
+                  <li>Probation officer at 100%+ caseload has limited time to explain conditions</li>
+                  <li>No single view of what he can and cannot do (travel, curfew, restricted areas)</li>
+                  <li>If conditions change, he finds out at his next appointment</li>
+                </ol>
+              </div>
+              <div class="journey-col journey-col-agent">
+                <h5>With the Agent</h5>
+                <ol>
+                  <li>Agent reads Marcus's licence conditions and presents them in plain language</li>
+                  <li>Sets up reporting reminders aligned with his probation schedule</li>
+                  <li>Explains restrictions clearly &mdash; what's allowed, what's not, and why</li>
+                  <li>Coordinates with DWP (UC claim) and DVLA (licence renewal) around probation requirements</li>
+                  <li>Flags the 6-week approved premises deadline and sequences housing steps accordingly</li>
+                </ol>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- James → MoJ -->
+        <article class="journey-card">
+          <div class="journey-header">
+            <div class="journey-avatar" style="background:#00703c;">JW</div>
+            <div class="journey-title">
+              <h4>James Whitfield</h4>
+              <div class="journey-subtitle">The Disabled Appellant &mdash; PIP Tribunal &amp; SEND Tribunal</div>
+            </div>
+          </div>
+          <div class="journey-opening">My PIP was turned down and my son's EHCP is stuck.</div>
+          <div class="journey-body">
+            <div class="journey-columns">
+              <div class="journey-col journey-col-today">
+                <h5>Today's Process</h5>
+                <ol>
+                  <li>Receives PIP mandatory reconsideration rejection from DWP</li>
+                  <li>Must file tribunal appeal within 1 month &mdash; complex legal paperwork</li>
+                  <li>Needs to gather medical evidence from GP, consultant, occupational therapist</li>
+                  <li>Searches for legal representation &mdash; 40% fewer legal aid firms available</li>
+                  <li>Waits months for hearing date while Motability car is at risk</li>
+                  <li>Separately, if Owen's EHCP is refused, must file a SEND tribunal &mdash; entirely different process</li>
+                </ol>
+              </div>
+              <div class="journey-col journey-col-agent">
+                <h5>With the Agent</h5>
+                <ol>
+                  <li>Agent identifies two tribunal tracks: PIP appeal and potential SEND tribunal</li>
+                  <li>Creates medical evidence checklist based on James's MS diagnosis and PIP descriptors</li>
+                  <li>Drafts tribunal appeal paperwork with the right legal framing</li>
+                  <li>Checks legal aid eligibility and finds nearest providers</li>
+                  <li>For Owen: monitors EHCP 20-week deadline (DfE) and prepares SEND tribunal if needed</li>
+                  <li>Coordinates both processes so James handles them in parallel, not sequentially</li>
+                </ol>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Daniel → MoJ -->
+        <article class="journey-card">
+          <div class="journey-header">
+            <div class="journey-avatar" style="background:#4c6272;">DO</div>
+            <div class="journey-title">
+              <h4>Daniel Obi</h4>
+              <div class="journey-subtitle">The Self-Employed &mdash; Civil Money Claim</div>
+            </div>
+          </div>
+          <div class="journey-opening">I'm self-employed and I'm confused about my tax and I've got a client who won't pay.</div>
+          <div class="journey-body">
+            <div class="journey-columns">
+              <div class="journey-col journey-col-today">
+                <h5>Today's Process</h5>
+                <ol>
+                  <li>Writes to the debtor requesting payment &mdash; no response</li>
+                  <li>Researches civil money claims online, unsure if it's worth it for &pound;4,200</li>
+                  <li>Fills out the MCOL form, pays court fee (&pound;205 for this amount)</li>
+                  <li>Waits for defendant response &mdash; if disputed, must prepare for hearing</li>
+                  <li>If judgment awarded, still has to enforce it separately</li>
+                </ol>
+              </div>
+              <div class="journey-col journey-col-agent">
+                <h5>With the Agent</h5>
+                <ol>
+                  <li>Agent identifies the unpaid invoice as a civil money claim candidate</li>
+                  <li>Explains the process, likely costs (&pound;205 fee, reclaimable), and timeline</li>
+                  <li>Drafts the formal letter before action (required pre-step)</li>
+                  <li>If no response, files the claim through MCOL with pre-filled details</li>
+                  <li>Tracks the claim status and advises on enforcement options if judgment is awarded</li>
+                </ol>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <a href="#directory" class="back-to-top">Back to departments</a>
+      </div>
+    </section>
+
+
+    <!-- ════════════════════════════════════════════════════════════ -->
+    <!-- DWP                                                         -->
+    <!-- ════════════════════════════════════════════════════════════ -->
+    <section id="dwp" class="dept-section">
+      <div class="container">
+        <div class="dept-header">
+          <div class="dept-name-bar">
+            <div class="dept-icon" style="background:#1d70b8;">DWP</div>
+            <div>
+              <h2 style="margin-bottom:0.25rem;">Department for Work &amp; Pensions</h2>
+              <div class="dept-meta">Permanent Secretary: Sir Peter Schofield KCB (stepping down July 2026)</div>
+            </div>
+          </div>
+          <div class="dept-scale">&pound;268.5bn in benefit payments &middot; 7.3m UC claimants</div>
+          <p style="font-size:1rem; color:#505a5f; max-width:700px; margin-top:0.75rem;">
+            DWP has the highest volume of citizen interactions in government. Every one of
+            our eight personas interacts with DWP &mdash; making it the clearest demonstration
+            of how agents can transform service delivery at scale.
+          </p>
+        </div>
+
+        <!-- Challenges -->
+        <h3 style="margin-bottom:1rem;">Key Challenges</h3>
+        <div class="challenge-grid">
+          <div class="challenge-card">
+            <div class="stat" style="color:#1d70b8;">5.3m</div>
+            <div class="stat-label">Calls abandoned in 2023&ndash;24</div>
+            <p>Citizens give up trying to reach DWP by phone. Each abandoned call represents a person who needed help and didn't get it.</p>
+          </div>
+          <div class="challenge-card">
+            <div class="stat" style="color:#1d70b8;">66%</div>
+            <div class="stat-label">PIP appeals succeed at tribunal</div>
+            <p>Two-thirds of appealed PIP decisions are overturned, suggesting widespread issues with initial assessments. 392k reviews backlogged.</p>
+          </div>
+          <div class="challenge-card">
+            <div class="stat" style="color:#1d70b8;">26 min</div>
+            <div class="stat-label">Average ESA call wait time</div>
+            <p>Only 50% of ESA calls are answered. Citizens with disabilities wait longest to reach the service designed to support them.</p>
+          </div>
+          <div class="challenge-card">
+            <div class="stat" style="color:#1d70b8;">&pound;9.5bn</div>
+            <div class="stat-label">In benefit overpayments</div>
+            <p>3.3% of total benefit spend. Overpayments create recovery burdens for citizens and administrative costs for the department.</p>
+          </div>
+        </div>
+
+        <!-- Agent Value -->
+        <div class="agent-value">
+          <h3>Where Agents Help</h3>
+          <div class="agent-value-grid">
+            <div class="agent-value-item" style="border-left-color:#1d70b8;">
+              <h4>Eliminate abandoned calls</h4>
+              <p>5.3m citizens gave up trying to reach DWP. An agent is always available, never puts citizens on hold, and handles the complexity that drives most calls.</p>
+            </div>
+            <div class="agent-value-item" style="border-left-color:#1d70b8;">
+              <h4>Dependency chain sequencing</h4>
+              <p>Many DWP services have prerequisites across departments. The agent sequences NI number &rarr; UC application &rarr; housing element automatically, so citizens don't fall into gaps between steps.</p>
+            </div>
+            <div class="agent-value-item" style="border-left-color:#1d70b8;">
+              <h4>Proactive entitlement surfacing</h4>
+              <p>Citizens don't know what they're entitled to. The agent identifies missed benefits &mdash; Priya doesn't know about Tax-Free Childcare, Daniel doesn't know UC covers income dips for the self-employed.</p>
+            </div>
+            <div class="agent-value-item" style="border-left-color:#1d70b8;">
+              <h4>Pre-filled claims</h4>
+              <p>Citizens provide their information once. The agent reuses it across applications, reducing errors that drive the &pound;9.5bn overpayment figure and cutting processing time.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Personas & Journeys -->
+        <h3 style="margin-bottom:1rem;">Relevant Personas &amp; New User Journeys</h3>
+
+        <!-- Sarah → DWP -->
+        <article class="journey-card">
+          <div class="journey-header">
+            <div class="journey-avatar" style="background:#912b88;">SO</div>
+            <div class="journey-title">
+              <h4>Sarah Okafor</h4>
+              <div class="journey-subtitle">Bereaved Spouse &mdash; Bereavement Support Payment &amp; State Pension</div>
+            </div>
+          </div>
+          <div class="journey-opening">My husband died three weeks ago. I don't know what to do.</div>
+          <div class="journey-body">
+            <div class="journey-columns">
+              <div class="journey-col journey-col-today">
+                <h5>Today's Process</h5>
+                <ol>
+                  <li>Notify DWP of David's death to stop State Pension (Tell Us Once covers some of this)</li>
+                  <li>Research Bereavement Support Payment eligibility &mdash; different from the old Bereavement Allowance</li>
+                  <li>Find and complete the BSP application form</li>
+                  <li>Provide marriage certificate, death certificate, NI numbers for both</li>
+                  <li>Wait for processing while managing sudden income drop</li>
+                </ol>
+              </div>
+              <div class="journey-col journey-col-agent">
+                <h5>With the Agent</h5>
+                <ol>
+                  <li>Agent identifies DWP bereavement services from Sarah's situation</li>
+                  <li>Stops David's State Pension and applies for BSP in one flow</li>
+                  <li>Confirms eligibility: &pound;3,500 lump sum plus 18 monthly payments of &pound;350</li>
+                  <li>Uses death certificate data already provided for MoJ probate</li>
+                  <li>Flags the income impact and checks if Sarah qualifies for any additional support</li>
+                </ol>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Amina → DWP -->
+        <article class="journey-card">
+          <div class="journey-header">
+            <div class="journey-avatar" style="background:#d4351c;">AH</div>
+            <div class="journey-title">
+              <h4>Amina Hassan</h4>
+              <div class="journey-subtitle">Asylum Seeker &mdash; NI Number &amp; Universal Credit</div>
+            </div>
+          </div>
+          <div class="journey-opening">I just got my refugee status. What do I need to do?</div>
+          <div class="journey-body">
+            <div class="journey-columns">
+              <div class="journey-col journey-col-today">
+                <h5>Today's Process</h5>
+                <ol>
+                  <li>Apply for NI number (DWP/HMRC) &mdash; 6+ week wait</li>
+                  <li>Cannot claim UC until NI number arrives</li>
+                  <li>Cannot open bank account without proof of address and right-to-work</li>
+                  <li>Cannot receive UC payments without bank account</li>
+                  <li>Stuck on &pound;49.18/week asylum support during the entire wait</li>
+                  <li>Each step depends on the previous one &mdash; a dependency chain across departments</li>
+                </ol>
+              </div>
+              <div class="journey-col journey-col-agent">
+                <h5>With the Agent</h5>
+                <ol>
+                  <li>Agent maps the full dependency chain and starts NI number application immediately</li>
+                  <li>In parallel, guides bank account opening with refugee status documentation</li>
+                  <li>Queues UC application for submission as soon as NI number arrives</li>
+                  <li>Pre-fills UC claim with information Amina has already provided</li>
+                  <li>Tracks NI number progress and triggers next steps automatically</li>
+                  <li>Explains what Amina can expect and when &mdash; reducing anxiety during the wait</li>
+                </ol>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Marcus → DWP -->
+        <article class="journey-card">
+          <div class="journey-header">
+            <div class="journey-avatar" style="background:#f47738;">MT</div>
+            <div class="journey-title">
+              <h4>Marcus Taylor</h4>
+              <div class="journey-subtitle">Prison Leaver &mdash; UC &amp; Housing</div>
+            </div>
+          </div>
+          <div class="journey-opening">I've just been released from prison and I need to sort everything out.</div>
+          <div class="journey-body">
+            <div class="journey-columns">
+              <div class="journey-col journey-col-today">
+                <h5>Today's Process</h5>
+                <ol>
+                  <li>Apply for UC &mdash; temporary hostel address complicates the claim</li>
+                  <li>No bank account (closed during sentence) &mdash; can't receive payments</li>
+                  <li>Apply to housing register separately &mdash; 6 weeks before approved premises time runs out</li>
+                  <li>1 DWP Work Coach for the entire prison &mdash; no pre-release setup</li>
+                  <li>Must coordinate UC journal, housing applications, and probation reporting alone</li>
+                </ol>
+              </div>
+              <div class="journey-col journey-col-agent">
+                <h5>With the Agent</h5>
+                <ol>
+                  <li>Agent accepts temporary hostel address for UC claim and explains what changes when Marcus moves</li>
+                  <li>Guides bank account opening in parallel (basic bank accounts that accept prison leavers)</li>
+                  <li>Submits housing register application and flags the 6-week approved premises deadline</li>
+                  <li>Coordinates UC work search requirements with probation reporting schedule (MoJ)</li>
+                  <li>Creates a single timeline: housing, benefits, employment &mdash; all sequenced</li>
+                </ol>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Priya → DWP -->
+        <article class="journey-card">
+          <div class="journey-header">
+            <div class="journey-avatar" style="background:#1d70b8;">PA</div>
+            <div class="journey-title">
+              <h4>Priya Anand</h4>
+              <div class="journey-subtitle">New Mum &mdash; UC Top-Up &amp; Child Benefit</div>
+            </div>
+          </div>
+          <div class="journey-opening">I've got a baby and a 4-year-old starting school, and I'm struggling with money.</div>
+          <div class="journey-body">
+            <div class="journey-columns">
+              <div class="journey-col journey-col-today">
+                <h5>Today's Process</h5>
+                <ol>
+                  <li>Unsure if &pound;38,700 combined income qualifies for UC top-up</li>
+                  <li>Needs to apply for Child Benefit for Arjun separately</li>
+                  <li>Doesn't know Tax-Free Childcare exists (HMRC, not DWP)</li>
+                  <li>Free school meals eligibility for Meera depends on UC status she hasn't confirmed</li>
+                  <li>Each benefit has different eligibility rules across different departments</li>
+                </ol>
+              </div>
+              <div class="journey-col journey-col-agent">
+                <h5>With the Agent</h5>
+                <ol>
+                  <li>Agent runs UC eligibility check on combined &pound;38,700 income &mdash; confirms she qualifies for top-up</li>
+                  <li>Files Child Benefit claim for Arjun with details already provided</li>
+                  <li>Proactively identifies Tax-Free Childcare (HMRC) &mdash; &pound;2,000/year she didn't know about</li>
+                  <li>Confirms Meera's FSM eligibility based on UC status (DfE)</li>
+                  <li>Total unclaimed support found: approximately &pound;5,000/year</li>
+                </ol>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- James → DWP -->
+        <article class="journey-card">
+          <div class="journey-header">
+            <div class="journey-avatar" style="background:#00703c;">JW</div>
+            <div class="journey-title">
+              <h4>James Whitfield</h4>
+              <div class="journey-subtitle">Disabled Appellant &mdash; PIP &amp; ESA</div>
+            </div>
+          </div>
+          <div class="journey-opening">My PIP was turned down and my son's EHCP is stuck.</div>
+          <div class="journey-body">
+            <div class="journey-columns">
+              <div class="journey-col journey-col-today">
+                <h5>Today's Process</h5>
+                <ol>
+                  <li>PIP assessment scored 4 points for mobility (needs 8 for enhanced rate)</li>
+                  <li>Must request mandatory reconsideration within 1 month &mdash; phone line average wait 26 minutes</li>
+                  <li>If reconsideration fails, file tribunal appeal (MoJ) &mdash; different system entirely</li>
+                  <li>Motability car at risk during the entire process</li>
+                  <li>ESA support group continuation uncertain</li>
+                  <li>All of this while managing an MS relapse</li>
+                </ol>
+              </div>
+              <div class="journey-col journey-col-agent">
+                <h5>With the Agent</h5>
+                <ol>
+                  <li>Agent files mandatory reconsideration immediately &mdash; no phone queue</li>
+                  <li>Reviews PIP assessment against descriptors and identifies where James should have scored higher</li>
+                  <li>Gathers medical evidence from James's MS specialist records</li>
+                  <li>Confirms ESA support group is unaffected during PIP appeal</li>
+                  <li>Explains Motability rules &mdash; car retained during appeal process</li>
+                  <li>If reconsideration fails, seamlessly transitions to tribunal appeal (MoJ)</li>
+                </ol>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Daniel → DWP -->
+        <article class="journey-card">
+          <div class="journey-header">
+            <div class="journey-avatar" style="background:#4c6272;">DO</div>
+            <div class="journey-title">
+              <h4>Daniel Obi</h4>
+              <div class="journey-subtitle">Self-Employed &mdash; UC During Income Dips</div>
+            </div>
+          </div>
+          <div class="journey-opening">I'm self-employed and I'm confused about my tax and I've got a client who won't pay.</div>
+          <div class="journey-body">
+            <div class="journey-columns">
+              <div class="journey-col journey-col-today">
+                <h5>Today's Process</h5>
+                <ol>
+                  <li>Had 3 quiet months last winter &mdash; didn't know UC was available to the self-employed</li>
+                  <li>Self-employed minimum income floor rules are complex and poorly explained</li>
+                  <li>Would need to report monthly earnings and business expenses to DWP</li>
+                  <li>Risks losing UC if income rises above threshold &mdash; cliff edge anxiety</li>
+                </ol>
+              </div>
+              <div class="journey-col journey-col-agent">
+                <h5>With the Agent</h5>
+                <ol>
+                  <li>Agent proactively flags UC eligibility during income dips &mdash; Daniel didn't know to ask</li>
+                  <li>Explains minimum income floor clearly: what it is, when it applies, how it affects his claim</li>
+                  <li>Helps report monthly earnings using his existing business records</li>
+                  <li>Models what happens if income recovers &mdash; no cliff edges, just gradual taper</li>
+                </ol>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Zara → DWP -->
+        <article class="journey-card">
+          <div class="journey-header">
+            <div class="journey-avatar" style="background:#28a197;">ZB</div>
+            <div class="journey-title">
+              <h4>Zara Begum</h4>
+              <div class="journey-subtitle">First-Timer &mdash; NI Number Trace</div>
+            </div>
+          </div>
+          <div class="journey-opening">I'm starting uni in September and I need to sort out everything &mdash; money, passport, driving test, all of it.</div>
+          <div class="journey-body">
+            <div class="journey-columns">
+              <div class="journey-col journey-col-today">
+                <h5>Today's Process</h5>
+                <ol>
+                  <li>NI numbers are issued automatically at 16 &mdash; Zara never received her letter</li>
+                  <li>Needs NI number for Student Loans Company application (DfE)</li>
+                  <li>Must call HMRC or DWP to trace it &mdash; doesn't know which</li>
+                  <li>Phone wait times and confusing IVR menus for a first-time caller</li>
+                </ol>
+              </div>
+              <div class="journey-col journey-col-agent">
+                <h5>With the Agent</h5>
+                <ol>
+                  <li>Agent identifies missing NI number as a blocker for student finance</li>
+                  <li>Initiates NI number trace through DWP with Zara's details</li>
+                  <li>Explains what an NI number is and why she needs it (first-timer language)</li>
+                  <li>Once found, passes it directly to the student finance application (DfE)</li>
+                </ol>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Nowaks → DWP -->
+        <article class="journey-card">
+          <div class="journey-header">
+            <div class="journey-avatar" style="background:#4c2c92;">FN</div>
+            <div class="journey-title">
+              <h4>Fatima &amp; Tomasz Nowak</h4>
+              <div class="journey-subtitle">Growing Family &mdash; UC Recalculation &amp; Carer's Allowance</div>
+            </div>
+          </div>
+          <div class="journey-opening">My son's EHCP is stuck, my husband needs to sort out his immigration status, and I don't know if we're getting all the help we're entitled to.</div>
+          <div class="journey-body">
+            <div class="journey-columns">
+              <div class="journey-col journey-col-today">
+                <h5>Today's Process</h5>
+                <ol>
+                  <li>Fatima considering reducing hours to support Adam's transition &mdash; doesn't know how this affects UC</li>
+                  <li>May qualify for Carer's Allowance for Adam's support needs &mdash; but CA interacts with UC in complex ways</li>
+                  <li>Must report income changes to UC journal manually</li>
+                  <li>No way to model the financial impact before making the decision</li>
+                </ol>
+              </div>
+              <div class="journey-col journey-col-agent">
+                <h5>With the Agent</h5>
+                <ol>
+                  <li>Agent models the financial impact of Fatima reducing hours: UC increase vs lost earnings</li>
+                  <li>Checks Carer's Allowance eligibility and explains the UC interaction (&pound;151.89 earnings limit)</li>
+                  <li>Shows the net household income under different scenarios before Fatima decides</li>
+                  <li>If she proceeds, updates UC claim and files Carer's Allowance application together</li>
+                </ol>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <a href="#directory" class="back-to-top">Back to departments</a>
+      </div>
+    </section>
+
+
+    <!-- ════════════════════════════════════════════════════════════ -->
+    <!-- HMRC                                                        -->
+    <!-- ════════════════════════════════════════════════════════════ -->
+    <section id="hmrc" class="dept-section">
+      <div class="container">
+        <div class="dept-header">
+          <div class="dept-name-bar">
+            <div class="dept-icon" style="background:#00703c;">HMRC</div>
+            <div>
+              <h2 style="margin-bottom:0.25rem;">HM Revenue &amp; Customs</h2>
+              <div class="dept-meta">Permanent Secretary: John-Paul Marks CB (appointed April 2025)</div>
+            </div>
+          </div>
+          <div class="dept-scale">&pound;875.9bn revenue collected at 0.5p per pound</div>
+          <p style="font-size:1rem; color:#505a5f; max-width:700px; margin-top:0.75rem;">
+            HMRC processes the highest monetary value of any department. Its transformation
+            challenge is clear: 76% of 37 million annual calls are avoidable. That's 28 million
+            unnecessary phone calls, costing &pound;140&ndash;196 million per year.
+          </p>
+        </div>
+
+        <!-- Challenges -->
+        <h3 style="margin-bottom:1rem;">Key Challenges</h3>
+        <div class="challenge-grid">
+          <div class="challenge-card">
+            <div class="stat" style="color:#00703c;">76%</div>
+            <div class="stat-label">Of 37m calls are avoidable</div>
+            <p>~28 million unnecessary calls per year, costing &pound;140&ndash;196m. Citizens call because they can't find answers or don't understand what they've been told.</p>
+          </div>
+          <div class="challenge-card">
+            <div class="stat" style="color:#00703c;">475k</div>
+            <div class="stat-label">File Self Assessment on deadline day</div>
+            <p>Nearly half a million people file on the last day. Deadline-day spikes overwhelm systems and staff.</p>
+          </div>
+          <div class="challenge-card">
+            <div class="stat" style="color:#00703c;">5.6m</div>
+            <div class="stat-label">Taxpayers overpaid &pound;3.5bn via PAYE errors</div>
+            <p>Wrong tax codes, incorrect starter checklists, and missing P45s cause millions to pay the wrong amount of tax.</p>
+          </div>
+          <div class="challenge-card">
+            <div class="stat" style="color:#00703c;">April 2026</div>
+            <div class="stat-label">Making Tax Digital deadline</div>
+            <p>4.2m sole traders with income above &pound;50k must file quarterly digital records. Most don't know yet. 1 in 5 APIs not fully tested.</p>
+          </div>
+        </div>
+
+        <!-- Agent Value -->
+        <div class="agent-value">
+          <h3>Where Agents Help</h3>
+          <div class="agent-value-grid">
+            <div class="agent-value-item" style="border-left-color:#00703c;">
+              <h4>Eliminate avoidable calls</h4>
+              <p>28 million calls per year that don't need to happen. An agent answers tax code queries, explains Self Assessment, and guides MTD setup &mdash; the top reasons people call.</p>
+            </div>
+            <div class="agent-value-item" style="border-left-color:#00703c;">
+              <h4>Proactive tax code correction</h4>
+              <p>5.6m people are on the wrong tax code. The agent identifies errors proactively and files the correction &mdash; before the citizen even knows there's a problem.</p>
+            </div>
+            <div class="agent-value-item" style="border-left-color:#00703c;">
+              <h4>MTD onboarding at scale</h4>
+              <p>Guides 4.2m sole traders through Making Tax Digital setup: choosing compatible software, connecting accounts, understanding quarterly reporting.</p>
+            </div>
+            <div class="agent-value-item" style="border-left-color:#00703c;">
+              <h4>Surface hidden entitlements</h4>
+              <p>Tax-Free Childcare saves families up to &pound;2,000/year, but many don't know it exists. The agent identifies eligibility and sets up accounts automatically.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Personas & Journeys -->
+        <h3 style="margin-bottom:1rem;">Relevant Personas &amp; New User Journeys</h3>
+
+        <!-- Sarah → HMRC -->
+        <article class="journey-card">
+          <div class="journey-header">
+            <div class="journey-avatar" style="background:#912b88;">SO</div>
+            <div class="journey-title">
+              <h4>Sarah Okafor</h4>
+              <div class="journey-subtitle">Bereaved Spouse &mdash; Inheritance Tax &amp; Tax Code</div>
+            </div>
+          </div>
+          <div class="journey-opening">My husband died three weeks ago. I don't know what to do.</div>
+          <div class="journey-body">
+            <div class="journey-columns">
+              <div class="journey-col journey-col-today">
+                <h5>Today's Process</h5>
+                <ol>
+                  <li>Must calculate inheritance tax on &pound;645k estate (property, pension, ISA)</li>
+                  <li>IHT must be paid before probate is granted (MoJ) &mdash; a cross-department dependency</li>
+                  <li>Needs to update her own tax code from married to single</li>
+                  <li>David's final tax affairs must be settled &mdash; partial year return</li>
+                  <li>Different HMRC helplines for IHT, PAYE, and deceased's tax affairs</li>
+                </ol>
+              </div>
+              <div class="journey-col journey-col-agent">
+                <h5>With the Agent</h5>
+                <ol>
+                  <li>Agent calculates IHT using estate details already gathered for probate (MoJ)</li>
+                  <li>Identifies nil-rate band, residence nil-rate band, and transferable allowance</li>
+                  <li>Coordinates IHT payment timing with probate application</li>
+                  <li>Updates Sarah's tax code from married to single automatically</li>
+                  <li>Handles David's final tax return &mdash; all in one conversation</li>
+                </ol>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Priya → HMRC -->
+        <article class="journey-card">
+          <div class="journey-header">
+            <div class="journey-avatar" style="background:#1d70b8;">PA</div>
+            <div class="journey-title">
+              <h4>Priya Anand</h4>
+              <div class="journey-subtitle">New Mum &mdash; Tax-Free Childcare &amp; 30-Hour Code</div>
+            </div>
+          </div>
+          <div class="journey-opening">I've got a baby and a 4-year-old starting school, and I'm struggling with money.</div>
+          <div class="journey-body">
+            <div class="journey-columns">
+              <div class="journey-col journey-col-today">
+                <h5>Today's Process</h5>
+                <ol>
+                  <li>Priya has never heard of Tax-Free Childcare &mdash; it's not advertised at her nursery</li>
+                  <li>Would need to find the Childcare Choices website, check eligibility, create a Government Gateway account</li>
+                  <li>30-hour free childcare requires a confirmation code from HMRC, renewed every 3 months</li>
+                  <li>Eligibility depends on both parents working &mdash; must verify employment details</li>
+                  <li>Different from the 15-hour universal entitlement &mdash; confusing overlap</li>
+                </ol>
+              </div>
+              <div class="journey-col journey-col-agent">
+                <h5>With the Agent</h5>
+                <ol>
+                  <li>Agent proactively identifies Tax-Free Childcare &mdash; Priya qualifies but didn't know to ask</li>
+                  <li>Sets up the account: government tops up &pound;2 for every &pound;8 Priya pays, saving up to &pound;2,000/year</li>
+                  <li>Confirms 30-hour code for Arjun's nursery and explains the reconfirmation cycle</li>
+                  <li>Coordinates with DfE for Meera's free school meals eligibility</li>
+                  <li>Single conversation surfaces &pound;5,000+ in annual support across HMRC, DWP, and DfE</li>
+                </ol>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Daniel → HMRC -->
+        <article class="journey-card">
+          <div class="journey-header">
+            <div class="journey-avatar" style="background:#4c6272;">DO</div>
+            <div class="journey-title">
+              <h4>Daniel Obi</h4>
+              <div class="journey-subtitle">Self-Employed &mdash; MTD, Self Assessment &amp; Tax Refund</div>
+            </div>
+          </div>
+          <div class="journey-opening">I'm self-employed and I'm confused about my tax and I've got a client who won't pay.</div>
+          <div class="journey-body">
+            <div class="journey-columns">
+              <div class="journey-col journey-col-today">
+                <h5>Today's Process</h5>
+                <ol>
+                  <li>Making Tax Digital applies from April 2026 &mdash; Daniel doesn't know yet</li>
+                  <li>Uses a spreadsheet for books. Needs MTD-compatible software (19 providers, no guidance on which)</li>
+                  <li>Files Self Assessment on deadline day with 475,000 others</li>
+                  <li>Overpaid &pound;1,800 in tax &mdash; refund stuck in processing (5&ndash;6 weeks at peak)</li>
+                  <li>Calls HMRC to chase refund &mdash; 13.5 minute average wait</li>
+                </ol>
+              </div>
+              <div class="journey-col journey-col-agent">
+                <h5>With the Agent</h5>
+                <ol>
+                  <li>Agent flags MTD deadline: April 2026, quarterly digital records required for income above &pound;50k</li>
+                  <li>Recommends compatible software based on Daniel's business type and existing tools</li>
+                  <li>Chases the &pound;1,800 refund status &mdash; no phone queue</li>
+                  <li>Offers to file Self Assessment early using digital records once MTD is set up</li>
+                  <li>Proactively flags UC eligibility during future income dips (DWP)</li>
+                </ol>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Zara → HMRC -->
+        <article class="journey-card">
+          <div class="journey-header">
+            <div class="journey-avatar" style="background:#28a197;">ZB</div>
+            <div class="journey-title">
+              <h4>Zara Begum</h4>
+              <div class="journey-subtitle">First-Timer &mdash; Emergency Tax Code &amp; First PAYE</div>
+            </div>
+          </div>
+          <div class="journey-opening">I'm starting uni in September and I need to sort out everything &mdash; money, passport, driving test, all of it.</div>
+          <div class="journey-body">
+            <div class="journey-columns">
+              <div class="journey-col journey-col-today">
+                <h5>Today's Process</h5>
+                <ol>
+                  <li>Zara's employer filed a starter checklist incorrectly &mdash; she's been emergency-taxed for 2 months</li>
+                  <li>Doesn't know what a tax code is, what PAYE means, or why her payslip looks wrong</li>
+                  <li>Would need to call HMRC, navigate the IVR, explain a problem she doesn't understand</li>
+                  <li>Refund would take weeks to process once the code is corrected</li>
+                </ol>
+              </div>
+              <div class="journey-col journey-col-agent">
+                <h5>With the Agent</h5>
+                <ol>
+                  <li>Agent explains PAYE in plain language: what it is, how tax codes work, what the numbers on her payslip mean</li>
+                  <li>Identifies the emergency tax code from her payslip details</li>
+                  <li>Files the correct starter declaration to fix the code</li>
+                  <li>Calculates the refund she's owed and triggers it automatically</li>
+                  <li>First-timer language throughout &mdash; no jargon, no assumed knowledge</li>
+                </ol>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Nowaks → HMRC -->
+        <article class="journey-card">
+          <div class="journey-header">
+            <div class="journey-avatar" style="background:#4c2c92;">FN</div>
+            <div class="journey-title">
+              <h4>Fatima &amp; Tomasz Nowak</h4>
+              <div class="journey-subtitle">Growing Family &mdash; Child Benefit &amp; HICBC Risk</div>
+            </div>
+          </div>
+          <div class="journey-opening">My son's EHCP is stuck, my husband needs to sort out his immigration status, and I don't know if we're getting all the help we're entitled to.</div>
+          <div class="journey-body">
+            <div class="journey-columns">
+              <div class="journey-col journey-col-today">
+                <h5>Today's Process</h5>
+                <ol>
+                  <li>Claiming Child Benefit for 3 children &mdash; straightforward currently</li>
+                  <li>Tomasz offered promotion to &pound;52k &mdash; would trigger High Income Child Benefit Charge</li>
+                  <li>HICBC is poorly understood: clawback via Self Assessment, 1% of benefit per &pound;200 over &pound;50k</li>
+                  <li>Many families opt out of Child Benefit entirely, losing NI credits they need for State Pension</li>
+                  <li>Nobody tells the Nowaks this is coming until the tax bill arrives</li>
+                </ol>
+              </div>
+              <div class="journey-col journey-col-agent">
+                <h5>With the Agent</h5>
+                <ol>
+                  <li>Agent identifies HICBC risk before Tomasz accepts the promotion</li>
+                  <li>Models the exact impact: at &pound;52k, they'd repay 10% of Child Benefit via SA</li>
+                  <li>Advises: keep claiming Child Benefit (worth it for NI credits even with HICBC)</li>
+                  <li>Registers Tomasz for Self Assessment if he accepts the promotion</li>
+                  <li>No surprise tax bills &mdash; the family knows before making the decision</li>
+                </ol>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <a href="#directory" class="back-to-top">Back to departments</a>
+      </div>
+    </section>
+
+
+    <!-- ════════════════════════════════════════════════════════════ -->
+    <!-- DfE                                                         -->
+    <!-- ════════════════════════════════════════════════════════════ -->
+    <section id="dfe" class="dept-section">
+      <div class="container">
+        <div class="dept-header">
+          <div class="dept-name-bar">
+            <div class="dept-icon" style="background:#f47738;">DfE</div>
+            <div>
+              <h2 style="margin-bottom:0.25rem;">Department for Education</h2>
+              <div class="dept-meta">Permanent Secretary: Susan Acland-Hood (since December 2020)</div>
+            </div>
+          </div>
+          <div class="dept-scale">2.1m children eligible for FSM &middot; 638,700 with EHCPs</div>
+          <p style="font-size:1rem; color:#505a5f; max-width:700px; margin-top:0.75rem;">
+            DfE services are uniquely cross-departmental. Free school meals depend on DWP benefit
+            data. Tax-Free Childcare runs through HMRC. EHCPs need NHS assessments. The data-sharing
+            barriers between departments hit DfE hardest.
+          </p>
+        </div>
+
+        <!-- Challenges -->
+        <h3 style="margin-bottom:1rem;">Key Challenges</h3>
+        <div class="challenge-grid">
+          <div class="challenge-card">
+            <div class="stat" style="color:#f47738;">46.4%</div>
+            <div class="stat-label">Of EHCPs meet the 20-week deadline</div>
+            <p>More than half of all EHCP applications breach the statutory 20-week timeline. 13,700 families went to SEND tribunal last year.</p>
+          </div>
+          <div class="challenge-card">
+            <div class="stat" style="color:#f47738;">13,700</div>
+            <div class="stat-label">SEND tribunal appeals</div>
+            <p>Families forced into legal proceedings to get their children the support they're entitled to. Most could be avoided with better initial processes.</p>
+          </div>
+          <div class="challenge-card">
+            <div class="stat" style="color:#f47738;">46%</div>
+            <div class="stat-label">Of LAs have sufficient under-2 childcare places</div>
+            <p>The September 2025 childcare expansion needs 84,500 more places. Supply hasn't kept up with the policy commitment.</p>
+          </div>
+          <div class="challenge-card">
+            <div class="stat" style="color:#f47738;">Data gap</div>
+            <div class="stat-label">FSM eligibility requires separate proof</div>
+            <p>Free school meals depend on DWP benefit status, but DfE and DWP systems don't share data. Parents must prove eligibility separately to each.</p>
+          </div>
+        </div>
+
+        <!-- Agent Value -->
+        <div class="agent-value">
+          <h3>Where Agents Help</h3>
+          <div class="agent-value-grid">
+            <div class="agent-value-item" style="border-left-color:#f47738;">
+              <h4>EHCP deadline tracking</h4>
+              <p>Automatically monitors the 20-week statutory deadline, chases missing assessments, and drafts formal complaints if the deadline is breached. Prepares SEND tribunal paperwork if needed.</p>
+            </div>
+            <div class="agent-value-item" style="border-left-color:#f47738;">
+              <h4>Bridge the DWP-DfE data gap</h4>
+              <p>Uses the citizen's UC status (already confirmed with DWP) to automatically verify FSM eligibility with DfE &mdash; no separate proof needed.</p>
+            </div>
+            <div class="agent-value-item" style="border-left-color:#f47738;">
+              <h4>Student finance coordination</h4>
+              <p>Student finance requires parental income evidence from HMRC. The agent coordinates the cross-department data sharing in a single flow.</p>
+            </div>
+            <div class="agent-value-item" style="border-left-color:#f47738;">
+              <h4>School admissions complexity</h4>
+              <p>In-year admissions, secondary transfers, and Reception intake all have different processes and timelines. The agent handles the right process for each child.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Personas & Journeys -->
+        <h3 style="margin-bottom:1rem;">Relevant Personas &amp; New User Journeys</h3>
+
+        <!-- Amina → DfE -->
+        <article class="journey-card">
+          <div class="journey-header">
+            <div class="journey-avatar" style="background:#d4351c;">AH</div>
+            <div class="journey-title">
+              <h4>Amina Hassan</h4>
+              <div class="journey-subtitle">Asylum Seeker &mdash; In-Year School Place</div>
+            </div>
+          </div>
+          <div class="journey-opening">I just got my refugee status. What do I need to do?</div>
+          <div class="journey-body">
+            <div class="journey-columns">
+              <div class="journey-col journey-col-today">
+                <h5>Today's Process</h5>
+                <ol>
+                  <li>Needs a school place for Yusuf (age 6) mid-year &mdash; not a standard September intake</li>
+                  <li>In-year admissions are handled by each school or the local authority &mdash; depends on the area</li>
+                  <li>Must contact multiple schools to find availability</li>
+                  <li>Language barrier makes phone calls and forms difficult</li>
+                  <li>No central view of which schools have Year 1 places available</li>
+                </ol>
+              </div>
+              <div class="journey-col journey-col-agent">
+                <h5>With the Agent</h5>
+                <ol>
+                  <li>Agent identifies in-year school admissions as the correct process for Yusuf</li>
+                  <li>Locates schools with Year 1 places near Amina's Bradford address</li>
+                  <li>Explains the process in clear, simple language suited to intermediate English</li>
+                  <li>Submits the in-year application to the local authority</li>
+                  <li>Tracks the application and explains Amina's rights if no place is offered</li>
+                </ol>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Priya → DfE -->
+        <article class="journey-card">
+          <div class="journey-header">
+            <div class="journey-avatar" style="background:#1d70b8;">PA</div>
+            <div class="journey-title">
+              <h4>Priya Anand</h4>
+              <div class="journey-subtitle">New Mum &mdash; Free School Meals &amp; School Registration</div>
+            </div>
+          </div>
+          <div class="journey-opening">I've got a baby and a 4-year-old starting school, and I'm struggling with money.</div>
+          <div class="journey-body">
+            <div class="journey-columns">
+              <div class="journey-col journey-col-today">
+                <h5>Today's Process</h5>
+                <ol>
+                  <li>Meera starting school in September &mdash; application already submitted</li>
+                  <li>Free school meals eligibility depends on UC status, but DfE can't check directly</li>
+                  <li>Must apply separately to the local authority with proof of benefits</li>
+                  <li>Many eligible families don't apply because they don't know they qualify</li>
+                </ol>
+              </div>
+              <div class="journey-col journey-col-agent">
+                <h5>With the Agent</h5>
+                <ol>
+                  <li>Agent already confirmed Priya's UC top-up eligibility (DWP)</li>
+                  <li>Uses that confirmation to apply for Meera's free school meals automatically</li>
+                  <li>No separate proof needed &mdash; the agent bridges the DWP-DfE data gap</li>
+                  <li>Also confirms Meera's school place and explains the September start process</li>
+                </ol>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- James → DfE -->
+        <article class="journey-card">
+          <div class="journey-header">
+            <div class="journey-avatar" style="background:#00703c;">JW</div>
+            <div class="journey-title">
+              <h4>James Whitfield</h4>
+              <div class="journey-subtitle">Disabled Appellant &mdash; Owen's EHCP</div>
+            </div>
+          </div>
+          <div class="journey-opening">My PIP was turned down and my son's EHCP is stuck.</div>
+          <div class="journey-body">
+            <div class="journey-columns">
+              <div class="journey-col journey-col-today">
+                <h5>Today's Process</h5>
+                <ol>
+                  <li>School applied for Owen's EHCP in September &mdash; it's now week 18 of 20</li>
+                  <li>No educational psychologist assessment has been arranged</li>
+                  <li>The 20-week statutory deadline is approaching with no decision in sight</li>
+                  <li>James doesn't know his rights if the deadline is breached</li>
+                  <li>If EHCP is refused, must navigate the SEND tribunal system (MoJ) &mdash; entirely separate process</li>
+                  <li>All of this while managing his own MS relapse and PIP appeal</li>
+                </ol>
+              </div>
+              <div class="journey-col journey-col-agent">
+                <h5>With the Agent</h5>
+                <ol>
+                  <li>Agent tracks Owen's EHCP timeline: week 18, no EP assessment, deadline in 2 weeks</li>
+                  <li>Flags the statutory breach and drafts a formal complaint to the local authority</li>
+                  <li>Explains James's rights: the LA must issue a decision, even if late</li>
+                  <li>If EHCP is refused, prepares SEND tribunal appeal (MoJ) with evidence already gathered</li>
+                  <li>Coordinates the EHCP and PIP appeals so James handles both without drowning</li>
+                </ol>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Zara → DfE -->
+        <article class="journey-card">
+          <div class="journey-header">
+            <div class="journey-avatar" style="background:#28a197;">ZB</div>
+            <div class="journey-title">
+              <h4>Zara Begum</h4>
+              <div class="journey-subtitle">First-Timer &mdash; Student Finance</div>
+            </div>
+          </div>
+          <div class="journey-opening">I'm starting uni in September and I need to sort out everything &mdash; money, passport, driving test, all of it.</div>
+          <div class="journey-body">
+            <div class="journey-columns">
+              <div class="journey-col journey-col-today">
+                <h5>Today's Process</h5>
+                <ol>
+                  <li>Student finance application is means-tested &mdash; requires parents' income evidence</li>
+                  <li>Parents must provide HMRC income details or consent to data sharing</li>
+                  <li>Zara doesn't understand the difference between Plan 5 and Plan 2 repayment</li>
+                  <li>Needs NI number (DWP) before SLC will process the application</li>
+                  <li>Multiple online accounts needed: SLC, Government Gateway, UCAS</li>
+                </ol>
+              </div>
+              <div class="journey-col journey-col-agent">
+                <h5>With the Agent</h5>
+                <ol>
+                  <li>Agent explains student finance in plain language: tuition loan, maintenance loan, what you repay and when</li>
+                  <li>Uses NI number (traced via DWP) to start the application</li>
+                  <li>Guides Zara's parents through the income evidence step (HMRC data sharing)</li>
+                  <li>Explains Plan 5 repayment: 9% of income above &pound;25,000, written off after 40 years</li>
+                  <li>Calculates expected maintenance loan based on household income</li>
+                </ol>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Nowaks → DfE -->
+        <article class="journey-card">
+          <div class="journey-header">
+            <div class="journey-avatar" style="background:#4c2c92;">FN</div>
+            <div class="journey-title">
+              <h4>Fatima &amp; Tomasz Nowak</h4>
+              <div class="journey-subtitle">Growing Family &mdash; EHCP, Secondary Transfer, FSM &amp; Reception</div>
+            </div>
+          </div>
+          <div class="journey-opening">My son's EHCP is stuck, my husband needs to sort out his immigration status, and I don't know if we're getting all the help we're entitled to.</div>
+          <div class="journey-body">
+            <div class="journey-columns">
+              <div class="journey-col journey-col-today">
+                <h5>Today's Process</h5>
+                <ol>
+                  <li>Adam's EHCP application (autism) is at week 10 of 20 &mdash; no EP assessment scheduled yet</li>
+                  <li>Secondary school transfer in September depends on EHCP outcome (specialist provision vs mainstream)</li>
+                  <li>Kasia's free school meals need recertifying &mdash; separate application to the local authority</li>
+                  <li>Lily starting Reception &mdash; separate school admissions process</li>
+                  <li>Four different DfE processes for three children, all running simultaneously</li>
+                </ol>
+              </div>
+              <div class="journey-col journey-col-agent">
+                <h5>With the Agent</h5>
+                <ol>
+                  <li>Agent creates a single family education view: three children, four processes, all timelines visible</li>
+                  <li>Tracks Adam's EHCP at week 10 and flags if EP assessment isn't scheduled by week 14</li>
+                  <li>Links EHCP outcome to secondary transfer preferences &mdash; specialist if granted, mainstream backup</li>
+                  <li>Recertifies Kasia's FSM using DWP benefit status already confirmed</li>
+                  <li>Confirms Lily's Reception place and start date</li>
+                </ol>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <a href="#directory" class="back-to-top">Back to departments</a>
+      </div>
+    </section>
+
+
+    <!-- ════════════════════════════════════════════════════════════ -->
+    <!-- HOME OFFICE                                                 -->
+    <!-- ════════════════════════════════════════════════════════════ -->
+    <section id="ho" class="dept-section">
+      <div class="container">
+        <div class="dept-header">
+          <div class="dept-name-bar">
+            <div class="dept-icon" style="background:#d4351c;">HO</div>
+            <div>
+              <h2 style="margin-bottom:0.25rem;">Home Office</h2>
+              <div class="dept-meta">Acting Permanent Secretary: Simon Ridley CB (Second PS, Migration and Borders)</div>
+            </div>
+          </div>
+          <div class="dept-scale">&pound;27.8bn department &middot; &pound;7.3bn in fee income</div>
+          <p style="font-size:1rem; color:#505a5f; max-width:700px; margin-top:0.75rem;">
+            The Home Office is in the middle of its biggest digital transformation: the eVisa
+            transition. Every physical immigration document is being replaced with a digital
+            record. The cross-departmental friction &mdash; settled status interacting with DWP
+            benefits, right-to-work checks with employers &mdash; is where agents add most value.
+          </p>
+        </div>
+
+        <!-- Challenges -->
+        <h3 style="margin-bottom:1rem;">Key Challenges</h3>
+        <div class="challenge-grid">
+          <div class="challenge-card">
+            <div class="stat" style="color:#d4351c;">8.78m</div>
+            <div class="stat-label">EU Settlement Scheme applications</div>
+            <p>All must transition to eVisa. Many people don't know they need to act, don't understand the digital system, or can't access it.</p>
+          </div>
+          <div class="challenge-card">
+            <div class="stat" style="color:#d4351c;">166,300</div>
+            <div class="stat-label">Asylum cases pending</div>
+            <p>68% waiting more than 6 months. The backlog costs &pound;4bn per year in accommodation and support. When decisions are finally made, citizens face a cascade of DWP, HMRC, and DfE interactions.</p>
+          </div>
+          <div class="challenge-card">
+            <div class="stat" style="color:#d4351c;">Feb 2026</div>
+            <div class="stat-label">eVisa transition live</div>
+            <p>The biggest digital change in Home Office history. All new visas are digital-only. Existing physical documents must be linked to online accounts.</p>
+          </div>
+          <div class="challenge-card">
+            <div class="stat" style="color:#d4351c;">7.27m</div>
+            <div class="stat-label">DBS certificates issued</div>
+            <p>Citizens and employers struggle to understand the difference between basic, standard, and enhanced DBS checks, and which roles require which level.</p>
+          </div>
+        </div>
+
+        <!-- Agent Value -->
+        <div class="agent-value">
+          <h3>Where Agents Help</h3>
+          <div class="agent-value-grid">
+            <div class="agent-value-item" style="border-left-color:#d4351c;">
+              <h4>eVisa transition guidance</h4>
+              <p>Guides millions through the eVisa transition: setting up UKVI accounts, linking existing settled status, understanding what changes and what doesn't.</p>
+            </div>
+            <div class="agent-value-item" style="border-left-color:#d4351c;">
+              <h4>Right-to-work share codes</h4>
+              <p>Generates right-to-work and right-to-rent share codes without citizens needing to navigate the UKVI system themselves. Employers get instant verification.</p>
+            </div>
+            <div class="agent-value-item" style="border-left-color:#d4351c;">
+              <h4>DBS level guidance</h4>
+              <p>Explains which DBS check level a specific job requires, whether spent convictions will appear, and what employers can and cannot ask about.</p>
+            </div>
+            <div class="agent-value-item" style="border-left-color:#d4351c;">
+              <h4>Post-asylum coordination</h4>
+              <p>When asylum decisions are made, the agent coordinates the cascade: NI number (DWP), bank account, UC claim, school places (DfE), eVisa setup &mdash; all sequenced correctly.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Personas & Journeys -->
+        <h3 style="margin-bottom:1rem;">Relevant Personas &amp; New User Journeys</h3>
+
+        <!-- Amina → HO -->
+        <article class="journey-card">
+          <div class="journey-header">
+            <div class="journey-avatar" style="background:#d4351c;">AH</div>
+            <div class="journey-title">
+              <h4>Amina Hassan</h4>
+              <div class="journey-subtitle">Asylum Seeker &mdash; BRP-to-eVisa &amp; Right to Work</div>
+            </div>
+          </div>
+          <div class="journey-opening">I just got my refugee status. What do I need to do?</div>
+          <div class="journey-body">
+            <div class="journey-columns">
+              <div class="journey-col journey-col-today">
+                <h5>Today's Process</h5>
+                <ol>
+                  <li>Has a Biometric Residence Permit &mdash; physical card that expires in 2026</li>
+                  <li>Needs to understand the eVisa transition: what it means, when to act, what to do</li>
+                  <li>Employers need right-to-work verification &mdash; must generate a share code from UKVI</li>
+                  <li>Landlords need right-to-rent verification &mdash; different process</li>
+                  <li>Navigating UKVI systems in intermediate English with no prior experience of UK bureaucracy</li>
+                </ol>
+              </div>
+              <div class="journey-col journey-col-agent">
+                <h5>With the Agent</h5>
+                <ol>
+                  <li>Agent explains the BRP-to-eVisa transition in clear, simple language</li>
+                  <li>Sets up Amina's UKVI online account and links her refugee status</li>
+                  <li>Generates right-to-work share code for employers</li>
+                  <li>Generates right-to-rent share code for landlords</li>
+                  <li>Explains what the eVisa means for her other applications (DWP, HMRC) so she understands the whole picture</li>
+                </ol>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Marcus → HO -->
+        <article class="journey-card">
+          <div class="journey-header">
+            <div class="journey-avatar" style="background:#f47738;">MT</div>
+            <div class="journey-title">
+              <h4>Marcus Taylor</h4>
+              <div class="journey-subtitle">Prison Leaver &mdash; DBS Disclosure Guidance</div>
+            </div>
+          </div>
+          <div class="journey-opening">I've just been released from prison and I need to sort everything out.</div>
+          <div class="journey-body">
+            <div class="journey-columns">
+              <div class="journey-col journey-col-today">
+                <h5>Today's Process</h5>
+                <ol>
+                  <li>Marcus has a spent conviction for drug supply &mdash; complex disclosure rules</li>
+                  <li>Different DBS levels reveal different information: basic shows unspent only, enhanced shows everything</li>
+                  <li>Construction work: which level is required? Depends on the specific role</li>
+                  <li>No clear guidance on which jobs he can and can't apply for</li>
+                  <li>Risks wasting time applying for roles that require enhanced DBS he'd fail</li>
+                </ol>
+              </div>
+              <div class="journey-col journey-col-agent">
+                <h5>With the Agent</h5>
+                <ol>
+                  <li>Agent understands Marcus's conviction type and when it becomes spent</li>
+                  <li>Explains the three DBS levels and what each reveals about his record</li>
+                  <li>For construction: most roles require basic DBS only &mdash; his spent conviction won't appear</li>
+                  <li>Identifies roles that require enhanced checks (working with vulnerable adults) and advises accordingly</li>
+                  <li>Honest, practical guidance so Marcus focuses his job search on achievable roles</li>
+                </ol>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Zara → HO -->
+        <article class="journey-card">
+          <div class="journey-header">
+            <div class="journey-avatar" style="background:#28a197;">ZB</div>
+            <div class="journey-title">
+              <h4>Zara Begum</h4>
+              <div class="journey-subtitle">First-Timer &mdash; First Adult Passport</div>
+            </div>
+          </div>
+          <div class="journey-opening">I'm starting uni in September and I need to sort out everything &mdash; money, passport, driving test, all of it.</div>
+          <div class="journey-body">
+            <div class="journey-columns">
+              <div class="journey-col journey-col-today">
+                <h5>Today's Process</h5>
+                <ol>
+                  <li>Child passport expired in 2024 &mdash; can't renew, must apply as a new adult applicant</li>
+                  <li>New application requires countersignature, photos, supporting documents</li>
+                  <li>Processing takes up to 10 weeks &mdash; needs it before September family trip</li>
+                  <li>Her only current photo ID is a provisional driving licence</li>
+                  <li>First time navigating a government application of this complexity</li>
+                </ol>
+              </div>
+              <div class="journey-col journey-col-agent">
+                <h5>With the Agent</h5>
+                <ol>
+                  <li>Agent identifies that Zara needs a new adult passport, not a renewal &mdash; different form</li>
+                  <li>Flags the 10-week processing time against her September travel date</li>
+                  <li>Guides the application step by step: photos, countersignature requirements, documents</li>
+                  <li>Submits the application online and tracks processing status</li>
+                  <li>First-timer support: explains what a countersignature is, who can provide one, and how</li>
+                </ol>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Nowaks → HO -->
+        <article class="journey-card">
+          <div class="journey-header">
+            <div class="journey-avatar" style="background:#4c2c92;">FN</div>
+            <div class="journey-title">
+              <h4>Fatima &amp; Tomasz Nowak</h4>
+              <div class="journey-subtitle">Growing Family &mdash; EU Settled Status &amp; Share Code</div>
+            </div>
+          </div>
+          <div class="journey-opening">My son's EHCP is stuck, my husband needs to sort out his immigration status, and I don't know if we're getting all the help we're entitled to.</div>
+          <div class="journey-body">
+            <div class="journey-columns">
+              <div class="journey-col journey-col-today">
+                <h5>Today's Process</h5>
+                <ol>
+                  <li>Tomasz has EU Settled Status (granted 2021) but never set up a UKVI online account</li>
+                  <li>His BRP is expiring in 2026 &mdash; needs to link status to eVisa</li>
+                  <li>Employer asking for right-to-work share code &mdash; Tomasz doesn't know how to generate one</li>
+                  <li>Worries that his status might be affected if he doesn't act in time</li>
+                  <li>Fatima (British-born) doesn't need to do anything, but doesn't understand Tomasz's requirements</li>
+                </ol>
+              </div>
+              <div class="journey-col journey-col-agent">
+                <h5>With the Agent</h5>
+                <ol>
+                  <li>Agent sets up Tomasz's UKVI online account and links his Settled Status</li>
+                  <li>Confirms his status is secure &mdash; eVisa replaces the physical card, rights unchanged</li>
+                  <li>Generates a right-to-work share code for his employer immediately</li>
+                  <li>Explains the BRP expiry timeline so Tomasz isn't anxious about deadlines</li>
+                  <li>Coordinates with DVLA for EU driving licence exchange (separate process, same trip)</li>
+                </ol>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <a href="#directory" class="back-to-top">Back to departments</a>
+      </div>
+    </section>
+
+
+    <!-- ════════════════════════════════════════════════════════════ -->
+    <!-- DVLA                                                        -->
+    <!-- ════════════════════════════════════════════════════════════ -->
+    <section id="dvla" class="dept-section">
+      <div class="container">
+        <div class="dept-header">
+          <div class="dept-name-bar">
+            <div class="dept-icon" style="background:#4c6272;">DVLA</div>
+            <div>
+              <h2 style="margin-bottom:0.25rem;">Driver and Vehicle Licensing Agency</h2>
+              <div class="dept-meta">Executive Agency of the Department for Transport</div>
+            </div>
+          </div>
+          <div class="dept-scale">High-volume transactional services</div>
+          <p style="font-size:1rem; color:#505a5f; max-width:700px; margin-top:0.75rem;">
+            DVLA handles some of the most routine government transactions &mdash; licence renewals,
+            vehicle tax, MOT reminders. But for citizens with complex circumstances &mdash; medical
+            conditions, criminal records, foreign licences &mdash; these simple transactions become
+            fraught with anxiety and administrative burden.
+          </p>
+        </div>
+
+        <!-- Challenges -->
+        <h3 style="margin-bottom:1rem;">Key Challenges</h3>
+        <div class="challenge-grid">
+          <div class="challenge-card">
+            <div class="stat" style="color:#4c6272;">2027</div>
+            <div class="stat-label">EU licence exchange deadline</div>
+            <p>EU nationals with foreign licences must exchange them for UK ones. Many don't know the deadline exists or what the process involves.</p>
+          </div>
+          <div class="challenge-card">
+            <div class="stat" style="color:#4c6272;">&pound;1,000</div>
+            <div class="stat-label">Fine for undisclosed medical conditions</div>
+            <p>Citizens with conditions like MS, epilepsy, or diabetes must notify DVLA. Failure invalidates their insurance and carries a fine, but the process is poorly understood.</p>
+          </div>
+          <div class="challenge-card">
+            <div class="stat" style="color:#4c6272;">3 months</div>
+            <div class="stat-label">Average driving test wait</div>
+            <p>Learner drivers face long waits for test appointments, particularly in urban areas. Bradford, where Zara lives, is one of the worst-affected.</p>
+          </div>
+          <div class="challenge-card">
+            <div class="stat" style="color:#4c6272;">Cost gap</div>
+            <div class="stat-label">Digital vs postal processing</div>
+            <p>Online transactions are significantly cheaper and faster than postal ones, but citizens with complex cases often can't use the standard digital journey.</p>
+          </div>
+        </div>
+
+        <!-- Agent Value -->
+        <div class="agent-value">
+          <h3>Where Agents Help</h3>
+          <div class="agent-value-grid">
+            <div class="agent-value-item" style="border-left-color:#4c6272;">
+              <h4>Sensitive medical disclosure</h4>
+              <p>Handles DVLA medical notifications with care &mdash; explains the legal obligation, what happens during the review, and what outcomes to expect. Removes fear from a process citizens often avoid.</p>
+            </div>
+            <div class="agent-value-item" style="border-left-color:#4c6272;">
+              <h4>EU licence exchange</h4>
+              <p>Walks EU nationals through the exchange process: which documents they need, how to apply, and the 2027 deadline. Coordinates with Home Office settled status verification.</p>
+            </div>
+            <div class="agent-value-item" style="border-left-color:#4c6272;">
+              <h4>Address-dependent renewals</h4>
+              <p>For citizens without a stable address (prison leavers, newly housed), sequences the renewal so it happens as soon as address is confirmed.</p>
+            </div>
+            <div class="agent-value-item" style="border-left-color:#4c6272;">
+              <h4>Vehicle tax guidance</h4>
+              <p>Confirms the correct VED class for business vehicles and handles renewals, removing confusion about vehicle categories and rates.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Personas & Journeys -->
+        <h3 style="margin-bottom:1rem;">Relevant Personas &amp; New User Journeys</h3>
+
+        <!-- Marcus → DVLA -->
+        <article class="journey-card">
+          <div class="journey-header">
+            <div class="journey-avatar" style="background:#f47738;">MT</div>
+            <div class="journey-title">
+              <h4>Marcus Taylor</h4>
+              <div class="journey-subtitle">Prison Leaver &mdash; Expired Licence Renewal</div>
+            </div>
+          </div>
+          <div class="journey-opening">I've just been released from prison and I need to sort everything out.</div>
+          <div class="journey-body">
+            <div class="journey-columns">
+              <div class="journey-col journey-col-today">
+                <h5>Today's Process</h5>
+                <ol>
+                  <li>Driving licence expired during sentence &mdash; needs renewal for construction work</li>
+                  <li>Renewal requires a confirmed address &mdash; Marcus is in temporary approved premises</li>
+                  <li>Must wait until he has permanent housing before DVLA will process the renewal</li>
+                  <li>Can't drive to construction sites without a valid licence &mdash; limits employment options</li>
+                  <li>Paper renewal would take weeks longer than online</li>
+                </ol>
+              </div>
+              <div class="journey-col journey-col-agent">
+                <h5>With the Agent</h5>
+                <ol>
+                  <li>Agent identifies licence renewal as dependent on housing (DWP/local authority)</li>
+                  <li>Sequences the process: housing application first, licence renewal queued</li>
+                  <li>As soon as permanent address is confirmed, triggers online renewal</li>
+                  <li>Ensures the fastest processing track &mdash; online, not paper</li>
+                  <li>Coordinates timeline with employment search so Marcus knows when he can start driving roles</li>
+                </ol>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- James → DVLA -->
+        <article class="journey-card">
+          <div class="journey-header">
+            <div class="journey-avatar" style="background:#00703c;">JW</div>
+            <div class="journey-title">
+              <h4>James Whitfield</h4>
+              <div class="journey-subtitle">Disabled Appellant &mdash; Medical Fitness Notification</div>
+            </div>
+          </div>
+          <div class="journey-opening">My PIP was turned down and my son's EHCP is stuck.</div>
+          <div class="journey-body">
+            <div class="journey-columns">
+              <div class="journey-col journey-col-today">
+                <h5>Today's Process</h5>
+                <ol>
+                  <li>MS diagnosis requires DVLA notification &mdash; legal obligation, &pound;1,000 fine if not disclosed</li>
+                  <li>Failure to notify also invalidates car insurance</li>
+                  <li>James fears the medical review will take months and he'll lose his licence</li>
+                  <li>Without a licence, he can't attend hospital appointments or Owen's school</li>
+                  <li>The process feels like punishment for having a disability</li>
+                </ol>
+              </div>
+              <div class="journey-col journey-col-agent">
+                <h5>With the Agent</h5>
+                <ol>
+                  <li>Agent explains the legal obligation clearly and without alarm</li>
+                  <li>Submits the medical notification online with James's MS details</li>
+                  <li>Explains the review process: DVLA may request GP/consultant report, typical timeline 6&ndash;8 weeks</li>
+                  <li>Reassures: most people with relapsing-remitting MS retain their licence with conditions</li>
+                  <li>Flags the Motability car interaction &mdash; DVLA notification and PIP appeal (DWP/MoJ) are separate processes</li>
+                </ol>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Daniel → DVLA -->
+        <article class="journey-card">
+          <div class="journey-header">
+            <div class="journey-avatar" style="background:#4c6272;">DO</div>
+            <div class="journey-title">
+              <h4>Daniel Obi</h4>
+              <div class="journey-subtitle">Self-Employed &mdash; Van VED Renewal</div>
+            </div>
+          </div>
+          <div class="journey-opening">I'm self-employed and I'm confused about my tax and I've got a client who won't pay.</div>
+          <div class="journey-body">
+            <div class="journey-columns">
+              <div class="journey-col journey-col-today">
+                <h5>Today's Process</h5>
+                <ol>
+                  <li>Van VED renewal due next month &mdash; straightforward but needs to confirm vehicle class</li>
+                  <li>Business vehicles have different VED rates depending on weight and emissions</li>
+                  <li>Not sure if his van is correctly classified for business use</li>
+                  <li>MOT also due &mdash; separate process, separate reminder</li>
+                </ol>
+              </div>
+              <div class="journey-col journey-col-agent">
+                <h5>With the Agent</h5>
+                <ol>
+                  <li>Agent checks Daniel's vehicle registration and confirms the correct VED class</li>
+                  <li>Processes the VED renewal online &mdash; correct rate for his van type</li>
+                  <li>Flags MOT due date and reminds him to book</li>
+                  <li>A simple transaction, handled in seconds alongside his more complex HMRC and MoJ interactions</li>
+                </ol>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Zara → DVLA -->
+        <article class="journey-card">
+          <div class="journey-header">
+            <div class="journey-avatar" style="background:#28a197;">ZB</div>
+            <div class="journey-title">
+              <h4>Zara Begum</h4>
+              <div class="journey-subtitle">First-Timer &mdash; Provisional Licence &amp; Driving Test</div>
+            </div>
+          </div>
+          <div class="journey-opening">I'm starting uni in September and I need to sort out everything &mdash; money, passport, driving test, all of it.</div>
+          <div class="journey-body">
+            <div class="journey-columns">
+              <div class="journey-col journey-col-today">
+                <h5>Today's Process</h5>
+                <ol>
+                  <li>Has a provisional licence and 14 lessons completed</li>
+                  <li>Driving test booked in 8 weeks &mdash; took 3 months to get a slot in Bradford</li>
+                  <li>If she passes, needs to apply for a full licence &mdash; separate application</li>
+                  <li>Doesn't understand the process of upgrading from provisional to full</li>
+                  <li>Needs the full licence as ID for university &mdash; provisional alone is limiting</li>
+                </ol>
+              </div>
+              <div class="journey-col journey-col-agent">
+                <h5>With the Agent</h5>
+                <ol>
+                  <li>Agent confirms driving test booking and date &mdash; 8 weeks from now</li>
+                  <li>Checks if earlier test slots have opened up at nearby centres</li>
+                  <li>Explains the pass-to-full-licence process in first-timer language</li>
+                  <li>If she passes, submits the full licence application immediately</li>
+                  <li>Coordinates with passport application (Home Office) &mdash; both provide photo ID she needs for uni</li>
+                </ol>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Nowaks → DVLA -->
+        <article class="journey-card">
+          <div class="journey-header">
+            <div class="journey-avatar" style="background:#4c2c92;">FN</div>
+            <div class="journey-title">
+              <h4>Fatima &amp; Tomasz Nowak</h4>
+              <div class="journey-subtitle">Growing Family &mdash; EU Driving Licence Exchange</div>
+            </div>
+          </div>
+          <div class="journey-opening">My son's EHCP is stuck, my husband needs to sort out his immigration status, and I don't know if we're getting all the help we're entitled to.</div>
+          <div class="journey-body">
+            <div class="journey-columns">
+              <div class="journey-col journey-col-today">
+                <h5>Today's Process</h5>
+                <ol>
+                  <li>Tomasz still has his Polish driving licence &mdash; must exchange before 2027 deadline</li>
+                  <li>Needs to apply via D1 form (paper only for EU exchanges) with supporting documents</li>
+                  <li>Must send original Polish licence to DVLA &mdash; can't drive during processing</li>
+                  <li>Processing time varies &mdash; could be weeks without a valid licence</li>
+                  <li>Doesn't know about the deadline or the consequences of missing it</li>
+                </ol>
+              </div>
+              <div class="journey-col journey-col-agent">
+                <h5>With the Agent</h5>
+                <ol>
+                  <li>Agent flags the 2027 EU licence exchange deadline &mdash; Tomasz didn't know</li>
+                  <li>Explains the process: D1 form, documents needed, original licence submission</li>
+                  <li>Advises on timing: avoid peak periods, plan for the period without a licence</li>
+                  <li>Coordinates with Home Office eVisa setup &mdash; both require identity verification</li>
+                  <li>Tomasz handles both his immigration status and driving licence in one conversation</li>
+                </ol>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <a href="#directory" class="back-to-top">Back to departments</a>
+      </div>
+    </section>
+
+
+    <!-- Footer -->
+    <footer style="background:#0b0c0c; color:#b1b4b6; padding:2rem 0; font-size:0.85rem;">
+      <div class="container">
+        <p>Agentic Legibility Stack &mdash; Department Presentations</p>
+        <p style="margin-top:0.25rem; color:#6b7280;">
+          For permanent secretary demonstrations. MoJ &middot; DWP &middot; HMRC &middot; DfE &middot; Home Office &middot; DVLA.
+        </p>
+        <p style="margin-top:0.75rem;">
+          <a href="index.html" style="color:#b1b4b6;">Project Overview</a> &middot;
+          <a href="personas.html" style="color:#b1b4b6;">Personas</a> &middot;
+          <a href="departments.html" style="color:#b1b4b6;">Departments</a>
+        </p>
+      </div>
+    </footer>
+
+  </body>
+</html>
