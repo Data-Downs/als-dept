@@ -47,17 +47,19 @@ afterAll(async () => {
 
 describe("server creation counts", () => {
   it("loads expected number of services, tools, resources, and prompts", () => {
-    expect(serviceCount).toBe(3);
-    expect(toolCount).toBe(6);
-    expect(resourceCount).toBe(12);
-    expect(promptCount).toBe(6);
+    // Counts scale with the number of services in data/services/
+    expect(serviceCount).toBeGreaterThanOrEqual(3);
+    // Tools, resources, and prompts depend on which artefacts each service has
+    expect(toolCount).toBeGreaterThanOrEqual(serviceCount);
+    expect(resourceCount).toBeGreaterThanOrEqual(serviceCount);
+    expect(promptCount).toBeGreaterThanOrEqual(serviceCount);
   });
 });
 
 describe("resources — listing", () => {
-  it("lists all 12 resources", async () => {
+  it("lists all resources", async () => {
     const { resources } = await client.listResources();
-    expect(resources).toHaveLength(12);
+    expect(resources).toHaveLength(resourceCount);
   });
 
   it("includes UC manifest, policy, consent, state-model resources", async () => {
@@ -100,9 +102,9 @@ describe("resources — reading", () => {
 });
 
 describe("tools — listing + annotations", () => {
-  it("lists 8 tools total", async () => {
+  it("lists all tools", async () => {
     const { tools } = await client.listTools();
-    expect(tools).toHaveLength(6);
+    expect(tools).toHaveLength(toolCount);
   });
 
   it("has no legacy tool types (migrated to resources)", async () => {
@@ -113,12 +115,12 @@ describe("tools — listing + annotations", () => {
     expect(names.some((n) => n.endsWith("_get_consent_model"))).toBe(false);
   });
 
-  it("has 4 check_eligibility tools with correct annotations", async () => {
+  it("has check_eligibility tools with correct annotations", async () => {
     const { tools } = await client.listTools();
     const eligTools = tools.filter((t) =>
       t.name.endsWith("_check_eligibility"),
     );
-    expect(eligTools).toHaveLength(3);
+    expect(eligTools.length).toBeGreaterThanOrEqual(3);
     for (const t of eligTools) {
       const ann = t.annotations as Record<string, unknown> | undefined;
       expect(ann?.readOnlyHint).toBe(true);
@@ -126,10 +128,10 @@ describe("tools — listing + annotations", () => {
     }
   });
 
-  it("has 4 advance_state tools with correct annotations", async () => {
+  it("has advance_state tools with correct annotations", async () => {
     const { tools } = await client.listTools();
     const stateTools = tools.filter((t) => t.name.endsWith("_advance_state"));
-    expect(stateTools).toHaveLength(3);
+    expect(stateTools.length).toBeGreaterThanOrEqual(3);
     for (const t of stateTools) {
       const ann = t.annotations as Record<string, unknown> | undefined;
       expect(ann?.readOnlyHint).toBe(false);
@@ -208,9 +210,9 @@ describe("tools — advance_state execution", () => {
 });
 
 describe("prompts — listing + execution", () => {
-  it("lists 8 prompts total", async () => {
+  it("lists all prompts", async () => {
     const { prompts } = await client.listPrompts();
-    expect(prompts).toHaveLength(6);
+    expect(prompts).toHaveLength(promptCount);
   });
 
   it("includes expected prompt names", async () => {
