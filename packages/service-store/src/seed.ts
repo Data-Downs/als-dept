@@ -16,7 +16,20 @@ import {
 import { ServiceArtefactStore } from "./service-store";
 import { ServiceGraphStore } from "./graph-store";
 import { FULL_SERVICES } from "./full-services";
-import catalogueData from "../../../data/govuk-services-catalogue.json";
+
+// Catalogue data loaded lazily to avoid bloating the Worker bundle
+let _catalogueData: Array<Record<string, unknown>> | null = null;
+function getCatalogueData(): Array<Record<string, unknown>> {
+  if (!_catalogueData) {
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      _catalogueData = require("../../../data/govuk-services-catalogue.json");
+    } catch {
+      _catalogueData = [];
+    }
+  }
+  return _catalogueData!;
+}
 
 export interface SeedOptions {
   /** @deprecated — no longer used. Full services are now embedded. */
@@ -165,7 +178,7 @@ export async function seedServiceStore(
   // 5. Seed catalogue services from GOV.UK spreadsheet
   // These are lightweight entries (no artefacts) — INSERT OR IGNORE to avoid
   // duplicating existing full or graph services.
-  const catalogue = catalogueData as Array<{
+  const catalogue = getCatalogueData() as Array<{
     id: string;
     title: string;
     description: string;
