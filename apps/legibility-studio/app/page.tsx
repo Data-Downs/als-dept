@@ -14,6 +14,9 @@ import PageHeader from "@/components/ui/PageHeader";
 
 interface DashboardSummary {
   serviceCount: number;
+  fullCount: number;
+  catalogueCount: number;
+  coverage: number;
   totalCases: number;
   activeCases: number;
   completionRate: number;
@@ -70,8 +73,21 @@ export default function StudioHomePage() {
         }
         setServiceMap(map);
 
+        const fullCount = services.filter(
+          (s: { source?: string }) => (s.source || "full") === "full",
+        ).length;
+        const catalogueCount = services.filter(
+          (s: { source?: string }) => s.source === "catalogue",
+        ).length;
+
         setSummary({
           serviceCount: services.length,
+          fullCount,
+          catalogueCount,
+          coverage:
+            services.length > 0
+              ? Math.round((fullCount / services.length) * 100)
+              : 0,
           totalCases: dashboardData?.totalCases || 0,
           activeCases: dashboardData?.activeCases || 0,
           completionRate: dashboardData?.completionRate || 0,
@@ -82,6 +98,9 @@ export default function StudioHomePage() {
       .catch(() => {
         setSummary({
           serviceCount: 0,
+          fullCount: 0,
+          catalogueCount: 0,
+          coverage: 0,
           totalCases: 0,
           activeCases: 0,
           completionRate: 0,
@@ -97,8 +116,19 @@ export default function StudioHomePage() {
       />
 
       {/* KPI row */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
-        <KPICard label="Services" value={summary?.serviceCount ?? "..."} />
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-10">
+        <KPICard
+          label="Services Catalogued"
+          value={summary?.serviceCount ?? "..."}
+        />
+        <KPICard
+          label="With Full Artefacts"
+          value={summary?.fullCount ?? "..."}
+        />
+        <KPICard
+          label="Artefact Coverage"
+          value={summary ? `${summary.coverage}%` : "..."}
+        />
         <KPICard
           label="Total Cases"
           value={summary ? summary.totalCases.toLocaleString() : "..."}
@@ -106,10 +136,6 @@ export default function StudioHomePage() {
         <KPICard
           label="Active Cases"
           value={summary ? summary.activeCases.toLocaleString() : "..."}
-        />
-        <KPICard
-          label="Completion Rate"
-          value={summary ? `${summary.completionRate}%` : "..."}
         />
       </div>
 

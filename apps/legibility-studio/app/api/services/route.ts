@@ -29,6 +29,8 @@ export async function GET() {
       govuk_url: s.govukUrl,
       generatedAt: s.generatedAt,
       interactionType: s.interactionType,
+      priority: s.priority || null,
+      channels: s.channels || null,
     }));
 
     const graphStore = await getServiceGraphStore();

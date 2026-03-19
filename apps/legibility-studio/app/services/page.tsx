@@ -16,11 +16,13 @@ interface Service {
   promoted: boolean;
   completeness: number;
   gapCount: number;
-  source?: "full" | "graph";
+  source?: "full" | "graph" | "catalogue";
   serviceType?: string;
   govuk_url?: string;
   generatedAt?: string;
   interactionType?: string;
+  priority?: "demo" | "transactional" | "reference";
+  channels?: { online: boolean; phone: boolean; email: boolean; letter: boolean; inperson: boolean; form: boolean };
 }
 
 // ── Typology configuration ──
@@ -451,9 +453,9 @@ export default function ServicesPage() {
   const [dashboard, setDashboard] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
   const [togglingId, setTogglingId] = useState<string | null>(null);
-  const [sourceFilter, setSourceFilter] = useState<"all" | "full" | "graph">(
-    "all",
-  );
+  const [sourceFilter, setSourceFilter] = useState<
+    "all" | "full" | "graph" | "catalogue"
+  >("all");
   const [deptFilter, setDeptFilter] = useState<string>("all");
   const [typologyFilter, setTypologyFilter] = useState<string>("all");
   const [lifeEventFilter, setLifeEventFilter] = useState<string>("all");
@@ -552,6 +554,9 @@ export default function ServicesPage() {
     (s) => (s.source || "full") === "full",
   ).length;
   const graphCount = services.filter((s) => s.source === "graph").length;
+  const catalogueCount = services.filter(
+    (s) => s.source === "catalogue",
+  ).length;
 
   const togglePromote = useCallback(async (serviceId: string) => {
     setTogglingId(serviceId);
@@ -722,23 +727,39 @@ export default function ServicesPage() {
         {/* Source filter */}
         <div className="flex items-center gap-1.5">
           <span className="text-sm text-gray-500">Source:</span>
-          {(["all", "full", "graph"] as const).map((f) => (
-            <button
-              key={f}
-              onClick={() => setSourceFilter(f)}
-              className={`text-xs font-bold px-2.5 py-1 rounded-full border transition-colors ${
-                sourceFilter === f
-                  ? "bg-govuk-blue text-white border-govuk-blue"
-                  : "bg-white text-gray-600 border-gray-300 hover:border-govuk-blue"
-              }`}
-            >
-              {f === "all"
-                ? `All (${services.length})`
+          {(["all", "full", "graph", "catalogue"] as const).map((f) => {
+            const count =
+              f === "all"
+                ? services.length
                 : f === "full"
-                  ? `Full (${fullCount})`
-                  : `Graph (${graphCount})`}
-            </button>
-          ))}
+                  ? fullCount
+                  : f === "graph"
+                    ? graphCount
+                    : catalogueCount;
+            const label =
+              f === "all"
+                ? "All"
+                : f === "full"
+                  ? "Full"
+                  : f === "graph"
+                    ? "Graph"
+                    : "Catalogue";
+            return (
+              <button
+                key={f}
+                onClick={() => setSourceFilter(f)}
+                className={`text-xs font-bold px-2.5 py-1 rounded-full border transition-colors ${
+                  sourceFilter === f
+                    ? f === "catalogue"
+                      ? "bg-gray-700 text-white border-gray-700"
+                      : "bg-govuk-blue text-white border-govuk-blue"
+                    : "bg-white text-gray-600 border-gray-300 hover:border-govuk-blue"
+                }`}
+              >
+                {label} ({count})
+              </button>
+            );
+          })}
         </div>
 
         {/* Typology filter */}
@@ -880,13 +901,24 @@ export default function ServicesPage() {
                     <h2 className="text-lg font-bold">{service.name}</h2>
                     <span
                       className={`text-[10px] font-bold uppercase px-1.5 py-0.5 rounded ${
-                        (service.source || "full") === "full"
-                          ? "bg-blue-100 text-blue-800"
-                          : "bg-amber-100 text-amber-800"
+                        service.source === "catalogue"
+                          ? "bg-gray-100 text-gray-600"
+                          : (service.source || "full") === "full"
+                            ? "bg-blue-100 text-blue-800"
+                            : "bg-amber-100 text-amber-800"
                       }`}
                     >
-                      {(service.source || "full") === "full" ? "Full" : "Graph"}
+                      {service.source === "catalogue"
+                        ? "Catalogue"
+                        : (service.source || "full") === "full"
+                          ? "Full"
+                          : "Graph"}
                     </span>
+                    {service.priority === "demo" && (
+                      <span className="text-[10px] font-bold uppercase px-1.5 py-0.5 rounded bg-purple-100 text-purple-800">
+                        Demo
+                      </span>
+                    )}
                     {service.interactionType && (
                       <span className="text-[10px] font-medium text-purple-700 bg-purple-100 px-1.5 py-0.5 rounded uppercase">
                         {service.interactionType.replace(/_/g, " ")}
@@ -1015,7 +1047,9 @@ export default function ServicesPage() {
                 ) : (
                   <div className="flex items-center gap-3">
                     <span className="text-sm text-gray-500">
-                      Graph-only — needs artefacts for full integration
+                      {service.source === "catalogue"
+                        ? "Catalogue — no artefacts yet"
+                        : "Graph-only — needs artefacts for full integration"}
                     </span>
                     {service.govuk_url && (
                       <>
