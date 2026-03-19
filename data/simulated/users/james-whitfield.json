@@ -1,0 +1,213 @@
+{
+  "id": "james-whitfield",
+  "name": "James Whitfield",
+  "personaId": "james-whitfield",
+  "personaName": "James Whitfield",
+  "description": "Disabled appellant with MS, fighting PIP appeal and son's stuck EHCP application",
+  "color": "#00703c",
+  "date_of_birth": "1983-08-14",
+  "age": 42,
+  "national_insurance_number": "KR482956B",
+  "address": {
+    "line_1": "38 Brecks Lane",
+    "line_2": "",
+    "city": "Rotherham",
+    "postcode": "S65 3HT",
+    "country": "England"
+  },
+  "jurisdiction": "England",
+  "credentials": [
+    {
+      "type": "national-insurance",
+      "issuer": "HMRC",
+      "number": "KR482956B",
+      "issued": "2001-08-14",
+      "status": "valid"
+    },
+    {
+      "type": "proof-of-address",
+      "issuer": "Royal Mail",
+      "number": "PAF-JW-S653HT",
+      "issued": "2025-11-01",
+      "expires": "2026-11-01",
+      "status": "valid"
+    }
+  ],
+  "employment_status": "unable-to-work",
+  "self_employed": false,
+  "income": 0,
+  "savings": 1200,
+  "bank_account": true,
+  "primaryContact": {
+    "firstName": "James",
+    "middleName": "Robert",
+    "lastName": "Whitfield",
+    "dateOfBirth": "1983-08-14",
+    "nationalInsuranceNumber": "KR482956B",
+    "email": "james.whitfield83@gmail.com",
+    "phone": "07491382045"
+  },
+  "spouse": {
+    "firstName": "Claire",
+    "lastName": "Whitfield",
+    "dateOfBirth": "1985-11-22",
+    "nationalInsuranceNumber": "TN619283C",
+    "email": "claire.whitfield@outlook.com",
+    "phone": "07734521890",
+    "occupation": "Part-time teaching assistant"
+  },
+  "children": [
+    {
+      "firstName": "Owen",
+      "lastName": "Whitfield",
+      "dateOfBirth": "2017-12-03",
+      "childBenefitNumber": "CHB9381726A"
+    }
+  ],
+  "employment": {
+    "status": "Unable to work — ESA support group",
+    "previousRole": "Warehouse Supervisor",
+    "previousEmployer": "Rotherham Distribution Ltd",
+    "previousSalary": 28000,
+    "leftEmployment": "2023-03-15",
+    "reasonForLeaving": "Multiple sclerosis relapse — unable to continue physical role",
+    "esaSupportGroup": true,
+    "esaStartDate": "2023-04-01"
+  },
+  "spouseEmployment": {
+    "status": "Part-time employed",
+    "employer": "Rotherham Borough Council",
+    "jobTitle": "Teaching Assistant",
+    "annualIncome": 12800,
+    "hoursPerWeek": 16,
+    "taxCode": "1257L"
+  },
+  "financials": {
+    "householdIncome": 12800,
+    "personalAccount": {
+      "bank": "Halifax",
+      "sortCode": "11-05-42",
+      "accountNumber": "30198274",
+      "balance": 1200
+    },
+    "mortgage": {
+      "provider": "Nationwide",
+      "monthlyPayment": 680,
+      "remainingBalance": 94000
+    },
+    "motabilityCar": {
+      "status": "at risk — depends on PIP enhanced mobility",
+      "vehicle": "Vauxhall Corsa",
+      "leaseEnd": "2027-01-15"
+    }
+  },
+  "housing": {
+    "type": "Owner-occupier (mortgaged)",
+    "mortgageProvider": "Nationwide",
+    "mortgageBalance": 94000,
+    "monthlyPayment": 680
+  },
+  "benefits": {
+    "currentlyReceiving": [
+      {
+        "type": "Employment and Support Allowance (Support Group)",
+        "amount": 138.2,
+        "frequency": "weekly",
+        "startDate": "2023-04-01",
+        "reason": "Multiple sclerosis — unable to work"
+      },
+      {
+        "type": "PIP — Standard Daily Living",
+        "amount": 72.65,
+        "frequency": "weekly",
+        "startDate": "2023-06-01",
+        "reason": "Multiple sclerosis"
+      },
+      {
+        "type": "Child Benefit",
+        "amount": 26.05,
+        "frequency": "weekly",
+        "startDate": "2018-01-01"
+      }
+    ],
+    "potentiallyEligibleFor": [
+      "PIP Enhanced Mobility (if appeal succeeds)",
+      "Motability Scheme (requires enhanced mobility)",
+      "Carer's Allowance (for Claire, if caring >35hrs/week)",
+      "Council Tax Reduction"
+    ],
+    "previousClaims": []
+  },
+  "healthInfo": {
+    "gpSurgery": "Brecks Medical Practice, Rotherham",
+    "nhsNumber": "943 182 6740",
+    "conditions": [
+      "Multiple sclerosis (relapsing-remitting, diagnosed 2019)",
+      "Currently in relapse — increased fatigue, mobility difficulties, left-side weakness"
+    ],
+    "medications": [
+      "Dimethyl fumarate (Tecfidera) — disease-modifying therapy",
+      "Gabapentin — neuropathic pain",
+      "Baclofen — spasticity"
+    ],
+    "neurologist": "Dr S. Patel, Sheffield Teaching Hospitals",
+    "msNurse": "Karen Dobson, Rotherham MS Service",
+    "lastRelapseDate": "2026-01-20",
+    "dvlaNotificationRequired": true,
+    "dvlaMedicalNotificationStatus": "not yet notified"
+  },
+  "communicationStyle": {
+    "tone": "Frustrated but determined. Exhausted by the system, manages fatigue carefully",
+    "techSavvy": "Moderate — can use online forms but finds them tiring during relapses",
+    "primaryConcerns": [
+      "PIP mobility score was wrong — I can barely walk 20 metres on bad days",
+      "Owen needs support at school and the council is dragging its feet",
+      "If I lose the Motability car, Claire can't get Owen to school",
+      "I shouldn't have to fight for things when I'm this ill"
+    ],
+    "typicalPhrases": [
+      "The assessor watched me walk in and decided I was fine",
+      "Owen's school says he needs help but the council won't assess him",
+      "I'm too tired to chase these people every day",
+      "My wife is holding everything together",
+      "The MS nurse says my condition clearly qualifies — why don't they listen?"
+    ]
+  },
+  "appeals": {
+    "pipMandatoryRecon": {
+      "status": "pending",
+      "date": "2026-02-10"
+    },
+    "ehcpApplicationDate": "2025-11-10",
+    "ehcpStatutoryDeadline": "2026-04-06",
+    "ehcpCurrentWeek": 18,
+    "sendTribunalStatus": "not_started",
+    "legalAidEligibility": true,
+    "evidenceChecklist": [
+      { "item": "MS nurse specialist letter", "status": "obtained" },
+      { "item": "Neurologist report (Prof Patel)", "status": "obtained" },
+      { "item": "GP supporting letter", "status": "needed" },
+      { "item": "Physiotherapy assessment", "status": "needed" },
+      { "item": "Daily living diary (4 weeks)", "status": "submitted" },
+      { "item": "Owen's school SENCO report", "status": "obtained" },
+      { "item": "Educational psychologist assessment", "status": "needed" },
+      { "item": "CAMHS ADHD diagnosis letter", "status": "obtained" }
+    ]
+  },
+  "_fieldSources": {
+    "address": { "source": "DWP", "tier": "verified", "topic": "identity" },
+    "primaryContact": { "source": "DWP", "tier": "verified", "topic": "identity" },
+    "healthInfo": { "source": "NHS", "tier": "verified", "topic": "health" },
+    "healthInfo.conditions": { "source": "NHS", "tier": "verified", "topic": "disability" },
+    "healthInfo.medications": { "source": "NHS", "tier": "verified", "topic": "health" },
+    "benefits": { "source": "DWP", "tier": "verified", "topic": "finance" },
+    "appeals.pipMandatoryRecon": { "source": "DWP", "tier": "verified", "topic": "disability" },
+    "appeals.ehcpApplicationDate": { "source": "Local Authority", "tier": "verified", "topic": "education" },
+    "appeals.ehcpCurrentWeek": { "source": "Local Authority", "tier": "verified", "topic": "education" },
+    "appeals.ehcpStatutoryDeadline": { "source": "Local Authority", "tier": "verified", "topic": "education" },
+    "appeals.sendTribunalStatus": { "source": "HMCTS", "tier": "verified", "topic": "justice" },
+    "employment": { "source": "DWP", "tier": "verified", "topic": "employment" },
+    "financials": { "source": "DWP", "tier": "submitted", "topic": "finance" },
+    "children": { "source": "DWP", "tier": "verified", "topic": "parenting" }
+  }
+}

@@ -192,5 +192,20 @@
       "I need this done today",
       "Why are you asking me things you already know?"
     ]
+  },
+  "_fieldSources": {
+    "primaryContact.firstName": { "source": "User", "tier": "verified", "topic": "identity" },
+    "primaryContact.dateOfBirth": { "source": "User", "tier": "verified", "topic": "identity" },
+    "primaryContact.nationalInsuranceNumber": { "source": "DWP", "tier": "verified", "topic": "finance" },
+    "primaryContact.email": { "source": "User", "tier": "submitted", "topic": "identity" },
+    "primaryContact.phone": { "source": "User", "tier": "submitted", "topic": "identity" },
+    "communicationStyle": { "source": "Agent inference", "tier": "inferred", "topic": "general" },
+    "address": { "source": "HMRC", "tier": "verified", "topic": "housing" },
+    "employment": { "source": "HMRC", "tier": "verified", "topic": "business" },
+    "financials": { "source": "User", "tier": "submitted", "topic": "finance" },
+    "vehicles": { "source": "DVLA", "tier": "verified", "topic": "driving" },
+    "healthInfo": { "source": "NHS", "tier": "verified", "topic": "health" },
+    "benefits": { "source": "DWP", "tier": "verified", "topic": "finance" },
+    "children": { "source": "User", "tier": "submitted", "topic": "parenting" }
   }
 }

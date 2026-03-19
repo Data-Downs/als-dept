@@ -167,7 +167,12 @@ function isServiceRelevant(
     emp?.status ?? emp?.employment_status ?? (raw.employment_status as string);
   switch (service) {
     case "driving":
-      return !!(data.vehicles && data.vehicles.length > 0);
+      return !!(
+        (data.vehicles && data.vehicles.length > 0) ||
+        raw.firstTimer?.provisionalLicence ||
+        raw.firstTimer?.drivingTestBooking ||
+        raw.growingFamily // Nowaks: EU licence exchange
+      );
     case "benefits":
       return !!(
         (data.benefits?.currentlyReceiving &&
@@ -176,34 +181,68 @@ function isServiceRelevant(
           data.benefits.potentiallyEligibleFor.length > 0) ||
         data.pregnancy ||
         (data.children && data.children.length > 0) ||
-        raw.over_70
+        raw.over_70 ||
+        raw.bereavement || // Sarah: bereavement support payment
+        raw.immigration || // Amina: UC after refugee status
+        raw.justiceHistory || // Marcus: UC on release
+        raw.childcare || // Priya: child benefit, UC top-up
+        raw.appeals || // James: PIP, ESA
+        raw.selfEmployment || // Daniel: UC during income dips
+        raw.growingFamily // Nowaks: UC, Carer's Allowance
       );
     case "money":
-      return !!(data.financials || raw.income || raw.savings);
+      return !!(
+        data.financials ||
+        raw.income ||
+        raw.savings ||
+        raw.selfEmployment ||
+        raw.bereavement?.ihtLiability ||
+        raw.childcare?.taxFreeChildcareAccount !== undefined ||
+        raw.growingFamily?.hicbcRisk
+      );
     case "health":
-      return !!(data.healthInfo || data.pregnancy || raw.over_70);
+      return !!(
+        data.healthInfo ||
+        data.pregnancy ||
+        raw.over_70 ||
+        raw.appeals // James: MS, disability
+      );
     case "employment":
-      return !!(data.employment || raw.employment_status);
+      return !!(
+        data.employment ||
+        raw.employment_status ||
+        raw.justiceHistory || // Marcus: job search with DBS
+        raw.firstTimer?.payeDetails // Zara: first PAYE
+      );
     case "parenting":
       return !!(
         data.pregnancy ||
         (data.children && data.children.length > 0) ||
         (data.family as Record<string, unknown> | undefined)?.children ||
-        data.partner
+        data.partner ||
+        raw.childcare || // Priya: childcare, FSM, school
+        raw.growingFamily // Nowaks: EHCP, school admissions, FSM
       );
     case "travel":
-      return !!(raw.credentials || raw.visa || raw.immigration);
+      return !!(
+        raw.credentials ||
+        raw.visa ||
+        raw.immigration || // Amina: eVisa, right to work
+        raw.firstTimer?.passportStatus // Zara: first passport
+      );
     case "business":
       return !!(
         empStatus === "self-employed" ||
         empStatus === "Self-Employed" ||
-        raw.business
+        raw.business ||
+        raw.selfEmployment // Daniel: MTD, SA, civil claims
       );
     case "care":
       return !!(
         raw.powerOfAttorney ||
         (data.family as Record<string, unknown> | undefined)?.dependents ||
-        raw.carer
+        raw.carer ||
+        raw.growingFamily?.carersAllowanceEligibility // Nowaks: Carer's Allowance
       );
     case "retirement": {
       const fin = data.financials as Record<string, unknown> | undefined;
@@ -225,7 +264,9 @@ function isServiceRelevant(
       return !!(
         raw.education ||
         empStatus === "student" ||
-        empStatus === "Student"
+        empStatus === "Student" ||
+        raw.firstTimer?.educationStatus || // Zara: student finance
+        raw.firstTimer?.studentFinanceStatus
       );
     default:
       return false;

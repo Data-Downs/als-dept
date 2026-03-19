@@ -120,5 +120,19 @@
       "I worked for six years and now I can't even pay my rent",
       "Just tell me what I need to do"
     ]
+  },
+  "_fieldSources": {
+    "primaryContact.firstName": { "source": "User", "tier": "verified", "topic": "identity" },
+    "primaryContact.dateOfBirth": { "source": "User", "tier": "verified", "topic": "identity" },
+    "primaryContact.nationalInsuranceNumber": { "source": "DWP", "tier": "verified", "topic": "finance" },
+    "primaryContact.email": { "source": "User", "tier": "submitted", "topic": "identity" },
+    "primaryContact.phone": { "source": "User", "tier": "submitted", "topic": "identity" },
+    "communicationStyle": { "source": "Agent inference", "tier": "inferred", "topic": "general" },
+    "address": { "source": "DWP", "tier": "submitted", "topic": "housing" },
+    "employment": { "source": "DWP", "tier": "verified", "topic": "employment" },
+    "financials": { "source": "User", "tier": "submitted", "topic": "finance" },
+    "healthInfo": { "source": "NHS", "tier": "verified", "topic": "health" },
+    "benefits": { "source": "DWP", "tier": "verified", "topic": "finance" },
+    "family": { "source": "User", "tier": "submitted", "topic": "parenting" }
   }
 }

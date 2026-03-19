@@ -35,6 +35,27 @@ const PROPERTY_CATEGORY: Record<string, string> = {
   benefits: "benefits",
   businessAssets: "business",
   communicationStyle: "communication",
+  // New unified model categories
+  immigration: "immigration",
+  justiceHistory: "justice",
+  bereavement: "legal",
+  childcare: "parenting",
+  appeals: "legal",
+  selfEmployment: "business",
+  firstTimer: "education",
+  growingFamily: "parenting",
+  housing: "housing",
+  passport: "identity",
+  councilTaxStatus: "housing",
+  niRecord: "financial",
+  statePensionForecast: "financial",
+  employmentHistory: "employment",
+  workplace: "employment",
+  notificationPreferences: "communication",
+  topicPreferences: "communication",
+  chatHistory: "communication",
+  credentials: "identity",
+  _fieldSources: "metadata",
 };
 
 export class SubmittedStore {

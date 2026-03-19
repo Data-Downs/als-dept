@@ -1,0 +1,208 @@
+{
+  "id": "marcus-taylor",
+  "name": "Marcus Taylor",
+  "personaId": "marcus-taylor",
+  "personaName": "Marcus Taylor",
+  "description": "Prison leaver on licence navigating UC, housing, employment with DBS disclosure, and driving licence renewal",
+  "date_of_birth": "1996-07-22",
+  "age": 29,
+  "national_insurance_number": "MT220796C",
+  "address": {
+    "line_1": "Room 7, Kirkgate House",
+    "line_2": "15 Kirkgate",
+    "city": "Huddersfield",
+    "county": "West Yorkshire",
+    "postcode": "HD1 1QT",
+    "country": "England"
+  },
+  "jurisdiction": "England",
+  "color": "#f47738",
+  "credentials": [
+    {
+      "type": "national-insurance",
+      "issuer": "HMRC",
+      "number": "MT220796C",
+      "issued": "2014-07-22",
+      "status": "valid"
+    },
+    {
+      "type": "driving-licence",
+      "issuer": "DVLA",
+      "number": "TAYLO960722MJ9FK",
+      "issued": "2015-08-10",
+      "expires": "2025-08-10",
+      "status": "expired"
+    }
+  ],
+  "employment_status": "unemployed",
+  "employer": null,
+  "income": 0,
+  "savings": 0,
+  "bank_account": false,
+  "primaryContact": {
+    "firstName": "Marcus",
+    "middleName": "James",
+    "lastName": "Taylor",
+    "dateOfBirth": "1996-07-22",
+    "nationalInsuranceNumber": "MT220796C",
+    "email": "marcus.t96@gmail.com",
+    "phone": "07438912345"
+  },
+  "employment": {
+    "marcus": {
+      "status": "Unemployed",
+      "previousOccupation": "Construction labourer",
+      "previousEmployer": "B&K Construction Ltd",
+      "lastEmploymentDate": "2024-06-01",
+      "qualifications": "GCSEs (5 A-C including Maths and English)",
+      "cscsCard": "Expired during sentence",
+      "notes": "Previously worked in construction. CSCS card lapsed. Needs to renew card and DBS check for site work."
+    }
+  },
+  "financials": {
+    "combinedAnnualIncome": 0,
+    "householdIncome": 0,
+    "monthlyRent": 0,
+    "councilTaxBand": null,
+    "councilTaxAnnual": 0,
+    "currentAccount": null,
+    "savingsAccount": null,
+    "notes": "No bank account — closed by bank during sentence. No savings. Received £46 discharge grant on release. Needs to open basic bank account for UC payments."
+  },
+  "benefits": {
+    "currentlyReceiving": [],
+    "previousClaims": [],
+    "potentiallyEligibleFor": [
+      "Universal Credit",
+      "Council Tax Reduction",
+      "Housing Element (UC)"
+    ]
+  },
+  "healthInfo": {
+    "marcus": {
+      "gpSurgery": "Not yet registered (was registered at HMP Leeds healthcare)",
+      "nhsNumber": "712 438 9106",
+      "conditions": [],
+      "medications": []
+    }
+  },
+  "family": {
+    "children": [
+      {
+        "firstName": "Chloe",
+        "lastName": "Taylor",
+        "dateOfBirth": "2022-03-08",
+        "notes": "Age 4, lives with ex-partner Jade in Wakefield. Marcus has informal contact arrangement — sees Chloe every other Saturday at a contact centre."
+      }
+    ],
+    "notes": "Single. Daughter Chloe lives with ex-partner Jade Matthews in Wakefield. No formal custody arrangement. Marcus's mum lives in Leeds — supportive but limited means.",
+    "supportNetwork": [
+      "Mum (Diane Taylor) in Leeds",
+      "Probation officer",
+      "Approved premises keyworker",
+      "Prison leavers support group at St George's Centre"
+    ]
+  },
+  "housing": {
+    "type": "Approved premises (hostel)",
+    "propertyType": "Single room in approved premises",
+    "notes": "Approved premises placement — maximum 12 weeks. 6 weeks remaining. Must find permanent accommodation or faces street homelessness. Hostel address accepted for UC but not for driving licence renewal."
+  },
+  "vehicles": [],
+  "communicationStyle": {
+    "tone": "Direct, slightly guarded. Doesn't trust institutions easily — has had bad experiences. Frustrated by bureaucracy but trying to stay on the right side of things for Chloe's sake. Uses plain language.",
+    "techSavvy": "Moderate — comfortable with smartphones and social media. Had limited internet access in prison. Can use basic apps but hasn't navigated government websites before. No laptop — phone only.",
+    "primaryConcerns": [
+      "Getting UC sorted before approved premises time runs out",
+      "Finding permanent housing — terrified of being on the streets",
+      "Getting work in construction again but worried about DBS",
+      "Renewing driving licence — needs an address and it's expired",
+      "Seeing Chloe regularly and proving he's getting his life together",
+      "Not breaching licence conditions"
+    ],
+    "typicalPhrases": [
+      "I've just been released from prison and I need to sort everything out.",
+      "I've got six weeks before they kick me out of the hostel.",
+      "I want to get back into construction but I don't know if my record stops me.",
+      "My probation officer is alright but she's got like 50 other people to deal with.",
+      "I just want to see my daughter and prove I've sorted myself out.",
+      "I don't even have a bank account. How am I supposed to get UC without one?"
+    ]
+  },
+  "justiceHistory": {
+    "releaseDate": "2026-02-05",
+    "sentenceLength": "18 months",
+    "offenceCategory": "Drug supply (Class B — cannabis)",
+    "licenceConditions": [
+      "Report to probation officer fortnightly",
+      "Reside at approved premises as directed",
+      "Do not travel outside England and Wales without permission",
+      "Do not contact co-defendants",
+      "Attend all scheduled appointments with probation",
+      "Undertake drug testing as required",
+      "Curfew: 11pm to 6am at approved premises"
+    ],
+    "licenceEndDate": "2027-02-05",
+    "probationOfficer": "Karen Mitchell, West Yorkshire Probation Service",
+    "reportingSchedule": "Fortnightly — Tuesdays 10am at Huddersfield Probation Office",
+    "restrictions": [
+      "Curfew 11pm–6am",
+      "No contact with named co-defendants",
+      "No travel outside England and Wales"
+    ],
+    "dbsDisclosureStatus": "undisclosed",
+    "approvedPremisesDeadline": "2026-04-30"
+  },
+  "_fieldSources": {
+    "address": {
+      "source": "HMPPS",
+      "tier": "verified",
+      "topic": "housing"
+    },
+    "primaryContact.nationalInsuranceNumber": {
+      "source": "HMRC",
+      "tier": "verified",
+      "topic": "identity"
+    },
+    "justiceHistory.releaseDate": {
+      "source": "HMPPS",
+      "tier": "verified",
+      "topic": "justice"
+    },
+    "justiceHistory.licenceConditions": {
+      "source": "HMPPS",
+      "tier": "verified",
+      "topic": "justice"
+    },
+    "justiceHistory.licenceEndDate": {
+      "source": "HMPPS",
+      "tier": "verified",
+      "topic": "justice"
+    },
+    "justiceHistory.probationOfficer": {
+      "source": "HMPPS",
+      "tier": "verified",
+      "topic": "justice"
+    },
+    "justiceHistory.reportingSchedule": {
+      "source": "HMPPS",
+      "tier": "verified",
+      "topic": "justice"
+    },
+    "justiceHistory.dbsDisclosureStatus": {
+      "source": "DBS",
+      "tier": "verified",
+      "topic": "justice"
+    },
+    "justiceHistory.approvedPremisesDeadline": {
+      "source": "HMPPS",
+      "tier": "verified",
+      "topic": "housing"
+    },
+    "credentials.driving-licence": {
+      "source": "DVLA",
+      "tier": "verified",
+      "topic": "driving"
+    }
+  }
+}

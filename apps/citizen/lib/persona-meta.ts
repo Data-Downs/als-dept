@@ -17,6 +17,14 @@ export const PERSONA_NAMES: Record<string, string> = {
   "mary-summers": "Mary Summers",
   "rebecca-shortland": "Rebecca Shortland",
   "anna-cotton": "Anna Cotton",
+  "sarah-okafor": "Sarah Okafor",
+  "amina-hassan": "Amina Hassan",
+  "marcus-taylor": "Marcus Taylor",
+  "priya-anand": "Priya Anand",
+  "james-whitfield": "James Whitfield",
+  "daniel-obi": "Daniel Obi",
+  "zara-begum": "Zara Begum",
+  "fatima-nowak": "Fatima & Tomasz Nowak",
 };
 
 export const PERSONA_COLORS: Record<string, string> = {
@@ -28,6 +36,14 @@ export const PERSONA_COLORS: Record<string, string> = {
   "mary-summers": "#4c6272",
   "rebecca-shortland": "#b58900",
   "anna-cotton": "#1d70b8",
+  "sarah-okafor": "#912b88",
+  "amina-hassan": "#d4351c",
+  "marcus-taylor": "#f47738",
+  "priya-anand": "#1d70b8",
+  "james-whitfield": "#00703c",
+  "daniel-obi": "#4c6272",
+  "zara-begum": "#28a197",
+  "fatima-nowak": "#4c2c92",
 };
 
 function deriveInitials(name: string): string {

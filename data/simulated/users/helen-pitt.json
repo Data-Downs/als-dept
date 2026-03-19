@@ -199,5 +199,20 @@
       "I'm worried about how this will affect my mortgage or my daughter's future",
       "I've never claimed benefits before and I'm not sure if I'm even eligible, but I don't know what else to do"
     ]
+  },
+  "_fieldSources": {
+    "primaryContact.firstName": { "source": "User", "tier": "verified", "topic": "identity" },
+    "primaryContact.dateOfBirth": { "source": "User", "tier": "verified", "topic": "identity" },
+    "primaryContact.nationalInsuranceNumber": { "source": "DWP", "tier": "verified", "topic": "finance" },
+    "primaryContact.email": { "source": "User", "tier": "submitted", "topic": "identity" },
+    "primaryContact.phone": { "source": "User", "tier": "submitted", "topic": "identity" },
+    "communicationStyle": { "source": "Agent inference", "tier": "inferred", "topic": "general" },
+    "address": { "source": "HMRC", "tier": "verified", "topic": "housing" },
+    "employment": { "source": "HMRC", "tier": "verified", "topic": "employment" },
+    "financials": { "source": "User", "tier": "submitted", "topic": "finance" },
+    "vehicles": { "source": "DVLA", "tier": "verified", "topic": "driving" },
+    "healthInfo": { "source": "NHS", "tier": "verified", "topic": "health" },
+    "benefits": { "source": "DWP", "tier": "verified", "topic": "finance" },
+    "family": { "source": "User", "tier": "submitted", "topic": "parenting" }
   }
 }

@@ -1,6 +1,13 @@
 import { describe, it, expect } from "vitest";
 import * as fs from "fs";
 import * as path from "path";
+import {
+  FIELD_REGISTRY,
+  getFieldsBySource,
+  getFieldsByTopic,
+  getFieldsByTier,
+  getFieldMetaForPath,
+} from "../packages/personal-data/src/field-registry";
 
 const ROOT = path.resolve(__dirname, "..");
 const SERVICES_DIR = path.join(ROOT, "data/services");
@@ -144,7 +151,10 @@ describe("Data integrity — simulated personas", () => {
         expect(persona.id).toBeTruthy();
         expect(persona.name).toBeTruthy();
         expect(persona.date_of_birth).toBeTruthy();
-        expect(persona.national_insurance_number).toBeTruthy();
+        // NI number can be null for personas who haven't received one (e.g. Amina, Zara)
+        expect(
+          persona.national_insurance_number !== undefined,
+        ).toBe(true);
       });
 
       it("has address with required fields", () => {
@@ -225,4 +235,89 @@ describe("Data integrity — cross-references", () => {
       }
     }
   });
+});
+
+// ── Field Registry ──
+
+describe("Data integrity — field registry", () => {
+  it("registry has at least 80 field entries", () => {
+    expect(Object.keys(FIELD_REGISTRY).length).toBeGreaterThanOrEqual(80);
+  });
+
+  it("getFieldsBySource returns HMRC fields", () => {
+    const hmrcFields = getFieldsBySource("HMRC");
+    expect(hmrcFields.length).toBeGreaterThan(5);
+    expect(hmrcFields).toContain("employment.income");
+  });
+
+  it("getFieldsBySource returns DWP fields", () => {
+    const dwpFields = getFieldsBySource("DWP");
+    expect(dwpFields.length).toBeGreaterThan(3);
+    expect(dwpFields).toContain("benefits.currentlyReceiving");
+  });
+
+  it("getFieldsByTopic returns driving fields", () => {
+    const drivingFields = getFieldsByTopic("driving");
+    expect(drivingFields.length).toBeGreaterThan(3);
+    expect(drivingFields).toContain("vehicles[].registrationNumber");
+  });
+
+  it("getFieldsByTier returns verified fields", () => {
+    const verifiedFields = getFieldsByTier("verified");
+    expect(verifiedFields.length).toBeGreaterThan(20);
+  });
+
+  it("getFieldMetaForPath returns metadata for known field", () => {
+    const meta = getFieldMetaForPath("primaryContact.nationalInsuranceNumber");
+    expect(meta).toBeDefined();
+    expect(meta.sources).toContain("DWP");
+    expect(meta.tier).toBe("verified");
+  });
+
+  it("getFieldMetaForPath returns undefined for unknown field", () => {
+    expect(getFieldMetaForPath("nonexistent.field")).toBeUndefined();
+  });
+
+  it("every registry entry has valid structure", () => {
+    const validTiers = new Set(["verified", "submitted", "inferred"]);
+    for (const [path, meta] of Object.entries(FIELD_REGISTRY)) {
+      expect(Array.isArray((meta as { sources: string[] }).sources)).toBe(true);
+      expect((meta as { sources: string[] }).sources.length).toBeGreaterThan(0);
+      expect((meta as { topic: string }).topic).toBeTruthy();
+      expect(validTiers.has((meta as { tier: string }).tier)).toBe(true);
+    }
+  });
+});
+
+// ── Persona _fieldSources ──
+
+describe("Data integrity — persona field sources", () => {
+  const userFiles = fs.existsSync(USERS_DIR)
+    ? fs.readdirSync(USERS_DIR).filter((f) => f.endsWith(".json"))
+    : [];
+  for (const file of userFiles) {
+    const personaName = file.replace(".json", "");
+
+    it(`${personaName} has _fieldSources block`, () => {
+      const persona = JSON.parse(
+        fs.readFileSync(path.join(USERS_DIR, file), "utf-8"),
+      );
+      expect(persona._fieldSources).toBeDefined();
+      expect(typeof persona._fieldSources).toBe("object");
+      expect(Object.keys(persona._fieldSources).length).toBeGreaterThan(0);
+    });
+
+    it(`${personaName} _fieldSources entries have valid structure`, () => {
+      const persona = JSON.parse(
+        fs.readFileSync(path.join(USERS_DIR, file), "utf-8"),
+      );
+      const validTiers = new Set(["verified", "submitted", "inferred"]);
+      for (const [, attribution] of Object.entries(persona._fieldSources || {})) {
+        const attr = attribution as { source: string; tier: string; topic: string };
+        expect(attr.source).toBeTruthy();
+        expect(validTiers.has(attr.tier)).toBe(true);
+        expect(attr.topic).toBeTruthy();
+      }
+    });
+  }
 });

@@ -1,0 +1,163 @@
+{
+  "id": "zara-begum",
+  "name": "Zara Begum",
+  "personaId": "zara-begum",
+  "personaName": "Zara Begum",
+  "description": "First-time government user, 18, navigating uni, passport, driving test, and tax for the first time",
+  "color": "#28a197",
+  "date_of_birth": "2007-09-15",
+  "age": 18,
+  "national_insurance_number": null,
+  "address": {
+    "line_1": "14 Manningham Lane",
+    "line_2": "",
+    "city": "Bradford",
+    "postcode": "BD1 3EA",
+    "country": "England"
+  },
+  "jurisdiction": "England",
+  "credentials": [
+    {
+      "type": "driving-licence",
+      "issuer": "DVLA",
+      "number": "BEGUM709150ZA9BC",
+      "issued": "2025-06-10",
+      "expires": "2035-06-10",
+      "status": "valid",
+      "claims": {
+        "type": "provisional"
+      }
+    }
+  ],
+  "employment_status": "part-time-employed",
+  "self_employed": false,
+  "income": 3994,
+  "savings": 340,
+  "bank_account": true,
+  "primaryContact": {
+    "firstName": "Zara",
+    "lastName": "Begum",
+    "dateOfBirth": "2007-09-15",
+    "email": "zara.begum07@gmail.com",
+    "phone": "07412938561"
+  },
+  "employment": {
+    "status": "Part-time employed",
+    "employer": "Tesco Express, Bradford",
+    "jobTitle": "Customer assistant",
+    "annualIncome": 3994,
+    "hoursPerWeek": 12,
+    "hourlyRate": 6.40,
+    "rateType": "Apprentice rate (under 19)",
+    "startDate": "2026-04-01",
+    "taxCode": "0T W1",
+    "taxCodeError": true,
+    "taxCodeErrorDetail": "Emergency tax code — employer filed wrong starter checklist declaration. Should be 1257L",
+    "payeRef": "475/T3892"
+  },
+  "financials": {
+    "householdIncome": 40000,
+    "personalAccount": {
+      "bank": "Monzo",
+      "sortCode": "04-00-04",
+      "accountNumber": "51938274",
+      "balance": 340
+    },
+    "parentalIncome": {
+      "father": {
+        "occupation": "Taxi driver (self-employed)",
+        "annualIncome": 26000
+      },
+      "mother": {
+        "occupation": "Teaching assistant",
+        "annualIncome": 14000
+      }
+    },
+    "creditHistory": "None — no credit file"
+  },
+  "children": [],
+  "family": {
+    "supportNetwork": [
+      "Father — Tariq Begum, taxi driver",
+      "Mother — Nasreen Begum, teaching assistant",
+      "Siblings — brother Imran (14), sister Aisha (11)"
+    ],
+    "notes": "Lives with parents. Parents cannot contribute to university costs"
+  },
+  "passport": {
+    "number": "546821903",
+    "expiryDate": "2024-03-12",
+    "status": "expired"
+  },
+  "benefits": {
+    "currentlyReceiving": [],
+    "potentiallyEligibleFor": [
+      "Student finance (maintenance loan — means-tested)",
+      "Tuition fee loan",
+      "University bursary (household income under £42,875)"
+    ],
+    "previousClaims": []
+  },
+  "healthInfo": {
+    "gpSurgery": "Manningham Medical Centre, Bradford",
+    "conditions": ["None"],
+    "medications": []
+  },
+  "communicationStyle": {
+    "tone": "Eager but overwhelmed. Doesn't know what she doesn't know. Uses informal language",
+    "techSavvy": "High for social media and apps, low for government systems and forms",
+    "primaryConcerns": [
+      "I don't know how to apply for student finance",
+      "I need a passport before September but my old one was a child one",
+      "I've been emergency-taxed and I don't understand why",
+      "I never got my NI number letter — do I even have one?",
+      "My driving test is in 8 weeks and I don't feel ready"
+    ],
+    "typicalPhrases": [
+      "What even is a tax code?",
+      "Do I need my parents' payslips for student finance?",
+      "I never got an NI number letter — is that normal?",
+      "Can I use my provisional as ID for everything?",
+      "How long does a passport take? I need it by September",
+      "I'm confused about repayment plans — do I have to pay it back straight away?"
+    ]
+  },
+  "firstTimer": {
+    "educationStatus": {
+      "qualifications": "A-levels: Biology (B), Chemistry (C), Maths (C)",
+      "universityOffer": "Leeds Beckett University — MPharm Pharmacy (conditional offer met)",
+      "ucasRef": "2607-839215"
+    },
+    "studentFinanceStatus": "not_applied",
+    "parentalIncomeRequired": true,
+    "niNumberStatus": "missing",
+    "provisionalLicence": {
+      "number": "BEGUM709150ZA9BC",
+      "issueDate": "2025-06-10"
+    },
+    "drivingTestBooking": {
+      "ref": "4829-1053-7182",
+      "date": "2026-05-14",
+      "centre": "Bradford (Heaton)"
+    },
+    "payeDetails": {
+      "employer": "Tesco Express, Bradford",
+      "taxCode": "0T W1",
+      "starterChecklistStatus": "wrong"
+    },
+    "passportStatus": "child_expired",
+    "institutionalLiteracy": "low"
+  },
+  "_fieldSources": {
+    "address": { "source": "User", "tier": "submitted", "topic": "identity" },
+    "primaryContact": { "source": "User", "tier": "submitted", "topic": "identity" },
+    "firstTimer.educationStatus": { "source": "DfE", "tier": "verified", "topic": "education" },
+    "firstTimer.studentFinanceStatus": { "source": "SLC", "tier": "verified", "topic": "education" },
+    "firstTimer.niNumberStatus": { "source": "DWP", "tier": "verified", "topic": "identity" },
+    "firstTimer.provisionalLicence": { "source": "DVLA", "tier": "verified", "topic": "driving" },
+    "firstTimer.drivingTestBooking": { "source": "DVSA", "tier": "verified", "topic": "driving" },
+    "firstTimer.payeDetails": { "source": "HMRC", "tier": "verified", "topic": "employment" },
+    "passport": { "source": "HM Passport Office", "tier": "verified", "topic": "identity" },
+    "employment": { "source": "HMRC", "tier": "verified", "topic": "employment" }
+  }
+}

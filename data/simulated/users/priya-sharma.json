@@ -102,5 +102,18 @@
       "Sorry, can you explain what that means exactly?",
       "Is there anything else I should know about?"
     ]
+  },
+  "_fieldSources": {
+    "primaryContact.firstName": { "source": "User", "tier": "verified", "topic": "identity" },
+    "primaryContact.dateOfBirth": { "source": "User", "tier": "verified", "topic": "identity" },
+    "primaryContact.nationalInsuranceNumber": { "source": "DWP", "tier": "verified", "topic": "finance" },
+    "primaryContact.email": { "source": "User", "tier": "submitted", "topic": "identity" },
+    "primaryContact.phone": { "source": "User", "tier": "submitted", "topic": "identity" },
+    "communicationStyle": { "source": "Agent inference", "tier": "inferred", "topic": "general" },
+    "address": { "source": "HMRC", "tier": "verified", "topic": "housing" },
+    "employment": { "source": "DWP", "tier": "verified", "topic": "employment" },
+    "financials": { "source": "User", "tier": "submitted", "topic": "finance" },
+    "healthInfo": { "source": "NHS", "tier": "verified", "topic": "health" },
+    "benefits": { "source": "DWP", "tier": "verified", "topic": "finance" }
   }
 }

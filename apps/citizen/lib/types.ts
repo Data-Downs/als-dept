@@ -1,81 +1,17 @@
 /** Core types for the citizen-02 app */
 
-export interface PersonaData {
-  personaId: string;
-  personaName: string;
-  description: string;
-  primaryContact: {
-    firstName: string;
-    middleName?: string;
-    lastName: string;
-    dateOfBirth: string;
-    nationalInsuranceNumber?: string;
-    email?: string;
-    phone?: string;
-  };
-  partner?: {
-    firstName: string;
-    lastName: string;
-    dateOfBirth: string;
-    nationalInsuranceNumber?: string;
-  };
-  address: {
-    line1: string;
-    line2?: string;
-    city: string;
-    postcode: string;
-    residingSince?: string;
-    housingStatus?: string;
-  };
-  employment?: Record<string, unknown>;
-  financials?: Record<string, unknown>;
-  vehicles?: Vehicle[];
-  pregnancy?: {
-    dueDate: string;
-    hospital?: string;
-    midwife?: string;
-    firstBaby?: boolean;
-    expectedArrival?: string;
-  };
-  children?: Array<{
-    firstName: string;
-    lastName: string;
-    dateOfBirth: string;
-  }>;
-  benefits?: {
-    currentlyReceiving?: Array<{
-      type: string;
-      amount: number;
-      frequency: string;
-      startDate?: string;
-    }>;
-    potentiallyEligibleFor?: string[];
-    previousClaims?: Array<Record<string, unknown>>;
-  };
-  healthInfo?: Record<string, unknown>;
-  family?: {
-    supportNetwork?: string[];
-    notes?: string;
-  };
-  communicationStyle?: {
-    tone: string;
-    techSavvy: string;
-    primaryConcerns: string[];
-    typicalPhrases: string[];
-  };
-}
+import type {
+  CitizenProfile,
+  Vehicle,
+} from "@als/personal-data";
 
-export interface Vehicle {
-  make: string;
-  model: string;
-  year: number;
-  color: string;
-  registrationNumber: string;
-  owner: string;
-  motExpiry?: string;
-  taxExpiry?: string;
-  insuranceExpiry?: string;
-}
+/**
+ * PersonaData — extends the unified CitizenProfile from @als/personal-data.
+ * Kept as a type alias for backwards compatibility across the citizen app.
+ */
+export type PersonaData = CitizenProfile;
+
+export type { Vehicle } from "@als/personal-data";
 
 export interface ChatMessage {
   role: "user" | "assistant";

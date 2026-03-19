@@ -1,5 +1,10 @@
 /**
- * Credential types used across the identity system
+ * Credential types used across the identity system.
+ *
+ * TestUser retains its legacy flat shape for backwards compatibility with
+ * the OneLoginSimulator and WalletSimulator. Persona JSON files may contain
+ * additional fields from CitizenProfile (see @als/personal-data) — the
+ * index signature allows those to pass through.
  */
 
 export interface TestUser {
@@ -25,6 +30,8 @@ export interface TestUser {
   over_70?: boolean;
   no_fixed_address?: boolean;
   pension_qualifying_years?: number;
+  /** Allow additional CitizenProfile fields to pass through */
+  [key: string]: unknown;
 }
 
 export interface WalletCredential {

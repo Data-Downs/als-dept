@@ -1,0 +1,246 @@
+{
+  "id": "sarah-okafor",
+  "name": "Sarah Okafor",
+  "personaId": "sarah-okafor",
+  "personaName": "Sarah Okafor",
+  "description": "Bereaved spouse navigating probate, bereavement benefits, and inheritance tax after husband's sudden death",
+  "date_of_birth": "1967-09-14",
+  "age": 58,
+  "national_insurance_number": "SO140967A",
+  "address": {
+    "line_1": "28 Meadow Close",
+    "line_2": "",
+    "city": "Chelmsford",
+    "county": "Essex",
+    "postcode": "CM1 4QR",
+    "country": "England"
+  },
+  "jurisdiction": "England",
+  "color": "#912b88",
+  "credentials": [
+    {
+      "type": "national-insurance",
+      "issuer": "HMRC",
+      "number": "SO140967A",
+      "issued": "1985-09-14",
+      "status": "valid"
+    },
+    {
+      "type": "proof-of-address",
+      "issuer": "Council Tax",
+      "number": "CT-SO-CM14QR",
+      "issued": "2025-04-01",
+      "expires": "2026-04-01",
+      "status": "valid"
+    }
+  ],
+  "employment_status": "employed",
+  "employer": "Chelmsford City Council",
+  "income": 18500,
+  "savings": 45000,
+  "bank_account": true,
+  "primaryContact": {
+    "firstName": "Sarah",
+    "middleName": "Grace",
+    "lastName": "Okafor",
+    "dateOfBirth": "1967-09-14",
+    "nationalInsuranceNumber": "SO140967A",
+    "email": "sarah.okafor@btinternet.com",
+    "phone": "07712345678"
+  },
+  "spouse": {
+    "firstName": "David",
+    "middleName": "Oluwole",
+    "lastName": "Okafor",
+    "dateOfBirth": "1963-12-03",
+    "nationalInsuranceNumber": "DO031263B",
+    "status": "deceased",
+    "dateOfDeath": "2026-02-26"
+  },
+  "employment": {
+    "sarah": {
+      "status": "Employed",
+      "employer": "Chelmsford City Council",
+      "jobTitle": "Library Assistant (Part-time)",
+      "startDate": "2012-03-01",
+      "annualIncome": 18500,
+      "taxCode": "1257L",
+      "payrollNumber": "CCC2012034",
+      "hoursPerWeek": 20
+    },
+    "david": {
+      "status": "Retired",
+      "previousEmployer": "BT Group PLC",
+      "previousJobTitle": "Senior Network Engineer",
+      "retirementDate": "2025-11-30",
+      "finalSalary": 52000,
+      "pensionScheme": "BT Pension Scheme"
+    }
+  },
+  "financials": {
+    "combinedAnnualIncome": 18500,
+    "householdIncome": 18500,
+    "monthlyMortgage": 0,
+    "councilTaxBand": "D",
+    "councilTaxAnnual": 2050,
+    "currentAccount": {
+      "bank": "NatWest",
+      "sortCode": "60-14-33",
+      "accountNumber": "45678901",
+      "balance": 2800
+    },
+    "savingsAccount": {
+      "bank": "NatWest",
+      "sortCode": "60-14-33",
+      "accountNumber": "56789012",
+      "balance": 45000
+    },
+    "jointAccount": {
+      "bank": "NatWest",
+      "sortCode": "60-14-33",
+      "accountNumber": "67890123",
+      "balance": 4200
+    },
+    "notes": "ISA held by David (£45k) now part of estate. Joint property owned outright — mortgage paid off 2022."
+  },
+  "benefits": {
+    "currentlyReceiving": [],
+    "previousClaims": [],
+    "potentiallyEligibleFor": [
+      "Bereavement Support Payment",
+      "Widowed Parent's Allowance"
+    ]
+  },
+  "healthInfo": {
+    "sarah": {
+      "gpSurgery": "Meadow Lane Surgery",
+      "nhsNumber": "634 891 2057",
+      "conditions": ["Mild anxiety (since bereavement)"],
+      "medications": []
+    }
+  },
+  "family": {
+    "children": [
+      {
+        "firstName": "Adaeze",
+        "lastName": "Okafor",
+        "dateOfBirth": "1997-06-22",
+        "notes": "Age 28, lives in London, works in marketing"
+      },
+      {
+        "firstName": "Emeka",
+        "lastName": "Okafor",
+        "dateOfBirth": "2000-11-15",
+        "notes": "Age 25, finishing MSc at Manchester, lives away"
+      }
+    ],
+    "notes": "Two adult children, neither living at home. Sarah's sister nearby in Braintree provides emotional support.",
+    "supportNetwork": [
+      "Sister Margaret in Braintree",
+      "Daughter Adaeze visits from London at weekends",
+      "Colleagues at the library",
+      "Church community at St Mary's"
+    ]
+  },
+  "housing": {
+    "type": "Owner occupier",
+    "propertyType": "Three-bedroom semi-detached",
+    "purchaseDate": "2002-09-01",
+    "purchasePrice": 185000,
+    "mortgageProvider": "None — paid off",
+    "monthlyMortgage": 0,
+    "mortgageBalance": 0,
+    "estimatedValue": 420000
+  },
+  "communicationStyle": {
+    "tone": "Quiet, polite, emotionally fragile. Apologises often. Struggles to remember details through grief fog. Needs patience and gentle prompting.",
+    "techSavvy": "Basic — uses email and online banking but struggles with complex forms. David used to handle all the financial admin. Has never applied for anything online from government before.",
+    "primaryConcerns": [
+      "Understanding what to do first after David's death",
+      "Whether she needs to pay inheritance tax before probate",
+      "Stopping David's state pension and getting bereavement support",
+      "Whether she can stay in the house on her income alone",
+      "Not letting David down by getting the executor duties wrong"
+    ],
+    "typicalPhrases": [
+      "My husband died three weeks ago. I don't know what to do.",
+      "David always handled all of this. I don't even know where to start.",
+      "Someone mentioned probate but I don't really understand what that means.",
+      "Is there a time limit? I'm worried I'm already too late for something.",
+      "I'm sorry, I keep forgetting things. My head isn't right at the moment.",
+      "My daughter Adaeze has been trying to help but she doesn't know either."
+    ]
+  },
+  "bereavement": {
+    "deceasedName": "David Oluwole Okafor",
+    "dateOfDeath": "2026-02-26",
+    "relationship": "husband",
+    "estateValue": 645000,
+    "willExists": true,
+    "executorStatus": "named",
+    "probateStatus": "not_started",
+    "tellUsOnceRef": null,
+    "ihtLiability": null,
+    "pensionProviders": [
+      "BT Pension Scheme",
+      "State Pension (DWP)"
+    ]
+  },
+  "_fieldSources": {
+    "address": {
+      "source": "HMRC",
+      "tier": "verified",
+      "topic": "identity"
+    },
+    "primaryContact.nationalInsuranceNumber": {
+      "source": "HMRC",
+      "tier": "verified",
+      "topic": "identity"
+    },
+    "income": {
+      "source": "HMRC",
+      "tier": "verified",
+      "topic": "finance"
+    },
+    "employment.sarah": {
+      "source": "HMRC",
+      "tier": "verified",
+      "topic": "employment"
+    },
+    "bereavement.deceasedName": {
+      "source": "General Register Office",
+      "tier": "verified",
+      "topic": "identity"
+    },
+    "bereavement.dateOfDeath": {
+      "source": "General Register Office",
+      "tier": "verified",
+      "topic": "identity"
+    },
+    "bereavement.probateStatus": {
+      "source": "HMCTS",
+      "tier": "verified",
+      "topic": "legal"
+    },
+    "bereavement.estateValue": {
+      "source": "HMRC",
+      "tier": "submitted",
+      "topic": "finance"
+    },
+    "bereavement.willExists": {
+      "source": "User",
+      "tier": "submitted",
+      "topic": "legal"
+    },
+    "bereavement.ihtLiability": {
+      "source": "HMRC",
+      "tier": "inferred",
+      "topic": "finance"
+    },
+    "bereavement.pensionProviders": {
+      "source": "DWP",
+      "tier": "verified",
+      "topic": "finance"
+    }
+  }
+}

@@ -1,0 +1,183 @@
+{
+  "id": "daniel-obi",
+  "name": "Daniel Obi",
+  "personaId": "daniel-obi",
+  "personaName": "Daniel Obi",
+  "description": "Self-employed plumber confused about tax, MTD compliance, and a client who won't pay",
+  "color": "#4c6272",
+  "date_of_birth": "1988-06-21",
+  "age": 37,
+  "national_insurance_number": "JE731842D",
+  "address": {
+    "line_1": "Flat 4",
+    "line_2": "72 Pershore Road",
+    "city": "Birmingham",
+    "postcode": "B5 7NX",
+    "country": "England"
+  },
+  "jurisdiction": "England",
+  "credentials": [
+    {
+      "type": "national-insurance",
+      "issuer": "HMRC",
+      "number": "JE731842D",
+      "issued": "2006-06-21",
+      "status": "valid"
+    },
+    {
+      "type": "driving-licence",
+      "issuer": "DVLA",
+      "number": "OBI886210JE9AB",
+      "issued": "2010-03-15",
+      "expires": "2030-03-15",
+      "status": "valid"
+    },
+    {
+      "type": "proof-of-address",
+      "issuer": "Royal Mail",
+      "number": "PAF-DO-B57NX",
+      "issued": "2025-09-01",
+      "expires": "2026-09-01",
+      "status": "valid"
+    }
+  ],
+  "employment_status": "self-employed",
+  "self_employed": true,
+  "income": 36000,
+  "savings": 3400,
+  "bank_account": true,
+  "primaryContact": {
+    "firstName": "Daniel",
+    "middleName": "Chukwuemeka",
+    "lastName": "Obi",
+    "dateOfBirth": "1988-06-21",
+    "nationalInsuranceNumber": "JE731842D",
+    "email": "dan.obi.plumbing@gmail.com",
+    "phone": "07823491056"
+  },
+  "employment": {
+    "status": "Self-employed",
+    "tradingName": "D. Obi Plumbing & Heating",
+    "businessType": "Plumbing and heating engineer — sole trader",
+    "businessStartDate": "2018-04-06",
+    "annualRevenue": 58000,
+    "annualExpenses": 22000,
+    "netIncome": 36000,
+    "taxCode": "BR",
+    "taxCodeError": true,
+    "taxCodeErrorDetail": "Wrong tax code applied — overpaid £1,800, refund pending since October 2025",
+    "utrNumber": "5839201746",
+    "accountant": "None — does own books on spreadsheet",
+    "vatRegistered": false
+  },
+  "financials": {
+    "householdIncome": 36000,
+    "personalAccount": {
+      "bank": "Lloyds",
+      "sortCode": "30-90-15",
+      "accountNumber": "48291035",
+      "balance": 3400
+    },
+    "businessAccount": {
+      "bank": "Starling Business",
+      "sortCode": "60-83-71",
+      "accountNumber": "71024893",
+      "balance": 6200
+    },
+    "taxRefundOwed": 1800,
+    "taxRefundStatus": "pending — submitted October 2025",
+    "rent": 750,
+    "unpaidInvoices": 4200
+  },
+  "housing": {
+    "type": "Private rented",
+    "landlord": "Midlands Property Group",
+    "monthlyPayment": 750
+  },
+  "vehicles": [
+    {
+      "make": "Ford",
+      "model": "Transit Custom",
+      "year": 2020,
+      "color": "White",
+      "registrationNumber": "BG20 VAN",
+      "owner": "Daniel Obi",
+      "motExpiry": "2026-08-14",
+      "taxExpiry": "2026-06-30",
+      "insuranceExpiry": "2026-07-01",
+      "businessUse": "Yes — 100% business use",
+      "notes": "Commercial vehicle, VED light goods class"
+    }
+  ],
+  "benefits": {
+    "currentlyReceiving": [],
+    "potentiallyEligibleFor": [
+      "Universal Credit (during low-income months — self-employed minimum income floor applies after 12 months)",
+      "Council Tax Reduction"
+    ],
+    "previousClaims": []
+  },
+  "healthInfo": {
+    "gpSurgery": "Moseley Medical Centre, Birmingham",
+    "conditions": ["None"],
+    "medications": []
+  },
+  "communicationStyle": {
+    "tone": "Straightforward, practical, no-nonsense. Doesn't like paperwork",
+    "techSavvy": "Basic-to-moderate — uses phone for banking and WhatsApp, struggles with government portals",
+    "primaryConcerns": [
+      "I've overpaid tax and HMRC won't give me my money back",
+      "A client owes me £4,200 and won't answer my calls",
+      "I don't understand what Making Tax Digital means for me",
+      "I didn't know I could have claimed UC when work dried up last winter"
+    ],
+    "typicalPhrases": [
+      "I just want my money back from the taxman",
+      "Can you help me get this client to pay?",
+      "What's MTD? Nobody told me about that",
+      "I've been doing my own books for 8 years, why do I need software now?",
+      "Do I really have to do quarterly reports?",
+      "I had three months with hardly any work — nobody told me I could get help"
+    ]
+  },
+  "selfEmployment": {
+    "tradingName": "D. Obi Plumbing & Heating",
+    "utrNumber": "5839201746",
+    "turnover": 58000,
+    "expenses": 22000,
+    "netProfit": 36000,
+    "mtdStatus": "required_not_enrolled",
+    "mtdDeadline": "2026-04-06",
+    "outstandingInvoices": [
+      {
+        "debtor": "Mr R. Karim — Kitchen & bathroom refit",
+        "amount": 4200,
+        "dueDate": "2025-12-15",
+        "monthsOverdue": 3
+      }
+    ],
+    "quarterlyReportingDates": [
+      "2026-07-05",
+      "2026-10-05",
+      "2027-01-05",
+      "2027-04-05"
+    ],
+    "saFilingHistory": [
+      { "year": "2022-23", "filedDate": "2024-01-31", "onTime": true },
+      { "year": "2023-24", "filedDate": "2025-01-30", "onTime": true },
+      { "year": "2024-25", "filedDate": "2026-01-31", "onTime": true }
+    ]
+  },
+  "_fieldSources": {
+    "address": { "source": "HMRC", "tier": "verified", "topic": "identity" },
+    "primaryContact": { "source": "HMRC", "tier": "verified", "topic": "identity" },
+    "selfEmployment": { "source": "HMRC", "tier": "verified", "topic": "business" },
+    "selfEmployment.utrNumber": { "source": "HMRC", "tier": "verified", "topic": "finance" },
+    "selfEmployment.mtdStatus": { "source": "HMRC", "tier": "verified", "topic": "business" },
+    "selfEmployment.saFilingHistory": { "source": "HMRC", "tier": "verified", "topic": "finance" },
+    "selfEmployment.outstandingInvoices": { "source": "User", "tier": "submitted", "topic": "finance" },
+    "vehicles": { "source": "DVLA", "tier": "verified", "topic": "driving" },
+    "financials": { "source": "HMRC", "tier": "verified", "topic": "finance" },
+    "employment": { "source": "HMRC", "tier": "verified", "topic": "employment" }
+  }
+}

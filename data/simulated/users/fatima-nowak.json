@@ -1,0 +1,262 @@
+{
+  "id": "fatima-nowak",
+  "name": "Fatima Nowak",
+  "personaId": "fatima-nowak",
+  "personaName": "Fatima & Tomasz Nowak",
+  "description": "Growing family with EHCP, immigration status, and benefit threshold challenges across 5 departments",
+  "color": "#4c2c92",
+  "date_of_birth": "1982-12-08",
+  "age": 43,
+  "national_insurance_number": "WL293847A",
+  "address": {
+    "line_1": "19 Ashcroft Road",
+    "line_2": "",
+    "city": "Luton",
+    "postcode": "LU2 9AY",
+    "country": "England"
+  },
+  "jurisdiction": "England",
+  "credentials": [
+    {
+      "type": "national-insurance",
+      "issuer": "HMRC",
+      "number": "WL293847A",
+      "issued": "2000-12-08",
+      "status": "valid"
+    },
+    {
+      "type": "proof-of-address",
+      "issuer": "Royal Mail",
+      "number": "PAF-FN-LU29AY",
+      "issued": "2025-08-15",
+      "expires": "2026-08-15",
+      "status": "valid"
+    }
+  ],
+  "employment_status": "part-time-employed",
+  "self_employed": false,
+  "income": 11200,
+  "savings": 1800,
+  "bank_account": true,
+  "primaryContact": {
+    "firstName": "Fatima",
+    "lastName": "Nowak",
+    "dateOfBirth": "1982-12-08",
+    "nationalInsuranceNumber": "WL293847A",
+    "email": "fatima.nowak@outlook.com",
+    "phone": "07591482036"
+  },
+  "spouse": {
+    "firstName": "Tomasz",
+    "lastName": "Nowak",
+    "dateOfBirth": "1980-07-03",
+    "nationalInsuranceNumber": "PX582931C",
+    "email": "tomasz.nowak@gmail.com",
+    "phone": "07734918205",
+    "occupation": "Warehouse supervisor"
+  },
+  "children": [
+    {
+      "firstName": "Kasia",
+      "lastName": "Nowak",
+      "dateOfBirth": "2010-10-22",
+      "childBenefitNumber": "CHB4829103A"
+    },
+    {
+      "firstName": "Adam",
+      "lastName": "Nowak",
+      "dateOfBirth": "2014-05-17",
+      "childBenefitNumber": "CHB4829104B"
+    },
+    {
+      "firstName": "Lily",
+      "lastName": "Nowak",
+      "dateOfBirth": "2020-09-30",
+      "childBenefitNumber": "CHB4829105C"
+    }
+  ],
+  "employment": {
+    "status": "Part-time employed",
+    "employer": "Luton Borough Council — School Catering",
+    "jobTitle": "School dinner supervisor",
+    "annualIncome": 11200,
+    "hoursPerWeek": 15,
+    "taxCode": "1257L",
+    "termTimeOnly": true
+  },
+  "spouseEmployment": {
+    "status": "Full-time employed",
+    "employer": "Amazon Fulfilment Centre, Luton",
+    "jobTitle": "Warehouse Supervisor",
+    "annualIncome": 31000,
+    "taxCode": "1257L",
+    "potentialPromotion": {
+      "newRole": "Shift Manager",
+      "newSalary": 52000,
+      "hicbcImplication": "Would trigger High Income Child Benefit Charge"
+    }
+  },
+  "financials": {
+    "householdIncome": 42200,
+    "personalAccount": {
+      "bank": "Barclays",
+      "sortCode": "20-45-18",
+      "accountNumber": "63819274",
+      "balance": 1800
+    },
+    "rent": 680,
+    "councilTax": {
+      "band": "C",
+      "annualAmount": 1680,
+      "monthlyPayment": 140
+    },
+    "childBenefit": {
+      "weeklyAmount": 68.6,
+      "children": 3,
+      "firstChildRate": 26.05,
+      "additionalChildRate": 17.25
+    }
+  },
+  "housing": {
+    "type": "Council house",
+    "landlord": "Luton Borough Council",
+    "monthlyPayment": 680
+  },
+  "councilTaxStatus": {
+    "band": "C",
+    "paymentStatus": "Up to date"
+  },
+  "benefits": {
+    "currentlyReceiving": [
+      {
+        "type": "Child Benefit",
+        "amount": 68.6,
+        "frequency": "weekly",
+        "startDate": "2010-11-01"
+      }
+    ],
+    "potentiallyEligibleFor": [
+      "Universal Credit (depending on hours and income)",
+      "Carer's Allowance (if Fatima reduces hours to care for Adam)",
+      "Free School Meals — recertification for Kasia",
+      "Council Tax Reduction"
+    ],
+    "previousClaims": []
+  },
+  "healthInfo": {
+    "gpSurgery": "Ashcroft Surgery, Luton",
+    "conditions": ["None (Fatima)"],
+    "medications": [],
+    "notes": "Adam diagnosed with autism spectrum condition (Level 1) — under paediatric team at Luton & Dunstable Hospital"
+  },
+  "communicationStyle": {
+    "tone": "Warm, caring, slightly anxious. Advocates fiercely for her children but finds bureaucracy intimidating",
+    "techSavvy": "Moderate — uses phone apps, finds government websites confusing",
+    "primaryConcerns": [
+      "Adam's EHCP is stuck and secondary school starts in September",
+      "Tomasz has never set up his eVisa — his employer is asking for proof",
+      "Are we missing out on benefits we're entitled to?",
+      "What happens to Child Benefit if Tomasz gets promoted?",
+      "Tomasz still has his Polish driving licence — what does he need to do?"
+    ],
+    "typicalPhrases": [
+      "I don't understand why the EHCP is taking so long",
+      "Tomasz's employer keeps asking for his share code and we don't know what that is",
+      "Nobody explained the Child Benefit charge thing",
+      "Am I allowed to reduce my hours to help Adam?",
+      "Kasia needs her free school meals — do we have to reapply every year?",
+      "We've been here nearly 20 years and it still feels like we're proving ourselves"
+    ]
+  },
+  "immigration": {
+    "status": "settled",
+    "homeOfficeRef": "NOWAK-2021-EUSS-7429",
+    "brpNumber": "ZR9284710",
+    "brpExpiry": "2026-12-31",
+    "rightToWork": true,
+    "rightToRent": true,
+    "ninoStatus": "received",
+    "eVisaMigrationDate": "Not yet linked — UKVI online account not created"
+  },
+  "growingFamily": {
+    "children": [
+      {
+        "name": "Kasia Nowak",
+        "age": 15,
+        "school": "Luton Academy",
+        "yearGroup": "Year 10",
+        "fsmStatus": true,
+        "specialNeeds": null
+      },
+      {
+        "name": "Adam Nowak",
+        "age": 11,
+        "school": "Ashcroft Primary School",
+        "yearGroup": "Year 6",
+        "fsmStatus": true,
+        "specialNeeds": {
+          "condition": "Autism Spectrum Condition (Level 1)",
+          "ehcpStatus": "applied — week 10 of 20"
+        }
+      },
+      {
+        "name": "Lily Nowak",
+        "age": 5,
+        "school": "Ashcroft Primary School",
+        "yearGroup": "Reception",
+        "fsmStatus": true,
+        "specialNeeds": null
+      }
+    ],
+    "ehcpDetails": {
+      "childName": "Adam Nowak",
+      "condition": "Autism Spectrum Condition (Level 1)",
+      "applicationDate": "2026-01-06",
+      "currentWeek": 10,
+      "epAssessmentStatus": "not_scheduled",
+      "preferredProvision": "Luton Academy (with additional support) or specialist ASD provision",
+      "statutoryDeadline": "2026-06-01"
+    },
+    "secondaryTransferStatus": "preferences_submitted",
+    "childBenefitClaims": {
+      "childCount": 3,
+      "weeklyAmount": 68.6
+    },
+    "hicbcRisk": {
+      "highestEarnerIncome": 31000,
+      "thresholdBreached": false,
+      "estimatedCharge": 0
+    },
+    "householdIncomeBreakdown": [
+      { "earner": "Fatima Nowak", "amount": 11200, "source": "Part-time employment" },
+      { "earner": "Tomasz Nowak", "amount": 31000, "source": "Full-time employment" },
+      { "earner": "Child Benefit", "amount": 3567, "source": "DWP" }
+    ],
+    "immigrationStatusPerMember": [
+      { "name": "Fatima Nowak", "status": "British citizen", "eVisaLinked": false },
+      { "name": "Tomasz Nowak", "status": "EU Settled Status (2021)", "eVisaLinked": false, "brpExpiry": "2026-12-31" },
+      { "name": "Kasia Nowak", "status": "British citizen", "eVisaLinked": false },
+      { "name": "Adam Nowak", "status": "British citizen", "eVisaLinked": false },
+      { "name": "Lily Nowak", "status": "British citizen", "eVisaLinked": false }
+    ],
+    "carersAllowanceEligibility": {
+      "eligible": true,
+      "interactionWithUC": "Carer's element can be added to UC; standalone CA may be more beneficial if not on UC"
+    }
+  },
+  "_fieldSources": {
+    "address": { "source": "Local Authority", "tier": "verified", "topic": "housing" },
+    "primaryContact": { "source": "User", "tier": "submitted", "topic": "identity" },
+    "immigration": { "source": "Home Office", "tier": "verified", "topic": "immigration" },
+    "immigration.brpNumber": { "source": "Home Office", "tier": "verified", "topic": "immigration" },
+    "immigration.rightToWork": { "source": "Home Office", "tier": "verified", "topic": "immigration" },
+    "growingFamily.ehcpDetails": { "source": "Local Authority", "tier": "verified", "topic": "education" },
+    "growingFamily.children": { "source": "DfE", "tier": "verified", "topic": "education" },
+    "growingFamily.childBenefitClaims": { "source": "HMRC", "tier": "verified", "topic": "finance" },
+    "growingFamily.hicbcRisk": { "source": "HMRC", "tier": "inferred", "topic": "finance" },
+    "growingFamily.immigrationStatusPerMember": { "source": "Home Office", "tier": "verified", "topic": "immigration" },
+    "spouseEmployment": { "source": "HMRC", "tier": "verified", "topic": "employment" },
+    "vehicles": { "source": "DVLA", "tier": "verified", "topic": "driving" },
+    "benefits": { "source": "DWP", "tier": "verified", "topic": "finance" }
+  }
+}

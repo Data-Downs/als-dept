@@ -383,5 +383,20 @@
       "Could you explain that again? I want to make sure I've got all the details right",
       "We've worked hard all our lives and just want to make sure everything is in order"
     ]
+  },
+  "_fieldSources": {
+    "primaryContact.firstName": { "source": "User", "tier": "verified", "topic": "identity" },
+    "primaryContact.dateOfBirth": { "source": "User", "tier": "verified", "topic": "identity" },
+    "primaryContact.nationalInsuranceNumber": { "source": "DWP", "tier": "verified", "topic": "finance" },
+    "primaryContact.email": { "source": "User", "tier": "submitted", "topic": "identity" },
+    "primaryContact.phone": { "source": "User", "tier": "submitted", "topic": "identity" },
+    "communicationStyle": { "source": "Agent inference", "tier": "inferred", "topic": "general" },
+    "address": { "source": "HMRC", "tier": "verified", "topic": "housing" },
+    "employment": { "source": "DWP", "tier": "verified", "topic": "employment" },
+    "financials": { "source": "User", "tier": "submitted", "topic": "finance" },
+    "vehicles": { "source": "DVLA", "tier": "verified", "topic": "driving" },
+    "healthInfo": { "source": "NHS", "tier": "verified", "topic": "health" },
+    "benefits": { "source": "DWP", "tier": "verified", "topic": "finance" },
+    "family": { "source": "User", "tier": "submitted", "topic": "parenting" }
   }
 }

@@ -1,0 +1,184 @@
+{
+  "id": "amina-hassan",
+  "name": "Amina Hassan",
+  "personaId": "amina-hassan",
+  "personaName": "Amina Hassan",
+  "description": "New resident from Sudan starting over in the UK — navigating NI number, Universal Credit, eVisa transition, and school place for son",
+  "date_of_birth": "1991-08-12",
+  "age": 34,
+  "national_insurance_number": null,
+  "address": {
+    "line_1": "Room 14, Sunrise House",
+    "line_2": "47 Manningham Lane",
+    "city": "Bradford",
+    "county": "West Yorkshire",
+    "postcode": "BD1 3EA",
+    "country": "England"
+  },
+  "jurisdiction": "England",
+  "color": "#d4351c",
+  "credentials": [],
+  "employment_status": "unemployed",
+  "employer": null,
+  "income": 2557,
+  "savings": 0,
+  "bank_account": false,
+  "primaryContact": {
+    "firstName": "Amina",
+    "lastName": "Hassan",
+    "dateOfBirth": "1991-08-12",
+    "email": null,
+    "phone": "07459321876"
+  },
+  "employment": {
+    "amina": {
+      "status": "Unemployed",
+      "previousOccupation": "Pharmacist (Sudan)",
+      "qualification": "Bachelor of Pharmacy, University of Khartoum (2014)",
+      "qualificationRecognised": false,
+      "notes": "Pharmacy degree not yet recognised by GPhC. Needs to apply for overseas pharmacist assessment."
+    }
+  },
+  "financials": {
+    "combinedAnnualIncome": 2557,
+    "householdIncome": 2557,
+    "monthlyRent": 0,
+    "councilTaxBand": null,
+    "councilTaxAnnual": 0,
+    "currentAccount": null,
+    "savingsAccount": null,
+    "notes": "Receiving £49.18/week asylum support (Section 95). No bank account — receives support via Aspen card. No NI number yet."
+  },
+  "benefits": {
+    "currentlyReceiving": [
+      {
+        "type": "Asylum Support (Section 95)",
+        "amount": 49.18,
+        "frequency": "weekly",
+        "startDate": "2023-06-15",
+        "reason": "Asylum seeker subsistence"
+      }
+    ],
+    "previousClaims": [],
+    "potentiallyEligibleFor": [
+      "Universal Credit",
+      "Child Benefit",
+      "Free school meals for Yusuf",
+      "Council Tax Reduction"
+    ]
+  },
+  "healthInfo": {
+    "amina": {
+      "gpSurgery": "Not yet registered",
+      "nhsNumber": null,
+      "conditions": [],
+      "medications": []
+    }
+  },
+  "family": {
+    "children": [
+      {
+        "firstName": "Yusuf",
+        "lastName": "Hassan",
+        "dateOfBirth": "2019-10-05",
+        "notes": "Age 6, born in Sudan. Needs school place. Some English from nursery in dispersal accommodation."
+      }
+    ],
+    "notes": "Single mother. Husband killed in conflict in Sudan 2022. No family in UK. Small community of Sudanese women in Bradford dispersal accommodation.",
+    "supportNetwork": [
+      "Sudanese community group in Bradford",
+      "Refugee Action caseworker (limited hours)",
+      "Volunteer English tutor at library"
+    ]
+  },
+  "housing": {
+    "type": "Dispersal accommodation",
+    "propertyType": "Shared house — single room with Yusuf",
+    "landlord": "Serco (Home Office contract)",
+    "notes": "Must find own accommodation within 28 days of refugee status grant. Section 95 support ends."
+  },
+  "communicationStyle": {
+    "tone": "Polite and formal. Sometimes hesitant — searching for the right English word. Determined but overwhelmed by the number of things to do. Protective of Yusuf's needs above her own.",
+    "techSavvy": "Intermediate — uses WhatsApp and Google Translate regularly. Can navigate basic websites but struggles with long government forms in English. Uses phone for everything, no laptop.",
+    "primaryConcerns": [
+      "Getting an NI number so she can work and claim benefits",
+      "Finding a school place for Yusuf",
+      "Understanding the BRP to eVisa transition before expiry",
+      "Opening a bank account with no proof of address history",
+      "Finding stable housing before Section 95 support ends",
+      "Getting her pharmacy qualification recognised in the UK"
+    ],
+    "typicalPhrases": [
+      "I just got my refugee status. What do I need to do?",
+      "I have my BRP but they say it is changing to eVisa — I don't understand.",
+      "My son Yusuf needs a school. He is six and has not been to school here.",
+      "I was a pharmacist in Sudan. I want to work but I don't have a National Insurance number.",
+      "They gave me a letter but I don't understand all the words.",
+      "I don't have a bank account. How can I receive money?"
+    ]
+  },
+  "immigration": {
+    "status": "refugee",
+    "homeOfficeRef": "HO/2023/ASY/48291",
+    "brpNumber": "ZR1234567",
+    "brpExpiry": "2026-12-31",
+    "eVisaMigrationDate": "2026-12-31",
+    "rightToWork": true,
+    "rightToRent": true,
+    "languageProficiency": "intermediate",
+    "accommodationType": "Dispersal accommodation (Section 95)",
+    "ninoStatus": "not_applied"
+  },
+  "_fieldSources": {
+    "address": {
+      "source": "Home Office",
+      "tier": "verified",
+      "topic": "housing"
+    },
+    "immigration.status": {
+      "source": "Home Office",
+      "tier": "verified",
+      "topic": "immigration"
+    },
+    "immigration.brpNumber": {
+      "source": "Home Office",
+      "tier": "verified",
+      "topic": "immigration"
+    },
+    "immigration.brpExpiry": {
+      "source": "Home Office",
+      "tier": "verified",
+      "topic": "immigration"
+    },
+    "immigration.rightToWork": {
+      "source": "Home Office",
+      "tier": "verified",
+      "topic": "immigration"
+    },
+    "immigration.rightToRent": {
+      "source": "Home Office",
+      "tier": "verified",
+      "topic": "immigration"
+    },
+    "immigration.ninoStatus": {
+      "source": "DWP",
+      "tier": "verified",
+      "topic": "identity"
+    },
+    "immigration.homeOfficeRef": {
+      "source": "Home Office",
+      "tier": "verified",
+      "topic": "immigration"
+    },
+    "benefits.currentlyReceiving": {
+      "source": "Home Office",
+      "tier": "verified",
+      "topic": "finance"
+    },
+    "primaryContact.nationalInsuranceNumber": {
+      "source": "DWP",
+      "tier": "inferred",
+      "topic": "identity"
+    }
+  }
+}

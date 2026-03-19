@@ -36,6 +36,14 @@ import davidEvans from "../../../data/simulated/users/david-evans.json";
 import marySummers from "../../../data/simulated/users/mary-summers.json";
 import rebeccaShortland from "../../../data/simulated/users/rebecca-shortland.json";
 import annaCotton from "../../../data/simulated/users/anna-cotton.json";
+import sarahOkafor from "../../../data/simulated/users/sarah-okafor.json";
+import aminaHassan from "../../../data/simulated/users/amina-hassan.json";
+import marcusTaylor from "../../../data/simulated/users/marcus-taylor.json";
+import priyaAnand from "../../../data/simulated/users/priya-anand.json";
+import jamesWhitfield from "../../../data/simulated/users/james-whitfield.json";
+import danielObi from "../../../data/simulated/users/daniel-obi.json";
+import zaraBegum from "../../../data/simulated/users/zara-begum.json";
+import fatimaNowak from "../../../data/simulated/users/fatima-nowak.json";
 
 // ── Prompt files (bundled as string constants for Cloudflare) ──
 
@@ -627,6 +635,14 @@ const ALL_USERS: Record<string, unknown>[] = [
   marySummers as unknown as Record<string, unknown>,
   rebeccaShortland as unknown as Record<string, unknown>,
   annaCotton as unknown as Record<string, unknown>,
+  sarahOkafor as unknown as Record<string, unknown>,
+  aminaHassan as unknown as Record<string, unknown>,
+  marcusTaylor as unknown as Record<string, unknown>,
+  priyaAnand as unknown as Record<string, unknown>,
+  jamesWhitfield as unknown as Record<string, unknown>,
+  danielObi as unknown as Record<string, unknown>,
+  zaraBegum as unknown as Record<string, unknown>,
+  fatimaNowak as unknown as Record<string, unknown>,
 ];
 
 const PERSONA_DATA: Record<string, Record<string, unknown>> = {};

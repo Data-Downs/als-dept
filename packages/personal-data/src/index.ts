@@ -20,3 +20,34 @@ export type {
   ServiceAccessGrant,
   ServiceAccessMap,
 } from "./data-model";
+
+// Unified citizen data model
+export type {
+  CitizenProfile,
+  DataFieldMeta,
+  DataTier,
+  DataTopic,
+  DataSource,
+  FieldSourceAttribution,
+  BereavementData,
+  ImmigrationData,
+  JusticeHistoryData,
+  ChildcareData,
+  AppealsData,
+  SelfEmploymentData,
+  FirstTimerData,
+  GrowingFamilyData,
+  Vehicle,
+  WalletCredential,
+} from "./citizen-data-model";
+
+// Field registry
+export {
+  FIELD_REGISTRY,
+  getFieldsBySource,
+  getFieldsByTopic,
+  getFieldsByTier,
+  getFieldMetaForPath,
+  getAllSources,
+  getAllTopics,
+} from "./field-registry";

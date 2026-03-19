@@ -1,0 +1,253 @@
+{
+  "id": "priya-anand",
+  "name": "Priya Anand",
+  "personaId": "priya-anand",
+  "personaName": "Priya & Dev Anand",
+  "description": "New mum struggling with childcare costs, unaware of Tax-Free Childcare and other entitlements across DWP, HMRC, and DfE",
+  "date_of_birth": "1994-12-03",
+  "age": 31,
+  "national_insurance_number": "PA031294D",
+  "address": {
+    "line_1": "Flat 12, Langley Court",
+    "line_2": "89 High Street",
+    "city": "Slough",
+    "county": "Berkshire",
+    "postcode": "SL1 1DH",
+    "country": "England"
+  },
+  "jurisdiction": "England",
+  "color": "#1d70b8",
+  "credentials": [
+    {
+      "type": "national-insurance",
+      "issuer": "HMRC",
+      "number": "PA031294D",
+      "issued": "2012-12-03",
+      "status": "valid"
+    },
+    {
+      "type": "proof-of-address",
+      "issuer": "Council Tax",
+      "number": "CT-PA-SL11DH",
+      "issued": "2025-04-01",
+      "expires": "2026-04-01",
+      "status": "valid"
+    }
+  ],
+  "employment_status": "employed",
+  "employer": "Langley Academy",
+  "income": 14200,
+  "savings": 2800,
+  "bank_account": true,
+  "primaryContact": {
+    "firstName": "Priya",
+    "middleName": "Deepa",
+    "lastName": "Anand",
+    "dateOfBirth": "1994-12-03",
+    "nationalInsuranceNumber": "PA031294D",
+    "email": "priya.anand@gmail.com",
+    "phone": "07891234567"
+  },
+  "partner": {
+    "firstName": "Dev",
+    "lastName": "Anand",
+    "dateOfBirth": "1992-06-18",
+    "nationalInsuranceNumber": "DA180692B",
+    "email": "dev.anand@outlook.com",
+    "phone": "07923456789",
+    "occupation": "Delivery driver"
+  },
+  "employment": {
+    "priya": {
+      "status": "Employed",
+      "employer": "Langley Academy",
+      "jobTitle": "Teaching Assistant (Part-time)",
+      "startDate": "2019-09-01",
+      "annualIncome": 14200,
+      "taxCode": "1257L",
+      "payrollNumber": "LA2019045",
+      "hoursPerWeek": 20
+    },
+    "dev": {
+      "status": "Employed",
+      "employer": "DPD Group UK",
+      "jobTitle": "Delivery Driver",
+      "startDate": "2021-03-15",
+      "annualIncome": 24500,
+      "taxCode": "1257L",
+      "payrollNumber": "DPD210315A"
+    }
+  },
+  "financials": {
+    "combinedAnnualIncome": 38700,
+    "householdIncome": 38700,
+    "monthlyRent": 1100,
+    "councilTaxBand": "C",
+    "councilTaxAnnual": 1680,
+    "currentAccount": {
+      "bank": "Lloyds",
+      "sortCode": "30-96-14",
+      "accountNumber": "78901234",
+      "balance": 340
+    },
+    "savingsAccount": {
+      "bank": "Lloyds",
+      "sortCode": "30-96-14",
+      "accountNumber": "89012345",
+      "balance": 2800
+    },
+    "jointAccount": null,
+    "notes": "Paying £800/month nursery for Arjun. Combined with £1,100 rent and £140 council tax, leaves very little. Savings slowly decreasing."
+  },
+  "benefits": {
+    "currentlyReceiving": [
+      {
+        "type": "Child Benefit",
+        "amount": 102.40,
+        "frequency": "every 4 weeks",
+        "startDate": "2022-01-15",
+        "reason": "Two children — Meera and Arjun"
+      }
+    ],
+    "previousClaims": [],
+    "potentiallyEligibleFor": [
+      "Tax-Free Childcare (up to £2,000/year saving)",
+      "Universal Credit top-up",
+      "30-hour free childcare for Arjun",
+      "Free school meals for Meera",
+      "Council Tax Reduction"
+    ]
+  },
+  "healthInfo": {
+    "priya": {
+      "gpSurgery": "Langley Health Centre",
+      "nhsNumber": "521 784 3906",
+      "conditions": [],
+      "medications": []
+    },
+    "dev": {
+      "gpSurgery": "Langley Health Centre",
+      "nhsNumber": "538 219 4670",
+      "conditions": [],
+      "medications": []
+    }
+  },
+  "family": {
+    "children": [
+      {
+        "firstName": "Meera",
+        "lastName": "Anand",
+        "dateOfBirth": "2021-11-20",
+        "notes": "Age 4, starting Reception in September 2026. Currently attends pre-school 2 mornings a week (15 hours free entitlement)."
+      },
+      {
+        "firstName": "Arjun",
+        "lastName": "Anand",
+        "dateOfBirth": "2025-06-14",
+        "childBenefitNumber": "CHB98765432",
+        "notes": "Age 9 months. Attends Little Stars Nursery 3 days/week at £800/month."
+      }
+    ],
+    "notes": "Priya's parents in Hounslow help with childcare one day a week. Dev's family in Leicester, less frequent contact. Priya's mum helps when she can but works full-time herself.",
+    "supportNetwork": [
+      "Priya's parents in Hounslow (one day/week childcare)",
+      "Dev's parents in Leicester (occasional weekends)",
+      "Mums group from Arjun's nursery",
+      "Teaching assistant colleagues at Langley Academy"
+    ]
+  },
+  "housing": {
+    "type": "Private rental",
+    "propertyType": "Two-bedroom flat",
+    "landlord": "Slough Lettings Ltd",
+    "monthlyPayment": 1100,
+    "leaseEnd": "2027-03-31",
+    "notes": "Fixed tenancy until March 2027. Flat is small for family of four — hoping to move to a 3-bed but can't afford current rents."
+  },
+  "communicationStyle": {
+    "tone": "Warm but stressed. Talks quickly, often mid-way through doing something else (feeding Arjun, keeping Meera entertained). Practical and wants clear answers, not waffle. Slightly embarrassed about money worries.",
+    "techSavvy": "Good with phones — uses apps for banking, shopping, parenting groups. Less confident with government websites. Dev helps with anything complicated. Has tried GOV.UK before but gave up on a long form.",
+    "primaryConcerns": [
+      "Nursery costs eating into their budget — £800/month is nearly half her salary",
+      "Getting Meera into a good school for September",
+      "Whether they qualify for any help they don't know about",
+      "Making the money last until payday",
+      "Feeling guilty about not being with Arjun more"
+    ],
+    "typicalPhrases": [
+      "I've got a baby and a 4-year-old starting school, and I'm struggling with money.",
+      "We're both working and we're still skint. Something isn't right.",
+      "I didn't even know Tax-Free Childcare was a thing. Why doesn't anyone tell you?",
+      "Dev works all hours but the nursery costs just swallow everything.",
+      "Is Meera going to get free school meals? Someone at the school gate mentioned it.",
+      "Sorry, just a sec — Arjun, don't touch that — sorry, what were you saying?"
+    ]
+  },
+  "childcare": {
+    "nurseryProvider": "Little Stars Nursery, Slough",
+    "nurseryCostMonthly": 800,
+    "thirtyHourCode": null,
+    "thirtyHourCodeExpiry": null,
+    "taxFreeChildcareAccount": false,
+    "taxFreeChildcareBalance": null,
+    "fsmEligibility": true,
+    "schoolRegistrationStatus": "not_started"
+  },
+  "_fieldSources": {
+    "address": {
+      "source": "DWP",
+      "tier": "verified",
+      "topic": "housing"
+    },
+    "primaryContact.nationalInsuranceNumber": {
+      "source": "HMRC",
+      "tier": "verified",
+      "topic": "identity"
+    },
+    "income": {
+      "source": "HMRC",
+      "tier": "verified",
+      "topic": "finance"
+    },
+    "employment.priya": {
+      "source": "HMRC",
+      "tier": "verified",
+      "topic": "employment"
+    },
+    "employment.dev": {
+      "source": "HMRC",
+      "tier": "verified",
+      "topic": "employment"
+    },
+    "childcare.nurseryProvider": {
+      "source": "User",
+      "tier": "submitted",
+      "topic": "parenting"
+    },
+    "childcare.nurseryCostMonthly": {
+      "source": "User",
+      "tier": "submitted",
+      "topic": "parenting"
+    },
+    "childcare.taxFreeChildcareAccount": {
+      "source": "HMRC",
+      "tier": "verified",
+      "topic": "parenting"
+    },
+    "childcare.fsmEligibility": {
+      "source": "DfE",
+      "tier": "inferred",
+      "topic": "education"
+    },
+    "childcare.schoolRegistrationStatus": {
+      "source": "DfE",
+      "tier": "verified",
+      "topic": "education"
+    },
+    "benefits.currentlyReceiving": {
+      "source": "DWP",
+      "tier": "verified",
+      "topic": "finance"
+    }
+  }
+}

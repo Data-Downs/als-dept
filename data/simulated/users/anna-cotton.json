@@ -210,5 +210,20 @@
       "We're fortunate with Tom's salary, but childcare costs are eye-watering"
     ]
   },
-  "color": "#1d70b8"
+  "color": "#1d70b8",
+  "_fieldSources": {
+    "primaryContact.firstName": { "source": "User", "tier": "verified", "topic": "identity" },
+    "primaryContact.dateOfBirth": { "source": "User", "tier": "verified", "topic": "identity" },
+    "primaryContact.nationalInsuranceNumber": { "source": "DWP", "tier": "verified", "topic": "finance" },
+    "primaryContact.email": { "source": "User", "tier": "submitted", "topic": "identity" },
+    "primaryContact.phone": { "source": "User", "tier": "submitted", "topic": "identity" },
+    "communicationStyle": { "source": "Agent inference", "tier": "inferred", "topic": "general" },
+    "address": { "source": "User", "tier": "submitted", "topic": "housing" },
+    "employment": { "source": "HMRC", "tier": "verified", "topic": "employment" },
+    "financials": { "source": "User", "tier": "submitted", "topic": "finance" },
+    "vehicles": { "source": "DVLA", "tier": "verified", "topic": "driving" },
+    "healthInfo": { "source": "NHS", "tier": "verified", "topic": "health" },
+    "benefits": { "source": "DWP", "tier": "verified", "topic": "finance" },
+    "family": { "source": "User", "tier": "submitted", "topic": "parenting" }
+  }
 }
