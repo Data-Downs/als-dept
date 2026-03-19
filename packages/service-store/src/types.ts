@@ -17,7 +17,7 @@ export interface ServiceRow {
   department: string;
   department_key: string;
   description: string;
-  source: "full" | "graph";
+  source: "full" | "graph" | "catalogue";
   service_type: string | null;
   govuk_url: string | null;
   eligibility_summary: string | null;
@@ -25,6 +25,8 @@ export interface ServiceRow {
   proactive: number; // SQLite boolean
   gated: number; // SQLite boolean
   manifest_json: string;
+  channels_json: string | null;
+  priority: "demo" | "transactional" | "reference" | null;
   policy_json: string | null;
   state_model_json: string | null;
   consent_json: string | null;
@@ -60,10 +62,11 @@ export interface LifeEventServiceRow {
 /** Filtering options for listServices() */
 export interface ServiceFilter {
   department?: string;
-  source?: "full" | "graph";
+  source?: "full" | "graph" | "catalogue";
   promoted?: boolean;
   search?: string;
   serviceType?: string;
+  priority?: "demo" | "transactional" | "reference";
 }
 
 /** Full service with parsed artefacts */
@@ -73,7 +76,7 @@ export interface ServiceWithArtefacts {
   department: string;
   departmentKey: string;
   description: string;
-  source: "full" | "graph";
+  source: "full" | "graph" | "catalogue";
   serviceType: string | null;
   govukUrl: string | null;
   eligibilitySummary: string | null;
@@ -85,10 +88,22 @@ export interface ServiceWithArtefacts {
   stateModel: StateModelDefinition | null;
   consent: ConsentModel | null;
   cardDefinitions: StateCardMapping[] | null;
+  channels: ChannelAvailability | null;
+  priority: "demo" | "transactional" | "reference" | null;
   generatedAt: string | null;
   interactionType: string | null;
   createdAt: string;
   updatedAt: string;
+}
+
+/** Channel availability for a service */
+export interface ChannelAvailability {
+  online: boolean;
+  phone: boolean;
+  email: boolean;
+  letter: boolean;
+  inperson: boolean;
+  form: boolean;
 }
 
 /** Summary for list views (no full JSON artefacts) */
@@ -98,7 +113,7 @@ export interface ServiceSummary {
   department: string;
   departmentKey: string;
   description: string;
-  source: "full" | "graph";
+  source: "full" | "graph" | "catalogue";
   serviceType: string | null;
   govukUrl: string | null;
   promoted: boolean;
@@ -106,6 +121,8 @@ export interface ServiceSummary {
   hasStateModel: boolean;
   hasConsent: boolean;
   hasCardDefinitions: boolean;
+  channels: ChannelAvailability | null;
+  priority: "demo" | "transactional" | "reference" | null;
   generatedAt: string | null;
   interactionType: string | null;
 }

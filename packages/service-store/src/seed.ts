@@ -16,6 +16,7 @@ import {
 import { ServiceArtefactStore } from "./service-store";
 import { ServiceGraphStore } from "./graph-store";
 import { FULL_SERVICES } from "./full-services";
+import catalogueData from "../../../data/govuk-services-catalogue.json";
 
 export interface SeedOptions {
   /** @deprecated — no longer used. Full services are now embedded. */
@@ -27,6 +28,7 @@ export interface SeedOptions {
 export interface SeedResult {
   graphServices: number;
   fullServices: number;
+  catalogueServices: number;
   edges: number;
   lifeEvents: number;
 }
@@ -160,9 +162,64 @@ export async function seedServiceStore(
   await db.batch(leStatements);
   await db.batch(lesStatements);
 
+  // 5. Seed catalogue services from GOV.UK spreadsheet
+  // These are lightweight entries (no artefacts) — INSERT OR IGNORE to avoid
+  // duplicating existing full or graph services.
+  const catalogue = catalogueData as Array<{
+    id: string;
+    title: string;
+    description: string;
+    link: string;
+    govuk_url: string;
+    format: string;
+    primary_department: string;
+    department_key: string;
+    service_available: boolean;
+    channels: Record<string, boolean>;
+    priority: "demo" | "transactional" | "reference";
+  }>;
+
+  let catalogueCount = 0;
+  const catStatements: Array<{ sql: string; params: unknown[] }> = [];
+
+  for (const entry of catalogue) {
+    const manifest = {
+      id: entry.id,
+      name: entry.title,
+      department: entry.primary_department,
+      description: entry.description,
+      govuk_url: entry.govuk_url,
+      serviceType: entry.format === "transaction" ? "application" : "guide",
+    };
+
+    catStatements.push({
+      sql: `INSERT OR IGNORE INTO services (id, name, department, department_key, description, source, service_type, govuk_url, promoted, proactive, gated, manifest_json, channels_json, priority)
+            VALUES (?, ?, ?, ?, ?, 'catalogue', ?, ?, 0, 0, 0, ?, ?, ?)`,
+      params: [
+        entry.id,
+        entry.title,
+        entry.primary_department,
+        entry.department_key,
+        entry.description,
+        entry.format === "transaction" ? "application" : entry.format,
+        entry.govuk_url,
+        JSON.stringify(manifest),
+        JSON.stringify(entry.channels),
+        entry.priority,
+      ],
+    });
+    catalogueCount++;
+  }
+
+  // Batch in chunks of 100 to avoid exceeding D1 limits
+  for (let i = 0; i < catStatements.length; i += 100) {
+    await db.batch(catStatements.slice(i, i + 100));
+  }
+
   return {
     graphServices: graphCount,
     fullServices: fullCount,
+    catalogueServices: catalogueCount,
     edges: EDGES.length,
     lifeEvents: LIFE_EVENTS.length,
   };

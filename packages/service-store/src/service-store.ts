@@ -100,6 +100,10 @@ export class ServiceArtefactStore {
       sql += " AND service_type = ?";
       params.push(filter.serviceType);
     }
+    if (filter?.priority) {
+      sql += " AND priority = ?";
+      params.push(filter.priority);
+    }
     if (filter?.search) {
       sql += " AND (name LIKE ? OR description LIKE ? OR id LIKE ?)";
       const term = `%${filter.search}%`;
@@ -125,7 +129,7 @@ export class ServiceArtefactStore {
       department: row.department,
       departmentKey: row.department_key,
       description: row.description,
-      source: row.source as "full" | "graph",
+      source: row.source as "full" | "graph" | "catalogue",
       serviceType: row.service_type,
       govukUrl: row.govuk_url,
       promoted: !!row.promoted,
@@ -133,6 +137,8 @@ export class ServiceArtefactStore {
       hasStateModel: !!row.has_state_model,
       hasConsent: !!row.has_consent,
       hasCardDefinitions: !!row.has_card_definitions,
+      channels: row.channels_json ? JSON.parse(row.channels_json as string) : null,
+      priority: (row.priority as "demo" | "transactional" | "reference") || null,
       generatedAt: row.generated_at || null,
       interactionType: row.interaction_type || null,
     }));
@@ -146,15 +152,17 @@ export class ServiceArtefactStore {
     stateModel?: Record<string, unknown> | null;
     consent?: Record<string, unknown> | null;
     cardDefinitions?: Array<Record<string, unknown>> | null;
-    source?: "full" | "graph";
+    source?: "full" | "graph" | "catalogue";
     departmentKey?: string;
+    channels?: Record<string, boolean> | null;
+    priority?: "demo" | "transactional" | "reference" | null;
   }): Promise<void> {
     const m = data.manifest;
     const deptKey = data.departmentKey || this.slugify(m.department || "");
 
     await this.db.run(
-      `INSERT INTO services (id, name, department, department_key, description, source, service_type, govuk_url, eligibility_summary, promoted, proactive, gated, manifest_json, policy_json, state_model_json, consent_json, card_definitions_json)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      `INSERT INTO services (id, name, department, department_key, description, source, service_type, govuk_url, eligibility_summary, promoted, proactive, gated, manifest_json, policy_json, state_model_json, consent_json, card_definitions_json, channels_json, priority)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       data.id,
       m.name,
       m.department,
@@ -172,6 +180,8 @@ export class ServiceArtefactStore {
       data.stateModel ? JSON.stringify(data.stateModel) : null,
       data.consent ? JSON.stringify(data.consent) : null,
       data.cardDefinitions ? JSON.stringify(data.cardDefinitions) : null,
+      data.channels ? JSON.stringify(data.channels) : null,
+      data.priority || null,
     );
   }
 
@@ -441,7 +451,7 @@ export class ServiceArtefactStore {
       department: row.department,
       departmentKey: row.department_key,
       description: row.description,
-      source: row.source as "full" | "graph",
+      source: row.source as "full" | "graph" | "catalogue",
       serviceType: row.service_type,
       govukUrl: row.govuk_url,
       eligibilitySummary: row.eligibility_summary,
@@ -457,6 +467,8 @@ export class ServiceArtefactStore {
       cardDefinitions: row.card_definitions_json
         ? JSON.parse(row.card_definitions_json)
         : null,
+      channels: row.channels_json ? JSON.parse(row.channels_json) : null,
+      priority: (row.priority as "demo" | "transactional" | "reference") || null,
       generatedAt: row.generated_at || null,
       interactionType: row.interaction_type || null,
       createdAt: row.created_at,
