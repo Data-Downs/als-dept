@@ -283,7 +283,174 @@ interface LifeEventFilter {
   serviceIds: string[];
 }
 
-// AllServicesDashboard removed — operational metrics belong on the evidence page
+// ── Compact service table with expandable rows ──
+
+function ServiceTable({
+  services,
+  generatingId,
+  togglingId,
+  onGenerate,
+  onTogglePromote,
+}: {
+  services: Service[];
+  generatingId: string | null;
+  togglingId: string | null;
+  onGenerate: (id: string) => void;
+  onTogglePromote: (id: string) => void;
+}) {
+  const [expandedId, setExpandedId] = useState<string | null>(null);
+
+  return (
+    <div className="border border-studio-border rounded-xl bg-white overflow-hidden">
+      <table className="w-full">
+        <thead>
+          <tr className="border-b border-studio-border bg-gray-50">
+            <th className="text-left py-2.5 px-4 text-xs font-semibold text-gray-500 w-[40%]">Service</th>
+            <th className="text-left py-2.5 px-4 text-xs font-semibold text-gray-500">Department</th>
+            <th className="text-center py-2.5 px-4 text-xs font-semibold text-gray-500">Source</th>
+            <th className="text-center py-2.5 px-4 text-xs font-semibold text-gray-500">Policy</th>
+            <th className="text-center py-2.5 px-4 text-xs font-semibold text-gray-500">States</th>
+            <th className="text-center py-2.5 px-4 text-xs font-semibold text-gray-500">Consent</th>
+            <th className="text-right py-2.5 px-4 text-xs font-semibold text-gray-500">Status</th>
+          </tr>
+        </thead>
+        <tbody className="divide-y divide-studio-border">
+          {services.map((service) => {
+            const isExpanded = expandedId === service.id;
+            const isFull = (service.source || "full") === "full";
+
+            return (
+              <tr key={service.id} className="group">
+                <td colSpan={7} className="p-0">
+                  {/* Compact row */}
+                  <button
+                    onClick={() => setExpandedId(isExpanded ? null : service.id)}
+                    className="flex items-center w-full text-left hover:bg-gray-50 transition-colors"
+                  >
+                    <div className="py-2.5 px-4 w-[40%] flex items-center gap-2 min-w-0">
+                      <svg
+                        className={`shrink-0 text-gray-400 transition-transform ${isExpanded ? "rotate-90" : ""}`}
+                        width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"
+                      >
+                        <path d="M9 18l6-6-6-6" />
+                      </svg>
+                      <span className="text-sm font-medium text-gray-900 truncate">{service.name}</span>
+                      {service.priority === "demo" && (
+                        <span className="shrink-0 text-[9px] font-bold uppercase px-1 py-0.5 rounded bg-purple-100 text-purple-700">Demo</span>
+                      )}
+                    </div>
+                    <div className="py-2.5 px-4 flex-1 text-sm text-gray-500 truncate">{service.department}</div>
+                    <div className="py-2.5 px-4 w-16 text-center">
+                      <span className={`text-[10px] font-bold uppercase px-1.5 py-0.5 rounded ${
+                        service.source === "catalogue" ? "bg-gray-100 text-gray-500" : "bg-blue-100 text-blue-800"
+                      }`}>
+                        {service.source === "catalogue" ? "Cat" : "Full"}
+                      </span>
+                    </div>
+                    <div className="py-2.5 px-4 w-16 text-center">
+                      {service.source === "catalogue" ? <span className="text-gray-300">—</span>
+                        : service.hasPolicy ? <span className="text-green-600">&#10003;</span>
+                        : <span className="text-red-500">&#10007;</span>}
+                    </div>
+                    <div className="py-2.5 px-4 w-16 text-center">
+                      {service.source === "catalogue" ? <span className="text-gray-300">—</span>
+                        : service.hasStateModel ? <span className="text-green-600">&#10003;</span>
+                        : <span className="text-red-500">&#10007;</span>}
+                    </div>
+                    <div className="py-2.5 px-4 w-16 text-center">
+                      {service.source === "catalogue" ? <span className="text-gray-300">—</span>
+                        : service.hasConsent ? <span className="text-green-600">&#10003;</span>
+                        : <span className="text-red-500">&#10007;</span>}
+                    </div>
+                    <div className="py-2.5 px-4 w-20 text-right">
+                      {service.source === "catalogue" ? (
+                        <span className="text-[11px] text-gray-400">Not started</span>
+                      ) : service.completeness === 100 ? (
+                        <span className="text-[11px] text-green-700 font-bold">Complete</span>
+                      ) : (
+                        <span className="text-[11px] text-amber-700 font-bold">{service.completeness}%</span>
+                      )}
+                    </div>
+                  </button>
+
+                  {/* Expanded detail */}
+                  {isExpanded && (
+                    <div className="bg-gray-50 border-t border-studio-border px-6 py-4">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3">
+                        <div>
+                          <p className="text-sm text-gray-700">{service.description || "No description."}</p>
+                          {service.govuk_url && (
+                            <a href={service.govuk_url} target="_blank" rel="noopener noreferrer"
+                              className="text-xs text-studio-accent hover:underline mt-1 inline-block">
+                              View on GOV.UK &rarr;
+                            </a>
+                          )}
+                        </div>
+                        <div className="flex flex-wrap gap-2 items-start">
+                          {service.serviceType && TYPOLOGY_CONFIG[service.serviceType] && (
+                            <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${TYPOLOGY_CONFIG[service.serviceType].bgColor} ${TYPOLOGY_CONFIG[service.serviceType].color}`}>
+                              {TYPOLOGY_CONFIG[service.serviceType].icon} {TYPOLOGY_CONFIG[service.serviceType].label}
+                            </span>
+                          )}
+                          {service.generatedAt && (
+                            <span className="text-[10px] font-medium text-green-700 bg-green-100 px-1.5 py-0.5 rounded">Generated</span>
+                          )}
+                          {service.promoted && (
+                            <span className="text-[10px] font-medium text-green-700 bg-green-100 px-1.5 py-0.5 rounded">Promoted</span>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Actions */}
+                      <div className="flex items-center gap-3 pt-2 border-t border-gray-200">
+                        {isFull ? (
+                          <>
+                            <a href={`/services/${encodeURIComponent(service.id)}`} className="text-xs font-semibold text-studio-accent hover:underline">View details</a>
+                            <span className="text-gray-300">|</span>
+                            <a href={`/services/${encodeURIComponent(service.id)}/edit`} className="text-xs font-semibold text-studio-accent hover:underline">Edit</a>
+                            <span className="text-gray-300">|</span>
+                            <a href={`/services/${encodeURIComponent(service.id)}/ledger`} className="text-xs font-semibold text-studio-accent hover:underline">Ledger</a>
+                            <span className="text-gray-300">|</span>
+                            <button
+                              onClick={() => onTogglePromote(service.id)}
+                              disabled={togglingId === service.id}
+                              className="text-xs font-semibold text-studio-accent hover:underline disabled:opacity-50"
+                            >
+                              {service.promoted ? "Unpromote" : "Promote"}
+                            </button>
+                          </>
+                        ) : (
+                          <>
+                            <span className="text-xs text-gray-500">Catalogue — no artefacts yet</span>
+                            {service.govuk_url && (
+                              <>
+                                <span className="text-gray-300">|</span>
+                                <button
+                                  onClick={() => onGenerate(service.id)}
+                                  disabled={generatingId === service.id}
+                                  className="text-xs font-semibold text-purple-600 hover:underline disabled:opacity-50"
+                                >
+                                  {generatingId === service.id ? "Generating..." : "Generate artefacts"}
+                                </button>
+                              </>
+                            )}
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+      {services.length === 0 && (
+        <div className="text-center py-8 text-gray-400 text-sm">No services match the current filters.</div>
+      )}
+    </div>
+  );
+}
 
 export default function ServicesPage() {
   const [services, setServices] = useState<Service[]>([]);
@@ -634,223 +801,17 @@ export default function ServicesPage() {
         </div>
       )}
 
-      <div className="space-y-4">
-        {govServices.map((service) => (
-          <div
-            key={service.id}
-            className="border border-studio-border rounded-xl bg-white hover:shadow-sm transition-shadow"
-          >
-            <a
-              href={`/services/${encodeURIComponent(service.id)}`}
-              className="block p-5"
-            >
-              <div className="flex justify-between items-start">
-                <div>
-                  <div className="flex items-center gap-2 mb-1">
-                    <h2 className="text-lg font-bold">{service.name}</h2>
-                    <span
-                      className={`text-[10px] font-bold uppercase px-1.5 py-0.5 rounded ${
-                        service.source === "catalogue"
-                          ? "bg-gray-100 text-gray-600"
-                          : "bg-blue-100 text-blue-800"
-                      }`}
-                    >
-                      {service.source === "catalogue"
-                        ? "Catalogue"
-                        : "Full"}
-                    </span>
-                    {service.priority === "demo" && (
-                      <span className="text-[10px] font-bold uppercase px-1.5 py-0.5 rounded bg-purple-100 text-purple-800">
-                        Demo
-                      </span>
-                    )}
-                    {service.interactionType && (
-                      <span className="text-[10px] font-medium text-purple-700 bg-purple-100 px-1.5 py-0.5 rounded uppercase">
-                        {service.interactionType.replace(/_/g, " ")}
-                      </span>
-                    )}
-                    {service.generatedAt && (
-                      <span
-                        className="text-[10px] font-medium text-green-700 bg-green-100 px-1.5 py-0.5 rounded"
-                        title={service.generatedAt}
-                      >
-                        Generated
-                      </span>
-                    )}
-                    {service.serviceType &&
-                      TYPOLOGY_CONFIG[service.serviceType] && (
-                        <span
-                          className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${TYPOLOGY_CONFIG[service.serviceType].bgColor} ${TYPOLOGY_CONFIG[service.serviceType].color}`}
-                        >
-                          {TYPOLOGY_CONFIG[service.serviceType].icon}{" "}
-                          {TYPOLOGY_CONFIG[service.serviceType].label}
-                        </span>
-                      )}
-                    {service.serviceType &&
-                      !service.interactionType &&
-                      !TYPOLOGY_CONFIG[service.serviceType] && (
-                        <span className="text-[10px] font-medium text-gray-500 uppercase">
-                          {service.serviceType}
-                        </span>
-                      )}
-                  </div>
-                  <p className="text-sm text-gray-500 mt-0.5">
-                    {service.department}
-                  </p>
-                  <p className="text-sm mt-2 text-gray-700">
-                    {service.description}
-                  </p>
-                </div>
-                {(service.source || "full") === "full" && (
-                  <div className="text-right">
-                    <div className="text-3xl font-light tracking-tight">
-                      {service.completeness}%
-                    </div>
-                    <div className="text-xs text-gray-500">complete</div>
-                    {service.gapCount > 0 && (
-                      <div className="text-xs text-red-600 mt-1">
-                        {service.gapCount} gap(s)
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
+      <ServiceTable
+        services={govServices}
+        generatingId={generatingId}
+        togglingId={togglingId}
+        onGenerate={generateService}
+        onTogglePromote={togglePromote}
+      />
 
-              <div className="flex gap-2 mt-3">
-                {(service.source || "full") === "full" ? (
-                  <>
-                    <span className="text-xs bg-green-100 text-green-800 px-2 py-0.5 rounded-full">
-                      Manifest
-                    </span>
-                    <span
-                      className={`text-xs px-2 py-0.5 rounded-full ${
-                        service.hasPolicy
-                          ? "bg-green-100 text-green-800"
-                          : "bg-red-100 text-red-800"
-                      }`}
-                    >
-                      Policy {service.hasPolicy ? "" : "(missing)"}
-                    </span>
-                    <span
-                      className={`text-xs px-2 py-0.5 rounded-full ${
-                        service.hasStateModel
-                          ? "bg-green-100 text-green-800"
-                          : "bg-red-100 text-red-800"
-                      }`}
-                    >
-                      State Model {service.hasStateModel ? "" : "(missing)"}
-                    </span>
-                    <span
-                      className={`text-xs px-2 py-0.5 rounded-full ${
-                        service.hasConsent
-                          ? "bg-green-100 text-green-800"
-                          : "bg-red-100 text-red-800"
-                      }`}
-                    >
-                      Consent {service.hasConsent ? "" : "(missing)"}
-                    </span>
-                  </>
-                ) : (
-                  <>
-                    <span className="text-xs bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full">
-                      Eligibility data
-                    </span>
-                    <span className="text-xs bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full">
-                      GOV.UK link
-                    </span>
-                  </>
-                )}
-              </div>
-            </a>
-
-            {/* Action bar */}
-            <div className="border-t border-studio-border px-5 py-3 flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                {(service.source || "full") === "full" ? (
-                  <>
-                    <a
-                      href={`/services/${encodeURIComponent(service.id)}/ledger`}
-                      className="text-sm font-semibold text-studio-accent hover:underline"
-                    >
-                      View ledger
-                    </a>
-                    <span className="text-gray-300">|</span>
-                    <a
-                      href={`/services/${encodeURIComponent(service.id)}/edit`}
-                      className="text-sm font-semibold text-studio-accent hover:underline"
-                    >
-                      Edit service
-                    </a>
-                    <span className="text-gray-300">|</span>
-                    <a
-                      href={`/services/${encodeURIComponent(service.id)}`}
-                      className="text-sm font-semibold text-red-600 hover:underline"
-                    >
-                      Delete
-                    </a>
-                  </>
-                ) : (
-                  <div className="flex items-center gap-3">
-                    <span className="text-sm text-gray-500">
-                      Catalogue — no artefacts yet
-                    </span>
-                    {service.govuk_url && (
-                      <>
-                        <span className="text-gray-300">|</span>
-                        <button
-                          onClick={(e) => {
-                            e.preventDefault();
-                            generateService(service.id);
-                          }}
-                          disabled={generatingId === service.id}
-                          className="text-sm font-semibold text-purple-600 hover:underline disabled:opacity-50"
-                        >
-                          {generatingId === service.id
-                            ? "Generating..."
-                            : "Generate"}
-                        </button>
-                      </>
-                    )}
-                  </div>
-                )}
-              </div>
-
-              <div className="flex items-center gap-3">
-                {(service.source || "full") === "full" && (
-                  <>
-                    <span className="text-sm text-gray-500">
-                      {service.promoted ? (
-                        <span className="text-green-700 font-medium">
-                          Promoted
-                        </span>
-                      ) : (
-                        "Not promoted"
-                      )}
-                    </span>
-                    <button
-                      onClick={(e) => {
-                        e.preventDefault();
-                        togglePromote(service.id);
-                      }}
-                      disabled={togglingId === service.id}
-                      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 ${
-                        service.promoted ? "bg-green-600" : "bg-gray-300"
-                      } ${togglingId === service.id ? "opacity-50 cursor-wait" : "cursor-pointer"}`}
-                      aria-label={`${service.promoted ? "Remove" : "Add"} ${service.name} from citizen dashboard`}
-                    >
-                      <span
-                        className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                          service.promoted ? "translate-x-6" : "translate-x-1"
-                        }`}
-                      />
-                    </button>
-                  </>
-                )}
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
+      <p className="text-xs text-gray-400 mt-4">
+        Showing {govServices.length} of {services.length} services.
+      </p>
     </div>
   );
 }
