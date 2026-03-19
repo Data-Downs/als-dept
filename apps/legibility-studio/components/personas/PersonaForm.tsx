@@ -9,6 +9,7 @@ import SchemaArraySection from "./SchemaArraySection";
 import BenefitsSection from "./BenefitsSection";
 import HealthInfoSection from "./HealthInfoSection";
 import FamilySection from "./FamilySection";
+import DataSourcesSection from "./DataSourcesSection";
 import {
   ALL_STRUCTURED_KEYS,
   credentialsSchema,
@@ -240,6 +241,19 @@ export default function PersonaForm({ data, onChange }: Props) {
           />
         </FormField>
       </Section>
+
+      {/* ── 1b. Data Sources ── */}
+      {data._fieldSources && (
+        <DataSourcesSection
+          fieldSources={
+            data._fieldSources as Record<
+              string,
+              { source: string; tier: string; topic: string }
+            >
+          }
+          onChange={(updated) => update({ _fieldSources: updated })}
+        />
+      )}
 
       {/* ── 2. Identity ── */}
       <Section title="Identity" defaultOpen>

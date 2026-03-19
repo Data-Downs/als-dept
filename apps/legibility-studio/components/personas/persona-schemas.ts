@@ -657,4 +657,9 @@ export const ALL_STRUCTURED_KEYS = new Set([
   "no_fixed_address",
   "pension_qualifying_years",
   "employer",
+  // Metadata
+  "_fieldSources",
+  "color",
+  "householdId",
+  "relationships",
 ]);
