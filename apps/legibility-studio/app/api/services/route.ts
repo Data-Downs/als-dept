@@ -13,7 +13,14 @@ export async function GET() {
     const store = await getServiceArtefactStore();
     const services = await store.listServices();
 
-    const mapped = services.map((s) => ({
+    const mapped = services.map((s) => {
+      // Compute actual completeness from artefact presence
+      const artefactChecks = [true, s.hasPolicy, s.hasStateModel, s.hasConsent]; // manifest always present
+      const present = artefactChecks.filter(Boolean).length;
+      const completeness = s.source === "catalogue" ? 0 : Math.round((present / 4) * 100);
+      const gapCount = s.source === "catalogue" ? 4 : (4 - present);
+
+      return {
       id: s.id,
       name: s.name,
       department: s.department,
@@ -22,8 +29,8 @@ export async function GET() {
       hasStateModel: s.hasStateModel,
       hasConsent: s.hasConsent,
       promoted: s.promoted,
-      completeness: s.source === "full" ? 50 : 0, // Approximate; full gap analysis via /api/v1/
-      gapCount: 0,
+      completeness,
+      gapCount,
       source: s.source,
       serviceType: s.serviceType,
       govuk_url: s.govukUrl,
@@ -31,7 +38,8 @@ export async function GET() {
       interactionType: s.interactionType,
       priority: s.priority || null,
       channels: s.channels || null,
-    }));
+    };
+    });
 
     const graphStore = await getServiceGraphStore();
     const lifeEvents = await graphStore.getLifeEvents();
