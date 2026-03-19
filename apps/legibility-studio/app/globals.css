@@ -45,9 +45,9 @@ a:visited {
 }
 
 a:focus {
-  outline: 3px solid var(--govuk-blue);
-  outline-offset: 0;
-  background-color: transparent;
-  color: var(--govuk-blue);
+  outline: none;
+  background-color: rgba(29, 112, 184, 0.15);
+  border-radius: 4px;
+  color: var(--govuk-dark-blue);
   text-decoration: none;
 }
