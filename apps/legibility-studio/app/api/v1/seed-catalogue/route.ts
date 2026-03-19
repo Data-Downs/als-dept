@@ -35,11 +35,14 @@ interface CatalogueEntry {
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const entries = body.services as CatalogueEntry[];
+    // Accept either { services: [...] } or a bare array [...]
+    const entries = (
+      Array.isArray(body) ? body : body.services
+    ) as CatalogueEntry[];
 
     if (!Array.isArray(entries) || entries.length === 0) {
       return jsonWithCors(
-        { error: "Body must contain a non-empty 'services' array" },
+        { error: "Body must be an array or contain a non-empty 'services' array" },
         { status: 400 },
       );
     }
