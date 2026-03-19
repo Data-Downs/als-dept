@@ -287,7 +287,6 @@ interface LifeEventFilter {
 }
 
 // AllServicesDashboard removed — operational metrics belong on the evidence page
-}
 
 export default function ServicesPage() {
   const [services, setServices] = useState<Service[]>([]);
