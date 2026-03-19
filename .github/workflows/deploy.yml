@@ -81,18 +81,19 @@ jobs:
       - name: Seed personas into D1
         run: |
           STUDIO_URL="https://als-studio.chris-8ab.workers.dev"
-          PERSONAS='{"personas":['
-          FIRST=true
-          for f in data/simulated/users/*.json; do
-            if [ "$FIRST" = true ]; then FIRST=false; else PERSONAS="$PERSONAS,"; fi
-            PERSONAS="$PERSONAS$(cat "$f")"
-          done
-          PERSONAS="$PERSONAS]}"
-          COUNT=$(echo "$PERSONAS" | node -e "const d=JSON.parse(require('fs').readFileSync('/dev/stdin','utf8')); console.log(d.personas.length)")
-          echo "Seeding $COUNT personas..."
+          # Build JSON payload via node to avoid shell argument length limits
+          node -e "
+            const fs = require('fs');
+            const path = require('path');
+            const dir = 'data/simulated/users';
+            const files = fs.readdirSync(dir).filter(f => f.endsWith('.json'));
+            const personas = files.map(f => JSON.parse(fs.readFileSync(path.join(dir, f), 'utf8')));
+            fs.writeFileSync('/tmp/personas-payload.json', JSON.stringify({ personas }));
+            console.log('Prepared ' + personas.length + ' personas for seeding');
+          "
           curl -sf -X POST "$STUDIO_URL/api/v1/seed-personas" \
             -H "Content-Type: application/json" \
-            -d "$PERSONAS"
+            -d @/tmp/personas-payload.json
 
   # ── Citizen app (deploys after studio if studio is deploying) ──
   deploy-citizen:
