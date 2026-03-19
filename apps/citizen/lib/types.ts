@@ -3,7 +3,7 @@
 import type {
   CitizenProfile,
   Vehicle,
-} from "@als/personal-data";
+} from "@als/personal-data/src/citizen-data-model";
 
 /**
  * PersonaData — extends the unified CitizenProfile from @als/personal-data.
@@ -11,7 +11,7 @@ import type {
  */
 export type PersonaData = CitizenProfile;
 
-export type { Vehicle } from "@als/personal-data";
+export type { Vehicle } from "@als/personal-data/src/citizen-data-model";
 
 export interface ChatMessage {
   role: "user" | "assistant";
