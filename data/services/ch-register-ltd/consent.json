@@ -1,0 +1,132 @@
+{
+  "id": "ch-register-ltd.consent",
+  "version": "1.0.0",
+  "grants": [
+    {
+      "id": "identity-verification",
+      "description": "Verify identity of all directors using GOV.UK One Login",
+      "data_shared": [
+        "full_name",
+        "date_of_birth",
+        "residential_address",
+        "national_insurance_number"
+      ],
+      "source": "one-login",
+      "purpose": "To confirm the identity of all company directors as required by Companies House registration rules",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "companies-house-register-search",
+      "description": "Search Companies House register to check company name availability",
+      "data_shared": [
+        "proposed_company_name"
+      ],
+      "source": "companies-house-register",
+      "purpose": "To check if your chosen company name is available and not too similar to existing registered companies",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "director-details-publication",
+      "description": "Publish director details on the public Companies House register",
+      "data_shared": [
+        "director_full_name",
+        "director_date_of_birth",
+        "director_nationality",
+        "director_occupation",
+        "director_service_address",
+        "director_appointment_date"
+      ],
+      "source": "citizen-provided",
+      "purpose": "Directors' information is legally required to be publicly available on the Companies House register",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "shareholder-guarantor-details",
+      "description": "Record and publish shareholder or guarantor details",
+      "data_shared": [
+        "member_full_name",
+        "member_address",
+        "shares_held_or_guarantee_amount"
+      ],
+      "source": "citizen-provided",
+      "purpose": "Shareholder or guarantor information is legally required to be recorded and made publicly available",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "psc-register",
+      "description": "Record and publish People with Significant Control (PSC) information",
+      "data_shared": [
+        "psc_full_name",
+        "psc_date_of_birth",
+        "psc_nationality",
+        "psc_address",
+        "nature_of_control"
+      ],
+      "source": "citizen-provided",
+      "purpose": "PSC information must be publicly registered to comply with transparency requirements",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "registered-office-address",
+      "description": "Publish registered office address on public register",
+      "data_shared": [
+        "registered_office_address_line_1",
+        "registered_office_address_line_2",
+        "registered_office_city",
+        "registered_office_postcode",
+        "registered_office_country"
+      ],
+      "source": "citizen-provided",
+      "purpose": "The registered office address will be publicly available and used for all official company correspondence",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "articles-of-association",
+      "description": "File and publish articles of association",
+      "data_shared": [
+        "articles_document_or_model_articles_confirmation"
+      ],
+      "source": "citizen-provided",
+      "purpose": "Articles of association define how the company is run and are legally required to be publicly filed",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "corporation-tax-setup",
+      "description": "Share company information with HMRC for Corporation Tax registration",
+      "data_shared": [
+        "company_name",
+        "company_number",
+        "registered_office_address",
+        "date_of_incorporation",
+        "accounting_reference_date"
+      ],
+      "source": "companies-house",
+      "purpose": "Companies House automatically notifies HMRC to set up your company for Corporation Tax",
+      "duration": "until-revoked",
+      "required": true
+    }
+  ],
+  "revocation": {
+    "mechanism": "You can update company information through Companies House Web Filing service or dissolve the company",
+    "effect": "Changes to company details must be filed as updates. Revoking director or shareholder status requires formal resignation or transfer processes. The company can only be removed from the register by formal dissolution."
+  },
+  "delegation": {
+    "agent_identity": "GOV.UK AI Agent",
+    "scopes": [
+      "check-name-availability",
+      "verify-eligibility-requirements",
+      "pre-fill-application-forms",
+      "search-companies-house-register",
+      "retrieve-model-articles",
+      "submit-registration-application"
+    ],
+    "limitations": "Agent cannot: make payment without explicit confirmation; choose company name without user approval; appoint directors or shareholders without user authorization; sign memorandum of association (requires user signature); modify articles of association without user review; accept terms and conditions on behalf of user; provide legal advice on company structure."
+  }
+}

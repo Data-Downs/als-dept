@@ -1,0 +1,19 @@
+{
+  "id": "opg-lpa",
+  "version": "1.0.0",
+  "name": "Lasting Power of Attorney",
+  "description": "Health and welfare and/or property and finance. Register before mental capacity is lost.",
+  "department": "OPG",
+  "input_schema": {
+    "type": "object"
+  },
+  "output_schema": {
+    "type": "object"
+  },
+  "source": "graph",
+  "serviceType": "legal_process",
+  "govuk_url": "https://www.gov.uk/power-of-attorney",
+  "eligibility_summary": "A legal document appointing trusted people (attorneys) to make decisions on your behalf. Two types: Property & Financial Affairs (can be used immediately), and Health & Welfare (only if you lose capacity). Must be registered with OPG before use.",
+  "proactive": true,
+  "gated": false
+}

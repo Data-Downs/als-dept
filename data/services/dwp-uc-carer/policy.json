@@ -1,0 +1,118 @@
+{
+  "id": "dwp-uc-carer.eligibility",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "uc-recipient",
+      "description": "Applicant must be receiving or applying for Universal Credit",
+      "condition": {
+        "field": "universal_credit_status",
+        "operator": "in",
+        "value": [
+          "receiving",
+          "applying"
+        ]
+      },
+      "reason_if_failed": "You must be receiving or applying for Universal Credit to get the carer's element",
+      "alternative_service": "dwp-uc.application"
+    },
+    {
+      "id": "care-hours",
+      "description": "Applicant must provide care for at least 35 hours per week",
+      "condition": {
+        "field": "care_hours_per_week",
+        "operator": ">=",
+        "value": 35
+      },
+      "reason_if_failed": "You must provide care for at least 35 hours per week to qualify for the carer's element",
+      "evidence_source": "citizen-declared"
+    },
+    {
+      "id": "care-recipient-benefit",
+      "description": "Person cared for must receive a qualifying disability benefit",
+      "condition": {
+        "field": "care_recipient_benefit",
+        "operator": "in",
+        "value": [
+          "pip-daily-living",
+          "dla-middle-or-high-care",
+          "attendance-allowance",
+          "adult-disability-payment",
+          "child-disability-payment-middle-or-high",
+          "armed-forces-independence-payment",
+          "constant-attendance-allowance-full-day",
+          "constant-attendance-allowance-intermediate",
+          "constant-attendance-allowance-exceptional"
+        ]
+      },
+      "reason_if_failed": "The person you care for must receive one of the qualifying disability benefits at the required rate",
+      "evidence_source": "dwp-benefits-system"
+    },
+    {
+      "id": "not-lcwra",
+      "description": "Applicant cannot receive both carer's element and LCWRA element",
+      "condition": {
+        "field": "receives_lcwra_element",
+        "operator": "!=",
+        "value": true
+      },
+      "reason_if_failed": "You cannot receive the carer's element if you already receive the limited capability for work and work-related activity (LCWRA) element",
+      "alternative_service": "dwp-uc.lcwra-element"
+    },
+    {
+      "id": "age-minimum",
+      "description": "Applicant must be at least 16 years old (UC eligibility)",
+      "condition": {
+        "field": "age",
+        "operator": ">=",
+        "value": 16
+      },
+      "reason_if_failed": "You must be at least 16 years old to claim Universal Credit and the carer's element",
+      "evidence_source": "identity-verified"
+    },
+    {
+      "id": "one-element-per-household",
+      "description": "Only one carer's element per household if both partners care for the same person",
+      "condition": {
+        "field": "partner_receives_carer_element_for_same_person",
+        "operator": "!=",
+        "value": true
+      },
+      "reason_if_failed": "Your partner already receives the carer's element for this person. Only one carer's element can be paid per household for the same care recipient",
+      "evidence_source": "dwp-uc-system"
+    }
+  ],
+  "explanation_template": "Carer's element eligibility: {outcome}. Additional amount: £201.68 per month if approved.",
+  "edge_cases": [
+    {
+      "id": "severe-disability-premium-impact",
+      "description": "Care recipient currently receives severe disability premium",
+      "detection": "care_recipient_has_sdp",
+      "action": "Hand off to work coach. Warning: The person you care for may lose their severe disability premium when you claim the carer's element. They should be informed before proceeding."
+    },
+    {
+      "id": "safeguarding-concern",
+      "description": "Potential safeguarding concern regarding care arrangements",
+      "detection": "safeguarding_flag",
+      "action": "Immediate handoff to specialist team. Care arrangement requires verification and assessment of suitability."
+    },
+    {
+      "id": "multiple-carers",
+      "description": "Multiple people claim to care for the same person more than 35 hours each",
+      "detection": "multiple_carer_claims",
+      "action": "Hand off to case manager. Assessment required to determine who provides the majority of care and how hours are split."
+    },
+    {
+      "id": "care-recipient-benefit-ending",
+      "description": "Care recipient's qualifying benefit is under review or ending soon",
+      "detection": "care_recipient_benefit_under_review",
+      "action": "Inform applicant that carer's element will stop if care recipient loses qualifying benefit. May need to reapply if benefit is reinstated."
+    },
+    {
+      "id": "commercial-care-arrangement",
+      "description": "Caring appears to be part of paid employment rather than unpaid care",
+      "detection": "commercial_care_arrangement",
+      "action": "Hand off to fraud investigation team. Carer's element is for unpaid care only, not paid employment as a carer."
+    }
+  ]
+}

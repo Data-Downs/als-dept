@@ -1,0 +1,87 @@
+{
+  "id": "hmcts-divorce.consent",
+  "version": "1.0.0",
+  "grants": [
+    {
+      "id": "identity-verification",
+      "description": "Verify your identity using your GOV.UK One Login credentials",
+      "data_shared": [
+        "full_name",
+        "date_of_birth",
+        "national_insurance_number",
+        "current_address"
+      ],
+      "source": "one-login",
+      "purpose": "To confirm your identity before processing your divorce application and to ensure court correspondence reaches you",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "marriage-certificate-verification",
+      "description": "Share your marriage certificate details with HMCTS",
+      "data_shared": [
+        "marriage_date",
+        "marriage_location",
+        "spouse_full_name",
+        "marriage_certificate_number"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To verify your marriage is legally recognised in the UK and that you meet the one-year marriage duration requirement",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "spouse-contact-details",
+      "description": "Provide your spouse's contact details for court correspondence",
+      "data_shared": [
+        "spouse_full_name",
+        "spouse_address",
+        "spouse_email"
+      ],
+      "source": "citizen-provided",
+      "purpose": "The court must send divorce papers to your spouse so they can respond to the application",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "financial-information",
+      "description": "Share financial information if applying for help with court fees",
+      "data_shared": [
+        "income",
+        "benefits_received",
+        "savings",
+        "household_composition"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To assess whether you are eligible for help paying the £612 divorce application fee",
+      "duration": "session",
+      "required": false
+    },
+    {
+      "id": "case-updates",
+      "description": "Receive notifications about your divorce case by email and SMS",
+      "data_shared": [
+        "email_address",
+        "mobile_number"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To send you updates about your divorce application, including when you need to take action",
+      "duration": "until-revoked",
+      "required": false
+    }
+  ],
+  "revocation": {
+    "mechanism": "Contact HMCTS Divorce Service or through your MyHMCTS account if using a solicitor. You can withdraw your application at any time before the final order is granted.",
+    "effect": "If you revoke consent before the application is issued, no further action will be taken. After issue, withdrawal may affect your ability to recover the court fee. Your spouse will be notified if the application is withdrawn."
+  },
+  "delegation": {
+    "agent_identity": "GOV.UK AI Agent",
+    "scopes": [
+      "read-personal-data",
+      "complete-d8-form",
+      "submit-to-hmcts",
+      "check-case-status"
+    ],
+    "limitations": "Agent cannot make the decision to divorce on your behalf. You must explicitly confirm you want to continue with the divorce at each stage (application, conditional order, final order). Agent cannot make payment on your behalf. Agent cannot agree to financial settlements or child arrangements. Agent cannot act as your litigation friend if your spouse lacks mental capacity. Agent cannot dispute a divorce on your spouse's behalf. For joint applications, both spouses must separately confirm continuation - the agent cannot confirm on behalf of your spouse."
+  }
+}

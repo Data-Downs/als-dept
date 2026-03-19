@@ -1,0 +1,110 @@
+{
+  "id": "dwp.winter-fuel.eligibility",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "age-minimum",
+      "description": "Must be born before 22 September 1959",
+      "condition": {
+        "field": "date_of_birth",
+        "operator": "<=",
+        "value": "1959-09-21"
+      },
+      "reason_if_failed": "You must be born before 22 September 1959 to be eligible for Winter Fuel Payment",
+      "evidence_source": "identity-verified"
+    },
+    {
+      "id": "residency",
+      "description": "Must live in England or Wales",
+      "condition": {
+        "field": "jurisdiction",
+        "operator": "in",
+        "value": [
+          "England",
+          "Wales"
+        ]
+      },
+      "reason_if_failed": "Winter Fuel Payment is only available to residents of England and Wales. Scotland and Northern Ireland have separate schemes.",
+      "alternative_service": "scotland-pension-age-winter-heating",
+      "evidence_source": "address-verification"
+    },
+    {
+      "id": "not-in-hospital",
+      "description": "Must not have been in hospital for free treatment for whole of qualifying week (15-21 Sept 2025) and the year before",
+      "condition": {
+        "field": "hospital_stay_qualifying_period",
+        "operator": "!=",
+        "value": "full-period-both-years"
+      },
+      "reason_if_failed": "You are not eligible if you were in hospital receiving free in-patient treatment for the entire qualifying week and the year before",
+      "evidence_source": "nhs-records"
+    },
+    {
+      "id": "not-in-prison",
+      "description": "Must not have been in prison for whole qualifying week (15-21 Sept 2025)",
+      "condition": {
+        "field": "prison_status_qualifying_week",
+        "operator": "!=",
+        "value": "imprisoned"
+      },
+      "reason_if_failed": "You cannot get Winter Fuel Payment if you were in prison for the whole of the qualifying week",
+      "evidence_source": "moj-records"
+    },
+    {
+      "id": "immigration-status",
+      "description": "Must not have 'no public funds' restriction on immigration status",
+      "condition": {
+        "field": "public_funds_restriction",
+        "operator": "!=",
+        "value": true
+      },
+      "reason_if_failed": "You are not eligible if your granted leave to enter the UK says you cannot claim public funds",
+      "evidence_source": "home-office"
+    },
+    {
+      "id": "qualifying-benefit-2024",
+      "description": "From 2024/25, must receive Pension Credit or another qualifying means-tested benefit",
+      "condition": {
+        "field": "receives_qualifying_benefit",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "From winter 2024/25, Winter Fuel Payment is only available if you receive Pension Credit or another qualifying benefit. You may be eligible for Pension Credit - check now.",
+      "alternative_service": "dwp.pension-credit",
+      "evidence_source": "dwp-benefit-records"
+    }
+  ],
+  "explanation_template": "Winter Fuel Payment eligibility: {outcome}. Amount: {amount}",
+  "edge_cases": [
+    {
+      "id": "care-home-resident",
+      "description": "Lives in care home and receives qualifying benefits from 23 June 2025 or earlier",
+      "detection": "care_home_resident AND qualifying_benefit_continuous_from_june",
+      "action": "Not eligible for Winter Fuel Payment. Reduced payment of £100-£150 may apply in some circumstances. Route to manual assessment."
+    },
+    {
+      "id": "income-over-35k",
+      "description": "Income is over £35,000 threshold",
+      "detection": "annual_income > 35000",
+      "action": "Payment will be made but HMRC will recover it through tax code or Self Assessment. Inform citizen that HMRC will take it back."
+    },
+    {
+      "id": "couple-joint-claim",
+      "description": "Lives with partner and both claim qualifying benefits jointly",
+      "detection": "household_composition AND joint_benefit_claim",
+      "action": "One person will receive a single payment. Amount depends on ages. Route to household assessment."
+    },
+    {
+      "id": "deferred-state-pension",
+      "description": "Has deferred State Pension since last Winter Fuel Payment",
+      "detection": "state_pension_deferred",
+      "action": "Must make a manual claim. Route to claim process."
+    },
+    {
+      "id": "first-time-claimant",
+      "description": "Never received Winter Fuel Payment before and does not receive automatic qualifying benefits",
+      "detection": "no_previous_wfp AND no_automatic_benefit",
+      "action": "Must make a manual claim by phone or post. Deadline 31 March 2026."
+    }
+  ]
+}

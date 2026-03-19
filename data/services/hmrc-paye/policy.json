@@ -1,0 +1,95 @@
+{
+  "id": "hmrc-paye.eligibility",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "has-employees",
+      "description": "Business must employ staff or use subcontractors (construction)",
+      "condition": {
+        "field": "has_employees_or_contractors",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "You only need to register as an employer if you employ staff or use subcontractors for construction work",
+      "evidence_source": "citizen-provided"
+    },
+    {
+      "id": "earnings-threshold",
+      "description": "Employees must earn above Lower Earnings Limit or receive expenses/benefits",
+      "condition": {
+        "field": "meets_earnings_threshold",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "You only need to register if employees earn above the Lower Earnings Limit (£123/week for 2024-25) or receive expenses or benefits",
+      "evidence_source": "citizen-provided"
+    },
+    {
+      "id": "timing-before-payday",
+      "description": "Must register before first payday",
+      "condition": {
+        "field": "registration_timing",
+        "operator": "!=",
+        "value": "after-first-payday"
+      },
+      "reason_if_failed": "You must register before your first payday. If you have already paid employees, contact HMRC for late registration guidance.",
+      "alternative_service": "hmrc.contact-paye-helpline",
+      "triggers_handoff": true
+    },
+    {
+      "id": "timing-not-too-early",
+      "description": "Cannot register more than 2 months before starting to pay people",
+      "condition": {
+        "field": "days_until_first_payday",
+        "operator": "<=",
+        "value": 60
+      },
+      "reason_if_failed": "You cannot register more than 2 months before you start paying people. Please return closer to your first payday.",
+      "evidence_source": "citizen-provided"
+    },
+    {
+      "id": "uk-business",
+      "description": "Business must operate in the UK for HMRC PAYE purposes",
+      "condition": {
+        "field": "uk_business",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "This service is for UK-based employers. Contact HMRC for international employment arrangements.",
+      "triggers_handoff": true
+    }
+  ],
+  "explanation_template": "PAYE employer registration eligibility: {outcome}",
+  "edge_cases": [
+    {
+      "id": "sole-director",
+      "description": "Applicant is sole director of limited company",
+      "detection": "company_type == 'limited' AND director_count == 1",
+      "action": "Confirm requirement: You must register even if you are the only director and only paying yourself."
+    },
+    {
+      "id": "construction-industry",
+      "description": "Applicant uses construction industry subcontractors",
+      "detection": "uses_cis_subcontractors == true",
+      "action": "Route to Construction Industry Scheme (CIS) registration in addition to PAYE. Additional verification required."
+    },
+    {
+      "id": "late-registration",
+      "description": "First payday has already passed",
+      "detection": "first_payday_date < current_date",
+      "action": "Hand off to HMRC helpline. Late full payment submission process required. Potential penalties may apply."
+    },
+    {
+      "id": "agricultural-workers",
+      "description": "Employer of agricultural or horticultural workers",
+      "detection": "industry_sector == 'agriculture'",
+      "action": "Advise on Agricultural Minimum Wage requirements and additional reporting obligations."
+    },
+    {
+      "id": "welsh-language",
+      "description": "Applicant requests Welsh language service",
+      "detection": "language_preference == 'cy'",
+      "action": "Route to Welsh language version of service (Cymraeg)."
+    }
+  ]
+}

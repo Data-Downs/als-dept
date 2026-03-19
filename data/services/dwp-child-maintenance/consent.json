@@ -1,0 +1,105 @@
+{
+  "id": "dwp-child-maintenance.consent",
+  "version": "1.0.0",
+  "grants": [
+    {
+      "id": "identity-verification",
+      "description": "Verify your identity using your GOV.UK One Login credentials",
+      "data_shared": [
+        "full_name",
+        "date_of_birth",
+        "national_insurance_number",
+        "address"
+      ],
+      "source": "one-login",
+      "purpose": "To confirm your identity and establish your role as the parent with care or paying parent",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "contact-other-parent",
+      "description": "Allow CMS to contact the other parent to establish the child maintenance arrangement",
+      "data_shared": [
+        "your_name",
+        "your_contact_details",
+        "child_details",
+        "maintenance_claim"
+      ],
+      "source": "citizen-provided",
+      "purpose": "CMS must inform the other parent of the application and gather their income information",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "hmrc-income-access",
+      "description": "Allow CMS to access HMRC income data for both parents to calculate the maintenance amount",
+      "data_shared": [
+        "gross_annual_income",
+        "employment_status",
+        "self_employment_income",
+        "pension_income",
+        "benefits_received"
+      ],
+      "source": "hmrc",
+      "purpose": "To accurately calculate the child maintenance payment based on the paying parent's income",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "child-details-sharing",
+      "description": "Share information about your child or children for the maintenance calculation",
+      "data_shared": [
+        "child_full_name",
+        "child_date_of_birth",
+        "child_living_arrangements",
+        "number_of_children",
+        "education_status"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To determine eligibility and calculate the correct maintenance amount",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "banking-details",
+      "description": "Provide bank account details if using the Collect and Pay service",
+      "data_shared": [
+        "account_holder_name",
+        "sort_code",
+        "account_number"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To receive child maintenance payments through the CMS Collect and Pay service",
+      "duration": "until-revoked",
+      "required": false
+    },
+    {
+      "id": "ongoing-case-management",
+      "description": "Allow CMS to review and update the maintenance arrangement annually or when circumstances change",
+      "data_shared": [
+        "income_changes",
+        "living_arrangement_changes",
+        "contact_with_child",
+        "number_of_nights_with_child"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To ensure the maintenance amount remains accurate and fair as circumstances change",
+      "duration": "until-revoked",
+      "required": true
+    }
+  ],
+  "revocation": {
+    "mechanism": "Contact Child Maintenance Service by phone or through your online account to close the case",
+    "effect": "The maintenance arrangement will be closed. You may need to arrange private maintenance or apply again in the future. Both parents will be notified."
+  },
+  "delegation": {
+    "agent_identity": "GOV.UK AI Agent",
+    "scopes": [
+      "read-personal-data",
+      "read-child-details",
+      "submit-application-details",
+      "check-eligibility"
+    ],
+    "limitations": "Agent cannot choose the payment method (Direct Pay vs Collect and Pay) on your behalf. Agent cannot agree to shared care arrangements. Agent cannot make decisions that affect the other parent's obligations. Agent cannot access or modify bank account details. Agent cannot close or cancel the maintenance arrangement. Agent cannot represent you in disputes or mandatory reconsideration."
+  }
+}

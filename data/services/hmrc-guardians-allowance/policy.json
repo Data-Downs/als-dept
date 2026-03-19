@@ -1,0 +1,113 @@
+{
+  "id": "hmrc.guardians-allowance.eligibility",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "child-benefit-required",
+      "description": "Applicant must qualify for Child Benefit for the child",
+      "condition": {
+        "field": "qualifies_for_child_benefit",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "You must qualify for Child Benefit to receive Guardian's Allowance. Apply for Child Benefit first.",
+      "alternative_service": "hmrc.child-benefit",
+      "evidence_source": "hmrc-child-benefit-records"
+    },
+    {
+      "id": "not-own-child",
+      "description": "The child must not be the applicant's own child",
+      "condition": {
+        "field": "relationship_to_child",
+        "operator": "!=",
+        "value": "biological_parent"
+      },
+      "reason_if_failed": "Guardian's Allowance is for bringing up someone else's child, not your own child",
+      "evidence_source": "birth-certificate"
+    },
+    {
+      "id": "both-parents-deceased",
+      "description": "Both of the child's parents must have died, or meet special circumstances for one surviving parent",
+      "condition": {
+        "field": "both_parents_deceased_or_exception",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "Both parents must have died, or the surviving parent must be untraceable, in prison for 2+ years, or in hospital by court order",
+      "evidence_source": "death-certificates",
+      "triggers_handoff": true
+    },
+    {
+      "id": "parent-uk-connection",
+      "description": "At least one parent must have been born in UK/EEA/Switzerland or lived in UK since age 16 for 52 weeks in any 2-year period",
+      "condition": {
+        "field": "parent_uk_connection",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "At least one parent must have had a sufficient connection to the UK",
+      "evidence_source": "parent-residence-records"
+    },
+    {
+      "id": "child-lives-with-applicant",
+      "description": "The child must currently be living with the applicant",
+      "condition": {
+        "field": "child_lives_with_applicant",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "You must be bringing up the child for them to live with you",
+      "evidence_source": "citizen-declaration"
+    },
+    {
+      "id": "child-age-limit",
+      "description": "The child must be under 16, or under 20 if in approved education or training",
+      "condition": {
+        "field": "child_age_eligible",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "The child must be under 16, or under 20 if in full-time education or approved training",
+      "evidence_source": "birth-certificate"
+    }
+  ],
+  "explanation_template": "Guardian's Allowance eligibility: {outcome}. This benefit provides £22.10 per week on top of Child Benefit.",
+  "edge_cases": [
+    {
+      "id": "surviving-parent-unknown",
+      "description": "One parent is alive but their whereabouts are unknown despite reasonable efforts to contact them",
+      "detection": "one_parent_alive_whereabouts_unknown",
+      "action": "Require evidence of reasonable efforts to locate surviving parent. HMRC will assess the evidence provided."
+    },
+    {
+      "id": "surviving-parent-imprisoned",
+      "description": "One parent is alive but imprisoned for at least 2 years from the date of the other parent's death",
+      "detection": "one_parent_alive_in_prison",
+      "action": "Require prison documentation showing sentence length. Guardian's Allowance can be awarded if sentence is at least 2 years from date of other parent's death."
+    },
+    {
+      "id": "surviving-parent-hospital-order",
+      "description": "One parent is alive but in hospital by court order",
+      "detection": "one_parent_alive_hospital_order",
+      "action": "Require court order documentation. Guardian's Allowance can be awarded while parent remains in hospital under court order."
+    },
+    {
+      "id": "adoption-after-award",
+      "description": "Guardian has adopted the child after Guardian's Allowance was awarded",
+      "detection": "adoption_after_award",
+      "action": "Guardian's Allowance can continue if it was being paid before the adoption. No new claims allowed post-adoption."
+    },
+    {
+      "id": "temporary-abroad",
+      "description": "Guardian or child temporarily abroad for more than 8 weeks",
+      "detection": "abroad_more_than_8_weeks",
+      "action": "Guardian's Allowance may be affected. Route to HMRC assessment for temporary absence rules."
+    },
+    {
+      "id": "permanent-abroad",
+      "description": "Guardian or child permanently moving abroad (more than 1 year)",
+      "detection": "abroad_more_than_1_year",
+      "action": "Guardian's Allowance will stop. Require notification to HMRC Guardian's Allowance Unit."
+    }
+  ]
+}

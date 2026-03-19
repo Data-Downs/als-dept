@@ -1,0 +1,19 @@
+{
+  "id": "dwp-uc-carer",
+  "version": "1.0.0",
+  "name": "UC Carer element",
+  "description": "Additional ~£185/month in Universal Credit if eligible for Carer's Allowance.",
+  "department": "DWP",
+  "input_schema": {
+    "type": "object"
+  },
+  "output_schema": {
+    "type": "object"
+  },
+  "source": "graph",
+  "serviceType": "entitlement",
+  "govuk_url": "https://www.gov.uk/universal-credit/what-youll-get",
+  "eligibility_summary": "An extra £198.31/month (2024/25) added to Universal Credit for people who are eligible for Carer's Allowance. No need to actually claim Carer's Allowance — just be eligible.",
+  "proactive": true,
+  "gated": true
+}

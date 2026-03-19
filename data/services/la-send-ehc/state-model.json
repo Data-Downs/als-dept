@@ -1,0 +1,155 @@
+{
+  "id": "la-send-ehc.states",
+  "version": "1.0.0",
+  "states": [
+    {
+      "id": "not-started",
+      "type": "initial"
+    },
+    {
+      "id": "identity-verified"
+    },
+    {
+      "id": "eligibility-checked"
+    },
+    {
+      "id": "consent-given"
+    },
+    {
+      "id": "evidence-submitted"
+    },
+    {
+      "id": "assessment-decision-pending"
+    },
+    {
+      "id": "under-assessment",
+      "receipt": true
+    },
+    {
+      "id": "draft-plan-issued",
+      "receipt": true
+    },
+    {
+      "id": "comments-submitted"
+    },
+    {
+      "id": "school-selected"
+    },
+    {
+      "id": "final-plan-issued",
+      "receipt": true
+    },
+    {
+      "id": "completed",
+      "type": "terminal",
+      "receipt": true
+    },
+    {
+      "id": "rejected",
+      "type": "terminal",
+      "receipt": true
+    },
+    {
+      "id": "handed-off",
+      "type": "terminal",
+      "receipt": true
+    }
+  ],
+  "transitions": [
+    {
+      "from": "not-started",
+      "to": "identity-verified",
+      "trigger": "verify-identity"
+    },
+    {
+      "from": "identity-verified",
+      "to": "eligibility-checked",
+      "trigger": "check-eligibility"
+    },
+    {
+      "from": "eligibility-checked",
+      "to": "consent-given",
+      "trigger": "grant-consent",
+      "condition": "eligible"
+    },
+    {
+      "from": "eligibility-checked",
+      "to": "rejected",
+      "trigger": "reject",
+      "condition": "not-eligible"
+    },
+    {
+      "from": "eligibility-checked",
+      "to": "handed-off",
+      "trigger": "handoff",
+      "condition": "edge-case"
+    },
+    {
+      "from": "consent-given",
+      "to": "evidence-submitted",
+      "trigger": "submit-evidence"
+    },
+    {
+      "from": "evidence-submitted",
+      "to": "assessment-decision-pending",
+      "trigger": "request-assessment"
+    },
+    {
+      "from": "assessment-decision-pending",
+      "to": "under-assessment",
+      "trigger": "approve-assessment",
+      "condition": "within-16-weeks"
+    },
+    {
+      "from": "assessment-decision-pending",
+      "to": "rejected",
+      "trigger": "decline-assessment",
+      "condition": "within-16-weeks"
+    },
+    {
+      "from": "assessment-decision-pending",
+      "to": "handed-off",
+      "trigger": "appeal-decision",
+      "condition": "dispute-raised"
+    },
+    {
+      "from": "under-assessment",
+      "to": "draft-plan-issued",
+      "trigger": "issue-draft-plan",
+      "condition": "within-20-weeks"
+    },
+    {
+      "from": "under-assessment",
+      "to": "rejected",
+      "trigger": "conclude-no-plan-needed",
+      "condition": "within-20-weeks"
+    },
+    {
+      "from": "draft-plan-issued",
+      "to": "comments-submitted",
+      "trigger": "submit-comments",
+      "condition": "within-15-days"
+    },
+    {
+      "from": "comments-submitted",
+      "to": "school-selected",
+      "trigger": "select-school"
+    },
+    {
+      "from": "school-selected",
+      "to": "final-plan-issued",
+      "trigger": "finalize-plan"
+    },
+    {
+      "from": "final-plan-issued",
+      "to": "completed",
+      "trigger": "accept-plan"
+    },
+    {
+      "from": "final-plan-issued",
+      "to": "handed-off",
+      "trigger": "appeal-plan",
+      "condition": "dispute-raised"
+    }
+  ]
+}

@@ -1,0 +1,94 @@
+{
+  "id": "hmpo.other-passport-name.eligibility",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "age-minimum",
+      "description": "Applicant must be at least 16 years old (or turning 16 in the next 3 weeks) for an adult passport",
+      "condition": {
+        "field": "age",
+        "operator": ">=",
+        "value": 16
+      },
+      "reason_if_failed": "You must be at least 16 years old to apply for an adult passport name change. Use the child passport service instead.",
+      "alternative_service": "hmpo.child-passport",
+      "evidence_source": "identity-verified"
+    },
+    {
+      "id": "has-existing-passport",
+      "description": "Applicant must have an existing UK passport to change the name on",
+      "condition": {
+        "field": "passport_number",
+        "operator": "exists"
+      },
+      "reason_if_failed": "You need an existing UK passport to change your name. Apply for a first adult passport instead.",
+      "alternative_service": "hmpo.first-adult-passport",
+      "evidence_source": "citizen-provided"
+    },
+    {
+      "id": "valid-name-change-evidence",
+      "description": "Applicant must provide valid evidence of name change (marriage certificate or deed poll)",
+      "condition": {
+        "field": "name_change_document",
+        "operator": "in",
+        "value": [
+          "marriage_certificate",
+          "deed_poll",
+          "civil_partnership_certificate"
+        ]
+      },
+      "reason_if_failed": "You must provide a marriage certificate, civil partnership certificate, or deed poll as evidence of your name change",
+      "evidence_source": "citizen-provided"
+    },
+    {
+      "id": "passport-not-cancelled",
+      "description": "Current passport must not be reported as lost or stolen without being cancelled first",
+      "condition": {
+        "field": "passport_status",
+        "operator": "!=",
+        "value": "lost-or-stolen-uncancelled"
+      },
+      "reason_if_failed": "Your passport is reported as lost or stolen but not cancelled. You must cancel it before applying for a replacement.",
+      "triggers_handoff": true
+    }
+  ],
+  "explanation_template": "Passport name change eligibility: {outcome}",
+  "edge_cases": [
+    {
+      "id": "lost-or-stolen",
+      "description": "Passport has been lost or stolen",
+      "detection": "passport_status == 'lost-or-stolen'",
+      "action": "Must cancel existing passport before proceeding. Route to cancellation process first."
+    },
+    {
+      "id": "damaged-passport",
+      "description": "Current passport is damaged (pages ripped, cover coming away, stains, illegible details)",
+      "detection": "passport_condition == 'damaged'",
+      "action": "Damaged passport must be replaced rather than renewed. Assess damage severity and proceed with replacement application."
+    },
+    {
+      "id": "unexpired-visas",
+      "description": "Current passport contains unexpired visas",
+      "detection": "has_unexpired_visas == true",
+      "action": "Previous passport with visa will be returned separately. Advise citizen to carry both passports when travelling. Russia has different rules - trigger handoff."
+    },
+    {
+      "id": "interview-required",
+      "description": "Application requires video interview for identity verification",
+      "detection": "interview_flag == true",
+      "action": "Book video interview after initial assessment. Interview must be completed before final decision."
+    },
+    {
+      "id": "child-under-16",
+      "description": "Applicant is under 16 years old",
+      "detection": "age < 16",
+      "action": "Route to child passport service. Different application process and requirements."
+    },
+    {
+      "id": "outside-uk",
+      "description": "Applicant is currently outside the UK",
+      "detection": "current_location != 'UK'",
+      "action": "Different process for overseas applications. Route to overseas passport service."
+    }
+  ]
+}

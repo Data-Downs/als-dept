@@ -1,0 +1,96 @@
+{
+  "id": "other-motability.eligibility",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "pip-enhanced-rate",
+      "description": "Applicant must be receiving the Enhanced Rate of the Mobility Component of PIP",
+      "condition": {
+        "field": "pip_mobility_component_rate",
+        "operator": "==",
+        "value": "enhanced"
+      },
+      "reason_if_failed": "You must be receiving the Enhanced Rate of the Mobility Component of Personal Independence Payment (PIP) to use the Motability scheme",
+      "evidence_source": "dwp-pip-award",
+      "alternative_service": "pip.apply"
+    },
+    {
+      "id": "pip-award-duration",
+      "description": "PIP award must have at least 12 months remaining",
+      "condition": {
+        "field": "pip_award_end_date",
+        "operator": ">=",
+        "value": "12-months-from-now"
+      },
+      "reason_if_failed": "Your PIP award must have at least 12 months remaining to start a Motability lease",
+      "evidence_source": "dwp-pip-award"
+    },
+    {
+      "id": "uk-resident",
+      "description": "Applicant must be a UK resident",
+      "condition": {
+        "field": "uk_resident",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "The Motability scheme is only available to UK residents",
+      "evidence_source": "identity-verified"
+    },
+    {
+      "id": "pip-allowance-payable",
+      "description": "PIP mobility allowance must be in payment",
+      "condition": {
+        "field": "pip_payment_status",
+        "operator": "==",
+        "value": "in-payment"
+      },
+      "reason_if_failed": "Your PIP mobility allowance must be in payment to use the Motability scheme",
+      "evidence_source": "dwp-pip-award",
+      "triggers_handoff": true
+    },
+    {
+      "id": "no-conflicting-scheme",
+      "description": "Applicant must not have another active Motability agreement",
+      "condition": {
+        "field": "existing_motability_agreement",
+        "operator": "!=",
+        "value": true
+      },
+      "reason_if_failed": "You already have an active Motability agreement. Contact Motability to discuss upgrading or changing your vehicle.",
+      "triggers_handoff": true
+    }
+  ],
+  "explanation_template": "Motability scheme eligibility: {outcome}",
+  "edge_cases": [
+    {
+      "id": "war-pensioners",
+      "description": "Applicant receives War Pensioners' Mobility Supplement",
+      "detection": "war_pensioners_mobility_supplement",
+      "action": "Eligible under alternative scheme. Route to War Pensioners' Motability pathway."
+    },
+    {
+      "id": "afip-recipient",
+      "description": "Applicant receives Armed Forces Independence Payment",
+      "detection": "armed_forces_independence_payment",
+      "action": "Eligible under AFIP scheme. Route to Armed Forces Motability pathway."
+    },
+    {
+      "id": "terminal-illness",
+      "description": "Applicant has terminal illness with special rules",
+      "detection": "terminal_illness_special_rules",
+      "action": "Fast-track application. Contact Motability specialist team for urgent processing."
+    },
+    {
+      "id": "vehicle-adaptations",
+      "description": "Applicant requires vehicle adaptations for disability",
+      "detection": "requires_adaptations",
+      "action": "Route to adaptations assessment. May be eligible for additional grant funding."
+    },
+    {
+      "id": "pip-reassessment-pending",
+      "description": "Applicant has PIP reassessment due within 12 months",
+      "detection": "pip_reassessment_due",
+      "action": "Proceed with caution. Inform applicant that lease depends on continued Enhanced Rate award."
+    }
+  ]
+}

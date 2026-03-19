@@ -1,0 +1,151 @@
+{
+  "id": "ho.eu-settled-status.eligibility",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "eu-eea-swiss-national",
+      "description": "Applicant must be an EU, EEA or Swiss national, or a family member of one",
+      "condition": {
+        "field": "nationality_or_family_relationship",
+        "operator": "in",
+        "value": [
+          "EU",
+          "EEA",
+          "Swiss",
+          "family-member-of-eligible-person"
+        ]
+      },
+      "reason_if_failed": "You must be from the EU, EEA or Switzerland, or be the family member of someone who is",
+      "evidence_source": "identity-verified"
+    },
+    {
+      "id": "residence-by-deadline",
+      "description": "Applicant or their family member must have been living in UK by 31 December 2020",
+      "condition": {
+        "field": "uk_residence_start_date",
+        "operator": "<=",
+        "value": "2020-12-31"
+      },
+      "reason_if_failed": "You or your family member must have been living in the UK by 31 December 2020",
+      "evidence_source": "residence-documents"
+    },
+    {
+      "id": "application-deadline",
+      "description": "Applicant must apply by their relevant deadline or have reasonable grounds for delay",
+      "condition": {
+        "field": "deadline_met_or_reasonable_grounds",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "You have not applied by your deadline and have not shown reasonable grounds for the delay",
+      "evidence_source": "citizen-provided",
+      "triggers_handoff": true
+    },
+    {
+      "id": "valid-identity-document",
+      "description": "Applicant must provide valid passport or national identity card (or BRC if non-EU)",
+      "condition": {
+        "field": "identity_document_type",
+        "operator": "in",
+        "value": [
+          "passport",
+          "national-identity-card",
+          "biometric-residence-card"
+        ]
+      },
+      "reason_if_failed": "You must provide a valid identity document",
+      "evidence_source": "identity-verified"
+    },
+    {
+      "id": "continuous-residence-five-years",
+      "description": "For settled status, applicant must have 5 years continuous residence (at least 6 months per year)",
+      "condition": {
+        "field": "continuous_residence_years",
+        "operator": ">=",
+        "value": 5
+      },
+      "reason_if_failed": "You do not have 5 years continuous residence. You may be eligible for pre-settled status instead.",
+      "evidence_source": "automated-residence-check"
+    },
+    {
+      "id": "not-serious-criminal",
+      "description": "Applicant must not have serious or repeated criminal convictions or pose security threat",
+      "condition": {
+        "field": "serious_criminality_or_security_threat",
+        "operator": "==",
+        "value": false
+      },
+      "reason_if_failed": "Your application cannot be granted due to serious criminality or security concerns",
+      "evidence_source": "police-national-computer",
+      "triggers_handoff": true
+    },
+    {
+      "id": "family-relationship-valid",
+      "description": "If applying as family member, relationship must have existed by 31 Dec 2020 and still exist (unless child born/adopted after)",
+      "condition": {
+        "field": "family_relationship_valid",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "Your family relationship does not meet the requirements for this scheme",
+      "evidence_source": "family-documents"
+    }
+  ],
+  "explanation_template": "EU Settlement Scheme eligibility: {outcome}. Status type: {status_type}",
+  "edge_cases": [
+    {
+      "id": "domestic-violence-victim",
+      "description": "Applicant is a victim of domestic violence or abuse in relationship with EU/EEA/Swiss national",
+      "detection": "domestic_violence_declared",
+      "action": "May be eligible for settled status without 5 years continuous residence. Route to specialist caseworker for assessment. Supporting evidence from domestic violence organisation required."
+    },
+    {
+      "id": "permanent-incapacity",
+      "description": "Applicant had to stop working due to accident, illness or occupational disease",
+      "detection": "permanent_incapacity_declared",
+      "action": "May be eligible for settled status with less than 5 years residence. Medical evidence and proof of work-related accident or occupational disease pension required."
+    },
+    {
+      "id": "child-in-education",
+      "description": "Applicant is child of EU/EEA/Swiss national who worked in UK and left, and child is in education",
+      "detection": "child_in_education_of_former_worker",
+      "action": "Special eligibility rules apply. Parent is also eligible. Evidence of parent's former work and current education enrollment required. Cannot use online service - contact Resolution Centre."
+    },
+    {
+      "id": "primary-carer-british-citizen",
+      "description": "Applicant is primary carer of British citizen (Zambrano case)",
+      "detection": "zambrano_primary_carer",
+      "action": "Limited eligibility - must have entered UK with specific EU Settlement Scheme family permit. Cannot use online service. Contact Resolution Centre for specialist application form."
+    },
+    {
+      "id": "eligible-person-northern-ireland",
+      "description": "Applicant is family member of eligible person of Northern Ireland with compelling reasons they could not return by deadline",
+      "detection": "northern_ireland_family_member",
+      "action": "Different eligibility pathway. Must prove family member born in NI with qualifying parent citizenship. Evidence of compelling practical/compassionate reasons required."
+    },
+    {
+      "id": "child-application-late",
+      "description": "Parent/guardian failed to apply for child by deadline",
+      "detection": "child_late_application_parental_failure",
+      "action": "Child may have reasonable grounds for late application even if parent does not. Assess child's circumstances separately. Social services involvement may be required."
+    },
+    {
+      "id": "indefinite-leave-holder",
+      "description": "Applicant already has ILE/ILR since before 31 Dec 2020",
+      "detection": "existing_ile_ilr",
+      "action": "Not required to apply but can choose to. If granted, will get settled status with 5-year (not 2-year) absence allowance. Advantageous for frequent travellers."
+    },
+    {
+      "id": "exempt-from-immigration-control",
+      "description": "Applicant is/was exempt from immigration control (diplomat, NATO member)",
+      "detection": "immigration_control_exempt",
+      "action": "Can apply at any time. Family members can apply regardless of exemption status. Privileges and immunities may change if settled status granted."
+    },
+    {
+      "id": "covid-extended-absence",
+      "description": "Applicant was outside UK for more than 6-12 months due to COVID-19",
+      "detection": "covid_extended_absence",
+      "action": "May not break continuous residence if absence was COVID-related. Evidence of COVID impact on travel or circumstances required. Each case assessed individually."
+    }
+  ]
+}

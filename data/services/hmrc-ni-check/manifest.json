@@ -1,0 +1,19 @@
+{
+  "id": "hmrc-ni-check",
+  "version": "1.0.0",
+  "name": "Check & top up NI record",
+  "description": "Check for gaps before retiring. Voluntary contributions can fill missing years.",
+  "department": "HMRC",
+  "input_schema": {
+    "type": "object"
+  },
+  "output_schema": {
+    "type": "object"
+  },
+  "source": "graph",
+  "serviceType": "entitlement",
+  "govuk_url": "https://www.gov.uk/check-national-insurance-record",
+  "eligibility_summary": "Anyone can check their NI record online for free via their Personal Tax Account. Gaps can be filled with voluntary Class 3 contributions. Critical to do before retirement.",
+  "proactive": true,
+  "gated": false
+}

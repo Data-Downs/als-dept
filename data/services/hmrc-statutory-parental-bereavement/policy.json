@@ -1,0 +1,164 @@
+{
+  "id": "hmrc.statutory-parental-bereavement.eligibility",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "child-age-or-stillbirth",
+      "description": "Child must have been under 18 at time of death, or a stillbirth after 24 weeks of pregnancy",
+      "condition": {
+        "field": "child_age_or_stillbirth_weeks",
+        "operator": "<=",
+        "value": 18
+      },
+      "reason_if_failed": "This benefit is only available for children under 18 or stillbirths after 24 weeks of pregnancy",
+      "evidence_source": "death-certificate-or-stillbirth-certificate"
+    },
+    {
+      "id": "within-56-weeks",
+      "description": "Leave or pay must be taken/claimed within 56 weeks of the date of death or stillbirth",
+      "condition": {
+        "field": "weeks_since_death",
+        "operator": "<=",
+        "value": 56
+      },
+      "reason_if_failed": "You must claim within 56 weeks of the date of death or stillbirth",
+      "evidence_source": "death-certificate-date"
+    },
+    {
+      "id": "relationship-to-child",
+      "description": "Applicant must be the child's parent, parent's partner, or had day-to-day responsibility for the child",
+      "condition": {
+        "field": "relationship_type",
+        "operator": "in",
+        "value": [
+          "biological-parent",
+          "adoptive-parent",
+          "surrogate-parent",
+          "parent-partner",
+          "day-to-day-carer"
+        ]
+      },
+      "reason_if_failed": "You must be the child's parent, the partner of the parent, or have had day-to-day responsibility for the child",
+      "evidence_source": "citizen-declaration"
+    },
+    {
+      "id": "employee-status-leave",
+      "description": "Applicant must be classed as an employee (for leave entitlement)",
+      "condition": {
+        "field": "employment_status",
+        "operator": "==",
+        "value": "employee"
+      },
+      "reason_if_failed": "You must be an employee to qualify for Parental Bereavement Leave",
+      "evidence_source": "employer-confirmation"
+    },
+    {
+      "id": "continuous-employment-pay",
+      "description": "For pay, applicant must have been continuously employed for at least 26 weeks up to the end of the relevant week",
+      "condition": {
+        "field": "weeks_employed",
+        "operator": ">=",
+        "value": 26
+      },
+      "reason_if_failed": "You must have been employed for at least 26 weeks to qualify for Statutory Parental Bereavement Pay (you may still be eligible for leave)",
+      "evidence_source": "employer-paye-records"
+    },
+    {
+      "id": "minimum-earnings-pay",
+      "description": "For pay, applicant must earn on average £125 per week before tax",
+      "condition": {
+        "field": "average_weekly_earnings",
+        "operator": ">=",
+        "value": 125
+      },
+      "reason_if_failed": "You must earn at least £125 per week on average to qualify for Statutory Parental Bereavement Pay (you may still be eligible for leave)",
+      "evidence_source": "employer-paye-records"
+    },
+    {
+      "id": "still-employed-at-death",
+      "description": "For pay, applicant must be employed on the day of death or stillbirth",
+      "condition": {
+        "field": "employed_on_death_date",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "You must have been employed on the day of the death or stillbirth to qualify for pay",
+      "evidence_source": "employer-confirmation"
+    },
+    {
+      "id": "notice-given-leave",
+      "description": "Applicant must give employer correct notice for leave (varies by timing)",
+      "condition": {
+        "field": "notice_given_for_leave",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "You must give your employer the required notice before taking leave",
+      "evidence_source": "citizen-confirmation"
+    },
+    {
+      "id": "notice-given-pay",
+      "description": "For pay, applicant must claim within 28 days of the first day of the week being claimed for",
+      "condition": {
+        "field": "pay_claim_within_28_days",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "You must claim Statutory Parental Bereavement Pay within 28 days of the first day of the week you're claiming for",
+      "evidence_source": "claim-date"
+    }
+  ],
+  "explanation_template": "Statutory Parental Bereavement eligibility: {outcome}. Leave eligibility: {leave_eligible}. Pay eligibility: {pay_eligible}.",
+  "edge_cases": [
+    {
+      "id": "day-to-day-responsibility-4-weeks",
+      "description": "For day-to-day carers, child must have lived with applicant for 4 continuous weeks before death",
+      "detection": "relationship_type == 'day-to-day-carer'",
+      "action": "Verify that child lived with applicant for 4 continuous weeks ending with date of death, and applicant/partner had day-to-day care responsibility. If paid to look after child, only eligible if foster parent with local authority fee/allowance."
+    },
+    {
+      "id": "paid-carer-not-eligible",
+      "description": "Paid carers are generally not eligible unless foster parent or receiving expense reimbursement",
+      "detection": "paid_to_care == true",
+      "action": "Check if applicant is: (1) foster parent with local authority fee/allowance, (2) reimbursed for expenses only, or (3) receiving payments under will/trust. Otherwise, not eligible."
+    },
+    {
+      "id": "adoption-order-timing",
+      "description": "Adoptive parents eligible after order granted, or before if placement not disrupted",
+      "detection": "relationship_type == 'adoptive-parent'",
+      "action": "Verify adoption order granted or that child was placed and placement was not disrupted/stopped. If international adoption, verify 'official notification' received and child entered UK."
+    },
+    {
+      "id": "biological-parent-after-adoption",
+      "description": "Biological parents not eligible after adoption/parental order unless contact order in place",
+      "detection": "biological_parent_after_adoption == true",
+      "action": "Check if contact order was in place. If not, not eligible. Route to bereavement support services."
+    },
+    {
+      "id": "surrogate-parental-order",
+      "description": "Parents via surrogate eligible after parental order made, or before if applied/intended within 6 months",
+      "detection": "relationship_type == 'surrogate-parent'",
+      "action": "Verify parental order granted OR that applicant applied/intended to apply within 6 months of birth and expected order to be granted."
+    },
+    {
+      "id": "interaction-other-statutory-leave",
+      "description": "If taking other statutory leave (maternity, paternity, shared parental), Parental Bereavement Leave must start after that leave ends",
+      "detection": "on_other_statutory_leave == true",
+      "action": "Confirm dates of other statutory leave. Parental Bereavement Leave must start after other leave ends, but still within 56 weeks of death/stillbirth. Provide guidance on booking leave after other leave period."
+    },
+    {
+      "id": "stillbirth-less-than-24-weeks",
+      "description": "Stillbirths before 24 weeks of pregnancy are not covered by this scheme",
+      "detection": "stillbirth_weeks < 24",
+      "action": "Not eligible for this scheme. Route to employer's own bereavement policy and external bereavement support services.",
+      "triggers_handoff": true
+    },
+    {
+      "id": "parent-in-household-day-to-day-carer",
+      "description": "Day-to-day carer not eligible if child's parent or someone with parental responsibility lived in same household",
+      "detection": "parent_in_same_household == true && relationship_type == 'day-to-day-carer'",
+      "action": "Not eligible as a day-to-day carer if parent or person with parental responsibility also lived in household. Check if eligible under different relationship type.",
+      "triggers_handoff": true
+    }
+  ]
+}

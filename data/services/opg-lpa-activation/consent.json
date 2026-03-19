@@ -1,0 +1,73 @@
+{
+  "id": "opg.lpa-activation.consent",
+  "version": "1.0.0",
+  "grants": [
+    {
+      "id": "attorney-identity-verification",
+      "description": "Verify your identity as a registered attorney on the LPA",
+      "data_shared": [
+        "full_name",
+        "date_of_birth",
+        "address",
+        "attorney_reference_number"
+      ],
+      "source": "one-login",
+      "purpose": "To confirm you are a registered attorney with authority to notify OPG of the donor's death",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "death-certificate-sharing",
+      "description": "Share the donor's death certificate with OPG",
+      "data_shared": [
+        "donor_full_name",
+        "date_of_death",
+        "place_of_death",
+        "death_certificate_number"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To confirm the donor has passed away and the LPA must be cancelled",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "lpa-document-return",
+      "description": "Return the original LPA document and certified copies to OPG",
+      "data_shared": [
+        "lpa_reference_number",
+        "original_document_location"
+      ],
+      "source": "citizen-provided",
+      "purpose": "OPG must receive the original LPA document to cancel it. The LPA will be destroyed unless you request its return.",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "return-address-sharing",
+      "description": "Provide a return address if you want the cancelled LPA sent back instead of destroyed",
+      "data_shared": [
+        "return_address_line_1",
+        "return_address_line_2",
+        "return_city",
+        "return_postcode"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To return the cancelled LPA document to you rather than destroying it",
+      "duration": "session",
+      "required": false
+    }
+  ],
+  "revocation": {
+    "mechanism": "Contact OPG by phone or post before documents are sent",
+    "effect": "Notification will be cancelled. You will remain responsible for notifying OPG of the donor's death."
+  },
+  "delegation": {
+    "agent_identity": "GOV.UK AI Agent",
+    "scopes": [
+      "read-attorney-records",
+      "verify-lpa-registration",
+      "submit-death-notification"
+    ],
+    "limitations": "Agent cannot physically send the original LPA document on your behalf. Agent cannot decide whether the LPA should be destroyed or returned. Agent cannot act if you are not a registered attorney on the LPA."
+  }
+}

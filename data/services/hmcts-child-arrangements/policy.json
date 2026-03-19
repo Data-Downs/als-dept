@@ -1,0 +1,87 @@
+{
+  "id": "hmcts.child-arrangements.eligibility",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "parental-responsibility",
+      "description": "Applicant must have parental responsibility for the child",
+      "condition": {
+        "field": "parental_responsibility",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "You must have parental responsibility to apply for a child arrangements order. This includes mothers, fathers with parental responsibility, or certain relatives.",
+      "evidence_source": "identity-verified"
+    },
+    {
+      "id": "miam-attended",
+      "description": "Applicant must have attended a MIAM unless exempt",
+      "condition": {
+        "field": "miam_completed_or_exempt",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "You must attend a Mediation Information and Assessment Meeting (MIAM) before applying to court, unless you qualify for an exemption.",
+      "evidence_source": "mediator-signed-form",
+      "alternative_service": "family-mediation-council.find-mediator"
+    },
+    {
+      "id": "child-in-uk",
+      "description": "Child must be habitually resident in England or Wales",
+      "condition": {
+        "field": "child_jurisdiction",
+        "operator": "in",
+        "value": [
+          "England",
+          "Wales"
+        ]
+      },
+      "reason_if_failed": "This service is for children habitually resident in England and Wales. Different rules apply in Scotland and Northern Ireland.",
+      "alternative_service": "scottish-courts.child-arrangements"
+    },
+    {
+      "id": "no-urgent-safeguarding",
+      "description": "Application is not an urgent safeguarding matter requiring immediate intervention",
+      "condition": {
+        "field": "urgent_safeguarding_concern",
+        "operator": "!=",
+        "value": true
+      },
+      "reason_if_failed": "This case requires immediate intervention. You should contact emergency services or social services.",
+      "triggers_handoff": true
+    }
+  ],
+  "explanation_template": "Child arrangements order eligibility: {outcome}",
+  "edge_cases": [
+    {
+      "id": "domestic-abuse",
+      "description": "Applicant has evidence of domestic abuse",
+      "detection": "domestic_abuse_evidence",
+      "action": "MIAM exemption granted. Application fast-tracked. Cafcass safeguarding checks required. Special measures may be available in court (e.g. separate waiting areas, screens)."
+    },
+    {
+      "id": "child-at-risk",
+      "description": "Child is at risk of harm or social services are involved",
+      "detection": "child_protection_involvement",
+      "action": "MIAM exemption granted. Immediate referral to Cafcass for safeguarding assessment. Court may order Section 37 investigation. Application prioritized."
+    },
+    {
+      "id": "international-element",
+      "description": "One parent lives overseas or child may be taken abroad",
+      "detection": "international_jurisdiction",
+      "action": "May require prohibited steps order to prevent removal from jurisdiction. Check Hague Convention applies. Consider urgent 'without notice' hearing."
+    },
+    {
+      "id": "parental-alienation",
+      "description": "Allegations of one parent turning child against the other",
+      "detection": "alienation_concerns",
+      "action": "Cafcass will conduct detailed assessment. Court may order psychological evaluation. Child-inclusive mediation recommended."
+    },
+    {
+      "id": "mental-health-concerns",
+      "description": "One or both parents have significant mental health issues affecting care",
+      "detection": "mental_health_concerns",
+      "action": "Cafcass assessment required. Court may request medical evidence. Specialist reports may be ordered."
+    }
+  ]
+}

@@ -1,0 +1,103 @@
+{
+  "id": "dwp-uc-health.consent",
+  "version": "1.0.0",
+  "grants": [
+    {
+      "id": "identity-verification",
+      "description": "Verify your identity against your existing Universal Credit claim",
+      "data_shared": [
+        "full_name",
+        "date_of_birth",
+        "national_insurance_number",
+        "uc_reference_number"
+      ],
+      "source": "dwp-uc-system",
+      "purpose": "To confirm you are an existing Universal Credit claimant and link this application to your claim",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "medical-records-access",
+      "description": "Allow DWP to request and review medical evidence from your GP or healthcare providers",
+      "data_shared": [
+        "medical_history",
+        "fit_notes",
+        "treatment_records",
+        "gp_correspondence",
+        "specialist_reports"
+      ],
+      "source": "nhs-gp-practice",
+      "purpose": "To gather evidence of your health condition for the Work Capability Assessment",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "wca-provider-sharing",
+      "description": "Share your information with the independent assessment provider (currently Maximus/IAS) for the Work Capability Assessment",
+      "data_shared": [
+        "personal_details",
+        "medical_evidence",
+        "assessment_questionnaire",
+        "uc_claim_details"
+      ],
+      "source": "dwp-and-citizen",
+      "purpose": "The assessment provider needs this information to conduct your Work Capability Assessment",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "assessment-attendance",
+      "description": "Consent to attend a Work Capability Assessment, which may be face-to-face, by telephone, or by video",
+      "data_shared": [
+        "health_condition_details",
+        "functional_ability",
+        "daily_living_impacts"
+      ],
+      "source": "citizen-in-assessment",
+      "purpose": "The healthcare professional needs to assess your capability for work through an assessment",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "decision-notification",
+      "description": "Allow DWP to notify you of the assessment outcome and any changes to your Universal Credit payment",
+      "data_shared": [
+        "assessment_outcome",
+        "lcwra_decision",
+        "payment_changes"
+      ],
+      "source": "dwp-decision-maker",
+      "purpose": "You will receive a decision letter explaining the outcome and your right to request mandatory reconsideration",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "ongoing-review",
+      "description": "Consent to periodic reviews of your health condition and work capability",
+      "data_shared": [
+        "updated_medical_evidence",
+        "condition_changes",
+        "functional_ability_changes"
+      ],
+      "source": "citizen-and-medical-providers",
+      "purpose": "Your LCWRA status may be reviewed periodically to ensure you continue to meet the criteria",
+      "duration": "until-revoked",
+      "required": true
+    }
+  ],
+  "revocation": {
+    "mechanism": "You can withdraw consent by contacting DWP through your Universal Credit account or calling the UC helpline. You can also refuse to attend an assessment.",
+    "effect": "Withdrawing consent or not attending your assessment will result in your LCWRA application being rejected. Your standard Universal Credit will continue but without the additional LCWRA element."
+  },
+  "delegation": {
+    "agent_identity": "GOV.UK AI Agent on behalf of Universal Credit claimant",
+    "scopes": [
+      "read-uc-claim-data",
+      "submit-medical-evidence",
+      "book-wca-appointment",
+      "request-reconsideration",
+      "read-decision-letters"
+    ],
+    "limitations": "Agent CANNOT attend the Work Capability Assessment on your behalf - you must attend in person or arrange an approved representative. Agent CANNOT sign mandatory reconsideration requests - you must provide your own signature. Agent CAN help you gather evidence, prepare for assessment, understand decisions, and submit supporting documents. Agent CANNOT provide medical opinions or diagnosis."
+  }
+}

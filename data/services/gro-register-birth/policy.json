@@ -1,0 +1,107 @@
+{
+  "id": "gro.register-birth.eligibility",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "jurisdiction",
+      "description": "Birth must have occurred in England or Wales",
+      "condition": {
+        "field": "birth_jurisdiction",
+        "operator": "in",
+        "value": [
+          "England",
+          "Wales"
+        ]
+      },
+      "reason_if_failed": "This service is for births in England and Wales only. Different rules apply for Scotland, Northern Ireland, and births abroad.",
+      "alternative_service": "nrs.register-birth-scotland",
+      "triggers_handoff": true
+    },
+    {
+      "id": "within-42-days",
+      "description": "Birth must be registered within 42 days",
+      "condition": {
+        "field": "days_since_birth",
+        "operator": "<=",
+        "value": 42
+      },
+      "reason_if_failed": "Late registrations (after 42 days) require a different process. You may need to provide additional evidence and speak to a superintendent registrar.",
+      "triggers_handoff": true
+    },
+    {
+      "id": "qualified-informant",
+      "description": "Person registering must be a qualified informant",
+      "condition": {
+        "field": "informant_type",
+        "operator": "in",
+        "value": [
+          "parent",
+          "person_present_at_birth",
+          "person_responsible",
+          "hospital_staff"
+        ]
+      },
+      "reason_if_failed": "You must be a parent, someone present at the birth, someone responsible for the child, or hospital administrative staff to register the birth.",
+      "evidence_source": "identity-verified"
+    },
+    {
+      "id": "has-identity-documents",
+      "description": "Informant must provide at least one form of acceptable identification",
+      "condition": {
+        "field": "identity_documents",
+        "operator": "exists"
+      },
+      "reason_if_failed": "You must bring at least one form of identification (passport, birth certificate, deed poll, driving licence, proof of address, Council Tax bill, or marriage/civil partnership certificate).",
+      "evidence_source": "identity-verified"
+    },
+    {
+      "id": "has-birth-information",
+      "description": "Informant must be able to provide required birth details",
+      "condition": {
+        "field": "has_birth_details",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "You need to know the place and date of birth, baby's name and sex, and parents' details to complete the registration."
+    }
+  ],
+  "explanation_template": "Birth registration eligibility: {outcome}",
+  "edge_cases": [
+    {
+      "id": "same-sex-male-couple",
+      "description": "Same-sex male couples must obtain a parental order from the court before registration",
+      "detection": "same_sex_male_couple",
+      "action": "Route to court services. You must apply for a parental order from the family court before you can be registered as parents."
+    },
+    {
+      "id": "unmarried-both-parents",
+      "description": "Unmarried parents wanting both names on certificate need statutory declaration or joint registration",
+      "detection": "unmarried_both_parents",
+      "action": "Explain options: (1) both parents attend together, (2) one parent brings signed statutory declaration from the other, (3) one parent brings court order giving father parental responsibility."
+    },
+    {
+      "id": "surrogacy",
+      "description": "Births involving surrogacy may require parental order from court",
+      "detection": "surrogacy_arrangement",
+      "action": "Route to legal advice. Surrogacy arrangements may require a parental order from the court before registration."
+    },
+    {
+      "id": "parents-unable-to-attend",
+      "description": "Parents unable to register due to medical or other serious reasons",
+      "detection": "parents_unavailable",
+      "action": "Confirm alternative qualified informant is present. Hospital staff or person present at birth may register instead."
+    },
+    {
+      "id": "late-registration",
+      "description": "Registration attempted after 42 days",
+      "detection": "days_since_birth_gt_42",
+      "action": "Route to superintendent registrar. Late registrations require additional evidence and may incur penalties."
+    },
+    {
+      "id": "birth-abroad",
+      "description": "Birth occurred outside England and Wales",
+      "detection": "birth_outside_jurisdiction",
+      "action": "Route to appropriate service (Scotland, Northern Ireland, or overseas registration service)."
+    }
+  ]
+}

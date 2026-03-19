@@ -1,0 +1,120 @@
+{
+  "id": "dwp.bereavement-support.states",
+  "version": "1.0.0",
+  "states": [
+    {
+      "id": "not-started",
+      "type": "initial"
+    },
+    {
+      "id": "identity-verified"
+    },
+    {
+      "id": "eligibility-checked"
+    },
+    {
+      "id": "consent-given"
+    },
+    {
+      "id": "details-submitted"
+    },
+    {
+      "id": "ni-record-assessment"
+    },
+    {
+      "id": "rate-determination"
+    },
+    {
+      "id": "decision",
+      "receipt": true
+    },
+    {
+      "id": "payment-setup"
+    },
+    {
+      "id": "completed",
+      "type": "terminal",
+      "receipt": true
+    },
+    {
+      "id": "rejected",
+      "type": "terminal",
+      "receipt": true
+    },
+    {
+      "id": "handed-off",
+      "type": "terminal",
+      "receipt": true
+    }
+  ],
+  "transitions": [
+    {
+      "from": "not-started",
+      "to": "identity-verified",
+      "trigger": "verify-identity"
+    },
+    {
+      "from": "identity-verified",
+      "to": "eligibility-checked",
+      "trigger": "check-eligibility"
+    },
+    {
+      "from": "eligibility-checked",
+      "to": "consent-given",
+      "trigger": "grant-consent",
+      "condition": "eligible"
+    },
+    {
+      "from": "eligibility-checked",
+      "to": "rejected",
+      "trigger": "reject",
+      "condition": "not-eligible"
+    },
+    {
+      "from": "eligibility-checked",
+      "to": "handed-off",
+      "trigger": "handoff",
+      "condition": "edge-case"
+    },
+    {
+      "from": "consent-given",
+      "to": "details-submitted",
+      "trigger": "submit-details"
+    },
+    {
+      "from": "details-submitted",
+      "to": "ni-record-assessment",
+      "trigger": "begin-ni-check"
+    },
+    {
+      "from": "ni-record-assessment",
+      "to": "rate-determination",
+      "trigger": "ni-sufficient"
+    },
+    {
+      "from": "ni-record-assessment",
+      "to": "rejected",
+      "trigger": "ni-insufficient"
+    },
+    {
+      "from": "rate-determination",
+      "to": "decision",
+      "trigger": "determine-rate"
+    },
+    {
+      "from": "decision",
+      "to": "payment-setup",
+      "trigger": "approve"
+    },
+    {
+      "from": "decision",
+      "to": "rejected",
+      "trigger": "reject-application"
+    },
+    {
+      "from": "payment-setup",
+      "to": "completed",
+      "trigger": "payments-begin"
+    }
+  ]
+}

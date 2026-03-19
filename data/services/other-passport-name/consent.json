@@ -1,0 +1,118 @@
+{
+  "id": "hmpo.other-passport-name.consent",
+  "version": "1.0.0",
+  "grants": [
+    {
+      "id": "identity-verification",
+      "description": "Verify your identity using your GOV.UK One Login credentials",
+      "data_shared": [
+        "full_name",
+        "previous_name",
+        "date_of_birth",
+        "address_line_1",
+        "address_line_2",
+        "city",
+        "postcode",
+        "national_insurance_number"
+      ],
+      "source": "one-login",
+      "purpose": "To confirm your identity and current details before processing your passport name change",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "existing-passport-details",
+      "description": "Share your current passport details and history with HMPO",
+      "data_shared": [
+        "passport_number",
+        "issue_date",
+        "expiry_date",
+        "passport_photo",
+        "previous_passport_numbers"
+      ],
+      "source": "hmpo-records",
+      "purpose": "To validate your existing passport and link it to your new application",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "name-change-evidence",
+      "description": "Upload your marriage certificate, civil partnership certificate, or deed poll as evidence of name change",
+      "data_shared": [
+        "marriage_certificate",
+        "new_legal_name",
+        "name_change_date",
+        "supporting_document_images"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To verify your legal name change and update passport records accordingly",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "digital-photo",
+      "description": "Provide a digital photo that meets passport photo requirements for your new passport",
+      "data_shared": [
+        "digital_photograph",
+        "photo_metadata"
+      ],
+      "source": "citizen-provided",
+      "purpose": "Your photo will be printed on your new passport card",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "payment-information",
+      "description": "Process your payment for the passport name change application",
+      "data_shared": [
+        "payment_card_last_4_digits",
+        "payment_amount",
+        "transaction_reference"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To process the £94.50 fee for online applications (£107 for paper applications)",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "foreign-passports",
+      "description": "Share copies of any valid foreign passports you hold",
+      "data_shared": [
+        "foreign_passport_copies",
+        "foreign_passport_numbers",
+        "issuing_countries"
+      ],
+      "source": "citizen-provided",
+      "purpose": "UK law requires disclosure of foreign nationality status for passport applications",
+      "duration": "until-revoked",
+      "required": false
+    },
+    {
+      "id": "video-interview",
+      "description": "Participate in a video interview if required for identity verification",
+      "data_shared": [
+        "video_interview_recording",
+        "identity_verification_responses",
+        "interview_timestamp"
+      ],
+      "source": "citizen-provided",
+      "purpose": "Some applications require a video interview to confirm identity and prevent fraud",
+      "duration": "until-revoked",
+      "required": false
+    }
+  ],
+  "revocation": {
+    "mechanism": "Contact HMPO Passport Adviceline or revoke through your GOV.UK account before submission",
+    "effect": "Application will be cancelled and payment refunded if consent is revoked before final submission. After submission, withdrawal may not be possible and fees may not be refunded."
+  },
+  "delegation": {
+    "agent_identity": "GOV.UK AI Agent",
+    "scopes": [
+      "read-personal-data",
+      "verify-eligibility",
+      "upload-documents",
+      "submit-to-hmpo"
+    ],
+    "limitations": "Agent cannot make payment on your behalf. Agent cannot upload your photo without your explicit approval. Agent cannot complete video interview on your behalf. Agent cannot sign the declaration confirming accuracy of information - you must do this yourself."
+  }
+}

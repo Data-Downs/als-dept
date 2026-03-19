@@ -1,0 +1,151 @@
+{
+  "id": "dwp.pension-credit.consent",
+  "version": "1.0.0",
+  "grants": [
+    {
+      "id": "identity-verification",
+      "description": "Verify your identity using your GOV.UK One Login credentials",
+      "data_shared": [
+        "full_name",
+        "date_of_birth",
+        "national_insurance_number",
+        "address"
+      ],
+      "source": "one-login",
+      "purpose": "To confirm your identity and check you have reached State Pension age before processing your Pension Credit application",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "state-pension-data",
+      "description": "Share your State Pension entitlement and payment information with DWP",
+      "data_shared": [
+        "state_pension_amount",
+        "state_pension_start_date",
+        "deferred_pension_status"
+      ],
+      "source": "dwp-state-pension",
+      "purpose": "To calculate your total income and determine your Pension Credit entitlement",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "other-benefits-data",
+      "description": "Share information about other benefits you receive",
+      "data_shared": [
+        "benefit_types",
+        "benefit_amounts",
+        "disability_benefits",
+        "carers_allowance"
+      ],
+      "source": "dwp-benefits-system",
+      "purpose": "To calculate your total income and determine if you qualify for extra Pension Credit amounts",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "income-declaration",
+      "description": "Declare all sources of income including pensions, employment and self-employment",
+      "data_shared": [
+        "occupational_pensions",
+        "private_pensions",
+        "employment_income",
+        "self_employment_income",
+        "foreign_pensions",
+        "other_income"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To calculate your total weekly income and determine your Pension Credit top-up amount",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "savings-investments-declaration",
+      "description": "Declare your savings, investments and property holdings",
+      "data_shared": [
+        "savings_amount",
+        "investments_value",
+        "property_ownership",
+        "capital_assets"
+      ],
+      "source": "citizen-provided",
+      "purpose": "Savings over £10,000 count as income (£1 per week for every £500 over £10,000)",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "household-composition",
+      "description": "Declare partner status and household members including children and young people",
+      "data_shared": [
+        "partner_details",
+        "partner_income",
+        "children_in_household",
+        "young_persons_in_household",
+        "other_residents"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To determine if you should apply as a single person or couple, and if you qualify for extra amounts for children or young people",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "housing-costs",
+      "description": "Declare housing costs including ground rent, service charges and site rents",
+      "data_shared": [
+        "property_tenure",
+        "ground_rent",
+        "service_charges",
+        "site_rents"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To determine if you qualify for extra Pension Credit amounts to help with housing costs",
+      "duration": "until-revoked",
+      "required": false
+    },
+    {
+      "id": "bank-account-details",
+      "description": "Provide bank account details for Pension Credit payments",
+      "data_shared": [
+        "bank_name",
+        "account_holder_name",
+        "sort_code",
+        "account_number"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To pay your Pension Credit into your bank account",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "ongoing-circumstances-monitoring",
+      "description": "Allow DWP to monitor changes to your circumstances through data sharing with HMRC, local councils and other government departments",
+      "data_shared": [
+        "employment_status",
+        "benefit_changes",
+        "housing_benefit_status",
+        "council_tax_reduction_status"
+      ],
+      "source": "hmrc-dwp-local-authorities",
+      "purpose": "To keep your Pension Credit award up to date and identify if you become entitled to more or less",
+      "duration": "until-revoked",
+      "required": true
+    }
+  ],
+  "revocation": {
+    "mechanism": "Contact Pension Service helpline on 0800 731 0469 or write to the address on your Pension Credit award letter",
+    "effect": "Your Pension Credit application will be cancelled if consent is revoked before a decision is made. If revoked after award, your Pension Credit payments will stop and you will need to make a new claim."
+  },
+  "delegation": {
+    "agent_identity": "GOV.UK AI Agent acting on behalf of citizen",
+    "scopes": [
+      "read-personal-data",
+      "read-benefits-data",
+      "read-pension-data",
+      "submit-to-dwp",
+      "declare-income",
+      "declare-savings",
+      "declare-circumstances"
+    ],
+    "limitations": "Agent cannot make decisions about whether to defer pensions. Agent cannot provide bank account details without explicit citizen confirmation. Agent cannot confirm address changes without citizen verification. Agent must handoff to human for: complex partner situations (partner under State Pension age), care home residents (over 4 weeks), EU settlement status issues, Assessed Income Period (AIP) queries, temporary absence from Great Britain, or applications requiring backdating beyond 3 months."
+  }
+}

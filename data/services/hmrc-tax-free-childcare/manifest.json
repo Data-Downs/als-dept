@@ -1,0 +1,19 @@
+{
+  "id": "hmrc-tax-free-childcare",
+  "version": "1.0.0",
+  "name": "Tax-Free Childcare account",
+  "description": "Government tops up by 25p per £1 saved (max £500/quarter). Cannot use alongside UC childcare element.",
+  "department": "HMRC",
+  "input_schema": {
+    "type": "object"
+  },
+  "output_schema": {
+    "type": "object"
+  },
+  "source": "graph",
+  "serviceType": "entitlement",
+  "govuk_url": "https://www.gov.uk/tax-free-childcare",
+  "eligibility_summary": "For every £8 a parent pays into their account, the government adds £2 (up to £500 per child per quarter, or £1,000 if disabled). Must be in work and earning at least NMW for 16 hours.",
+  "proactive": true,
+  "gated": false
+}

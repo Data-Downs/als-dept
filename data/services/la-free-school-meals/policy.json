@@ -1,0 +1,86 @@
+{
+  "id": "la.free-school-meals.eligibility",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "child-at-state-school",
+      "description": "Child must attend a government-funded school",
+      "condition": {
+        "field": "school_type",
+        "operator": "==",
+        "value": "state-funded"
+      },
+      "reason_if_failed": "Free school meals are only available for children at government-funded schools. Contact your school directly if they offer their own support.",
+      "evidence_source": "school-register"
+    },
+    {
+      "id": "qualifying-benefit",
+      "description": "Parent/guardian must receive a qualifying benefit OR child receives benefit directly",
+      "condition": {
+        "field": "qualifying_benefit",
+        "operator": "in",
+        "value": [
+          "income-support",
+          "jsa-income-based",
+          "esa-income-related",
+          "immigration-asylum-support",
+          "pension-credit-guaranteed",
+          "child-tax-credit-only",
+          "working-tax-credit-run-on",
+          "universal-credit"
+        ]
+      },
+      "reason_if_failed": "You must be receiving a qualifying benefit to apply for free school meals. Check the full list on GOV.UK.",
+      "evidence_source": "dwp-benefits-data"
+    },
+    {
+      "id": "universal-credit-income-threshold",
+      "description": "If on Universal Credit (applied after 1 April 2018), household income must be under £7,400/year",
+      "condition": {
+        "field": "uc_annual_net_income",
+        "operator": "<=",
+        "value": 7400
+      },
+      "reason_if_failed": "Your Universal Credit household income is above the £7,400 annual threshold",
+      "evidence_source": "dwp-uc-income-data"
+    },
+    {
+      "id": "child-tax-credit-conditions",
+      "description": "If on Child Tax Credit, must not have Working Tax Credit and income under £16,190",
+      "condition": {
+        "field": "ctc_annual_gross_income",
+        "operator": "<=",
+        "value": 16190
+      },
+      "reason_if_failed": "Your annual gross income exceeds £16,190 or you are also receiving Working Tax Credit",
+      "evidence_source": "hmrc-tax-credits-data"
+    }
+  ],
+  "explanation_template": "Free school meals eligibility: {outcome}. {reason}",
+  "edge_cases": [
+    {
+      "id": "infant-free-school-meals",
+      "description": "Children in reception, year 1, or year 2 receive free school meals automatically",
+      "detection": "year_group in ['reception', 'year-1', 'year-2']",
+      "action": "Auto-approve for infant free school meals. Encourage registration if on qualifying benefits to unlock Pupil Premium funding for school."
+    },
+    {
+      "id": "no-recourse-public-funds",
+      "description": "Families with no recourse to public funds may still be eligible under local authority discretion",
+      "detection": "immigration_status == 'nrpf'",
+      "action": "Route to local authority case worker for manual assessment. Child may still qualify under local policy."
+    },
+    {
+      "id": "child-receives-benefit-directly",
+      "description": "Child receives qualifying benefit directly (not through parent/guardian)",
+      "detection": "benefit_claimant == 'child'",
+      "action": "Verify child's benefit status directly with DWP. May require additional safeguarding checks."
+    },
+    {
+      "id": "care-leaver",
+      "description": "Child is a care leaver or under local authority care",
+      "detection": "care_status in ['looked-after', 'care-leaver']",
+      "action": "Fast-track approval. Coordinate with local authority children's services for ongoing support."
+    }
+  ]
+}

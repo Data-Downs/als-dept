@@ -1,0 +1,19 @@
+{
+  "id": "dvsa-driving-test",
+  "version": "1.0.0",
+  "name": "Driving Test (practical)",
+  "description": "Must pass theory test first. £62 weekday / £75 evening & weekend. Grants full licence on pass.",
+  "department": "DVSA",
+  "input_schema": {
+    "type": "object"
+  },
+  "output_schema": {
+    "type": "object"
+  },
+  "source": "graph",
+  "serviceType": "application",
+  "govuk_url": "https://www.gov.uk/book-driving-test",
+  "eligibility_summary": "Must pass the theory test before the practical driving test can be booked. Costs £62 (weekday) or £75 (evening/weekend/bank holiday). On passing, the provisional licence is automatically upgraded to a full driving licence.",
+  "proactive": true,
+  "gated": true
+}

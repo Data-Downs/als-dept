@@ -1,0 +1,98 @@
+{
+  "id": "dwp-ni-number.eligibility",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "uk-residency",
+      "description": "Applicant must live in the UK",
+      "condition": {
+        "field": "lives_in_uk",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "You must live in the UK to apply for a National Insurance number",
+      "evidence_source": "address-confirmation"
+    },
+    {
+      "id": "right-to-work",
+      "description": "Applicant must have the right to work in the UK",
+      "condition": {
+        "field": "right_to_work_uk",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "You must have the right to work in the UK to get a National Insurance number",
+      "evidence_source": "identity-documents",
+      "triggers_handoff": true
+    },
+    {
+      "id": "employment-status",
+      "description": "Applicant must be working, looking for work, or have a job offer",
+      "condition": {
+        "field": "employment_status",
+        "operator": "in",
+        "value": [
+          "employed",
+          "seeking_work",
+          "job_offer"
+        ]
+      },
+      "reason_if_failed": "You must be working, looking for work, or have an offer to start work to apply for a National Insurance number",
+      "evidence_source": "citizen-provided"
+    },
+    {
+      "id": "minimum-age",
+      "description": "Applicant must be at least 16 years old",
+      "condition": {
+        "field": "age",
+        "operator": ">=",
+        "value": 16
+      },
+      "reason_if_failed": "You must be at least 16 years old to apply for a National Insurance number. UK residents under 16 are automatically sent a NI number before their 16th birthday if Child Benefit was claimed.",
+      "evidence_source": "identity-verified"
+    },
+    {
+      "id": "no-existing-number",
+      "description": "Applicant must not already have a National Insurance number",
+      "condition": {
+        "field": "existing_ni_number",
+        "operator": "not-exists"
+      },
+      "reason_if_failed": "Our records show you already have a National Insurance number. You do not need to apply for a new one.",
+      "alternative_service": "gov.find-ni-number"
+    }
+  ],
+  "explanation_template": "National Insurance number application eligibility: {outcome}",
+  "edge_cases": [
+    {
+      "id": "under-16",
+      "description": "Applicant is under 16 years old",
+      "detection": "age < 16",
+      "action": "Reject application. UK residents are automatically sent a NI number before their 16th birthday if Child Benefit was claimed for them."
+    },
+    {
+      "id": "aged-16-19-might-have-number",
+      "description": "Applicant is aged 16-19 and may already have a NI number from Child Benefit",
+      "detection": "age >= 16 AND age <= 19",
+      "action": "Prompt to check if they already have a NI number before proceeding. Direct to find NI number service."
+    },
+    {
+      "id": "brp-evisa-holder",
+      "description": "Applicant has a biometric residence permit or eVisa",
+      "detection": "has_brp OR has_evisa",
+      "action": "Prompt to check BRP card or UKVI account for existing NI number before applying."
+    },
+    {
+      "id": "cannot-upload-documents",
+      "description": "Applicant cannot take or upload photos of identity documents",
+      "detection": "document_upload_capability == false",
+      "action": "Application will proceed but may require postal verification or in-person appointment. Processing time extended to more than 4 weeks."
+    },
+    {
+      "id": "no-identity-documents",
+      "description": "Applicant has no passport or national identity card",
+      "detection": "no_passport AND no_national_id",
+      "action": "Route to in-person identity verification appointment. Contact helpline for guidance."
+    }
+  ]
+}

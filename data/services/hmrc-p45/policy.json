@@ -1,0 +1,75 @@
+{
+  "id": "hmrc.p45.eligibility",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "employment-record-exists",
+      "description": "Applicant must have a record of employment with HMRC",
+      "condition": {
+        "field": "paye_employment_record",
+        "operator": "exists"
+      },
+      "reason_if_failed": "No employment record found. You can only request a P45 if you were employed and paid through PAYE.",
+      "evidence_source": "hmrc-paye-system"
+    },
+    {
+      "id": "employment-ended",
+      "description": "Employment must have ended (leaving date recorded)",
+      "condition": {
+        "field": "employment_end_date",
+        "operator": "exists"
+      },
+      "reason_if_failed": "Your employment appears to be ongoing. A P45 is only issued when you leave a job.",
+      "evidence_source": "hmrc-paye-system"
+    },
+    {
+      "id": "p45-not-issued",
+      "description": "P45 must not have already been issued by the employer",
+      "condition": {
+        "field": "p45_issued_flag",
+        "operator": "!=",
+        "value": true
+      },
+      "reason_if_failed": "Our records show your employer has already issued your P45. Contact your employer if you have not received it.",
+      "alternative_service": "hmrc.contact-employer-support"
+    },
+    {
+      "id": "within-valid-timeframe",
+      "description": "Request must be within 4 years of leaving employment",
+      "condition": {
+        "field": "months_since_leaving",
+        "operator": "<=",
+        "value": 48
+      },
+      "reason_if_failed": "You can only request P45 information for the last 4 tax years. For older records, contact HMRC.",
+      "triggers_handoff": true
+    }
+  ],
+  "explanation_template": "P45 request eligibility: {outcome}",
+  "edge_cases": [
+    {
+      "id": "employer-ceased-trading",
+      "description": "Employer is no longer trading or has entered administration",
+      "detection": "employer_status == 'ceased' OR employer_status == 'insolvent'",
+      "action": "Route to HMRC specialist team. P45 information will be generated from PAYE records without employer involvement."
+    },
+    {
+      "id": "employment-dispute",
+      "description": "Dispute about employment dates or whether employment ended",
+      "detection": "disputed_dates OR employment_tribunal_reference",
+      "action": "Route to HMRC compliance team. May require evidence of employment termination (redundancy letter, resignation acceptance, etc.)."
+    },
+    {
+      "id": "multiple-employments",
+      "description": "Applicant has multiple concurrent employments in the tax year",
+      "detection": "concurrent_employments > 1",
+      "action": "Clarify which employment the P45 request relates to. Each employment generates a separate P45."
+    },
+    {
+      "id": "employer-non-compliant",
+      "description": "Employer has history of not issuing P45s or PAYE non-compliance",
+      "detection": "employer_compliance_flag == 'poor'",
+      "action": "HMRC will issue P45 information directly and may investigate employer for PAYE compliance."
+    }
+  ]
+}

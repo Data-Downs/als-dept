@@ -1,0 +1,93 @@
+{
+  "id": "gro.register-birth.states",
+  "version": "1.0.0",
+  "states": [
+    {
+      "id": "not-started",
+      "type": "initial"
+    },
+    {
+      "id": "identity-verified"
+    },
+    {
+      "id": "eligibility-checked"
+    },
+    {
+      "id": "consent-given"
+    },
+    {
+      "id": "birth-details-submitted"
+    },
+    {
+      "id": "parent-details-submitted"
+    },
+    {
+      "id": "certificate-selected"
+    },
+    {
+      "id": "registered",
+      "type": "terminal",
+      "receipt": true
+    },
+    {
+      "id": "rejected",
+      "type": "terminal",
+      "receipt": true
+    },
+    {
+      "id": "handed-off",
+      "type": "terminal",
+      "receipt": true
+    }
+  ],
+  "transitions": [
+    {
+      "from": "not-started",
+      "to": "identity-verified",
+      "trigger": "verify-identity"
+    },
+    {
+      "from": "identity-verified",
+      "to": "eligibility-checked",
+      "trigger": "check-eligibility"
+    },
+    {
+      "from": "eligibility-checked",
+      "to": "consent-given",
+      "trigger": "grant-consent",
+      "condition": "eligible"
+    },
+    {
+      "from": "eligibility-checked",
+      "to": "rejected",
+      "trigger": "reject",
+      "condition": "not-eligible"
+    },
+    {
+      "from": "eligibility-checked",
+      "to": "handed-off",
+      "trigger": "handoff",
+      "condition": "edge-case"
+    },
+    {
+      "from": "consent-given",
+      "to": "birth-details-submitted",
+      "trigger": "submit-birth-details"
+    },
+    {
+      "from": "birth-details-submitted",
+      "to": "parent-details-submitted",
+      "trigger": "submit-parent-details"
+    },
+    {
+      "from": "parent-details-submitted",
+      "to": "certificate-selected",
+      "trigger": "select-certificate"
+    },
+    {
+      "from": "certificate-selected",
+      "to": "registered",
+      "trigger": "confirm-registration"
+    }
+  ]
+}

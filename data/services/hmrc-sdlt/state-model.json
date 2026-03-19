@@ -1,0 +1,105 @@
+{
+  "id": "hmrc-sdlt.states",
+  "version": "1.0.0",
+  "states": [
+    {
+      "id": "not-started",
+      "type": "initial"
+    },
+    {
+      "id": "identity-verified"
+    },
+    {
+      "id": "eligibility-checked"
+    },
+    {
+      "id": "consent-given"
+    },
+    {
+      "id": "property-details-confirmed"
+    },
+    {
+      "id": "liability-calculated",
+      "receipt": true
+    },
+    {
+      "id": "return-submitted",
+      "receipt": true
+    },
+    {
+      "id": "payment-made",
+      "receipt": true
+    },
+    {
+      "id": "completed",
+      "type": "terminal",
+      "receipt": true
+    },
+    {
+      "id": "zero-liability-completed",
+      "type": "terminal",
+      "receipt": true
+    },
+    {
+      "id": "handed-off",
+      "type": "terminal",
+      "receipt": true
+    }
+  ],
+  "transitions": [
+    {
+      "from": "not-started",
+      "to": "identity-verified",
+      "trigger": "verify-identity"
+    },
+    {
+      "from": "identity-verified",
+      "to": "eligibility-checked",
+      "trigger": "check-eligibility"
+    },
+    {
+      "from": "eligibility-checked",
+      "to": "consent-given",
+      "trigger": "grant-consent",
+      "condition": "eligible"
+    },
+    {
+      "from": "eligibility-checked",
+      "to": "handed-off",
+      "trigger": "handoff",
+      "condition": "not-eligible OR late-filing OR complex-case"
+    },
+    {
+      "from": "consent-given",
+      "to": "property-details-confirmed",
+      "trigger": "confirm-property-details"
+    },
+    {
+      "from": "property-details-confirmed",
+      "to": "liability-calculated",
+      "trigger": "calculate-liability"
+    },
+    {
+      "from": "liability-calculated",
+      "to": "return-submitted",
+      "trigger": "submit-return"
+    },
+    {
+      "from": "return-submitted",
+      "to": "payment-made",
+      "trigger": "make-payment",
+      "condition": "sdlt-due > 0"
+    },
+    {
+      "from": "return-submitted",
+      "to": "zero-liability-completed",
+      "trigger": "complete",
+      "condition": "sdlt-due == 0"
+    },
+    {
+      "from": "payment-made",
+      "to": "completed",
+      "trigger": "complete"
+    }
+  ]
+}

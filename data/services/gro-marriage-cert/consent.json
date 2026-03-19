@@ -1,0 +1,88 @@
+{
+  "id": "gro.marriage-cert.consent",
+  "version": "1.0.0",
+  "grants": [
+    {
+      "id": "identity-verification",
+      "description": "Verify your identity to access the GRO ordering service",
+      "data_shared": [
+        "full_name",
+        "email_address",
+        "account_credentials"
+      ],
+      "source": "gro-account",
+      "purpose": "To register on the GRO website and track your certificate order",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "marriage-record-access",
+      "description": "Search the GRO marriage and civil partnership register for the specified event",
+      "data_shared": [
+        "marriage_date",
+        "names_of_parties",
+        "place_of_marriage",
+        "gro_reference_number"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To locate the correct marriage or civil partnership record in the GRO register",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "payment-processing",
+      "description": "Process payment for the certificate (£12.50 standard or £38.50 priority)",
+      "data_shared": [
+        "card_number",
+        "expiry_date",
+        "cardholder_name",
+        "billing_address"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To collect payment for the certificate and any search fees (£3.50 extra if no GRO reference)",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "delivery-address-confirmation",
+      "description": "Provide delivery address for the certificate to be posted",
+      "data_shared": [
+        "delivery_name",
+        "address_line_1",
+        "address_line_2",
+        "city",
+        "postcode",
+        "country"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To dispatch the certificate to your specified address (4 days standard, next day priority if ordered by 4pm)",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "certificate-dispatch",
+      "description": "Share delivery address with Royal Mail or courier for certificate dispatch",
+      "data_shared": [
+        "delivery_name",
+        "full_delivery_address"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To enable Royal Mail or courier to deliver the physical certificate to your address",
+      "duration": "until-revoked",
+      "required": true
+    }
+  ],
+  "revocation": {
+    "mechanism": "Contact GRO on 0300 123 1837 or email before certificate dispatch",
+    "effect": "Order will be cancelled and refund issued if certificate has not yet been dispatched. No refund after dispatch."
+  },
+  "delegation": {
+    "agent_identity": "GOV.UK AI Agent",
+    "scopes": [
+      "read-marriage-details",
+      "search-gro-register",
+      "submit-order"
+    ],
+    "limitations": "Agent cannot make payment on your behalf without explicit authorization. Agent cannot change delivery address without your confirmation. Agent cannot access the physical certificate once issued. Agent cannot request corrections to the register - this requires handoff to GRO staff."
+  }
+}

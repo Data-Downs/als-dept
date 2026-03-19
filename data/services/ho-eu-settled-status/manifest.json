@@ -1,0 +1,19 @@
+{
+  "id": "ho-eu-settled-status",
+  "version": "1.0.0",
+  "name": "EU Settlement Scheme (Settled / Pre-Settled Status)",
+  "description": "For EU/EEA/Swiss nationals who lived in the UK before 31 December 2020. Grants the right to continue living and working in the UK.",
+  "department": "Home Office",
+  "input_schema": {
+    "type": "object"
+  },
+  "output_schema": {
+    "type": "object"
+  },
+  "source": "graph",
+  "serviceType": "application",
+  "govuk_url": "https://www.gov.uk/settled-status-eu-citizens-families",
+  "eligibility_summary": "EU, EEA and Swiss nationals who were living in the UK before 31 December 2020 can apply for settled status (if they have lived in the UK for 5+ continuous years) or pre-settled status (less than 5 years). Applications are free. A separate Brexit-specific route to the right to remain.",
+  "proactive": true,
+  "gated": false
+}

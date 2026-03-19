@@ -1,0 +1,91 @@
+{
+  "id": "gro.marriage-cert.eligibility",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "england-wales-jurisdiction",
+      "description": "Marriage or civil partnership must be registered in England or Wales",
+      "condition": {
+        "field": "registration_jurisdiction",
+        "operator": "in",
+        "value": [
+          "England",
+          "Wales"
+        ]
+      },
+      "reason_if_failed": "This service is for marriages and civil partnerships registered in England and Wales only",
+      "evidence_source": "citizen-provided",
+      "alternative_service": "scotland: nrscotland.gov.uk | northern-ireland: nidirect.gov.uk",
+      "triggers_handoff": true
+    },
+    {
+      "id": "valid-registration-date",
+      "description": "Marriage must be registered after July 1837 (start of civil registration)",
+      "condition": {
+        "field": "marriage_date",
+        "operator": ">=",
+        "value": "1837-07-01"
+      },
+      "reason_if_failed": "Civil registration began in July 1837. Earlier marriages are not in the GRO register",
+      "evidence_source": "citizen-provided"
+    },
+    {
+      "id": "sufficient-details-or-reference",
+      "description": "Applicant must provide either a GRO index reference number OR full marriage details",
+      "condition": {
+        "field": "has_gro_reference_or_full_details",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "You need either the GRO index reference number or the full details (names, date, location) of the marriage",
+      "evidence_source": "citizen-provided"
+    },
+    {
+      "id": "delivery-address-provided",
+      "description": "Valid delivery address must be provided for certificate dispatch",
+      "condition": {
+        "field": "delivery_address",
+        "operator": "exists"
+      },
+      "reason_if_failed": "A delivery address is required to post the certificate",
+      "evidence_source": "citizen-provided"
+    },
+    {
+      "id": "payment-method-available",
+      "description": "Valid payment method required (debit or credit card)",
+      "condition": {
+        "field": "payment_method",
+        "operator": "exists"
+      },
+      "reason_if_failed": "Payment by debit or credit card is required. Certificates cost £12.50 (standard) or £38.50 (priority)",
+      "evidence_source": "citizen-provided"
+    }
+  ],
+  "explanation_template": "Marriage certificate eligibility: {outcome}. Certificate cost: {price}. Dispatch: {dispatch_time}",
+  "edge_cases": [
+    {
+      "id": "overseas-registration",
+      "description": "Marriage or civil partnership registered abroad with FCDO Overseas Registration Unit",
+      "detection": "registration_jurisdiction == 'overseas' OR registered_with == 'fcdo'",
+      "action": "Hand off to FCDO Overseas Registration Unit. Email overseas.registrationunit@fcdo.gov.uk. Cost typically £50 plus courier fees. Not available from GRO until November of following year."
+    },
+    {
+      "id": "recent-marriage",
+      "description": "Marriage registered very recently (less than 5 working days ago)",
+      "detection": "days_since_marriage < 5",
+      "action": "Advise that recent registrations may not yet be in the GRO system. Recommend waiting a few more days or contacting the local register office where the marriage took place."
+    },
+    {
+      "id": "correction-needed",
+      "description": "Applicant believes there is an error in the registered details",
+      "detection": "correction_requested == true",
+      "action": "Hand off to GRO corrections service. Contact GRO on 0300 123 1837. Corrections must be made before ordering certificate."
+    },
+    {
+      "id": "non-party-applicant",
+      "description": "Applicant is not one of the parties to the marriage/civil partnership",
+      "detection": "applicant_role == 'researcher' OR applicant_role == 'third-party'",
+      "action": "Proceed with order. Anyone can order a marriage or civil partnership certificate for family tree research. No special authorization needed for marriages (unlike birth certificates)."
+    }
+  ]
+}

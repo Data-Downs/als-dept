@@ -1,0 +1,115 @@
+{
+  "id": "other-dbs.eligibility",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "employer-eligible",
+      "description": "Employer must be registered with DBS or using an umbrella body",
+      "condition": {
+        "field": "employer_registration_status",
+        "operator": "in",
+        "value": [
+          "registered-with-dbs",
+          "using-umbrella-body"
+        ]
+      },
+      "reason_if_failed": "You must register with DBS or use an umbrella body to request checks",
+      "evidence_source": "employer-provided"
+    },
+    {
+      "id": "uk-jurisdiction",
+      "description": "Check must be for England or Wales",
+      "condition": {
+        "field": "jurisdiction",
+        "operator": "in",
+        "value": [
+          "England",
+          "Wales"
+        ]
+      },
+      "reason_if_failed": "DBS checks only cover England and Wales. Use Disclosure Scotland or AccessNI for other UK nations.",
+      "alternative_service": "disclosure-scotland"
+    },
+    {
+      "id": "basic-check-eligible",
+      "description": "Basic checks are available for any role",
+      "condition": {
+        "field": "check_type",
+        "operator": "==",
+        "value": "basic"
+      },
+      "reason_if_failed": "N/A - always passes for basic checks"
+    },
+    {
+      "id": "standard-check-eligible",
+      "description": "Standard checks require specified eligible roles",
+      "condition": {
+        "field": "role_eligible_for_standard",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "This role is not eligible for a standard DBS check. You may only request a basic check.",
+      "evidence_source": "role-description"
+    },
+    {
+      "id": "enhanced-check-eligible",
+      "description": "Enhanced checks require roles involving children or vulnerable adults",
+      "condition": {
+        "field": "role_involves_vulnerable_groups",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "Enhanced checks are only for roles involving work with children or vulnerable adults",
+      "evidence_source": "role-description"
+    },
+    {
+      "id": "employee-identity-verified",
+      "description": "Employee must provide valid identity documents",
+      "condition": {
+        "field": "identity_documents_provided",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "Employee must provide valid identity documents as specified in DBS guidance",
+      "evidence_source": "identity-documents"
+    },
+    {
+      "id": "not-self-employed-personal",
+      "description": "Self-employed or personal employees must request their own checks",
+      "condition": {
+        "field": "employment_type",
+        "operator": "!=",
+        "value": "self-employed-personal"
+      },
+      "reason_if_failed": "For self-employed or personal employees, the individual must request their own DBS check",
+      "triggers_handoff": true
+    }
+  ],
+  "explanation_template": "DBS check eligibility: {outcome}",
+  "edge_cases": [
+    {
+      "id": "lived-abroad",
+      "description": "Employee lived abroad and DBS check won't cover foreign time",
+      "detection": "lived_abroad",
+      "action": "Advise employer that DBS check only covers UK records. Employer must check criminal records in the country where employee lived."
+    },
+    {
+      "id": "childminder-ofsted",
+      "description": "Childminders can get checks through Ofsted",
+      "detection": "role_type == childminder",
+      "action": "Redirect to Ofsted for childminder-specific DBS check process"
+    },
+    {
+      "id": "volunteer-free",
+      "description": "Volunteers are eligible for free DBS checks",
+      "detection": "employment_type == volunteer",
+      "action": "Apply volunteer pricing (£0.00) instead of standard fees"
+    },
+    {
+      "id": "adult-first-carer",
+      "description": "Care service employers can use DBS Adult First for faster initial clearance",
+      "detection": "care_service_provider && check_type == enhanced",
+      "action": "Offer DBS Adult First service (additional £6) for supervised work clearance within 2 days"
+    }
+  ]
+}

@@ -1,0 +1,75 @@
+{
+  "id": "other-right-to-work.consent",
+  "version": "1.0.0",
+  "grants": [
+    {
+      "id": "employer-identity-verification",
+      "description": "Verify your identity as a legitimate employer authorized to conduct right to work checks",
+      "data_shared": [
+        "employer_name",
+        "business_registration_number",
+        "business_address"
+      ],
+      "source": "employer-provided",
+      "purpose": "To ensure only authorized employers can verify right to work and to maintain audit trail",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "applicant-right-to-work-check",
+      "description": "Share applicant's right to work status with employer via Home Office online service",
+      "data_shared": [
+        "full_name",
+        "date_of_birth",
+        "nationality",
+        "immigration_status",
+        "work_permissions",
+        "visa_expiry_date"
+      ],
+      "source": "home-office",
+      "purpose": "To verify the applicant has the legal right to work in the UK for the employer",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "document-verification",
+      "description": "Copy and retain applicant's right to work documents",
+      "data_shared": [
+        "passport_details",
+        "visa_details",
+        "biometric_residence_permit_number",
+        "national_insurance_number"
+      ],
+      "source": "applicant-provided",
+      "purpose": "To maintain evidence of right to work check as required by law and protect against civil penalties",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "record-retention",
+      "description": "Store copies of documents and check records for duration of employment plus 2 years",
+      "data_shared": [
+        "document_copies",
+        "check_date",
+        "verification_outcome"
+      ],
+      "source": "check-process",
+      "purpose": "Legal requirement to maintain audit trail and demonstrate compliance with right to work legislation",
+      "duration": "until-revoked",
+      "required": true
+    }
+  ],
+  "revocation": {
+    "mechanism": "Employer must delete records after 2 years post-employment. Applicant can request Home Office to revoke share code access.",
+    "effect": "Employer loses statutory excuse if records are not kept for required duration. Revoked share codes cannot be used for verification."
+  },
+  "delegation": {
+    "agent_identity": "GOV.UK AI Agent",
+    "scopes": [
+      "read-share-code",
+      "submit-verification-request",
+      "record-check-date"
+    ],
+    "limitations": "Agent cannot make final hiring decision. Agent cannot override document verification failures. Agent cannot access Home Office systems directly - only through approved share code mechanism. Agent must flag edge cases requiring human review (e.g., Certificate of Application, pre-1989 arrivals)."
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "id": "hmrc-carers-credit",
+  "version": "1.0.0",
+  "name": "Carer's Credit",
+  "description": "National Insurance credits to protect State Pension while caring. For those not claiming Carer's Allowance.",
+  "department": "HMRC",
+  "input_schema": {
+    "type": "object"
+  },
+  "output_schema": {
+    "type": "object"
+  },
+  "source": "graph",
+  "serviceType": "entitlement",
+  "govuk_url": "https://www.gov.uk/carers-credit",
+  "eligibility_summary": "Fills gaps in your NI record while you are caring (20+ hours/week) but not receiving Carer's Allowance. Protects your future State Pension entitlement.",
+  "proactive": true,
+  "gated": true
+}

@@ -1,0 +1,19 @@
+{
+  "id": "nhs-free-prescriptions",
+  "version": "1.0.0",
+  "name": "Free prescriptions (disability)",
+  "description": "Prepayment certificate at £111/year. Free if on qualifying benefit or certain conditions.",
+  "department": "NHS",
+  "input_schema": {
+    "type": "object"
+  },
+  "output_schema": {
+    "type": "object"
+  },
+  "source": "graph",
+  "serviceType": "entitlement",
+  "govuk_url": "https://www.gov.uk/get-free-prescriptions-on-the-nhs",
+  "eligibility_summary": "Free NHS prescriptions if receiving PIP, DLA, ESA, or on UC with certain health conditions, or if diagnosed with a qualifying medical condition (e.g. diabetes, epilepsy, thyroid conditions).",
+  "proactive": true,
+  "gated": true
+}

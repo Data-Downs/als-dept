@@ -1,0 +1,101 @@
+{
+  "id": "hmrc-mtd.eligibility",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "vat-registered",
+      "description": "Business is VAT-registered (for VAT MTD)",
+      "condition": {
+        "field": "vat_registration_number",
+        "operator": "exists"
+      },
+      "reason_if_failed": "VAT MTD is mandatory for VAT-registered businesses only. If you're not VAT-registered, you don't need to enrol for VAT MTD.",
+      "evidence_source": "hmrc-records"
+    },
+    {
+      "id": "vat-threshold",
+      "description": "Turnover is above VAT threshold (£85,000)",
+      "condition": {
+        "field": "annual_turnover",
+        "operator": ">=",
+        "value": 85000
+      },
+      "reason_if_failed": "Your turnover is below the VAT threshold. VAT MTD only applies if you are VAT-registered.",
+      "evidence_source": "hmrc-records"
+    },
+    {
+      "id": "income-tax-qualifying",
+      "description": "Self-employed or landlord with income over £50,000 (for Income Tax MTD from April 2026)",
+      "condition": {
+        "field": "qualifying_income",
+        "operator": ">=",
+        "value": 50000
+      },
+      "reason_if_failed": "Income Tax MTD applies to self-employed individuals and landlords with annual income over £50,000 from April 2026.",
+      "evidence_source": "self-assessment-records"
+    },
+    {
+      "id": "has-compatible-software",
+      "description": "Must use or intend to use MTD-compatible software",
+      "condition": {
+        "field": "software_declaration",
+        "operator": "==",
+        "value": "confirmed"
+      },
+      "reason_if_failed": "You must use MTD-compatible software to keep digital records and submit returns. Choose software before enrolling.",
+      "alternative_service": "hmrc.software-providers-list"
+    },
+    {
+      "id": "uk-tax-resident",
+      "description": "Must be a UK tax resident or have UK tax obligations",
+      "condition": {
+        "field": "tax_residency",
+        "operator": "in",
+        "value": [
+          "UK",
+          "UK-obligations"
+        ]
+      },
+      "reason_if_failed": "MTD applies to UK tax residents and those with UK tax obligations.",
+      "triggers_handoff": true
+    },
+    {
+      "id": "not-exempt",
+      "description": "Not digitally exempt or excluded from MTD",
+      "condition": {
+        "field": "exemption_status",
+        "operator": "!=",
+        "value": "exempt"
+      },
+      "reason_if_failed": "You may be exempt from MTD. Contact HMRC to discuss your circumstances.",
+      "triggers_handoff": true
+    }
+  ],
+  "explanation_template": "Making Tax Digital eligibility: {outcome}. {vat_mtd_status} {income_tax_mtd_status}",
+  "edge_cases": [
+    {
+      "id": "digital-exclusion",
+      "description": "Person cannot use digital services due to age, disability, or location",
+      "detection": "digital_exclusion_declared",
+      "action": "Route to HMRC exemption application. May be able to use alternative methods or get support."
+    },
+    {
+      "id": "partnership",
+      "description": "Business is a partnership with complex structure",
+      "detection": "partnership_structure",
+      "action": "Each partner may need to enrol separately. Route to partnership MTD guidance."
+    },
+    {
+      "id": "multiple-businesses",
+      "description": "Individual has multiple self-employed businesses or properties",
+      "detection": "multiple_income_sources",
+      "action": "All qualifying businesses/properties must be included in MTD. May need accountant support."
+    },
+    {
+      "id": "overseas-element",
+      "description": "Business has overseas trading or tax obligations outside UK",
+      "detection": "overseas_trading",
+      "action": "Complex tax situation. Route to HMRC helpline for guidance on international MTD requirements."
+    }
+  ]
+}

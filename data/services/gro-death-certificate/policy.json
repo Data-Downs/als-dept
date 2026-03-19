@@ -1,0 +1,71 @@
+{
+  "id": "gro.death-certificate.eligibility",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "death-registered",
+      "description": "Death must have been registered before certificates can be ordered",
+      "condition": {
+        "field": "death_registration_status",
+        "operator": "==",
+        "value": "registered"
+      },
+      "reason_if_failed": "The death must be registered before you can order a certificate. Register the death first.",
+      "alternative_service": "gro.register-death"
+    },
+    {
+      "id": "england-wales-jurisdiction",
+      "description": "Death must have been registered in England or Wales for GRO to issue certificate",
+      "condition": {
+        "field": "death_registration_jurisdiction",
+        "operator": "in",
+        "value": [
+          "England",
+          "Wales"
+        ]
+      },
+      "reason_if_failed": "This service is for deaths registered in England and Wales only",
+      "alternative_service": "nrs.death-certificate-scotland",
+      "triggers_handoff": true
+    },
+    {
+      "id": "overseas-registration-timing",
+      "description": "Overseas deaths registered with FCDO cannot be ordered from GRO until November of following year",
+      "condition": {
+        "field": "overseas_registration_embargo",
+        "operator": "!=",
+        "value": true
+      },
+      "reason_if_failed": "This death was registered overseas. You cannot order from GRO until November of next year.",
+      "alternative_service": "fcdo.overseas-registration-unit",
+      "triggers_handoff": true
+    }
+  ],
+  "explanation_template": "Death certificate order eligibility: {outcome}",
+  "edge_cases": [
+    {
+      "id": "no-gro-reference",
+      "description": "Applicant does not have the GRO index reference number",
+      "detection": "missing_gro_reference",
+      "action": "Add £3.50 search fee per certificate. Processing time extended to 15 working days."
+    },
+    {
+      "id": "very-recent-death",
+      "description": "Death registered within last few days (record may not be in GRO system yet)",
+      "detection": "registration_date_recent",
+      "action": "Advise to order from local register office instead for faster processing."
+    },
+    {
+      "id": "bulk-order",
+      "description": "Ordering large quantity of certificates for probate or estate administration",
+      "detection": "quantity_over_10",
+      "action": "Confirm quantity needed. Each certificate costs £12.50. Consider priority service if urgent for probate."
+    },
+    {
+      "id": "name-discrepancy",
+      "description": "Name on death record does not match search query exactly",
+      "detection": "name_mismatch",
+      "action": "Hand off to GRO search service. May require additional verification or local register office contact."
+    }
+  ]
+}

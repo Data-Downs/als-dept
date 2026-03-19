@@ -1,0 +1,19 @@
+{
+  "id": "lr-registration",
+  "version": "1.0.0",
+  "name": "Land Registry registration (AP1)",
+  "description": "Register new ownership. Solicitor handles. Required for mortgage to complete.",
+  "department": "Land Registry",
+  "input_schema": {
+    "type": "object"
+  },
+  "output_schema": {
+    "type": "object"
+  },
+  "source": "graph",
+  "serviceType": "obligation",
+  "govuk_url": "https://www.gov.uk/registering-land-or-property-with-land-registry",
+  "eligibility_summary": "All property purchases in England and Wales must be registered at HM Land Registry. Usually handled by the solicitor/conveyancer. Priority period starts when the application is received — must be submitted promptly after completion.",
+  "proactive": true,
+  "gated": true
+}

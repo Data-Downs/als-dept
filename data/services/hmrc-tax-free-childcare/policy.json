@@ -1,0 +1,261 @@
+{
+  "id": "hmrc.tax-free-childcare.eligibility",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "child-age-standard",
+      "description": "Child must be under 11 years old (before September after 11th birthday)",
+      "condition": {
+        "field": "child_age",
+        "operator": "<=",
+        "value": 11
+      },
+      "reason_if_failed": "Your child is only eligible until the September after they turn 11",
+      "evidence_source": "birth-certificate"
+    },
+    {
+      "id": "child-age-disabled",
+      "description": "Disabled child must be under 16 years old (before September after 16th birthday)",
+      "condition": {
+        "field": "child_age_if_disabled",
+        "operator": "<=",
+        "value": 16
+      },
+      "reason_if_failed": "Your disabled child is only eligible until the September after they turn 16",
+      "evidence_source": "birth-certificate"
+    },
+    {
+      "id": "child-lives-with-applicant",
+      "description": "Child must usually live with the applicant",
+      "condition": {
+        "field": "child_usually_lives_with_applicant",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "Your child must usually live with you to be eligible"
+    },
+    {
+      "id": "not-foster-child",
+      "description": "Cannot claim for foster children",
+      "condition": {
+        "field": "child_is_fostered",
+        "operator": "!=",
+        "value": true
+      },
+      "reason_if_failed": "You cannot claim Tax-Free Childcare for a foster child. Check if you're eligible for Free Childcare for Working Parents instead.",
+      "alternative_service": "hmrc.free-childcare-working-parents"
+    },
+    {
+      "id": "applicant-working",
+      "description": "Applicant must be working, on leave, or starting work",
+      "condition": {
+        "field": "applicant_work_status",
+        "operator": "in",
+        "value": [
+          "employed",
+          "self-employed",
+          "sick-leave",
+          "annual-leave",
+          "maternity-leave",
+          "paternity-leave",
+          "adoption-leave",
+          "shared-parental-leave",
+          "starting-work"
+        ]
+      },
+      "reason_if_failed": "You must be in work or returning to work to be eligible",
+      "evidence_source": "hmrc-paye-records"
+    },
+    {
+      "id": "applicant-minimum-income",
+      "description": "Applicant must earn at least National Minimum Wage for 16 hours per week over next 3 months",
+      "condition": {
+        "field": "applicant_quarterly_income",
+        "operator": ">=",
+        "value": "age_based_threshold"
+      },
+      "reason_if_failed": "You must expect to earn at least the equivalent of National Minimum Wage for 16 hours a week. This is £2,539.68 per quarter if you're 21+, £2,080 if 18-20, or £1,570.40 if under 18 or an apprentice.",
+      "evidence_source": "hmrc-paye-records"
+    },
+    {
+      "id": "applicant-maximum-income",
+      "description": "Applicant's adjusted net income must not exceed £100,000",
+      "condition": {
+        "field": "applicant_adjusted_net_income",
+        "operator": "<=",
+        "value": 100000
+      },
+      "reason_if_failed": "You cannot get Tax-Free Childcare if your adjusted net income is over £100,000 for the current tax year",
+      "evidence_source": "hmrc-self-assessment"
+    },
+    {
+      "id": "partner-working",
+      "description": "Partner (if applicable) must be working, on leave, starting work, or receiving specific benefits",
+      "condition": {
+        "field": "partner_work_status",
+        "operator": "in",
+        "value": [
+          "employed",
+          "self-employed",
+          "sick-leave",
+          "annual-leave",
+          "maternity-leave",
+          "paternity-leave",
+          "adoption-leave",
+          "shared-parental-leave",
+          "starting-work",
+          "on-qualifying-benefit",
+          "not-applicable"
+        ]
+      },
+      "reason_if_failed": "Your partner must also be working or receiving Incapacity Benefit, Severe Disablement Allowance, Carer's Allowance/Support Payment, or contribution-based ESA",
+      "evidence_source": "hmrc-paye-records"
+    },
+    {
+      "id": "partner-minimum-income",
+      "description": "Partner (if applicable) must earn at least National Minimum Wage for 16 hours per week",
+      "condition": {
+        "field": "partner_quarterly_income",
+        "operator": ">=",
+        "value": "age_based_threshold"
+      },
+      "reason_if_failed": "Your partner must also expect to earn at least the equivalent of National Minimum Wage for 16 hours a week",
+      "evidence_source": "hmrc-paye-records"
+    },
+    {
+      "id": "partner-maximum-income",
+      "description": "Partner's adjusted net income must not exceed £100,000",
+      "condition": {
+        "field": "partner_adjusted_net_income",
+        "operator": "<=",
+        "value": 100000
+      },
+      "reason_if_failed": "You cannot get Tax-Free Childcare if your partner's adjusted net income is over £100,000 for the current tax year",
+      "evidence_source": "hmrc-self-assessment"
+    },
+    {
+      "id": "has-national-insurance",
+      "description": "Applicant must have a National Insurance number",
+      "condition": {
+        "field": "applicant_national_insurance_number",
+        "operator": "exists"
+      },
+      "reason_if_failed": "You must have a National Insurance number to apply"
+    },
+    {
+      "id": "immigration-status",
+      "description": "Applicant must have British/Irish citizenship, settled/pre-settled status, or permission to access public funds",
+      "condition": {
+        "field": "applicant_immigration_status",
+        "operator": "in",
+        "value": [
+          "british-citizen",
+          "irish-citizen",
+          "settled-status",
+          "pre-settled-status",
+          "public-funds-permitted",
+          "frontier-worker"
+        ]
+      },
+      "reason_if_failed": "You must be a British or Irish citizen, have settled or pre-settled status, or have permission to access public funds",
+      "evidence_source": "identity-verified"
+    },
+    {
+      "id": "not-claiming-universal-credit-childcare",
+      "description": "Cannot claim Tax-Free Childcare while receiving Universal Credit childcare element",
+      "condition": {
+        "field": "receives_universal_credit_childcare",
+        "operator": "!=",
+        "value": true
+      },
+      "reason_if_failed": "You cannot get Tax-Free Childcare at the same time as claiming Universal Credit childcare element. Use the childcare calculator to see which is best for you.",
+      "alternative_service": "universal-credit.childcare-costs",
+      "triggers_handoff": true
+    },
+    {
+      "id": "not-receiving-childcare-vouchers",
+      "description": "Cannot claim Tax-Free Childcare while receiving childcare vouchers or directly contracted childcare",
+      "condition": {
+        "field": "receives_childcare_vouchers",
+        "operator": "!=",
+        "value": true
+      },
+      "reason_if_failed": "You cannot get Tax-Free Childcare at the same time as receiving childcare vouchers. You must tell your employer to stop them within 90 days of applying.",
+      "triggers_handoff": true
+    },
+    {
+      "id": "provider-registered",
+      "description": "Childcare provider must be registered/approved for the scheme",
+      "condition": {
+        "field": "provider_is_registered",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "Your childcare provider must be signed up to the Tax-Free Childcare scheme. Check with them before applying.",
+      "evidence_source": "citizen-provided"
+    }
+  ],
+  "explanation_template": "Tax-Free Childcare eligibility: {outcome}. Government will top up by £2 for every £8 you pay in (up to £500 per quarter per child, or £1,000 if disabled).",
+  "edge_cases": [
+    {
+      "id": "disabled-child",
+      "description": "Child is disabled (certified blind/severely sight-impaired or receives DLA/PIP/AFIP/CDP/ADP)",
+      "detection": "child_receives_disability_benefit",
+      "action": "Higher quarterly limit applies: £1,000 instead of £500. Can use extra money for specialist equipment. Eligible until September after 16th birthday."
+    },
+    {
+      "id": "self-employed-new-business",
+      "description": "Self-employed for less than 12 months",
+      "detection": "self_employment_duration_months < 12",
+      "action": "Minimum income requirement does not apply. Still eligible regardless of current earnings."
+    },
+    {
+      "id": "company-director",
+      "description": "Applicant or partner is a company director without regular PAYE",
+      "detection": "employment_type == 'company-director'",
+      "action": "May need to provide additional evidence of meeting minimum income: wage slips, bank statements, accountant statement, invoices, or annual payroll. Required at first application and each reconfirmation."
+    },
+    {
+      "id": "irregular-income",
+      "description": "Self-employed or irregular income patterns",
+      "detection": "irregular_income",
+      "action": "Can use average expected earnings over the full tax year instead of next 3 months. Example: £10,158.72 per year = £2,539.68 per quarter average."
+    },
+    {
+      "id": "separated-parents",
+      "description": "Parents are separated but jointly responsible for child",
+      "detection": "relationship_status == 'separated'",
+      "action": "Both parents must decide who applies. If cannot agree, both apply separately and HMRC will decide who gets the account. Only one parent can have an account per child."
+    },
+    {
+      "id": "eea-childcare-provider",
+      "description": "Childcare provider is based in an EEA country",
+      "detection": "provider_location == 'eea'",
+      "action": "Contact HMRC to check if provider is eligible. Special rules may apply."
+    },
+    {
+      "id": "frontier-worker",
+      "description": "Living in EU/Switzerland/Norway/Iceland/Liechtenstein but working in UK",
+      "detection": "immigration_status == 'frontier-worker'",
+      "action": "May still be eligible if work in UK started before 1 January 2021 and worked in UK at least once every 12 months since. Must show Frontier Worker permit when applying."
+    },
+    {
+      "id": "partner-absent-6-months",
+      "description": "Partner is or will be absent from household for more than 6 months, or is a prisoner",
+      "detection": "partner_absent_or_imprisoned",
+      "action": "Partner's employment and income will not affect eligibility. Apply as single parent."
+    },
+    {
+      "id": "no-childcare-vouchers-confirmation",
+      "description": "Applicant or partner receives childcare vouchers but wants to switch",
+      "detection": "receives_childcare_vouchers",
+      "action": "Must tell employer within 90 days of Tax-Free Childcare application to stop vouchers. May need to provide evidence to HMRC. Wait for Tax-Free Childcare decision before cancelling vouchers."
+    },
+    {
+      "id": "universal-credit-switch",
+      "description": "Currently claiming Universal Credit but wants to switch to Tax-Free Childcare",
+      "detection": "receives_universal_credit",
+      "action": "Wait until you get a decision on Tax-Free Childcare before cancelling Universal Credit claim. Use childcare calculator to check which is better for you."
+    }
+  ]
+}

@@ -1,0 +1,104 @@
+{
+  "id": "hmrc.marriage-allowance.eligibility",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "married-or-civil-partnership",
+      "description": "Applicant must be married or in a civil partnership",
+      "condition": {
+        "field": "relationship_status",
+        "operator": "in",
+        "value": [
+          "married",
+          "civil-partnership"
+        ]
+      },
+      "reason_if_failed": "You must be married or in a civil partnership to claim Marriage Allowance. You cannot claim if you're living together but not married or in a civil partnership.",
+      "evidence_source": "identity-verified"
+    },
+    {
+      "id": "applicant-income-below-allowance",
+      "description": "Applicant (lower earner) must have income below Personal Allowance",
+      "condition": {
+        "field": "applicant_income",
+        "operator": "<=",
+        "value": 12570
+      },
+      "reason_if_failed": "Your income must be below the Personal Allowance (£12,570) to transfer some of it to your partner.",
+      "evidence_source": "hmrc-tax-records"
+    },
+    {
+      "id": "partner-basic-rate-taxpayer",
+      "description": "Partner must pay Income Tax at basic rate (England/Wales/NI)",
+      "condition": {
+        "field": "partner_income",
+        "operator": ">=",
+        "value": 12571
+      },
+      "reason_if_failed": "Your partner's income must be at least £12,571 to benefit from Marriage Allowance.",
+      "evidence_source": "hmrc-tax-records"
+    },
+    {
+      "id": "partner-not-higher-rate",
+      "description": "Partner must not be a higher rate taxpayer (England/Wales/NI)",
+      "condition": {
+        "field": "partner_income",
+        "operator": "<=",
+        "value": 50270
+      },
+      "reason_if_failed": "Your partner's income is above £50,270, so they pay tax at the higher rate and cannot benefit from Marriage Allowance.",
+      "evidence_source": "hmrc-tax-records"
+    },
+    {
+      "id": "not-receiving-married-couples-allowance",
+      "description": "Cannot claim both Marriage Allowance and Married Couple's Allowance",
+      "condition": {
+        "field": "married_couples_allowance",
+        "operator": "!=",
+        "value": true
+      },
+      "reason_if_failed": "You cannot get Marriage Allowance and Married Couple's Allowance at the same time.",
+      "alternative_service": "hmrc.married-couples-allowance",
+      "triggers_handoff": true
+    }
+  ],
+  "explanation_template": "Marriage Allowance eligibility: {outcome}. You could save up to £252 per year as a couple.",
+  "edge_cases": [
+    {
+      "id": "born-before-1935",
+      "description": "Applicant or partner born before 6 April 1935",
+      "detection": "date_of_birth before 1935-04-06",
+      "action": "Route to Married Couple's Allowance assessment. This may provide greater benefit. Call Income Tax helpline on 0300 200 3300."
+    },
+    {
+      "id": "partner-deceased",
+      "description": "Partner has died since 5 April 2021",
+      "detection": "partner_deceased == true AND partner_death_date >= 2021-04-05",
+      "action": "Can still claim. Phone Income Tax helpline on 0300 200 3300 to process claim."
+    },
+    {
+      "id": "self-assessment-user",
+      "description": "Applicant or partner is registered for Self Assessment",
+      "detection": "self_assessment == true",
+      "action": "Different application process. Complete Marriage Allowance section on Self Assessment return. Lower earner files at least 3 days before higher earner."
+    },
+    {
+      "id": "scottish-resident",
+      "description": "Partner is a Scottish resident (different income thresholds)",
+      "detection": "partner_jurisdiction == 'Scotland'",
+      "action": "Apply Scottish thresholds: partner income must be between £12,571 and £43,662 (starter, basic or intermediate rate)."
+    },
+    {
+      "id": "other-income-sources",
+      "description": "Applicant or partner receives dividends, savings interest, or benefits from employment",
+      "detection": "other_income_sources == true",
+      "action": "Complex income calculation required. Call Income Tax helpline on 0300 200 3300 to confirm eligibility."
+    },
+    {
+      "id": "living-abroad",
+      "description": "Applicant or partner lives abroad",
+      "detection": "jurisdiction == 'abroad'",
+      "action": "Eligible if you still receive a Personal Allowance. Verify eligibility before proceeding."
+    }
+  ]
+}

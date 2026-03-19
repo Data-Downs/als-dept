@@ -1,0 +1,130 @@
+{
+  "id": "opg-lpa.consent",
+  "version": "1.0.0",
+  "grants": [
+    {
+      "id": "identity-verification",
+      "description": "Verify your identity using your GOV.UK One Login credentials or other identity documents",
+      "data_shared": [
+        "full_name",
+        "date_of_birth",
+        "address",
+        "national_insurance_number"
+      ],
+      "source": "one-login",
+      "purpose": "To confirm your identity and verify you have mental capacity to make this legal decision",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "attorney-details-collection",
+      "description": "Provide details about your chosen attorney(s) including their identity and contact information",
+      "data_shared": [
+        "attorney_full_name",
+        "attorney_date_of_birth",
+        "attorney_address",
+        "attorney_relationship",
+        "decision_making_authority"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To appoint your attorney(s) and specify how they can make decisions on your behalf",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "certificate-provider-verification",
+      "description": "Certificate provider confirms you understand what you're doing and are making the LPA by choice",
+      "data_shared": [
+        "certificate_provider_name",
+        "certificate_provider_signature",
+        "certificate_provider_confirmation"
+      ],
+      "source": "certificate-provider",
+      "purpose": "Independent verification that you have mental capacity and are not being coerced",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "witness-signatures",
+      "description": "Witnesses confirm the signatures on the LPA forms are genuine",
+      "data_shared": [
+        "witness_name",
+        "witness_address",
+        "witness_signature"
+      ],
+      "source": "witness",
+      "purpose": "To authenticate the signatures on the legal document",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "people-to-notify",
+      "description": "Notify people you have chosen who will be informed when you apply to register the LPA",
+      "data_shared": [
+        "notified_person_name",
+        "notified_person_address"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To allow specified people to raise concerns about the LPA during the 3-week notification period",
+      "duration": "session",
+      "required": false
+    },
+    {
+      "id": "opg-registration",
+      "description": "Share your completed LPA with the Office of the Public Guardian for registration and oversight",
+      "data_shared": [
+        "full_lpa_document",
+        "donor_details",
+        "attorney_details",
+        "preferences_and_instructions"
+      ],
+      "source": "opg-lpa-service",
+      "purpose": "To register your LPA so it becomes legally binding and can be used by your attorneys",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "financial-institution-sharing",
+      "description": "If making a property and financial affairs LPA, share attorney authority with banks and financial institutions",
+      "data_shared": [
+        "lpa_reference_number",
+        "attorney_details",
+        "scope_of_authority"
+      ],
+      "source": "opg-register",
+      "purpose": "To enable your attorney(s) to access and manage your financial accounts and property",
+      "duration": "until-revoked",
+      "required": false
+    },
+    {
+      "id": "healthcare-provider-sharing",
+      "description": "If making a health and welfare LPA, share attorney authority with healthcare providers",
+      "data_shared": [
+        "lpa_reference_number",
+        "attorney_details",
+        "healthcare_preferences",
+        "life_sustaining_treatment_preferences"
+      ],
+      "source": "opg-register",
+      "purpose": "To enable your attorney(s) to make healthcare decisions on your behalf when you lack capacity",
+      "duration": "until-revoked",
+      "required": false
+    }
+  ],
+  "revocation": {
+    "mechanism": "Send a written 'deed of revocation' to OPG with the original LPA document, signed and witnessed, or remove specific attorneys with a 'partial deed of revocation'",
+    "effect": "LPA will be cancelled and can no longer be used by your attorneys. You must have mental capacity to revoke an LPA."
+  },
+  "delegation": {
+    "agent_identity": "GOV.UK AI Agent",
+    "scopes": [
+      "read-lpa-guidance",
+      "help-complete-forms",
+      "check-eligibility",
+      "explain-attorney-responsibilities",
+      "calculate-fees",
+      "provide-reduction-exemption-guidance"
+    ],
+    "limitations": "Agent CANNOT: (1) Act as your attorney, certificate provider, or witness, (2) Make decisions about who your attorney should be, (3) Make decisions about your preferences or instructions for your attorneys, (4) Sign any forms on your behalf, (5) Make payment without your explicit authorization, (6) Submit the registration to OPG without your final review and confirmation, (7) Revoke or end your LPA, (8) Make decisions if you lack mental capacity. The AI agent can only provide guidance and administrative support. All legal decisions must be made by you."
+  }
+}

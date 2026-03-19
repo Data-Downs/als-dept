@@ -1,0 +1,128 @@
+{
+  "id": "gro.marriage-cert.states",
+  "version": "1.0.0",
+  "states": [
+    {
+      "id": "not-started",
+      "type": "initial"
+    },
+    {
+      "id": "identity-verified"
+    },
+    {
+      "id": "eligibility-checked"
+    },
+    {
+      "id": "consent-given"
+    },
+    {
+      "id": "details-submitted"
+    },
+    {
+      "id": "record-search"
+    },
+    {
+      "id": "payment-made",
+      "receipt": true
+    },
+    {
+      "id": "assessment"
+    },
+    {
+      "id": "decision",
+      "receipt": true
+    },
+    {
+      "id": "completed",
+      "type": "terminal",
+      "receipt": true
+    },
+    {
+      "id": "rejected",
+      "type": "terminal",
+      "receipt": true
+    },
+    {
+      "id": "handed-off",
+      "type": "terminal",
+      "receipt": true
+    }
+  ],
+  "transitions": [
+    {
+      "from": "not-started",
+      "to": "identity-verified",
+      "trigger": "verify-identity"
+    },
+    {
+      "from": "identity-verified",
+      "to": "eligibility-checked",
+      "trigger": "check-eligibility"
+    },
+    {
+      "from": "eligibility-checked",
+      "to": "consent-given",
+      "trigger": "grant-consent",
+      "condition": "eligible"
+    },
+    {
+      "from": "eligibility-checked",
+      "to": "rejected",
+      "trigger": "reject",
+      "condition": "not-eligible"
+    },
+    {
+      "from": "eligibility-checked",
+      "to": "handed-off",
+      "trigger": "handoff",
+      "condition": "edge-case"
+    },
+    {
+      "from": "consent-given",
+      "to": "details-submitted",
+      "trigger": "submit-details"
+    },
+    {
+      "from": "details-submitted",
+      "to": "record-search",
+      "trigger": "search-records",
+      "condition": "no-gro-reference"
+    },
+    {
+      "from": "details-submitted",
+      "to": "payment-made",
+      "trigger": "skip-search",
+      "condition": "has-gro-reference"
+    },
+    {
+      "from": "record-search",
+      "to": "payment-made",
+      "trigger": "record-found"
+    },
+    {
+      "from": "record-search",
+      "to": "rejected",
+      "trigger": "record-not-found"
+    },
+    {
+      "from": "payment-made",
+      "to": "assessment",
+      "trigger": "begin-assessment"
+    },
+    {
+      "from": "assessment",
+      "to": "decision",
+      "trigger": "make-decision"
+    },
+    {
+      "from": "decision",
+      "to": "completed",
+      "trigger": "approve"
+    },
+    {
+      "from": "decision",
+      "to": "rejected",
+      "trigger": "reject-application"
+    }
+  ]
+}

@@ -1,0 +1,121 @@
+{
+  "id": "hmcts-benefit-tribunal.eligibility",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "mandatory-reconsideration-completed",
+      "description": "Applicant must have completed Mandatory Reconsideration or have valid exemption",
+      "condition": {
+        "field": "mandatory_reconsideration_notice",
+        "operator": "exists"
+      },
+      "reason_if_failed": "You must request a Mandatory Reconsideration from DWP before appealing to the tribunal. Your decision letter will say if you can appeal without this.",
+      "evidence_source": "citizen-provided",
+      "alternative_service": "dwp.mandatory-reconsideration"
+    },
+    {
+      "id": "within-time-limit",
+      "description": "Appeal must be submitted within 1 month of Mandatory Reconsideration decision",
+      "condition": {
+        "field": "days_since_mr_decision",
+        "operator": "<=",
+        "value": 31
+      },
+      "reason_if_failed": "Appeals must be submitted within 1 month of your Mandatory Reconsideration decision. You can still submit a late appeal but must explain why it's late. It may not be accepted.",
+      "evidence_source": "mr-decision-date"
+    },
+    {
+      "id": "valid-benefit-type",
+      "description": "The benefit decision must be one that can be appealed to this tribunal",
+      "condition": {
+        "field": "benefit_type",
+        "operator": "in",
+        "value": [
+          "PIP",
+          "ESA",
+          "Universal Credit",
+          "DLA",
+          "Carer's Allowance",
+          "Attendance Allowance",
+          "JSA",
+          "Child Benefit",
+          "Tax Credits",
+          "Pension Credit"
+        ]
+      },
+      "reason_if_failed": "This benefit type cannot be appealed through this service. Check your decision letter for the correct appeals process.",
+      "triggers_handoff": true
+    },
+    {
+      "id": "has-national-insurance",
+      "description": "Applicant must provide National Insurance number",
+      "condition": {
+        "field": "national_insurance_number",
+        "operator": "exists"
+      },
+      "reason_if_failed": "You need a National Insurance number to submit an appeal",
+      "evidence_source": "identity-verified"
+    },
+    {
+      "id": "uk-jurisdiction",
+      "description": "Applicant must be in England, Wales or Scotland",
+      "condition": {
+        "field": "jurisdiction",
+        "operator": "in",
+        "value": [
+          "England",
+          "Wales",
+          "Scotland"
+        ]
+      },
+      "reason_if_failed": "This tribunal is for England, Wales and Scotland only. Northern Ireland has a different process. Social Security Scotland decisions have a separate appeals process.",
+      "alternative_service": "ni-social-security-appeals",
+      "triggers_handoff": true
+    }
+  ],
+  "explanation_template": "Benefit tribunal appeal eligibility: {outcome}",
+  "edge_cases": [
+    {
+      "id": "late-appeal",
+      "description": "Appeal submitted more than 1 month after Mandatory Reconsideration decision",
+      "detection": "days_since_mr_decision > 31",
+      "action": "Accept appeal but flag for judicial review. Citizen must provide written explanation for delay. Tribunal will decide whether to accept the late appeal."
+    },
+    {
+      "id": "child-maintenance",
+      "description": "Appeal relates to Child Maintenance decision",
+      "detection": "benefit_type == 'Child Maintenance'",
+      "action": "Cannot appeal online. Direct citizen to SSCS2 postal form. Provide address for HMCTS Child Maintenance Appeals."
+    },
+    {
+      "id": "hmrc-decision",
+      "description": "Appeal relates to HMRC decision (Tax Credits, Tax-Free Childcare)",
+      "detection": "benefit_type in ['Tax Credits', 'Tax-Free Childcare', '30 hours free childcare']",
+      "action": "Cannot appeal online. Direct citizen to SSCS5 postal form for HMRC appeals."
+    },
+    {
+      "id": "vaccine-damage",
+      "description": "Appeal relates to Vaccine Damage Payment",
+      "detection": "benefit_type == 'Vaccine Damage Payment'",
+      "action": "Cannot appeal online. Direct citizen to SSCS7 postal form specifically for Vaccine Damage Payment appeals."
+    },
+    {
+      "id": "accessibility-needs",
+      "description": "Citizen requires reasonable adjustments for hearing (interpreter, hearing loop, accessible room)",
+      "detection": "accessibility_requirements_declared",
+      "action": "Flag case for tribunal accommodations. Document requirements in case file. HMCTS will arrange official interpreter - citizen cannot bring their own."
+    },
+    {
+      "id": "overseas-evidence",
+      "description": "Citizen or representative is outside UK and wants to give live evidence",
+      "detection": "evidence_location == 'outside_uk'",
+      "action": "Citizen must contact tribunal as soon as possible to request video/audio link. Must specify country and type of evidence. Tribunal will assess feasibility."
+    },
+    {
+      "id": "vulnerable-appellant",
+      "description": "Appellant has mental health condition or other vulnerability affecting capacity",
+      "detection": "vulnerability_declared",
+      "action": "Consider need for representative. Flag case for additional support. May require assessment of capacity to participate in hearing."
+    }
+  ]
+}

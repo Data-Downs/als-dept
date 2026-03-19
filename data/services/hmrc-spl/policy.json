@@ -1,0 +1,173 @@
+{
+  "id": "hmrc-spl.eligibility",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "shared-responsibility",
+      "description": "Both parents must share responsibility for the child from birth or placement",
+      "condition": {
+        "field": "shared_responsibility_from_birth",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "You're not eligible if responsibility started after birth or placement. You may be eligible for standard maternity/paternity leave instead.",
+      "alternative_service": "hmrc.maternity-leave",
+      "evidence_source": "citizen-declaration"
+    },
+    {
+      "id": "within-first-year",
+      "description": "Leave and pay must be taken within first year after birth or placement",
+      "condition": {
+        "field": "child_age_weeks",
+        "operator": "<=",
+        "value": 52
+      },
+      "reason_if_failed": "SPL and ShPP must be taken within the first year after your child is born or placed with your family",
+      "evidence_source": "child-birth-certificate"
+    },
+    {
+      "id": "claimant-employment-continuity",
+      "description": "Claimant must be employed continuously by same employer for at least 26 weeks",
+      "condition": {
+        "field": "claimant_continuous_employment_weeks",
+        "operator": ">=",
+        "value": 26
+      },
+      "reason_if_failed": "You must have been employed continuously by the same employer for at least 26 weeks by the relevant qualifying week",
+      "evidence_source": "employer-provided"
+    },
+    {
+      "id": "claimant-employee-status",
+      "description": "Claimant must be an 'employee' not a 'worker' for SPL",
+      "condition": {
+        "field": "claimant_employment_status",
+        "operator": "==",
+        "value": "employee"
+      },
+      "reason_if_failed": "You must be an 'employee' to get SPL. Workers may still qualify for ShPP only.",
+      "evidence_source": "employment-contract"
+    },
+    {
+      "id": "claimant-earnings-threshold",
+      "description": "Claimant must earn at least £125 per week on average for ShPP",
+      "condition": {
+        "field": "claimant_average_weekly_earnings",
+        "operator": ">=",
+        "value": 125
+      },
+      "reason_if_failed": "You must earn at least £125 per week on average to qualify for ShPP",
+      "evidence_source": "employer-payroll"
+    },
+    {
+      "id": "partner-work-history",
+      "description": "Partner must have worked 26 weeks out of the 66 weeks before qualifying week",
+      "condition": {
+        "field": "partner_worked_weeks_in_66",
+        "operator": ">=",
+        "value": 26
+      },
+      "reason_if_failed": "Your partner must have worked for at least 26 weeks out of the 66 weeks before the qualifying week",
+      "evidence_source": "partner-employment-history"
+    },
+    {
+      "id": "partner-earnings-threshold",
+      "description": "Partner must have earned at least £390 in total across 13 of the 66 weeks",
+      "condition": {
+        "field": "partner_earnings_in_13_weeks",
+        "operator": ">=",
+        "value": 390
+      },
+      "reason_if_failed": "Your partner must have earned at least £390 in total across any 13 of the 66 weeks before the qualifying week",
+      "evidence_source": "partner-earnings-declaration"
+    },
+    {
+      "id": "maternity-leave-curtailed",
+      "description": "Mother/adopter must curtail maternity or adoption leave to create SPL",
+      "condition": {
+        "field": "maternity_leave_curtailed",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "The mother or adopter must end their maternity or adoption leave early to create SPL. They must give binding notice to their employer.",
+      "evidence_source": "curtailment-notice"
+    },
+    {
+      "id": "compulsory-maternity-completed",
+      "description": "Mother must complete compulsory 2 weeks maternity leave (4 weeks if factory work)",
+      "condition": {
+        "field": "compulsory_maternity_leave_completed",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "The mother cannot return to work before the end of compulsory maternity leave (2 weeks, or 4 weeks for factory workers)",
+      "evidence_source": "maternity-leave-dates"
+    },
+    {
+      "id": "child-born-or-placed",
+      "description": "Child must be born or placed with family before SPL/ShPP can start",
+      "condition": {
+        "field": "child_born_or_placed",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "You can only start SPL or ShPP once the child has been born or placed with your family",
+      "evidence_source": "birth-certificate"
+    },
+    {
+      "id": "notice-period-met",
+      "description": "At least 8 weeks' written notice must be given to employer",
+      "condition": {
+        "field": "notice_weeks_given",
+        "operator": ">=",
+        "value": 8
+      },
+      "reason_if_failed": "You must give your employer at least 8 weeks' written notice of your leave dates",
+      "evidence_source": "notice-to-employer"
+    }
+  ],
+  "explanation_template": "Shared Parental Leave and Pay eligibility: {outcome}. You can share up to {available_weeks} weeks of leave and {available_pay_weeks} weeks of pay.",
+  "edge_cases": [
+    {
+      "id": "partner-death",
+      "description": "Partner dies during pregnancy or after birth/placement",
+      "detection": "partner_deceased",
+      "action": "Special provisions apply. The surviving parent may still be able to take SPL/ShPP. Route to bereavement support and specialist caseworker."
+    },
+    {
+      "id": "child-death-or-disruption",
+      "description": "Child dies or adoption placement disrupted",
+      "detection": "child_deceased_or_placement_disrupted",
+      "action": "SPL/ShPP continues for 8 weeks after death or disruption. Route to bereavement support."
+    },
+    {
+      "id": "multiple-births",
+      "description": "Multiple children born at same time",
+      "detection": "multiple_births",
+      "action": "Same total leave/pay applies regardless of number of children. Provide guidance on dividing leave."
+    },
+    {
+      "id": "self-employed-partner",
+      "description": "Partner is self-employed",
+      "detection": "partner_self_employed",
+      "action": "Self-employed partner must still meet work history and earnings test. Verify via tax returns and bank statements."
+    },
+    {
+      "id": "worker-status-confusion",
+      "description": "Applicant unclear if they're employee or worker",
+      "detection": "employment_status_unclear",
+      "action": "Route to employment status checker. If worker status, may qualify for ShPP only, not SPL."
+    },
+    {
+      "id": "employer-non-cooperation",
+      "description": "Employer refuses to provide required information or accept SPL request",
+      "detection": "employer_non_cooperation",
+      "action": "This is a statutory right. Route to ACAS for mediation. May require legal intervention."
+    },
+    {
+      "id": "overseas-employment",
+      "description": "One or both parents work overseas or for overseas employer",
+      "detection": "overseas_employment",
+      "action": "Complex eligibility rules apply. Must work in UK or for UK employer with UK establishment. Route to specialist caseworker."
+    }
+  ]
+}

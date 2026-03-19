@@ -1,0 +1,19 @@
+{
+  "id": "hmcts-benefit-tribunal",
+  "version": "1.0.0",
+  "name": "Social Security & Child Support Tribunal",
+  "description": "Independent tribunal to appeal a DWP benefit decision after Mandatory Reconsideration has been completed.",
+  "department": "HMCTS",
+  "input_schema": {
+    "type": "object"
+  },
+  "output_schema": {
+    "type": "object"
+  },
+  "source": "graph",
+  "serviceType": "legal_process",
+  "govuk_url": "https://www.gov.uk/appeal-benefit-decision",
+  "eligibility_summary": "If a Mandatory Reconsideration has not resolved your dispute with a DWP benefit decision, you can appeal to an independent tribunal. The tribunal is free and independent of DWP.",
+  "proactive": true,
+  "gated": true
+}

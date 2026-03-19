@@ -1,0 +1,101 @@
+{
+  "id": "other-disabled-railcard.eligibility",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "disability-benefit",
+      "description": "Applicant receives a qualifying disability benefit",
+      "condition": {
+        "field": "disability_benefit",
+        "operator": "in",
+        "value": [
+          "PIP",
+          "DLA",
+          "Attendance Allowance",
+          "War Pensioners Mobility Supplement",
+          "Armed Forces Independence Payment"
+        ]
+      },
+      "reason_if_failed": "You must receive a qualifying disability benefit or meet another eligibility criterion",
+      "evidence_source": "dwp-benefit-records"
+    },
+    {
+      "id": "registered-blind",
+      "description": "Applicant is registered blind or partially sighted with their local authority",
+      "condition": {
+        "field": "visual_impairment_registered",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "You must be registered with your local authority as blind or partially sighted",
+      "evidence_source": "local-authority-register"
+    },
+    {
+      "id": "medical-certificate",
+      "description": "Applicant has medical evidence of epilepsy or severe mental/physical disability",
+      "condition": {
+        "field": "medical_certificate",
+        "operator": "exists"
+      },
+      "reason_if_failed": "You need a certificate from a medical professional confirming your condition",
+      "evidence_source": "medical-practitioner",
+      "triggers_handoff": true
+    },
+    {
+      "id": "uk-resident",
+      "description": "Applicant must be resident in the UK",
+      "condition": {
+        "field": "country_of_residence",
+        "operator": "==",
+        "value": "UK"
+      },
+      "reason_if_failed": "This railcard is only available to UK residents"
+    },
+    {
+      "id": "photo-requirement",
+      "description": "Applicant must provide a passport-style photo",
+      "condition": {
+        "field": "photo",
+        "operator": "exists"
+      },
+      "reason_if_failed": "A digital passport-style photo is required for your railcard"
+    },
+    {
+      "id": "payment-made",
+      "description": "Application fee of £20 must be paid",
+      "condition": {
+        "field": "payment_status",
+        "operator": "==",
+        "value": "completed"
+      },
+      "reason_if_failed": "The £20 annual fee must be paid to issue the railcard"
+    }
+  ],
+  "explanation_template": "Disabled Persons Railcard eligibility: {outcome}. You qualify if you receive certain disability benefits, are registered blind/partially sighted, or have medical evidence of qualifying conditions.",
+  "edge_cases": [
+    {
+      "id": "temporary-disability",
+      "description": "Applicant has a temporary disability that may not qualify",
+      "detection": "disability_duration_temporary",
+      "action": "Refer to manual assessment. Railcard is for long-term disabilities lasting at least 12 months."
+    },
+    {
+      "id": "benefit-in-assessment",
+      "description": "Applicant's disability benefit claim is pending decision",
+      "detection": "benefit_status_pending",
+      "action": "Advise to reapply once benefit decision is confirmed. Cannot issue railcard until benefit is awarded."
+    },
+    {
+      "id": "companion-information",
+      "description": "Applicant requires information about companion discount rules",
+      "detection": "companion_query",
+      "action": "Provide guidance: One adult companion travels at 1/3 off when travelling with the railcard holder."
+    },
+    {
+      "id": "lost-evidence",
+      "description": "Applicant cannot provide immediate evidence but claims eligibility",
+      "detection": "evidence_unavailable",
+      "action": "Hand off to customer service for alternative verification methods."
+    }
+  ]
+}

@@ -1,0 +1,147 @@
+{
+  "id": "dwp.access-to-work.eligibility",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "age-minimum",
+      "description": "Applicant must be at least 16 years old",
+      "condition": {
+        "field": "age",
+        "operator": ">=",
+        "value": 16
+      },
+      "reason_if_failed": "You must be at least 16 years old to apply for Access to Work",
+      "evidence_source": "identity-verified"
+    },
+    {
+      "id": "has-disability-or-health-condition",
+      "description": "Applicant must have a disability, illness or health condition affecting their ability to work",
+      "condition": {
+        "field": "has_condition_affecting_work",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "You must have a physical or mental health condition or disability that means you need support to do your job or get to/from work",
+      "evidence_source": "self-declared"
+    },
+    {
+      "id": "jurisdiction",
+      "description": "Applicant must live and work in England, Scotland or Wales",
+      "condition": {
+        "field": "jurisdiction",
+        "operator": "in",
+        "value": [
+          "England",
+          "Scotland",
+          "Wales"
+        ]
+      },
+      "reason_if_failed": "This service is only available if you live and work in England, Scotland or Wales. There's a different system in Northern Ireland.",
+      "alternative_service": "access-to-work-ni"
+    },
+    {
+      "id": "in-paid-work",
+      "description": "Applicant must be in paid work or starting/returning within 12 weeks",
+      "condition": {
+        "field": "employment_status",
+        "operator": "in",
+        "value": [
+          "employed",
+          "self-employed",
+          "starting-within-12-weeks"
+        ]
+      },
+      "reason_if_failed": "You must be in paid work, or be about to start or return to paid work in the next 12 weeks",
+      "evidence_source": "workplace-contact"
+    },
+    {
+      "id": "not-civil-servant",
+      "description": "Applicant must not be a civil servant",
+      "condition": {
+        "field": "is_civil_servant",
+        "operator": "==",
+        "value": false
+      },
+      "reason_if_failed": "If you're a civil servant, your employer will provide support instead of Access to Work. Contact your employer directly.",
+      "triggers_handoff": true
+    },
+    {
+      "id": "self-employed-turnover",
+      "description": "If self-employed, annual turnover must be at least £6,500",
+      "condition": {
+        "field": "annual_turnover",
+        "operator": ">=",
+        "value": 6500
+      },
+      "reason_if_failed": "If you're self-employed, you must have an annual turnover of at least £6,500",
+      "evidence_source": "utr-verification"
+    },
+    {
+      "id": "work-hours-minimum",
+      "description": "Applicant must work more than 1 hour per week",
+      "condition": {
+        "field": "weekly_work_hours",
+        "operator": ">=",
+        "value": 1
+      },
+      "reason_if_failed": "You must work more than 1 hour a week to be eligible for Access to Work",
+      "evidence_source": "self-declared"
+    },
+    {
+      "id": "esa-work-limit",
+      "description": "If receiving ESA, must work less than 16 hours per week",
+      "condition": {
+        "field": "weekly_work_hours",
+        "operator": "<=",
+        "value": 16
+      },
+      "reason_if_failed": "If you're getting Employment and Support Allowance (ESA), you can only get Access to Work if you work less than 16 hours a week",
+      "evidence_source": "self-declared"
+    }
+  ],
+  "explanation_template": "Access to Work eligibility: {outcome}. {reason}",
+  "edge_cases": [
+    {
+      "id": "civil-servant",
+      "description": "Applicant is a civil servant",
+      "detection": "is_civil_servant == true",
+      "action": "Route to employer. Civil servants receive support directly from their employer, not through Access to Work."
+    },
+    {
+      "id": "mental-health-previous-claim",
+      "description": "Applicant has previously received Access to Work mental health support",
+      "detection": "mental_health_support_type == 'mental-health' AND previous_mental_health_claim == true",
+      "action": "Reject mental health support application. Applicants can only claim Access to Work mental health support once."
+    },
+    {
+      "id": "channel-islands-or-iom",
+      "description": "Applicant lives in Channel Islands or Isle of Man",
+      "detection": "jurisdiction IN ['Channel Islands', 'Isle of Man']",
+      "action": "Reject application. Access to Work is not available if you live in the Channel Islands or the Isle of Man."
+    },
+    {
+      "id": "reasonable-adjustments",
+      "description": "Support needed may be a reasonable adjustment (employer's legal obligation)",
+      "detection": "support_type == 'reasonable-adjustment'",
+      "action": "Advise applicant and employer. Access to Work will not pay for reasonable adjustments. These are changes your employer must legally make."
+    },
+    {
+      "id": "no-formal-diagnosis",
+      "description": "Applicant has symptoms but no formal diagnosis",
+      "detection": "has_formal_diagnosis == false",
+      "action": "Proceed with application. You do not need to be diagnosed with a condition to apply for Access to Work."
+    },
+    {
+      "id": "voluntary-work",
+      "description": "Applicant is doing voluntary work, not paid employment",
+      "detection": "employment_status == 'voluntary'",
+      "action": "Reject application. You cannot get Access to Work support for voluntary work."
+    },
+    {
+      "id": "communication-support-interview",
+      "description": "Applicant needs communication support for job interview only",
+      "detection": "support_type == 'interview-communication-support'",
+      "action": "Route to separate application process for communication support at job interviews."
+    }
+  ]
+}

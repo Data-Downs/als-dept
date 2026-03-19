@@ -1,0 +1,114 @@
+{
+  "id": "hmrc-vat.eligibility",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "mandatory-threshold-exceeded",
+      "description": "Taxable turnover has exceeded £90,000 in any rolling 12-month period",
+      "condition": {
+        "field": "rolling_12_month_turnover",
+        "operator": ">=",
+        "value": 90000
+      },
+      "reason_if_failed": "Your turnover has not exceeded the mandatory VAT registration threshold of £90,000",
+      "evidence_source": "business-records"
+    },
+    {
+      "id": "mandatory-threshold-expected",
+      "description": "Taxable turnover is expected to exceed £90,000 in the next 30 days",
+      "condition": {
+        "field": "expected_30_day_turnover",
+        "operator": ">=",
+        "value": 90000
+      },
+      "reason_if_failed": "Your expected turnover does not meet the mandatory registration threshold within 30 days",
+      "evidence_source": "business-forecast"
+    },
+    {
+      "id": "taxable-supplies",
+      "description": "Business makes or intends to make taxable supplies in the UK",
+      "condition": {
+        "field": "makes_taxable_supplies",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "You must make taxable supplies to register for VAT. Businesses making only exempt supplies cannot register.",
+      "alternative_service": "hmrc.business-tax-advice",
+      "triggers_handoff": true
+    },
+    {
+      "id": "business-established",
+      "description": "Business is established or has a fixed establishment in the UK",
+      "condition": {
+        "field": "uk_establishment",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "Non-UK businesses must follow the non-resident VAT registration process",
+      "alternative_service": "hmrc.non-resident-vat",
+      "triggers_handoff": true
+    },
+    {
+      "id": "valid-business-type",
+      "description": "Business type is eligible for VAT registration",
+      "condition": {
+        "field": "business_type",
+        "operator": "in",
+        "value": [
+          "sole-trader",
+          "partnership",
+          "limited-company",
+          "llp",
+          "charity",
+          "non-profit"
+        ]
+      },
+      "reason_if_failed": "Your business type requires specialist VAT registration guidance",
+      "triggers_handoff": true
+    },
+    {
+      "id": "not-already-registered",
+      "description": "Business is not already registered for VAT",
+      "condition": {
+        "field": "vat_registered",
+        "operator": "==",
+        "value": false
+      },
+      "reason_if_failed": "This business is already registered for VAT. Use the VAT management service to update details.",
+      "alternative_service": "hmrc.vat-account"
+    }
+  ],
+  "explanation_template": "VAT registration eligibility: {outcome}. Registration is mandatory if turnover exceeds £90,000, or voluntary below this threshold to reclaim VAT on business purchases.",
+  "edge_cases": [
+    {
+      "id": "distance-selling",
+      "description": "Business sells goods to UK customers from outside the UK (distance selling)",
+      "detection": "distance_seller",
+      "action": "Distance selling threshold of £70,000 applies. Route to distance selling VAT guidance."
+    },
+    {
+      "id": "eu-acquisitions",
+      "description": "Business acquires goods from EU exceeding £85,000",
+      "detection": "eu_acquisitions_over_threshold",
+      "action": "Must register for VAT immediately even if UK turnover below threshold. Route to acquisition VAT guidance."
+    },
+    {
+      "id": "vat-group",
+      "description": "Multiple related companies want to register as a VAT group",
+      "detection": "vat_group_application",
+      "action": "Requires VAT group registration (VAT51). Hand off to HMRC VAT specialist team."
+    },
+    {
+      "id": "overseas-business",
+      "description": "Non-UK business making supplies in UK",
+      "detection": "non_uk_business_uk_supplies",
+      "action": "May require VAT representative or security deposit. Route to overseas business VAT team."
+    },
+    {
+      "id": "late-registration",
+      "description": "Turnover exceeded threshold more than 30 days ago (late registration)",
+      "detection": "late_registration",
+      "action": "Penalties may apply for late registration. Flag for compliance review during processing."
+    }
+  ]
+}

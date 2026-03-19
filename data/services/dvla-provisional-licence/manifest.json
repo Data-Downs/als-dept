@@ -1,0 +1,19 @@
+{
+  "id": "dvla-provisional-licence",
+  "version": "1.0.0",
+  "name": "Provisional Driving Licence",
+  "description": "Apply from age 15 years and 9 months. Required before taking lessons or tests. Apply online via DVLA.",
+  "department": "DVLA",
+  "input_schema": {
+    "type": "object"
+  },
+  "output_schema": {
+    "type": "object"
+  },
+  "source": "graph",
+  "serviceType": "document",
+  "govuk_url": "https://www.gov.uk/apply-first-provisional-driving-licence",
+  "eligibility_summary": "Required before you can take driving lessons or book a theory or practical test. Can be applied for from age 15 years and 9 months (to be ready for when you turn 17). Apply online via DVLA for £34.",
+  "proactive": true,
+  "gated": false
+}

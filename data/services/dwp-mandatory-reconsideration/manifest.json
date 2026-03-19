@@ -1,0 +1,19 @@
+{
+  "id": "dwp-mandatory-reconsideration",
+  "version": "1.0.0",
+  "name": "Mandatory Reconsideration",
+  "description": "Formal review of a DWP benefit decision. Must be requested before you can appeal to a tribunal. Apply within 1 month of the decision letter.",
+  "department": "DWP",
+  "input_schema": {
+    "type": "object"
+  },
+  "output_schema": {
+    "type": "object"
+  },
+  "source": "graph",
+  "serviceType": "application",
+  "govuk_url": "https://www.gov.uk/mandatory-reconsideration",
+  "eligibility_summary": "If you disagree with a DWP decision on Universal Credit, JSA, ESA, PIP, or other benefits, you must request a Mandatory Reconsideration before you can appeal to a tribunal. Must be requested within 1 month of the decision letter.",
+  "proactive": true,
+  "gated": true
+}

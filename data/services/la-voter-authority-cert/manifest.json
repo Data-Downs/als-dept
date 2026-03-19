@@ -1,0 +1,19 @@
+{
+  "id": "la-voter-authority-cert",
+  "version": "1.0.0",
+  "name": "Voter Authority Certificate",
+  "description": "Free photo ID for polling stations if you lack an accepted form of photo ID (passport, driving licence, etc.). Apply via local council.",
+  "department": "Local Authority",
+  "input_schema": {
+    "type": "object"
+  },
+  "output_schema": {
+    "type": "object"
+  },
+  "source": "graph",
+  "serviceType": "document",
+  "govuk_url": "https://www.gov.uk/apply-for-photo-id-voter-authority-certificate",
+  "eligibility_summary": "Free photo ID for use at polling stations at UK elections, introduced from 2023. Required if you do not have an accepted form of photo ID (such as a passport, driving licence, or certain concessionary bus passes). Apply via your local council.",
+  "proactive": true,
+  "gated": true
+}

@@ -1,0 +1,103 @@
+{
+  "id": "hmrc.child-benefit.consent",
+  "version": "1.0.0",
+  "grants": [
+    {
+      "id": "identity-verification",
+      "description": "Verify your identity using your GOV.UK One Login credentials",
+      "data_shared": [
+        "full_name",
+        "date_of_birth",
+        "national_insurance_number",
+        "current_address"
+      ],
+      "source": "one-login",
+      "purpose": "To confirm your identity and check your eligibility for Child Benefit",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "child-details-sharing",
+      "description": "Share details about the child or children you're claiming for",
+      "data_shared": [
+        "child_full_name",
+        "child_date_of_birth",
+        "child_birth_certificate_number",
+        "child_adoption_details",
+        "child_education_status",
+        "child_living_arrangements"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To determine your entitlement to Child Benefit and calculate the correct payment amount",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "bank-account-details",
+      "description": "Provide your bank or building society account details for Child Benefit payments",
+      "data_shared": [
+        "account_name",
+        "sort_code",
+        "account_number"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To pay your Child Benefit into your chosen account every 4 weeks (or weekly if eligible)",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "partner-income-details",
+      "description": "Share information about your partner's income and National Insurance number",
+      "data_shared": [
+        "partner_national_insurance_number",
+        "partner_adjusted_net_income",
+        "partner_employment_status"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To determine if High Income Child Benefit Charge applies. If either you or your partner earn over £60,000, you may need to pay a tax charge.",
+      "duration": "until-revoked",
+      "required": false
+    },
+    {
+      "id": "hmrc-benefit-records",
+      "description": "Allow HMRC to check existing benefit claims and National Insurance records",
+      "data_shared": [
+        "existing_child_benefit_claims",
+        "national_insurance_contribution_history",
+        "other_benefits_claimed",
+        "tax_records"
+      ],
+      "source": "hmrc-internal-systems",
+      "purpose": "To prevent duplicate claims, verify eligibility, calculate High Income Child Benefit Charge if applicable, and award National Insurance credits towards your State Pension",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "birth-certificate-verification",
+      "description": "Verify your child's birth or adoption certificate details",
+      "data_shared": [
+        "birth_certificate_details",
+        "registration_district",
+        "passport_or_travel_document"
+      ],
+      "source": "general-register-office",
+      "purpose": "To confirm your child's identity and your relationship to them. If birth registered outside UK, we'll verify passport or travel document used to enter UK.",
+      "duration": "session",
+      "required": false
+    }
+  ],
+  "revocation": {
+    "mechanism": "Contact Child Benefit Office by phone, post, or through your online account to stop your claim",
+    "effect": "Child Benefit payments will stop. You'll lose National Insurance credits. You can restart payments at any time by contacting HMRC."
+  },
+  "delegation": {
+    "agent_identity": "GOV.UK AI Agent",
+    "scopes": [
+      "read-personal-data",
+      "read-child-details",
+      "submit-application-to-hmrc",
+      "check-eligibility-status"
+    ],
+    "limitations": "Agent cannot provide bank account details on your behalf - you must enter these yourself. Agent cannot make decisions about payment preferences (opt in/opt out) without your explicit confirmation. Agent cannot claim for a child if someone else is already claiming for that child. Agent cannot modify partner income declarations without your verification. For edge cases like split families, joined families, fostering, or pre-settled status, agent will hand off to HMRC Child Benefit Office for human assessment."
+  }
+}

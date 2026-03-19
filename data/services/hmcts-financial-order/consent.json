@@ -1,0 +1,93 @@
+{
+  "id": "hmcts.financial-order.consent",
+  "version": "1.0.0",
+  "grants": [
+    {
+      "id": "identity-verification",
+      "description": "Verify your identity using your GOV.UK One Login credentials",
+      "data_shared": [
+        "full_name",
+        "date_of_birth",
+        "national_insurance_number"
+      ],
+      "source": "one-login",
+      "purpose": "To confirm you are a party to the divorce or dissolution proceedings before processing the consent order application",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "divorce-status-check",
+      "description": "Check your divorce or civil partnership dissolution status with the court",
+      "data_shared": [
+        "case_number",
+        "conditional_order_status",
+        "final_order_status",
+        "partner_details"
+      ],
+      "source": "hmcts-divorce-court",
+      "purpose": "To verify you have reached conditional order stage and are eligible to apply for a consent order",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "financial-information",
+      "description": "Share financial information and draft consent order details",
+      "data_shared": [
+        "assets_list",
+        "property_details",
+        "pension_information",
+        "savings_and_investments",
+        "maintenance_arrangements",
+        "draft_consent_order_document"
+      ],
+      "source": "citizen-provided",
+      "purpose": "For the judge to review the proposed financial division and determine if it is fair",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "statement-of-information",
+      "description": "Provide statement of information form detailing your financial circumstances",
+      "data_shared": [
+        "income",
+        "living_expenses",
+        "debts",
+        "children_details"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To give the court full context about both parties' financial situations when reviewing the consent order",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "contact-details",
+      "description": "Provide your address and contact information for correspondence",
+      "data_shared": [
+        "address_line_1",
+        "address_line_2",
+        "city",
+        "postcode",
+        "email",
+        "phone_number"
+      ],
+      "source": "citizen-provided",
+      "purpose": "For the court to send you the approved consent order and any correspondence about your application",
+      "duration": "until-revoked",
+      "required": true
+    }
+  ],
+  "revocation": {
+    "mechanism": "Contact HMCTS Financial Remedy or withdraw application through your case portal",
+    "effect": "Application will be cancelled if consent is revoked before judicial approval. Once approved, the consent order becomes legally binding and can only be changed by applying to vary the order."
+  },
+  "delegation": {
+    "agent_identity": "GOV.UK AI Agent",
+    "scopes": [
+      "read-divorce-status",
+      "read-financial-information",
+      "complete-forms",
+      "submit-to-hmcts"
+    ],
+    "limitations": "Agent CANNOT sign the consent order on behalf of either party - both parties must sign personally. Agent CANNOT draft the consent order - this must be prepared by a solicitor or legal adviser. Agent CANNOT make payment without explicit authorization. Agent CANNOT agree to financial terms on your behalf. Agent can only help with form completion and submission."
+  }
+}

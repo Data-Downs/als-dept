@@ -1,0 +1,119 @@
+{
+  "id": "dwp.maternity-allowance.consent",
+  "version": "1.0.0",
+  "grants": [
+    {
+      "id": "identity-verification",
+      "description": "Verify your identity using your GOV.UK One Login credentials",
+      "data_shared": [
+        "full_name",
+        "date_of_birth",
+        "national_insurance_number",
+        "address"
+      ],
+      "source": "one-login",
+      "purpose": "To confirm your identity before processing your Maternity Allowance application",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "employment-history",
+      "description": "Share your employment history for the 66 weeks before your baby is due (the test period)",
+      "data_shared": [
+        "employer_names",
+        "employment_start_dates",
+        "employment_end_dates",
+        "earnings_per_week",
+        "payroll_records"
+      ],
+      "source": "hmrc-paye",
+      "purpose": "To verify you have worked at least 26 weeks and earned at least £30/week for 13 weeks in the test period",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "self-employment-records",
+      "description": "Share your self-employment registration and National Insurance contribution records",
+      "data_shared": [
+        "self_employment_start_date",
+        "class2_ni_contributions",
+        "contribution_payment_dates",
+        "hmrc_registration_status"
+      ],
+      "source": "hmrc-self-assessment",
+      "purpose": "To verify your self-employment status and calculate your Maternity Allowance entitlement based on Class 2 NI contributions",
+      "duration": "session",
+      "required": false
+    },
+    {
+      "id": "maternity-medical-certificate",
+      "description": "Share your MATB1 maternity certificate or medical confirmation of pregnancy",
+      "data_shared": [
+        "expected_due_date",
+        "pregnancy_confirmation",
+        "matb1_certificate",
+        "actual_birth_date"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To confirm your pregnancy and calculate when your Maternity Allowance payments can start",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "payment-details",
+      "description": "Provide your bank account details for Maternity Allowance payments",
+      "data_shared": [
+        "bank_account_number",
+        "sort_code",
+        "account_holder_name"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To pay your Maternity Allowance directly into your bank account every 2 or 4 weeks",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "other-benefits",
+      "description": "Share information about other benefits you currently receive",
+      "data_shared": [
+        "universal_credit_status",
+        "jsa_status",
+        "other_dwp_benefits",
+        "housing_benefit",
+        "carers_allowance"
+      ],
+      "source": "dwp-benefits-system",
+      "purpose": "To understand how Maternity Allowance will interact with your other benefits and ensure correct total payments",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "smp-refusal",
+      "description": "Share your SMP1 form if you were refused Statutory Maternity Pay by your employer",
+      "data_shared": [
+        "employer_name",
+        "smp_refusal_reason",
+        "smp1_form"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To confirm you are not eligible for Statutory Maternity Pay and should receive Maternity Allowance instead",
+      "duration": "session",
+      "required": false
+    }
+  ],
+  "revocation": {
+    "mechanism": "Contact DWP Maternity Allowance helpline or write to DWP to withdraw your application",
+    "effect": "Application will be cancelled if consent is revoked before decision. If revoked after payments start, you must report you no longer wish to claim and payments will stop."
+  },
+  "delegation": {
+    "agent_identity": "GOV.UK AI Agent",
+    "scopes": [
+      "read-personal-data",
+      "read-employment-history",
+      "read-ni-contributions",
+      "submit-application-to-dwp",
+      "upload-documents"
+    ],
+    "limitations": "Agent cannot provide bank details on your behalf. Agent cannot confirm your last day of employment without your explicit confirmation. Agent cannot make decisions about when you want payments to start. Agent cannot report changes of circumstances (e.g. return to work) - you must do this yourself. Agent cannot request mandatory reconsideration or appeal decisions."
+  }
+}

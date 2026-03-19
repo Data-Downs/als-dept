@@ -1,0 +1,145 @@
+{
+  "id": "dwp.new-style-esa.eligibility",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "under-state-pension-age",
+      "description": "Applicant must be under State Pension age",
+      "condition": {
+        "field": "age",
+        "operator": "<=",
+        "value": 66
+      },
+      "reason_if_failed": "You must be under State Pension age to claim New Style ESA",
+      "evidence_source": "identity-verified"
+    },
+    {
+      "id": "has-health-condition",
+      "description": "Applicant must have a disability or health condition that affects ability to work",
+      "condition": {
+        "field": "has_health_condition",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "New Style ESA is for people whose health condition prevents or limits their ability to work",
+      "evidence_source": "fit-note-required"
+    },
+    {
+      "id": "has-fit-note",
+      "description": "Applicant must have a fit note if unable to work for more than 7 days",
+      "condition": {
+        "field": "fit_note_provided",
+        "operator": "exists"
+      },
+      "reason_if_failed": "You need a fit note from your doctor if you've been unable to work for more than 7 days",
+      "evidence_source": "gp-provided"
+    },
+    {
+      "id": "ni-contributions-sufficient",
+      "description": "Applicant must have paid enough National Insurance contributions in the last 2-3 years",
+      "condition": {
+        "field": "ni_contributions_sufficient",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "You need to have paid enough National Insurance contributions in the last 2 to 3 years. National Insurance credits also count. Check your NI record for gaps.",
+      "evidence_source": "hmrc-ni-record",
+      "alternative_service": "dwp.universal-credit"
+    },
+    {
+      "id": "not-claiming-jsa",
+      "description": "Applicant must not be claiming Jobseeker's Allowance",
+      "condition": {
+        "field": "claiming_jsa",
+        "operator": "!=",
+        "value": true
+      },
+      "reason_if_failed": "You cannot get New Style ESA if you claim Jobseeker's Allowance (JSA)",
+      "alternative_service": "dwp.jsa"
+    },
+    {
+      "id": "not-receiving-ssp",
+      "description": "Applicant must not be receiving Statutory Sick Pay",
+      "condition": {
+        "field": "receiving_ssp",
+        "operator": "!=",
+        "value": true
+      },
+      "reason_if_failed": "You cannot get New Style ESA if you're getting Statutory Sick Pay (SSP). You can apply up to 3 months before your SSP ends.",
+      "evidence_source": "employer-provided"
+    },
+    {
+      "id": "work-hours-limit",
+      "description": "If working, applicant must work less than 16 hours per week",
+      "condition": {
+        "field": "work_hours_per_week",
+        "operator": "<=",
+        "value": 16
+      },
+      "reason_if_failed": "You cannot claim ESA if you work 16 or more hours per week",
+      "evidence_source": "citizen-provided"
+    },
+    {
+      "id": "earnings-limit",
+      "description": "If working, applicant must not earn more than £195.50 per week",
+      "condition": {
+        "field": "weekly_earnings",
+        "operator": "<=",
+        "value": 195.5
+      },
+      "reason_if_failed": "You cannot claim ESA if you earn more than £195.50 per week",
+      "evidence_source": "citizen-provided"
+    }
+  ],
+  "explanation_template": "New Style ESA eligibility: {outcome}. You will undergo a Work Capability Assessment to determine your support needs.",
+  "edge_cases": [
+    {
+      "id": "end-of-life",
+      "description": "Applicant is nearing the end of life (medical professional confirms 12 months or less to live)",
+      "detection": "sr1_form_provided",
+      "action": "Fast-track to support group. Higher payment rate immediately. No Work Capability Assessment or Claimant Commitment required. Form SR1 from medical professional triggers this pathway."
+    },
+    {
+      "id": "ssp-ending-soon",
+      "description": "Applicant's Statutory Sick Pay is due to end within 3 months",
+      "detection": "ssp_end_date_within_3_months",
+      "action": "Allow application now. ESA payments will start when SSP ends. Applicant should provide SSP end date."
+    },
+    {
+      "id": "claiming-universal-credit",
+      "description": "Applicant is also claiming Universal Credit",
+      "detection": "universal_credit_claim_active",
+      "action": "Eligible for both. UC payment will be reduced by New Style ESA amount. Only one Work Capability Assessment needed. New Style ESA provides Class 1 NI credits."
+    },
+    {
+      "id": "private-pension-over-85",
+      "description": "Applicant receives private pension income over £85 per week",
+      "detection": "private_pension_weekly_over_85",
+      "action": "ESA payment reduced by half of pension income over £85. Example: £100 pension = £7.50 deduction. May still receive NI credits even if no payment."
+    },
+    {
+      "id": "severe-limitation",
+      "description": "Illness or disability severely limits what applicant can do",
+      "detection": "work_capability_assessment_severe",
+      "action": "Place in support group (higher rate, no work-related activity requirements). Assessment determines this."
+    },
+    {
+      "id": "in-hospital-or-care",
+      "description": "Applicant is in hospital, care home or sheltered accommodation",
+      "detection": "in_institutional_care",
+      "action": "May not need Work Capability Assessment. Report this circumstance immediately as it affects claim."
+    },
+    {
+      "id": "pregnant",
+      "description": "Applicant becomes pregnant during claim",
+      "detection": "pregnancy_status_change",
+      "action": "Report immediately. May affect claim assessment and group placement."
+    },
+    {
+      "id": "caring-responsibilities",
+      "description": "Applicant starts or stops caring for someone",
+      "detection": "carer_status_change",
+      "action": "Report immediately. May be eligible for Carer's Allowance instead or in addition. Affects ESA assessment."
+    }
+  ]
+}

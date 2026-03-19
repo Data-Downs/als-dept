@@ -1,0 +1,104 @@
+{
+  "id": "hmrc-iht400.eligibility",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "estate-threshold",
+      "description": "Estate value exceeds the nil-rate band threshold",
+      "condition": {
+        "field": "estate_gross_value",
+        "operator": ">=",
+        "value": 325000
+      },
+      "reason_if_failed": "No Inheritance Tax is due. You may still need to complete a simpler form (IHT205) to obtain probate.",
+      "evidence_source": "estate-valuation",
+      "alternative_service": "hmrc.iht205"
+    },
+    {
+      "id": "death-occurred",
+      "description": "Death has occurred and applicant is the executor or administrator",
+      "condition": {
+        "field": "executor_role",
+        "operator": "exists"
+      },
+      "reason_if_failed": "IHT400 must be completed by the executor named in the will or the administrator appointed by the court",
+      "evidence_source": "probate-registry"
+    },
+    {
+      "id": "within-deadline",
+      "description": "Tax must be paid within 6 months of death (before probate granted)",
+      "condition": {
+        "field": "months_since_death",
+        "operator": "<=",
+        "value": 6
+      },
+      "reason_if_failed": "Payment is overdue. Interest will be charged from 6 months after death. You should complete the return urgently.",
+      "evidence_source": "death-certificate"
+    },
+    {
+      "id": "uk-assets-exist",
+      "description": "Estate includes UK assets subject to Inheritance Tax",
+      "condition": {
+        "field": "uk_assets",
+        "operator": "exists"
+      },
+      "reason_if_failed": "If the deceased was domiciled abroad with no UK assets, UK Inheritance Tax may not apply",
+      "evidence_source": "estate-inventory",
+      "triggers_handoff": true
+    }
+  ],
+  "explanation_template": "Inheritance Tax (IHT400) eligibility: {outcome}. Estate value: £{estate_gross_value}. Threshold: £{applicable_threshold}.",
+  "edge_cases": [
+    {
+      "id": "charity-reduced-rate",
+      "description": "Estate leaves 10% or more to charity and may qualify for reduced 36% rate",
+      "detection": "charity_legacy_percentage >= 10",
+      "action": "Apply reduced rate of 36% instead of 40%. Calculate net value and ensure qualifying charitable gifts are properly documented."
+    },
+    {
+      "id": "gifts-within-7-years",
+      "description": "Deceased made substantial gifts in the 7 years before death",
+      "detection": "gifts_in_last_7_years > 0",
+      "action": "Assess each gift for taper relief. Gifts in years 3-7 before death may qualify for reduced rates. Recipients may be liable for tax on gifts exceeding £325,000 threshold."
+    },
+    {
+      "id": "residence-nil-rate-band",
+      "description": "Home left to direct descendants (children/grandchildren) and estate under £2m",
+      "detection": "home_to_descendants AND estate_gross_value < 2000000",
+      "action": "Additional £175,000 threshold may apply (total £500,000). Verify relationship of beneficiaries and property ownership."
+    },
+    {
+      "id": "business-agricultural-relief",
+      "description": "Estate includes business or agricultural assets",
+      "detection": "business_assets OR agricultural_assets",
+      "action": "Business Relief or Agricultural Relief may apply (50-100% reduction). Requires specialist valuation. Route to Inheritance Tax helpline.",
+      "triggers_handoff": true
+    },
+    {
+      "id": "complex-trusts",
+      "description": "Estate involves trusts or settlements",
+      "detection": "trust_involvement",
+      "action": "Trust taxation is complex and requires specialist advice. Route to HMRC Trust team or recommend professional advisor.",
+      "triggers_handoff": true
+    },
+    {
+      "id": "foreign-domicile",
+      "description": "Deceased was domiciled outside UK or lived abroad for 10+ of last 20 years",
+      "detection": "non_uk_domicile OR years_abroad >= 10",
+      "action": "Only UK assets are taxable. Excluded assets (foreign currency accounts, overseas pensions) do not attract UK IHT. Check double-taxation treaties.",
+      "triggers_handoff": true
+    },
+    {
+      "id": "gifts-with-reservation",
+      "description": "Deceased gave away assets but continued to benefit from them",
+      "detection": "gift_with_reservation",
+      "action": "Gift with reservation counts towards estate value regardless of when given. Assess whether donor paid market rent or had genuine arms-length arrangement."
+    },
+    {
+      "id": "spouse-civil-partner-exemption",
+      "description": "Assets passing to UK-resident spouse or civil partner",
+      "detection": "spouse_inheritance AND spouse_uk_resident",
+      "action": "No Inheritance Tax on spouse/civil partner inheritance. Unused nil-rate band transfers to surviving partner. Verify UK residency status."
+    }
+  ]
+}

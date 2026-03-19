@@ -1,0 +1,19 @@
+{
+  "id": "hmrc-guardians-allowance",
+  "version": "1.0.0",
+  "name": "Guardian's Allowance",
+  "description": "£21.75/week if raising a child both of whose parents have died (or one has died and the other is untraceable).",
+  "department": "HMRC",
+  "input_schema": {
+    "type": "object"
+  },
+  "output_schema": {
+    "type": "object"
+  },
+  "source": "graph",
+  "serviceType": "benefit",
+  "govuk_url": "https://www.gov.uk/guardians-allowance",
+  "eligibility_summary": "Guardian's Allowance is paid on top of Child Benefit to those raising a child whose parents have both died. In some cases only one parent needs to have died.",
+  "proactive": true,
+  "gated": true
+}

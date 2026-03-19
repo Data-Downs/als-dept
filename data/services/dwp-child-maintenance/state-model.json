@@ -1,0 +1,127 @@
+{
+  "id": "dwp-child-maintenance.states",
+  "version": "1.0.0",
+  "states": [
+    {
+      "id": "not-started",
+      "type": "initial"
+    },
+    {
+      "id": "identity-verified"
+    },
+    {
+      "id": "eligibility-checked"
+    },
+    {
+      "id": "consent-given"
+    },
+    {
+      "id": "child-details-submitted"
+    },
+    {
+      "id": "other-parent-details-submitted"
+    },
+    {
+      "id": "living-arrangements-submitted"
+    },
+    {
+      "id": "income-assessment-requested"
+    },
+    {
+      "id": "calculation-complete",
+      "receipt": true
+    },
+    {
+      "id": "payment-method-chosen"
+    },
+    {
+      "id": "arrangement-established",
+      "receipt": true
+    },
+    {
+      "id": "completed",
+      "type": "terminal",
+      "receipt": true
+    },
+    {
+      "id": "rejected",
+      "type": "terminal",
+      "receipt": true
+    },
+    {
+      "id": "handed-off",
+      "type": "terminal",
+      "receipt": true
+    }
+  ],
+  "transitions": [
+    {
+      "from": "not-started",
+      "to": "identity-verified",
+      "trigger": "verify-identity"
+    },
+    {
+      "from": "identity-verified",
+      "to": "eligibility-checked",
+      "trigger": "check-eligibility"
+    },
+    {
+      "from": "eligibility-checked",
+      "to": "consent-given",
+      "trigger": "grant-consent",
+      "condition": "eligible"
+    },
+    {
+      "from": "eligibility-checked",
+      "to": "rejected",
+      "trigger": "reject",
+      "condition": "not-eligible"
+    },
+    {
+      "from": "eligibility-checked",
+      "to": "handed-off",
+      "trigger": "handoff",
+      "condition": "edge-case"
+    },
+    {
+      "from": "consent-given",
+      "to": "child-details-submitted",
+      "trigger": "submit-child-details"
+    },
+    {
+      "from": "child-details-submitted",
+      "to": "other-parent-details-submitted",
+      "trigger": "submit-other-parent-details"
+    },
+    {
+      "from": "other-parent-details-submitted",
+      "to": "living-arrangements-submitted",
+      "trigger": "submit-living-arrangements"
+    },
+    {
+      "from": "living-arrangements-submitted",
+      "to": "income-assessment-requested",
+      "trigger": "request-income-assessment"
+    },
+    {
+      "from": "income-assessment-requested",
+      "to": "calculation-complete",
+      "trigger": "complete-calculation"
+    },
+    {
+      "from": "calculation-complete",
+      "to": "payment-method-chosen",
+      "trigger": "choose-payment-method"
+    },
+    {
+      "from": "payment-method-chosen",
+      "to": "arrangement-established",
+      "trigger": "establish-arrangement"
+    },
+    {
+      "from": "arrangement-established",
+      "to": "completed",
+      "trigger": "confirm-completion"
+    }
+  ]
+}

@@ -1,0 +1,105 @@
+{
+  "id": "hmcts.child-arrangements.consent",
+  "version": "1.0.0",
+  "grants": [
+    {
+      "id": "identity-verification",
+      "description": "Verify your identity using GOV.UK One Login or other approved methods",
+      "data_shared": [
+        "full_name",
+        "date_of_birth",
+        "national_insurance_number",
+        "address"
+      ],
+      "source": "one-login",
+      "purpose": "To confirm your identity and parental responsibility before processing your application",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "cafcass-information-sharing",
+      "description": "Share information about your family situation with Cafcass (Children and Family Court Advisory and Support Service)",
+      "data_shared": [
+        "family_circumstances",
+        "child_welfare_information",
+        "parenting_history",
+        "contact_arrangements",
+        "concerns_about_other_parent"
+      ],
+      "source": "citizen-provided",
+      "purpose": "Cafcass will use this information to assess what's in the best interests of your child and prepare reports for the court",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "court-records",
+      "description": "Share your application details and supporting documents with the family court",
+      "data_shared": [
+        "c100_form",
+        "miam_certificate",
+        "supporting_evidence",
+        "previous_court_orders"
+      ],
+      "source": "citizen-provided",
+      "purpose": "The court needs this information to consider your application and make decisions about child arrangements",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "child-welfare-checks",
+      "description": "Allow Cafcass to contact schools, doctors, and other professionals involved in your child's care",
+      "data_shared": [
+        "school_records",
+        "medical_information",
+        "social_services_involvement"
+      ],
+      "source": "third-party-professionals",
+      "purpose": "To understand your child's needs and ensure any court order is in their best interests",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "other-parent-notification",
+      "description": "Share your application and contact details with the other parent (your ex-partner)",
+      "data_shared": [
+        "full_name",
+        "address",
+        "contact_details",
+        "application_details"
+      ],
+      "source": "citizen-provided",
+      "purpose": "The other parent has a right to know about the application and respond to the court. In cases of domestic abuse, special measures can protect your information.",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "mediation-information-sharing",
+      "description": "Share information about your mediation attendance with the court",
+      "data_shared": [
+        "miam_attendance",
+        "mediation_voucher_use",
+        "exemption_reasons"
+      ],
+      "source": "family-mediation-council-mediator",
+      "purpose": "The court needs to confirm you've attended mediation or have a valid exemption before considering your application",
+      "duration": "session",
+      "required": true
+    }
+  ],
+  "revocation": {
+    "mechanism": "Contact the court directly or through your legal adviser to withdraw your application",
+    "effect": "Your application will be closed. You can reapply later if needed. Any information already shared with Cafcass and the court will be retained according to their data retention policies."
+  },
+  "delegation": {
+    "agent_identity": "GOV.UK AI Agent acting on behalf of the applicant",
+    "scopes": [
+      "read-personal-data",
+      "read-cafcass-guidance",
+      "book-miam-appointment",
+      "complete-c100-form",
+      "upload-supporting-documents",
+      "check-application-status"
+    ],
+    "limitations": "Agent CANNOT make payment on your behalf. Agent CANNOT sign legal documents or consent orders. Agent CANNOT attend court hearings or MIAM on your behalf. Agent CANNOT make decisions about what type of order to apply for - you must decide this yourself. Agent CANNOT communicate directly with your ex-partner or their legal representatives. Agent CANNOT make statements about domestic abuse or safeguarding concerns without your explicit review and confirmation. Agent CANNOT withdraw your application without your explicit instruction."
+  }
+}

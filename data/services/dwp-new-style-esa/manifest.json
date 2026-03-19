@@ -1,0 +1,19 @@
+{
+  "id": "dwp-new-style-esa",
+  "version": "1.0.0",
+  "name": "New Style ESA",
+  "description": "If health prevents work. Requires fit note from GP and Work Capability Assessment.",
+  "department": "DWP",
+  "input_schema": {
+    "type": "object"
+  },
+  "output_schema": {
+    "type": "object"
+  },
+  "source": "graph",
+  "serviceType": "benefit",
+  "govuk_url": "https://www.gov.uk/employment-support-allowance/eligibility",
+  "eligibility_summary": "Contributory benefit for people whose health condition prevents or limits their ability to work. Requires NI contributions in the last two tax years and a fit note from a GP.",
+  "proactive": true,
+  "gated": false
+}

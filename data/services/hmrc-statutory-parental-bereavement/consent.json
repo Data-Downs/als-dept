@@ -1,0 +1,117 @@
+{
+  "id": "hmrc.statutory-parental-bereavement.consent",
+  "version": "1.0.0",
+  "grants": [
+    {
+      "id": "identity-verification",
+      "description": "Verify your identity using your GOV.UK One Login credentials",
+      "data_shared": [
+        "full_name",
+        "date_of_birth",
+        "national_insurance_number"
+      ],
+      "source": "one-login",
+      "purpose": "To confirm your identity before processing your application for Statutory Parental Bereavement Leave and Pay",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "relationship-declaration",
+      "description": "Declare your relationship to the child who died or was stillborn",
+      "data_shared": [
+        "relationship_type",
+        "child_name",
+        "date_of_death_or_stillbirth",
+        "child_date_of_birth",
+        "stillbirth_gestation_weeks"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To confirm you meet the eligibility criteria based on your relationship to the child",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "employment-details",
+      "description": "Share your employment details with HMRC and your employer",
+      "data_shared": [
+        "employer_name",
+        "employer_paye_reference",
+        "employment_start_date",
+        "average_weekly_earnings",
+        "employment_status"
+      ],
+      "source": "hmrc-paye-rti",
+      "purpose": "To verify your eligibility for Statutory Parental Bereavement Pay based on length of service and earnings",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "leave-dates",
+      "description": "Provide the dates you wish to take Parental Bereavement Leave",
+      "data_shared": [
+        "leave_start_date",
+        "leave_duration_weeks",
+        "leave_pattern"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To notify your employer of when you intend to take leave and calculate entitlement",
+      "duration": "until-revoked",
+      "required": false
+    },
+    {
+      "id": "pay-claim-details",
+      "description": "Provide the dates for which you are claiming Statutory Parental Bereavement Pay",
+      "data_shared": [
+        "pay_period_start",
+        "pay_period_end",
+        "pay_weeks_claimed"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To process your claim for Statutory Parental Bereavement Pay through your employer",
+      "duration": "until-revoked",
+      "required": false
+    },
+    {
+      "id": "other-statutory-leave",
+      "description": "Declare if you are currently on or planning other statutory leave (maternity, paternity, shared parental)",
+      "data_shared": [
+        "other_leave_type",
+        "other_leave_start_date",
+        "other_leave_end_date"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To ensure Parental Bereavement Leave is correctly scheduled and does not overlap with other statutory leave",
+      "duration": "session",
+      "required": false
+    },
+    {
+      "id": "day-to-day-care-details",
+      "description": "If claiming as a day-to-day carer, provide details of your care arrangement",
+      "data_shared": [
+        "child_lived_with_for_4_weeks",
+        "day_to_day_responsibility",
+        "paid_to_care",
+        "foster_parent_status"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To verify eligibility if you are claiming based on day-to-day care responsibility rather than as a parent",
+      "duration": "until-revoked",
+      "required": false
+    }
+  ],
+  "revocation": {
+    "mechanism": "Contact HMRC or revoke through your GOV.UK account. You can also cancel your leave or pay claim directly with your employer following the notice requirements.",
+    "effect": "Application will be cancelled if consent is revoked before employer processes the claim. If leave or pay has already begun, you may need to follow cancellation procedures with your employer."
+  },
+  "delegation": {
+    "agent_identity": "GOV.UK AI Agent",
+    "scopes": [
+      "read-personal-data",
+      "submit-declaration",
+      "notify-employer",
+      "read-employment-data",
+      "read-hmrc-paye-data"
+    ],
+    "limitations": "Agent can help complete the declaration and notify your employer on your behalf. Agent cannot submit false information or make material changes to dates without your explicit confirmation. Agent cannot cancel leave or pay that has already been approved without your instruction. Agent cannot access death certificates or medical records — you must provide these details."
+  }
+}

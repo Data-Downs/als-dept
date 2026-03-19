@@ -1,0 +1,119 @@
+{
+  "id": "hmcts-probate.consent",
+  "version": "1.0.0",
+  "grants": [
+    {
+      "id": "identity-verification",
+      "description": "Verify your identity using your GOV.UK One Login credentials",
+      "data_shared": [
+        "full_name",
+        "date_of_birth",
+        "national_insurance_number",
+        "address"
+      ],
+      "source": "one-login",
+      "purpose": "To confirm you are who you say you are and that you are the named executor or closest relative",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "estate-valuation-access",
+      "description": "Access your estate valuation and Inheritance Tax determination from HMRC",
+      "data_shared": [
+        "gross_estate_value",
+        "net_estate_value",
+        "iht_liability",
+        "iht_reference_code"
+      ],
+      "source": "hmrc-iht-service",
+      "purpose": "To verify the estate valuation and Inheritance Tax position reported in your probate application",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "death-certificate-sharing",
+      "description": "Share the death certificate with HMCTS Probate Service",
+      "data_shared": [
+        "death_certificate_number",
+        "deceased_full_name",
+        "date_of_death",
+        "place_of_death"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To verify the death and establish the legal basis for probate application",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "will-document-sharing",
+      "description": "Upload and share the original will with HMCTS Probate Registry",
+      "data_shared": [
+        "will_document",
+        "testator_signature",
+        "witness_signatures",
+        "will_date"
+      ],
+      "source": "citizen-provided",
+      "purpose": "The will becomes part of the public record and determines who can apply for probate and how the estate is distributed",
+      "duration": "until-revoked",
+      "required": false
+    },
+    {
+      "id": "executor-contact-sharing",
+      "description": "Share contact details for all executors named in the will or other applicants",
+      "data_shared": [
+        "executor_names",
+        "executor_email_addresses",
+        "executor_phone_numbers"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To contact all executors for legal declaration signing and to ensure agreement on who applies",
+      "duration": "session",
+      "required": false
+    },
+    {
+      "id": "estate-asset-details",
+      "description": "Provide detailed information about the deceased's assets, property, and debts",
+      "data_shared": [
+        "property_addresses",
+        "bank_account_details",
+        "investment_details",
+        "outstanding_debts",
+        "funeral_costs"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To enable the Probate Service to review and grant probate based on accurate estate information",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "beneficiary-information",
+      "description": "Provide information about beneficiaries named in the will or entitled under intestacy rules",
+      "data_shared": [
+        "beneficiary_names",
+        "beneficiary_relationships",
+        "inheritance_shares"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To ensure the correct distribution of the estate according to the will or intestacy rules",
+      "duration": "until-revoked",
+      "required": true
+    }
+  ],
+  "revocation": {
+    "mechanism": "Contact HMCTS Probate Service at contactprobate@justice.gov.uk or revoke through your GOV.UK account",
+    "effect": "Application will be cancelled if consent is revoked before grant issued. If grant already issued, revocation will not affect the grant but will prevent further data sharing."
+  },
+  "delegation": {
+    "agent_identity": "GOV.UK AI Agent",
+    "scopes": [
+      "read-estate-data",
+      "read-iht-status",
+      "read-will-document",
+      "prepare-application-forms",
+      "calculate-fees",
+      "track-application-status"
+    ],
+    "limitations": "Agent CANNOT: sign the legal declaration on your behalf (you or all executors must sign personally); make payment for probate fees; upload the original will (you must provide); resolve executor disputes; make legal decisions about contested applications; act as your legal representative in court; determine beneficiaries or change the will; authorize changes to estate valuation."
+  }
+}

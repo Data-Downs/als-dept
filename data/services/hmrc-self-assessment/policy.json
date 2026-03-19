@@ -1,0 +1,104 @@
+{
+  "id": "hmrc.self-assessment.eligibility",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "qualifying-income-source",
+      "description": "Applicant must have qualifying income: self-employed, company director, landlord, or untaxed income",
+      "condition": {
+        "field": "income_source",
+        "operator": "in",
+        "value": [
+          "self-employed",
+          "company-director",
+          "landlord",
+          "untaxed-income",
+          "partnership"
+        ]
+      },
+      "reason_if_failed": "You only need to register for Self Assessment if you're self-employed, a company director, receive rental income, or have other untaxed income. Check if you need to send a tax return.",
+      "evidence_source": "citizen-declared",
+      "alternative_service": "hmrc.check-if-need-tax-return"
+    },
+    {
+      "id": "not-already-active",
+      "description": "Applicant must not have an active Self Assessment registration",
+      "condition": {
+        "field": "existing_utr_active",
+        "operator": "!=",
+        "value": true
+      },
+      "reason_if_failed": "You already have an active Self Assessment registration. Use your existing Unique Taxpayer Reference (UTR) to file your return.",
+      "alternative_service": "hmrc.self-assessment-login",
+      "triggers_handoff": true
+    },
+    {
+      "id": "needs-reactivation-check",
+      "description": "Check if applicant has inactive registration requiring reactivation",
+      "condition": {
+        "field": "existing_utr_inactive",
+        "operator": "!=",
+        "value": true
+      },
+      "reason_if_failed": "You have a previous Self Assessment registration that needs reactivating. Follow the reactivation process instead.",
+      "alternative_service": "hmrc.reactivate-self-assessment",
+      "triggers_handoff": true
+    },
+    {
+      "id": "uk-tax-resident",
+      "description": "Applicant must be a UK taxpayer or have UK tax obligations",
+      "condition": {
+        "field": "uk_tax_obligation",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "This service is for UK taxpayers. If you're a non-UK resident with UK income, contact HMRC International.",
+      "evidence_source": "identity-verified",
+      "triggers_handoff": true
+    },
+    {
+      "id": "deadline-awareness",
+      "description": "Registration must be completed by 5 October in tax year following income",
+      "condition": {
+        "field": "registration_date",
+        "operator": "<=",
+        "value": "2025-10-05"
+      },
+      "reason_if_failed": "You are registering after the 5 October deadline. You may receive a penalty. Continue with registration but expect a late registration penalty notice.",
+      "evidence_source": "system-date"
+    }
+  ],
+  "explanation_template": "Self Assessment registration eligibility: {outcome}",
+  "edge_cases": [
+    {
+      "id": "partnership-income",
+      "description": "Applicant is a partner in a business partnership",
+      "detection": "income_source == 'partnership'",
+      "action": "Partnership income requires additional registration details. Route to partnership-specific registration flow."
+    },
+    {
+      "id": "complex-income-structures",
+      "description": "Applicant has multiple income sources requiring Self Assessment",
+      "detection": "multiple_income_sources == true",
+      "action": "Multiple income sources require careful classification. Agent should gather all income details before proceeding."
+    },
+    {
+      "id": "non-resident-uk-income",
+      "description": "Applicant is non-UK resident but has UK-source income",
+      "detection": "uk_resident == false AND uk_income == true",
+      "action": "Non-residents with UK income may need Self Assessment but have different rules. Hand off to HMRC International team."
+    },
+    {
+      "id": "ceased-self-employment",
+      "description": "Applicant has recently ceased self-employment but needs final return",
+      "detection": "self_employment_ceased == true",
+      "action": "You may still need to register to file a final tax return for the year you ceased trading. Continue with registration."
+    },
+    {
+      "id": "high-income-child-benefit",
+      "description": "Applicant earning over £50,000 with child benefit in household",
+      "detection": "income_over_50k == true AND child_benefit_recipient == true",
+      "action": "High earners with child benefit in household must register and report via Self Assessment to pay the High Income Child Benefit Charge."
+    }
+  ]
+}

@@ -1,0 +1,121 @@
+{
+  "id": "ho-visa.consent",
+  "version": "1.0.0",
+  "grants": [
+    {
+      "id": "identity-verification",
+      "description": "Verify your identity using passport and supporting identity documents",
+      "data_shared": [
+        "full_name",
+        "date_of_birth",
+        "nationality",
+        "passport_number",
+        "passport_photo",
+        "place_of_birth"
+      ],
+      "source": "passport-scan",
+      "purpose": "To confirm your identity for visa application processing and border control",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "biometric-data-collection",
+      "description": "Collect biometric information (fingerprints and digital facial photograph) at a visa application centre",
+      "data_shared": [
+        "fingerprints",
+        "facial_photograph",
+        "biometric_reference_number"
+      ],
+      "source": "visa-application-centre",
+      "purpose": "Biometric data is used to verify your identity at UK border control, prevent identity fraud, and check against security databases",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "background-security-checks",
+      "description": "Share your criminal record, immigration history, and security information for vetting",
+      "data_shared": [
+        "criminal_record",
+        "previous_visa_history",
+        "immigration_violations",
+        "entry_bans",
+        "security_flags"
+      ],
+      "source": "home-office-databases",
+      "purpose": "To assess security risks, check immigration compliance, and determine eligibility for UK entry",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "financial-information-sharing",
+      "description": "Share bank statements, income details, and proof of financial support",
+      "data_shared": [
+        "bank_statements",
+        "income_details",
+        "savings_balance",
+        "sponsorship_details",
+        "employment_verification"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To verify you can financially support yourself during your UK stay without recourse to public funds",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "travel-history-sharing",
+      "description": "Share your international travel history and previous visa applications",
+      "data_shared": [
+        "travel_dates",
+        "countries_visited",
+        "previous_visas",
+        "visa_refusals",
+        "passport_stamps"
+      ],
+      "source": "passport-stamps",
+      "purpose": "To assess your travel patterns, immigration compliance history, and credibility of stated purpose",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "health-information-sharing",
+      "description": "Share tuberculosis test results and declared medical conditions affecting travel",
+      "data_shared": [
+        "tb_test_certificate",
+        "medical_conditions",
+        "medication_requirements"
+      ],
+      "source": "approved-medical-clinic",
+      "purpose": "To protect public health in the UK and ensure you can access necessary medical care during your stay",
+      "duration": "session",
+      "required": false
+    },
+    {
+      "id": "sponsor-verification",
+      "description": "Allow Home Office to verify information with your UK sponsor (employer, educational institution, or family member)",
+      "data_shared": [
+        "sponsor_details",
+        "sponsor_financial_status",
+        "relationship_to_sponsor",
+        "accommodation_details"
+      ],
+      "source": "uk-sponsor",
+      "purpose": "To verify the genuineness of your stated purpose and ensure adequate support arrangements in the UK",
+      "duration": "session",
+      "required": false
+    }
+  ],
+  "revocation": {
+    "mechanism": "Contact UK Visas and Immigration or withdraw application through your online account at gov.uk/visa-immigration",
+    "effect": "Application will be withdrawn immediately. Visa fees are non-refundable. Biometric data and background check results will be retained for 10 years for security purposes. You may reapply at any time."
+  },
+  "delegation": {
+    "agent_identity": "GOV.UK AI Agent",
+    "scopes": [
+      "read-application-data",
+      "upload-supporting-documents",
+      "schedule-biometrics-appointment",
+      "check-application-status"
+    ],
+    "limitations": "Agent cannot make visa fee payment on your behalf. Agent cannot physically attend biometric appointment or interview for you. Agent cannot change critical personal information (name, date of birth, nationality, passport number) without your explicit real-time confirmation. Agent cannot submit false or misleading information. Agent cannot authorize third parties to act on your behalf. Agent cannot appeal a visa refusal without your explicit instruction."
+  }
+}

@@ -1,0 +1,120 @@
+{
+  "id": "hmrc.tax-free-childcare.consent",
+  "version": "1.0.0",
+  "grants": [
+    {
+      "id": "identity-verification",
+      "description": "Verify your identity using your GOV.UK One Login credentials",
+      "data_shared": [
+        "full_name",
+        "date_of_birth",
+        "national_insurance_number"
+      ],
+      "source": "one-login",
+      "purpose": "To confirm your identity and access your HMRC records",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "income-verification-paye",
+      "description": "Access your PAYE income records from HMRC to verify you meet minimum earnings",
+      "data_shared": [
+        "employment_status",
+        "employer_name",
+        "gross_earnings",
+        "tax_paid",
+        "national_insurance_contributions"
+      ],
+      "source": "hmrc-paye",
+      "purpose": "To verify you earn at least National Minimum Wage for 16 hours per week and do not exceed £100,000 adjusted net income",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "income-verification-self-assessment",
+      "description": "Access your Self Assessment records from HMRC if you're self-employed",
+      "data_shared": [
+        "self_employment_income",
+        "business_start_date",
+        "adjusted_net_income",
+        "unique_taxpayer_reference"
+      ],
+      "source": "hmrc-self-assessment",
+      "purpose": "To verify your self-employment income and check income thresholds",
+      "duration": "until-revoked",
+      "required": false
+    },
+    {
+      "id": "partner-income-verification",
+      "description": "Access your partner's HMRC income records to verify their eligibility",
+      "data_shared": [
+        "partner_employment_status",
+        "partner_gross_earnings",
+        "partner_adjusted_net_income"
+      ],
+      "source": "hmrc-paye",
+      "purpose": "Both you and your partner must meet the working and income requirements",
+      "duration": "until-revoked",
+      "required": false
+    },
+    {
+      "id": "child-details-verification",
+      "description": "Confirm your child's details including age and disability status",
+      "data_shared": [
+        "child_full_name",
+        "child_date_of_birth",
+        "child_birth_certificate_number",
+        "child_disability_status",
+        "child_disability_benefit_type"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To verify your child is eligible for Tax-Free Childcare and calculate the correct top-up limits",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "benefit-status-check",
+      "description": "Check if you or your partner receive benefits that affect eligibility",
+      "data_shared": [
+        "universal_credit_status",
+        "childcare_voucher_status",
+        "incapacity_benefit_status",
+        "severe_disablement_allowance_status",
+        "carers_allowance_status",
+        "employment_support_allowance_status"
+      ],
+      "source": "hmrc-benefits",
+      "purpose": "To check you don't receive conflicting benefits (Universal Credit childcare element or childcare vouchers) and to verify if your partner qualifies through specific benefits",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "quarterly-reconfirmation",
+      "description": "Reconfirm your eligibility every 3 months by updating your circumstances",
+      "data_shared": [
+        "current_employment_status",
+        "current_income",
+        "current_childcare_needs",
+        "partner_status_changes"
+      ],
+      "source": "hmrc-records",
+      "purpose": "To ensure you remain eligible for Tax-Free Childcare. Your account will stop if you don't reconfirm every 3 months.",
+      "duration": "until-revoked",
+      "required": true
+    }
+  ],
+  "revocation": {
+    "mechanism": "Contact HMRC Childcare Service helpline or revoke through your GOV.UK childcare account",
+    "effect": "Your Tax-Free Childcare account will be closed. Any money in your account must be used or withdrawn. You will not receive further government top-ups."
+  },
+  "delegation": {
+    "agent_identity": "GOV.UK AI Agent",
+    "scopes": [
+      "read-personal-data",
+      "read-hmrc-records",
+      "submit-application",
+      "reconfirm-eligibility"
+    ],
+    "limitations": "Agent cannot make payments into the childcare account or pay childcare providers on your behalf. Agent cannot decide which parent gets the account in separation cases - HMRC will make that decision. Agent cannot change your childcare provider without your explicit confirmation. Agent cannot withdraw money from your account."
+  }
+}

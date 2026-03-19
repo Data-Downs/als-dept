@@ -1,0 +1,143 @@
+{
+  "id": "hmcts-benefit-tribunal.states",
+  "version": "1.0.0",
+  "states": [
+    {
+      "id": "not-started",
+      "type": "initial"
+    },
+    {
+      "id": "identity-verified"
+    },
+    {
+      "id": "eligibility-checked"
+    },
+    {
+      "id": "consent-given"
+    },
+    {
+      "id": "appeal-submitted",
+      "receipt": true
+    },
+    {
+      "id": "dwp-response-received"
+    },
+    {
+      "id": "evidence-gathering"
+    },
+    {
+      "id": "hearing-scheduled"
+    },
+    {
+      "id": "hearing-completed"
+    },
+    {
+      "id": "decision-issued",
+      "receipt": true
+    },
+    {
+      "id": "completed",
+      "type": "terminal",
+      "receipt": true
+    },
+    {
+      "id": "rejected",
+      "type": "terminal",
+      "receipt": true
+    },
+    {
+      "id": "handed-off",
+      "type": "terminal",
+      "receipt": true
+    },
+    {
+      "id": "withdrawn",
+      "type": "terminal",
+      "receipt": true
+    }
+  ],
+  "transitions": [
+    {
+      "from": "not-started",
+      "to": "identity-verified",
+      "trigger": "verify-identity"
+    },
+    {
+      "from": "identity-verified",
+      "to": "eligibility-checked",
+      "trigger": "check-eligibility"
+    },
+    {
+      "from": "eligibility-checked",
+      "to": "consent-given",
+      "trigger": "grant-consent",
+      "condition": "eligible"
+    },
+    {
+      "from": "eligibility-checked",
+      "to": "rejected",
+      "trigger": "reject",
+      "condition": "not-eligible-no-mr"
+    },
+    {
+      "from": "eligibility-checked",
+      "to": "handed-off",
+      "trigger": "handoff",
+      "condition": "requires-alternative-form"
+    },
+    {
+      "from": "consent-given",
+      "to": "appeal-submitted",
+      "trigger": "submit-appeal"
+    },
+    {
+      "from": "appeal-submitted",
+      "to": "dwp-response-received",
+      "trigger": "receive-dwp-response"
+    },
+    {
+      "from": "dwp-response-received",
+      "to": "evidence-gathering",
+      "trigger": "begin-evidence-phase"
+    },
+    {
+      "from": "evidence-gathering",
+      "to": "hearing-scheduled",
+      "trigger": "schedule-hearing"
+    },
+    {
+      "from": "evidence-gathering",
+      "to": "withdrawn",
+      "trigger": "withdraw-appeal",
+      "condition": "citizen-requests-withdrawal"
+    },
+    {
+      "from": "hearing-scheduled",
+      "to": "hearing-completed",
+      "trigger": "complete-hearing"
+    },
+    {
+      "from": "hearing-scheduled",
+      "to": "decision-issued",
+      "trigger": "paper-decision",
+      "condition": "no-attendance-paper-only"
+    },
+    {
+      "from": "hearing-completed",
+      "to": "decision-issued",
+      "trigger": "issue-decision"
+    },
+    {
+      "from": "decision-issued",
+      "to": "completed",
+      "trigger": "appeal-upheld",
+      "condition": "tribunal-finds-in-favour"
+    },
+    {
+      "from": "decision-issued",
+      "to": "rejected",
+      "trigger": "appeal-dismissed",
+      "condition": "tribunal-dismisses-appeal"
+    }
+  ]
+}

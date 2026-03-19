@@ -1,0 +1,80 @@
+{
+  "id": "hmrc.tax-on-pension.consent",
+  "version": "1.0.0",
+  "grants": [
+    {
+      "id": "identity-verification",
+      "description": "Verify your identity using your GOV.UK One Login credentials",
+      "data_shared": [
+        "full_name",
+        "date_of_birth",
+        "national_insurance_number"
+      ],
+      "source": "one-login",
+      "purpose": "To confirm your identity before accessing your tax and pension records",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "hmrc-tax-records",
+      "description": "Access your HMRC tax records to calculate your tax liability",
+      "data_shared": [
+        "personal_allowance",
+        "tax_code",
+        "previous_payments",
+        "other_income_sources",
+        "marriage_allowance_status",
+        "blind_persons_allowance_status"
+      ],
+      "source": "hmrc",
+      "purpose": "To determine whether you owe tax on your pension and calculate the amount",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "pension-income-details",
+      "description": "Access details of your State Pension and private pension income",
+      "data_shared": [
+        "state_pension_amount",
+        "additional_state_pension_amount",
+        "private_pension_providers",
+        "private_pension_amounts",
+        "pension_commencement_dates"
+      ],
+      "source": "dwp-and-pension-providers",
+      "purpose": "To calculate total pension income for tax liability assessment",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "other-income-sources",
+      "description": "Declare other taxable income including employment, benefits, and investments",
+      "data_shared": [
+        "employment_income",
+        "self_employment_income",
+        "taxable_benefits",
+        "investment_income",
+        "property_income",
+        "foreign_income"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To calculate total annual income and determine overall tax liability",
+      "duration": "session",
+      "required": true
+    }
+  ],
+  "revocation": {
+    "mechanism": "Revoke consent through your GOV.UK account or contact HMRC",
+    "effect": "Calculation will be cancelled. You will need to contact HMRC directly to discuss your tax liability."
+  },
+  "delegation": {
+    "agent_identity": "GOV.UK AI Agent",
+    "scopes": [
+      "read-tax-records",
+      "read-pension-records",
+      "calculate-liability",
+      "provide-payment-method-guidance"
+    ],
+    "limitations": "Agent cannot make tax payments on your behalf. Agent cannot change your tax code or Personal Allowance. Agent cannot submit Self Assessment returns. Agent cannot access records if you have foreign income, Marriage Allowance, or Blind Person's Allowance (these require human HMRC advisor)."
+  }
+}

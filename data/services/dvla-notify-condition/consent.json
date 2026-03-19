@@ -1,0 +1,92 @@
+{
+  "id": "dvla-notify-condition.consent",
+  "version": "1.0.0",
+  "grants": [
+    {
+      "id": "identity-verification",
+      "description": "Verify your identity using your GOV.UK One Login credentials",
+      "data_shared": [
+        "full_name",
+        "date_of_birth",
+        "national_insurance_number"
+      ],
+      "source": "one-login",
+      "purpose": "To confirm your identity before accessing and updating your DVLA medical records",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "driving-licence-access",
+      "description": "Access your current driving licence details from DVLA records",
+      "data_shared": [
+        "driving_licence_number",
+        "licence_type",
+        "entitlements",
+        "licence_status",
+        "expiry_date"
+      ],
+      "source": "dvla-licence-database",
+      "purpose": "To verify your licence and determine which notification process applies to you",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "medical-condition-disclosure",
+      "description": "Share details of your medical condition with DVLA",
+      "data_shared": [
+        "condition_name",
+        "diagnosis_date",
+        "symptoms",
+        "treatment_details",
+        "impact_on_driving"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To enable DVLA to assess whether your condition affects your fitness to drive and whether any licence restrictions are needed",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "gp-consultant-details",
+      "description": "Provide your GP or consultant's contact details for medical verification",
+      "data_shared": [
+        "gp_name",
+        "gp_practice_name",
+        "gp_address",
+        "consultant_name",
+        "consultant_hospital"
+      ],
+      "source": "citizen-provided",
+      "purpose": "DVLA may need to contact your medical professionals to verify your condition and assess fitness to drive",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "dvla-medical-records-update",
+      "description": "Allow DVLA to create and maintain medical records linked to your licence",
+      "data_shared": [
+        "medical_history",
+        "condition_updates",
+        "medical_assessments",
+        "fitness_to_drive_decisions"
+      ],
+      "source": "dvla-created",
+      "purpose": "To maintain accurate records of your medical conditions and any restrictions or requirements for your driving licence",
+      "duration": "until-revoked",
+      "required": true
+    }
+  ],
+  "revocation": {
+    "mechanism": "Contact DVLA or revoke through your GOV.UK account. Note: Revoking consent does not remove your legal duty to notify DVLA of medical conditions.",
+    "effect": "Application will be cancelled if consent is revoked before completion. Your legal duty to notify remains. Failure to notify can result in fines up to £1,000 and may invalidate your insurance."
+  },
+  "delegation": {
+    "agent_identity": "GOV.UK AI Agent",
+    "scopes": [
+      "read-personal-data",
+      "read-medical-records",
+      "search-notifiable-conditions",
+      "submit-notification-to-dvla"
+    ],
+    "limitations": "Agent cannot voluntarily surrender your licence without explicit confirmation. Agent cannot consent to medical examinations on your behalf. Agent cannot override DVLA's fitness-to-drive decision. Agent can only submit notifications for conditions you explicitly disclose - it cannot infer or diagnose conditions. Agent cannot advise on whether you should continue driving - that is a decision for you, your doctor, and DVLA."
+  }
+}

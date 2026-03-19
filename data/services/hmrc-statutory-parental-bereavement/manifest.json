@@ -1,0 +1,19 @@
+{
+  "id": "hmrc-statutory-parental-bereavement",
+  "version": "1.0.0",
+  "name": "Statutory Parental Bereavement Pay & Leave",
+  "description": "2 weeks paid leave if a child under 18 dies or a baby is stillborn after 24 weeks of pregnancy.",
+  "department": "HMRC",
+  "input_schema": {
+    "type": "object"
+  },
+  "output_schema": {
+    "type": "object"
+  },
+  "source": "graph",
+  "serviceType": "entitlement",
+  "govuk_url": "https://www.gov.uk/parental-bereavement-pay-leave",
+  "eligibility_summary": "Employees are entitled to 2 weeks of paid parental bereavement leave following the death of a child under 18 or a stillbirth after 24 weeks. Must be taken within 56 weeks of the death. Paid at the statutory flat rate.",
+  "proactive": true,
+  "gated": false
+}

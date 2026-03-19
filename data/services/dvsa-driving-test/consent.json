@@ -1,0 +1,81 @@
+{
+  "id": "dvsa.driving-test.consent",
+  "version": "1.0.0",
+  "grants": [
+    {
+      "id": "identity-verification",
+      "description": "Verify your identity using your GOV.UK One Login credentials",
+      "data_shared": [
+        "full_name",
+        "date_of_birth",
+        "address"
+      ],
+      "source": "one-login",
+      "purpose": "To confirm your identity and residency status before booking your test",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "licence-check",
+      "description": "Check your provisional driving licence and theory test records with DVLA and DVSA",
+      "data_shared": [
+        "provisional_licence_number",
+        "theory_test_pass_certificate",
+        "licence_status"
+      ],
+      "source": "dvla-dvsa-records",
+      "purpose": "To verify you have a valid provisional licence and have passed your theory test",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "payment-details",
+      "description": "Provide payment information to pay for your test",
+      "data_shared": [
+        "payment_card_details"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To pay the test fee (£62 weekday or £75 evening/weekend/bank holiday)",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "instructor-availability",
+      "description": "Check your driving instructor's availability at your chosen test time",
+      "data_shared": [
+        "instructor_personal_reference_number"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To confirm your instructor is available for your test appointment",
+      "duration": "session",
+      "required": false
+    },
+    {
+      "id": "test-booking-details",
+      "description": "Store your test booking information",
+      "data_shared": [
+        "test_centre",
+        "test_date",
+        "test_time",
+        "vehicle_type"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To schedule and confirm your driving test appointment",
+      "duration": "until-revoked",
+      "required": true
+    }
+  ],
+  "revocation": {
+    "mechanism": "Cancel your test through the DVSA booking system or by calling 0300 200 1122",
+    "effect": "Your test booking will be cancelled. Refunds available if cancelled at least 3 working days before your test."
+  },
+  "delegation": {
+    "agent_identity": "GOV.UK AI Agent",
+    "scopes": [
+      "read-licence-data",
+      "check-test-availability",
+      "select-test-slots"
+    ],
+    "limitations": "Agent cannot make payment on your behalf without explicit confirmation. Agent cannot cancel a confirmed booking. Agent cannot attend the test on your behalf."
+  }
+}

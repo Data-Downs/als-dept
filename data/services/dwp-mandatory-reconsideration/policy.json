@@ -1,0 +1,110 @@
+{
+  "id": "dwp.mandatory-reconsideration.eligibility",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "has-decision-letter",
+      "description": "Applicant must have received a DWP benefit decision",
+      "condition": {
+        "field": "decision_letter_date",
+        "operator": "exists"
+      },
+      "reason_if_failed": "You need a DWP decision letter to request mandatory reconsideration",
+      "evidence_source": "citizen-provided"
+    },
+    {
+      "id": "eligible-benefit",
+      "description": "The benefit decision must be eligible for mandatory reconsideration",
+      "condition": {
+        "field": "benefit_type",
+        "operator": "in",
+        "value": [
+          "universal-credit",
+          "pip",
+          "esa",
+          "jsa",
+          "attendance-allowance",
+          "carers-allowance",
+          "dla",
+          "pension-credit",
+          "income-support",
+          "maternity-allowance",
+          "child-maintenance"
+        ]
+      },
+      "reason_if_failed": "This benefit uses a different challenge process",
+      "alternative_service": "dwp.benefit-specific-challenge",
+      "triggers_handoff": true
+    },
+    {
+      "id": "within-time-limit",
+      "description": "Request must be within 1 month of decision letter date",
+      "condition": {
+        "field": "days_since_decision",
+        "operator": "<=",
+        "value": 31
+      },
+      "reason_if_failed": "Your request is over 1 month late. You can still apply if you have a good reason (e.g. hospital stay, bereavement)",
+      "evidence_source": "decision-letter-date"
+    },
+    {
+      "id": "has-grounds",
+      "description": "Applicant must have grounds for reconsideration",
+      "condition": {
+        "field": "reconsideration_reason",
+        "operator": "in",
+        "value": [
+          "error",
+          "missed-evidence",
+          "disagree-reasoning"
+        ]
+      },
+      "reason_if_failed": "You must explain why you believe the decision was wrong",
+      "evidence_source": "citizen-provided"
+    },
+    {
+      "id": "decision-can-be-reconsidered",
+      "description": "The decision must be one that can be reconsidered",
+      "condition": {
+        "field": "decision_type",
+        "operator": "!=",
+        "value": "non-reconsiderable"
+      },
+      "reason_if_failed": "This decision cannot be reconsidered. Your original decision letter should explain your options.",
+      "triggers_handoff": true
+    }
+  ],
+  "explanation_template": "Mandatory reconsideration eligibility: {outcome}",
+  "edge_cases": [
+    {
+      "id": "late-application-good-reason",
+      "description": "Application is over 1 month late but applicant has good reason (hospital, bereavement, etc.)",
+      "detection": "days_since_decision > 31 AND has_good_reason",
+      "action": "Allow application. Require explanation of late reason. DWP decision-maker will assess if reason is acceptable."
+    },
+    {
+      "id": "written-statement-requested",
+      "description": "Applicant has requested written statement of reasons",
+      "detection": "written_statement_requested",
+      "action": "Time limit becomes 14 days from written statement date, not original decision date."
+    },
+    {
+      "id": "benefit-at-risk",
+      "description": "Full review means benefit could decrease or stop",
+      "detection": "always",
+      "action": "Mandatory warning: 'If you ask for mandatory reconsideration, someone will look at your whole benefit claim again. Your benefit may stop, stay the same, increase or decrease.' Require explicit acknowledgment."
+    },
+    {
+      "id": "universal-credit-journal",
+      "description": "Universal Credit claimants can request via their online journal",
+      "detection": "benefit_type == universal-credit AND has_uc_account",
+      "action": "Offer UC journal submission as alternative to phone/letter/form."
+    },
+    {
+      "id": "vulnerable-claimant",
+      "description": "Claimant may need additional support (mental health, learning disability, etc.)",
+      "detection": "vulnerability_flag",
+      "action": "Recommend free advice from Citizens Advice, Advicelocal, or legal adviser before proceeding."
+    }
+  ]
+}

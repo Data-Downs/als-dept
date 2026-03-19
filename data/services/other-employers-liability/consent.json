@@ -1,0 +1,90 @@
+{
+  "id": "other.employers-liability.consent",
+  "version": "1.0.0",
+  "grants": [
+    {
+      "id": "identity-verification",
+      "description": "Verify your identity as the business owner or responsible person",
+      "data_shared": [
+        "full_name",
+        "date_of_birth",
+        "national_insurance_number"
+      ],
+      "source": "one-login",
+      "purpose": "To confirm you are authorised to purchase Employers' Liability insurance for this business",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "business-details-sharing",
+      "description": "Share your business details with insurance providers to obtain quotes",
+      "data_shared": [
+        "company_name",
+        "company_registration_number",
+        "business_address",
+        "number_of_employees",
+        "industry_sector",
+        "annual_payroll",
+        "workplace_locations"
+      ],
+      "source": "companies-house",
+      "purpose": "Insurance providers need this information to calculate your premium and assess risk",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "payroll-verification",
+      "description": "Verify employee numbers and payroll details with HMRC",
+      "data_shared": [
+        "number_of_employees",
+        "total_payroll",
+        "employee_locations"
+      ],
+      "source": "hmrc",
+      "purpose": "To confirm the number and location of employees to determine if EL insurance is required",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "compliance-registration",
+      "description": "Register your EL insurance details with the government for compliance monitoring",
+      "data_shared": [
+        "policy_number",
+        "insurer_name",
+        "cover_amount",
+        "policy_start_date",
+        "policy_end_date"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To maintain a record of your compliance with EL insurance requirements and enable enforcement",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "fca-register-check",
+      "description": "Verify your chosen insurer is FCA-authorised",
+      "data_shared": [
+        "insurer_name",
+        "insurer_reference_number"
+      ],
+      "source": "fca",
+      "purpose": "To ensure you purchase insurance from a legally authorised provider",
+      "duration": "session",
+      "required": true
+    }
+  ],
+  "revocation": {
+    "mechanism": "Contact the service or revoke through your GOV.UK account",
+    "effect": "Revoking consent will cancel the application but you remain legally required to have EL insurance. You will need to obtain insurance through another route."
+  },
+  "delegation": {
+    "agent_identity": "GOV.UK AI Agent",
+    "scopes": [
+      "read-business-data",
+      "request-insurance-quotes",
+      "verify-compliance-status",
+      "register-policy-details"
+    ],
+    "limitations": "Agent cannot purchase insurance on your behalf without explicit confirmation at each step. Agent cannot select an insurer without your approval. Agent cannot commit to premium payment. Agent cannot display or download your certificate without your explicit request. For high-risk businesses or complex cases, agent must hand off to a qualified insurance broker or advisor."
+  }
+}

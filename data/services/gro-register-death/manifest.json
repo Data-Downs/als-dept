@@ -1,0 +1,19 @@
+{
+  "id": "gro-register-death",
+  "version": "1.0.0",
+  "name": "Register the death",
+  "description": "Register at local register office. Required before probate, Tell Us Once and bereavement payments.",
+  "department": "GRO",
+  "input_schema": {
+    "type": "object"
+  },
+  "output_schema": {
+    "type": "object"
+  },
+  "source": "graph",
+  "serviceType": "registration",
+  "govuk_url": "https://www.gov.uk/register-a-death",
+  "eligibility_summary": "Required for every death in England and Wales. Must be done by a qualified informant (relative, person present at death, etc.) within 5 days.",
+  "proactive": true,
+  "gated": false
+}

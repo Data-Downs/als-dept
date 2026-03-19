@@ -1,0 +1,105 @@
+{
+  "id": "la-council-tax-reduction.eligibility",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "uk-residency",
+      "description": "Applicant must be a UK resident (not Northern Ireland)",
+      "condition": {
+        "field": "jurisdiction",
+        "operator": "in",
+        "value": [
+          "England",
+          "Wales",
+          "Scotland"
+        ]
+      },
+      "reason_if_failed": "Council Tax Reduction is not available in Northern Ireland. There's a different scheme called Rate Relief.",
+      "alternative_service": "ni.rate-relief",
+      "evidence_source": "identity-verified"
+    },
+    {
+      "id": "council-area-resident",
+      "description": "Applicant must be liable for Council Tax in the local authority area",
+      "condition": {
+        "field": "council_tax_liable",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "You must be liable for Council Tax in this council area to apply for reduction",
+      "evidence_source": "citizen-provided"
+    },
+    {
+      "id": "low-income-or-benefits",
+      "description": "Applicant must be on low income or claim qualifying benefits",
+      "condition": {
+        "field": "low_income_or_benefits",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "Council Tax Reduction is for people on low income or claiming benefits. Your income may be too high.",
+      "evidence_source": "hmrc-dwp-verified"
+    },
+    {
+      "id": "savings-threshold",
+      "description": "Total household savings must be below the council's threshold (typically £16,000)",
+      "condition": {
+        "field": "household_savings",
+        "operator": "<=",
+        "value": 16000
+      },
+      "reason_if_failed": "Your household savings exceed the threshold for Council Tax Reduction in this council area",
+      "evidence_source": "bank-verified"
+    },
+    {
+      "id": "age-minimum",
+      "description": "Applicant must be at least 18 years old (or emancipated minor)",
+      "condition": {
+        "field": "age",
+        "operator": ">=",
+        "value": 18
+      },
+      "reason_if_failed": "You must be 18 or over to apply for Council Tax Reduction",
+      "evidence_source": "identity-verified"
+    }
+  ],
+  "explanation_template": "Council Tax Reduction eligibility: {outcome}. Your council will assess your household income, savings, and circumstances to determine the reduction amount.",
+  "edge_cases": [
+    {
+      "id": "pension-age",
+      "description": "Applicant has reached State Pension age",
+      "detection": "age >= state_pension_age",
+      "action": "Route to pension-age Council Tax Reduction scheme. Different rules and thresholds apply."
+    },
+    {
+      "id": "student-household",
+      "description": "Applicant or household members are full-time students",
+      "detection": "student_status",
+      "action": "Full-time students usually exempt from Council Tax entirely. Check if Council Tax exemption applies before reduction."
+    },
+    {
+      "id": "complex-household",
+      "description": "Household includes non-dependant adults or multiple families",
+      "detection": "non_dependant_adults > 0",
+      "action": "Manual assessment required. Non-dependant deductions will apply to reduction calculation."
+    },
+    {
+      "id": "refugee-asylum",
+      "description": "Applicant is refugee or asylum seeker with uncertain immigration status",
+      "detection": "immigration_status in ['refugee', 'asylum-seeker']",
+      "action": "Special rules apply. Route to specialist caseworker. Asylum seekers may be exempt from Council Tax."
+    },
+    {
+      "id": "severe-disability",
+      "description": "Applicant or household member has severe disability",
+      "detection": "severe_disability_premium",
+      "action": "Enhanced reduction may apply. Ensure Severe Disability Premium is included in assessment."
+    },
+    {
+      "id": "universal-credit",
+      "description": "Applicant receives Universal Credit",
+      "detection": "receives_universal_credit",
+      "action": "Assessment based on Universal Credit award. Income fluctuations may affect monthly reduction."
+    }
+  ]
+}

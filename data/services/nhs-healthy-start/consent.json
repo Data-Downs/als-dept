@@ -1,0 +1,104 @@
+{
+  "id": "nhs-healthy-start.consent",
+  "version": "1.0.0",
+  "grants": [
+    {
+      "id": "identity-verification",
+      "description": "Verify your identity using your NHS login or GOV.UK One Login credentials",
+      "data_shared": [
+        "full_name",
+        "date_of_birth",
+        "nhs_number",
+        "national_insurance_number"
+      ],
+      "source": "nhs-login",
+      "purpose": "To confirm your identity before processing your Healthy Start application",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "benefits-verification",
+      "description": "Check your benefit status with the Department for Work and Pensions (DWP)",
+      "data_shared": [
+        "national_insurance_number",
+        "benefit_type",
+        "benefit_claim_status",
+        "benefit_amount"
+      ],
+      "source": "dwp-benefits-data",
+      "purpose": "To confirm you receive a qualifying benefit for Healthy Start eligibility",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "maternity-records",
+      "description": "Access your maternity records to confirm pregnancy and expected due date",
+      "data_shared": [
+        "pregnancy_status",
+        "weeks_pregnant",
+        "expected_due_date",
+        "maternity_exemption_certificate_number"
+      ],
+      "source": "nhs-maternity-services",
+      "purpose": "To verify you are at least 10 weeks pregnant and calculate your voucher entitlement",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "child-records",
+      "description": "Access birth registration data to confirm children under 4 in your household",
+      "data_shared": [
+        "child_name",
+        "child_date_of_birth",
+        "child_nhs_number",
+        "birth_certificate_number"
+      ],
+      "source": "general-register-office",
+      "purpose": "To verify you have children under 4 and calculate your voucher entitlement",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "address-confirmation",
+      "description": "Confirm your current address for card delivery and eligibility verification",
+      "data_shared": [
+        "address_line_1",
+        "address_line_2",
+        "city",
+        "postcode",
+        "jurisdiction"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To post your Healthy Start prepaid card to your address and confirm you live in an eligible area",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "ongoing-eligibility-checks",
+      "description": "Allow NHS Healthy Start to check your ongoing eligibility through periodic benefits verification",
+      "data_shared": [
+        "benefit_claim_status",
+        "child_age_updates",
+        "pregnancy_outcome"
+      ],
+      "source": "dwp-benefits-data",
+      "purpose": "To ensure you continue to receive the correct voucher amount and stop payments if you no longer qualify",
+      "duration": "until-revoked",
+      "required": true
+    }
+  ],
+  "revocation": {
+    "mechanism": "Contact NHS Healthy Start helpline or revoke through your NHS account",
+    "effect": "Your application will be cancelled or your card will be stopped. You can reapply at any time."
+  },
+  "delegation": {
+    "agent_identity": "GOV.UK AI Agent",
+    "scopes": [
+      "read-personal-data",
+      "read-benefits-data",
+      "read-nhs-maternity-records",
+      "submit-to-nhs-healthy-start"
+    ],
+    "limitations": "Agent cannot modify your benefit claims. Agent cannot change your address without your explicit confirmation. Agent cannot add or remove children from your application without verification. Agent will hand off to a human advisor if there are complex eligibility questions or if maternity exemption certificate is missing."
+  }
+}

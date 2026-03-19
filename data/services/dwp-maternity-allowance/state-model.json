@@ -1,0 +1,146 @@
+{
+  "id": "dwp.maternity-allowance.states",
+  "version": "1.0.0",
+  "states": [
+    {
+      "id": "not-started",
+      "type": "initial"
+    },
+    {
+      "id": "identity-verified"
+    },
+    {
+      "id": "eligibility-checked"
+    },
+    {
+      "id": "consent-given"
+    },
+    {
+      "id": "employment-details-submitted"
+    },
+    {
+      "id": "documents-uploaded"
+    },
+    {
+      "id": "assessment",
+      "receipt": true
+    },
+    {
+      "id": "additional-evidence-requested"
+    },
+    {
+      "id": "decision",
+      "receipt": true
+    },
+    {
+      "id": "entitlement-confirmed",
+      "receipt": true
+    },
+    {
+      "id": "payment-active",
+      "receipt": true
+    },
+    {
+      "id": "completed",
+      "type": "terminal",
+      "receipt": true
+    },
+    {
+      "id": "rejected",
+      "type": "terminal",
+      "receipt": true
+    },
+    {
+      "id": "handed-off",
+      "type": "terminal",
+      "receipt": true
+    }
+  ],
+  "transitions": [
+    {
+      "from": "not-started",
+      "to": "identity-verified",
+      "trigger": "verify-identity"
+    },
+    {
+      "from": "identity-verified",
+      "to": "eligibility-checked",
+      "trigger": "check-eligibility"
+    },
+    {
+      "from": "eligibility-checked",
+      "to": "consent-given",
+      "trigger": "grant-consent",
+      "condition": "eligible"
+    },
+    {
+      "from": "eligibility-checked",
+      "to": "rejected",
+      "trigger": "reject",
+      "condition": "not-eligible"
+    },
+    {
+      "from": "eligibility-checked",
+      "to": "handed-off",
+      "trigger": "handoff",
+      "condition": "edge-case-requires-specialist"
+    },
+    {
+      "from": "consent-given",
+      "to": "employment-details-submitted",
+      "trigger": "submit-employment-details"
+    },
+    {
+      "from": "employment-details-submitted",
+      "to": "documents-uploaded",
+      "trigger": "upload-documents"
+    },
+    {
+      "from": "documents-uploaded",
+      "to": "assessment",
+      "trigger": "begin-assessment"
+    },
+    {
+      "from": "assessment",
+      "to": "additional-evidence-requested",
+      "trigger": "request-evidence",
+      "condition": "insufficient-evidence"
+    },
+    {
+      "from": "additional-evidence-requested",
+      "to": "assessment",
+      "trigger": "submit-additional-evidence"
+    },
+    {
+      "from": "assessment",
+      "to": "decision",
+      "trigger": "make-decision"
+    },
+    {
+      "from": "decision",
+      "to": "entitlement-confirmed",
+      "trigger": "approve"
+    },
+    {
+      "from": "decision",
+      "to": "rejected",
+      "trigger": "reject-application"
+    },
+    {
+      "from": "entitlement-confirmed",
+      "to": "payment-active",
+      "trigger": "confirm-last-work-day"
+    },
+    {
+      "from": "payment-active",
+      "to": "completed",
+      "trigger": "complete-payment-period"
+    },
+    {
+      "from": "payment-active",
+      "to": "assessment",
+      "trigger": "review-change-of-circumstances",
+      "condition": "change-reported"
+    }
+  ]
+}

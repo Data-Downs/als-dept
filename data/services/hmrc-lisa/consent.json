@@ -1,0 +1,93 @@
+{
+  "id": "hmrc-lisa.consent",
+  "version": "1.0.0",
+  "grants": [
+    {
+      "id": "identity-verification",
+      "description": "Verify your identity to access your Lifetime ISA details",
+      "data_shared": [
+        "full_name",
+        "date_of_birth",
+        "national_insurance_number"
+      ],
+      "source": "one-login",
+      "purpose": "To confirm your identity and link to your Lifetime ISA account with your provider",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "isa-account-access",
+      "description": "Access your Lifetime ISA account details from your provider",
+      "data_shared": [
+        "isa_account_number",
+        "account_balance",
+        "government_bonus_amount",
+        "first_payment_date",
+        "account_opening_date",
+        "isa_provider_name"
+      ],
+      "source": "isa-provider",
+      "purpose": "To verify your eligibility and calculate the amount available (savings plus 25% government bonus) for your home purchase",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "conveyancer-authorization",
+      "description": "Authorize your conveyancer/solicitor to receive LISA funds directly from your provider",
+      "data_shared": [
+        "conveyancer_name",
+        "conveyancer_firm",
+        "conveyancer_reference",
+        "conveyancer_bank_details",
+        "property_address",
+        "property_price",
+        "expected_completion_date"
+      ],
+      "source": "citizen-provided",
+      "purpose": "ISA provider will pay funds directly to your conveyancer before property completion. You will not receive the funds directly.",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "first-time-buyer-declaration",
+      "description": "Declare that you are a first-time buyer and have never owned property before",
+      "data_shared": [
+        "first_time_buyer_status",
+        "previous_property_ownership",
+        "declaration_timestamp"
+      ],
+      "source": "citizen-declaration",
+      "purpose": "To confirm you meet the first-time buyer eligibility criteria for using LISA bonus",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "mortgage-details",
+      "description": "Share mortgage details to verify you're buying with a standard mortgage",
+      "data_shared": [
+        "mortgage_lender",
+        "mortgage_amount",
+        "mortgage_type",
+        "mortgage_in_principle_reference"
+      ],
+      "source": "mortgage-lender",
+      "purpose": "To confirm you're buying with a mortgage and not using a private mortgage from relatives",
+      "duration": "session",
+      "required": true
+    }
+  ],
+  "revocation": {
+    "mechanism": "Contact your ISA provider directly or revoke through your GOV.UK account before funds are released",
+    "effect": "Conveyancer will not receive funds. If you later withdraw the money for another purpose, you will incur a 25% unauthorised withdrawal charge which recovers the government bonus."
+  },
+  "delegation": {
+    "agent_identity": "GOV.UK AI Agent",
+    "scopes": [
+      "read-isa-account-details",
+      "verify-eligibility",
+      "submit-property-details",
+      "submit-conveyancer-details"
+    ],
+    "limitations": "Agent cannot make the final authorization to release funds to the conveyancer without your explicit confirmation. Agent cannot declare first-time buyer status on your behalf without supporting evidence. Agent cannot change conveyancer details once authorization is given. Agent cannot access or withdraw the funds directly."
+  }
+}

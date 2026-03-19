@@ -1,0 +1,118 @@
+{
+  "id": "la-council-tax.consent",
+  "version": "1.0.0",
+  "grants": [
+    {
+      "id": "identity-verification",
+      "description": "Verify your identity to register for Council Tax",
+      "data_shared": [
+        "full_name",
+        "date_of_birth",
+        "national_insurance_number"
+      ],
+      "source": "one-login",
+      "purpose": "To confirm your identity and link you to the correct Council Tax account",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "new-property-details",
+      "description": "Provide details of your new property address",
+      "data_shared": [
+        "property_address",
+        "postcode",
+        "move_in_date",
+        "occupancy_status"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To register you for Council Tax at your new address and determine the correct band and charge",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "old-property-details",
+      "description": "Provide details of your previous property to close the account",
+      "data_shared": [
+        "previous_address",
+        "previous_postcode",
+        "move_out_date",
+        "previous_council"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To close your Council Tax account at your old address and notify the previous council",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "household-composition",
+      "description": "Share details about who lives in the property for discount assessment",
+      "data_shared": [
+        "number_of_adults",
+        "number_of_children",
+        "student_status",
+        "disability_status",
+        "occupant_names"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To assess eligibility for Council Tax discounts (single person, student, disabled band reduction, etc.)",
+      "duration": "until-revoked",
+      "required": false
+    },
+    {
+      "id": "valuation-band-lookup",
+      "description": "Retrieve your property's Council Tax band from the Valuation Office Agency",
+      "data_shared": [
+        "property_address",
+        "valuation_band",
+        "band_effective_date"
+      ],
+      "source": "voa-valuation-office",
+      "purpose": "To determine the correct Council Tax band for your property and calculate the amount due",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "payment-details",
+      "description": "Provide bank details to set up Direct Debit for Council Tax payments",
+      "data_shared": [
+        "bank_account_number",
+        "sort_code",
+        "account_holder_name"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To set up automatic monthly payments for your Council Tax bill",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "previous-council-notification",
+      "description": "Notify your previous local authority to close your old Council Tax account",
+      "data_shared": [
+        "previous_address",
+        "previous_account_number",
+        "move_out_date",
+        "forwarding_address"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To inform your previous council that you have moved out and close your account to prevent further charges",
+      "duration": "session",
+      "required": true
+    }
+  ],
+  "revocation": {
+    "mechanism": "Contact your local council online, by phone, or in writing to revoke consent",
+    "effect": "Revoking consent will stop the registration process. You are still legally liable for Council Tax and must register by another method."
+  },
+  "delegation": {
+    "agent_identity": "GOV.UK AI Agent acting on behalf of local authority",
+    "scopes": [
+      "read-personal-data",
+      "read-property-data",
+      "calculate-council-tax",
+      "assess-discount-eligibility",
+      "register-new-address",
+      "notify-previous-council"
+    ],
+    "limitations": "Agent cannot set up Direct Debit payment without explicit confirmation of bank details. Agent cannot apply for discretionary discounts or exemptions requiring evidence without citizen providing supporting documents. Agent cannot challenge Council Tax band on your behalf. Agent cannot make changes to household composition without your confirmation."
+  }
+}

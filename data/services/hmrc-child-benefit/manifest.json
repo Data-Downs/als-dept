@@ -1,0 +1,19 @@
+{
+  "id": "hmrc-child-benefit",
+  "version": "1.0.0",
+  "name": "Child Benefit",
+  "description": "Backdatable 3 months. High Income Charge applies if either parent earns over £60k.",
+  "department": "HMRC",
+  "input_schema": {
+    "type": "object"
+  },
+  "output_schema": {
+    "type": "object"
+  },
+  "source": "graph",
+  "serviceType": "benefit",
+  "govuk_url": "https://www.gov.uk/child-benefit",
+  "eligibility_summary": "Available to anyone responsible for a child under 16 (or under 20 in qualifying education). Backdatable 3 months. High Income Child Benefit Charge applies if either parent earns over £60k.",
+  "proactive": true,
+  "gated": false
+}

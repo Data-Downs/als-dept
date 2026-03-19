@@ -1,0 +1,86 @@
+{
+  "id": "gro.register-death.eligibility",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "jurisdiction",
+      "description": "Death must have occurred in England or Wales",
+      "condition": {
+        "field": "death_location_country",
+        "operator": "in",
+        "value": [
+          "England",
+          "Wales"
+        ]
+      },
+      "reason_if_failed": "Deaths in Scotland are registered with National Records of Scotland. Deaths in Northern Ireland are registered with the General Register Office for Northern Ireland.",
+      "alternative_service": "gro-scotland.register-death"
+    },
+    {
+      "id": "time-limit",
+      "description": "Death must be registered within 5 days",
+      "condition": {
+        "field": "days_since_death",
+        "operator": "<=",
+        "value": 5
+      },
+      "reason_if_failed": "The death should have been registered within 5 days. Contact the register office urgently to explain the delay.",
+      "triggers_handoff": true
+    },
+    {
+      "id": "qualified-informant",
+      "description": "Registrant must be a qualified informant",
+      "condition": {
+        "field": "informant_relationship",
+        "operator": "in",
+        "value": [
+          "relative",
+          "present_at_death",
+          "occupier_of_premises",
+          "person_arranging_funeral",
+          "person_causing_disposal"
+        ]
+      },
+      "reason_if_failed": "Only certain people can register a death: a relative, someone present at the death, the occupier where the death occurred, the person arranging the funeral, or the person causing disposal of the body.",
+      "evidence_source": "self-declared"
+    },
+    {
+      "id": "medical-certificate",
+      "description": "Medical certificate of cause of death must be available",
+      "condition": {
+        "field": "medical_certificate_issued",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "You need a medical certificate of cause of death (MCCD) from a doctor before you can register the death.",
+      "triggers_handoff": true
+    }
+  ],
+  "explanation_template": "Death registration eligibility: {outcome}",
+  "edge_cases": [
+    {
+      "id": "coroner-case",
+      "description": "Death has been referred to the coroner (sudden, unexplained, or suspicious)",
+      "detection": "coroner_involved",
+      "action": "Cannot register until coroner investigation is complete. The coroner will contact you when you can register. This may take weeks or months."
+    },
+    {
+      "id": "stillbirth",
+      "description": "Baby was stillborn after 24 weeks of pregnancy",
+      "detection": "stillbirth",
+      "action": "Route to stillbirth registration process. Different forms and procedures apply."
+    },
+    {
+      "id": "death-abroad",
+      "description": "Death occurred outside the UK",
+      "detection": "death_location_country != UK",
+      "action": "Deaths abroad must be registered according to local laws. You can also register with the UK High Commission or consulate. Use 'Register a death abroad' service."
+    },
+    {
+      "id": "no-doctor-certificate",
+      "description": "Doctor has not issued medical certificate",
+      "detection": "medical_certificate_issued == false",
+      "action": "Contact the doctor or hospital where the death occurred. If the death was unexpected, the coroner may need to investigate."
+    }
+  ]
+}

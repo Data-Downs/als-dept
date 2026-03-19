@@ -1,0 +1,130 @@
+{
+  "id": "ho-ilr.eligibility",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "has-eligible-visa",
+      "description": "Applicant must hold an eligible visa type for ILR",
+      "condition": {
+        "field": "visa_type",
+        "operator": "in",
+        "value": [
+          "skilled-worker",
+          "tier-2",
+          "global-talent",
+          "innovator-founder",
+          "uk-ancestry",
+          "spouse-partner",
+          "parent",
+          "child",
+          "bn-o",
+          "refugee",
+          "humanitarian-protection"
+        ]
+      },
+      "reason_if_failed": "Your current visa type is not eligible for ILR. Check which visa routes lead to settlement.",
+      "alternative_service": "ukvi.visa-advice",
+      "evidence_source": "identity-verified"
+    },
+    {
+      "id": "qualifying-period-met",
+      "description": "Applicant must have completed the qualifying period for their visa type",
+      "condition": {
+        "field": "years_on_eligible_visa",
+        "operator": ">=",
+        "value": 5
+      },
+      "reason_if_failed": "You must complete the required qualifying period on an eligible visa (usually 5 years, sometimes 2-3 years for Tier 1 or Global Talent)",
+      "evidence_source": "immigration-history"
+    },
+    {
+      "id": "continuous-residence",
+      "description": "Applicant must meet continuous residence requirement",
+      "condition": {
+        "field": "max_days_absent_in_12_months",
+        "operator": "<=",
+        "value": 180
+      },
+      "reason_if_failed": "You have spent more than 180 days outside the UK in a 12-month period, breaking continuous residence",
+      "evidence_source": "border-crossing-records",
+      "triggers_handoff": true
+    },
+    {
+      "id": "good-character",
+      "description": "Applicant must meet the good character requirement",
+      "condition": {
+        "field": "criminal_record_status",
+        "operator": "in",
+        "value": [
+          "clear",
+          "minor-spent-conviction"
+        ]
+      },
+      "reason_if_failed": "Your criminal record may affect your application. This requires case-by-case assessment.",
+      "evidence_source": "criminal-record-check",
+      "triggers_handoff": true
+    },
+    {
+      "id": "no-immigration-breaches",
+      "description": "Applicant must not have recent immigration breaches",
+      "condition": {
+        "field": "immigration_breach_count",
+        "operator": "==",
+        "value": 0
+      },
+      "reason_if_failed": "Previous immigration breaches (overstaying, working without permission) may affect your application",
+      "evidence_source": "immigration-history",
+      "triggers_handoff": true
+    },
+    {
+      "id": "income-requirement",
+      "description": "Applicant must meet income requirements if applying through family route",
+      "condition": {
+        "field": "annual_income",
+        "operator": ">=",
+        "value": 29000
+      },
+      "reason_if_failed": "Family visa routes require minimum income of £29,000 per year (or £34,500 with children)",
+      "evidence_source": "hmrc-tax-records"
+    }
+  ],
+  "explanation_template": "Indefinite Leave to Remain eligibility: {outcome}. Required: eligible visa, qualifying period complete, continuous residence maintained, good character.",
+  "edge_cases": [
+    {
+      "id": "domestic-violence",
+      "description": "Applicant's relationship ended due to domestic violence",
+      "detection": "domestic_violence_flag",
+      "action": "Route to domestic violence concession pathway. Different evidence requirements apply. No income requirement."
+    },
+    {
+      "id": "refugee-status",
+      "description": "Applicant has refugee status or humanitarian protection",
+      "detection": "refugee_status",
+      "action": "Separate ILR pathway for refugees. Usually eligible after 5 years. No income requirement."
+    },
+    {
+      "id": "long-residence",
+      "description": "Applicant has 10+ years continuous lawful residence",
+      "detection": "years_lawful_residence >= 10",
+      "action": "Route to 10-year long residence pathway. Different continuous residence rules may apply."
+    },
+    {
+      "id": "armed-forces",
+      "description": "Applicant has served in UK armed forces",
+      "detection": "armed_forces_service",
+      "action": "Expedited pathway for armed forces personnel. Check eligibility for immediate ILR in some cases."
+    },
+    {
+      "id": "serious-criminality",
+      "description": "Applicant has unspent criminal conviction or prison sentence over 12 months",
+      "detection": "serious_conviction",
+      "action": "Automatic refusal likely. Hand off to immigration lawyer. Consider Rehabilitation of Offenders Act timescales."
+    },
+    {
+      "id": "absences-exceptional",
+      "description": "Absences exceed 180 days but for compelling reasons (serious illness, family emergency)",
+      "detection": "absences_with_reasons",
+      "action": "Discretionary consideration may apply. Hand off to case worker with full explanation and evidence."
+    }
+  ]
+}

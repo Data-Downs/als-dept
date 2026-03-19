@@ -1,0 +1,19 @@
+{
+  "id": "hmcts-legal-aid",
+  "version": "1.0.0",
+  "name": "Legal Aid application",
+  "description": "Means and merits tested. Available in domestic abuse cases. Applied via Legal Aid Agency.",
+  "department": "HMCTS",
+  "input_schema": {
+    "type": "object"
+  },
+  "output_schema": {
+    "type": "object"
+  },
+  "source": "graph",
+  "serviceType": "entitlement",
+  "govuk_url": "https://www.gov.uk/legal-aid",
+  "eligibility_summary": "Government funding for legal advice and representation in certain cases. Both means-tested (income/capital) and merits-tested (strength of case). Domestic abuse cases have wider automatic eligibility. Applied via a legal aid solicitor.",
+  "proactive": true,
+  "gated": false
+}

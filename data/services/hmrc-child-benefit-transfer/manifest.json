@@ -1,0 +1,19 @@
+{
+  "id": "hmrc-child-benefit-transfer",
+  "version": "1.0.0",
+  "name": "Child Benefit transfer",
+  "description": "Notify if child now lives with different parent after separation. Only one claimant permitted.",
+  "department": "HMRC",
+  "input_schema": {
+    "type": "object"
+  },
+  "output_schema": {
+    "type": "object"
+  },
+  "source": "graph",
+  "serviceType": "obligation",
+  "govuk_url": "https://www.gov.uk/child-benefit/change-of-circumstances",
+  "eligibility_summary": "After separation, only one parent can claim Child Benefit per child. If the child's living arrangements change, Child Benefit must be transferred to the main carer.",
+  "proactive": true,
+  "gated": true
+}

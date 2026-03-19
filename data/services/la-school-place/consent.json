@@ -1,0 +1,101 @@
+{
+  "id": "la-school-place.consent",
+  "version": "1.0.0",
+  "grants": [
+    {
+      "id": "parent-identity-verification",
+      "description": "Verify your identity as the parent or guardian of the child",
+      "data_shared": [
+        "full_name",
+        "date_of_birth",
+        "address",
+        "national_insurance_number"
+      ],
+      "source": "one-login",
+      "purpose": "To confirm you have parental responsibility and are authorised to apply for a school place",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "child-personal-details",
+      "description": "Provide your child's personal information for the application",
+      "data_shared": [
+        "child_full_name",
+        "child_date_of_birth",
+        "child_gender",
+        "child_address",
+        "child_nhs_number"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To identify the child and assess eligibility based on age and residence",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "current-school-record",
+      "description": "Share your child's current school attendance record if applicable",
+      "data_shared": [
+        "current_school_name",
+        "current_year_group",
+        "attendance_record"
+      ],
+      "source": "current-school",
+      "purpose": "For secondary transfer applications, to verify current education status",
+      "duration": "session",
+      "required": false
+    },
+    {
+      "id": "sibling-information",
+      "description": "Share information about siblings at preferred schools",
+      "data_shared": [
+        "sibling_names",
+        "sibling_dates_of_birth",
+        "sibling_current_schools"
+      ],
+      "source": "citizen-provided",
+      "purpose": "Siblings at the preferred school may increase admission priority under school admission criteria",
+      "duration": "session",
+      "required": false
+    },
+    {
+      "id": "preferences-shared-with-schools",
+      "description": "Share your ranked school preferences with the named schools and local authority",
+      "data_shared": [
+        "ranked_school_preferences",
+        "reason_for_preferences",
+        "child_personal_details"
+      ],
+      "source": "citizen-provided",
+      "purpose": "Schools and the local authority need your preferences to allocate places according to admission criteria",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "supporting-circumstances",
+      "description": "Share medical, social, or other supporting information if applicable",
+      "data_shared": [
+        "medical_evidence",
+        "social_worker_reports",
+        "supporting_letters"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To support your application if there are exceptional medical or social reasons for a specific school",
+      "duration": "until-revoked",
+      "required": false
+    }
+  ],
+  "revocation": {
+    "mechanism": "Contact your local authority admissions team or withdraw through your online account",
+    "effect": "Application will be withdrawn. You can reapply but may miss the deadline for coordinated offers."
+  },
+  "delegation": {
+    "agent_identity": "GOV.UK AI Agent",
+    "scopes": [
+      "read-personal-data",
+      "submit-child-details",
+      "rank-school-preferences",
+      "submit-to-local-authority"
+    ],
+    "limitations": "Agent cannot rank school preferences without your explicit confirmation of each preference in order. Agent cannot submit supporting medical/social evidence on your behalf without your review. Agent cannot accept or decline a school place offer."
+  }
+}

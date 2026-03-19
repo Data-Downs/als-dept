@@ -1,0 +1,111 @@
+{
+  "id": "dwp.attendance-allowance.consent",
+  "version": "1.0.0",
+  "grants": [
+    {
+      "id": "identity-verification",
+      "description": "Verify your identity using your National Insurance number and personal details",
+      "data_shared": [
+        "full_name",
+        "date_of_birth",
+        "national_insurance_number",
+        "address",
+        "contact_details"
+      ],
+      "source": "one-login",
+      "purpose": "To confirm your identity and link your claim to your DWP records",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "medical-information-sharing",
+      "description": "Share details of your disability, health condition, and care needs with DWP",
+      "data_shared": [
+        "disability_description",
+        "health_conditions",
+        "care_needs_description",
+        "frequency_of_care_needed",
+        "duration_of_condition"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To assess your eligibility for Attendance Allowance and determine the appropriate rate",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "gp-contact-consent",
+      "description": "Allow DWP to contact your GP or medical centre for supporting evidence if needed",
+      "data_shared": [
+        "gp_name",
+        "gp_surgery_name",
+        "gp_address",
+        "gp_phone_number"
+      ],
+      "source": "citizen-provided",
+      "purpose": "DWP may need to contact your GP to verify medical information or request additional evidence to support your claim",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "care-home-hospital-details",
+      "description": "Share details of any care home, hospital, or hospice stay",
+      "data_shared": [
+        "care_home_name",
+        "care_home_address",
+        "admission_date",
+        "funding_source",
+        "hospital_name",
+        "hospice_name"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To determine if you're eligible for Attendance Allowance while in institutional care and to calculate the correct payment",
+      "duration": "until-revoked",
+      "required": false
+    },
+    {
+      "id": "end-of-life-information",
+      "description": "Share SR1 form from medical professional stating you might have 12 months or less to live (special rules claims only)",
+      "data_shared": [
+        "sr1_form",
+        "medical_professional_details",
+        "prognosis_information"
+      ],
+      "source": "medical-professional",
+      "purpose": "To fast-track your claim and automatically award the higher rate of Attendance Allowance under special rules for end of life",
+      "duration": "until-revoked",
+      "required": false
+    },
+    {
+      "id": "existing-benefits-check",
+      "description": "Allow DWP to check if you're receiving other disability benefits that would affect your Attendance Allowance claim",
+      "data_shared": [
+        "dla_status",
+        "pip_status",
+        "adp_status",
+        "sadla_status",
+        "afip_status",
+        "constant_attendance_allowance_status"
+      ],
+      "source": "dwp-benefits-system",
+      "purpose": "To ensure you're not already receiving a benefit that would make you ineligible for Attendance Allowance, or to adjust payment if you receive Constant Attendance Allowance",
+      "duration": "until-revoked",
+      "required": true
+    }
+  ],
+  "revocation": {
+    "mechanism": "Contact DWP Attendance Allowance helpline on 0800 731 0122 or write to Freepost DWP Attendance Allowance",
+    "effect": "Application will be cancelled if consent is revoked before decision. If you're already receiving Attendance Allowance, revocation may require a change of circumstances report and could affect your payments."
+  },
+  "delegation": {
+    "agent_identity": "GOV.UK AI Agent acting on behalf of citizen",
+    "scopes": [
+      "read-personal-data",
+      "submit-medical-information",
+      "submit-care-needs-description",
+      "request-gp-contact",
+      "check-eligibility-rules",
+      "submit-application-to-dwp"
+    ],
+    "limitations": "Agent cannot provide medical evidence (SR1 form must come from medical professional). Agent cannot make decisions about care needs severity on citizen's behalf - citizen or their appointee must describe their own care needs. Agent cannot act as an appointee or power of attorney without proper legal authority. Agent cannot attend face-to-face medical assessments on citizen's behalf. Agent must defer to citizen for all subjective assessments of care needs and disability impact."
+  }
+}

@@ -1,0 +1,146 @@
+{
+  "id": "hmcts-legal-aid.eligibility",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "case-type-eligible",
+      "description": "Case must be in an eligible category for legal aid",
+      "condition": {
+        "field": "case_category",
+        "operator": "in",
+        "value": [
+          "domestic-abuse",
+          "forced-marriage",
+          "homelessness",
+          "housing-disrepair",
+          "criminal-defence",
+          "family-mediation",
+          "child-protection",
+          "mental-health-tribunal",
+          "discrimination",
+          "asylum",
+          "human-trafficking",
+          "special-educational-needs"
+        ]
+      },
+      "reason_if_failed": "Your type of legal case is not covered by legal aid. You may be able to apply for exceptional case funding if your human rights are at risk.",
+      "alternative_service": "hmcts-legal-aid.exceptional-funding",
+      "evidence_source": "solicitor-assessment"
+    },
+    {
+      "id": "means-test-income",
+      "description": "Joint monthly income must be £2,657 or less (before tax), or receiving qualifying benefits",
+      "condition": {
+        "field": "monthly_income_or_benefits",
+        "operator": "<=",
+        "value": 2657
+      },
+      "reason_if_failed": "Your household income is above the threshold for legal aid. You may still be eligible if your case involves domestic abuse or forced marriage.",
+      "evidence_source": "payslips-benefits-statements"
+    },
+    {
+      "id": "qualifying-benefits",
+      "description": "Alternative income test: receiving Universal Credit, Pension Credit (Guarantee), JSA, ESA, or Income Support",
+      "condition": {
+        "field": "receives_qualifying_benefit",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "You do not receive a qualifying benefit and your income exceeds the threshold",
+      "evidence_source": "dwp-benefits-verification"
+    },
+    {
+      "id": "means-test-capital",
+      "description": "Assets (savings, investments, home equity over £100k) must not exceed £8,000",
+      "condition": {
+        "field": "total_assets",
+        "operator": "<=",
+        "value": 8000
+      },
+      "reason_if_failed": "Your savings and assets exceed the £8,000 threshold. You may still be eligible if you are over State Pension age, disputing home ownership, or your case involves domestic abuse or forced marriage.",
+      "evidence_source": "bank-statements-property-valuation"
+    },
+    {
+      "id": "merits-test",
+      "description": "Case must have reasonable prospects of success and be proportionate",
+      "condition": {
+        "field": "case_merits_score",
+        "operator": ">=",
+        "value": "borderline"
+      },
+      "reason_if_failed": "Your case does not meet the merits test for legal aid funding. Discuss alternative options with your solicitor.",
+      "evidence_source": "solicitor-legal-assessment",
+      "triggers_handoff": true
+    },
+    {
+      "id": "solicitor-instructed",
+      "description": "Applicant must be represented by a legal aid solicitor",
+      "condition": {
+        "field": "has_legal_aid_solicitor",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "You must instruct a legal aid solicitor to apply for legal aid. Find a legal aid solicitor via the LAA directory.",
+      "alternative_service": "legal-aid-solicitor-finder"
+    },
+    {
+      "id": "uk-jurisdiction",
+      "description": "Legal aid application must be for a case in England or Wales",
+      "condition": {
+        "field": "jurisdiction",
+        "operator": "in",
+        "value": [
+          "England",
+          "Wales"
+        ]
+      },
+      "reason_if_failed": "This service is for legal aid in England and Wales only. Contact Legal Aid Scotland or the Northern Ireland Legal Services Agency.",
+      "alternative_service": "scotland-ni-legal-aid"
+    }
+  ],
+  "explanation_template": "Legal aid eligibility: {outcome}. Means test: {means_result}. Merits test: {merits_result}.",
+  "edge_cases": [
+    {
+      "id": "domestic-abuse-wider-eligibility",
+      "description": "Domestic abuse cases have wider financial eligibility (higher income and assets allowed)",
+      "detection": "case_category == 'domestic-abuse' OR case_category == 'forced-marriage'",
+      "action": "Apply relaxed means test thresholds. Applicant may still be eligible even if income or assets exceed standard limits."
+    },
+    {
+      "id": "automatic-eligibility-children",
+      "description": "Cases involving mental health tribunals, child abduction, or children in care are automatically eligible regardless of means",
+      "detection": "case_category IN ['mental-health-tribunal', 'child-abduction', 'children-in-care']",
+      "action": "Skip means test. Proceed directly to merits assessment."
+    },
+    {
+      "id": "emergency-representation",
+      "description": "Urgent cases (e.g., immediate risk of harm) can receive emergency legal representation before full assessment",
+      "detection": "urgency_level == 'emergency'",
+      "action": "Grant Emergency Legal Representation. Full legal aid application must still be completed within statutory timeframe."
+    },
+    {
+      "id": "exceptional-case-funding",
+      "description": "Cases not normally eligible may qualify if human rights are at risk",
+      "detection": "human_rights_risk == true AND case_category NOT IN eligible_categories",
+      "action": "Route to Exceptional Case Funding (ECF) process. Requires separate ECF application demonstrating human rights infringement."
+    },
+    {
+      "id": "criminal-defence-automatic",
+      "description": "Under 18s in full-time education automatically get legal aid for criminal defence",
+      "detection": "age < 18 AND in_full_time_education == true AND case_category == 'criminal-defence'",
+      "action": "Grant automatic legal aid for criminal defence. No means test required."
+    },
+    {
+      "id": "statutory-charge",
+      "description": "If applicant wins money or property, LAA may recover costs via statutory charge",
+      "detection": "case_outcome == 'won' AND money_or_property_awarded > 0",
+      "action": "LAA Secured Debt Team will assess statutory charge. Applicant may need to repay legal aid costs from award."
+    },
+    {
+      "id": "partner-financial-assessment",
+      "description": "Partner's income and assets are included in means test unless good reason to exclude",
+      "detection": "has_partner == true",
+      "action": "Include partner's financial details in means test. Applicant must provide partner's consent or show good reason for exclusion (e.g., financial abuse)."
+    }
+  ]
+}

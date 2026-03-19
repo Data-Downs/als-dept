@@ -1,0 +1,91 @@
+{
+  "id": "hmrc-spp.consent",
+  "version": "1.0.0",
+  "grants": [
+    {
+      "id": "identity-verification",
+      "description": "Verify your identity using your GOV.UK One Login credentials",
+      "data_shared": [
+        "full_name",
+        "date_of_birth",
+        "national_insurance_number"
+      ],
+      "source": "one-login",
+      "purpose": "To confirm your identity before processing your Statutory Paternity Pay application",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "employment-records-access",
+      "description": "Access your employment and earnings records from HMRC",
+      "data_shared": [
+        "employer_name",
+        "employment_start_date",
+        "employment_status",
+        "weekly_earnings",
+        "tax_records"
+      ],
+      "source": "hmrc-employment-records",
+      "purpose": "To verify you meet the 26 weeks continuous employment requirement and earn at least £125 per week",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "pregnancy-birth-details",
+      "description": "Provide details about your partner's pregnancy or the adoption/surrogacy arrangement",
+      "data_shared": [
+        "due_date_or_placement_date",
+        "partner_name",
+        "relationship_to_child",
+        "multiple_births_flag",
+        "adoption_or_surrogacy_details"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To determine your eligibility window and calculate the qualifying week for Statutory Paternity Pay",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "leave-preferences",
+      "description": "Share your preferred leave start date and duration with HMRC and your employer",
+      "data_shared": [
+        "leave_start_date",
+        "leave_duration_weeks",
+        "notice_date"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To arrange your Statutory Paternity Pay period and notify your employer of your leave",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "employer-notification",
+      "description": "Share your Statutory Paternity Pay claim with your employer",
+      "data_shared": [
+        "full_name",
+        "due_date",
+        "leave_start_date",
+        "leave_duration",
+        "claim_reference"
+      ],
+      "source": "hmrc",
+      "purpose": "Your employer needs to confirm your employment status and arrange payment of Statutory Paternity Pay",
+      "duration": "until-revoked",
+      "required": true
+    }
+  ],
+  "revocation": {
+    "mechanism": "Contact HMRC or revoke through your GOV.UK account. You can also tell your employer in writing that you no longer wish to claim.",
+    "effect": "Application will be cancelled if consent is revoked before assessment is complete. You must give 28 days notice to change your leave start date."
+  },
+  "delegation": {
+    "agent_identity": "GOV.UK AI Agent",
+    "scopes": [
+      "read-personal-data",
+      "read-employment-records",
+      "submit-to-hmrc",
+      "notify-employer"
+    ],
+    "limitations": "Agent cannot change your leave start date without your explicit confirmation. Agent cannot confirm pregnancy or birth details on your behalf without supporting evidence. Agent cannot sign statutory declarations for surrogacy arrangements. Agent requires your explicit approval before notifying your employer."
+  }
+}

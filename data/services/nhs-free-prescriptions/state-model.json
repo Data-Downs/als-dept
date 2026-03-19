@@ -1,0 +1,131 @@
+{
+  "id": "nhs-free-prescriptions.states",
+  "version": "1.0.0",
+  "states": [
+    {
+      "id": "not-started",
+      "type": "initial"
+    },
+    {
+      "id": "identity-verified"
+    },
+    {
+      "id": "eligibility-checked"
+    },
+    {
+      "id": "consent-given"
+    },
+    {
+      "id": "exemption-type-selected"
+    },
+    {
+      "id": "details-submitted"
+    },
+    {
+      "id": "evidence-verification"
+    },
+    {
+      "id": "assessment"
+    },
+    {
+      "id": "decision",
+      "receipt": true
+    },
+    {
+      "id": "certificate-issued",
+      "receipt": true
+    },
+    {
+      "id": "completed",
+      "type": "terminal",
+      "receipt": true
+    },
+    {
+      "id": "rejected",
+      "type": "terminal",
+      "receipt": true
+    },
+    {
+      "id": "handed-off",
+      "type": "terminal",
+      "receipt": true
+    }
+  ],
+  "transitions": [
+    {
+      "from": "not-started",
+      "to": "identity-verified",
+      "trigger": "verify-identity"
+    },
+    {
+      "from": "identity-verified",
+      "to": "eligibility-checked",
+      "trigger": "check-eligibility"
+    },
+    {
+      "from": "eligibility-checked",
+      "to": "consent-given",
+      "trigger": "grant-consent",
+      "condition": "potentially-eligible"
+    },
+    {
+      "from": "eligibility-checked",
+      "to": "rejected",
+      "trigger": "reject",
+      "condition": "not-eligible"
+    },
+    {
+      "from": "consent-given",
+      "to": "exemption-type-selected",
+      "trigger": "select-exemption-type"
+    },
+    {
+      "from": "exemption-type-selected",
+      "to": "details-submitted",
+      "trigger": "submit-details"
+    },
+    {
+      "from": "details-submitted",
+      "to": "evidence-verification",
+      "trigger": "verify-evidence",
+      "condition": "evidence-required"
+    },
+    {
+      "from": "details-submitted",
+      "to": "assessment",
+      "trigger": "skip-verification",
+      "condition": "auto-verify"
+    },
+    {
+      "from": "evidence-verification",
+      "to": "assessment",
+      "trigger": "evidence-verified"
+    },
+    {
+      "from": "evidence-verification",
+      "to": "handed-off",
+      "trigger": "handoff",
+      "condition": "clinical-review-required"
+    },
+    {
+      "from": "assessment",
+      "to": "decision",
+      "trigger": "make-decision"
+    },
+    {
+      "from": "decision",
+      "to": "certificate-issued",
+      "trigger": "approve"
+    },
+    {
+      "from": "decision",
+      "to": "rejected",
+      "trigger": "reject-application"
+    },
+    {
+      "from": "certificate-issued",
+      "to": "completed",
+      "trigger": "complete"
+    }
+  ]
+}

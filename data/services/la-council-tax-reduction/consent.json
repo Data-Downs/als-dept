@@ -1,0 +1,106 @@
+{
+  "id": "la-council-tax-reduction.consent",
+  "version": "1.0.0",
+  "grants": [
+    {
+      "id": "identity-verification",
+      "description": "Verify your identity using your GOV.UK One Login credentials",
+      "data_shared": [
+        "full_name",
+        "date_of_birth",
+        "national_insurance_number",
+        "current_address"
+      ],
+      "source": "one-login",
+      "purpose": "To confirm your identity and that you are liable for Council Tax at this address",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "hmrc-income-sharing",
+      "description": "Share your income information from HMRC for means-testing",
+      "data_shared": [
+        "employment_income",
+        "self_employment_income",
+        "pension_income",
+        "taxable_benefits"
+      ],
+      "source": "hmrc",
+      "purpose": "To calculate your household income and determine the reduction amount",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "dwp-benefits-sharing",
+      "description": "Share your benefits information from DWP for assessment",
+      "data_shared": [
+        "universal_credit_amount",
+        "pip_amount",
+        "esa_amount",
+        "jsa_amount",
+        "child_benefit",
+        "other_benefits"
+      ],
+      "source": "dwp",
+      "purpose": "To include your benefits in the means-test calculation and determine qualifying status",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "bank-account-verification",
+      "description": "Share your savings and capital information for means-testing",
+      "data_shared": [
+        "bank_account_balances",
+        "savings_accounts",
+        "investments",
+        "property_value"
+      ],
+      "source": "open-banking",
+      "purpose": "To verify your household savings are below the threshold for Council Tax Reduction",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "household-composition",
+      "description": "Confirm details about who lives in your household",
+      "data_shared": [
+        "partner_details",
+        "children_details",
+        "non_dependant_adults",
+        "household_size"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To calculate the correct reduction based on your household circumstances",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "council-tax-account",
+      "description": "Link your Council Tax account to this application",
+      "data_shared": [
+        "council_tax_reference",
+        "property_band",
+        "annual_charge",
+        "payment_history"
+      ],
+      "source": "local-authority",
+      "purpose": "To apply the reduction to the correct Council Tax account",
+      "duration": "until-revoked",
+      "required": true
+    }
+  ],
+  "revocation": {
+    "mechanism": "Contact your local council or revoke through your GOV.UK account. You can also write to the council's revenues and benefits team.",
+    "effect": "Your application will be cancelled and any reduction will be removed from your Council Tax account. You will be liable for the full amount."
+  },
+  "delegation": {
+    "agent_identity": "GOV.UK AI Agent",
+    "scopes": [
+      "read-personal-data",
+      "read-financial-data",
+      "submit-to-local-authority",
+      "upload-evidence"
+    ],
+    "limitations": "Agent cannot make legal declarations on your behalf. Agent cannot provide false financial information. Agent cannot confirm household composition without your explicit verification. Agent cannot appeal decisions. All financial data must be verified with you before submission. You must review and approve the final application before it is submitted to the council."
+  }
+}

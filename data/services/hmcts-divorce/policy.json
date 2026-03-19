@@ -1,0 +1,111 @@
+{
+  "id": "hmcts-divorce.eligibility",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "marriage-duration",
+      "description": "You must have been married for over a year",
+      "condition": {
+        "field": "marriage_duration_years",
+        "operator": ">=",
+        "value": 1
+      },
+      "reason_if_failed": "You cannot apply for a divorce until you have been married for at least one year. You may be able to apply for separation or annulment.",
+      "evidence_source": "marriage-certificate",
+      "alternative_service": "hmcts.legal-separation"
+    },
+    {
+      "id": "relationship-breakdown",
+      "description": "Your relationship must have permanently broken down",
+      "condition": {
+        "field": "relationship_broken_down",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "You must confirm that your relationship has permanently broken down to apply for a divorce"
+    },
+    {
+      "id": "uk-recognised-marriage",
+      "description": "Your marriage must be legally recognised in the UK",
+      "condition": {
+        "field": "marriage_recognised_uk",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "Your marriage must be legally recognised in the UK (including same-sex marriage)",
+      "evidence_source": "marriage-certificate"
+    },
+    {
+      "id": "england-wales-jurisdiction",
+      "description": "You must be applying in England or Wales",
+      "condition": {
+        "field": "jurisdiction",
+        "operator": "in",
+        "value": [
+          "England",
+          "Wales"
+        ]
+      },
+      "reason_if_failed": "This service is for divorces in England and Wales only. There are different processes for Scotland and Northern Ireland.",
+      "alternative_service": "scottish-courts.divorce"
+    },
+    {
+      "id": "not-civil-partnership",
+      "description": "This service is for ending marriages, not civil partnerships",
+      "condition": {
+        "field": "relationship_type",
+        "operator": "==",
+        "value": "marriage"
+      },
+      "reason_if_failed": "If you are ending a civil partnership, use the service for ending a civil partnership.",
+      "alternative_service": "hmcts.end-civil-partnership"
+    }
+  ],
+  "explanation_template": "Divorce application eligibility: {outcome}. Minimum timeframe: 26 weeks (20 weeks to Conditional Order + 6 weeks to Final Order).",
+  "edge_cases": [
+    {
+      "id": "domestic-abuse-risk",
+      "description": "Applicant is at risk of domestic abuse from spouse",
+      "detection": "domestic_abuse_risk",
+      "action": "Joint application not recommended. Route to sole application pathway and provide domestic abuse support resources."
+    },
+    {
+      "id": "spouse-no-response",
+      "description": "Spouse does not respond to court papers within 14 days",
+      "detection": "spouse_non_responsive",
+      "action": "Applicant can continue as sole applicant. Court will contact applicant with next steps."
+    },
+    {
+      "id": "spouse-disputes",
+      "description": "Spouse intends to dispute the divorce",
+      "detection": "spouse_disputes",
+      "action": "Spouse must complete answer form with genuine legal reason. May require court hearing. Human case worker required."
+    },
+    {
+      "id": "spouse-lacks-capacity",
+      "description": "Spouse lacks mental capacity to consent or participate",
+      "detection": "spouse_lacks_capacity",
+      "action": "Requires appointment of litigation friend. Contact Official Solicitor if no suitable person available. Human caseworker required.",
+      "triggers_handoff": true
+    },
+    {
+      "id": "polygamous-marriage",
+      "description": "Applicant is married to more than one person",
+      "detection": "polygamous_marriage",
+      "action": "Contact Divorce Service Centre for special handling. Standard online process cannot be used.",
+      "triggers_handoff": true
+    },
+    {
+      "id": "spouse-address-unknown",
+      "description": "Applicant does not know spouse's current address",
+      "detection": "spouse_address_unknown",
+      "action": "Special process required for service of papers. Court can advise on alternative methods of service."
+    },
+    {
+      "id": "financial-orders-pending",
+      "description": "Applicant needs legally binding financial/property arrangements",
+      "detection": "financial_orders_required",
+      "action": "Must apply to court for consent order BEFORE applying for final order. Divorce cannot be finalized until resolved."
+    }
+  ]
+}

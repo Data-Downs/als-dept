@@ -1,0 +1,106 @@
+{
+  "id": "gro.give-notice.consent",
+  "version": "1.0.0",
+  "grants": [
+    {
+      "id": "identity-verification",
+      "description": "Verify your identity using passport, birth certificate, and proof of address",
+      "data_shared": [
+        "full_name",
+        "date_of_birth",
+        "place_of_birth",
+        "nationality",
+        "current_address",
+        "address_history"
+      ],
+      "source": "citizen-provided-documents",
+      "purpose": "To confirm your identity and eligibility to give notice of marriage or civil partnership",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "immigration-status-sharing",
+      "description": "Share your immigration status with the Home Office if you or your partner are from outside UK or Ireland",
+      "data_shared": [
+        "passport_number",
+        "visa_status",
+        "immigration_history",
+        "biometric_photo",
+        "relationship_details"
+      ],
+      "source": "citizen-provided",
+      "purpose": "The Home Office needs to verify your right to marry in the UK and may conduct relationship investigations. This is a legal requirement for non-UK/Irish nationals.",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "marital-history",
+      "description": "Share details of any previous marriages or civil partnerships",
+      "data_shared": [
+        "previous_marriage_details",
+        "divorce_decree",
+        "death_certificate",
+        "dissolution_order"
+      ],
+      "source": "citizen-provided-documents",
+      "purpose": "To confirm you are legally free to marry or form a civil partnership",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "venue-details",
+      "description": "Share details of your planned ceremony venue with the register office",
+      "data_shared": [
+        "venue_name",
+        "venue_address",
+        "ceremony_date",
+        "ceremony_type"
+      ],
+      "source": "citizen-provided",
+      "purpose": "This information is required for your legal notice and must be included in the signed statement",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "partner-details",
+      "description": "Share your partner's personal details for the marriage or civil partnership notice",
+      "data_shared": [
+        "partner_full_name",
+        "partner_date_of_birth",
+        "partner_address",
+        "partner_nationality",
+        "partner_marital_status"
+      ],
+      "source": "citizen-provided",
+      "purpose": "Both partners' details are required for the legal notice of marriage or civil partnership",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "parent-details",
+      "description": "Share details of up to 4 parents (mothers, fathers, step-parents) for the marriage schedule",
+      "data_shared": [
+        "parent_names",
+        "parent_occupations"
+      ],
+      "source": "citizen-provided",
+      "purpose": "Parent details will appear on your marriage or civil partnership schedule and certificate",
+      "duration": "until-revoked",
+      "required": false
+    }
+  ],
+  "revocation": {
+    "mechanism": "Contact your local register office to withdraw your notice",
+    "effect": "Your notice will be cancelled and you will need to give notice again if you wish to proceed. Fees are non-refundable."
+  },
+  "delegation": {
+    "agent_identity": "GOV.UK AI Agent",
+    "scopes": [
+      "read-personal-data",
+      "verify-documents",
+      "calculate-fees",
+      "book-appointment"
+    ],
+    "limitations": "Agent cannot sign the legal notice on your behalf - you must attend the register office in person. Agent cannot make payment without your explicit confirmation. Agent cannot provide false information to the Home Office. Agent cannot proceed if immigration investigation is required - this requires human intervention."
+  }
+}

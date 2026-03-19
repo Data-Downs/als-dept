@@ -1,0 +1,93 @@
+{
+  "id": "hmrc.cancel-marriage-allowance.eligibility",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "has-active-claim",
+      "description": "Must have an active Marriage Allowance claim to cancel",
+      "condition": {
+        "field": "marriage_allowance_status",
+        "operator": "==",
+        "value": "active"
+      },
+      "reason_if_failed": "You do not have an active Marriage Allowance claim. No cancellation is needed.",
+      "evidence_source": "hmrc-marriage-allowance-records"
+    },
+    {
+      "id": "valid-cancellation-reason",
+      "description": "Must have a valid reason for cancellation",
+      "condition": {
+        "field": "cancellation_reason",
+        "operator": "in",
+        "value": [
+          "relationship-ended",
+          "income-changed",
+          "voluntary"
+        ]
+      },
+      "reason_if_failed": "You must provide a valid reason to cancel Marriage Allowance",
+      "evidence_source": "citizen-provided"
+    },
+    {
+      "id": "authority-to-cancel",
+      "description": "Either partner can cancel if relationship ended; otherwise must be original claimant",
+      "condition": {
+        "field": "has_authority_to_cancel",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "Only the person who made the original claim can cancel, unless your relationship has ended",
+      "evidence_source": "hmrc-marriage-allowance-records"
+    },
+    {
+      "id": "not-self-assessment",
+      "description": "Self Assessment filers must cancel via their tax return or by phone",
+      "condition": {
+        "field": "files_self_assessment",
+        "operator": "==",
+        "value": false
+      },
+      "reason_if_failed": "You are registered for Self Assessment. Please cancel via your tax return or call HMRC.",
+      "alternative_service": "hmrc.self-assessment",
+      "triggers_handoff": true
+    },
+    {
+      "id": "partner-not-deceased",
+      "description": "If partner has died, must contact HMRC by phone",
+      "condition": {
+        "field": "partner_deceased",
+        "operator": "==",
+        "value": false
+      },
+      "reason_if_failed": "If your partner has died, please contact HMRC Marriage Allowance enquiries on 0300 200 3300",
+      "triggers_handoff": true
+    }
+  ],
+  "explanation_template": "Marriage Allowance cancellation eligibility: {outcome}",
+  "edge_cases": [
+    {
+      "id": "partner-deceased",
+      "description": "Partner has died since Marriage Allowance claim began",
+      "detection": "partner_deceased == true",
+      "action": "Route to phone service. HMRC Marriage Allowance enquiries: 0300 200 3300. Different Personal Allowance rules apply."
+    },
+    {
+      "id": "self-assessment-filer",
+      "description": "User files Self Assessment tax return",
+      "detection": "files_self_assessment == true",
+      "action": "Must cancel via Self Assessment return (leave Marriage Allowance section blank is NOT sufficient) or phone HMRC. Cannot cancel online."
+    },
+    {
+      "id": "underpayment-risk",
+      "description": "Cancellation may cause tax underpayment for current year",
+      "detection": "relationship_ended == true AND within_tax_year == true",
+      "action": "Warn user: Backdating to 6 April may create underpayment. Consider calling HMRC to discuss payment arrangements."
+    },
+    {
+      "id": "unclear-authority",
+      "description": "User unsure if they are the original claimant",
+      "detection": "unsure_who_claimed == true",
+      "action": "Route to phone service. HMRC can confirm who made the original claim from their records."
+    }
+  ]
+}

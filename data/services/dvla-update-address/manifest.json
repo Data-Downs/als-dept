@@ -1,0 +1,19 @@
+{
+  "id": "dvla-update-address",
+  "version": "1.0.0",
+  "name": "Update driving licence address",
+  "description": "Legal requirement to update within 3 months of moving. Can be done online.",
+  "department": "DVLA",
+  "input_schema": {
+    "type": "object"
+  },
+  "output_schema": {
+    "type": "object"
+  },
+  "source": "graph",
+  "serviceType": "obligation",
+  "govuk_url": "https://www.gov.uk/change-address-driving-licence",
+  "eligibility_summary": "A legal requirement for all driving licence holders within 3 months of moving. Can be done quickly online for free. Failure to update is technically an offence.",
+  "proactive": true,
+  "gated": false
+}

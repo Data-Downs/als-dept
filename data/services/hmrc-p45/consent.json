@@ -1,0 +1,74 @@
+{
+  "id": "hmrc.p45.consent",
+  "version": "1.0.0",
+  "grants": [
+    {
+      "id": "identity-verification",
+      "description": "Verify your identity using your GOV.UK One Login credentials",
+      "data_shared": [
+        "full_name",
+        "date_of_birth",
+        "national_insurance_number"
+      ],
+      "source": "one-login",
+      "purpose": "To confirm your identity and link to your PAYE employment records",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "paye-employment-records",
+      "description": "Access your PAYE employment records held by HMRC",
+      "data_shared": [
+        "employment_history",
+        "employer_details",
+        "employment_dates",
+        "tax_paid",
+        "earnings_to_date"
+      ],
+      "source": "hmrc-paye-system",
+      "purpose": "To verify your employment and generate P45 information showing tax paid in the tax year",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "employer-contact",
+      "description": "Allow HMRC to contact your former employer on your behalf",
+      "data_shared": [
+        "your_name",
+        "your_national_insurance_number",
+        "employment_dates"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To verify with your employer that you have left employment and request P45 issuance if not already done",
+      "duration": "until-revoked",
+      "required": false
+    },
+    {
+      "id": "employment-details-confirmation",
+      "description": "Confirm employment details including employer name, dates, and reason for leaving",
+      "data_shared": [
+        "employer_name",
+        "employer_paye_reference",
+        "last_day_of_employment",
+        "reason_for_leaving"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To match against HMRC records and process your P45 request",
+      "duration": "session",
+      "required": true
+    }
+  ],
+  "revocation": {
+    "mechanism": "Contact HMRC or revoke through your personal tax account",
+    "effect": "Request will be cancelled if consent is revoked before P45 information is issued. Already-issued P45 information cannot be withdrawn."
+  },
+  "delegation": {
+    "agent_identity": "GOV.UK AI Agent",
+    "scopes": [
+      "read-paye-records",
+      "submit-p45-request",
+      "verify-employment-details"
+    ],
+    "limitations": "Agent cannot contact your employer without explicit consent. Agent cannot dispute employment dates or tax calculations on your behalf. Agent cannot access records older than 4 years without human verification."
+  }
+}

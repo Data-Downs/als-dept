@@ -1,0 +1,88 @@
+{
+  "id": "hmrc.free-childcare-15.eligibility",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "child-age-minimum",
+      "description": "Child must be at least 9 months old",
+      "condition": {
+        "field": "child_age_months",
+        "operator": ">=",
+        "value": 9
+      },
+      "reason_if_failed": "Your child must be at least 9 months old to qualify for the universal 15 hours free childcare",
+      "evidence_source": "birth-certificate"
+    },
+    {
+      "id": "child-age-maximum",
+      "description": "Child must be under 5 years old and not yet in reception class",
+      "condition": {
+        "field": "child_age_years",
+        "operator": "<=",
+        "value": 4
+      },
+      "reason_if_failed": "The universal 15 hours free childcare is for children aged 9 months up to when they start reception class",
+      "evidence_source": "birth-certificate"
+    },
+    {
+      "id": "uk-resident",
+      "description": "Child must be a UK resident",
+      "condition": {
+        "field": "child_residency_status",
+        "operator": "==",
+        "value": "uk-resident"
+      },
+      "reason_if_failed": "Your child must be a UK resident to qualify for free childcare",
+      "evidence_source": "identity-verified"
+    },
+    {
+      "id": "parental-responsibility",
+      "description": "Applicant must have parental responsibility for the child",
+      "condition": {
+        "field": "parental_responsibility",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "You must have parental responsibility for the child to apply for their free childcare",
+      "triggers_handoff": true
+    },
+    {
+      "id": "not-in-reception",
+      "description": "Child must not yet be in reception class",
+      "condition": {
+        "field": "school_status",
+        "operator": "!=",
+        "value": "reception"
+      },
+      "reason_if_failed": "Children in reception class receive free early years education through school",
+      "alternative_service": "dfe.early-years-education"
+    }
+  ],
+  "explanation_template": "Universal 15 hours free childcare eligibility: {outcome}",
+  "edge_cases": [
+    {
+      "id": "special-educational-needs",
+      "description": "Child has special educational needs or disabilities",
+      "detection": "sen_disability_flag",
+      "action": "Route to SEN team. Child may be eligible for additional support hours and specialist provision."
+    },
+    {
+      "id": "adopted-child",
+      "description": "Child has been recently adopted",
+      "detection": "adoption_status",
+      "action": "Additional documentation required. Adoption certificate needed instead of birth certificate."
+    },
+    {
+      "id": "looked-after-child",
+      "description": "Child is looked after by local authority (foster care)",
+      "detection": "looked_after_status",
+      "action": "Contact local authority. Different funding arrangements apply for looked after children."
+    },
+    {
+      "id": "non-uk-national",
+      "description": "Parent or child is non-UK national",
+      "detection": "immigration_status_check_required",
+      "action": "Additional right to reside checks required. May need Home Office verification."
+    }
+  ]
+}

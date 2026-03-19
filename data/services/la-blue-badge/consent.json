@@ -1,0 +1,101 @@
+{
+  "id": "la-blue-badge.consent",
+  "version": "1.0.0",
+  "grants": [
+    {
+      "id": "identity-verification",
+      "description": "Provide proof of identity documents for verification by your local council",
+      "data_shared": [
+        "full_name",
+        "date_of_birth",
+        "proof_of_identity_document"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To confirm your identity before processing your Blue Badge application",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "benefits-check",
+      "description": "Allow your local council to check your benefit entitlements with DWP to determine automatic qualification",
+      "data_shared": [
+        "national_insurance_number",
+        "pip_status",
+        "dla_status",
+        "benefit_award_details"
+      ],
+      "source": "dwp-benefits",
+      "purpose": "To determine if you automatically qualify for a Blue Badge based on Enhanced Rate PIP mobility or DLA higher rate mobility component",
+      "duration": "session",
+      "required": false
+    },
+    {
+      "id": "photo-sharing",
+      "description": "Provide a recent digital photo for your Blue Badge",
+      "data_shared": [
+        "digital_photo"
+      ],
+      "source": "citizen-provided",
+      "purpose": "Your photo will be printed on your Blue Badge for identification purposes",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "address-confirmation",
+      "description": "Provide proof of address for your local council records and badge delivery",
+      "data_shared": [
+        "address_line_1",
+        "address_line_2",
+        "city",
+        "postcode",
+        "proof_of_address_document"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To confirm you are resident in the local authority area and to deliver your Blue Badge",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "medical-information",
+      "description": "Share information about your disability, medical conditions, and mobility limitations with your local council",
+      "data_shared": [
+        "medical_conditions",
+        "mobility_limitations",
+        "medication_details",
+        "healthcare_professional_details",
+        "medical_evidence"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To assess your eligibility for a Blue Badge if you do not automatically qualify through benefits. This information may be shared with medical assessors appointed by the council.",
+      "duration": "session",
+      "required": false
+    },
+    {
+      "id": "existing-badge",
+      "description": "Provide details of your current Blue Badge if you are reapplying",
+      "data_shared": [
+        "current_badge_number",
+        "badge_expiry_date",
+        "issuing_authority"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To verify your existing badge and process your renewal application",
+      "duration": "session",
+      "required": false
+    }
+  ],
+  "revocation": {
+    "mechanism": "Contact your local council or log into your saved application to withdraw consent",
+    "effect": "Application will be cancelled if consent is revoked before decision. If badge has been issued, you must surrender it to your local council."
+  },
+  "delegation": {
+    "agent_identity": "GOV.UK AI Agent",
+    "scopes": [
+      "read-personal-data",
+      "check-benefit-entitlement",
+      "upload-documents",
+      "submit-application"
+    ],
+    "limitations": "Agent cannot make payment on your behalf without explicit confirmation. Agent cannot submit medical information or mobility assessments without your review and approval. Agent cannot apply on behalf of an organisation. Agent cannot change your address or personal details without your explicit confirmation. For discretionary applications requiring medical assessment, agent will route to human case worker."
+  }
+}

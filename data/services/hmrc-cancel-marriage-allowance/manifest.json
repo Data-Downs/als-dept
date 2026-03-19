@@ -1,0 +1,19 @@
+{
+  "id": "hmrc-cancel-marriage-allowance",
+  "version": "1.0.0",
+  "name": "Cancel Marriage Allowance",
+  "description": "Must be cancelled after divorce or separation. Done via Self Assessment or HMRC phone.",
+  "department": "HMRC",
+  "input_schema": {
+    "type": "object"
+  },
+  "output_schema": {
+    "type": "object"
+  },
+  "source": "graph",
+  "serviceType": "obligation",
+  "govuk_url": "https://www.gov.uk/marriage-allowance/if-your-circumstances-change",
+  "eligibility_summary": "If you were claiming Marriage Allowance and have now separated or divorced, it must be cancelled. Failure to cancel can result in an underpayment of tax.",
+  "proactive": true,
+  "gated": true
+}

@@ -1,0 +1,19 @@
+{
+  "id": "la-council-tax-single-discount",
+  "version": "1.0.0",
+  "name": "Council Tax single person discount",
+  "description": "25% discount if now living alone after bereavement or separation.",
+  "department": "Local Authority",
+  "input_schema": {
+    "type": "object"
+  },
+  "output_schema": {
+    "type": "object"
+  },
+  "source": "graph",
+  "serviceType": "entitlement",
+  "govuk_url": "https://www.gov.uk/council-tax-discounts",
+  "eligibility_summary": "A 25% reduction in Council Tax if you are the only adult resident in a property. Apply to your local council after bereavement, divorce/separation, or a household member moving out.",
+  "proactive": true,
+  "gated": true
+}

@@ -1,0 +1,19 @@
+{
+  "id": "dwp-winter-fuel",
+  "version": "1.0.0",
+  "name": "Winter Fuel Payment",
+  "description": "Now only if you receive Pension Credit or another qualifying benefit (changed 2024).",
+  "department": "DWP",
+  "input_schema": {
+    "type": "object"
+  },
+  "output_schema": {
+    "type": "object"
+  },
+  "source": "graph",
+  "serviceType": "entitlement",
+  "govuk_url": "https://www.gov.uk/winter-fuel-payment",
+  "eligibility_summary": "Annual payment of £200–£300 to help with heating costs. From winter 2024/25, only available to those receiving Pension Credit or another means-tested qualifying benefit. No longer automatic for all over-State-Pension-age.",
+  "proactive": true,
+  "gated": true
+}

@@ -1,0 +1,114 @@
+{
+  "id": "hmrc.tax-on-pension.eligibility",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "income-threshold",
+      "description": "Total annual income must exceed Personal Allowance to owe tax",
+      "condition": {
+        "field": "total_annual_income",
+        "operator": ">=",
+        "value": 12570
+      },
+      "reason_if_failed": "Your total income is below the Personal Allowance (£12,570). You do not owe tax on your pension.",
+      "evidence_source": "hmrc-tax-records"
+    },
+    {
+      "id": "pension-income-exists",
+      "description": "Applicant must have pension income (State or private)",
+      "condition": {
+        "field": "pension_income",
+        "operator": "exists"
+      },
+      "reason_if_failed": "This service is for people receiving State Pension or private pension income.",
+      "evidence_source": "dwp-pension-records"
+    },
+    {
+      "id": "no-foreign-income",
+      "description": "Applicant must not have foreign income",
+      "condition": {
+        "field": "foreign_income",
+        "operator": "not-exists"
+      },
+      "reason_if_failed": "You cannot use this tool if you have foreign income. Contact HMRC for advice.",
+      "alternative_service": "hmrc.contact-hmrc",
+      "triggers_handoff": true
+    },
+    {
+      "id": "no-marriage-allowance",
+      "description": "Applicant must not receive Marriage Allowance",
+      "condition": {
+        "field": "marriage_allowance",
+        "operator": "not-exists"
+      },
+      "reason_if_failed": "You cannot use this tool if you receive Marriage Allowance. Contact HMRC for advice.",
+      "triggers_handoff": true
+    },
+    {
+      "id": "no-blind-persons-allowance",
+      "description": "Applicant must not receive Blind Person's Allowance",
+      "condition": {
+        "field": "blind_persons_allowance",
+        "operator": "not-exists"
+      },
+      "reason_if_failed": "You cannot use this tool if you receive Blind Person's Allowance. Contact HMRC for advice.",
+      "triggers_handoff": true
+    },
+    {
+      "id": "uk-resident-or-uk-provider",
+      "description": "Applicant must be UK resident or have UK pension provider",
+      "condition": {
+        "field": "uk_tax_resident_or_uk_pension_provider",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "You may only pay UK tax if you're a UK resident or receive pension from a UK provider.",
+      "evidence_source": "hmrc-residency-status"
+    }
+  ],
+  "explanation_template": "Income tax on pension: {outcome}. Total income: £{total_annual_income}. Personal Allowance: £12,570. Tax owed: {tax_owed}. Payment method: {payment_method}.",
+  "edge_cases": [
+    {
+      "id": "terminal-illness",
+      "description": "Life expectancy less than a year due to serious illness",
+      "detection": "life_expectancy_less_than_year",
+      "action": "Special rules apply: may take entire pension as tax-free lump sum if under 75 and below lump sum allowance. Contact pension provider and HMRC."
+    },
+    {
+      "id": "small-pot-lump-sum",
+      "description": "Taking pension worth up to £10,000 as lump sum",
+      "detection": "pension_value_under_10000",
+      "action": "Small pot rules apply: 25% tax-free, remainder taxed. Up to 3 from personal pensions, unlimited from workplace."
+    },
+    {
+      "id": "trivial-commutation",
+      "description": "Total private pensions worth £30,000 or less",
+      "detection": "total_pension_value_under_30000",
+      "action": "Trivial commutation rules apply: 25% tax-free. All payments must be within 12 months."
+    },
+    {
+      "id": "large-lump-sum",
+      "description": "Taking large amount from pension in one go",
+      "detection": "lump_sum_over_threshold",
+      "action": "Warning: May pay Income Tax at higher rate. May owe extra tax at end of tax year. Consider spreading withdrawals."
+    },
+    {
+      "id": "living-abroad",
+      "description": "Applicant lives abroad but receives UK pension",
+      "detection": "non_uk_resident",
+      "action": "Check double-taxation agreement between UK and country of residence. May pay tax in both countries or only one."
+    },
+    {
+      "id": "unauthorised-payment",
+      "description": "Payment made outside government tax rules",
+      "detection": "unauthorised_payment_detected",
+      "action": "Warning: Unauthorised payments taxed at up to 55%. Includes early withdrawal before 55, loans against pension. Contact HMRC immediately."
+    },
+    {
+      "id": "self-employed",
+      "description": "Applicant is self-employed",
+      "detection": "self_employment_income",
+      "action": "Must complete Self Assessment tax return. Declare all income including State Pension and private pensions."
+    }
+  ]
+}

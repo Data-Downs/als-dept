@@ -1,0 +1,100 @@
+{
+  "id": "nhs-healthy-start.eligibility",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "pregnancy-or-child",
+      "description": "Applicant must be at least 10 weeks pregnant OR have a child under 4 years old",
+      "condition": {
+        "field": "has_qualifying_dependent",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "You must be at least 10 weeks pregnant or have a child under 4 years old to qualify for Healthy Start vouchers",
+      "evidence_source": "nhs-records"
+    },
+    {
+      "id": "pregnancy-stage",
+      "description": "If pregnant, must be at least 10 weeks pregnant",
+      "condition": {
+        "field": "pregnancy_weeks",
+        "operator": ">=",
+        "value": 10
+      },
+      "reason_if_failed": "You must be at least 10 weeks pregnant. You can apply once you reach 10 weeks",
+      "evidence_source": "maternity-exemption-certificate"
+    },
+    {
+      "id": "qualifying-benefit",
+      "description": "Applicant must receive a qualifying benefit",
+      "condition": {
+        "field": "receives_qualifying_benefit",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "You must receive Universal Credit, Child Tax Credit, Income Support, income-based Jobseeker's Allowance, Pension Credit, or income-related Employment and Support Allowance",
+      "evidence_source": "dwp-benefits-data",
+      "alternative_service": "nhs-healthy-start.under-18-route"
+    },
+    {
+      "id": "uk-eligible-region",
+      "description": "Applicant must be resident in England, Wales, or Northern Ireland",
+      "condition": {
+        "field": "jurisdiction",
+        "operator": "in",
+        "value": [
+          "England",
+          "Wales",
+          "Northern Ireland"
+        ]
+      },
+      "reason_if_failed": "Healthy Start is for England, Wales and Northern Ireland only. If you live in Scotland, apply for Best Start Foods instead.",
+      "alternative_service": "social-security-scotland.best-start-foods",
+      "triggers_handoff": true
+    },
+    {
+      "id": "under-18-exemption",
+      "description": "Applicants under 18 and pregnant are automatically eligible without benefits check",
+      "condition": {
+        "field": "age",
+        "operator": ">=",
+        "value": 18
+      },
+      "reason_if_failed": "As you are under 18 and pregnant, you qualify automatically. No benefits check needed.",
+      "evidence_source": "identity-verified"
+    }
+  ],
+  "explanation_template": "Healthy Start vouchers eligibility: {outcome}. Voucher value: £{weekly_amount}/week",
+  "edge_cases": [
+    {
+      "id": "multiple-children",
+      "description": "Applicant has multiple children under 4",
+      "detection": "children_under_4_count > 1",
+      "action": "Calculate total voucher value: £4.25 per child under 1, plus £4.25 per child aged 1-4. Add £8.50 if pregnant."
+    },
+    {
+      "id": "twins-or-multiple-birth",
+      "description": "Applicant is pregnant with twins or multiples",
+      "detection": "multiple_pregnancy",
+      "action": "Standard pregnancy voucher applies (£8.50/week). After birth, each baby gets separate voucher (£4.25 each)."
+    },
+    {
+      "id": "benefits-pending",
+      "description": "Applicant has applied for qualifying benefit but decision pending",
+      "detection": "benefit_application_pending",
+      "action": "Cannot proceed until benefits decision made. Advise to reapply once benefit confirmed."
+    },
+    {
+      "id": "child-turns-4",
+      "description": "Child will turn 4 during application period",
+      "detection": "child_approaching_4th_birthday",
+      "action": "Vouchers will stop on child's 4th birthday. System will automatically adjust."
+    },
+    {
+      "id": "no-maternity-exemption",
+      "description": "Pregnant applicant does not have maternity exemption certificate",
+      "detection": "pregnant && !has_matex_certificate",
+      "action": "Handoff to midwife/doctor to obtain MATB1 or maternity exemption certificate first. Required for pregnancy verification."
+    }
+  ]
+}

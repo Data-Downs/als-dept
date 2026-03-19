@@ -1,0 +1,19 @@
+{
+  "id": "hmrc-smp",
+  "version": "1.0.0",
+  "name": "Statutory Maternity Pay",
+  "description": "Via employer if 26+ weeks employed and earning above lower earnings limit.",
+  "department": "HMRC",
+  "input_schema": {
+    "type": "object"
+  },
+  "output_schema": {
+    "type": "object"
+  },
+  "source": "graph",
+  "serviceType": "entitlement",
+  "govuk_url": "https://www.gov.uk/maternity-pay-leave/pay",
+  "eligibility_summary": "Paid by employer for up to 39 weeks. Requires 26 weeks of continuous employment with the same employer by the 15th week before the due date.",
+  "proactive": true,
+  "gated": false
+}

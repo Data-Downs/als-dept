@@ -1,0 +1,150 @@
+{
+  "id": "other-help-to-buy.states",
+  "version": "1.0.0",
+  "states": [
+    {
+      "id": "not-started",
+      "type": "initial"
+    },
+    {
+      "id": "identity-verified"
+    },
+    {
+      "id": "developer-contacted"
+    },
+    {
+      "id": "eligibility-checked"
+    },
+    {
+      "id": "consent-given"
+    },
+    {
+      "id": "conveyancer-appointed"
+    },
+    {
+      "id": "details-submitted"
+    },
+    {
+      "id": "council-review"
+    },
+    {
+      "id": "mortgage-application"
+    },
+    {
+      "id": "certificate-issued",
+      "receipt": true
+    },
+    {
+      "id": "contracts-exchanged",
+      "receipt": true
+    },
+    {
+      "id": "purchase-completed",
+      "receipt": true
+    },
+    {
+      "id": "completed",
+      "type": "terminal",
+      "receipt": true
+    },
+    {
+      "id": "rejected",
+      "type": "terminal",
+      "receipt": true
+    },
+    {
+      "id": "handed-off",
+      "type": "terminal",
+      "receipt": true
+    }
+  ],
+  "transitions": [
+    {
+      "from": "not-started",
+      "to": "identity-verified",
+      "trigger": "verify-identity"
+    },
+    {
+      "from": "identity-verified",
+      "to": "developer-contacted",
+      "trigger": "contact-developer"
+    },
+    {
+      "from": "developer-contacted",
+      "to": "eligibility-checked",
+      "trigger": "check-eligibility"
+    },
+    {
+      "from": "eligibility-checked",
+      "to": "consent-given",
+      "trigger": "grant-consent",
+      "condition": "eligible"
+    },
+    {
+      "from": "eligibility-checked",
+      "to": "rejected",
+      "trigger": "reject",
+      "condition": "not-eligible"
+    },
+    {
+      "from": "eligibility-checked",
+      "to": "handed-off",
+      "trigger": "handoff",
+      "condition": "edge-case"
+    },
+    {
+      "from": "consent-given",
+      "to": "conveyancer-appointed",
+      "trigger": "appoint-conveyancer"
+    },
+    {
+      "from": "conveyancer-appointed",
+      "to": "details-submitted",
+      "trigger": "submit-to-council"
+    },
+    {
+      "from": "details-submitted",
+      "to": "council-review",
+      "trigger": "begin-council-review"
+    },
+    {
+      "from": "council-review",
+      "to": "rejected",
+      "trigger": "council-reject",
+      "condition": "council-ineligible"
+    },
+    {
+      "from": "council-review",
+      "to": "mortgage-application",
+      "trigger": "proceed-to-mortgage",
+      "condition": "council-approved"
+    },
+    {
+      "from": "mortgage-application",
+      "to": "certificate-issued",
+      "trigger": "issue-certificate",
+      "condition": "mortgage-approved"
+    },
+    {
+      "from": "mortgage-application",
+      "to": "rejected",
+      "trigger": "mortgage-declined",
+      "condition": "mortgage-failed"
+    },
+    {
+      "from": "certificate-issued",
+      "to": "contracts-exchanged",
+      "trigger": "exchange-contracts"
+    },
+    {
+      "from": "contracts-exchanged",
+      "to": "purchase-completed",
+      "trigger": "complete-purchase"
+    },
+    {
+      "from": "purchase-completed",
+      "to": "completed",
+      "trigger": "finalize"
+    }
+  ]
+}

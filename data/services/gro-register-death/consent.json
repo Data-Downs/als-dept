@@ -1,0 +1,80 @@
+{
+  "id": "gro.register-death.consent",
+  "version": "1.0.0",
+  "grants": [
+    {
+      "id": "identity-verification",
+      "description": "Provide proof of your identity as the informant registering the death",
+      "data_shared": [
+        "full_name",
+        "address",
+        "relationship_to_deceased",
+        "identification_document"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To confirm you are a qualified informant legally entitled to register this death",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "deceased-information",
+      "description": "Share details about the deceased for the death register",
+      "data_shared": [
+        "deceased_full_name",
+        "deceased_date_of_birth",
+        "deceased_date_of_death",
+        "deceased_place_of_death",
+        "deceased_usual_address",
+        "deceased_occupation",
+        "deceased_nhs_number",
+        "deceased_marital_status"
+      ],
+      "source": "citizen-provided",
+      "purpose": "Legal requirement to record accurate death information in the official register for England and Wales",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "medical-certificate",
+      "description": "Share medical certificate of cause of death from attending doctor",
+      "data_shared": [
+        "cause_of_death",
+        "doctor_name",
+        "doctor_gmc_number",
+        "medical_certificate_reference"
+      ],
+      "source": "nhs-doctor",
+      "purpose": "Legal requirement to record certified cause of death in the death register",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "tell-us-once",
+      "description": "Share death registration details with multiple government departments through Tell Us Once service",
+      "data_shared": [
+        "deceased_full_name",
+        "deceased_nhs_number",
+        "deceased_national_insurance_number",
+        "date_of_death",
+        "informant_contact_details"
+      ],
+      "source": "gro-death-register",
+      "purpose": "To notify HMRC, DWP, passport office, DVLA and other departments about the death, saving you from contacting them individually",
+      "duration": "session",
+      "required": false
+    }
+  ],
+  "revocation": {
+    "mechanism": "Contact the General Register Office to request amendments to the death register. Revocation of the death registration itself is not possible once completed.",
+    "effect": "Death registration is a permanent legal record. Errors can be corrected through formal amendment process."
+  },
+  "delegation": {
+    "agent_identity": "GOV.UK AI Agent",
+    "scopes": [
+      "book-appointment",
+      "pre-fill-forms",
+      "submit-deceased-details"
+    ],
+    "limitations": "Agent cannot act as the legal informant. Agent cannot sign the death register on your behalf. Agent cannot verify documents or provide false information. The informant must attend the register office in person or virtually to complete registration."
+  }
+}

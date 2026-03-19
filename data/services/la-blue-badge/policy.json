@@ -1,0 +1,123 @@
+{
+  "id": "la-blue-badge.eligibility",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "uk-resident",
+      "description": "Applicant must be a resident in England, Scotland, or Wales",
+      "condition": {
+        "field": "jurisdiction",
+        "operator": "in",
+        "value": [
+          "England",
+          "Scotland",
+          "Wales"
+        ]
+      },
+      "reason_if_failed": "This service is for residents of England, Scotland, or Wales only. Apply through your local authority in Northern Ireland if you live there.",
+      "alternative_service": "nidirect.blue-badge"
+    },
+    {
+      "id": "auto-qualify-pip",
+      "description": "Automatically qualifies if receiving Enhanced Rate PIP mobility component",
+      "condition": {
+        "field": "pip_mobility_component",
+        "operator": "==",
+        "value": "enhanced"
+      },
+      "reason_if_failed": "Not receiving Enhanced Rate PIP mobility component",
+      "evidence_source": "dwp-benefits"
+    },
+    {
+      "id": "auto-qualify-dla",
+      "description": "Automatically qualifies if receiving DLA highest rate mobility component",
+      "condition": {
+        "field": "dla_mobility_component",
+        "operator": "==",
+        "value": "higher"
+      },
+      "reason_if_failed": "Not receiving DLA higher rate mobility component",
+      "evidence_source": "dwp-benefits"
+    },
+    {
+      "id": "discretionary-mobility",
+      "description": "Applicant can apply discretionarily if they have a permanent or substantial disability affecting mobility",
+      "condition": {
+        "field": "has_mobility_disability",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "You must have a permanent or substantial disability that affects your ability to walk to be eligible for a Blue Badge",
+      "evidence_source": "citizen-provided"
+    },
+    {
+      "id": "has-photo",
+      "description": "Applicant must provide a recent digital photo showing head and shoulders",
+      "condition": {
+        "field": "photo",
+        "operator": "exists"
+      },
+      "reason_if_failed": "A recent digital photo is required for your Blue Badge application",
+      "evidence_source": "citizen-provided"
+    },
+    {
+      "id": "has-proof-of-identity",
+      "description": "Applicant must provide proof of identity (birth certificate, passport, or driving licence)",
+      "condition": {
+        "field": "proof_of_identity",
+        "operator": "exists"
+      },
+      "reason_if_failed": "You must provide proof of identity to apply for a Blue Badge",
+      "evidence_source": "citizen-provided"
+    },
+    {
+      "id": "has-proof-of-address",
+      "description": "Applicant must provide proof of address (Council Tax bill or government letter)",
+      "condition": {
+        "field": "proof_of_address",
+        "operator": "exists"
+      },
+      "reason_if_failed": "You must provide proof of address for your local council to process your application",
+      "evidence_source": "citizen-provided"
+    }
+  ],
+  "explanation_template": "Blue Badge eligibility: {outcome}. Auto-qualification: {auto_qualify}. Discretionary assessment: {requires_assessment}",
+  "edge_cases": [
+    {
+      "id": "terminal-illness",
+      "description": "Applicant has a terminal illness and is not expected to live more than 12 months",
+      "detection": "terminal_illness",
+      "action": "Fast-track application. Automatic approval without mobility assessment. Route to expedited processing."
+    },
+    {
+      "id": "child-under-two",
+      "description": "Applicant is a child under 2 years old with a medical condition",
+      "detection": "age_under_2",
+      "action": "Requires additional medical evidence from healthcare professional. Route to specialist assessment."
+    },
+    {
+      "id": "non-visible-disability",
+      "description": "Applicant has a non-visible disability (e.g., cognitive, mental health, autism)",
+      "detection": "non_visible_disability",
+      "action": "Route to assessment for those who cannot walk or find walking very difficult due to psychological distress or risk to themselves or others."
+    },
+    {
+      "id": "temporary-disability",
+      "description": "Applicant has a temporary mobility issue (less than 12 months)",
+      "detection": "temporary_condition",
+      "action": "May qualify for temporary badge. Requires medical evidence of expected duration. Route to local authority discretion."
+    },
+    {
+      "id": "organisation-application",
+      "description": "Application is being made by an organisation (e.g., care home, transport service)",
+      "detection": "applicant_type_organisation",
+      "action": "Organisation badges are issued only for transporting disabled people. Requires charity/company registration. Route to organisational assessment."
+    },
+    {
+      "id": "child-under-three",
+      "description": "Applicant is a child under 3 with specific medical conditions",
+      "detection": "age_under_3_with_condition",
+      "action": "Automatic qualification if child receives Higher Rate Disability Living Allowance mobility component or is registered blind."
+    }
+  ]
+}

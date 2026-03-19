@@ -1,0 +1,19 @@
+{
+  "id": "dwp-child-maintenance",
+  "version": "1.0.0",
+  "name": "Child Maintenance Service",
+  "description": "If parents cannot agree privately. CMS calculates based on paying parent's income.",
+  "department": "DWP",
+  "input_schema": {
+    "type": "object"
+  },
+  "output_schema": {
+    "type": "object"
+  },
+  "source": "graph",
+  "serviceType": "application",
+  "govuk_url": "https://www.gov.uk/child-maintenance",
+  "eligibility_summary": "A statutory service for parents who cannot reach a private maintenance arrangement. CMS calculates payments based on the paying parent's income. A fee applies to use the Collect & Pay service.",
+  "proactive": false,
+  "gated": true
+}

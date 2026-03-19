@@ -1,0 +1,19 @@
+{
+  "id": "hmrc-sdlt",
+  "version": "1.0.0",
+  "name": "Stamp Duty Land Tax return",
+  "description": "File within 14 days of completion. Solicitor usually handles. Required even if no tax is due.",
+  "department": "HMRC",
+  "input_schema": {
+    "type": "object"
+  },
+  "output_schema": {
+    "type": "object"
+  },
+  "source": "graph",
+  "serviceType": "obligation",
+  "govuk_url": "https://www.gov.uk/stamp-duty-land-tax",
+  "eligibility_summary": "A return must be filed within 14 days of completing a property purchase in England or Northern Ireland. The solicitor usually handles this. Must be filed even if no tax is due.",
+  "proactive": true,
+  "gated": true
+}

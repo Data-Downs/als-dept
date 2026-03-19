@@ -1,0 +1,19 @@
+{
+  "id": "la-food-hygiene",
+  "version": "1.0.0",
+  "name": "Food hygiene registration",
+  "description": "Any food business must register with local authority before trading.",
+  "department": "Local Authority",
+  "input_schema": {
+    "type": "object"
+  },
+  "output_schema": {
+    "type": "object"
+  },
+  "source": "graph",
+  "serviceType": "obligation",
+  "govuk_url": "https://www.gov.uk/food-business-registration",
+  "eligibility_summary": "Any business that sells, cooks, stores, handles, prepares or distributes food must register with their local authority at least 28 days before opening. Free to register. Required for home bakers, market stalls, restaurants, and caterers.",
+  "proactive": true,
+  "gated": false
+}

@@ -1,0 +1,182 @@
+{
+  "id": "dwp-carers-allowance.eligibility",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "age-minimum",
+      "description": "Applicant must be at least 16 years old",
+      "condition": {
+        "field": "age",
+        "operator": ">=",
+        "value": 16
+      },
+      "reason_if_failed": "You must be at least 16 years old to claim Carer's Allowance",
+      "evidence_source": "identity-verified"
+    },
+    {
+      "id": "hours-caring",
+      "description": "Applicant must spend at least 35 hours per week caring",
+      "condition": {
+        "field": "hours_caring_per_week",
+        "operator": ">=",
+        "value": 35
+      },
+      "reason_if_failed": "You must spend at least 35 hours a week caring for someone to be eligible for Carer's Allowance",
+      "evidence_source": "citizen-provided"
+    },
+    {
+      "id": "earnings-limit",
+      "description": "Earnings must be £196 or less per week after tax, NI and expenses",
+      "condition": {
+        "field": "net_weekly_earnings",
+        "operator": "<=",
+        "value": 196
+      },
+      "reason_if_failed": "Your earnings are too high. You can only earn £196 or less per week (after tax, National Insurance and expenses) to claim Carer's Allowance",
+      "evidence_source": "hmrc-income-data"
+    },
+    {
+      "id": "uk-residency",
+      "description": "Applicant must normally live in England or Wales",
+      "condition": {
+        "field": "residence_jurisdiction",
+        "operator": "in",
+        "value": [
+          "England",
+          "Wales"
+        ]
+      },
+      "reason_if_failed": "This service is for England and Wales residents only. If you live in Scotland, you need to apply for Carer Support Payment instead.",
+      "alternative_service": "social-security-scotland.carer-support-payment",
+      "triggers_handoff": true
+    },
+    {
+      "id": "residency-duration",
+      "description": "Must have been in England, Scotland or Wales for at least 2 of the last 3 years",
+      "condition": {
+        "field": "uk_residence_years",
+        "operator": ">=",
+        "value": 2
+      },
+      "reason_if_failed": "You must have been in England, Scotland or Wales for at least 2 of the last 3 years (unless you're a refugee or have humanitarian protection status)",
+      "evidence_source": "citizen-provided"
+    },
+    {
+      "id": "not-full-time-education",
+      "description": "Must not be in full-time education",
+      "condition": {
+        "field": "full_time_education",
+        "operator": "!=",
+        "value": true
+      },
+      "reason_if_failed": "You cannot claim Carer's Allowance if you're in full-time education",
+      "evidence_source": "citizen-provided"
+    },
+    {
+      "id": "study-hours-limit",
+      "description": "Must not be studying 21 hours or more per week",
+      "condition": {
+        "field": "study_hours_per_week",
+        "operator": "<=",
+        "value": 20
+      },
+      "reason_if_failed": "You cannot claim Carer's Allowance if you're studying for 21 hours a week or more",
+      "evidence_source": "citizen-provided"
+    },
+    {
+      "id": "not-immigration-control",
+      "description": "Must not be subject to immigration control",
+      "condition": {
+        "field": "subject_to_immigration_control",
+        "operator": "==",
+        "value": false
+      },
+      "reason_if_failed": "You cannot claim Carer's Allowance if you're subject to immigration control",
+      "evidence_source": "home-office-immigration-status",
+      "triggers_handoff": true
+    },
+    {
+      "id": "care-recipient-receives-qualifying-benefit",
+      "description": "Person cared for must receive a qualifying disability benefit",
+      "condition": {
+        "field": "care_recipient_disability_benefit",
+        "operator": "in",
+        "value": [
+          "pip-daily-living",
+          "dla-middle-or-high",
+          "attendance-allowance",
+          "pension-age-disability-payment",
+          "constant-attendance-allowance",
+          "armed-forces-independence-payment",
+          "child-disability-payment",
+          "adult-disability-payment"
+        ]
+      },
+      "reason_if_failed": "The person you care for must be receiving one of the qualifying disability benefits (such as PIP daily living component, DLA middle or highest care rate, or Attendance Allowance)",
+      "evidence_source": "dwp-benefits-system"
+    },
+    {
+      "id": "no-other-carer-claiming",
+      "description": "No other carer can be claiming Carer's Allowance or Carer Support Payment for the same person",
+      "condition": {
+        "field": "another_carer_claiming",
+        "operator": "==",
+        "value": false
+      },
+      "reason_if_failed": "Someone else is already claiming Carer's Allowance or Carer Support Payment for this person. Only one person can claim at a time. If you want to claim, speak to the other carer about changing their benefits.",
+      "evidence_source": "dwp-benefits-system",
+      "triggers_handoff": true
+    }
+  ],
+  "explanation_template": "Carer's Allowance eligibility: {outcome}. You could receive £83.30 per week if eligible, plus automatic National Insurance credits.",
+  "edge_cases": [
+    {
+      "id": "state-pension-recipient",
+      "description": "Applicant receives State Pension of £83.30 or more per week",
+      "detection": "state_pension_weekly >= 83.30",
+      "action": "No Carer's Allowance payment will be made, but you'll still get National Insurance credits. If your pension is less than £83.30, you'll get Carer's Allowance to make up the difference."
+    },
+    {
+      "id": "pension-credit-recipient",
+      "description": "Applicant receives Pension Credit",
+      "detection": "receives_pension_credit == true",
+      "action": "If your State Pension is more than £83.30 a week, you won't get a Carer's Allowance payment but your Pension Credit will increase instead."
+    },
+    {
+      "id": "universal-credit-recipient",
+      "description": "Applicant receives Universal Credit",
+      "detection": "receives_universal_credit == true",
+      "action": "Your Universal Credit payment will be reduced by the amount of your Carer's Allowance, but you may get an extra amount for caring. Report the change on your Universal Credit account."
+    },
+    {
+      "id": "severe-disability-premium-impact",
+      "description": "Care recipient receives severe disability premium",
+      "detection": "care_recipient_receives_severe_disability_premium == true",
+      "action": "When you claim Carer's Allowance, the person you care for will usually stop getting the severe disability premium. Contact the agency paying their benefit to confirm the impact."
+    },
+    {
+      "id": "sharing-care-dispute",
+      "description": "Multiple carers want to claim for the same person and cannot agree",
+      "detection": "care_sharing_dispute == true",
+      "action": "Hand off to DWP decision maker to determine who should receive the benefit. Both parties can apply and DWP will decide."
+    },
+    {
+      "id": "temporary-care-break",
+      "description": "Applicant temporarily stops providing care (hospital, respite)",
+      "detection": "temporary_care_break == true",
+      "action": "You can still get Carer's Allowance during temporary breaks. You must report if you or the person you care for will be in hospital/nursing home for more than 12 weeks, or you stop caring for more than 28 days."
+    },
+    {
+      "id": "refugee-humanitarian-status",
+      "description": "Applicant is a refugee or has humanitarian protection status",
+      "detection": "refugee_or_humanitarian_status == true",
+      "action": "Residency duration requirement does not apply. Process application normally."
+    },
+    {
+      "id": "armed-forces-abroad",
+      "description": "Applicant lives abroad as member of armed forces",
+      "detection": "armed_forces_abroad == true",
+      "action": "Still eligible despite living abroad. Verify armed forces status and process application."
+    }
+  ]
+}

@@ -1,0 +1,126 @@
+{
+  "id": "dwp.bereavement-support.consent",
+  "version": "1.0.0",
+  "grants": [
+    {
+      "id": "identity-verification",
+      "description": "Verify your identity using your GOV.UK One Login credentials",
+      "data_shared": [
+        "full_name",
+        "date_of_birth",
+        "national_insurance_number",
+        "current_address"
+      ],
+      "source": "one-login",
+      "purpose": "To confirm your identity and check your State Pension age eligibility",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "death-certificate-details",
+      "description": "Provide details from your partner's death certificate",
+      "data_shared": [
+        "partner_full_name",
+        "partner_date_of_birth",
+        "partner_date_of_death",
+        "death_registration_district"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To verify your partner's death and calculate claim timing",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "partner-ni-record",
+      "description": "Check your partner's National Insurance contribution record",
+      "data_shared": [
+        "partner_ni_number",
+        "partner_ni_contributions_history",
+        "partner_employment_history"
+      ],
+      "source": "hmrc",
+      "purpose": "To determine if your partner paid sufficient National Insurance contributions for you to be eligible",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "relationship-status",
+      "description": "Confirm your relationship to the deceased",
+      "data_shared": [
+        "marriage_certificate",
+        "civil_partnership_certificate",
+        "living_together_declaration"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To verify your eligibility and determine your payment rate",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "child-benefit-status",
+      "description": "Check if you were receiving or entitled to Child Benefit",
+      "data_shared": [
+        "child_benefit_record",
+        "children_names_and_ages",
+        "child_benefit_eligibility"
+      ],
+      "source": "child-benefit-office",
+      "purpose": "To determine if you qualify for the higher payment rate",
+      "duration": "session",
+      "required": false
+    },
+    {
+      "id": "pregnancy-status",
+      "description": "Declare if you were pregnant when your partner died",
+      "data_shared": [
+        "pregnancy_declaration",
+        "expected_due_date"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To determine if you qualify for the higher payment rate",
+      "duration": "until-revoked",
+      "required": false
+    },
+    {
+      "id": "bank-account-details",
+      "description": "Provide bank account details for payment",
+      "data_shared": [
+        "account_holder_name",
+        "sort_code",
+        "account_number",
+        "building_society_roll_number"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To pay your Bereavement Support Payment into your account",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "current-benefits",
+      "description": "Share information about benefits you currently receive",
+      "data_shared": [
+        "current_benefits_list",
+        "benefit_amounts"
+      ],
+      "source": "dwp-benefits",
+      "purpose": "To notify your benefits office and ensure correct ongoing entitlements",
+      "duration": "session",
+      "required": false
+    }
+  ],
+  "revocation": {
+    "mechanism": "Contact DWP Bereavement Service helpline or revoke through your GOV.UK account",
+    "effect": "Application will be cancelled if consent is revoked before decision. If revoked after approval, payments will stop immediately."
+  },
+  "delegation": {
+    "agent_identity": "GOV.UK AI Agent",
+    "scopes": [
+      "read-personal-data",
+      "read-death-certificate",
+      "check-ni-record",
+      "check-child-benefit-status",
+      "submit-application-to-dwp"
+    ],
+    "limitations": "Agent cannot provide bank account details on your behalf without explicit confirmation. Agent cannot make declarations about pregnancy or relationship status without your direct input. Agent cannot appeal a decision on your behalf. Agent cannot change payment details after approval without your explicit authorization."
+  }
+}

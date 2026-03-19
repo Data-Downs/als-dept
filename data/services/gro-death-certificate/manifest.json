@@ -1,0 +1,19 @@
+{
+  "id": "gro-death-certificate",
+  "version": "1.0.0",
+  "name": "Obtain death certificates",
+  "description": "Order multiple certified copies — banks, insurers and probate all require originals.",
+  "department": "GRO",
+  "input_schema": {
+    "type": "object"
+  },
+  "output_schema": {
+    "type": "object"
+  },
+  "source": "graph",
+  "serviceType": "document",
+  "govuk_url": "https://www.gov.uk/order-copy-birth-death-marriage-certificate",
+  "eligibility_summary": "Anyone can order certified copies of a registered death. Death must have been registered first. Banks, probate and insurers all need originals.",
+  "proactive": true,
+  "gated": true
+}

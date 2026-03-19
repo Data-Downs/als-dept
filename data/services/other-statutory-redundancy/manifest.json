@@ -1,0 +1,19 @@
+{
+  "id": "other-statutory-redundancy",
+  "version": "1.0.0",
+  "name": "Statutory Redundancy Pay",
+  "description": "Employer obligation based on age and length of service. Employment tribunal if refused.",
+  "department": "Employer / Tribunal",
+  "input_schema": {
+    "type": "object"
+  },
+  "output_schema": {
+    "type": "object"
+  },
+  "source": "graph",
+  "serviceType": "entitlement",
+  "govuk_url": "https://www.gov.uk/redundancy-payments-helpline",
+  "eligibility_summary": "A legal entitlement for employees made compulsorily redundant after 2 or more years of continuous employment. Amount depends on age, weekly pay (capped at £643/week), and length of service. Employer must pay — Employment Tribunal if they refuse.",
+  "proactive": true,
+  "gated": false
+}

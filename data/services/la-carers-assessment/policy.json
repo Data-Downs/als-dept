@@ -1,0 +1,81 @@
+{
+  "id": "la-carers-assessment.eligibility",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "age-minimum",
+      "description": "Applicant must be at least 18 years old",
+      "condition": {
+        "field": "age",
+        "operator": ">=",
+        "value": 18
+      },
+      "reason_if_failed": "You must be 18 or over to request a Carer's Assessment. Young carers (under 18) should request a Young Carer's Assessment instead.",
+      "alternative_service": "la-young-carers-assessment"
+    },
+    {
+      "id": "is-carer",
+      "description": "Applicant must be providing care to another person",
+      "condition": {
+        "field": "cared_for_person",
+        "operator": "exists"
+      },
+      "reason_if_failed": "You need to be caring for someone to request a Carer's Assessment. This service is for unpaid carers only.",
+      "evidence_source": "self-declaration"
+    },
+    {
+      "id": "local-authority-area",
+      "description": "Applicant must reside in the local authority's jurisdiction",
+      "condition": {
+        "field": "postcode",
+        "operator": "in",
+        "value": "local_authority_boundaries"
+      },
+      "reason_if_failed": "You need to apply to the local authority where you live. We'll help you find the right council.",
+      "triggers_handoff": true
+    },
+    {
+      "id": "substantial-care",
+      "description": "Applicant must be providing or intending to provide substantial care",
+      "condition": {
+        "field": "hours_of_care",
+        "operator": "exists"
+      },
+      "reason_if_failed": "Please provide information about the care you provide to help us assess your needs",
+      "evidence_source": "self-declaration"
+    }
+  ],
+  "explanation_template": "Carer's Assessment eligibility: {outcome}",
+  "edge_cases": [
+    {
+      "id": "carer-in-crisis",
+      "description": "Carer reports being in crisis or at breaking point",
+      "detection": "crisis_indicators",
+      "action": "Urgent priority assessment required. Route to emergency social care team within 24 hours. Provide crisis support contact details."
+    },
+    {
+      "id": "safeguarding-concern",
+      "description": "Information suggests safeguarding risk to carer or cared-for person",
+      "detection": "safeguarding_keywords",
+      "action": "Immediate handoff to safeguarding team. Do not proceed with standard assessment. Contact social services duty team."
+    },
+    {
+      "id": "cared-for-needs-assessment",
+      "description": "Person being cared for also needs or has never had a needs assessment",
+      "detection": "cared_for_no_assessment",
+      "action": "Offer combined assessment. Route to adult social care team to coordinate both assessments simultaneously."
+    },
+    {
+      "id": "multiple-carers",
+      "description": "Multiple carers caring for the same person",
+      "detection": "shared_caring_role",
+      "action": "Each carer entitled to separate assessment. Coordinate assessments and support plans to avoid duplication."
+    },
+    {
+      "id": "working-carer",
+      "description": "Carer is employed and needs assessment outside working hours",
+      "detection": "employment_status",
+      "action": "Offer flexible appointment times. Consider telephone or video assessment options."
+    }
+  ]
+}

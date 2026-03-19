@@ -1,0 +1,85 @@
+{
+  "id": "hmrc.ni-check.consent",
+  "version": "1.0.0",
+  "grants": [
+    {
+      "id": "identity-verification",
+      "description": "Verify your identity using your GOV.UK Sign In credentials and photo ID",
+      "data_shared": [
+        "full_name",
+        "date_of_birth",
+        "national_insurance_number"
+      ],
+      "source": "one-login",
+      "purpose": "To confirm your identity and protect your personal tax information",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "ni-record-access",
+      "description": "Access your National Insurance contribution and credits record from HMRC",
+      "data_shared": [
+        "ni_contributions_history",
+        "ni_credits_received",
+        "qualifying_years",
+        "gaps_in_record"
+      ],
+      "source": "hmrc-ni-records",
+      "purpose": "To show you your complete National Insurance record and identify any gaps",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "state-pension-forecast",
+      "description": "Access your State Pension forecast from DWP to show impact of voluntary contributions",
+      "data_shared": [
+        "state_pension_forecast",
+        "pension_age",
+        "projected_pension_amount"
+      ],
+      "source": "dwp-pension-service",
+      "purpose": "To show you how filling gaps would affect your State Pension entitlement",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "payment-processing",
+      "description": "Process payment for voluntary National Insurance contributions",
+      "data_shared": [
+        "payment_card_details",
+        "payment_amount",
+        "contribution_years"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To process your voluntary contribution payment securely",
+      "duration": "session",
+      "required": false
+    },
+    {
+      "id": "contact-details",
+      "description": "Store your contact details for correspondence about your NI record",
+      "data_shared": [
+        "email_address",
+        "postal_address"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To send you confirmation and receipts for any payments, and future correspondence about your record",
+      "duration": "until-revoked",
+      "required": false
+    }
+  ],
+  "revocation": {
+    "mechanism": "Revoke through your Personal Tax Account settings or by contacting HMRC",
+    "effect": "You will no longer be able to view your NI record online. Any voluntary contribution payments in progress will be cancelled."
+  },
+  "delegation": {
+    "agent_identity": "GOV.UK AI Agent",
+    "scopes": [
+      "read-ni-record",
+      "read-state-pension-forecast",
+      "identify-gaps",
+      "calculate-voluntary-contributions"
+    ],
+    "limitations": "Agent cannot make payments on your behalf. Agent cannot change your NI record or submit corrections. Agent cannot make decisions about whether you should pay voluntary contributions - this requires your explicit instruction. For complex cases near State Pension age, agent must recommend human specialist consultation."
+  }
+}

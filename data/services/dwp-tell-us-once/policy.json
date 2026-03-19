@@ -1,0 +1,101 @@
+{
+  "id": "dwp.tell-us-once.eligibility",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "death-registered-or-reported",
+      "description": "Death must be registered or reported to a coroner with a certificate",
+      "condition": {
+        "field": "death_status",
+        "operator": "in",
+        "value": [
+          "registered",
+          "coroner-interim-certificate",
+          "coroner-final-certificate"
+        ]
+      },
+      "reason_if_failed": "You can only use Tell Us Once after the death has been registered or reported to a coroner with a certificate",
+      "evidence_source": "registrar-or-coroner"
+    },
+    {
+      "id": "uk-residency",
+      "description": "Deceased must have been living in England, Scotland or Wales",
+      "condition": {
+        "field": "residence_at_death",
+        "operator": "in",
+        "value": [
+          "England",
+          "Scotland",
+          "Wales"
+        ]
+      },
+      "reason_if_failed": "Tell Us Once cannot be used if the person was living in Northern Ireland or permanently abroad when they died",
+      "alternative_service": "direct-notification-to-organisations"
+    },
+    {
+      "id": "reference-number-valid",
+      "description": "Reference number must be used within 28 days of issue",
+      "condition": {
+        "field": "reference_number_age_days",
+        "operator": "<=",
+        "value": 28
+      },
+      "reason_if_failed": "Your reference number has expired. Contact the registrar to get a new reference number",
+      "triggers_handoff": true
+    },
+    {
+      "id": "has-reference-number",
+      "description": "User must have a Tell Us Once reference number from registrar",
+      "condition": {
+        "field": "reference_number",
+        "operator": "exists"
+      },
+      "reason_if_failed": "You need a reference number from the registrar to use Tell Us Once. Contact your local register office",
+      "alternative_service": "direct-notification-to-organisations"
+    },
+    {
+      "id": "permission-granted",
+      "description": "Must have permission from executor/administrator or next of kin to share their details",
+      "condition": {
+        "field": "permission_from_representative",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "You need permission from the executor, administrator, surviving spouse or next of kin before giving their details",
+      "evidence_source": "citizen-declaration"
+    }
+  ],
+  "explanation_template": "Tell Us Once eligibility: {outcome}",
+  "edge_cases": [
+    {
+      "id": "death-abroad-temporarily",
+      "description": "Person died abroad temporarily (e.g., on holiday or business trip)",
+      "detection": "death_location_abroad AND temporary_absence",
+      "action": "Can use Tell Us Once if death certificate is verified by foreign embassy/high commission. Registrar will advise on verification process."
+    },
+    {
+      "id": "inquest-underway",
+      "description": "Coroner holding an inquest, death not yet registered",
+      "detection": "coroner_inquest_ongoing",
+      "action": "Can use Tell Us Once with interim death certificate from coroner. Contact registrar for reference number after obtaining interim certificate."
+    },
+    {
+      "id": "northern-ireland-resident",
+      "description": "Person was living in Northern Ireland when they died",
+      "detection": "residence_at_death == 'Northern Ireland'",
+      "action": "Cannot use Tell Us Once. Must notify organisations directly. Hand off to manual process guidance."
+    },
+    {
+      "id": "permanently-abroad",
+      "description": "Person was permanently living abroad when they died",
+      "detection": "residence_at_death == 'abroad' AND permanent_residence",
+      "action": "Cannot use Tell Us Once. Must notify UK organisations directly if applicable. Hand off to manual process guidance."
+    },
+    {
+      "id": "vulnerable-reporter",
+      "description": "Reporter needs additional support (e.g., BSL, Relay UK, language assistance)",
+      "detection": "requires_accessibility_support",
+      "action": "Registrar can complete Tell Us Once with the reporter or provide BSL video relay service/Relay UK details. Welsh language support available."
+    }
+  ]
+}

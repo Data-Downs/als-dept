@@ -1,0 +1,19 @@
+{
+  "id": "dvla-name-change",
+  "version": "1.0.0",
+  "name": "Update driving licence (name change)",
+  "description": "D1 form or online. Legal requirement — licence must reflect current name.",
+  "department": "DVLA",
+  "input_schema": {
+    "type": "object"
+  },
+  "output_schema": {
+    "type": "object"
+  },
+  "source": "graph",
+  "serviceType": "obligation",
+  "govuk_url": "https://www.gov.uk/change-name-driving-licence",
+  "eligibility_summary": "A legal requirement for driving licence holders who have changed their name — after marriage, civil partnership, deed poll or statutory declaration. Must be updated to reflect current legal name.",
+  "proactive": true,
+  "gated": true
+}

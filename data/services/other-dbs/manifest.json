@@ -1,0 +1,19 @@
+{
+  "id": "other-dbs",
+  "version": "1.0.0",
+  "name": "DBS check",
+  "description": "If working with children or vulnerable adults. Standard or enhanced check.",
+  "department": "DBS",
+  "input_schema": {
+    "type": "object"
+  },
+  "output_schema": {
+    "type": "object"
+  },
+  "source": "graph",
+  "serviceType": "application",
+  "govuk_url": "https://www.gov.uk/dbs-check-applicant-criminal-record",
+  "eligibility_summary": "A criminal record check required for roles involving work with children or vulnerable adults. Employers apply on behalf of the employee. Three levels: Basic (anyone), Standard (specified roles), Enhanced (children/vulnerable adult work).",
+  "proactive": false,
+  "gated": false
+}

@@ -1,0 +1,19 @@
+{
+  "id": "other-passport-name",
+  "version": "1.0.0",
+  "name": "Passport name change",
+  "description": "Not legally required after marriage but strongly recommended. Use marriage certificate.",
+  "department": "HMPO",
+  "input_schema": {
+    "type": "object"
+  },
+  "output_schema": {
+    "type": "object"
+  },
+  "source": "graph",
+  "serviceType": "document",
+  "govuk_url": "https://www.gov.uk/renew-adult-passport",
+  "eligibility_summary": "Not a legal requirement but strongly recommended after a name change. A passport in your new name is accepted as proof of identity for employment, travel, and financial services. Use the marriage certificate or deed poll as supporting evidence.",
+  "proactive": true,
+  "gated": true
+}

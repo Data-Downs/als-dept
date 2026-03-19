@@ -1,0 +1,128 @@
+{
+  "id": "dwp-uc-health.eligibility",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "existing-uc-claim",
+      "description": "Applicant must already be claiming Universal Credit",
+      "condition": {
+        "field": "universal_credit_status",
+        "operator": "==",
+        "value": "active"
+      },
+      "reason_if_failed": "You must be claiming Universal Credit to apply for the limited capability element. Apply for Universal Credit first.",
+      "alternative_service": "dwp.universal-credit",
+      "evidence_source": "dwp-uc-records"
+    },
+    {
+      "id": "health-condition-exists",
+      "description": "Applicant must have a health condition or disability that affects ability to work",
+      "condition": {
+        "field": "health_condition",
+        "operator": "exists"
+      },
+      "reason_if_failed": "You must have a health condition or disability that limits your capability for work",
+      "evidence_source": "citizen-declaration"
+    },
+    {
+      "id": "medical-evidence",
+      "description": "Applicant must provide medical evidence such as a fit note",
+      "condition": {
+        "field": "fit_note",
+        "operator": "exists"
+      },
+      "reason_if_failed": "You must provide a fit note or other medical evidence from your GP or healthcare professional",
+      "evidence_source": "gp-fit-note"
+    },
+    {
+      "id": "uk-resident",
+      "description": "Applicant must be resident in Great Britain or Northern Ireland",
+      "condition": {
+        "field": "residence",
+        "operator": "in",
+        "value": [
+          "England",
+          "Scotland",
+          "Wales",
+          "Northern Ireland"
+        ]
+      },
+      "reason_if_failed": "This service is for UK residents only",
+      "evidence_source": "uc-claim-address"
+    },
+    {
+      "id": "not-already-lcwra",
+      "description": "Applicant must not already be receiving the LCWRA element",
+      "condition": {
+        "field": "lcwra_element_status",
+        "operator": "!=",
+        "value": "active"
+      },
+      "reason_if_failed": "You are already receiving the limited capability for work and work-related activity element",
+      "evidence_source": "dwp-uc-records"
+    },
+    {
+      "id": "not-terminal-illness-fast-track",
+      "description": "If terminal illness, different process applies",
+      "condition": {
+        "field": "terminal_illness",
+        "operator": "!=",
+        "value": true
+      },
+      "reason_if_failed": "You should use the Special Rules for Terminal Illness process for faster support",
+      "triggers_handoff": true,
+      "alternative_service": "dwp.srti-application"
+    }
+  ],
+  "explanation_template": "LCWRA element eligibility: {outcome}. If eligible, you will need to complete a Work Capability Assessment.",
+  "edge_cases": [
+    {
+      "id": "terminal-illness",
+      "description": "Applicant is terminally ill with prognosis of 12 months or less",
+      "detection": "terminal_illness_indicator or ds1500_form",
+      "action": "Fast-track under Special Rules for Terminal Illness (SRTI). No claimant commitment or assessment required. Automatic LCWRA award."
+    },
+    {
+      "id": "severe-mental-health",
+      "description": "Applicant has severe mental health condition requiring specialist assessment",
+      "detection": "mental_health_condition with severity_indicator",
+      "action": "Arrange assessment with mental health specialist. Extended assessment time may be needed. Consider home assessment."
+    },
+    {
+      "id": "fluctuating-condition",
+      "description": "Applicant's condition varies significantly day-to-day",
+      "detection": "fluctuating_condition_indicator",
+      "action": "Assessment must consider worst-case scenarios and cumulative effects. Diary evidence may be requested."
+    },
+    {
+      "id": "already-pip-recipient",
+      "description": "Applicant already receives PIP with enhanced daily living component",
+      "detection": "pip_status == enhanced_daily_living",
+      "action": "May be eligible for automatic LCWRA determination without full WCA. DWP will review PIP evidence."
+    },
+    {
+      "id": "student-with-disability",
+      "description": "Applicant is in full-time education with pre-existing LCWRA assessment",
+      "detection": "student_status and pre_course_lcwra_assessment",
+      "action": "Must have been assessed as having limited capability BEFORE starting course. Verify assessment date and course start date."
+    },
+    {
+      "id": "domestic-abuse-victim",
+      "description": "Applicant is experiencing or fleeing domestic abuse",
+      "detection": "domestic_abuse_indicator",
+      "action": "Apply safeguarding measures. Assessment may need alternative location. Consider temporary easements on claimant commitment."
+    },
+    {
+      "id": "appeal-pending",
+      "description": "Applicant has a pending mandatory reconsideration or appeal",
+      "detection": "appeal_status == pending",
+      "action": "Do not submit new application. Existing appeal must be resolved first. Signpost to mandatory reconsideration process."
+    },
+    {
+      "id": "pre-2017-claimant",
+      "description": "Applicant started health-related UC or ESA claim before 3 April 2017",
+      "detection": "claim_start_date < 2017-04-03",
+      "action": "Lower LCWRA element amount applies (£158.76 instead of £423.27). Legacy rules apply."
+    }
+  ]
+}

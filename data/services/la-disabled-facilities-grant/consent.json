@@ -1,0 +1,132 @@
+{
+  "id": "la-disabled-facilities-grant.consent",
+  "version": "1.0.0",
+  "grants": [
+    {
+      "id": "identity-verification",
+      "description": "Verify your identity using your GOV.UK One Login credentials",
+      "data_shared": [
+        "full_name",
+        "date_of_birth",
+        "national_insurance_number"
+      ],
+      "source": "one-login",
+      "purpose": "To confirm you are who you say you are before processing your grant application",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "disability-information",
+      "description": "Share information about the disability affecting you or someone in your household",
+      "data_shared": [
+        "disability_type",
+        "disability_description",
+        "functional_limitations",
+        "medical_conditions"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To assess what home adaptations are necessary and appropriate for your needs",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "property-information",
+      "description": "Share information about your property and your legal relationship to it",
+      "data_shared": [
+        "property_address",
+        "ownership_status",
+        "tenancy_agreement",
+        "property_age",
+        "property_condition",
+        "existing_adaptations"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To verify your eligibility and assess whether the proposed work is feasible and reasonable",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "property-ownership-verification",
+      "description": "Verify property ownership or tenancy status with Land Registry or landlord",
+      "data_shared": [
+        "property_title",
+        "ownership_records",
+        "tenancy_status"
+      ],
+      "source": "land-registry",
+      "purpose": "To confirm you are the owner, tenant, or landlord and have the right to apply for adaptations",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "financial-information",
+      "description": "Share your household income and savings information for the means test (if applicable)",
+      "data_shared": [
+        "household_income",
+        "savings_over_6000",
+        "benefits_received",
+        "household_composition"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To calculate your contribution towards the cost of adaptations. Not required for disabled children under 18 or landlord applications.",
+      "duration": "session",
+      "required": false
+    },
+    {
+      "id": "benefits-data-sharing",
+      "description": "Allow the council to verify your benefits information with DWP",
+      "data_shared": [
+        "benefit_entitlements",
+        "benefit_amounts",
+        "household_members"
+      ],
+      "source": "dwp",
+      "purpose": "To verify your financial circumstances for the means test without requiring additional documentation",
+      "duration": "session",
+      "required": false
+    },
+    {
+      "id": "ot-assessment-consent",
+      "description": "Consent to an occupational therapist or trained assessor visiting your home",
+      "data_shared": [
+        "home_layout",
+        "access_barriers",
+        "current_mobility",
+        "daily_living_needs"
+      ],
+      "source": "ot-assessment",
+      "purpose": "To assess what adaptations are necessary and appropriate to meet the disabled person's needs",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "contractor-quotes",
+      "description": "Share quotes and specifications from contractors, architects, or surveyors",
+      "data_shared": [
+        "contractor_details",
+        "cost_estimates",
+        "technical_specifications",
+        "planning_documents"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To determine the total cost and feasibility of the proposed adaptations",
+      "duration": "session",
+      "required": true
+    }
+  ],
+  "revocation": {
+    "mechanism": "Contact your local council or revoke through your GOV.UK account",
+    "effect": "Application will be cancelled if consent is revoked before approval. After approval, revoking consent may require repayment of the grant if you move within 5 years."
+  },
+  "delegation": {
+    "agent_identity": "GOV.UK AI Agent",
+    "scopes": [
+      "read-personal-data",
+      "submit-application-to-council",
+      "schedule-ot-assessment",
+      "provide-property-information",
+      "share-contractor-quotes"
+    ],
+    "limitations": "Agent cannot make financial decisions on your behalf. Agent cannot consent to medical assessments without your explicit confirmation. Agent cannot sign contractor agreements or authorize work to begin. Agent cannot appeal a decision without your instruction. Agent must escalate to human for: terminal illness disclosures, safeguarding concerns, disputes about property ownership, or planning permission issues."
+  }
+}

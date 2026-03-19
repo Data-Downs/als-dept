@@ -1,0 +1,19 @@
+{
+  "id": "other-employers-liability",
+  "version": "1.0.0",
+  "name": "Employers' Liability Insurance",
+  "description": "Legal requirement if employing anyone. Minimum £5m cover.",
+  "department": "Other",
+  "input_schema": {
+    "type": "object"
+  },
+  "output_schema": {
+    "type": "object"
+  },
+  "source": "graph",
+  "serviceType": "obligation",
+  "govuk_url": "https://www.gov.uk/employers-liability-insurance",
+  "eligibility_summary": "A legal requirement for virtually all businesses that employ staff. Must have at least £5 million cover. Certificate must be displayed at each workplace. Penalties of up to £2,500/day for non-compliance.",
+  "proactive": true,
+  "gated": true
+}

@@ -1,0 +1,124 @@
+{
+  "id": "la-school-place.states",
+  "version": "1.0.0",
+  "states": [
+    {
+      "id": "not-started",
+      "type": "initial"
+    },
+    {
+      "id": "identity-verified"
+    },
+    {
+      "id": "eligibility-checked"
+    },
+    {
+      "id": "consent-given"
+    },
+    {
+      "id": "child-details-provided"
+    },
+    {
+      "id": "preferences-ranked"
+    },
+    {
+      "id": "supporting-info-submitted"
+    },
+    {
+      "id": "details-submitted",
+      "receipt": true
+    },
+    {
+      "id": "assessment"
+    },
+    {
+      "id": "decision",
+      "receipt": true
+    },
+    {
+      "id": "completed",
+      "type": "terminal",
+      "receipt": true
+    },
+    {
+      "id": "rejected",
+      "type": "terminal",
+      "receipt": true
+    },
+    {
+      "id": "handed-off",
+      "type": "terminal",
+      "receipt": true
+    }
+  ],
+  "transitions": [
+    {
+      "from": "not-started",
+      "to": "identity-verified",
+      "trigger": "verify-identity"
+    },
+    {
+      "from": "identity-verified",
+      "to": "eligibility-checked",
+      "trigger": "check-eligibility"
+    },
+    {
+      "from": "eligibility-checked",
+      "to": "consent-given",
+      "trigger": "grant-consent",
+      "condition": "eligible"
+    },
+    {
+      "from": "eligibility-checked",
+      "to": "rejected",
+      "trigger": "reject",
+      "condition": "not-eligible"
+    },
+    {
+      "from": "eligibility-checked",
+      "to": "handed-off",
+      "trigger": "handoff",
+      "condition": "edge-case"
+    },
+    {
+      "from": "consent-given",
+      "to": "child-details-provided",
+      "trigger": "provide-child-details"
+    },
+    {
+      "from": "child-details-provided",
+      "to": "preferences-ranked",
+      "trigger": "rank-school-preferences"
+    },
+    {
+      "from": "preferences-ranked",
+      "to": "supporting-info-submitted",
+      "trigger": "submit-supporting-info"
+    },
+    {
+      "from": "supporting-info-submitted",
+      "to": "details-submitted",
+      "trigger": "submit-application"
+    },
+    {
+      "from": "details-submitted",
+      "to": "assessment",
+      "trigger": "begin-assessment"
+    },
+    {
+      "from": "assessment",
+      "to": "decision",
+      "trigger": "make-decision"
+    },
+    {
+      "from": "decision",
+      "to": "completed",
+      "trigger": "offer-place"
+    },
+    {
+      "from": "decision",
+      "to": "rejected",
+      "trigger": "refuse-all-preferences"
+    }
+  ]
+}

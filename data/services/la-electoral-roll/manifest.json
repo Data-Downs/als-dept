@@ -1,0 +1,19 @@
+{
+  "id": "la-electoral-roll",
+  "version": "1.0.0",
+  "name": "Electoral roll update",
+  "description": "Update at both old and new address. Affects jury duty and credit checks.",
+  "department": "Local Authority",
+  "input_schema": {
+    "type": "object"
+  },
+  "output_schema": {
+    "type": "object"
+  },
+  "source": "graph",
+  "serviceType": "registration",
+  "govuk_url": "https://www.gov.uk/register-to-vote",
+  "eligibility_summary": "Register to vote at your new address. Affects eligibility for jury duty and credit checks. Can update online in 5 minutes. Also de-register from old address.",
+  "proactive": true,
+  "gated": false
+}

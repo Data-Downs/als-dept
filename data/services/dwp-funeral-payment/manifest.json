@@ -1,0 +1,19 @@
+{
+  "id": "dwp-funeral-payment",
+  "version": "1.0.0",
+  "name": "Funeral Expenses Payment",
+  "description": "One-off payment toward funeral costs if you are on a qualifying benefit. Must claim within 6 months of the funeral.",
+  "department": "DWP",
+  "input_schema": {
+    "type": "object"
+  },
+  "output_schema": {
+    "type": "object"
+  },
+  "source": "graph",
+  "serviceType": "grant",
+  "govuk_url": "https://www.gov.uk/funeral-payments",
+  "eligibility_summary": "Helps pay for funeral costs if you or your partner receive a qualifying benefit such as Universal Credit, Pension Credit, Income Support, or Housing Benefit. Paid back from the deceased's estate if there are sufficient funds. Must claim within 6 months of the funeral.",
+  "proactive": true,
+  "gated": true
+}

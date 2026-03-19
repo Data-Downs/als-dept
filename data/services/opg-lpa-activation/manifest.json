@@ -1,0 +1,19 @@
+{
+  "id": "opg-lpa-activation",
+  "version": "1.0.0",
+  "name": "Notify OPG of death",
+  "description": "Notify OPG when LPA holder dies. The registered LPA then ceases to have effect.",
+  "department": "OPG",
+  "input_schema": {
+    "type": "object"
+  },
+  "output_schema": {
+    "type": "object"
+  },
+  "source": "graph",
+  "serviceType": "obligation",
+  "govuk_url": "https://www.gov.uk/power-of-attorney/end-a-poa",
+  "eligibility_summary": "When the donor of an LPA dies, their attorneys must notify the Office of the Public Guardian and return the LPA document. The LPA automatically ceases to have effect on death.",
+  "proactive": true,
+  "gated": true
+}

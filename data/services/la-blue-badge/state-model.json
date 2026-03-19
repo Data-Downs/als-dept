@@ -1,0 +1,131 @@
+{
+  "id": "la-blue-badge.states",
+  "version": "1.0.0",
+  "states": [
+    {
+      "id": "not-started",
+      "type": "initial"
+    },
+    {
+      "id": "identity-provided"
+    },
+    {
+      "id": "eligibility-checked"
+    },
+    {
+      "id": "consent-given"
+    },
+    {
+      "id": "photo-submitted"
+    },
+    {
+      "id": "documents-uploaded"
+    },
+    {
+      "id": "payment-made",
+      "receipt": true
+    },
+    {
+      "id": "auto-approved"
+    },
+    {
+      "id": "assessment"
+    },
+    {
+      "id": "decision",
+      "receipt": true
+    },
+    {
+      "id": "completed",
+      "type": "terminal",
+      "receipt": true
+    },
+    {
+      "id": "rejected",
+      "type": "terminal",
+      "receipt": true
+    },
+    {
+      "id": "handed-off",
+      "type": "terminal",
+      "receipt": true
+    }
+  ],
+  "transitions": [
+    {
+      "from": "not-started",
+      "to": "identity-provided",
+      "trigger": "provide-identity"
+    },
+    {
+      "from": "identity-provided",
+      "to": "eligibility-checked",
+      "trigger": "check-eligibility"
+    },
+    {
+      "from": "eligibility-checked",
+      "to": "consent-given",
+      "trigger": "grant-consent",
+      "condition": "potentially-eligible"
+    },
+    {
+      "from": "eligibility-checked",
+      "to": "rejected",
+      "trigger": "reject",
+      "condition": "not-eligible"
+    },
+    {
+      "from": "eligibility-checked",
+      "to": "handed-off",
+      "trigger": "handoff",
+      "condition": "edge-case"
+    },
+    {
+      "from": "consent-given",
+      "to": "photo-submitted",
+      "trigger": "submit-photo"
+    },
+    {
+      "from": "photo-submitted",
+      "to": "documents-uploaded",
+      "trigger": "upload-documents"
+    },
+    {
+      "from": "documents-uploaded",
+      "to": "payment-made",
+      "trigger": "make-payment"
+    },
+    {
+      "from": "payment-made",
+      "to": "auto-approved",
+      "trigger": "auto-approve",
+      "condition": "auto-qualifies"
+    },
+    {
+      "from": "payment-made",
+      "to": "assessment",
+      "trigger": "begin-assessment",
+      "condition": "discretionary"
+    },
+    {
+      "from": "assessment",
+      "to": "decision",
+      "trigger": "make-decision"
+    },
+    {
+      "from": "auto-approved",
+      "to": "completed",
+      "trigger": "complete"
+    },
+    {
+      "from": "decision",
+      "to": "completed",
+      "trigger": "approve"
+    },
+    {
+      "from": "decision",
+      "to": "rejected",
+      "trigger": "reject-application"
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "id": "la-school-place",
+  "version": "1.0.0",
+  "name": "School place application",
+  "description": "Primary: apply by 15 January. Secondary: 31 October. Via local authority admissions.",
+  "department": "Local Authority",
+  "input_schema": {
+    "type": "object"
+  },
+  "output_schema": {
+    "type": "object"
+  },
+  "source": "graph",
+  "serviceType": "application",
+  "govuk_url": "https://www.gov.uk/apply-for-primary-school-place",
+  "eligibility_summary": "Apply for school places through the local authority. Key deadlines: Primary Reception — 15 January; Secondary Year 7 — 31 October. Local catchment area affects admission chances.",
+  "proactive": true,
+  "gated": false
+}

@@ -1,0 +1,140 @@
+{
+  "id": "dwp.tell-us-once.consent",
+  "version": "1.0.0",
+  "grants": [
+    {
+      "id": "reference-number-validation",
+      "description": "Validate your Tell Us Once reference number issued by the registrar",
+      "data_shared": [
+        "reference_number",
+        "death_registration_date",
+        "deceased_surname",
+        "deceased_date_of_death"
+      ],
+      "source": "registrar",
+      "purpose": "To confirm you have permission to use Tell Us Once and that the reference is valid",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "deceased-personal-details",
+      "description": "Share details about the person who died with government organisations",
+      "data_shared": [
+        "full_name",
+        "date_of_birth",
+        "date_of_death",
+        "national_insurance_number",
+        "address",
+        "marital_status"
+      ],
+      "source": "death-certificate-and-registrar",
+      "purpose": "To notify government organisations and update their records",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "deceased-identity-documents",
+      "description": "Share details of the deceased's passport and driving licence for cancellation",
+      "data_shared": [
+        "passport_number",
+        "town_of_birth",
+        "driving_licence_number"
+      ],
+      "source": "hmpo-and-dvla",
+      "purpose": "To cancel the passport and driving licence with HMPO and DVLA",
+      "duration": "until-revoked",
+      "required": false
+    },
+    {
+      "id": "deceased-vehicles",
+      "description": "Share details of vehicles registered to the deceased",
+      "data_shared": [
+        "vehicle_registration_numbers"
+      ],
+      "source": "dvla",
+      "purpose": "To remove the deceased as registered keeper and end vehicle tax for up to 5 vehicles",
+      "duration": "until-revoked",
+      "required": false
+    },
+    {
+      "id": "deceased-benefits-and-pensions",
+      "description": "Share details of benefits, State Pension and public sector pensions the deceased was receiving",
+      "data_shared": [
+        "benefit_types",
+        "pension_scheme_details",
+        "state_pension_status"
+      ],
+      "source": "dwp-hmrc-pension-schemes",
+      "purpose": "To cancel benefit and pension payments and prevent overpayments that would need to be repaid",
+      "duration": "until-revoked",
+      "required": false
+    },
+    {
+      "id": "deceased-local-services",
+      "description": "Share details of local council services the deceased was receiving",
+      "data_shared": [
+        "council_name",
+        "housing_benefit_status",
+        "council_tax_reduction_status",
+        "blue_badge_number"
+      ],
+      "source": "local-council",
+      "purpose": "To cancel Housing Benefit, Council Tax Reduction, Blue Badge and update electoral register",
+      "duration": "until-revoked",
+      "required": false
+    },
+    {
+      "id": "executor-administrator-details",
+      "description": "Share details of the person dealing with the deceased's estate",
+      "data_shared": [
+        "executor_name",
+        "executor_address",
+        "executor_contact_details"
+      ],
+      "source": "citizen-provided",
+      "purpose": "So organisations can contact the executor or administrator about the deceased's affairs",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "surviving-spouse-details",
+      "description": "Share details of the surviving spouse or civil partner (if applicable)",
+      "data_shared": [
+        "spouse_name",
+        "spouse_address",
+        "spouse_contact_details",
+        "spouse_national_insurance_number",
+        "spouse_date_of_birth"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To update records for joint benefits or entitlements and check eligibility for bereavement support",
+      "duration": "until-revoked",
+      "required": false
+    },
+    {
+      "id": "death-location-details",
+      "description": "Share details of where the death occurred (if in hospital, care home, nursing home or hospice)",
+      "data_shared": [
+        "institution_name",
+        "institution_address"
+      ],
+      "source": "citizen-provided",
+      "purpose": "For HMRC and DWP records",
+      "duration": "session",
+      "required": false
+    }
+  ],
+  "revocation": {
+    "mechanism": "Contact the organisations directly after using Tell Us Once. You cannot revoke the notification itself once submitted.",
+    "effect": "Once Tell Us Once has notified organisations, those organisations will have updated their records. You must contact them individually to make further changes."
+  },
+  "delegation": {
+    "agent_identity": "GOV.UK AI Agent acting on behalf of the executor, administrator, next of kin or bereaved family member",
+    "scopes": [
+      "read-death-certificate-data",
+      "submit-notification-to-organisations",
+      "validate-reference-number"
+    ],
+    "limitations": "Agent cannot obtain the Tell Us Once reference number on your behalf - you must get this from the registrar. Agent cannot provide consent on behalf of executors, administrators, surviving spouses or next of kin - you must have their explicit permission first. Agent cannot change which organisations are notified (all applicable organisations will be notified automatically). Agent cannot handle private pensions, banks or insurance - you must contact those separately."
+  }
+}

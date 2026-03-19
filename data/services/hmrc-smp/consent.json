@@ -1,0 +1,103 @@
+{
+  "id": "hmrc-smp.consent",
+  "version": "1.0.0",
+  "grants": [
+    {
+      "id": "identity-verification",
+      "description": "Verify your identity using your GOV.UK One Login credentials",
+      "data_shared": [
+        "full_name",
+        "date_of_birth",
+        "national_insurance_number"
+      ],
+      "source": "one-login",
+      "purpose": "To confirm your identity and link your claim to your employment and earnings records",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "employment-history",
+      "description": "Access your employment history to verify continuous employment with your current employer",
+      "data_shared": [
+        "employer_name",
+        "employer_paye_reference",
+        "employment_start_date",
+        "employment_status"
+      ],
+      "source": "hmrc-paye-records",
+      "purpose": "To check you have worked continuously for at least 26 weeks by the qualifying week (15th week before your due date)",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "earnings-data",
+      "description": "Access your earnings data from HMRC Real Time Information (RTI) system",
+      "data_shared": [
+        "gross_weekly_earnings",
+        "average_weekly_earnings",
+        "pay_frequency"
+      ],
+      "source": "hmrc-rti-data",
+      "purpose": "To calculate if you meet the £125 per week earnings threshold and determine your SMP rate",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "pregnancy-proof",
+      "description": "Submit proof of pregnancy via MATB1 certificate or doctor/midwife letter",
+      "data_shared": [
+        "expected_week_of_childbirth",
+        "matb1_certificate_number",
+        "issuing_healthcare_provider"
+      ],
+      "source": "nhs-maternity-services",
+      "purpose": "To confirm your pregnancy and expected due date for SMP calculation",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "claim-details",
+      "description": "Provide your desired SMP start date and any relevant circumstances",
+      "data_shared": [
+        "desired_smp_start_date",
+        "baby_actual_birth_date",
+        "early_birth_indicator",
+        "pregnancy_related_illness_dates"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To determine when your SMP should start and calculate your entitlement period",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "employer-notification",
+      "description": "Share your SMP claim details with your employer for payment processing",
+      "data_shared": [
+        "full_name",
+        "national_insurance_number",
+        "smp_entitlement_amount",
+        "smp_start_date",
+        "smp_end_date"
+      ],
+      "source": "hmrc-assessment",
+      "purpose": "Your employer needs this information to pay you SMP through their payroll and reclaim from HMRC",
+      "duration": "until-revoked",
+      "required": true
+    }
+  ],
+  "revocation": {
+    "mechanism": "Contact HMRC or revoke through your GOV.UK account. If you withdraw your claim, inform your employer directly.",
+    "effect": "Your SMP claim will be cancelled. You will need to reapply if you change your mind. Your employer must be notified if consent is revoked after they've been informed."
+  },
+  "delegation": {
+    "agent_identity": "GOV.UK AI Agent",
+    "scopes": [
+      "read-employment-data",
+      "read-earnings-data",
+      "calculate-eligibility",
+      "generate-smp1-form",
+      "generate-employer-notification"
+    ],
+    "limitations": "Agent cannot submit MATB1 certificate on your behalf (must be uploaded by you or requested directly from NHS). Agent cannot change your desired SMP start date without your explicit confirmation. Agent cannot communicate directly with your employer—only generate notification documents for you to send."
+  }
+}

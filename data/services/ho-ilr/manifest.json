@@ -1,0 +1,19 @@
+{
+  "id": "ho-ilr",
+  "version": "1.0.0",
+  "name": "Indefinite Leave to Remain",
+  "description": "After qualifying period. Continuous residence and income requirements apply.",
+  "department": "Home Office",
+  "input_schema": {
+    "type": "object"
+  },
+  "output_schema": {
+    "type": "object"
+  },
+  "source": "graph",
+  "serviceType": "application",
+  "govuk_url": "https://www.gov.uk/indefinite-leave-to-remain",
+  "eligibility_summary": "Gives the right to live, work and study in the UK without immigration restrictions. Usually requires 5 years of lawful residence on an eligible visa. Must not have spent more than 180 days outside the UK in any 12-month period.",
+  "proactive": true,
+  "gated": true
+}

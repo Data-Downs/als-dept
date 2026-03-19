@@ -1,0 +1,89 @@
+{
+  "id": "hmrc.self-assessment.consent",
+  "version": "1.0.0",
+  "grants": [
+    {
+      "id": "identity-verification",
+      "description": "Verify your identity using your GOV.UK One Login or Government Gateway credentials",
+      "data_shared": [
+        "full_name",
+        "date_of_birth",
+        "national_insurance_number",
+        "address"
+      ],
+      "source": "one-login",
+      "purpose": "To confirm your identity before creating your Self Assessment record and assigning a Unique Taxpayer Reference (UTR)",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "existing-tax-records-check",
+      "description": "Allow HMRC to check if you already have a Self Assessment registration or UTR",
+      "data_shared": [
+        "national_insurance_number",
+        "previous_utr",
+        "tax_history"
+      ],
+      "source": "hmrc-records",
+      "purpose": "To prevent duplicate registrations and check if you need to reactivate an existing account",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "income-source-disclosure",
+      "description": "Declare your income sources and business details (if applicable)",
+      "data_shared": [
+        "self_employment_details",
+        "company_directorships",
+        "rental_properties",
+        "untaxed_income_sources",
+        "business_start_date"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To determine if you need Self Assessment registration and to set up the correct tax categories on your account",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "registration-details-processing",
+      "description": "Allow HMRC to process your registration and assign a Unique Taxpayer Reference",
+      "data_shared": [
+        "full_name",
+        "address",
+        "contact_details",
+        "income_categories",
+        "business_information"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To create your Self Assessment account, generate your UTR, and send you confirmation",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "penalty-acknowledgment",
+      "description": "Acknowledge potential late registration penalties if registering after 5 October deadline",
+      "data_shared": [
+        "registration_date",
+        "income_start_date"
+      ],
+      "source": "system-generated",
+      "purpose": "To ensure you understand that late registration may result in penalties",
+      "duration": "session",
+      "required": false
+    }
+  ],
+  "revocation": {
+    "mechanism": "Contact HMRC Self Assessment helpline or write to HMRC to close your Self Assessment account",
+    "effect": "Registration will be cancelled if consent is revoked before UTR assignment. After UTR assignment, you must formally close your Self Assessment account through HMRC."
+  },
+  "delegation": {
+    "agent_identity": "GOV.UK AI Agent",
+    "scopes": [
+      "read-personal-data",
+      "check-eligibility",
+      "complete-registration-form",
+      "submit-to-hmrc"
+    ],
+    "limitations": "Agent cannot make legally binding tax declarations without your explicit approval. Agent cannot provide false income information. Agent cannot waive late registration penalties. Agent must escalate complex income structures (partnerships, trusts, foreign income) to you for review before submission. You must review and approve all income source declarations before the agent submits your registration."
+  }
+}

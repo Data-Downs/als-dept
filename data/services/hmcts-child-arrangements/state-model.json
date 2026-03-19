@@ -1,0 +1,239 @@
+{
+  "id": "hmcts.child-arrangements.states",
+  "version": "1.0.0",
+  "states": [
+    {
+      "id": "not-started",
+      "type": "initial"
+    },
+    {
+      "id": "identity-verified"
+    },
+    {
+      "id": "eligibility-checked"
+    },
+    {
+      "id": "miam-exemption-assessed"
+    },
+    {
+      "id": "miam-booked"
+    },
+    {
+      "id": "miam-completed"
+    },
+    {
+      "id": "consent-given"
+    },
+    {
+      "id": "application-type-selected"
+    },
+    {
+      "id": "details-submitted"
+    },
+    {
+      "id": "payment-made",
+      "receipt": true
+    },
+    {
+      "id": "application-submitted",
+      "receipt": true
+    },
+    {
+      "id": "cafcass-notified"
+    },
+    {
+      "id": "cafcass-assessment"
+    },
+    {
+      "id": "directions-hearing-scheduled"
+    },
+    {
+      "id": "agreement-reached-at-hearing",
+      "receipt": true
+    },
+    {
+      "id": "final-hearing-scheduled"
+    },
+    {
+      "id": "cafcass-report-prepared"
+    },
+    {
+      "id": "final-hearing"
+    },
+    {
+      "id": "decision",
+      "receipt": true
+    },
+    {
+      "id": "order-granted",
+      "type": "terminal",
+      "receipt": true
+    },
+    {
+      "id": "consent-order-approved",
+      "type": "terminal",
+      "receipt": true
+    },
+    {
+      "id": "application-withdrawn",
+      "type": "terminal",
+      "receipt": true
+    },
+    {
+      "id": "rejected",
+      "type": "terminal",
+      "receipt": true
+    },
+    {
+      "id": "handed-off",
+      "type": "terminal",
+      "receipt": true
+    }
+  ],
+  "transitions": [
+    {
+      "from": "not-started",
+      "to": "identity-verified",
+      "trigger": "verify-identity"
+    },
+    {
+      "from": "identity-verified",
+      "to": "eligibility-checked",
+      "trigger": "check-eligibility"
+    },
+    {
+      "from": "eligibility-checked",
+      "to": "miam-exemption-assessed",
+      "trigger": "assess-miam-exemption",
+      "condition": "eligible"
+    },
+    {
+      "from": "eligibility-checked",
+      "to": "rejected",
+      "trigger": "reject",
+      "condition": "not-eligible"
+    },
+    {
+      "from": "eligibility-checked",
+      "to": "handed-off",
+      "trigger": "handoff",
+      "condition": "urgent-safeguarding"
+    },
+    {
+      "from": "miam-exemption-assessed",
+      "to": "consent-given",
+      "trigger": "grant-consent",
+      "condition": "exempt-from-miam"
+    },
+    {
+      "from": "miam-exemption-assessed",
+      "to": "miam-booked",
+      "trigger": "book-miam",
+      "condition": "miam-required"
+    },
+    {
+      "from": "miam-booked",
+      "to": "miam-completed",
+      "trigger": "complete-miam"
+    },
+    {
+      "from": "miam-completed",
+      "to": "consent-given",
+      "trigger": "grant-consent",
+      "condition": "proceeding-to-court"
+    },
+    {
+      "from": "miam-completed",
+      "to": "agreement-reached-at-hearing",
+      "trigger": "reach-agreement",
+      "condition": "mediation-successful"
+    },
+    {
+      "from": "consent-given",
+      "to": "application-type-selected",
+      "trigger": "select-order-type"
+    },
+    {
+      "from": "application-type-selected",
+      "to": "details-submitted",
+      "trigger": "submit-c100-form"
+    },
+    {
+      "from": "details-submitted",
+      "to": "payment-made",
+      "trigger": "make-payment"
+    },
+    {
+      "from": "payment-made",
+      "to": "application-submitted",
+      "trigger": "submit-application"
+    },
+    {
+      "from": "application-submitted",
+      "to": "cafcass-notified",
+      "trigger": "notify-cafcass"
+    },
+    {
+      "from": "cafcass-notified",
+      "to": "cafcass-assessment",
+      "trigger": "begin-cafcass-assessment"
+    },
+    {
+      "from": "cafcass-assessment",
+      "to": "handed-off",
+      "trigger": "escalate-safeguarding",
+      "condition": "serious-welfare-concerns"
+    },
+    {
+      "from": "cafcass-assessment",
+      "to": "directions-hearing-scheduled",
+      "trigger": "schedule-directions-hearing"
+    },
+    {
+      "from": "directions-hearing-scheduled",
+      "to": "agreement-reached-at-hearing",
+      "trigger": "reach-agreement-at-hearing"
+    },
+    {
+      "from": "directions-hearing-scheduled",
+      "to": "final-hearing-scheduled",
+      "trigger": "schedule-final-hearing",
+      "condition": "cannot-agree"
+    },
+    {
+      "from": "directions-hearing-scheduled",
+      "to": "application-withdrawn",
+      "trigger": "withdraw-application"
+    },
+    {
+      "from": "final-hearing-scheduled",
+      "to": "cafcass-report-prepared",
+      "trigger": "prepare-cafcass-report"
+    },
+    {
+      "from": "cafcass-report-prepared",
+      "to": "final-hearing",
+      "trigger": "attend-final-hearing"
+    },
+    {
+      "from": "final-hearing",
+      "to": "decision",
+      "trigger": "make-decision"
+    },
+    {
+      "from": "decision",
+      "to": "order-granted",
+      "trigger": "grant-order"
+    },
+    {
+      "from": "decision",
+      "to": "rejected",
+      "trigger": "reject-application"
+    },
+    {
+      "from": "agreement-reached-at-hearing",
+      "to": "consent-order-approved",
+      "trigger": "approve-consent-order"
+    }
+  ]
+}

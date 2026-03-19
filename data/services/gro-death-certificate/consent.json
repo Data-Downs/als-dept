@@ -1,0 +1,88 @@
+{
+  "id": "gro.death-certificate.consent",
+  "version": "1.0.0",
+  "grants": [
+    {
+      "id": "identity-verification",
+      "description": "Verify your identity using your GOV.UK One Login credentials",
+      "data_shared": [
+        "full_name",
+        "email_address"
+      ],
+      "source": "one-login",
+      "purpose": "To create a secure account for ordering and to process payment",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "payment-processing",
+      "description": "Process payment by debit or credit card for the certificate order",
+      "data_shared": [
+        "card_number",
+        "expiry_date",
+        "cvv",
+        "billing_address"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To collect the certificate fee (£12.50 standard, £38.50 priority, plus £3.50 per search if no GRO reference)",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "delivery-address",
+      "description": "Provide the postal address where certificates should be sent",
+      "data_shared": [
+        "address_line_1",
+        "address_line_2",
+        "city",
+        "postcode",
+        "country"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To dispatch the certified death certificate(s) to you by post",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "death-record-access",
+      "description": "Access the death record from GRO index to verify details and produce certificate",
+      "data_shared": [
+        "deceased_full_name",
+        "date_of_death",
+        "place_of_death",
+        "gro_reference_number"
+      ],
+      "source": "gro-register",
+      "purpose": "To locate the correct death registration and produce certified copies",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "order-history",
+      "description": "Save your order details to your GRO account for future reference",
+      "data_shared": [
+        "order_number",
+        "certificate_details",
+        "order_date",
+        "delivery_status"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To allow you to track your order and reorder certificates if needed",
+      "duration": "until-revoked",
+      "required": false
+    }
+  ],
+  "revocation": {
+    "mechanism": "Contact GRO by phone (0300 123 1837) or email, or revoke through your GRO online account",
+    "effect": "Order will be cancelled if consent is revoked before dispatch. Refund may be issued for unprocessed orders."
+  },
+  "delegation": {
+    "agent_identity": "GOV.UK AI Agent",
+    "scopes": [
+      "search-death-records",
+      "verify-registration-details",
+      "submit-certificate-order"
+    ],
+    "limitations": "Agent cannot make payment on your behalf. Agent cannot change delivery address without your explicit confirmation. Agent cannot access full death record details beyond what is needed to verify the correct registration. Agent cannot order certificates for deaths outside England and Wales."
+  }
+}

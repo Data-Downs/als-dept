@@ -1,0 +1,72 @@
+{
+  "id": "dvla.update-address.consent",
+  "version": "1.0.0",
+  "grants": [
+    {
+      "id": "identity-verification",
+      "description": "Verify your identity using your GOV.UK One Login credentials",
+      "data_shared": [
+        "full_name",
+        "date_of_birth",
+        "national_insurance_number"
+      ],
+      "source": "one-login",
+      "purpose": "To confirm you are who you say you are before updating your driving licence address",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "driving-licence-check",
+      "description": "Access your current driving licence details from DVLA records",
+      "data_shared": [
+        "driving_licence_number",
+        "current_address",
+        "licence_status",
+        "driving_ban_status"
+      ],
+      "source": "dvla-database",
+      "purpose": "To verify your current licence details and eligibility to update the address",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "new-address-submission",
+      "description": "Submit your new address to update DVLA records",
+      "data_shared": [
+        "new_address_line_1",
+        "new_address_line_2",
+        "new_city",
+        "new_postcode"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To update your driving licence with your new address and send the new licence to this location",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "address-history-submission",
+      "description": "Provide addresses you've lived at in the last 3 years",
+      "data_shared": [
+        "previous_addresses",
+        "dates_at_each_address"
+      ],
+      "source": "citizen-provided",
+      "purpose": "Legal requirement for DVLA to maintain accurate address history for licence holders",
+      "duration": "until-revoked",
+      "required": true
+    }
+  ],
+  "revocation": {
+    "mechanism": "Contact DVLA or revoke through your GOV.UK account before registration is complete",
+    "effect": "Address update will be cancelled if consent is revoked before completion. You remain legally obligated to update your address within 3 months of moving."
+  },
+  "delegation": {
+    "agent_identity": "GOV.UK AI Agent",
+    "scopes": [
+      "read-personal-data",
+      "read-driving-licence-details",
+      "submit-address-update"
+    ],
+    "limitations": "Agent cannot change your name. Agent cannot apply for photo changes that require payment. Agent must confirm all address details with you before submission. Agent cannot override eligibility requirements."
+  }
+}

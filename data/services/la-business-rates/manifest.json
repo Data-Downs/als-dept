@@ -1,0 +1,19 @@
+{
+  "id": "la-business-rates",
+  "version": "1.0.0",
+  "name": "Business rates registration",
+  "description": "If using non-domestic premises. Small Business Relief may reduce or eliminate the charge.",
+  "department": "Local Authority",
+  "input_schema": {
+    "type": "object"
+  },
+  "output_schema": {
+    "type": "object"
+  },
+  "source": "graph",
+  "serviceType": "obligation",
+  "govuk_url": "https://www.gov.uk/introduction-to-business-rates",
+  "eligibility_summary": "Business rates are charged on non-domestic properties used for business. Valuation Office Agency assesses rateable value; local authority bills and collects. Small Business Rate Relief eliminates the charge for properties under £12,000 rateable value.",
+  "proactive": true,
+  "gated": false
+}

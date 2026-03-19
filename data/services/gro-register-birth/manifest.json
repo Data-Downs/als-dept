@@ -1,0 +1,19 @@
+{
+  "id": "gro-register-birth",
+  "version": "1.0.0",
+  "name": "Register the birth",
+  "description": "Register at local register office. Gateway to Child Benefit, free childcare and parental leave top-ups.",
+  "department": "GRO",
+  "input_schema": {
+    "type": "object"
+  },
+  "output_schema": {
+    "type": "object"
+  },
+  "source": "graph",
+  "serviceType": "registration",
+  "govuk_url": "https://www.gov.uk/register-birth",
+  "eligibility_summary": "Required for every birth in England and Wales. Must be done by a parent or other qualified informant within 42 days.",
+  "proactive": true,
+  "gated": false
+}

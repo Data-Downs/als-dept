@@ -1,0 +1,116 @@
+{
+  "id": "slc.student-finance.consent",
+  "version": "1.0.0",
+  "grants": [
+    {
+      "id": "identity-verification",
+      "description": "Verify your identity using your GOV.UK One Login credentials to access student finance",
+      "data_shared": [
+        "full_name",
+        "date_of_birth",
+        "national_insurance_number",
+        "address"
+      ],
+      "source": "one-login",
+      "purpose": "To confirm your identity and link your application to your student finance account",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "course-details-from-ucas",
+      "description": "Share your university and course details from UCAS with Student Loans Company",
+      "data_shared": [
+        "university_name",
+        "course_title",
+        "course_start_date",
+        "course_type",
+        "course_intensity",
+        "ucas_course_code"
+      ],
+      "source": "ucas",
+      "purpose": "To verify you are enrolled on a qualifying course and calculate your loan entitlement",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "household-income-from-hmrc",
+      "description": "Share your household income information from HMRC to assess your Maintenance Loan entitlement",
+      "data_shared": [
+        "taxable_income",
+        "tax_year",
+        "employment_status"
+      ],
+      "source": "hmrc",
+      "purpose": "To calculate the amount of Maintenance Loan you are entitled to based on household income",
+      "duration": "session",
+      "required": false
+    },
+    {
+      "id": "parental-or-partner-income",
+      "description": "Request your parent or partner to confirm their income via HMRC for income-assessed Maintenance Loan",
+      "data_shared": [
+        "parent_or_partner_taxable_income",
+        "tax_year"
+      ],
+      "source": "hmrc-via-parent-or-partner",
+      "purpose": "To include parental or partner income in the household income assessment for your Maintenance Loan calculation",
+      "duration": "session",
+      "required": false
+    },
+    {
+      "id": "previous-study-records",
+      "description": "Access your previous student finance records from SLC to determine remaining funding entitlement",
+      "data_shared": [
+        "previous_applications",
+        "courses_funded",
+        "years_funded",
+        "outstanding_loans"
+      ],
+      "source": "slc-records",
+      "purpose": "To calculate how many years of funding you have remaining based on prior study",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "bank-details-for-payment",
+      "description": "Provide your UK bank account details to receive Maintenance Loan payments",
+      "data_shared": [
+        "account_holder_name",
+        "sort_code",
+        "account_number"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To pay your Maintenance Loan directly into your bank account at the start of each term",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "evidence-documents",
+      "description": "Upload supporting evidence for special circumstances (e.g. medical evidence, estrangement evidence, previous study interruption)",
+      "data_shared": [
+        "evidence_document",
+        "document_type",
+        "upload_date"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To assess eligibility for maximum funding or special circumstances provisions",
+      "duration": "session",
+      "required": false
+    }
+  ],
+  "revocation": {
+    "mechanism": "Contact Student Loans Company or revoke consent through your online account at any time",
+    "effect": "Revoking consent will cancel your application if submitted. Revoking identity or bank details consent will prevent loan payments. You can reapply with renewed consent."
+  },
+  "delegation": {
+    "agent_identity": "GOV.UK AI Agent acting on behalf of student applicant",
+    "scopes": [
+      "read-application-status",
+      "check-eligibility",
+      "populate-basic-details",
+      "upload-evidence-documents",
+      "save-progress"
+    ],
+    "limitations": "Agent CANNOT submit the final application without explicit student confirmation. Agent CANNOT authorize parental or partner income access. Agent CANNOT change bank account details without re-verification. Agent CANNOT accept loan terms and conditions on behalf of the student. Agent CANNOT provide consent for data sharing from HMRC or UCAS - student must do this directly. For estranged students or care leavers, agent CANNOT disclose sensitive circumstances without student permission."
+  }
+}

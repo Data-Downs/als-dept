@@ -1,0 +1,71 @@
+{
+  "id": "la-electoral-roll.consent",
+  "version": "1.0.0",
+  "grants": [
+    {
+      "id": "identity-provision",
+      "description": "Provide your identity details (name, date of birth, National Insurance number, nationality)",
+      "data_shared": [
+        "full_name",
+        "date_of_birth",
+        "national_insurance_number",
+        "nationality"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To register you to vote and verify your eligibility",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "electoral-register-inclusion",
+      "description": "Add your name and address to the electoral register",
+      "data_shared": [
+        "full_name",
+        "address_line_1",
+        "address_line_2",
+        "city",
+        "postcode"
+      ],
+      "source": "citizen-provided",
+      "purpose": "Electoral register is used for running elections, preventing crime, checking credit applications, and selecting people for jury service",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "open-register-opt-out",
+      "description": "Choose whether to opt out of the open register",
+      "data_shared": [
+        "full_name",
+        "address"
+      ],
+      "source": "citizen-provided",
+      "purpose": "The open register can be bought by anyone (e.g., businesses for marketing). You can opt out.",
+      "duration": "until-revoked",
+      "required": false
+    },
+    {
+      "id": "old-address-deregistration",
+      "description": "De-register from your old address if you are moving",
+      "data_shared": [
+        "previous_address",
+        "full_name"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To remove you from the electoral roll at your old address when you move",
+      "duration": "session",
+      "required": false
+    }
+  ],
+  "revocation": {
+    "mechanism": "Contact your local Electoral Registration Office or re-register with updated details",
+    "effect": "Your registration will be cancelled. You will not be able to vote until you re-register."
+  },
+  "delegation": {
+    "agent_identity": "GOV.UK AI Agent",
+    "scopes": [
+      "read-personal-data",
+      "submit-to-electoral-office"
+    ],
+    "limitations": "Agent cannot opt you into the open register without explicit consent. Agent cannot complete registration if you have safety concerns requiring anonymous registration. Agent cannot register you to vote in Northern Ireland (different system)."
+  }
+}

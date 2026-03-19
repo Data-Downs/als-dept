@@ -1,0 +1,19 @@
+{
+  "id": "nhs-healthy-start",
+  "version": "1.0.0",
+  "name": "Healthy Start vouchers",
+  "description": "Food and milk vouchers if on qualifying benefits and 10+ weeks pregnant.",
+  "department": "NHS",
+  "input_schema": {
+    "type": "object"
+  },
+  "output_schema": {
+    "type": "object"
+  },
+  "source": "graph",
+  "serviceType": "benefit",
+  "govuk_url": "https://www.healthystart.nhs.uk/",
+  "eligibility_summary": "Prepaid card to buy fruit, vegetables, milk and infant formula for eligible pregnant women and parents of children under 4. Worth £8.50/week for pregnant women; £4.25/week per child under 1.",
+  "proactive": true,
+  "gated": false
+}

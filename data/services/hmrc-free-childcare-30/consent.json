@@ -1,0 +1,113 @@
+{
+  "id": "hmrc.free-childcare-30.consent",
+  "version": "1.0.0",
+  "grants": [
+    {
+      "id": "identity-verification",
+      "description": "Verify your identity using your GOV.UK One Login credentials",
+      "data_shared": [
+        "full_name",
+        "date_of_birth",
+        "national_insurance_number"
+      ],
+      "source": "one-login",
+      "purpose": "To confirm your identity before checking your eligibility for 30 hours free childcare",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "employment-verification",
+      "description": "Check your employment status with HMRC records",
+      "data_shared": [
+        "employment_status",
+        "employer_name",
+        "employment_start_date",
+        "hours_worked"
+      ],
+      "source": "hmrc-paye-records",
+      "purpose": "To verify that you meet the minimum working hours requirement",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "income-verification",
+      "description": "Check your income from HMRC tax records",
+      "data_shared": [
+        "annual_income",
+        "taxable_income",
+        "self_assessment_data"
+      ],
+      "source": "hmrc-tax-records",
+      "purpose": "To verify that you meet the minimum and maximum income requirements",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "partner-employment-verification",
+      "description": "Check your partner's employment status and income (if you have a partner)",
+      "data_shared": [
+        "partner_employment_status",
+        "partner_annual_income",
+        "partner_national_insurance_number"
+      ],
+      "source": "hmrc-paye-records",
+      "purpose": "To verify that your partner also meets the eligibility requirements",
+      "duration": "until-revoked",
+      "required": false
+    },
+    {
+      "id": "child-details",
+      "description": "Provide details about your child",
+      "data_shared": [
+        "child_full_name",
+        "child_date_of_birth",
+        "child_birth_certificate_number"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To confirm your child's age and identity for the childcare scheme",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "benefit-status-check",
+      "description": "Check if you receive any benefits that might affect eligibility",
+      "data_shared": [
+        "benefit_claims",
+        "income_support_status",
+        "universal_credit_status"
+      ],
+      "source": "hmrc-benefit-records",
+      "purpose": "To ensure you meet all eligibility criteria for 30 hours free childcare",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "quarterly-reconfirmation",
+      "description": "Allow HMRC to check your ongoing eligibility every 3 months",
+      "data_shared": [
+        "employment_status",
+        "income_updates",
+        "benefit_changes"
+      ],
+      "source": "hmrc-records",
+      "purpose": "To maintain your eligibility for 30 hours free childcare, as circumstances can change",
+      "duration": "until-revoked",
+      "required": true
+    }
+  ],
+  "revocation": {
+    "mechanism": "Contact HMRC Childcare Service or revoke through your Childcare Choices account",
+    "effect": "Your childcare code will be deactivated and you will no longer be eligible for 30 hours free childcare. You may need to pay for childcare or reapply if circumstances change."
+  },
+  "delegation": {
+    "agent_identity": "GOV.UK AI Agent",
+    "scopes": [
+      "read-personal-data",
+      "read-employment-data",
+      "read-income-data",
+      "submit-application-to-hmrc",
+      "retrieve-eligibility-status"
+    ],
+    "limitations": "Agent cannot provide false information about employment or income. Agent cannot override HMRC's eligibility decision. Agent cannot share your childcare code with unauthorised parties. Agent cannot modify your child's personal details without your explicit confirmation. Agent cannot apply on behalf of someone else without proper delegation authority."
+  }
+}

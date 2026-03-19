@@ -1,0 +1,19 @@
+{
+  "id": "ho-visa",
+  "version": "1.0.0",
+  "name": "Visa / leave to enter",
+  "description": "Type depends on purpose. Via UK Visas and Immigration. Must be in place before entry.",
+  "department": "Home Office",
+  "input_schema": {
+    "type": "object"
+  },
+  "output_schema": {
+    "type": "object"
+  },
+  "source": "graph",
+  "serviceType": "application",
+  "govuk_url": "https://www.gov.uk/browse/visas-immigration/getting-a-visa",
+  "eligibility_summary": "Non-UK and non-Irish nationals wishing to enter the UK must apply for the appropriate visa. Type depends on purpose: work, study, family reunion, etc. Must usually be obtained before travel.",
+  "proactive": true,
+  "gated": false
+}

@@ -1,0 +1,101 @@
+{
+  "id": "hmrc.child-benefit-transfer.consent",
+  "version": "1.0.0",
+  "grants": [
+    {
+      "id": "identity-verification",
+      "description": "Verify your identity using your GOV.UK One Login credentials",
+      "data_shared": [
+        "full_name",
+        "date_of_birth",
+        "national_insurance_number"
+      ],
+      "source": "one-login",
+      "purpose": "To confirm you are who you say you are before processing the Child Benefit transfer",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "child-benefit-records-access",
+      "description": "Access your existing Child Benefit records and the child's current claim details",
+      "data_shared": [
+        "existing_claim_number",
+        "child_full_name",
+        "child_date_of_birth",
+        "child_national_insurance_number",
+        "current_claimant_details",
+        "payment_history"
+      ],
+      "source": "hmrc-child-benefit-database",
+      "purpose": "To verify the existing claim and ensure only one person claims Child Benefit for this child",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "bank-details-collection",
+      "description": "Provide your bank or building society details for Child Benefit payments",
+      "data_shared": [
+        "account_holder_name",
+        "sort_code",
+        "account_number"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To pay your Child Benefit into your chosen account every 4 weeks",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "living-arrangements-confirmation",
+      "description": "Confirm details about the child's current living arrangements",
+      "data_shared": [
+        "child_address",
+        "moved_date",
+        "care_responsibilities",
+        "other_parent_contact_details"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To verify you are now responsible for the child and they live with you",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "other-parent-notification",
+      "description": "Share your transfer request details with the current Child Benefit claimant",
+      "data_shared": [
+        "transfer_request_date",
+        "new_claimant_name",
+        "child_name"
+      ],
+      "source": "hmrc-system",
+      "purpose": "To inform the current claimant their Child Benefit will stop and they must confirm they agree",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "income-verification",
+      "description": "Share your and your partner's income information to assess High Income Child Benefit Charge liability",
+      "data_shared": [
+        "adjusted_net_income",
+        "partner_adjusted_net_income"
+      ],
+      "source": "hmrc-self-assessment",
+      "purpose": "To inform you if you need to pay the High Income Child Benefit Charge and offer opt-out of payments",
+      "duration": "until-revoked",
+      "required": false
+    }
+  ],
+  "revocation": {
+    "mechanism": "Contact HMRC Child Benefit Office or revoke through your GOV.UK account",
+    "effect": "Transfer request will be cancelled if consent is revoked before completion. Existing claim remains active with current claimant."
+  },
+  "delegation": {
+    "agent_identity": "GOV.UK AI Agent",
+    "scopes": [
+      "read-child-benefit-records",
+      "read-personal-data",
+      "submit-transfer-request-to-hmrc",
+      "notify-other-parent"
+    ],
+    "limitations": "Agent cannot provide bank details on your behalf. Agent cannot confirm living arrangements without your explicit verification. Agent cannot make decisions about disputes between parents. Agent cannot opt you out of payments without your explicit instruction. If there is a parental dispute about who should claim, the agent must route you to a human advisor."
+  }
+}

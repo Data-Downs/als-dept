@@ -1,0 +1,76 @@
+{
+  "id": "hmrc-mtd.consent",
+  "version": "1.0.0",
+  "grants": [
+    {
+      "id": "identity-verification",
+      "description": "Verify your identity using your Government Gateway credentials",
+      "data_shared": [
+        "full_name",
+        "date_of_birth",
+        "national_insurance_number",
+        "utr",
+        "vat_registration_number"
+      ],
+      "source": "government-gateway",
+      "purpose": "To confirm your identity and link your MTD enrolment to your existing HMRC tax records",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "tax-records-access",
+      "description": "Allow HMRC to access your digital tax records kept in MTD-compatible software",
+      "data_shared": [
+        "digital_accounting_records",
+        "vat_returns",
+        "income_tax_calculations",
+        "business_transactions"
+      ],
+      "source": "mtd-software-provider",
+      "purpose": "HMRC needs to receive your VAT returns and Income Tax updates digitally through your software",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "software-provider-sharing",
+      "description": "Share your HMRC taxpayer reference with your chosen MTD-compatible software provider",
+      "data_shared": [
+        "vat_registration_number",
+        "utr",
+        "business_details"
+      ],
+      "source": "hmrc-records",
+      "purpose": "Your software needs these references to submit returns and updates to HMRC on your behalf",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "business-information",
+      "description": "Confirm your business information for MTD enrolment",
+      "data_shared": [
+        "business_name",
+        "business_address",
+        "business_type",
+        "accounting_period",
+        "turnover"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To set up your MTD account correctly and ensure compliance deadlines are accurate",
+      "duration": "until-revoked",
+      "required": true
+    }
+  ],
+  "revocation": {
+    "mechanism": "Contact HMRC or manage through your Government Gateway account. Note: If MTD is mandatory for you, you cannot opt out but can change software provider.",
+    "effect": "Enrolment will be cancelled only if MTD is not yet mandatory for you. If mandatory, you must use an alternative MTD-compatible software provider."
+  },
+  "delegation": {
+    "agent_identity": "GOV.UK AI Agent or Tax Agent",
+    "scopes": [
+      "read-tax-records",
+      "submit-enrolment",
+      "connect-software-credentials"
+    ],
+    "limitations": "Agent cannot select software on your behalf without explicit approval. Agent cannot revoke MTD enrolment if mandatory. Agent cannot access or modify your accounting records within the software - only the software connection to HMRC. Tax agents must be separately authorised through HMRC's agent services."
+  }
+}

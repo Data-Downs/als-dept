@@ -1,0 +1,84 @@
+{
+  "id": "dvla-cancel-licence.consent",
+  "version": "1.0.0",
+  "grants": [
+    {
+      "id": "identity-verification",
+      "description": "Verify your identity and relationship to the licence holder",
+      "data_shared": [
+        "full_name",
+        "date_of_birth",
+        "relationship_to_licence_holder"
+      ],
+      "source": "one-login",
+      "purpose": "To confirm you are authorized to cancel this driving licence",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "licence-details",
+      "description": "Share the driving licence details to be cancelled",
+      "data_shared": [
+        "driving_licence_number",
+        "licence_holder_name",
+        "licence_holder_date_of_birth",
+        "licence_issue_date"
+      ],
+      "source": "dvla-driver-record",
+      "purpose": "To identify and cancel the correct driving licence record",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "death-certificate",
+      "description": "Share death certificate details or Tell Us Once reference",
+      "data_shared": [
+        "death_certificate_number",
+        "date_of_death",
+        "tell_us_once_reference"
+      ],
+      "source": "gro-death-register",
+      "purpose": "To verify the death of the licence holder and process cancellation",
+      "duration": "session",
+      "required": false
+    },
+    {
+      "id": "cancellation-reason",
+      "description": "Provide the reason for cancelling the driving licence",
+      "data_shared": [
+        "cancellation_reason",
+        "effective_date",
+        "additional_details"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To record why the licence is being cancelled and process accordingly",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "physical-licence-status",
+      "description": "Confirm whether the physical licence card will be returned to DVLA",
+      "data_shared": [
+        "physical_licence_available",
+        "return_method"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To track the physical licence card and ensure proper disposal",
+      "duration": "session",
+      "required": true
+    }
+  ],
+  "revocation": {
+    "mechanism": "Contact DVLA before notification is submitted. After submission, cancellation cannot be reversed.",
+    "effect": "If consent is revoked before submission, the cancellation will not be processed. After submission, the licence remains cancelled."
+  },
+  "delegation": {
+    "agent_identity": "GOV.UK AI Agent",
+    "scopes": [
+      "read-licence-details",
+      "verify-death-certificate",
+      "submit-cancellation-notification"
+    ],
+    "limitations": "Agent cannot cancel a licence without explicit confirmation from an authorized person. Agent cannot override edge case handoffs (active court ban, medical review). Agent cannot process cancellations for medical reasons - these must be reported through medical review process."
+  }
+}

@@ -1,0 +1,145 @@
+{
+  "id": "ho-citizenship.consent",
+  "version": "1.0.0",
+  "grants": [
+    {
+      "id": "identity-verification",
+      "description": "Verify your identity using your GOV.UK One Login credentials",
+      "data_shared": [
+        "full_name",
+        "date_of_birth",
+        "national_insurance_number",
+        "biometric_residence_permit_number"
+      ],
+      "source": "one-login",
+      "purpose": "To confirm you are who you say you are and link to your immigration records",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "immigration-status-check",
+      "description": "Check your immigration status and ILR grant date",
+      "data_shared": [
+        "immigration_status",
+        "ilr_grant_date",
+        "visa_history",
+        "immigration_conditions"
+      ],
+      "source": "home-office-immigration-records",
+      "purpose": "To verify you hold valid ILR and meet the 12-month requirement",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "residence-history",
+      "description": "Access your UK residence history for the past 5 years",
+      "data_shared": [
+        "uk_addresses",
+        "residence_periods",
+        "tax_records"
+      ],
+      "source": "hmrc-residence-records",
+      "purpose": "To verify you have lived in the UK for the required period",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "travel-history",
+      "description": "Access your travel in and out of the UK for the past 5 years",
+      "data_shared": [
+        "border_crossing_dates",
+        "passport_stamps",
+        "days_abroad_calculation"
+      ],
+      "source": "border-force-travel-records",
+      "purpose": "To verify you have not exceeded the absence limits (450 days in 5 years, 90 days in final year)",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "language-qualification",
+      "description": "Share your English language qualification or test results",
+      "data_shared": [
+        "test_certificate",
+        "test_level",
+        "test_date",
+        "degree_certificate"
+      ],
+      "source": "language-test-provider",
+      "purpose": "To verify you meet the English language requirement at B1 level or above",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "life-in-uk-test",
+      "description": "Share your Life in the UK test results",
+      "data_shared": [
+        "test_pass_certificate",
+        "test_date",
+        "test_reference_number"
+      ],
+      "source": "life-in-uk-test-provider",
+      "purpose": "To verify you have passed the Life in the UK test",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "criminal-record-check",
+      "description": "Conduct a criminal record check for good character assessment",
+      "data_shared": [
+        "criminal_convictions",
+        "cautions",
+        "pending_charges",
+        "spent_convictions"
+      ],
+      "source": "police-national-computer",
+      "purpose": "To assess whether you meet the good character requirement for British citizenship",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "referee-details",
+      "description": "Provide details of two referees who have known you for at least 3 years",
+      "data_shared": [
+        "referee_names",
+        "referee_professions",
+        "referee_addresses",
+        "referee_contact_details"
+      ],
+      "source": "citizen-provided",
+      "purpose": "Home Office will contact your referees to verify your identity and good character",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "supporting-documents",
+      "description": "Upload supporting documents including passport, BRP, marriage certificate (if applicable)",
+      "data_shared": [
+        "passport_copy",
+        "biometric_residence_permit",
+        "marriage_certificate",
+        "employment_letters",
+        "bank_statements"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To verify your identity, residency, and eligibility for British citizenship",
+      "duration": "until-revoked",
+      "required": true
+    }
+  ],
+  "revocation": {
+    "mechanism": "Contact Home Office or revoke through your GOV.UK account before decision is made",
+    "effect": "Application will be withdrawn and fee may not be refundable. You can reapply later."
+  },
+  "delegation": {
+    "agent_identity": "GOV.UK AI Agent",
+    "scopes": [
+      "read-immigration-status",
+      "read-travel-history",
+      "calculate-absences",
+      "check-language-qualifications",
+      "submit-application-form"
+    ],
+    "limitations": "Agent cannot make payment on your behalf. Agent cannot provide or contact referees. Agent cannot upload documents without your explicit approval of each document. Agent cannot book citizenship ceremony. Agent cannot make statements about your character or criminal record."
+  }
+}

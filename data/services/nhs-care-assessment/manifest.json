@@ -1,0 +1,19 @@
+{
+  "id": "nhs-care-assessment",
+  "version": "1.0.0",
+  "name": "Care needs assessment",
+  "description": "Local authority assesses care needs. Can lead to a care plan and possible funded support.",
+  "department": "NHS",
+  "input_schema": {
+    "type": "object"
+  },
+  "output_schema": {
+    "type": "object"
+  },
+  "source": "graph",
+  "serviceType": "application",
+  "govuk_url": "https://www.gov.uk/care-needs-assessment-adults",
+  "eligibility_summary": "Any adult can request a care needs assessment from their local authority. Free and means-independent — the assessment itself is free, though resulting care may be means-tested. Can lead to a care plan and funded support.",
+  "proactive": true,
+  "gated": false
+}

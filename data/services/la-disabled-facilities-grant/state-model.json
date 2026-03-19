@@ -1,0 +1,172 @@
+{
+  "id": "la-disabled-facilities-grant.states",
+  "version": "1.0.0",
+  "states": [
+    {
+      "id": "not-started",
+      "type": "initial"
+    },
+    {
+      "id": "identity-verified"
+    },
+    {
+      "id": "eligibility-checked"
+    },
+    {
+      "id": "consent-given"
+    },
+    {
+      "id": "application-submitted"
+    },
+    {
+      "id": "ot-assessment-scheduled"
+    },
+    {
+      "id": "ot-assessment-completed"
+    },
+    {
+      "id": "quotes-gathering"
+    },
+    {
+      "id": "means-test-completed"
+    },
+    {
+      "id": "assessment-complete"
+    },
+    {
+      "id": "decision",
+      "receipt": true
+    },
+    {
+      "id": "approved",
+      "receipt": true
+    },
+    {
+      "id": "work-in-progress"
+    },
+    {
+      "id": "work-completed"
+    },
+    {
+      "id": "payment-made",
+      "receipt": true
+    },
+    {
+      "id": "completed",
+      "type": "terminal",
+      "receipt": true
+    },
+    {
+      "id": "rejected",
+      "type": "terminal",
+      "receipt": true
+    },
+    {
+      "id": "handed-off",
+      "type": "terminal",
+      "receipt": true
+    }
+  ],
+  "transitions": [
+    {
+      "from": "not-started",
+      "to": "identity-verified",
+      "trigger": "verify-identity"
+    },
+    {
+      "from": "identity-verified",
+      "to": "eligibility-checked",
+      "trigger": "check-eligibility"
+    },
+    {
+      "from": "eligibility-checked",
+      "to": "consent-given",
+      "trigger": "grant-consent",
+      "condition": "eligible"
+    },
+    {
+      "from": "eligibility-checked",
+      "to": "rejected",
+      "trigger": "reject",
+      "condition": "not-eligible"
+    },
+    {
+      "from": "eligibility-checked",
+      "to": "handed-off",
+      "trigger": "handoff",
+      "condition": "edge-case"
+    },
+    {
+      "from": "consent-given",
+      "to": "application-submitted",
+      "trigger": "submit-application"
+    },
+    {
+      "from": "application-submitted",
+      "to": "ot-assessment-scheduled",
+      "trigger": "schedule-ot-assessment"
+    },
+    {
+      "from": "ot-assessment-scheduled",
+      "to": "ot-assessment-completed",
+      "trigger": "complete-ot-assessment"
+    },
+    {
+      "from": "ot-assessment-completed",
+      "to": "quotes-gathering",
+      "trigger": "gather-quotes"
+    },
+    {
+      "from": "quotes-gathering",
+      "to": "means-test-completed",
+      "trigger": "complete-means-test",
+      "condition": "means-test-required"
+    },
+    {
+      "from": "quotes-gathering",
+      "to": "assessment-complete",
+      "trigger": "skip-means-test",
+      "condition": "means-test-exempt"
+    },
+    {
+      "from": "means-test-completed",
+      "to": "assessment-complete",
+      "trigger": "finalize-assessment"
+    },
+    {
+      "from": "assessment-complete",
+      "to": "decision",
+      "trigger": "make-decision"
+    },
+    {
+      "from": "decision",
+      "to": "approved",
+      "trigger": "approve-grant"
+    },
+    {
+      "from": "decision",
+      "to": "rejected",
+      "trigger": "reject-application"
+    },
+    {
+      "from": "approved",
+      "to": "work-in-progress",
+      "trigger": "begin-work"
+    },
+    {
+      "from": "work-in-progress",
+      "to": "work-completed",
+      "trigger": "complete-work"
+    },
+    {
+      "from": "work-completed",
+      "to": "payment-made",
+      "trigger": "make-payment"
+    },
+    {
+      "from": "payment-made",
+      "to": "completed",
+      "trigger": "finalize-grant"
+    }
+  ]
+}

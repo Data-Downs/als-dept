@@ -1,0 +1,19 @@
+{
+  "id": "la-blue-badge",
+  "version": "1.0.0",
+  "name": "Blue Badge",
+  "description": "Auto-qualify on Enhanced Rate PIP mobility. Apply via local council.",
+  "department": "Local Authority",
+  "input_schema": {
+    "type": "object"
+  },
+  "output_schema": {
+    "type": "object"
+  },
+  "source": "graph",
+  "serviceType": "entitlement",
+  "govuk_url": "https://www.gov.uk/apply-blue-badge",
+  "eligibility_summary": "Allows parking in disabled bays and on yellow lines. Auto-qualify if receiving Enhanced Rate PIP mobility or DLA (highest mobility rate). Others apply discretionarily. Apply via local council. Costs up to £10.",
+  "proactive": true,
+  "gated": true
+}

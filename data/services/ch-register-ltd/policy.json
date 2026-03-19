@@ -1,0 +1,122 @@
+{
+  "id": "ch-register-ltd.eligibility",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "company-name-available",
+      "description": "Company name must not be the same as an existing registered company",
+      "condition": {
+        "field": "company_name_status",
+        "operator": "==",
+        "value": "available"
+      },
+      "reason_if_failed": "This company name is already registered or too similar to an existing name. You must choose a different name.",
+      "evidence_source": "companies-house-register"
+    },
+    {
+      "id": "director-age-minimum",
+      "description": "All directors must be at least 16 years old",
+      "condition": {
+        "field": "director_age",
+        "operator": ">=",
+        "value": 16
+      },
+      "reason_if_failed": "Directors must be at least 16 years old to register a company",
+      "evidence_source": "identity-verified"
+    },
+    {
+      "id": "director-not-disqualified",
+      "description": "Directors must not be disqualified from acting as a director",
+      "condition": {
+        "field": "director_disqualified",
+        "operator": "==",
+        "value": false
+      },
+      "reason_if_failed": "You are disqualified from acting as a company director. Contact Companies House for advice.",
+      "evidence_source": "disqualified-directors-register",
+      "triggers_handoff": true
+    },
+    {
+      "id": "at-least-one-director",
+      "description": "Company must have at least one director",
+      "condition": {
+        "field": "director_count",
+        "operator": ">=",
+        "value": 1
+      },
+      "reason_if_failed": "You must appoint at least one director to register a company"
+    },
+    {
+      "id": "uk-registered-office",
+      "description": "Registered office address must be a physical UK address",
+      "condition": {
+        "field": "registered_office_type",
+        "operator": "==",
+        "value": "physical_uk_address"
+      },
+      "reason_if_failed": "You must provide a physical UK address (not a PO Box) as your registered office address"
+    },
+    {
+      "id": "registered-office-jurisdiction-match",
+      "description": "Registered office must be in same country as company registration",
+      "condition": {
+        "field": "office_jurisdiction_matches_registration",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "A company registered in England must have a registered office in England. Choose the correct registration jurisdiction or update your address."
+    },
+    {
+      "id": "at-least-one-shareholder-or-guarantor",
+      "description": "Company limited by shares must have at least one shareholder, or limited by guarantee must have at least one guarantor",
+      "condition": {
+        "field": "member_count",
+        "operator": ">=",
+        "value": 1
+      },
+      "reason_if_failed": "You must have at least one shareholder (for limited by shares) or guarantor (for limited by guarantee)"
+    },
+    {
+      "id": "articles-of-association-provided",
+      "description": "Company must have articles of association (model or custom)",
+      "condition": {
+        "field": "articles_of_association",
+        "operator": "exists"
+      },
+      "reason_if_failed": "You must provide articles of association. You can use standard model articles or upload custom articles."
+    }
+  ],
+  "explanation_template": "Limited company registration eligibility: {outcome}",
+  "edge_cases": [
+    {
+      "id": "company-name-too-similar",
+      "description": "Company name is too similar to existing name or trademark",
+      "detection": "name_similarity_complaint",
+      "action": "You may be asked to change your company name if someone complains it's too similar to their registered name or trademark. Choose a more distinctive name to avoid this risk."
+    },
+    {
+      "id": "sensitive-word-in-name",
+      "description": "Company name contains sensitive words requiring permission",
+      "detection": "sensitive_word_detected",
+      "action": "Your company name contains words like 'Accredited', 'Royal', or others requiring permission. You must get approval from the relevant authority before registration."
+    },
+    {
+      "id": "community-interest-company",
+      "description": "Registering a Community Interest Company (CIC)",
+      "detection": "company_type_cic",
+      "action": "CICs have different requirements and cannot use standard model articles. You must use CIC regulator's model constitutions and meet additional criteria."
+    },
+    {
+      "id": "company-secretary-restrictions",
+      "description": "Company secretary cannot be the auditor or an undischarged bankrupt",
+      "detection": "company_secretary_restrictions_violated",
+      "action": "Your company secretary cannot be the company's auditor or an undischarged bankrupt (unless they have court permission). Choose a different person."
+    },
+    {
+      "id": "service-provider-address",
+      "description": "Using accountant or solicitor address as registered office",
+      "detection": "service_provider_address",
+      "action": "If using a service provider's address, you must get their written permission and ensure they meet the requirements for receiving and confirming delivery of company mail."
+    }
+  ]
+}

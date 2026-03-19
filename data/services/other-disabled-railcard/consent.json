@@ -1,0 +1,99 @@
+{
+  "id": "other-disabled-railcard.consent",
+  "version": "1.0.0",
+  "grants": [
+    {
+      "id": "identity-verification",
+      "description": "Verify your identity using your GOV.UK One Login credentials",
+      "data_shared": [
+        "full_name",
+        "date_of_birth",
+        "national_insurance_number"
+      ],
+      "source": "one-login",
+      "purpose": "To confirm your identity before processing the railcard application",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "disability-benefit-check",
+      "description": "Check your disability benefit status with the Department for Work and Pensions",
+      "data_shared": [
+        "benefit_type",
+        "benefit_status",
+        "award_start_date",
+        "award_end_date"
+      ],
+      "source": "dwp-benefit-records",
+      "purpose": "To automatically verify your eligibility if you receive a qualifying disability benefit",
+      "duration": "session",
+      "required": false
+    },
+    {
+      "id": "visual-impairment-register",
+      "description": "Check your registration status with your local authority if you are blind or partially sighted",
+      "data_shared": [
+        "registration_status",
+        "registration_date",
+        "local_authority"
+      ],
+      "source": "local-authority-register",
+      "purpose": "To verify your eligibility as a registered blind or partially sighted person",
+      "duration": "session",
+      "required": false
+    },
+    {
+      "id": "medical-evidence",
+      "description": "Submit medical evidence of epilepsy or severe disability from your GP or specialist",
+      "data_shared": [
+        "medical_certificate",
+        "diagnosis",
+        "practitioner_details"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To verify your eligibility if you do not receive a qualifying benefit or are not registered blind/partially sighted",
+      "duration": "until-revoked",
+      "required": false
+    },
+    {
+      "id": "photo-upload",
+      "description": "Provide a passport-style digital photo for your railcard",
+      "data_shared": [
+        "digital_photo"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To print on your physical railcard for identification purposes",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "contact-details",
+      "description": "Provide your address and contact information for railcard delivery and correspondence",
+      "data_shared": [
+        "address_line_1",
+        "address_line_2",
+        "city",
+        "postcode",
+        "email",
+        "phone_number"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To post your railcard and send renewal reminders",
+      "duration": "until-revoked",
+      "required": true
+    }
+  ],
+  "revocation": {
+    "mechanism": "Contact Rail Delivery Group customer service or revoke through your online account",
+    "effect": "Application will be cancelled if consent is revoked before completion. Issued railcards remain valid until expiry."
+  },
+  "delegation": {
+    "agent_identity": "GOV.UK AI Agent",
+    "scopes": [
+      "read-personal-data",
+      "check-benefit-records",
+      "submit-application"
+    ],
+    "limitations": "Agent cannot make payment on your behalf. Agent cannot upload photos without your explicit confirmation. Agent cannot submit medical evidence without your review. For manual evidence assessment or complex cases, the agent will hand off to human customer service."
+  }
+}

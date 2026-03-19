@@ -1,0 +1,141 @@
+{
+  "id": "dwp.bereavement-support.eligibility",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "partner-deceased",
+      "description": "Partner must have died",
+      "condition": {
+        "field": "partner_death_date",
+        "operator": "exists"
+      },
+      "reason_if_failed": "You can only claim Bereavement Support Payment if your partner has died",
+      "evidence_source": "death-certificate"
+    },
+    {
+      "id": "under-pension-age",
+      "description": "Claimant must be under State Pension age when partner died",
+      "condition": {
+        "field": "age_at_partners_death",
+        "operator": "<=",
+        "value": "state_pension_age"
+      },
+      "reason_if_failed": "You must have been under State Pension age when your partner died",
+      "evidence_source": "identity-verified"
+    },
+    {
+      "id": "uk-resident",
+      "description": "Must be living in UK or country that pays bereavement benefits",
+      "condition": {
+        "field": "residence",
+        "operator": "in",
+        "value": [
+          "UK",
+          "eligible_country"
+        ]
+      },
+      "reason_if_failed": "You must be living in the UK or a country that pays bereavement benefits",
+      "evidence_source": "identity-verified",
+      "triggers_handoff": true
+    },
+    {
+      "id": "valid-relationship",
+      "description": "Must have been married, in civil partnership, or living together as if married",
+      "condition": {
+        "field": "relationship_status",
+        "operator": "in",
+        "value": [
+          "married",
+          "civil_partnership",
+          "living_together"
+        ]
+      },
+      "reason_if_failed": "You must have been married to your partner, in a civil partnership, or living with them as if you were married",
+      "evidence_source": "citizen-declaration"
+    },
+    {
+      "id": "ni-contributions",
+      "description": "Partner must have paid sufficient National Insurance contributions or died from work-related cause",
+      "condition": {
+        "field": "partner_ni_record",
+        "operator": "==",
+        "value": "sufficient"
+      },
+      "reason_if_failed": "Your partner must have paid sufficient National Insurance contributions, or died from an accident at work or work-related disease",
+      "evidence_source": "hmrc-ni-record"
+    },
+    {
+      "id": "not-in-prison",
+      "description": "Cannot claim if in prison",
+      "condition": {
+        "field": "in_prison",
+        "operator": "!=",
+        "value": true
+      },
+      "reason_if_failed": "You cannot claim Bereavement Support Payment if you are in prison",
+      "evidence_source": "citizen-declaration"
+    },
+    {
+      "id": "claim-within-21-months",
+      "description": "Must claim within 21 months of partner's death",
+      "condition": {
+        "field": "months_since_death",
+        "operator": "<=",
+        "value": 21
+      },
+      "reason_if_failed": "You usually need to claim within 21 months of your partner's death. Contact the Bereavement Service if the cause of death was only recently confirmed.",
+      "evidence_source": "death-certificate",
+      "triggers_handoff": true
+    },
+    {
+      "id": "living-together-requirements",
+      "description": "If living together (not married), must have Child Benefit or be pregnant",
+      "condition": {
+        "field": "living_together_eligible",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "If you were living together as if married, you must have been getting Child Benefit for a child, or have been pregnant when your partner died",
+      "evidence_source": "child-benefit-office"
+    }
+  ],
+  "explanation_template": "Bereavement Support Payment eligibility: {outcome}. Payment rate: {rate}. Claim timing affects payment amount.",
+  "edge_cases": [
+    {
+      "id": "death-before-2017",
+      "description": "Partner died before 6 April 2017",
+      "detection": "partner_death_date < 2017-04-06",
+      "action": "Route to Widowed Parent's Allowance instead. Hand off to specialist advisor."
+    },
+    {
+      "id": "cause-of-death-delayed",
+      "description": "Death occurred over 21 months ago but cause only recently confirmed",
+      "detection": "months_since_death > 21 AND death_confirmation_recent",
+      "action": "Hand off to Bereavement Service helpline for manual assessment."
+    },
+    {
+      "id": "international-claimant",
+      "description": "Claimant is currently abroad",
+      "detection": "current_location != 'UK'",
+      "action": "Route to International Pension Centre. Different application process required."
+    },
+    {
+      "id": "reaching-pension-age",
+      "description": "Claimant will reach State Pension age within 18 months",
+      "detection": "months_until_pension_age <= 18",
+      "action": "Warn that monthly payments may be reduced. Proceed with application but flag for assessment."
+    },
+    {
+      "id": "uncertain-ni-contributions",
+      "description": "Unsure if partner paid sufficient NI contributions",
+      "detection": "partner_ni_record == 'unknown'",
+      "action": "Proceed with application. DWP will check NI record during assessment."
+    },
+    {
+      "id": "delayed-claim",
+      "description": "Claiming between 3-21 months after death",
+      "detection": "months_since_death > 3 AND months_since_death <= 21",
+      "action": "Warn that payment amount will be reduced. One-off payment reduced/removed, fewer monthly payments available."
+    }
+  ]
+}

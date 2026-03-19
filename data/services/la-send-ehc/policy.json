@@ -1,0 +1,99 @@
+{
+  "id": "la-send-ehc.eligibility",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "age-range",
+      "description": "Child or young person must be aged 0-25",
+      "condition": {
+        "field": "age",
+        "operator": ">=",
+        "value": 0
+      },
+      "reason_if_failed": "EHC plans are only available for children and young people aged 0 to 25",
+      "evidence_source": "identity-verified"
+    },
+    {
+      "id": "age-upper-limit",
+      "description": "Child or young person must not be over 25",
+      "condition": {
+        "field": "age",
+        "operator": "<=",
+        "value": 25
+      },
+      "reason_if_failed": "EHC plans are only available for children and young people up to age 25",
+      "evidence_source": "identity-verified"
+    },
+    {
+      "id": "local-authority-resident",
+      "description": "Child must be resident in the local authority area",
+      "condition": {
+        "field": "local_authority_area",
+        "operator": "==",
+        "value": "this_authority"
+      },
+      "reason_if_failed": "You must apply to the local authority where the child lives",
+      "evidence_source": "address-confirmation"
+    },
+    {
+      "id": "complex-needs",
+      "description": "Child must have complex SEND needs that cannot be met through standard SEN support",
+      "condition": {
+        "field": "needs_exceed_sen_support",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "Standard SEN support should be tried first. Contact your school's SENCO to arrange SEN support.",
+      "alternative_service": "school.sen-support"
+    },
+    {
+      "id": "evidence-provided",
+      "description": "Supporting evidence must be submitted",
+      "condition": {
+        "field": "evidence_documents",
+        "operator": "exists"
+      },
+      "reason_if_failed": "You must provide reports from school/nursery, medical assessments, and a letter describing your child's needs",
+      "evidence_source": "citizen-provided"
+    }
+  ],
+  "explanation_template": "EHC plan assessment eligibility: {outcome}. The local authority will decide within 16 weeks whether to proceed with the assessment.",
+  "edge_cases": [
+    {
+      "id": "child-under-5",
+      "description": "Child is under 5 years old",
+      "detection": "age < 5",
+      "action": "Follow Early Years Foundation Stage framework. May still qualify for EHC plan if needs are complex. Ensure health visitor check and 2-year progress check are referenced."
+    },
+    {
+      "id": "young-person-16-plus",
+      "description": "Young person aged 16-25 can self-advocate",
+      "detection": "age >= 16",
+      "action": "Young person can request assessment themselves. Parental consent not required but parental input is valuable."
+    },
+    {
+      "id": "pre-2014-statement",
+      "description": "Child has a statement of SEN from before September 2014",
+      "detection": "has_sen_statement",
+      "action": "Existing statement will convert to EHC plan at next planned review or school transition. Continue with conversion process."
+    },
+    {
+      "id": "safeguarding-concern",
+      "description": "Safeguarding concerns identified during assessment",
+      "detection": "safeguarding_flag",
+      "action": "Immediately handoff to local authority safeguarding team. EHC assessment continues in parallel with safeguarding investigation."
+    },
+    {
+      "id": "disagreement-tribunal",
+      "description": "Parent/young person disagrees with local authority decision",
+      "detection": "dispute_raised",
+      "action": "Route to mediation and potentially SEND Tribunal. Handoff to Independent Parental Special Education Advice (IPSEA) for support."
+    },
+    {
+      "id": "personal-budget-requested",
+      "description": "Personal budget requested for implementing the plan",
+      "detection": "personal_budget_requested",
+      "action": "Separate personal budget assessment process. Can use direct payments, notional arrangements, or third-party arrangements."
+    }
+  ]
+}

@@ -1,0 +1,98 @@
+{
+  "id": "other-carers-leave.eligibility",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "employment-status",
+      "description": "Employee must be currently employed (from first day of employment)",
+      "condition": {
+        "field": "employment_status",
+        "operator": "==",
+        "value": "employed"
+      },
+      "reason_if_failed": "Carer's leave is only available to current employees",
+      "evidence_source": "employment-records"
+    },
+    {
+      "id": "dependant-care-need",
+      "description": "Dependant must have a qualifying long-term care need",
+      "condition": {
+        "field": "dependant_care_type",
+        "operator": "in",
+        "value": [
+          "long-term-illness",
+          "disability",
+          "old-age"
+        ]
+      },
+      "reason_if_failed": "Carer's leave requires the dependant to have a physical/mental illness expected to last >3 months, a disability, or care needs due to old age",
+      "evidence_source": "employee-declaration"
+    },
+    {
+      "id": "annual-entitlement",
+      "description": "Employee has not exceeded their annual entitlement (1 week per 12 months)",
+      "condition": {
+        "field": "carers_leave_taken_this_year",
+        "operator": "<=",
+        "value": "weekly_hours"
+      },
+      "reason_if_failed": "You have used your full entitlement of carer's leave this year. Your entitlement resets 12 months from your first request.",
+      "evidence_source": "leave-records"
+    },
+    {
+      "id": "notice-period-half-or-one-day",
+      "description": "For half day or 1 day requests, at least 3 days notice must be given",
+      "condition": {
+        "field": "notice_days",
+        "operator": ">=",
+        "value": 3
+      },
+      "reason_if_failed": "At least 3 days notice is required for half day or single day requests",
+      "evidence_source": "request-timestamp"
+    },
+    {
+      "id": "notice-period-multiple-days",
+      "description": "For multiple day requests, notice must be at least twice the requested leave",
+      "condition": {
+        "field": "notice_days",
+        "operator": ">=",
+        "value": "requested_days * 2"
+      },
+      "reason_if_failed": "Notice period must be at least twice the requested leave duration",
+      "evidence_source": "request-timestamp"
+    }
+  ],
+  "explanation_template": "Carer's leave request: {outcome}",
+  "edge_cases": [
+    {
+      "id": "emergency-care",
+      "description": "Employee needs immediate time off for emergency care situation",
+      "detection": "emergency_flag",
+      "action": "This may qualify for 'time off for dependants' (separate right) which doesn't require notice. Route to emergency leave guidance."
+    },
+    {
+      "id": "irregular-working-pattern",
+      "description": "Employee has irregular working hours or pattern",
+      "detection": "irregular_hours_flag",
+      "action": "Calculate entitlement: sum total hours worked in previous 12 months, divide by 52 (or weeks since start if <1 year). This is the leave entitlement in hours."
+    },
+    {
+      "id": "multiple-dependants",
+      "description": "Employee is caring for more than one dependant",
+      "detection": "multiple_dependants",
+      "action": "Clarify that 1 week entitlement applies to all dependants combined, not per dependant. Employee can use the week across multiple people."
+    },
+    {
+      "id": "serious-disruption",
+      "description": "Employer needs to delay due to serious disruption to business",
+      "detection": "disruption_flag",
+      "action": "Employer must propose alternative date within 1 month and provide written reason within 7 days. Cannot refuse, only delay."
+    },
+    {
+      "id": "first-week-employment",
+      "description": "Employee requesting leave in their first week of employment",
+      "detection": "employment_duration < 7 days",
+      "action": "Use expected weekly hours as the entitlement amount since no historical data available."
+    }
+  ]
+}

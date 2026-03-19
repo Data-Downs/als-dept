@@ -1,0 +1,121 @@
+{
+  "id": "gro.give-notice.states",
+  "version": "1.0.0",
+  "states": [
+    {
+      "id": "not-started",
+      "type": "initial"
+    },
+    {
+      "id": "identity-verified"
+    },
+    {
+      "id": "eligibility-checked"
+    },
+    {
+      "id": "consent-given"
+    },
+    {
+      "id": "venue-confirmed"
+    },
+    {
+      "id": "documents-verified"
+    },
+    {
+      "id": "appointment-booked"
+    },
+    {
+      "id": "amount-calculated",
+      "receipt": true
+    },
+    {
+      "id": "payment-made",
+      "receipt": true
+    },
+    {
+      "id": "notice-signed",
+      "receipt": true
+    },
+    {
+      "id": "completed",
+      "type": "terminal",
+      "receipt": true
+    },
+    {
+      "id": "immigration-hold",
+      "type": "terminal",
+      "receipt": true
+    },
+    {
+      "id": "handed-off",
+      "type": "terminal",
+      "receipt": true
+    }
+  ],
+  "transitions": [
+    {
+      "from": "not-started",
+      "to": "identity-verified",
+      "trigger": "verify-identity"
+    },
+    {
+      "from": "identity-verified",
+      "to": "eligibility-checked",
+      "trigger": "check-eligibility"
+    },
+    {
+      "from": "eligibility-checked",
+      "to": "consent-given",
+      "trigger": "grant-consent",
+      "condition": "eligible"
+    },
+    {
+      "from": "eligibility-checked",
+      "to": "handed-off",
+      "trigger": "handoff",
+      "condition": "not-eligible-or-edge-case"
+    },
+    {
+      "from": "consent-given",
+      "to": "venue-confirmed",
+      "trigger": "confirm-venue"
+    },
+    {
+      "from": "venue-confirmed",
+      "to": "documents-verified",
+      "trigger": "verify-documents"
+    },
+    {
+      "from": "documents-verified",
+      "to": "appointment-booked",
+      "trigger": "book-appointment"
+    },
+    {
+      "from": "appointment-booked",
+      "to": "amount-calculated",
+      "trigger": "calculate-amount"
+    },
+    {
+      "from": "amount-calculated",
+      "to": "payment-made",
+      "trigger": "make-payment"
+    },
+    {
+      "from": "payment-made",
+      "to": "notice-signed",
+      "trigger": "sign-notice"
+    },
+    {
+      "from": "notice-signed",
+      "to": "completed",
+      "trigger": "complete",
+      "condition": "no-immigration-hold"
+    },
+    {
+      "from": "notice-signed",
+      "to": "immigration-hold",
+      "trigger": "immigration-investigation",
+      "condition": "home-office-investigation-required"
+    }
+  ]
+}

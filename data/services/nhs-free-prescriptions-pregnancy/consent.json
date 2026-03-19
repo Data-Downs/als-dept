@@ -1,0 +1,73 @@
+{
+  "id": "nhs.free-prescriptions-pregnancy.consent",
+  "version": "1.0.0",
+  "grants": [
+    {
+      "id": "identity-verification",
+      "description": "Verify your identity using your NHS login or GOV.UK One Login",
+      "data_shared": [
+        "full_name",
+        "date_of_birth",
+        "nhs_number"
+      ],
+      "source": "nhs-login-or-one-login",
+      "purpose": "To confirm your identity and check your NHS records",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "pregnancy-confirmation",
+      "description": "Allow NHS to contact your GP or midwife to confirm your pregnancy status",
+      "data_shared": [
+        "pregnancy_status",
+        "due_date_or_birth_date",
+        "gp_practice_code",
+        "midwife_contact"
+      ],
+      "source": "gp-practice-or-midwife",
+      "purpose": "To verify your pregnancy or recent birth for Maternity Exemption Certificate eligibility",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "address-sharing",
+      "description": "Provide your postal address for certificate delivery",
+      "data_shared": [
+        "address_line_1",
+        "address_line_2",
+        "city",
+        "postcode"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To post your Maternity Exemption Certificate (MatEx) to you",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "medical-records-update",
+      "description": "Update your NHS medical records with MatEx certificate details",
+      "data_shared": [
+        "matex_certificate_number",
+        "certificate_start_date",
+        "certificate_expiry_date"
+      ],
+      "source": "nhs-prescription-services",
+      "purpose": "To allow pharmacies and dental practices to verify your exemption when you use services",
+      "duration": "until-revoked",
+      "required": true
+    }
+  ],
+  "revocation": {
+    "mechanism": "Contact NHS Prescription Services or use your NHS account to revoke",
+    "effect": "Certificate will be cancelled. You will lose free prescription and dental treatment until you reapply."
+  },
+  "delegation": {
+    "agent_identity": "GOV.UK AI Agent",
+    "scopes": [
+      "read-pregnancy-status",
+      "submit-matex-application",
+      "read-gp-details"
+    ],
+    "limitations": "Agent cannot access full medical records. Agent cannot modify pregnancy dates without explicit confirmation. Agent cannot revoke certificate on your behalf. Agent requires manual approval for sensitive edge cases (pregnancy loss, complications)."
+  }
+}

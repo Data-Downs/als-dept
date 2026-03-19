@@ -1,0 +1,77 @@
+{
+  "id": "other-tv-licence-pension.eligibility",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "age-minimum",
+      "description": "Applicant or their partner must be aged 75 or over",
+      "condition": {
+        "field": "age",
+        "operator": ">=",
+        "value": 75
+      },
+      "reason_if_failed": "You must be aged 75 or over to qualify for a free TV licence",
+      "evidence_source": "identity-verified"
+    },
+    {
+      "id": "pension-credit-required",
+      "description": "The 75+ person or their partner must receive Pension Credit",
+      "condition": {
+        "field": "pension_credit_status",
+        "operator": "==",
+        "value": "receiving"
+      },
+      "reason_if_failed": "You must be receiving Pension Credit to qualify for a free TV licence. If you think you're eligible for Pension Credit, apply first.",
+      "evidence_source": "dwp-pension-credit-service",
+      "alternative_service": "dwp.apply-pension-credit"
+    },
+    {
+      "id": "pension-credit-claimant",
+      "description": "The Pension Credit claimant must be the 75+ person or their partner",
+      "condition": {
+        "field": "pension_credit_claimant_in_household",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "The person aged 75+ or their partner must be the Pension Credit claimant to qualify",
+      "evidence_source": "dwp-pension-credit-service"
+    },
+    {
+      "id": "uk-resident",
+      "description": "Applicant must be a UK resident requiring a TV licence",
+      "condition": {
+        "field": "uk_resident",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "This concession is only available for UK TV licence holders"
+    }
+  ],
+  "explanation_template": "Free TV licence eligibility: {outcome}",
+  "edge_cases": [
+    {
+      "id": "pension-credit-pending",
+      "description": "Pension Credit application is pending decision",
+      "detection": "pension_credit_status == 'pending'",
+      "action": "Inform applicant to complete Pension Credit application first. Free TV licence can be backdated if Pension Credit is awarded."
+    },
+    {
+      "id": "care-home-resident",
+      "description": "Applicant lives in a care home",
+      "detection": "care_home_resident == true",
+      "action": "Different rules apply for care homes. Hand off to TV Licensing specialist team for accommodation licensing rules."
+    },
+    {
+      "id": "moving-house",
+      "description": "Applicant is moving house during application",
+      "detection": "address_change_pending == true",
+      "action": "Complete application with current address. Contact TV Licensing to update address when move is confirmed."
+    },
+    {
+      "id": "joint-household",
+      "description": "Multiple people aged 75+ in household",
+      "detection": "household_members_75_plus > 1",
+      "action": "Only one free licence needed per household. Confirm who the licence holder should be."
+    }
+  ]
+}

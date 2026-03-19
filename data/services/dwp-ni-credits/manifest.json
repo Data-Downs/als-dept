@@ -1,0 +1,19 @@
+{
+  "id": "dwp-ni-credits",
+  "version": "1.0.0",
+  "name": "National Insurance credits",
+  "description": "Automatically awarded on UC or JSA. Protects State Pension record while not working.",
+  "department": "DWP",
+  "input_schema": {
+    "type": "object"
+  },
+  "output_schema": {
+    "type": "object"
+  },
+  "source": "graph",
+  "serviceType": "entitlement",
+  "govuk_url": "https://www.gov.uk/national-insurance-credits",
+  "eligibility_summary": "NI credits fill gaps in your NI record when you are not working and paying contributions. Automatically awarded with UC, JSA, ESA, and certain other benefits. Protects your State Pension entitlement.",
+  "proactive": true,
+  "gated": true
+}

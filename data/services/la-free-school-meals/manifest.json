@@ -1,0 +1,19 @@
+{
+  "id": "la-free-school-meals",
+  "version": "1.0.0",
+  "name": "Free School Meals",
+  "description": "Auto-eligible if on UC with income under £7,400. Apply via school or local authority.",
+  "department": "Local Authority",
+  "input_schema": {
+    "type": "object"
+  },
+  "output_schema": {
+    "type": "object"
+  },
+  "source": "graph",
+  "serviceType": "entitlement",
+  "govuk_url": "https://www.gov.uk/apply-free-school-meals",
+  "eligibility_summary": "Free school meals for children at state schools if parents are on qualifying benefits. Automatic if on Universal Credit with annual net earned income under £7,400. Unlocks Pupil Premium funding for the school.",
+  "proactive": true,
+  "gated": true
+}

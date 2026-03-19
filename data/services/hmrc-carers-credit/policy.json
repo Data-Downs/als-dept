@@ -1,0 +1,100 @@
+{
+  "id": "hmrc.carers-credit.eligibility",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "age-minimum",
+      "description": "Applicant must be at least 16 years old",
+      "condition": {
+        "field": "age",
+        "operator": ">=",
+        "value": 16
+      },
+      "reason_if_failed": "You must be at least 16 years old to claim Carer's Credit",
+      "evidence_source": "identity-verified"
+    },
+    {
+      "id": "under-state-pension-age",
+      "description": "Applicant must be under State Pension age",
+      "condition": {
+        "field": "under_state_pension_age",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "You cannot claim Carer's Credit if you have reached State Pension age",
+      "evidence_source": "identity-verified"
+    },
+    {
+      "id": "caring-hours",
+      "description": "Applicant must be caring for at least 20 hours per week",
+      "condition": {
+        "field": "caring_hours_per_week",
+        "operator": ">=",
+        "value": 20
+      },
+      "reason_if_failed": "You must be caring for someone for at least 20 hours a week to qualify for Carer's Credit",
+      "evidence_source": "citizen-provided"
+    },
+    {
+      "id": "not-receiving-carers-allowance",
+      "description": "Applicant must not already be receiving Carer's Allowance or Carer Support Payment",
+      "condition": {
+        "field": "receives_carers_allowance",
+        "operator": "==",
+        "value": false
+      },
+      "reason_if_failed": "You automatically get National Insurance credits if you receive Carer's Allowance or Carer Support Payment. You do not need to apply separately.",
+      "alternative_service": "dwp.carers-allowance",
+      "triggers_handoff": false
+    },
+    {
+      "id": "not-receiving-child-benefit-under-12",
+      "description": "Applicant must not already be receiving automatic credits through Child Benefit for a child under 12",
+      "condition": {
+        "field": "receives_child_benefit_under_12",
+        "operator": "==",
+        "value": false
+      },
+      "reason_if_failed": "You automatically get National Insurance credits if you receive Child Benefit for a child under the age of 12. You do not need to apply separately.",
+      "alternative_service": "hmrc.child-benefit"
+    },
+    {
+      "id": "care-recipient-qualifying-benefit",
+      "description": "The person being cared for must receive a qualifying disability benefit OR have a signed Care Certificate",
+      "condition": {
+        "field": "care_recipient_qualifying_benefit_or_certificate",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "The person you care for must receive a qualifying benefit (DLA, PIP, Attendance Allowance, etc.) or you must provide a Care Certificate signed by a health or social care professional",
+      "evidence_source": "dwp-benefits-system"
+    }
+  ],
+  "explanation_template": "Carer's Credit eligibility: {outcome}",
+  "edge_cases": [
+    {
+      "id": "foster-carer",
+      "description": "Applicant is a foster carer",
+      "detection": "is_foster_carer",
+      "action": "Foster carers should apply for National Insurance credits through the foster care scheme instead. Route to alternative service."
+    },
+    {
+      "id": "break-in-caring-over-12-weeks",
+      "description": "Break in caring responsibilities exceeds 12 weeks",
+      "detection": "caring_break_weeks > 12",
+      "action": "Applicant must contact the Carer's Allowance Unit to report break. May affect eligibility for the period."
+    },
+    {
+      "id": "multiple-care-recipients",
+      "description": "Applicant cares for multiple people",
+      "detection": "number_of_care_recipients > 1",
+      "action": "Credits can be claimed for caring for multiple people. Ensure total caring hours are documented correctly."
+    },
+    {
+      "id": "care-certificate-required",
+      "description": "Care recipient does not receive qualifying benefit, so Care Certificate is needed",
+      "detection": "care_recipient_has_qualifying_benefit == false",
+      "action": "Applicant must obtain Care Certificate signed by a health or social care professional. This requires human coordination and cannot be fully automated."
+    }
+  ]
+}

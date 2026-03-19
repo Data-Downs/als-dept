@@ -1,0 +1,171 @@
+{
+  "id": "slc.student-finance.eligibility",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "nationality-or-residency",
+      "description": "Applicant must be a UK national, Irish citizen, or have settled/pre-settled status",
+      "condition": {
+        "field": "nationality_or_residency_status",
+        "operator": "in",
+        "value": [
+          "uk-national",
+          "irish-citizen",
+          "settled-status",
+          "pre-settled-status",
+          "eligible-immigration-status"
+        ]
+      },
+      "reason_if_failed": "You must be a UK national, Irish citizen, or have eligible residency status to apply for student finance",
+      "evidence_source": "identity-verified",
+      "alternative_service": "slc.international-student-support"
+    },
+    {
+      "id": "uk-residency-3-years",
+      "description": "Applicant must have lived in the UK, Channel Islands or Isle of Man for 3 years before course start (if home is in England)",
+      "condition": {
+        "field": "uk_residency_years",
+        "operator": ">=",
+        "value": 3
+      },
+      "reason_if_failed": "You must have been continuously living in the UK, Channel Islands or Isle of Man for 3 years before the first day of your first academic year",
+      "evidence_source": "residency-history"
+    },
+    {
+      "id": "qualifying-institution",
+      "description": "Course must be at a qualifying UK university or college",
+      "condition": {
+        "field": "institution_type",
+        "operator": "==",
+        "value": "qualifying-uk-institution"
+      },
+      "reason_if_failed": "Your university or college must offer a qualifying course for student finance",
+      "evidence_source": "ucas-course-details",
+      "triggers_handoff": true
+    },
+    {
+      "id": "qualifying-course",
+      "description": "Course must be a qualifying higher education course",
+      "condition": {
+        "field": "course_type",
+        "operator": "in",
+        "value": [
+          "first-degree",
+          "foundation-degree",
+          "cert-higher-ed",
+          "dip-higher-ed",
+          "hnc",
+          "hnd",
+          "itt-course",
+          "integrated-masters",
+          "pre-reg-healthcare",
+          "level-4-5-htq"
+        ]
+      },
+      "reason_if_failed": "Your course type does not qualify for student finance. Check with your institution.",
+      "evidence_source": "ucas-course-details",
+      "triggers_handoff": true
+    },
+    {
+      "id": "first-degree-or-limited-circumstances",
+      "description": "Applicant must be studying first higher education qualification or meet limited funding criteria",
+      "condition": {
+        "field": "previous_study_status",
+        "operator": "in",
+        "value": [
+          "first-degree",
+          "limited-funding-eligible",
+          "topping-up-qualification",
+          "priority-stem-subject"
+        ]
+      },
+      "reason_if_failed": "You've already completed a higher education course. You may only be eligible for limited funding in certain circumstances.",
+      "evidence_source": "slc-previous-study-records",
+      "alternative_service": "slc.postgraduate-loan"
+    },
+    {
+      "id": "part-time-intensity",
+      "description": "Part-time course must have at least 25% course intensity",
+      "condition": {
+        "field": "course_intensity_percentage",
+        "operator": ">=",
+        "value": 25
+      },
+      "reason_if_failed": "Your part-time course must have a course intensity of at least 25% to qualify for student finance",
+      "evidence_source": "ucas-course-details"
+    },
+    {
+      "id": "maintenance-loan-age-restriction",
+      "description": "Applicants aged 60+ on first day of course can only get limited Maintenance Loan if studying full-time",
+      "condition": {
+        "field": "age_on_course_start",
+        "operator": "<=",
+        "value": 59
+      },
+      "reason_if_failed": "If you're 60 or over, you may get limited funding for Maintenance Loans. Check the calculator for details.",
+      "evidence_source": "identity-verified"
+    },
+    {
+      "id": "not-degree-apprenticeship",
+      "description": "Applicant must not be doing a degree apprenticeship",
+      "condition": {
+        "field": "course_type",
+        "operator": "!=",
+        "value": "degree-apprenticeship"
+      },
+      "reason_if_failed": "You are not eligible for student finance if you're doing a degree apprenticeship. Speak to your employer about funding.",
+      "alternative_service": "apprenticeship-funding"
+    }
+  ],
+  "explanation_template": "Student finance eligibility: {outcome}. Tuition Fee Loan: {tuition_eligible}. Maintenance Loan: {maintenance_eligible}.",
+  "edge_cases": [
+    {
+      "id": "estranged-student",
+      "description": "Student is under 25 and has no contact with parents",
+      "detection": "estranged_status == true",
+      "action": "Route to estranged student pathway via UCAS. Household income not required. Maximum maintenance loan available."
+    },
+    {
+      "id": "care-leaver",
+      "description": "Student spent 13+ weeks in care before age 16",
+      "detection": "care_leaver_status == true",
+      "action": "Route to care leaver pathway via UCAS. Household income not used for Maintenance Loan calculation. Maximum amount available."
+    },
+    {
+      "id": "stopped-or-changed-course",
+      "description": "Student previously stopped studies or changed course",
+      "detection": "previous_course_status in ['stopped', 'changed', 'suspended']",
+      "action": "Assess remaining funding entitlement based on years previously funded. May require evidence if stopped for personal reasons."
+    },
+    {
+      "id": "previous-degree-stem",
+      "description": "Student has a degree but applying for priority STEM or healthcare subject",
+      "detection": "previous_degree_holder == true AND new_course_subject in ['stem-subjects', 'healthcare-courses']",
+      "action": "Limited funding may be available. Check specific subject eligibility and calculate remaining entitlement."
+    },
+    {
+      "id": "disabled-distance-learner",
+      "description": "Disabled student unable to attend course in person",
+      "detection": "disability == true AND distance_learning == true",
+      "action": "Maintenance Loan available for distance learning students with disabilities. Route to DSA assessment."
+    },
+    {
+      "id": "power-of-attorney",
+      "description": "Someone else is applying on behalf of the student using Power of Attorney",
+      "detection": "power_of_attorney == true",
+      "action": "Verify Power of Attorney documentation. Separate consent and identity verification required for agent."
+    },
+    {
+      "id": "medical-condition-affecting-study",
+      "description": "Student has a medical condition that may affect their ability to complete the course",
+      "detection": "medical_condition_disclosure == true",
+      "action": "Route to specialist assessment. May require medical evidence. Consider Disabled Students' Allowance application."
+    },
+    {
+      "id": "non-england-home-address",
+      "description": "Student's home is in Scotland, Wales, Northern Ireland, or Crown Dependencies",
+      "detection": "home_address_jurisdiction in ['scotland', 'wales', 'northern-ireland', 'jersey', 'guernsey', 'isle-of-man']",
+      "action": "Handoff to appropriate jurisdiction student finance body. This service is for England residents only."
+    }
+  ]
+}

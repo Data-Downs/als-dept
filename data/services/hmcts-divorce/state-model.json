@@ -1,0 +1,195 @@
+{
+  "id": "hmcts-divorce.states",
+  "version": "1.0.0",
+  "states": [
+    {
+      "id": "not-started",
+      "type": "initial"
+    },
+    {
+      "id": "identity-verified"
+    },
+    {
+      "id": "eligibility-checked"
+    },
+    {
+      "id": "consent-given"
+    },
+    {
+      "id": "application-type-selected"
+    },
+    {
+      "id": "application-completed"
+    },
+    {
+      "id": "payment-made"
+    },
+    {
+      "id": "application-submitted"
+    },
+    {
+      "id": "application-issued",
+      "receipt": true
+    },
+    {
+      "id": "awaiting-spouse-response"
+    },
+    {
+      "id": "spouse-acknowledged"
+    },
+    {
+      "id": "20-week-waiting-period"
+    },
+    {
+      "id": "conditional-order-applied"
+    },
+    {
+      "id": "conditional-order-granted",
+      "receipt": true
+    },
+    {
+      "id": "6-week-waiting-period"
+    },
+    {
+      "id": "final-order-applied"
+    },
+    {
+      "id": "final-order-granted",
+      "receipt": true
+    },
+    {
+      "id": "completed",
+      "type": "terminal",
+      "receipt": true
+    },
+    {
+      "id": "rejected",
+      "type": "terminal",
+      "receipt": true
+    },
+    {
+      "id": "handed-off",
+      "type": "terminal",
+      "receipt": true
+    }
+  ],
+  "transitions": [
+    {
+      "from": "not-started",
+      "to": "identity-verified",
+      "trigger": "verify-identity"
+    },
+    {
+      "from": "identity-verified",
+      "to": "eligibility-checked",
+      "trigger": "check-eligibility"
+    },
+    {
+      "from": "eligibility-checked",
+      "to": "consent-given",
+      "trigger": "grant-consent",
+      "condition": "eligible"
+    },
+    {
+      "from": "eligibility-checked",
+      "to": "rejected",
+      "trigger": "reject",
+      "condition": "not-eligible"
+    },
+    {
+      "from": "eligibility-checked",
+      "to": "handed-off",
+      "trigger": "handoff",
+      "condition": "edge-case"
+    },
+    {
+      "from": "consent-given",
+      "to": "application-type-selected",
+      "trigger": "select-application-type"
+    },
+    {
+      "from": "application-type-selected",
+      "to": "application-completed",
+      "trigger": "complete-application"
+    },
+    {
+      "from": "application-completed",
+      "to": "payment-made",
+      "trigger": "make-payment"
+    },
+    {
+      "from": "application-completed",
+      "to": "application-submitted",
+      "trigger": "submit-with-fee-exemption",
+      "condition": "fee-help-approved"
+    },
+    {
+      "from": "payment-made",
+      "to": "application-submitted",
+      "trigger": "submit-application"
+    },
+    {
+      "from": "application-submitted",
+      "to": "application-issued",
+      "trigger": "issue-application"
+    },
+    {
+      "from": "application-issued",
+      "to": "awaiting-spouse-response",
+      "trigger": "await-response",
+      "condition": "sole-application"
+    },
+    {
+      "from": "application-issued",
+      "to": "20-week-waiting-period",
+      "trigger": "begin-waiting-period",
+      "condition": "joint-application"
+    },
+    {
+      "from": "awaiting-spouse-response",
+      "to": "spouse-acknowledged",
+      "trigger": "spouse-responds"
+    },
+    {
+      "from": "awaiting-spouse-response",
+      "to": "handed-off",
+      "trigger": "handoff",
+      "condition": "spouse-disputes"
+    },
+    {
+      "from": "spouse-acknowledged",
+      "to": "20-week-waiting-period",
+      "trigger": "begin-waiting-period"
+    },
+    {
+      "from": "20-week-waiting-period",
+      "to": "conditional-order-applied",
+      "trigger": "apply-conditional-order"
+    },
+    {
+      "from": "conditional-order-applied",
+      "to": "conditional-order-granted",
+      "trigger": "grant-conditional-order"
+    },
+    {
+      "from": "conditional-order-granted",
+      "to": "6-week-waiting-period",
+      "trigger": "begin-final-waiting-period"
+    },
+    {
+      "from": "6-week-waiting-period",
+      "to": "final-order-applied",
+      "trigger": "apply-final-order"
+    },
+    {
+      "from": "final-order-applied",
+      "to": "final-order-granted",
+      "trigger": "grant-final-order"
+    },
+    {
+      "from": "final-order-granted",
+      "to": "completed",
+      "trigger": "complete"
+    }
+  ]
+}

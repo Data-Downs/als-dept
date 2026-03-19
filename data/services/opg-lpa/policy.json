@@ -1,0 +1,129 @@
+{
+  "id": "opg-lpa.eligibility",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "age-minimum-donor",
+      "description": "Donor (person making the LPA) must be at least 18 years old",
+      "condition": {
+        "field": "donor_age",
+        "operator": ">=",
+        "value": 18
+      },
+      "reason_if_failed": "You must be at least 18 years old to make a lasting power of attorney",
+      "evidence_source": "identity-verified"
+    },
+    {
+      "id": "mental-capacity-donor",
+      "description": "Donor must have mental capacity to make their own decisions",
+      "condition": {
+        "field": "donor_mental_capacity",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "You must have mental capacity (the ability to make your own decisions) when you make your LPA",
+      "triggers_handoff": true
+    },
+    {
+      "id": "age-minimum-attorney",
+      "description": "All attorneys must be at least 18 years old",
+      "condition": {
+        "field": "attorneys_age_minimum",
+        "operator": ">=",
+        "value": 18
+      },
+      "reason_if_failed": "Your attorney needs to be 18 or over",
+      "evidence_source": "attorney-details-verified"
+    },
+    {
+      "id": "attorney-mental-capacity",
+      "description": "Attorney must have mental capacity to make their own decisions",
+      "condition": {
+        "field": "attorney_mental_capacity",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "You must appoint someone who has the mental capacity to make their own decisions",
+      "evidence_source": "attorney-details-verified"
+    },
+    {
+      "id": "attorney-not-bankrupt-property",
+      "description": "For property and financial affairs LPA, attorney cannot be bankrupt or subject to DRO",
+      "condition": {
+        "field": "attorney_bankruptcy_status",
+        "operator": "not-exists"
+      },
+      "reason_if_failed": "You cannot choose someone who is subject to a Debt Relief Order or someone who is bankrupt if you're making a lasting power of attorney for property and financial affairs",
+      "evidence_source": "attorney-financial-check"
+    },
+    {
+      "id": "jurisdiction",
+      "description": "LPA is legally binding only in England and Wales",
+      "condition": {
+        "field": "lpa_jurisdiction",
+        "operator": "in",
+        "value": [
+          "England",
+          "Wales"
+        ]
+      },
+      "reason_if_failed": "This LPA will be legally binding only in England and Wales. Use a different service for Scotland or Northern Ireland.",
+      "alternative_service": "scotland-power-of-attorney"
+    },
+    {
+      "id": "certificate-provider-available",
+      "description": "Must have a certificate provider who confirms you're making the LPA by choice",
+      "condition": {
+        "field": "certificate_provider",
+        "operator": "exists"
+      },
+      "reason_if_failed": "You need a certificate provider to confirm you're making the LPA by choice and you understand what you're doing",
+      "evidence_source": "certificate-provider-verified"
+    }
+  ],
+  "explanation_template": "LPA eligibility: {outcome}. Remember, you can make one or both types of LPA (health & welfare, property & financial affairs).",
+  "edge_cases": [
+    {
+      "id": "loss-of-capacity-during-application",
+      "description": "Donor loses mental capacity during the application process",
+      "detection": "mental_capacity_assessment_failed",
+      "action": "Application cannot proceed. If LPA is not yet registered, it cannot be completed. Refer to Court of Protection for deputyship instead."
+    },
+    {
+      "id": "attorney-becomes-bankrupt",
+      "description": "Attorney becomes bankrupt or subject to DRO after appointment (property & financial affairs LPA only)",
+      "detection": "attorney_bankruptcy_notification",
+      "action": "Property & financial affairs LPA will end automatically. If replacement attorneys exist, they will take over. Otherwise, LPA ends."
+    },
+    {
+      "id": "attorney-loses-capacity",
+      "description": "Attorney loses mental capacity after being appointed",
+      "detection": "attorney_capacity_concern",
+      "action": "Attorney can no longer act. If replacement attorneys exist or other attorneys can act jointly and severally, LPA continues. Otherwise, LPA may end."
+    },
+    {
+      "id": "concerns-during-notification",
+      "description": "People to notify raise objections during 3-week notification period",
+      "detection": "notification_objection_received",
+      "action": "OPG will investigate concerns. Registration may be delayed or refused. Court of Protection may need to make a decision."
+    },
+    {
+      "id": "attorney-divorce",
+      "description": "Attorney divorces donor or ends civil partnership (if attorney is spouse/partner)",
+      "detection": "divorce_notification",
+      "action": "Attorney's appointment ends automatically. If replacement attorneys exist or other attorneys can act jointly and severally, LPA continues."
+    },
+    {
+      "id": "vulnerable-donor",
+      "description": "Concerns about undue influence or coercion",
+      "detection": "safeguarding_concern",
+      "action": "Certificate provider should not sign. If already registered, report to OPG. May require Court of Protection involvement."
+    },
+    {
+      "id": "attorney-conflict-of-interest",
+      "description": "Attorney has potential conflict of interest with donor's affairs",
+      "detection": "conflict_identified",
+      "action": "Attorney must act in donor's best interests. If serious conflict, may need to remove attorney or involve Court of Protection."
+    }
+  ]
+}

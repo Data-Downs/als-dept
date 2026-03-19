@@ -1,0 +1,83 @@
+{
+  "id": "la-bus-pass.consent",
+  "version": "1.0.0",
+  "grants": [
+    {
+      "id": "identity-verification",
+      "description": "Verify your identity using your GOV.UK One Login credentials",
+      "data_shared": [
+        "full_name",
+        "date_of_birth",
+        "national_insurance_number"
+      ],
+      "source": "one-login",
+      "purpose": "To confirm your identity before processing the bus pass application",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "age-verification",
+      "description": "Verify you have reached State Pension age",
+      "data_shared": [
+        "state_pension_age_reached",
+        "state_pension_date"
+      ],
+      "source": "dwp-pension-records",
+      "purpose": "To confirm eligibility for the free bus pass based on State Pension age",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "address-confirmation",
+      "description": "Confirm your current address to determine the issuing local authority",
+      "data_shared": [
+        "address_line_1",
+        "address_line_2",
+        "city",
+        "postcode",
+        "local_authority_code"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To identify which local authority will issue your pass and where to send it",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "photo-sharing",
+      "description": "Provide a photo for your bus pass card",
+      "data_shared": [
+        "passport_photo"
+      ],
+      "source": "hmpo-passport-office",
+      "purpose": "Your photo will appear on the physical bus pass card for identification purposes",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "disability-evidence",
+      "description": "Share evidence of qualifying disability (if applying on disability grounds)",
+      "data_shared": [
+        "pip_award_letter",
+        "blue_badge_number",
+        "medical_certification"
+      ],
+      "source": "dwp-pip-records",
+      "purpose": "To verify eligibility for disabled persons' bus pass if under State Pension age",
+      "duration": "session",
+      "required": false
+    }
+  ],
+  "revocation": {
+    "mechanism": "Contact your local authority or revoke through your GOV.UK account",
+    "effect": "Application will be cancelled if consent is revoked before the pass is issued"
+  },
+  "delegation": {
+    "agent_identity": "GOV.UK AI Agent",
+    "scopes": [
+      "read-personal-data",
+      "verify-eligibility",
+      "submit-to-local-authority"
+    ],
+    "limitations": "Agent cannot upload photos on your behalf without your explicit approval. Agent cannot change your registered address without your confirmation. Agent cannot appeal a rejection decision."
+  }
+}

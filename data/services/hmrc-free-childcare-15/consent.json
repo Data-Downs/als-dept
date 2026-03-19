@@ -1,0 +1,86 @@
+{
+  "id": "hmrc.free-childcare-15.consent",
+  "version": "1.0.0",
+  "grants": [
+    {
+      "id": "parent-identity-verification",
+      "description": "Verify your identity as the parent or legal guardian using your GOV.UK One Login credentials",
+      "data_shared": [
+        "full_name",
+        "date_of_birth",
+        "national_insurance_number"
+      ],
+      "source": "one-login",
+      "purpose": "To confirm your identity and link your Tax-Free Childcare account",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "child-details-sharing",
+      "description": "Share your child's details to determine their eligibility for free childcare",
+      "data_shared": [
+        "child_full_name",
+        "child_date_of_birth",
+        "child_address",
+        "birth_certificate_reference"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To verify your child's age and residency for the universal 15 hours free childcare entitlement",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "residency-status-check",
+      "description": "Check your and your child's residency and immigration status",
+      "data_shared": [
+        "uk_residency_status",
+        "immigration_status",
+        "right_to_reside"
+      ],
+      "source": "home-office",
+      "purpose": "To confirm you and your child meet the residency requirements for free childcare",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "childcare-provider-information",
+      "description": "Share information about your chosen childcare provider when you redeem your entitlement",
+      "data_shared": [
+        "provider_name",
+        "provider_ofsted_number",
+        "start_date"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To enable HMRC to pay your childcare provider for the free hours",
+      "duration": "until-revoked",
+      "required": false
+    },
+    {
+      "id": "hmrc-records-update",
+      "description": "Update your HMRC records with your child's entitlement status",
+      "data_shared": [
+        "entitlement_code",
+        "entitlement_start_date",
+        "hours_awarded"
+      ],
+      "source": "hmrc-childcare-service",
+      "purpose": "To maintain accurate records of your child's entitlement and enable reconfirmation",
+      "duration": "until-revoked",
+      "required": true
+    }
+  ],
+  "revocation": {
+    "mechanism": "Contact HMRC Childcare Service or manage through your Tax-Free Childcare online account",
+    "effect": "Entitlement will be cancelled and your childcare provider will no longer receive payment for free hours"
+  },
+  "delegation": {
+    "agent_identity": "GOV.UK AI Agent",
+    "scopes": [
+      "read-child-details",
+      "check-eligibility",
+      "submit-application",
+      "view-entitlement-code"
+    ],
+    "limitations": "Agent cannot modify your child's core details (name, date of birth) without explicit verification. Agent cannot select or change childcare providers on your behalf. Agent cannot revoke consent without your direct instruction. Agent can only view and explain your entitlement code, not share it with third parties."
+  }
+}

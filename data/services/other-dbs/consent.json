@@ -1,0 +1,88 @@
+{
+  "id": "other-dbs.consent",
+  "version": "1.0.0",
+  "grants": [
+    {
+      "id": "employee-identity-verification",
+      "description": "Employee provides identity documents for verification",
+      "data_shared": [
+        "full_name",
+        "date_of_birth",
+        "address_history",
+        "national_insurance_number",
+        "passport_number",
+        "driving_licence_number"
+      ],
+      "source": "employee-provided",
+      "purpose": "To verify the identity of the employee before conducting the criminal record check",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "criminal-record-disclosure",
+      "description": "Consent to disclose criminal record information to employer",
+      "data_shared": [
+        "unspent_convictions",
+        "unspent_cautions",
+        "spent_convictions",
+        "spent_cautions"
+      ],
+      "source": "police-national-computer",
+      "purpose": "To allow the employer to assess suitability for the role based on criminal record",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "enhanced-police-information",
+      "description": "Consent to disclose local police information (enhanced checks only)",
+      "data_shared": [
+        "local_police_intelligence",
+        "relevant_non_conviction_information"
+      ],
+      "source": "local-police-forces",
+      "purpose": "To provide additional information held by local police that may be relevant to the role",
+      "duration": "until-revoked",
+      "required": false
+    },
+    {
+      "id": "barred-list-check",
+      "description": "Consent to check barred lists (enhanced with barred lists only)",
+      "data_shared": [
+        "children_barred_list_status",
+        "adults_barred_list_status"
+      ],
+      "source": "dbs-barred-lists",
+      "purpose": "To confirm whether the employee is barred from working with children or vulnerable adults",
+      "duration": "until-revoked",
+      "required": false
+    },
+    {
+      "id": "employer-verification",
+      "description": "Verify employer's eligibility to request DBS checks",
+      "data_shared": [
+        "employer_name",
+        "employer_registration_number",
+        "organisation_type",
+        "umbrella_body_details"
+      ],
+      "source": "employer-provided",
+      "purpose": "To confirm the employer is authorized to request DBS checks",
+      "duration": "session",
+      "required": true
+    }
+  ],
+  "revocation": {
+    "mechanism": "Contact DBS customer services or withdraw consent through the application before certificate is issued",
+    "effect": "Application will be cancelled and any fees already paid will not be refunded. The employer will be notified of withdrawal."
+  },
+  "delegation": {
+    "agent_identity": "GOV.UK AI Agent",
+    "scopes": [
+      "verify-employer-registration",
+      "select-check-type",
+      "submit-employee-details",
+      "track-application-status"
+    ],
+    "limitations": "Agent cannot provide employee identity documents on employee's behalf. Agent cannot make payment without explicit employer authorization. Agent cannot grant consent on behalf of employee - employee must explicitly consent to criminal record disclosure. Agent cannot verify or assess the final certificate - employer must physically review the certificate sent to employee."
+  }
+}

@@ -1,0 +1,101 @@
+{
+  "id": "nhs.free-prescriptions-pregnancy.states",
+  "version": "1.0.0",
+  "states": [
+    {
+      "id": "not-started",
+      "type": "initial"
+    },
+    {
+      "id": "identity-verified"
+    },
+    {
+      "id": "eligibility-checked"
+    },
+    {
+      "id": "consent-given"
+    },
+    {
+      "id": "details-submitted"
+    },
+    {
+      "id": "gp-verification"
+    },
+    {
+      "id": "certificate-issued",
+      "receipt": true
+    },
+    {
+      "id": "completed",
+      "type": "terminal",
+      "receipt": true
+    },
+    {
+      "id": "rejected",
+      "type": "terminal",
+      "receipt": true
+    },
+    {
+      "id": "handed-off",
+      "type": "terminal",
+      "receipt": true
+    }
+  ],
+  "transitions": [
+    {
+      "from": "not-started",
+      "to": "identity-verified",
+      "trigger": "verify-identity"
+    },
+    {
+      "from": "identity-verified",
+      "to": "eligibility-checked",
+      "trigger": "check-eligibility"
+    },
+    {
+      "from": "eligibility-checked",
+      "to": "consent-given",
+      "trigger": "grant-consent",
+      "condition": "eligible"
+    },
+    {
+      "from": "eligibility-checked",
+      "to": "rejected",
+      "trigger": "reject",
+      "condition": "not-eligible"
+    },
+    {
+      "from": "eligibility-checked",
+      "to": "handed-off",
+      "trigger": "handoff",
+      "condition": "edge-case-or-no-gp"
+    },
+    {
+      "from": "consent-given",
+      "to": "details-submitted",
+      "trigger": "submit-details"
+    },
+    {
+      "from": "details-submitted",
+      "to": "gp-verification",
+      "trigger": "verify-pregnancy"
+    },
+    {
+      "from": "gp-verification",
+      "to": "certificate-issued",
+      "trigger": "issue-certificate",
+      "condition": "pregnancy-confirmed"
+    },
+    {
+      "from": "gp-verification",
+      "to": "rejected",
+      "trigger": "reject-application",
+      "condition": "pregnancy-not-confirmed"
+    },
+    {
+      "from": "certificate-issued",
+      "to": "completed",
+      "trigger": "complete"
+    }
+  ]
+}

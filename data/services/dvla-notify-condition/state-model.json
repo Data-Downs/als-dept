@@ -1,0 +1,121 @@
+{
+  "id": "dvla-notify-condition.states",
+  "version": "1.0.0",
+  "states": [
+    {
+      "id": "not-started",
+      "type": "initial"
+    },
+    {
+      "id": "identity-verified"
+    },
+    {
+      "id": "eligibility-checked"
+    },
+    {
+      "id": "condition-identified"
+    },
+    {
+      "id": "notification-requirement-assessed",
+      "receipt": true
+    },
+    {
+      "id": "consent-given"
+    },
+    {
+      "id": "medical-details-provided"
+    },
+    {
+      "id": "notification-submitted",
+      "receipt": true
+    },
+    {
+      "id": "completed",
+      "type": "terminal",
+      "receipt": true
+    },
+    {
+      "id": "no-action-required",
+      "type": "terminal",
+      "receipt": true
+    },
+    {
+      "id": "handed-off",
+      "type": "terminal",
+      "receipt": true
+    },
+    {
+      "id": "licence-surrendered",
+      "type": "terminal",
+      "receipt": true
+    }
+  ],
+  "transitions": [
+    {
+      "from": "not-started",
+      "to": "identity-verified",
+      "trigger": "verify-identity"
+    },
+    {
+      "from": "identity-verified",
+      "to": "eligibility-checked",
+      "trigger": "check-eligibility"
+    },
+    {
+      "from": "eligibility-checked",
+      "to": "condition-identified",
+      "trigger": "identify-condition",
+      "condition": "eligible"
+    },
+    {
+      "from": "eligibility-checked",
+      "to": "handed-off",
+      "trigger": "handoff",
+      "condition": "requires-paper-form-or-ni"
+    },
+    {
+      "from": "condition-identified",
+      "to": "notification-requirement-assessed",
+      "trigger": "assess-notification-requirement"
+    },
+    {
+      "from": "notification-requirement-assessed",
+      "to": "no-action-required",
+      "trigger": "complete",
+      "condition": "not-notifiable"
+    },
+    {
+      "from": "notification-requirement-assessed",
+      "to": "consent-given",
+      "trigger": "grant-consent",
+      "condition": "notifiable-and-online-eligible"
+    },
+    {
+      "from": "notification-requirement-assessed",
+      "to": "handed-off",
+      "trigger": "handoff",
+      "condition": "paper-form-required"
+    },
+    {
+      "from": "notification-requirement-assessed",
+      "to": "licence-surrendered",
+      "trigger": "surrender-licence",
+      "condition": "voluntary-surrender"
+    },
+    {
+      "from": "consent-given",
+      "to": "medical-details-provided",
+      "trigger": "provide-medical-details"
+    },
+    {
+      "from": "medical-details-provided",
+      "to": "notification-submitted",
+      "trigger": "submit-notification"
+    },
+    {
+      "from": "notification-submitted",
+      "to": "completed",
+      "trigger": "complete"
+    }
+  ]
+}

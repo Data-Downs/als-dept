@@ -1,0 +1,102 @@
+{
+  "id": "hmrc.update-records.consent",
+  "version": "1.0.0",
+  "grants": [
+    {
+      "id": "identity-verification",
+      "description": "Verify your identity using your GOV.UK sign in credentials",
+      "data_shared": [
+        "full_name",
+        "date_of_birth",
+        "national_insurance_number"
+      ],
+      "source": "one-login",
+      "purpose": "To confirm you are who you say you are before updating HMRC records",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "current-record-access",
+      "description": "Access your current HMRC records to display existing information",
+      "data_shared": [
+        "current_name",
+        "current_address",
+        "marital_status",
+        "tax_code",
+        "employment_records",
+        "self_assessment_status"
+      ],
+      "source": "hmrc-records",
+      "purpose": "To show you what information HMRC currently holds and what will change",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "record-update-authority",
+      "description": "Authorise HMRC to update your personal records",
+      "data_shared": [
+        "new_name",
+        "new_address",
+        "new_marital_status",
+        "supporting_documents"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To update HMRC records with your new personal information",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "tax-code-recalculation",
+      "description": "Allow HMRC to recalculate your tax code based on changes",
+      "data_shared": [
+        "income_changes",
+        "marital_status_change",
+        "employment_status"
+      ],
+      "source": "hmrc-records",
+      "purpose": "Changes to your circumstances may affect your tax code, benefits or state pension entitlement",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "dwp-notification",
+      "description": "Share your updated details with the Department for Work and Pensions (DWP)",
+      "data_shared": [
+        "name_change",
+        "address_change",
+        "marital_status_change"
+      ],
+      "source": "hmrc-records",
+      "purpose": "DWP needs updated information to ensure benefit payments and State Pension are correct",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "correspondence-address",
+      "description": "Confirm your correspondence address for HMRC letters and notices",
+      "data_shared": [
+        "address_line_1",
+        "address_line_2",
+        "city",
+        "postcode"
+      ],
+      "source": "citizen-provided",
+      "purpose": "HMRC will send tax-related correspondence and PAYE coding notices to this address",
+      "duration": "until-revoked",
+      "required": true
+    }
+  ],
+  "revocation": {
+    "mechanism": "Contact HMRC by phone on 0300 200 3300 or through your GOV.UK account",
+    "effect": "Record changes will be cancelled if consent is revoked before submission. After submission, you will need to contact HMRC to reverse the changes."
+  },
+  "delegation": {
+    "agent_identity": "GOV.UK AI Agent",
+    "scopes": [
+      "read-current-records",
+      "submit-change-request",
+      "receive-confirmation"
+    ],
+    "limitations": "Agent cannot provide supporting documents (e.g. marriage certificate, deed poll) on your behalf. Agent cannot confirm changes that affect benefits or tax without your explicit approval at the review stage. Agent cannot update business records. For sensitive changes (bereavement, gender change), agent will hand off to human HMRC staff."
+  }
+}

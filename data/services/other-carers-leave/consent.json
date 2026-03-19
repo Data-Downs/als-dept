@@ -1,0 +1,71 @@
+{
+  "id": "other-carers-leave.consent",
+  "version": "1.0.0",
+  "grants": [
+    {
+      "id": "identity-verification",
+      "description": "Verify employee identity to process carer's leave request",
+      "data_shared": [
+        "full_name",
+        "employee_id",
+        "date_of_birth"
+      ],
+      "source": "employer-hr-system",
+      "purpose": "To confirm the identity of the employee making the carer's leave request",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "employment-records-access",
+      "description": "Access employment records to verify eligibility and entitlement",
+      "data_shared": [
+        "employment_start_date",
+        "working_pattern",
+        "weekly_hours",
+        "previous_carers_leave_taken"
+      ],
+      "source": "employer-hr-system",
+      "purpose": "To calculate entitlement and verify the employee hasn't exceeded their annual allowance",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "leave-request-details",
+      "description": "Provide details of the carer's leave request",
+      "data_shared": [
+        "requested_dates",
+        "duration",
+        "dependant_relationship",
+        "care_type"
+      ],
+      "source": "employee-provided",
+      "purpose": "To process the statutory carer's leave request and maintain accurate leave records",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "dependant-information",
+      "description": "Declare information about the dependant requiring care (no evidence required by law)",
+      "data_shared": [
+        "dependant_care_need_type"
+      ],
+      "source": "employee-declaration",
+      "purpose": "To confirm the request meets statutory criteria for carer's leave",
+      "duration": "session",
+      "required": true
+    }
+  ],
+  "revocation": {
+    "mechanism": "Contact HR department or withdraw request through employer system",
+    "effect": "Request will be cancelled if consent is revoked before approval"
+  },
+  "delegation": {
+    "agent_identity": "GOV.UK AI Agent",
+    "scopes": [
+      "read-employment-data",
+      "submit-leave-request",
+      "check-eligibility"
+    ],
+    "limitations": "Agent cannot provide false information about care needs. Agent cannot override notice period requirements. Agent cannot force employer to approve request. Final approval decision rests with employer after assessment."
+  }
+}

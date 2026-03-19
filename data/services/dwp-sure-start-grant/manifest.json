@@ -1,0 +1,19 @@
+{
+  "id": "dwp-sure-start-grant",
+  "version": "1.0.0",
+  "name": "Sure Start Maternity Grant",
+  "description": "One-off £500 if on qualifying benefits. Usually first child only. Apply within 3 months of birth.",
+  "department": "DWP",
+  "input_schema": {
+    "type": "object"
+  },
+  "output_schema": {
+    "type": "object"
+  },
+  "source": "graph",
+  "serviceType": "grant",
+  "govuk_url": "https://www.gov.uk/sure-start-maternity-grant",
+  "eligibility_summary": "One-off £500 payment to help with costs of a new baby. Usually only for the first child. Must be on a qualifying benefit. Apply from 11 weeks before due date to 3 months after birth.",
+  "proactive": true,
+  "gated": true
+}

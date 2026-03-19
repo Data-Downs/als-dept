@@ -1,0 +1,101 @@
+{
+  "id": "dvla-name-change.consent",
+  "version": "1.0.0",
+  "grants": [
+    {
+      "id": "identity-verification",
+      "description": "Verify your identity using your GOV.UK One Login or existing driving licence details",
+      "data_shared": [
+        "full_name",
+        "previous_name",
+        "date_of_birth",
+        "driving_licence_number"
+      ],
+      "source": "one-login",
+      "purpose": "To confirm you are the licence holder requesting the name change",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "name-change-evidence",
+      "description": "Share evidence of your legal name change",
+      "data_shared": [
+        "marriage_certificate",
+        "civil_partnership_certificate",
+        "deed_poll",
+        "statutory_declaration",
+        "new_legal_name"
+      ],
+      "source": "citizen-provided",
+      "purpose": "DVLA requires original legal documents proving your name change to update your driving licence",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "address-confirmation",
+      "description": "Confirm your current address for delivery of the new licence",
+      "data_shared": [
+        "address_line_1",
+        "address_line_2",
+        "city",
+        "postcode"
+      ],
+      "source": "citizen-provided",
+      "purpose": "The new photocard licence will be posted to this address",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "photo-sharing",
+      "description": "Share a recent passport-type photo (required if you have a paper licence or are updating your photo)",
+      "data_shared": [
+        "passport_photo"
+      ],
+      "source": "citizen-provided",
+      "purpose": "DVLA will use this photo for your new photocard licence if you currently have a paper licence or are updating your photo",
+      "duration": "session",
+      "required": false
+    },
+    {
+      "id": "old-licence-details",
+      "description": "Provide details of your current driving licence",
+      "data_shared": [
+        "driving_licence_number",
+        "licence_issue_date",
+        "licence_type",
+        "vehicle_categories"
+      ],
+      "source": "dvla-existing-records",
+      "purpose": "To identify your current licence and transfer all entitlements to the new licence with your updated name",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "payment-details",
+      "description": "Share payment information if a fee applies (£17 for photo change or £20 for lost/stolen licence)",
+      "data_shared": [
+        "payment_method",
+        "payment_amount",
+        "transaction_reference"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To process the fee for photo change or replacement of lost/stolen licence",
+      "duration": "session",
+      "required": false
+    }
+  ],
+  "revocation": {
+    "mechanism": "Contact DVLA by phone on 0300 790 6801 or in writing before sending your application",
+    "effect": "Application will be cancelled if consent is revoked before submission. You cannot revoke consent after DVLA has received your documents and old licence."
+  },
+  "delegation": {
+    "agent_identity": "GOV.UK AI Agent",
+    "scopes": [
+      "read-personal-data",
+      "read-driving-licence-records",
+      "calculate-fees",
+      "prepare-application-form"
+    ],
+    "limitations": "Agent cannot make payment on your behalf without explicit confirmation. Agent cannot submit the application without your final approval of all details. Agent cannot send your original documents — you must post these yourself to DVLA. Agent cannot change the legal name on your evidence documents."
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "id": "other-disabled-railcard",
+  "version": "1.0.0",
+  "name": "Disabled Persons Railcard",
+  "description": "One third off most rail fares. Various disability benefits qualify automatically.",
+  "department": "Rail Delivery Group",
+  "input_schema": {
+    "type": "object"
+  },
+  "output_schema": {
+    "type": "object"
+  },
+  "source": "graph",
+  "serviceType": "entitlement",
+  "govuk_url": "https://www.disabledpersons-railcard.co.uk/",
+  "eligibility_summary": "1/3 off most rail fares for the holder and a companion. Qualifying conditions include receiving PIP, DLA, Attendance Allowance, being registered blind/partially sighted, or having epilepsy or severe mental or physical disability. Costs £20/year.",
+  "proactive": true,
+  "gated": true
+}

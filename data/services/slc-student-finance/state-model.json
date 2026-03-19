@@ -1,0 +1,183 @@
+{
+  "id": "slc.student-finance.states",
+  "version": "1.0.0",
+  "states": [
+    {
+      "id": "not-started",
+      "type": "initial"
+    },
+    {
+      "id": "identity-verified"
+    },
+    {
+      "id": "eligibility-checked"
+    },
+    {
+      "id": "consent-given"
+    },
+    {
+      "id": "account-accessed"
+    },
+    {
+      "id": "course-details-provided"
+    },
+    {
+      "id": "household-income-declared"
+    },
+    {
+      "id": "bank-details-provided"
+    },
+    {
+      "id": "evidence-uploaded"
+    },
+    {
+      "id": "parental-consent-requested"
+    },
+    {
+      "id": "application-submitted",
+      "receipt": true
+    },
+    {
+      "id": "assessment-in-progress"
+    },
+    {
+      "id": "approved",
+      "type": "terminal",
+      "receipt": true
+    },
+    {
+      "id": "partially-approved",
+      "type": "terminal",
+      "receipt": true
+    },
+    {
+      "id": "rejected",
+      "type": "terminal",
+      "receipt": true
+    },
+    {
+      "id": "handed-off",
+      "type": "terminal",
+      "receipt": true
+    }
+  ],
+  "transitions": [
+    {
+      "from": "not-started",
+      "to": "identity-verified",
+      "trigger": "verify-identity"
+    },
+    {
+      "from": "identity-verified",
+      "to": "eligibility-checked",
+      "trigger": "check-eligibility"
+    },
+    {
+      "from": "eligibility-checked",
+      "to": "consent-given",
+      "trigger": "grant-consent",
+      "condition": "eligible"
+    },
+    {
+      "from": "eligibility-checked",
+      "to": "rejected",
+      "trigger": "reject",
+      "condition": "not-eligible"
+    },
+    {
+      "from": "eligibility-checked",
+      "to": "handed-off",
+      "trigger": "handoff",
+      "condition": "wrong-jurisdiction"
+    },
+    {
+      "from": "consent-given",
+      "to": "account-accessed",
+      "trigger": "access-account"
+    },
+    {
+      "from": "account-accessed",
+      "to": "course-details-provided",
+      "trigger": "provide-course-details"
+    },
+    {
+      "from": "course-details-provided",
+      "to": "household-income-declared",
+      "trigger": "declare-household-income"
+    },
+    {
+      "from": "course-details-provided",
+      "to": "bank-details-provided",
+      "trigger": "skip-income-declaration",
+      "condition": "care-leaver-or-estranged"
+    },
+    {
+      "from": "household-income-declared",
+      "to": "parental-consent-requested",
+      "trigger": "request-parental-consent",
+      "condition": "requires-parental-income"
+    },
+    {
+      "from": "household-income-declared",
+      "to": "bank-details-provided",
+      "trigger": "proceed-to-bank-details",
+      "condition": "income-verified"
+    },
+    {
+      "from": "parental-consent-requested",
+      "to": "bank-details-provided",
+      "trigger": "parental-consent-received"
+    },
+    {
+      "from": "bank-details-provided",
+      "to": "evidence-uploaded",
+      "trigger": "upload-evidence",
+      "condition": "evidence-required"
+    },
+    {
+      "from": "bank-details-provided",
+      "to": "application-submitted",
+      "trigger": "submit-application",
+      "condition": "no-evidence-required"
+    },
+    {
+      "from": "evidence-uploaded",
+      "to": "application-submitted",
+      "trigger": "submit-application"
+    },
+    {
+      "from": "application-submitted",
+      "to": "assessment-in-progress",
+      "trigger": "begin-assessment"
+    },
+    {
+      "from": "assessment-in-progress",
+      "to": "approved",
+      "trigger": "approve",
+      "condition": "fully-eligible"
+    },
+    {
+      "from": "assessment-in-progress",
+      "to": "partially-approved",
+      "trigger": "approve-partially",
+      "condition": "limited-funding-eligible"
+    },
+    {
+      "from": "assessment-in-progress",
+      "to": "rejected",
+      "trigger": "reject",
+      "condition": "not-eligible"
+    },
+    {
+      "from": "assessment-in-progress",
+      "to": "handed-off",
+      "trigger": "handoff",
+      "condition": "requires-manual-review"
+    },
+    {
+      "from": "account-accessed",
+      "to": "account-accessed",
+      "trigger": "save-and-return"
+    }
+  ]
+}

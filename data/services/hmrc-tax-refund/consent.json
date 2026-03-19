@@ -1,0 +1,89 @@
+{
+  "id": "hmrc.tax-refund.consent",
+  "version": "1.0.0",
+  "grants": [
+    {
+      "id": "identity-verification",
+      "description": "Verify your identity using your Government Gateway credentials",
+      "data_shared": [
+        "full_name",
+        "date_of_birth",
+        "national_insurance_number"
+      ],
+      "source": "government-gateway",
+      "purpose": "To confirm your identity and link to your tax records before processing the refund claim",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "paye-records-access",
+      "description": "Access your PAYE employment and tax payment records for the current tax year",
+      "data_shared": [
+        "employment_history",
+        "paye_payments",
+        "tax_codes",
+        "p45_records",
+        "employers_details"
+      ],
+      "source": "hmrc-paye-system",
+      "purpose": "To verify employment details, calculate tax paid and owed, and determine refund amount",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "p45-details",
+      "description": "Provide details from your P45 form including total pay and tax paid",
+      "data_shared": [
+        "leaving_date",
+        "pay_and_tax_to_date",
+        "tax_code_at_leaving",
+        "employer_paye_reference"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To confirm employment end date and calculate correct tax position for refund",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "bank-account-details",
+      "description": "Provide bank account details for refund payment",
+      "data_shared": [
+        "account_name",
+        "sort_code",
+        "account_number"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To send your tax refund payment directly to your bank account",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "income-declaration",
+      "description": "Declare other sources of income and confirm you are not returning to work before April 5th",
+      "data_shared": [
+        "other_income_sources",
+        "benefit_receipts",
+        "returning_to_work_status",
+        "self_employment_status"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To ensure accurate refund calculation and confirm eligibility for P50 refund",
+      "duration": "session",
+      "required": true
+    }
+  ],
+  "revocation": {
+    "mechanism": "Contact HMRC or withdraw through your Government Gateway account",
+    "effect": "Application will be cancelled if consent is revoked before completion. Already-processed refunds cannot be reversed through consent revocation."
+  },
+  "delegation": {
+    "agent_identity": "HMRC AI Agent",
+    "scopes": [
+      "read-paye-records",
+      "read-employment-history",
+      "submit-p50-application",
+      "read-personal-allowance"
+    ],
+    "limitations": "Agent cannot provide bank account details without explicit user confirmation of each digit. Agent cannot declare income sources without direct user attestation. Agent cannot sign the final declaration on your behalf - you must review and confirm all details are correct."
+  }
+}

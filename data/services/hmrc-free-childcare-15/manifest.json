@@ -1,0 +1,19 @@
+{
+  "id": "hmrc-free-childcare-15",
+  "version": "1.0.0",
+  "name": "Free childcare — 15 hours",
+  "description": "From 9 months old. Universal entitlement. Via Tax-Free Childcare account.",
+  "department": "HMRC",
+  "input_schema": {
+    "type": "object"
+  },
+  "output_schema": {
+    "type": "object"
+  },
+  "source": "graph",
+  "serviceType": "entitlement",
+  "govuk_url": "https://www.gov.uk/help-paying-childcare/free-childcare-and-education-for-2-to-4-year-olds",
+  "eligibility_summary": "Universal 15 hours per week free childcare for children aged 9 months to 4 years. No income test. Apply via Childcare Choices / Tax-Free Childcare account.",
+  "proactive": true,
+  "gated": false
+}

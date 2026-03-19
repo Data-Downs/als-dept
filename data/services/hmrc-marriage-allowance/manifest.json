@@ -1,0 +1,19 @@
+{
+  "id": "hmrc-marriage-allowance",
+  "version": "1.0.0",
+  "name": "Marriage Allowance",
+  "description": "Transfer up to £1,260 of personal allowance if one partner earns below the threshold.",
+  "department": "HMRC",
+  "input_schema": {
+    "type": "object"
+  },
+  "output_schema": {
+    "type": "object"
+  },
+  "source": "graph",
+  "serviceType": "entitlement",
+  "govuk_url": "https://www.gov.uk/marriage-allowance",
+  "eligibility_summary": "Transfer up to £1,260 of unused Personal Allowance to your spouse/civil partner, saving up to £252/year in tax. Backdatable up to 4 years.",
+  "proactive": true,
+  "gated": true
+}

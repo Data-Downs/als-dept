@@ -1,0 +1,130 @@
+{
+  "id": "dwp.access-to-work.consent",
+  "version": "1.0.0",
+  "grants": [
+    {
+      "id": "identity-verification",
+      "description": "Verify your identity using your GOV.UK One Login credentials",
+      "data_shared": [
+        "full_name",
+        "date_of_birth",
+        "national_insurance_number",
+        "address"
+      ],
+      "source": "one-login",
+      "purpose": "To confirm your identity and check your eligibility for Access to Work",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "health-condition-disclosure",
+      "description": "Share information about your disability, illness or health condition and how it affects your work",
+      "data_shared": [
+        "condition_description",
+        "diagnosis_status",
+        "impact_on_work",
+        "support_requirements"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To assess what support you need and determine your grant amount",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "workplace-contact-verification",
+      "description": "Share details of a workplace contact who can confirm you work there",
+      "data_shared": [
+        "workplace_name",
+        "workplace_address",
+        "contact_name",
+        "contact_email",
+        "contact_phone"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To verify your employment status and arrange workplace assessment if needed",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "employer-contact-permission",
+      "description": "Give permission for Access to Work to contact your employer",
+      "data_shared": [
+        "employer_contact_details",
+        "discussion_of_condition",
+        "support_requirements"
+      ],
+      "source": "dwp-access-to-work",
+      "purpose": "To discuss reasonable adjustments, arrange workplace assessment, and coordinate support provision",
+      "duration": "until-revoked",
+      "required": false
+    },
+    {
+      "id": "workplace-assessment-permission",
+      "description": "Give permission for an assessor to view your workplace by video call or in person",
+      "data_shared": [
+        "workplace_layout",
+        "equipment_in_use",
+        "working_arrangements",
+        "accessibility_issues"
+      ],
+      "source": "workplace-assessment",
+      "purpose": "To determine what physical or equipment changes might help you in your role",
+      "duration": "session",
+      "required": false
+    },
+    {
+      "id": "financial-information",
+      "description": "Share your Unique Taxpayer Reference (UTR) if you are self-employed",
+      "data_shared": [
+        "utr_number",
+        "annual_turnover",
+        "self_employment_status"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To verify your self-employment status and confirm you meet the minimum turnover requirement",
+      "duration": "session",
+      "required": false
+    },
+    {
+      "id": "bank-details-for-payments",
+      "description": "Share bank account details for receiving grant payments or reimbursements",
+      "data_shared": [
+        "account_holder_name",
+        "sort_code",
+        "account_number"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To pay your approved Access to Work grant and reimburse approved expenses",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "benefits-information",
+      "description": "Share information about other benefits you receive, particularly ESA",
+      "data_shared": [
+        "benefit_types",
+        "esa_status",
+        "work_hours_if_on_esa"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To ensure Access to Work does not affect your other benefits and you meet eligibility criteria",
+      "duration": "until-revoked",
+      "required": false
+    }
+  ],
+  "revocation": {
+    "mechanism": "Contact Access to Work helpline on 0800 121 7479 or email to revoke consent",
+    "effect": "Application will be withdrawn if consent is revoked before decision. Grant may be withdrawn if consent is revoked after approval."
+  },
+  "delegation": {
+    "agent_identity": "GOV.UK AI Agent",
+    "scopes": [
+      "read-personal-data",
+      "read-health-data",
+      "submit-application-to-dwp",
+      "check-eligibility",
+      "communicate-with-adviser"
+    ],
+    "limitations": "Agent cannot provide medical advice or diagnosis. Agent cannot consent to employer contact on your behalf. Agent cannot consent to workplace assessment without your explicit permission. Agent cannot accept or reject a grant offer on your behalf. Agent cannot provide bank details without your confirmation. All sensitive health information requires your explicit review before submission."
+  }
+}

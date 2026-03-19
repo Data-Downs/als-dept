@@ -1,0 +1,83 @@
+{
+  "id": "other-pupil-premium.eligibility",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "child-on-roll",
+      "description": "Child must be on the school roll in England",
+      "condition": {
+        "field": "child_on_school_roll",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "Your child must be registered at a state-funded school in England to qualify for Pupil Premium",
+      "evidence_source": "school-records"
+    },
+    {
+      "id": "fsm-history",
+      "description": "Child must have qualified for Free School Meals at any point in the last 6 years",
+      "condition": {
+        "field": "ever_qualified_for_fsm",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "Your child must have qualified for Free School Meals at some point to be eligible for Pupil Premium. Check if you qualify for Free School Meals first.",
+      "alternative_service": "dfe.free-school-meals",
+      "evidence_source": "fsm-records"
+    },
+    {
+      "id": "england-school",
+      "description": "School must be in England",
+      "condition": {
+        "field": "school_jurisdiction",
+        "operator": "==",
+        "value": "England"
+      },
+      "reason_if_failed": "Pupil Premium only applies to state-funded schools in England. Scotland, Wales, and Northern Ireland have different funding arrangements.",
+      "alternative_service": "devolved-equivalent"
+    },
+    {
+      "id": "state-funded",
+      "description": "School must be state-funded",
+      "condition": {
+        "field": "school_type",
+        "operator": "in",
+        "value": [
+          "state-primary",
+          "state-secondary",
+          "academy",
+          "free-school"
+        ]
+      },
+      "reason_if_failed": "Pupil Premium is only available for pupils at state-funded schools. Independent schools are not eligible.",
+      "evidence_source": "school-records"
+    }
+  ],
+  "explanation_template": "Pupil Premium eligibility for {child_name}: {outcome}",
+  "edge_cases": [
+    {
+      "id": "child-in-care",
+      "description": "Child is looked after by a local authority or was previously in care",
+      "detection": "looked_after_status",
+      "action": "Child qualifies for Pupil Premium Plus at a higher rate (£2,530). Virtual school head will manage allocation. Route to local authority."
+    },
+    {
+      "id": "service-child",
+      "description": "Child's parent is in the armed forces",
+      "detection": "armed_forces_parent",
+      "action": "Child qualifies for Service Premium (£335/year). Different eligibility criteria apply. Ensure school knows about armed forces status."
+    },
+    {
+      "id": "recently-moved-school",
+      "description": "Child has recently transferred between schools",
+      "detection": "school_transfer_recent",
+      "action": "FSM eligibility should transfer automatically. If not showing on new school's records, provide evidence of previous FSM qualification."
+    },
+    {
+      "id": "uncertain-fsm-history",
+      "description": "Parent unsure if child has ever qualified for FSM",
+      "detection": "fsm_history_unknown",
+      "action": "Check with local authority or previous schools. FSM eligibility at any point in last 6 years counts."
+    }
+  ]
+}

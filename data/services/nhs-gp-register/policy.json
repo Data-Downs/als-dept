@@ -1,0 +1,72 @@
+{
+  "id": "nhs.gp-register.eligibility",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "england-resident",
+      "description": "Applicant must be living in England",
+      "condition": {
+        "field": "country_of_residence",
+        "operator": "==",
+        "value": "England"
+      },
+      "reason_if_failed": "This service is for registering with a GP practice in England. For Scotland, Wales or Northern Ireland, contact your local health board.",
+      "alternative_service": "nhs.find-gp-scotland"
+    },
+    {
+      "id": "in-catchment-area",
+      "description": "Applicant must live within the GP practice's catchment area",
+      "condition": {
+        "field": "postcode",
+        "operator": "in",
+        "value": "practice_catchment_postcodes"
+      },
+      "reason_if_failed": "You are outside this practice's catchment area. The practice must accept patients living in their area.",
+      "evidence_source": "address-verification",
+      "alternative_service": "nhs.find-alternative-gp"
+    },
+    {
+      "id": "has-address",
+      "description": "Applicant must have a verifiable address",
+      "condition": {
+        "field": "address",
+        "operator": "exists"
+      },
+      "reason_if_failed": "An address is required to verify you are in the practice's catchment area",
+      "evidence_source": "citizen-provided"
+    }
+  ],
+  "explanation_template": "GP registration eligibility: {outcome}",
+  "edge_cases": [
+    {
+      "id": "homeless-patient",
+      "description": "Applicant is homeless or of no fixed abode",
+      "detection": "no_fixed_address",
+      "action": "Route to specialist homeless healthcare team. Patient still entitled to register but may need support finding appropriate practice."
+    },
+    {
+      "id": "armed-forces",
+      "description": "Applicant is a member of armed forces or their family",
+      "detection": "military_service",
+      "action": "Armed forces personnel can register with civilian GP or use Defence Medical Services. Special rules may apply."
+    },
+    {
+      "id": "residential-care",
+      "description": "Applicant lives in residential or nursing care",
+      "detection": "residential_care_address",
+      "action": "Care home residents have right to register with GP of their choice. Care home may have arrangements with specific practices."
+    },
+    {
+      "id": "asylum-seeker",
+      "description": "Applicant is asylum seeker or refugee",
+      "detection": "asylum_status",
+      "action": "Asylum seekers and refugees are entitled to free NHS primary care. No immigration checks required for GP registration."
+    },
+    {
+      "id": "recently-moved",
+      "description": "Applicant has recently moved and proof of address is not yet available",
+      "detection": "recent_move",
+      "action": "Practice should accept alternative evidence such as tenancy agreement, utility bill, or letter from previous address."
+    }
+  ]
+}

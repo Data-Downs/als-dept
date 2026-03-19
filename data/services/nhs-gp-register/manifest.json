@@ -1,0 +1,19 @@
+{
+  "id": "nhs-gp-register",
+  "version": "1.0.0",
+  "name": "Register with new GP",
+  "description": "Register at nearest surgery. Medical records transfer automatically from old practice.",
+  "department": "NHS",
+  "input_schema": {
+    "type": "object"
+  },
+  "output_schema": {
+    "type": "object"
+  },
+  "source": "graph",
+  "serviceType": "registration",
+  "govuk_url": "https://www.gov.uk/register-with-a-gp",
+  "eligibility_summary": "Anyone living in England can register with a GP practice. Practices must accept patients living in their area. Medical records transfer automatically from old practice.",
+  "proactive": true,
+  "gated": false
+}

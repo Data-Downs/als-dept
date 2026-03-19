@@ -1,0 +1,89 @@
+{
+  "id": "other-motability.consent",
+  "version": "1.0.0",
+  "grants": [
+    {
+      "id": "identity-verification",
+      "description": "Verify your identity using your GOV.UK One Login credentials",
+      "data_shared": [
+        "full_name",
+        "date_of_birth",
+        "national_insurance_number",
+        "address"
+      ],
+      "source": "one-login",
+      "purpose": "To confirm your identity before processing your Motability application",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "pip-benefit-data",
+      "description": "Share your PIP Enhanced Rate mobility component award details with Motability",
+      "data_shared": [
+        "pip_award_rate",
+        "pip_award_start_date",
+        "pip_award_end_date",
+        "pip_payment_status",
+        "pip_weekly_amount"
+      ],
+      "source": "dwp-pip-system",
+      "purpose": "Motability needs to verify your PIP Enhanced Rate mobility component to process your lease application. Your allowance will be paid directly to Motability for the duration of the lease.",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "delivery-address",
+      "description": "Confirm the delivery address for your leased vehicle",
+      "data_shared": [
+        "delivery_address_line_1",
+        "delivery_address_line_2",
+        "delivery_city",
+        "delivery_postcode"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To arrange delivery of your selected vehicle to your preferred location",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "named-drivers",
+      "description": "Provide details of any additional named drivers who will use the vehicle",
+      "data_shared": [
+        "named_driver_name",
+        "named_driver_dob",
+        "named_driver_licence_number",
+        "relationship_to_applicant"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To add authorized drivers to your Motability insurance policy. Up to two named drivers can be added at no extra cost.",
+      "duration": "until-revoked",
+      "required": false
+    },
+    {
+      "id": "advance-payment",
+      "description": "Provide bank details if making an advance payment for your chosen vehicle",
+      "data_shared": [
+        "bank_account_number",
+        "bank_sort_code",
+        "account_holder_name"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To process any advance payment you choose to make towards a higher-specification vehicle",
+      "duration": "session",
+      "required": false
+    }
+  ],
+  "revocation": {
+    "mechanism": "Contact Motability directly or through your GOV.UK account to revoke consent and cancel your application",
+    "effect": "Application will be cancelled if consent is revoked before lease commencement. If lease is active, standard cancellation terms apply and you will need to contact Motability to end the agreement."
+  },
+  "delegation": {
+    "agent_identity": "GOV.UK AI Agent",
+    "scopes": [
+      "read-pip-award-data",
+      "submit-application-to-motability",
+      "select-eligible-vehicles"
+    ],
+    "limitations": "Agent cannot make advance payments on your behalf. Agent cannot add named drivers without your explicit approval. Agent cannot sign the final lease agreement - you must review and sign this yourself. Agent cannot select vehicle adaptations without specific medical assessment confirmation."
+  }
+}

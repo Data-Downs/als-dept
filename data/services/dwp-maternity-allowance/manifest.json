@@ -1,0 +1,19 @@
+{
+  "id": "dwp-maternity-allowance",
+  "version": "1.0.0",
+  "name": "Maternity Allowance",
+  "description": "If not eligible for SMP. For self-employed or recently employed. Up to 39 weeks.",
+  "department": "DWP",
+  "input_schema": {
+    "type": "object"
+  },
+  "output_schema": {
+    "type": "object"
+  },
+  "source": "graph",
+  "serviceType": "benefit",
+  "govuk_url": "https://www.gov.uk/maternity-allowance",
+  "eligibility_summary": "For those not eligible for Statutory Maternity Pay — typically self-employed, recently changed jobs, or agency workers. Up to 39 weeks of payments.",
+  "proactive": true,
+  "gated": false
+}

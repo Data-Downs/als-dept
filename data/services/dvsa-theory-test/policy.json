@@ -1,0 +1,79 @@
+{
+  "id": "dvsa.theory-test.eligibility",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "has-provisional-licence",
+      "description": "Applicant must have a valid UK provisional or full driving licence",
+      "condition": {
+        "field": "driving_licence_number",
+        "operator": "exists"
+      },
+      "reason_if_failed": "You need a valid UK driving licence to book a theory test. Apply for a provisional licence first.",
+      "evidence_source": "dvla-licence-check",
+      "alternative_service": "dvla.apply-provisional-licence",
+      "triggers_handoff": true
+    },
+    {
+      "id": "residency-requirement",
+      "description": "Applicant must have lived in England, Wales or Scotland for at least 185 days in the last 12 months",
+      "condition": {
+        "field": "uk_residency_days",
+        "operator": ">=",
+        "value": 185
+      },
+      "reason_if_failed": "You must have lived in England, Wales or Scotland for at least 185 days in the last 12 months before taking your theory test",
+      "evidence_source": "citizen-declared"
+    },
+    {
+      "id": "age-minimum",
+      "description": "Applicant must be at least 17 years old for car/motorcycle theory test",
+      "condition": {
+        "field": "age",
+        "operator": ">=",
+        "value": 17
+      },
+      "reason_if_failed": "You must be at least 17 years old to take a car or motorcycle theory test",
+      "evidence_source": "identity-verified"
+    },
+    {
+      "id": "not-already-passed",
+      "description": "Applicant must not already have a valid theory test pass for this category",
+      "condition": {
+        "field": "theory_test_status",
+        "operator": "!=",
+        "value": "passed-within-2-years"
+      },
+      "reason_if_failed": "You already have a valid theory test pass. You can now book your practical driving test.",
+      "evidence_source": "dvsa-theory-test-records",
+      "alternative_service": "dvsa.practical-driving-test"
+    }
+  ],
+  "explanation_template": "Theory test booking eligibility: {outcome}",
+  "edge_cases": [
+    {
+      "id": "disability-accommodation",
+      "description": "Applicant requires special accommodations due to reading difficulty, health condition or disability",
+      "detection": "requires_accommodations",
+      "action": "Flag during booking. DVSA will arrange appropriate support (extra time, translator, BSL interpreter, etc.)"
+    },
+    {
+      "id": "licence-upgrade",
+      "description": "Applicant is upgrading an existing licence category and may not need theory test",
+      "detection": "is_licence_upgrade",
+      "action": "Check upgrade exemptions list. If exempt (e.g. automatic to manual, A1 to A2 after 2+ years), route to practical test booking instead."
+    },
+    {
+      "id": "expired-theory-pass",
+      "description": "Applicant passed theory test more than 2 years ago",
+      "detection": "theory_pass_date_expired",
+      "action": "Theory test pass has expired. Must retake theory test before booking practical test."
+    },
+    {
+      "id": "lorry-bus-category",
+      "description": "Applicant is booking for lorry, bus or coach category",
+      "detection": "vehicle_category_in_lorry_bus",
+      "action": "Different pricing (£26 part 1a, £11 part 1b, £23 part 2) and multi-part test structure applies."
+    }
+  ]
+}

@@ -1,0 +1,89 @@
+{
+  "id": "la.food-hygiene.consent",
+  "version": "1.0.0",
+  "grants": [
+    {
+      "id": "identity-verification",
+      "description": "Verify your identity as the business owner or responsible person",
+      "data_shared": [
+        "full_name",
+        "date_of_birth",
+        "email_address",
+        "phone_number"
+      ],
+      "source": "one-login",
+      "purpose": "To confirm you are legally responsible for the food business and can register it",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "business-details-sharing",
+      "description": "Share your food business details with the local authority",
+      "data_shared": [
+        "business_name",
+        "trading_name",
+        "business_address",
+        "business_type",
+        "food_activities",
+        "number_of_employees"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To register your food business and create an inspection record with the local authority",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "food-safety-information",
+      "description": "Share information about food handling and preparation activities",
+      "data_shared": [
+        "food_types_handled",
+        "preparation_methods",
+        "storage_facilities",
+        "intended_customers"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To assess food safety risk and determine appropriate inspection frequency",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "inspection-consent",
+      "description": "Consent to unannounced food safety inspections by environmental health officers",
+      "data_shared": [
+        "business_opening_hours",
+        "access_arrangements"
+      ],
+      "source": "citizen-provided",
+      "purpose": "Food businesses must be inspected to ensure compliance with food hygiene regulations",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "fsa-data-sharing",
+      "description": "Share registration and inspection data with the Food Standards Agency",
+      "data_shared": [
+        "business_name",
+        "address",
+        "food_hygiene_rating",
+        "inspection_outcomes"
+      ],
+      "source": "local-authority",
+      "purpose": "FSA maintains national food safety records and publishes food hygiene ratings",
+      "duration": "until-revoked",
+      "required": true
+    }
+  ],
+  "revocation": {
+    "mechanism": "Contact your local authority to close or transfer your food business registration",
+    "effect": "Registration closure means you must cease food business operations. You cannot revoke consent for inspection while operating a food business."
+  },
+  "delegation": {
+    "agent_identity": "GOV.UK AI Agent",
+    "scopes": [
+      "read-personal-data",
+      "read-business-data",
+      "submit-registration-to-local-authority"
+    ],
+    "limitations": "Agent can complete the registration form on your behalf but cannot provide false information about food safety practices. Agent cannot make decisions about business operations or food handling procedures. Final submission requires your explicit confirmation that all details are accurate."
+  }
+}

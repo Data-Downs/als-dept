@@ -1,0 +1,88 @@
+{
+  "id": "dvsa.driving-test.eligibility",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "provisional-licence",
+      "description": "Applicant must have a valid provisional driving licence",
+      "condition": {
+        "field": "provisional_licence_number",
+        "operator": "exists"
+      },
+      "reason_if_failed": "You need a provisional driving licence to book a practical test",
+      "alternative_service": "dvla.apply-provisional-licence"
+    },
+    {
+      "id": "theory-test-passed",
+      "description": "Applicant must have passed theory test (unless exempt)",
+      "condition": {
+        "field": "theory_test_pass",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "You must pass your theory test before booking the practical test",
+      "evidence_source": "dvsa-theory-test-records"
+    },
+    {
+      "id": "residency-requirement",
+      "description": "Applicant must have lived in England, Wales or Scotland for at least 185 days in the last 12 months",
+      "condition": {
+        "field": "uk_residency_days",
+        "operator": ">=",
+        "value": 185
+      },
+      "reason_if_failed": "You must have lived in England, Wales or Scotland for at least 185 days in the last 12 months to take your test here",
+      "evidence_source": "identity-verified"
+    },
+    {
+      "id": "age-minimum",
+      "description": "Applicant must be at least 17 years old for car test",
+      "condition": {
+        "field": "age",
+        "operator": ">=",
+        "value": 17
+      },
+      "reason_if_failed": "You must be at least 17 years old to take a car driving test",
+      "evidence_source": "identity-verified"
+    },
+    {
+      "id": "northern-ireland",
+      "description": "Must not be Northern Ireland resident (different service)",
+      "condition": {
+        "field": "jurisdiction",
+        "operator": "!=",
+        "value": "Northern Ireland"
+      },
+      "reason_if_failed": "Northern Ireland residents must use a different service",
+      "alternative_service": "nidirect.driving-test",
+      "triggers_handoff": true
+    }
+  ],
+  "explanation_template": "Driving test booking eligibility: {outcome}",
+  "edge_cases": [
+    {
+      "id": "upgrade-test",
+      "description": "Applicant needs an upgrade test (e.g. automatic to manual, medium to large lorry)",
+      "detection": "upgrade_test_required",
+      "action": "Must call DVSA on 0300 200 1122. Cannot book online."
+    },
+    {
+      "id": "theory-exempt",
+      "description": "Applicant is exempt from theory test requirement",
+      "detection": "test_type in ['tractor', 'automatic-to-manual', 'motorcycle-progressive', 'lorry-with-licence', 'bus-with-licence']",
+      "action": "Skip theory test requirement check. Proceed with booking."
+    },
+    {
+      "id": "medical-condition",
+      "description": "Applicant has a medical condition that may affect driving ability",
+      "detection": "medical_conditions",
+      "action": "Ensure DVLA has been notified of medical condition. May require medical assessment before test."
+    },
+    {
+      "id": "service-unavailable-hours",
+      "description": "Service is only available 6am to 11:40pm",
+      "detection": "booking_time outside 06:00-23:40",
+      "action": "Inform user service hours are 6am to 11:40pm. Retry during available hours."
+    }
+  ]
+}

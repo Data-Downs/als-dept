@@ -1,0 +1,133 @@
+{
+  "id": "ho-citizenship.eligibility",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "age-minimum",
+      "description": "Applicant must be at least 18 years old",
+      "condition": {
+        "field": "age",
+        "operator": ">=",
+        "value": 18
+      },
+      "reason_if_failed": "You must be at least 18 years old to apply for naturalisation as a British citizen",
+      "evidence_source": "identity-verified"
+    },
+    {
+      "id": "has-ilr",
+      "description": "Applicant must hold Indefinite Leave to Remain (ILR)",
+      "condition": {
+        "field": "immigration_status",
+        "operator": "==",
+        "value": "ILR"
+      },
+      "reason_if_failed": "You must have Indefinite Leave to Remain before applying for citizenship",
+      "alternative_service": "ho.apply-ilr",
+      "evidence_source": "home-office-immigration-records"
+    },
+    {
+      "id": "ilr-duration",
+      "description": "Must have held ILR for at least 12 months",
+      "condition": {
+        "field": "ilr_grant_date_months_ago",
+        "operator": ">=",
+        "value": 12
+      },
+      "reason_if_failed": "You must have held ILR for at least 12 months before applying for citizenship",
+      "evidence_source": "home-office-immigration-records"
+    },
+    {
+      "id": "residency-period",
+      "description": "Must have lived in the UK for at least 5 years",
+      "condition": {
+        "field": "uk_residency_years",
+        "operator": ">=",
+        "value": 5
+      },
+      "reason_if_failed": "You must have lived in the UK for at least 5 years",
+      "evidence_source": "hmrc-residence-records"
+    },
+    {
+      "id": "absences-5-years",
+      "description": "Must not have spent more than 450 days outside the UK in the 5-year period",
+      "condition": {
+        "field": "days_abroad_5_years",
+        "operator": "<=",
+        "value": 450
+      },
+      "reason_if_failed": "You have spent more than 450 days outside the UK in the 5-year qualifying period",
+      "evidence_source": "border-force-travel-records"
+    },
+    {
+      "id": "absences-final-year",
+      "description": "Must not have spent more than 90 days outside the UK in the final 12 months",
+      "condition": {
+        "field": "days_abroad_final_year",
+        "operator": "<=",
+        "value": 90
+      },
+      "reason_if_failed": "You have spent more than 90 days outside the UK in the final year of the qualifying period",
+      "evidence_source": "border-force-travel-records"
+    },
+    {
+      "id": "language-requirement",
+      "description": "Must demonstrate knowledge of English, Welsh, or Scottish Gaelic",
+      "condition": {
+        "field": "language_qualification",
+        "operator": "exists"
+      },
+      "reason_if_failed": "You must pass an approved English language test at B1 level (CEFR) or higher, or have a degree taught in English",
+      "evidence_source": "language-test-provider"
+    },
+    {
+      "id": "life-in-uk-test",
+      "description": "Must have passed the Life in the UK test",
+      "condition": {
+        "field": "life_in_uk_test_passed",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "You must pass the Life in the UK test before applying",
+      "evidence_source": "life-in-uk-test-provider"
+    }
+  ],
+  "explanation_template": "British citizenship eligibility: {outcome}",
+  "edge_cases": [
+    {
+      "id": "criminal-conviction",
+      "description": "Applicant has criminal convictions that may affect good character requirement",
+      "detection": "criminal_record_exists",
+      "action": "Application requires enhanced caseworker assessment. Serious convictions may result in automatic refusal. Contact Home Office for guidance."
+    },
+    {
+      "id": "immigration-breach",
+      "description": "Applicant has previous immigration violations or overstays",
+      "detection": "immigration_breach_history",
+      "action": "Good character requirement may be affected. Enhanced caseworker review required. May need to demonstrate rehabilitation period."
+    },
+    {
+      "id": "crown-service",
+      "description": "Applicant has been abroad on Crown service (military, diplomatic, etc.)",
+      "detection": "crown_service_absences",
+      "action": "Time abroad on Crown service does not count toward absence limits. Provide evidence of service."
+    },
+    {
+      "id": "married-to-british-citizen",
+      "description": "Applicant is married to a British citizen",
+      "detection": "spouse_british_citizen",
+      "action": "You may be eligible for faster naturalisation route (3 years instead of 5). Use form AN2 instead of AN1."
+    },
+    {
+      "id": "under-18",
+      "description": "Applicant is under 18",
+      "detection": "age_under_18",
+      "action": "Use form MN1 for registration as a British citizen (different process for children)."
+    },
+    {
+      "id": "stateless",
+      "description": "Applicant is stateless or would become stateless",
+      "detection": "stateless_status",
+      "action": "Special provisions may apply. Contact Home Office for guidance on stateless persons applications."
+    }
+  ]
+}

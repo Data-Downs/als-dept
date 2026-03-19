@@ -1,0 +1,127 @@
+{
+  "id": "other-dbs.states",
+  "version": "1.0.0",
+  "states": [
+    {
+      "id": "not-started",
+      "type": "initial"
+    },
+    {
+      "id": "employer-verified"
+    },
+    {
+      "id": "check-type-selected"
+    },
+    {
+      "id": "employee-identity-verified"
+    },
+    {
+      "id": "eligibility-checked"
+    },
+    {
+      "id": "consent-given"
+    },
+    {
+      "id": "details-submitted"
+    },
+    {
+      "id": "payment-made",
+      "receipt": true
+    },
+    {
+      "id": "assessment"
+    },
+    {
+      "id": "certificate-issued",
+      "receipt": true
+    },
+    {
+      "id": "certificate-verified"
+    },
+    {
+      "id": "completed",
+      "type": "terminal",
+      "receipt": true
+    },
+    {
+      "id": "rejected",
+      "type": "terminal",
+      "receipt": true
+    },
+    {
+      "id": "handed-off",
+      "type": "terminal",
+      "receipt": true
+    }
+  ],
+  "transitions": [
+    {
+      "from": "not-started",
+      "to": "employer-verified",
+      "trigger": "verify-employer"
+    },
+    {
+      "from": "employer-verified",
+      "to": "check-type-selected",
+      "trigger": "select-check-type"
+    },
+    {
+      "from": "check-type-selected",
+      "to": "employee-identity-verified",
+      "trigger": "verify-employee-identity"
+    },
+    {
+      "from": "employee-identity-verified",
+      "to": "eligibility-checked",
+      "trigger": "check-eligibility"
+    },
+    {
+      "from": "eligibility-checked",
+      "to": "consent-given",
+      "trigger": "grant-consent",
+      "condition": "eligible"
+    },
+    {
+      "from": "eligibility-checked",
+      "to": "rejected",
+      "trigger": "reject",
+      "condition": "not-eligible"
+    },
+    {
+      "from": "eligibility-checked",
+      "to": "handed-off",
+      "trigger": "handoff",
+      "condition": "edge-case"
+    },
+    {
+      "from": "consent-given",
+      "to": "details-submitted",
+      "trigger": "submit-details"
+    },
+    {
+      "from": "details-submitted",
+      "to": "payment-made",
+      "trigger": "make-payment"
+    },
+    {
+      "from": "payment-made",
+      "to": "assessment",
+      "trigger": "begin-assessment"
+    },
+    {
+      "from": "assessment",
+      "to": "certificate-issued",
+      "trigger": "issue-certificate"
+    },
+    {
+      "from": "certificate-issued",
+      "to": "certificate-verified",
+      "trigger": "verify-certificate"
+    },
+    {
+      "from": "certificate-verified",
+      "to": "completed",
+      "trigger": "complete"
+    }
+  ]
+}

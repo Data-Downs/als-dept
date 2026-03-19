@@ -1,0 +1,123 @@
+{
+  "id": "gro.give-notice.eligibility",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "age-minimum",
+      "description": "Applicant must be 18 years or older",
+      "condition": {
+        "field": "age",
+        "operator": ">=",
+        "value": 18
+      },
+      "reason_if_failed": "You must be at least 18 years old to get married or form a civil partnership in England and Wales",
+      "evidence_source": "identity-verified"
+    },
+    {
+      "id": "not-already-married",
+      "description": "Applicant must not be currently married or in a civil partnership",
+      "condition": {
+        "field": "current_marital_status",
+        "operator": "in",
+        "value": [
+          "single",
+          "divorced",
+          "widowed",
+          "civil-partnership-dissolved"
+        ]
+      },
+      "reason_if_failed": "You cannot give notice if you are already married or in a civil partnership. You must divorce or dissolve the partnership first.",
+      "evidence_source": "citizen-declared",
+      "triggers_handoff": true
+    },
+    {
+      "id": "residency-requirement",
+      "description": "Applicant must have lived in the registration district for at least 7 days",
+      "condition": {
+        "field": "days_resident_in_district",
+        "operator": ">=",
+        "value": 7
+      },
+      "reason_if_failed": "You must have lived in the registration district for at least 7 days before giving notice",
+      "evidence_source": "proof-of-address"
+    },
+    {
+      "id": "timing-requirement",
+      "description": "Notice must be given at least 29 days before ceremony",
+      "condition": {
+        "field": "days_until_ceremony",
+        "operator": ">=",
+        "value": 29
+      },
+      "reason_if_failed": "You must give notice at least 29 days before your ceremony. The earliest date you can marry is 29 days after giving notice.",
+      "evidence_source": "venue-booking"
+    },
+    {
+      "id": "ceremony-within-12-months",
+      "description": "Ceremony must be held within 12 months of giving notice",
+      "condition": {
+        "field": "days_until_ceremony",
+        "operator": "<=",
+        "value": 365
+      },
+      "reason_if_failed": "Your ceremony must take place within 12 months of giving notice. You will need to give notice again if your ceremony date is later.",
+      "evidence_source": "venue-booking"
+    },
+    {
+      "id": "immigration-status-uk-irish",
+      "description": "If from outside UK/Ireland, must have appropriate visa or immigration status",
+      "condition": {
+        "field": "requires_immigration_check",
+        "operator": "==",
+        "value": false
+      },
+      "reason_if_failed": "You need the right visa to give notice, get married or form a civil partnership in the UK. You cannot use a Standard Visitor visa.",
+      "evidence_source": "passport-visa",
+      "alternative_service": "ukvi.marriage-visitor-visa",
+      "triggers_handoff": true
+    },
+    {
+      "id": "venue-confirmed",
+      "description": "Final ceremony venue must be confirmed before giving notice",
+      "condition": {
+        "field": "ceremony_venue",
+        "operator": "exists"
+      },
+      "reason_if_failed": "You must have confirmed your ceremony venue before giving notice, as you need to provide venue details in your legal statement",
+      "evidence_source": "venue-booking"
+    }
+  ],
+  "explanation_template": "Marriage/civil partnership notice eligibility: {outcome}",
+  "edge_cases": [
+    {
+      "id": "anglican-wedding",
+      "description": "Applicant is having an Anglican (Church of England) wedding",
+      "detection": "ceremony_type == 'anglican'",
+      "action": "The process of giving notice might be different for Anglican weddings. Hand off to venue for guidance on banns or common licence."
+    },
+    {
+      "id": "foreign-divorce",
+      "description": "Applicant divorced outside UK, Channel Islands, or Isle of Man",
+      "detection": "divorce_country not in ['GB', 'GG', 'JE', 'IM']",
+      "action": "Foreign divorce documents must be checked by GRO. Additional fee of £55 (local check) or £83 (GRO check) applies. May cause delay."
+    },
+    {
+      "id": "immigration-hold",
+      "description": "Home Office requires additional investigation for non-UK/Irish nationals",
+      "detection": "immigration_investigation_required == true",
+      "action": "You may need to wait up to 70 days before getting married or forming a civil partnership. The Home Office will ask questions about you and your relationship."
+    },
+    {
+      "id": "no-valid-visa",
+      "description": "Applicant from outside UK/Ireland without appropriate visa",
+      "detection": "requires_visa == true && visa_valid == false",
+      "action": "Cannot proceed. Must apply for marriage visitor visa or family visa before giving notice. If notice is given without valid visa, Home Office will be notified and may reject the notice."
+    },
+    {
+      "id": "partners-live-separately",
+      "description": "Partners live in different registration districts",
+      "detection": "partners_same_district == false",
+      "action": "Each partner must give notice at their own local register office. Notices do not need to be given on the same day. If one partner is from outside UK/Ireland, both must give notice together at one office."
+    }
+  ]
+}

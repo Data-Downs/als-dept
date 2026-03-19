@@ -1,0 +1,147 @@
+{
+  "id": "hmrc.free-childcare-30.states",
+  "version": "1.0.0",
+  "states": [
+    {
+      "id": "not-started",
+      "type": "initial"
+    },
+    {
+      "id": "identity-verified"
+    },
+    {
+      "id": "eligibility-checked"
+    },
+    {
+      "id": "consent-given"
+    },
+    {
+      "id": "parent-details-submitted"
+    },
+    {
+      "id": "partner-details-submitted"
+    },
+    {
+      "id": "child-details-submitted"
+    },
+    {
+      "id": "employment-verified"
+    },
+    {
+      "id": "income-verified"
+    },
+    {
+      "id": "assessment"
+    },
+    {
+      "id": "decision",
+      "receipt": true
+    },
+    {
+      "id": "code-issued",
+      "receipt": true
+    },
+    {
+      "id": "completed",
+      "type": "terminal",
+      "receipt": true
+    },
+    {
+      "id": "rejected",
+      "type": "terminal",
+      "receipt": true
+    },
+    {
+      "id": "handed-off",
+      "type": "terminal",
+      "receipt": true
+    }
+  ],
+  "transitions": [
+    {
+      "from": "not-started",
+      "to": "identity-verified",
+      "trigger": "verify-identity"
+    },
+    {
+      "from": "identity-verified",
+      "to": "eligibility-checked",
+      "trigger": "check-eligibility"
+    },
+    {
+      "from": "eligibility-checked",
+      "to": "consent-given",
+      "trigger": "grant-consent",
+      "condition": "eligible"
+    },
+    {
+      "from": "eligibility-checked",
+      "to": "rejected",
+      "trigger": "reject",
+      "condition": "not-eligible"
+    },
+    {
+      "from": "eligibility-checked",
+      "to": "handed-off",
+      "trigger": "handoff",
+      "condition": "edge-case"
+    },
+    {
+      "from": "consent-given",
+      "to": "parent-details-submitted",
+      "trigger": "submit-parent-details"
+    },
+    {
+      "from": "parent-details-submitted",
+      "to": "partner-details-submitted",
+      "trigger": "submit-partner-details",
+      "condition": "has-partner"
+    },
+    {
+      "from": "parent-details-submitted",
+      "to": "child-details-submitted",
+      "trigger": "submit-child-details",
+      "condition": "single-parent"
+    },
+    {
+      "from": "partner-details-submitted",
+      "to": "child-details-submitted",
+      "trigger": "submit-child-details"
+    },
+    {
+      "from": "child-details-submitted",
+      "to": "employment-verified",
+      "trigger": "verify-employment"
+    },
+    {
+      "from": "employment-verified",
+      "to": "income-verified",
+      "trigger": "verify-income"
+    },
+    {
+      "from": "income-verified",
+      "to": "assessment",
+      "trigger": "begin-assessment"
+    },
+    {
+      "from": "assessment",
+      "to": "decision",
+      "trigger": "make-decision"
+    },
+    {
+      "from": "decision",
+      "to": "code-issued",
+      "trigger": "approve"
+    },
+    {
+      "from": "decision",
+      "to": "rejected",
+      "trigger": "reject-application"
+    },
+    {
+      "from": "code-issued",
+      "to": "completed",
+      "trigger": "complete"
+    }
+  ]
+}

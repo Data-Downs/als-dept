@@ -1,0 +1,145 @@
+{
+  "id": "dwp-uc-health.states",
+  "version": "1.0.0",
+  "states": [
+    {
+      "id": "not-started",
+      "type": "initial"
+    },
+    {
+      "id": "identity-verified"
+    },
+    {
+      "id": "eligibility-checked"
+    },
+    {
+      "id": "consent-given"
+    },
+    {
+      "id": "medical-evidence-submitted"
+    },
+    {
+      "id": "wca-scheduled"
+    },
+    {
+      "id": "wca-completed"
+    },
+    {
+      "id": "assessment-under-review"
+    },
+    {
+      "id": "decision-made",
+      "receipt": true
+    },
+    {
+      "id": "mandatory-reconsideration-requested"
+    },
+    {
+      "id": "reconsideration-decision",
+      "receipt": true
+    },
+    {
+      "id": "completed",
+      "type": "terminal",
+      "receipt": true
+    },
+    {
+      "id": "rejected",
+      "type": "terminal",
+      "receipt": true
+    },
+    {
+      "id": "handed-off",
+      "type": "terminal",
+      "receipt": true
+    }
+  ],
+  "transitions": [
+    {
+      "from": "not-started",
+      "to": "identity-verified",
+      "trigger": "verify-identity"
+    },
+    {
+      "from": "identity-verified",
+      "to": "eligibility-checked",
+      "trigger": "check-eligibility"
+    },
+    {
+      "from": "eligibility-checked",
+      "to": "consent-given",
+      "trigger": "grant-consent",
+      "condition": "eligible"
+    },
+    {
+      "from": "eligibility-checked",
+      "to": "rejected",
+      "trigger": "reject",
+      "condition": "not-eligible"
+    },
+    {
+      "from": "eligibility-checked",
+      "to": "handed-off",
+      "trigger": "handoff",
+      "condition": "terminal-illness or complex-case"
+    },
+    {
+      "from": "consent-given",
+      "to": "medical-evidence-submitted",
+      "trigger": "submit-medical-evidence"
+    },
+    {
+      "from": "medical-evidence-submitted",
+      "to": "wca-scheduled",
+      "trigger": "schedule-wca"
+    },
+    {
+      "from": "wca-scheduled",
+      "to": "wca-completed",
+      "trigger": "complete-wca"
+    },
+    {
+      "from": "wca-completed",
+      "to": "assessment-under-review",
+      "trigger": "submit-for-review"
+    },
+    {
+      "from": "assessment-under-review",
+      "to": "decision-made",
+      "trigger": "make-decision"
+    },
+    {
+      "from": "decision-made",
+      "to": "completed",
+      "trigger": "approve-lcwra",
+      "condition": "lcwra-awarded"
+    },
+    {
+      "from": "decision-made",
+      "to": "rejected",
+      "trigger": "reject-lcwra",
+      "condition": "lcwra-not-awarded and no-appeal"
+    },
+    {
+      "from": "decision-made",
+      "to": "mandatory-reconsideration-requested",
+      "trigger": "request-reconsideration",
+      "condition": "citizen-appeals"
+    },
+    {
+      "from": "mandatory-reconsideration-requested",
+      "to": "reconsideration-decision",
+      "trigger": "complete-reconsideration"
+    },
+    {
+      "from": "reconsideration-decision",
+      "to": "completed",
+      "trigger": "approve-on-reconsideration"
+    },
+    {
+      "from": "reconsideration-decision",
+      "to": "rejected",
+      "trigger": "uphold-original-decision"
+    }
+  ]
+}

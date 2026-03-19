@@ -1,0 +1,19 @@
+{
+  "id": "hmrc-mtd",
+  "version": "1.0.0",
+  "name": "Making Tax Digital enrolment",
+  "description": "Mandatory for VAT-registered businesses. Phased rollout for income tax from 2026.",
+  "department": "HMRC",
+  "input_schema": {
+    "type": "object"
+  },
+  "output_schema": {
+    "type": "object"
+  },
+  "source": "graph",
+  "serviceType": "obligation",
+  "govuk_url": "https://www.gov.uk/guidance/use-making-tax-digital-for-vat",
+  "eligibility_summary": "Mandatory for all VAT-registered businesses — must keep digital records and file VAT returns via MTD-compatible software. Income Tax MTD rolls out from April 2026 for self-employed/landlords with income over £50k.",
+  "proactive": true,
+  "gated": true
+}

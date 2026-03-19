@@ -1,0 +1,112 @@
+{
+  "id": "hmcts-legal-aid.consent",
+  "version": "1.0.0",
+  "grants": [
+    {
+      "id": "identity-verification",
+      "description": "Verify your identity with your solicitor to confirm who you are",
+      "data_shared": [
+        "full_name",
+        "date_of_birth",
+        "national_insurance_number",
+        "address"
+      ],
+      "source": "citizen-provided-to-solicitor",
+      "purpose": "To confirm your identity before the Legal Aid Agency processes your application",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "financial-information-sharing",
+      "description": "Share your income, benefits, savings and assets with the Legal Aid Agency",
+      "data_shared": [
+        "monthly_income",
+        "payslips",
+        "bank_statements",
+        "savings_accounts",
+        "investments",
+        "property_ownership",
+        "home_equity_value",
+        "benefits_received"
+      ],
+      "source": "citizen-provided-and-third-party-verification",
+      "purpose": "The Legal Aid Agency needs this information to assess whether you qualify for legal aid funding under the means test",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "partner-financial-information",
+      "description": "Share your partner's income and assets with the Legal Aid Agency (if you have a partner)",
+      "data_shared": [
+        "partner_income",
+        "partner_assets",
+        "partner_benefits"
+      ],
+      "source": "partner-provided-via-citizen",
+      "purpose": "The means test includes your partner's financial circumstances unless you have good reason to exclude them (e.g., financial abuse)",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "benefits-verification",
+      "description": "Allow the Legal Aid Agency to verify your benefit claims with the Department for Work and Pensions",
+      "data_shared": [
+        "universal_credit_status",
+        "pension_credit_status",
+        "jsa_status",
+        "esa_status",
+        "income_support_status"
+      ],
+      "source": "dwp",
+      "purpose": "To confirm you receive qualifying benefits which may make you automatically eligible for legal aid",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "case-evidence-sharing",
+      "description": "Share evidence related to your legal case with the Legal Aid Agency and your solicitor",
+      "data_shared": [
+        "court_documents",
+        "police_reports",
+        "medical_records",
+        "social_services_reports",
+        "domestic_abuse_evidence",
+        "marac_referrals",
+        "refuge_letters",
+        "employer_letters"
+      ],
+      "source": "police-courts-health-social-services-citizen",
+      "purpose": "The Legal Aid Agency needs evidence to assess the merits of your case and confirm eligibility (e.g., evidence of domestic abuse)",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "solicitor-data-sharing",
+      "description": "Allow your solicitor to share all information you provide with the Legal Aid Agency on your behalf",
+      "data_shared": [
+        "all_personal_data",
+        "all_financial_data",
+        "all_case_evidence"
+      ],
+      "source": "solicitor-acting-as-agent",
+      "purpose": "Your solicitor will apply for legal aid on your behalf and must share the information you provide with the Legal Aid Agency",
+      "duration": "until-revoked",
+      "required": true
+    }
+  ],
+  "revocation": {
+    "mechanism": "Contact your solicitor or the Legal Aid Agency directly to withdraw consent. You can also revoke via your GOV.UK account if you used one.",
+    "effect": "Your legal aid application will be cancelled. If you have already received legal aid, you may be liable for costs incurred. If you have Emergency Legal Representation, it will end immediately."
+  },
+  "delegation": {
+    "agent_identity": "GOV.UK AI Agent acting on behalf of citizen",
+    "scopes": [
+      "gather-preliminary-information",
+      "help-complete-forms",
+      "request-evidence-letters",
+      "find-legal-aid-solicitor",
+      "explain-eligibility-criteria"
+    ],
+    "limitations": "Agent CANNOT instruct a solicitor on your behalf without explicit confirmation. Agent CANNOT submit the legal aid application to the Legal Aid Agency. Agent CANNOT provide legal advice. Agent CANNOT make decisions about your case strategy. Agent CANNOT represent you in court. Only a qualified solicitor can apply for legal aid and represent you. Agent CANNOT access your case evidence or share it without your explicit consent at each step."
+  }
+}

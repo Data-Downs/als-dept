@@ -1,0 +1,89 @@
+{
+  "id": "dvla.update-address.eligibility",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "has-licence",
+      "description": "Applicant must have an existing driving licence",
+      "condition": {
+        "field": "driving_licence_number",
+        "operator": "exists"
+      },
+      "reason_if_failed": "You need an existing driving licence to update the address. Apply for a new licence instead.",
+      "alternative_service": "dvla.apply-provisional-licence"
+    },
+    {
+      "id": "gb-resident",
+      "description": "Applicant must be a resident of Great Britain",
+      "condition": {
+        "field": "jurisdiction",
+        "operator": "in",
+        "value": [
+          "England",
+          "Wales",
+          "Scotland"
+        ]
+      },
+      "reason_if_failed": "This service is for Great Britain residents only. There's a different process in Northern Ireland.",
+      "alternative_service": "nidirect.update-driving-licence"
+    },
+    {
+      "id": "not-banned",
+      "description": "Applicant must not be banned from driving",
+      "condition": {
+        "field": "driving_ban_status",
+        "operator": "!=",
+        "value": "banned"
+      },
+      "reason_if_failed": "You cannot update your address while banned from driving. Contact DVLA for assistance.",
+      "triggers_handoff": true
+    },
+    {
+      "id": "address-changed",
+      "description": "New address must be different from current address",
+      "condition": {
+        "field": "new_address",
+        "operator": "!=",
+        "value": "current_address"
+      },
+      "reason_if_failed": "The new address you provided is the same as your current address on record."
+    },
+    {
+      "id": "address-history-available",
+      "description": "Applicant must provide addresses for the last 3 years",
+      "condition": {
+        "field": "address_history_3_years",
+        "operator": "exists"
+      },
+      "reason_if_failed": "You must provide all addresses you've lived at in the last 3 years.",
+      "evidence_source": "citizen-provided"
+    }
+  ],
+  "explanation_template": "Address update eligibility: {outcome}",
+  "edge_cases": [
+    {
+      "id": "moving-abroad",
+      "description": "Applicant is moving to an address outside Great Britain",
+      "detection": "new_address_country != GB",
+      "action": "Cannot register foreign address on British driving licence. Route to handoff. Contact driving licence authority in new country of residence."
+    },
+    {
+      "id": "combined-photo-change",
+      "description": "Applicant wants to change photo at the same time and licence valid 2+ years",
+      "detection": "change_photo && licence_valid_years >= 2",
+      "action": "Redirect to licence renewal service with £14 fee. This is a renewal, not just an address update."
+    },
+    {
+      "id": "combined-name-change",
+      "description": "Applicant wants to change name at the same time",
+      "detection": "change_name",
+      "action": "Route to postal application. Name changes cannot be done online."
+    },
+    {
+      "id": "legal-deadline-overdue",
+      "description": "Address change is overdue (more than 3 months since moving)",
+      "detection": "months_since_move > 3",
+      "action": "Warn that this is a legal requirement and delay may result in a fine up to £1,000. Proceed with update but flag for potential enforcement review."
+    }
+  ]
+}

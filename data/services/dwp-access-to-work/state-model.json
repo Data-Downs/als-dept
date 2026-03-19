@@ -1,0 +1,131 @@
+{
+  "id": "dwp.access-to-work.states",
+  "version": "1.0.0",
+  "states": [
+    {
+      "id": "not-started",
+      "type": "initial"
+    },
+    {
+      "id": "identity-verified"
+    },
+    {
+      "id": "eligibility-checked"
+    },
+    {
+      "id": "consent-given"
+    },
+    {
+      "id": "details-submitted"
+    },
+    {
+      "id": "adviser-review"
+    },
+    {
+      "id": "workplace-assessment"
+    },
+    {
+      "id": "assessment-completed"
+    },
+    {
+      "id": "decision",
+      "receipt": true
+    },
+    {
+      "id": "grant-approved",
+      "receipt": true
+    },
+    {
+      "id": "completed",
+      "type": "terminal",
+      "receipt": true
+    },
+    {
+      "id": "rejected",
+      "type": "terminal",
+      "receipt": true
+    },
+    {
+      "id": "handed-off",
+      "type": "terminal",
+      "receipt": true
+    }
+  ],
+  "transitions": [
+    {
+      "from": "not-started",
+      "to": "identity-verified",
+      "trigger": "verify-identity"
+    },
+    {
+      "from": "identity-verified",
+      "to": "eligibility-checked",
+      "trigger": "check-eligibility"
+    },
+    {
+      "from": "eligibility-checked",
+      "to": "consent-given",
+      "trigger": "grant-consent",
+      "condition": "eligible"
+    },
+    {
+      "from": "eligibility-checked",
+      "to": "rejected",
+      "trigger": "reject",
+      "condition": "not-eligible"
+    },
+    {
+      "from": "eligibility-checked",
+      "to": "handed-off",
+      "trigger": "handoff",
+      "condition": "civil-servant or edge-case"
+    },
+    {
+      "from": "consent-given",
+      "to": "details-submitted",
+      "trigger": "submit-details"
+    },
+    {
+      "from": "details-submitted",
+      "to": "adviser-review",
+      "trigger": "begin-review"
+    },
+    {
+      "from": "adviser-review",
+      "to": "workplace-assessment",
+      "trigger": "request-assessment",
+      "condition": "assessment-required"
+    },
+    {
+      "from": "adviser-review",
+      "to": "assessment-completed",
+      "trigger": "skip-assessment",
+      "condition": "assessment-not-required"
+    },
+    {
+      "from": "workplace-assessment",
+      "to": "assessment-completed",
+      "trigger": "complete-assessment"
+    },
+    {
+      "from": "assessment-completed",
+      "to": "decision",
+      "trigger": "make-decision"
+    },
+    {
+      "from": "decision",
+      "to": "grant-approved",
+      "trigger": "approve-grant"
+    },
+    {
+      "from": "decision",
+      "to": "rejected",
+      "trigger": "reject-application"
+    },
+    {
+      "from": "grant-approved",
+      "to": "completed",
+      "trigger": "confirm-acceptance"
+    }
+  ]
+}

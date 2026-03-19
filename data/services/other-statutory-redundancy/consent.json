@@ -1,0 +1,87 @@
+{
+  "id": "other.statutory-redundancy.consent",
+  "version": "1.0.0",
+  "grants": [
+    {
+      "id": "identity-verification",
+      "description": "Verify your identity to check eligibility and calculate entitlement",
+      "data_shared": [
+        "full_name",
+        "date_of_birth",
+        "national_insurance_number"
+      ],
+      "source": "one-login",
+      "purpose": "To confirm your identity and verify your age for redundancy calculation",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "employment-history",
+      "description": "Access your employment history to verify continuous service",
+      "data_shared": [
+        "employment_start_dates",
+        "employment_end_dates",
+        "employer_names",
+        "employment_status"
+      ],
+      "source": "hmrc-paye-records",
+      "purpose": "To verify you have at least 2 years continuous employment and are an employee",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "pay-information",
+      "description": "Share your pay information to calculate redundancy amount",
+      "data_shared": [
+        "weekly_gross_pay",
+        "recent_payslips"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To calculate your statutory redundancy pay based on your weekly earnings (capped at £643/week)",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "employer-details",
+      "description": "Provide details about your employer and redundancy",
+      "data_shared": [
+        "employer_name",
+        "employer_address",
+        "redundancy_date",
+        "redundancy_notice"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To understand your redundancy situation and determine the appropriate route for claiming payment",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "referral-sharing",
+      "description": "Share your case details with Acas, Employment Tribunal, or Insolvency Service if required",
+      "data_shared": [
+        "case_summary",
+        "calculated_entitlement",
+        "employer_details",
+        "contact_information"
+      ],
+      "source": "service-generated",
+      "purpose": "To enable follow-up support from the appropriate service if your employer refuses payment or is insolvent",
+      "duration": "until-revoked",
+      "required": false
+    }
+  ],
+  "revocation": {
+    "mechanism": "Contact the service or revoke through your GOV.UK account. For active tribunal or insolvency claims, contact that service directly.",
+    "effect": "Your case calculation will be deleted. Any referrals already made will need to be cancelled separately with Acas, Employment Tribunal, or Insolvency Service."
+  },
+  "delegation": {
+    "agent_identity": "GOV.UK AI Agent",
+    "scopes": [
+      "read-employment-records",
+      "calculate-entitlement",
+      "provide-guidance",
+      "prepare-referral-documents"
+    ],
+    "limitations": "Agent cannot negotiate with your employer on your behalf. Agent cannot submit Employment Tribunal claims or Insolvency Service claims. Agent cannot make legal representations. Agent can only calculate statutory entitlement and provide guidance on next steps."
+  }
+}

@@ -1,0 +1,108 @@
+{
+  "id": "dwp.sure-start-grant.eligibility",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "qualifying-benefit",
+      "description": "Applicant or partner must be receiving a qualifying benefit",
+      "condition": {
+        "field": "qualifying_benefit",
+        "operator": "in",
+        "value": [
+          "universal-credit",
+          "income-support",
+          "income-based-jsa",
+          "income-related-esa",
+          "pension-credit",
+          "smi-loan"
+        ]
+      },
+      "reason_if_failed": "You must be receiving Universal Credit, Income Support, income-based Jobseeker's Allowance, income-related Employment and Support Allowance, Pension Credit, or a Support for Mortgage Interest loan to qualify",
+      "evidence_source": "dwp-benefits-system"
+    },
+    {
+      "id": "first-child-usual",
+      "description": "Usually no other children under 16 (exceptions for multiple births and special cases)",
+      "condition": {
+        "field": "children_under_16",
+        "operator": "==",
+        "value": 0
+      },
+      "reason_if_failed": "The grant is usually only available for your first child. You may qualify if you're having twins or triplets, or meet other special criteria",
+      "evidence_source": "citizen-declared"
+    },
+    {
+      "id": "timing-window",
+      "description": "Claim must be made from 11 weeks before due date to 6 months after birth",
+      "condition": {
+        "field": "weeks_from_due_date",
+        "operator": ">=",
+        "value": -11
+      },
+      "reason_if_failed": "You can only claim from 11 weeks before your baby's due date. If your baby has already been born, you have up to 6 months to claim",
+      "evidence_source": "mat-b1-form"
+    },
+    {
+      "id": "not-scotland",
+      "description": "Applicant must not be resident in Scotland",
+      "condition": {
+        "field": "jurisdiction",
+        "operator": "!=",
+        "value": "Scotland"
+      },
+      "reason_if_failed": "If you live in Scotland, you cannot get a Sure Start Maternity Grant. You can apply for a Pregnancy and Baby Payment instead",
+      "alternative_service": "social-security-scotland.pregnancy-baby-payment",
+      "triggers_handoff": true
+    },
+    {
+      "id": "birth-deadline",
+      "description": "If baby already born, claim must be within 6 months of birth",
+      "condition": {
+        "field": "months_since_birth",
+        "operator": "<=",
+        "value": 6
+      },
+      "reason_if_failed": "You must claim within 6 months of your baby being born. The deadline has passed for this claim",
+      "evidence_source": "birth-certificate"
+    }
+  ],
+  "explanation_template": "Sure Start Maternity Grant eligibility: {outcome}. Amount: {grant_amount}",
+  "edge_cases": [
+    {
+      "id": "multiple-birth-with-children",
+      "description": "Having twins/triplets but already have children under 16",
+      "detection": "multiple_birth && children_under_16 > 0",
+      "action": "Calculate reduced grant: £500 if having twins and have 1+ children (not from multiple birth), £1000 if having triplets and have 1 child, £500 if having triplets and already had twins, £0 if already had triplets"
+    },
+    {
+      "id": "refugee-humanitarian-status",
+      "description": "Applicant has refugee status, humanitarian protection, or came from Afghanistan/Ukraine",
+      "detection": "refugee_status || humanitarian_protection || afghanistan_arrival || ukraine_arrival",
+      "action": "Grant available for first child born in UK regardless of other children. Verify status documentation."
+    },
+    {
+      "id": "adoption-surrogacy",
+      "description": "Applying for adoption, surrogacy, guardianship or residence order",
+      "detection": "adoption || surrogacy || guardianship || residence_order",
+      "action": "Baby must be under 1 year old on claim date. Verify legal documentation (parental order, adoption placement, guardianship appointment). Claim within 6 months of placement/order."
+    },
+    {
+      "id": "family-member-claimant",
+      "description": "Claiming for family member under 16 or 16-19 in approved education/training",
+      "detection": "claiming_for_family_member",
+      "action": "Verify family member lives with applicant. If 16-19, verify enrolled in approved full-time education (A-levels, T-levels, NVQs up to level 3, traineeships) or approved training (not employer-paid, not advanced degree). Must be first child for family member."
+    },
+    {
+      "id": "other-childs-care",
+      "description": "Child being cared for is someone else's (not partner's) and was over 12 months when arrangement started",
+      "detection": "caring_for_others_child && child_age_at_arrangement_start > 12",
+      "action": "May qualify for grant. Verify care arrangement and child's age when arrangement began."
+    },
+    {
+      "id": "missing-mat-b1",
+      "description": "Application submitted without MAT B1 or health professional evidence to meet deadline",
+      "detection": "no_pregnancy_evidence",
+      "action": "Accept application provisionally. Contact applicant within 28 days to arrange provision of MAT B1 form or health professional statement. Cannot complete assessment without evidence."
+    }
+  ]
+}

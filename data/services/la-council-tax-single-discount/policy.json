@@ -1,0 +1,105 @@
+{
+  "id": "la.council-tax-single-discount.eligibility",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "age-minimum",
+      "description": "Applicant must be at least 18 years old",
+      "condition": {
+        "field": "age",
+        "operator": ">=",
+        "value": 18
+      },
+      "reason_if_failed": "You must be at least 18 years old to be counted as an adult for Council Tax purposes",
+      "evidence_source": "identity-verified"
+    },
+    {
+      "id": "sole-adult-resident",
+      "description": "Applicant must be the only adult (18+) resident in the property",
+      "condition": {
+        "field": "other_adults_in_property",
+        "operator": "==",
+        "value": 0
+      },
+      "reason_if_failed": "The single person discount only applies if you are the only adult living in the property",
+      "evidence_source": "electoral-register,council-tax-records"
+    },
+    {
+      "id": "liable-for-council-tax",
+      "description": "Applicant must be liable for Council Tax on the property",
+      "condition": {
+        "field": "council_tax_liable",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "You must be liable for Council Tax on this property to claim the discount",
+      "evidence_source": "council-tax-records"
+    },
+    {
+      "id": "main-residence",
+      "description": "Property must be the applicant's main residence",
+      "condition": {
+        "field": "main_residence",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "The property must be your main home to qualify for the discount",
+      "evidence_source": "citizen-provided,electoral-register"
+    },
+    {
+      "id": "qualifying-reason",
+      "description": "Applicant must have a qualifying reason for living alone",
+      "condition": {
+        "field": "qualifying_reason",
+        "operator": "in",
+        "value": [
+          "bereavement",
+          "separation",
+          "divorce",
+          "household_member_moved_out"
+        ]
+      },
+      "reason_if_failed": "You must have experienced bereavement, separation, or a household member moving out to apply",
+      "evidence_source": "citizen-provided"
+    }
+  ],
+  "explanation_template": "Council Tax single person discount eligibility: {outcome}",
+  "edge_cases": [
+    {
+      "id": "disregarded-persons",
+      "description": "Property has other adults who are disregarded for Council Tax (students, care workers, severely mentally impaired)",
+      "detection": "has_disregarded_persons",
+      "action": "Council will verify disregarded status. Applicant may still qualify if only disregarded persons live with them."
+    },
+    {
+      "id": "shared-custody",
+      "description": "Applicant has children under 18 in shared custody arrangements",
+      "detection": "shared_custody",
+      "action": "Children under 18 don't affect eligibility. Council will confirm custody arrangements don't involve other adults residing in property."
+    },
+    {
+      "id": "temporary-absence",
+      "description": "Applicant or other resident is temporarily absent (hospital, prison, work)",
+      "detection": "temporary_absence",
+      "action": "Council will assess whether absence is temporary and how it affects residency status. May require evidence and review."
+    },
+    {
+      "id": "multiple-properties",
+      "description": "Applicant owns or is liable for Council Tax on multiple properties",
+      "detection": "multiple_properties",
+      "action": "Council will determine which property is the main residence. Discount only applies to main home."
+    },
+    {
+      "id": "live-in-carer",
+      "description": "Applicant has a live-in carer providing care",
+      "detection": "live_in_carer",
+      "action": "Carers providing at least 35 hours/week care may be disregarded. Council will verify carer status and hours."
+    },
+    {
+      "id": "previous-claim-rejected",
+      "description": "Applicant previously had a claim rejected or discount removed",
+      "detection": "previous_rejection",
+      "action": "Council will review circumstances that have changed since previous decision. May trigger additional verification."
+    }
+  ]
+}

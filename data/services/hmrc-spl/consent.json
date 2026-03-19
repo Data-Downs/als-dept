@@ -1,0 +1,121 @@
+{
+  "id": "hmrc-spl.consent",
+  "version": "1.0.0",
+  "grants": [
+    {
+      "id": "identity-verification-both-parents",
+      "description": "Verify the identity of both parents using GOV.UK One Login",
+      "data_shared": [
+        "full_name",
+        "date_of_birth",
+        "national_insurance_number"
+      ],
+      "source": "one-login",
+      "purpose": "To confirm both parents' identities before processing the SPL/ShPP application",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "claimant-employment-data",
+      "description": "Share employment details with HMRC from your employer",
+      "data_shared": [
+        "employer_name",
+        "employer_address",
+        "employment_start_date",
+        "employment_status",
+        "average_weekly_earnings",
+        "continuous_employment_weeks"
+      ],
+      "source": "employer-payroll-system",
+      "purpose": "To verify you meet the employment continuity and earnings requirements for SPL/ShPP",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "partner-employment-verification",
+      "description": "Verify partner's employment history and earnings",
+      "data_shared": [
+        "partner_employer_names",
+        "partner_employment_dates",
+        "partner_earnings_history",
+        "partner_national_insurance_contributions"
+      ],
+      "source": "hmrc-employment-records",
+      "purpose": "To verify your partner meets the work history and earnings test (26 weeks worked, £390 earned in 13 weeks)",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "maternity-adoption-records",
+      "description": "Access maternity or adoption leave and pay records",
+      "data_shared": [
+        "maternity_leave_start_date",
+        "maternity_pay_weeks_claimed",
+        "adoption_leave_start_date",
+        "adoption_pay_weeks_claimed",
+        "maternity_allowance_claimed"
+      ],
+      "source": "hmrc-benefits-records",
+      "purpose": "To calculate how much SPL and ShPP is available based on maternity/adoption leave already taken",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "child-birth-placement-details",
+      "description": "Share details of child's birth or placement",
+      "data_shared": [
+        "child_date_of_birth",
+        "child_due_date",
+        "child_placement_date",
+        "birth_certificate",
+        "adoption_matching_certificate"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To verify eligibility and calculate the qualifying week for SPL/ShPP",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "curtailment-notice",
+      "description": "Record binding notice to end maternity or adoption leave early",
+      "data_shared": [
+        "curtailment_date",
+        "maternity_leave_end_date",
+        "notice_given_to_employer"
+      ],
+      "source": "citizen-declaration",
+      "purpose": "To confirm maternity or adoption leave is being curtailed to create SPL entitlement",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "leave-plan-sharing",
+      "description": "Share your planned SPL dates and blocks with HMRC and employer",
+      "data_shared": [
+        "spl_start_dates",
+        "spl_end_dates",
+        "leave_blocks",
+        "split_days_planned"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To coordinate leave between parents and process ShPP payments on correct dates",
+      "duration": "until-revoked",
+      "required": true
+    }
+  ],
+  "revocation": {
+    "mechanism": "Contact HMRC or revoke through your GOV.UK account. You can change your leave dates with 8 weeks' notice.",
+    "effect": "Revoking consent will cancel your SPL/ShPP application. Already-approved leave blocks will continue unless you separately cancel with your employer."
+  },
+  "delegation": {
+    "agent_identity": "GOV.UK AI Agent",
+    "scopes": [
+      "read-eligibility-criteria",
+      "calculate-available-leave",
+      "read-employment-data",
+      "submit-application-with-authorization",
+      "check-application-status"
+    ],
+    "limitations": "Agent cannot give binding curtailment notice without your explicit instruction. Agent cannot change leave dates without your confirmation. Agent cannot communicate directly with your employer or partner's employer. Agent cannot override HMRC eligibility decisions. Agent cannot submit leave plans without your review and explicit approval of all dates."
+  }
+}

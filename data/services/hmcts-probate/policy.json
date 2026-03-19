@@ -1,0 +1,148 @@
+{
+  "id": "hmcts-probate.eligibility",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "estate-value-threshold",
+      "description": "Estate value must typically exceed £5,000 to require probate application",
+      "condition": {
+        "field": "gross_estate_value",
+        "operator": ">=",
+        "value": 5000
+      },
+      "reason_if_failed": "Probate may not be required for estates valued at £5,000 or less. Contact the financial organisations directly to confirm.",
+      "evidence_source": "estate-valuation"
+    },
+    {
+      "id": "jurisdiction-england-wales",
+      "description": "Death must have occurred in England or Wales",
+      "condition": {
+        "field": "jurisdiction",
+        "operator": "in",
+        "value": [
+          "England",
+          "Wales"
+        ]
+      },
+      "reason_if_failed": "This service is for deaths in England and Wales only. Use the Scotland probate service or Northern Ireland probate service.",
+      "alternative_service": "scotland-probate|ni-probate"
+    },
+    {
+      "id": "executor-with-will",
+      "description": "If there is a will, applicant must be named as executor",
+      "condition": {
+        "field": "executor_named_in_will",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "You are not named as an executor in the will. Only executors named in the will can apply for probate.",
+      "triggers_handoff": true
+    },
+    {
+      "id": "closest-relative-no-will",
+      "description": "If there is no will, applicant must be the closest living relative",
+      "condition": {
+        "field": "is_closest_relative",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "You are not the closest living relative. Use the inheritance checker to determine who should apply.",
+      "triggers_handoff": true
+    },
+    {
+      "id": "estate-valued",
+      "description": "Estate must be valued before applying",
+      "condition": {
+        "field": "estate_valuation_complete",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "You must value the estate before applying for probate. This includes all assets, debts, and determining the Inheritance Tax position.",
+      "evidence_source": "iht-assessment"
+    },
+    {
+      "id": "iht-determined",
+      "description": "Inheritance Tax position must be determined and reported if required",
+      "condition": {
+        "field": "iht_position_determined",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "You must determine whether Inheritance Tax is owed and submit IHT400 to HMRC if required before applying.",
+      "evidence_source": "hmrc-iht-checker"
+    },
+    {
+      "id": "original-will-available",
+      "description": "Original will must be available if one exists",
+      "condition": {
+        "field": "has_original_will",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "You must provide the original will with your application. Photocopies are not accepted.",
+      "triggers_handoff": true
+    },
+    {
+      "id": "executors-agree",
+      "description": "If multiple executors, all must agree who applies",
+      "condition": {
+        "field": "executors_in_agreement",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "All executors named in the will must agree on who will apply. You'll need to resolve this disagreement before proceeding.",
+      "triggers_handoff": true
+    }
+  ],
+  "explanation_template": "Probate application eligibility: {outcome}",
+  "edge_cases": [
+    {
+      "id": "executor-deceased",
+      "description": "Named executor has died",
+      "detection": "executor_status",
+      "action": "Check if will names a substitute executor. If not, other executors or entitled beneficiaries can apply. Legal advice recommended."
+    },
+    {
+      "id": "executor-incapacitated",
+      "description": "Executor unable to apply due to mental health condition or impairment",
+      "detection": "executor_capacity",
+      "action": "Medical professional must complete form PA14. Executor's deputy, attorney, or beneficiary can then apply."
+    },
+    {
+      "id": "will-lost",
+      "description": "Original will cannot be located",
+      "detection": "will_status",
+      "action": "May be able to apply with form PA13. Legal advice strongly recommended."
+    },
+    {
+      "id": "contested-application",
+      "description": "Another party wishes to challenge the probate application",
+      "detection": "caveat_entered",
+      "action": "Application will be paused. Handoff to Liverpool District Probate Registry for dispute resolution."
+    },
+    {
+      "id": "foreign-assets",
+      "description": "Significant assets held outside England and Wales",
+      "detection": "foreign_estate_percentage",
+      "action": "Foreign assets excluded from gross value for probate. May require separate probate in other jurisdictions."
+    },
+    {
+      "id": "joint-assets",
+      "description": "Property or assets owned jointly with surviving owner",
+      "detection": "joint_ownership",
+      "action": "Joint assets passing to surviving owner automatically excluded from probate value. Confirm with financial institutions."
+    },
+    {
+      "id": "unmarried-partner",
+      "description": "Applicant was partner but not married or in civil partnership",
+      "detection": "relationship_status",
+      "action": "Unmarried partners cannot apply for letters of administration. Handoff to legal advice."
+    },
+    {
+      "id": "executor-renunciation",
+      "description": "Executor wishes to give up their right to apply",
+      "detection": "executor_renunciation_request",
+      "action": "Executor completes form PA15. Other executors or entitled persons can then apply."
+    }
+  ]
+}

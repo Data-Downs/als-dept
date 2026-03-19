@@ -1,0 +1,19 @@
+{
+  "id": "slc-student-finance",
+  "version": "1.0.0",
+  "name": "Student Finance (tuition fee + maintenance loans)",
+  "description": "Tuition Fee Loan (up to £9,250/yr) and Maintenance Loan (income-assessed) for undergraduate study. Repaid via salary deductions once earning over threshold.",
+  "department": "Student Loans Company",
+  "input_schema": {
+    "type": "object"
+  },
+  "output_schema": {
+    "type": "object"
+  },
+  "source": "graph",
+  "serviceType": "application",
+  "govuk_url": "https://www.gov.uk/student-finance",
+  "eligibility_summary": "UK students starting an undergraduate course at a UK university can apply for a Tuition Fee Loan (up to £9,250/year, paid directly to university) and a Maintenance Loan (income-assessed, to cover living costs). Repayments begin after graduating and earning over the threshold (currently £25,000/year). Applications open the year before study.",
+  "proactive": true,
+  "gated": false
+}

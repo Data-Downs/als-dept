@@ -1,0 +1,19 @@
+{
+  "id": "other-carers-leave",
+  "version": "1.0.0",
+  "name": "Carer's leave (employer)",
+  "description": "5 days unpaid per year. Statutory right since April 2024.",
+  "department": "Employer",
+  "input_schema": {
+    "type": "object"
+  },
+  "output_schema": {
+    "type": "object"
+  },
+  "source": "graph",
+  "serviceType": "entitlement",
+  "govuk_url": "https://www.gov.uk/carers-leave",
+  "eligibility_summary": "Up to 5 days of unpaid leave per year from day 1 of employment to provide or arrange care for a dependant with a long-term care need. A statutory right since April 2024. Can be taken as individual days or half days.",
+  "proactive": true,
+  "gated": false
+}

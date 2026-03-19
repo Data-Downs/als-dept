@@ -1,0 +1,136 @@
+{
+  "id": "dwp-pip.consent",
+  "version": "1.0.0",
+  "grants": [
+    {
+      "id": "identity-verification",
+      "description": "Verify your identity using your National Insurance number, date of birth, and address",
+      "data_shared": [
+        "full_name",
+        "date_of_birth",
+        "national_insurance_number",
+        "address",
+        "phone_number"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To confirm your identity and establish eligibility for PIP",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "medical-information-access",
+      "description": "Access your medical records from your GP, specialists, and hospitals",
+      "data_shared": [
+        "medical_conditions",
+        "treatment_history",
+        "prescriptions",
+        "gp_contact_details",
+        "hospital_records",
+        "specialist_reports"
+      ],
+      "source": "nhs-medical-records",
+      "purpose": "To understand how your condition affects your daily living and mobility needs",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "health-assessment",
+      "description": "Attend a health assessment with an independent health professional if needed",
+      "data_shared": [
+        "physical_capability",
+        "cognitive_capability",
+        "daily_living_impact_assessment",
+        "mobility_impact_assessment"
+      ],
+      "source": "dwp-contracted-assessor",
+      "purpose": "To gather additional information about how your condition affects you if needed for the decision",
+      "duration": "session",
+      "required": false
+    },
+    {
+      "id": "care-home-hospital-information",
+      "description": "Share information about any time spent in care homes or hospitals",
+      "data_shared": [
+        "care_home_dates",
+        "care_home_addresses",
+        "hospital_admission_dates",
+        "care_funding_source"
+      ],
+      "source": "citizen-provided",
+      "purpose": "Time in care homes or hospitals can affect your PIP award",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "residency-immigration-information",
+      "description": "Share information about where you have lived and your immigration status if applicable",
+      "data_shared": [
+        "address_history",
+        "time_abroad",
+        "countries_visited",
+        "immigration_status",
+        "eu_settlement_status"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To check you meet the residency requirements for PIP",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "benefits-information",
+      "description": "Share information about other benefits you or family members receive",
+      "data_shared": [
+        "other_benefits_received",
+        "family_member_eea_benefits",
+        "constant_attendance_allowance",
+        "war_pensioners_mobility_supplement",
+        "armed_forces_independence_payment"
+      ],
+      "source": "dwp-benefits-system",
+      "purpose": "To ensure you do not receive incompatible benefits and to calculate any top-ups you may be entitled to",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "payment-details",
+      "description": "Provide your bank account details for PIP payments",
+      "data_shared": [
+        "bank_account_number",
+        "sort_code",
+        "account_holder_name"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To pay your PIP into your account every 4 weeks if your claim is approved",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "supporting-evidence",
+      "description": "Share supporting documents such as prescription lists, care plans, or letters from medical professionals",
+      "data_shared": [
+        "prescription_lists",
+        "care_plans",
+        "medical_letters",
+        "specialist_reports"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To support your claim and help DWP understand how your condition affects you",
+      "duration": "until-revoked",
+      "required": false
+    }
+  ],
+  "revocation": {
+    "mechanism": "Contact the PIP enquiry line or write to DWP to withdraw your claim",
+    "effect": "Your PIP claim will be cancelled. If you are already receiving PIP, payments will stop."
+  },
+  "delegation": {
+    "agent_identity": "GOV.UK AI Agent",
+    "scopes": [
+      "read-personal-data",
+      "read-medical-information",
+      "fill-pip-forms",
+      "submit-application"
+    ],
+    "limitations": "Agent cannot attend health assessments on your behalf. Agent cannot make subjective judgements about how your condition affects you - you must describe this yourself. Agent cannot challenge decisions or request mandatory reconsideration without your explicit instruction for each action. Agent cannot report changes to your condition that it has not been explicitly told about."
+  }
+}

@@ -1,0 +1,101 @@
+{
+  "id": "hmrc-smp.eligibility",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "employee-status",
+      "description": "Claimant must be an employee, not a worker or self-employed",
+      "condition": {
+        "field": "employment_status",
+        "operator": "==",
+        "value": "employee"
+      },
+      "reason_if_failed": "You must be an employee to qualify for Statutory Maternity Pay. Workers and self-employed individuals are not eligible.",
+      "alternative_service": "dwp.maternity-allowance",
+      "evidence_source": "hmrc-paye-records"
+    },
+    {
+      "id": "earnings-threshold",
+      "description": "Claimant must earn on average at least £125 per week",
+      "condition": {
+        "field": "average_weekly_earnings",
+        "operator": ">=",
+        "value": 125
+      },
+      "reason_if_failed": "Your average weekly earnings are below £125. You may be eligible for Maternity Allowance instead.",
+      "alternative_service": "dwp.maternity-allowance",
+      "evidence_source": "hmrc-rti-data"
+    },
+    {
+      "id": "continuous-employment",
+      "description": "Claimant must have worked continuously for at least 26 weeks by the qualifying week",
+      "condition": {
+        "field": "weeks_employed_by_qualifying_week",
+        "operator": ">=",
+        "value": 26
+      },
+      "reason_if_failed": "You must have worked continuously for your employer for at least 26 weeks by the 15th week before your due date (the qualifying week).",
+      "alternative_service": "dwp.maternity-allowance",
+      "evidence_source": "employer-confirmation"
+    },
+    {
+      "id": "proof-of-pregnancy",
+      "description": "Claimant must provide proof of pregnancy (MATB1 certificate or doctor/midwife letter)",
+      "condition": {
+        "field": "matb1_certificate",
+        "operator": "exists"
+      },
+      "reason_if_failed": "You must provide a MATB1 certificate or letter from your doctor/midwife to claim SMP.",
+      "evidence_source": "nhs-maternity-services"
+    },
+    {
+      "id": "notice-period",
+      "description": "Claimant must give at least 28 days' notice before the desired SMP start date",
+      "condition": {
+        "field": "notice_days",
+        "operator": ">=",
+        "value": 28
+      },
+      "reason_if_failed": "You must give your employer at least 28 days' notice before you want SMP to start, unless the baby is born early.",
+      "evidence_source": "citizen-provided"
+    },
+    {
+      "id": "not-in-custody",
+      "description": "Claimant must not be in police custody during the maternity pay period",
+      "condition": {
+        "field": "in_police_custody",
+        "operator": "!=",
+        "value": true
+      },
+      "reason_if_failed": "You cannot receive SMP while in police custody. SMP will not restart when you are discharged.",
+      "triggers_handoff": true
+    }
+  ],
+  "explanation_template": "Statutory Maternity Pay eligibility: {outcome}. If eligible, you will receive 90% of your average weekly earnings for 6 weeks, then £187.18 or 90% (whichever is lower) for 33 weeks.",
+  "edge_cases": [
+    {
+      "id": "early-birth-or-stillbirth",
+      "description": "Baby is born early or stillborn after 24th week of pregnancy",
+      "detection": "birth_date < expected_date OR stillbirth_after_24_weeks",
+      "action": "Still eligible for SMP and Statutory Maternity Leave. SMP starts automatically the day after birth if early."
+    },
+    {
+      "id": "baby-dies-after-birth",
+      "description": "Baby dies after being born",
+      "detection": "baby_death_after_birth",
+      "action": "Still eligible for full SMP and Statutory Maternity Leave entitlement."
+    },
+    {
+      "id": "surrogacy",
+      "description": "Child born through surrogacy arrangement",
+      "detection": "child_via_surrogacy",
+      "action": "Not eligible for SMP. Direct to Statutory Adoption Leave and Pay instead."
+    },
+    {
+      "id": "not-eligible-for-smp",
+      "description": "Does not meet SMP eligibility criteria",
+      "detection": "any_rule_failed",
+      "action": "Employer must provide form SMP1 within 7 days. Direct claimant to Maternity Allowance service."
+    }
+  ]
+}

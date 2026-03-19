@@ -1,0 +1,130 @@
+{
+  "id": "dwp.ni-credits.eligibility",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "has-ni-number",
+      "description": "Applicant must have a National Insurance number",
+      "condition": {
+        "field": "national_insurance_number",
+        "operator": "exists"
+      },
+      "reason_if_failed": "You need a National Insurance number to apply for NI credits",
+      "alternative_service": "hmrc.apply-ni-number"
+    },
+    {
+      "id": "under-state-pension-age",
+      "description": "Applicant must be under State Pension age",
+      "condition": {
+        "field": "under_state_pension_age",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "You cannot receive National Insurance credits after reaching State Pension age",
+      "evidence_source": "identity-verified"
+    },
+    {
+      "id": "not-reduced-rate",
+      "description": "Must not be married woman paying reduced rate National Insurance",
+      "condition": {
+        "field": "married_woman_reduced_rate",
+        "operator": "!=",
+        "value": true
+      },
+      "reason_if_failed": "You cannot usually get credits if you're a married woman paying reduced rate National Insurance"
+    },
+    {
+      "id": "in-qualifying-situation",
+      "description": "Must be in a qualifying situation (unemployed, caring, ill, parenting, on UC/JSA/ESA, etc.)",
+      "condition": {
+        "field": "qualifying_situation",
+        "operator": "in",
+        "value": [
+          "unemployed_jsa",
+          "unemployed_no_jsa",
+          "uc",
+          "esa",
+          "carer_allowance",
+          "carer_no_allowance",
+          "parent_child_benefit",
+          "foster_carer",
+          "maternity_allowance",
+          "statutory_pay_low_earnings",
+          "training_jobcentre",
+          "training_non_jobcentre",
+          "jury_service",
+          "armed_forces_partner"
+        ]
+      },
+      "reason_if_failed": "You must be in a qualifying situation to receive NI credits. Check the guidance to see if your circumstances qualify.",
+      "evidence_source": "benefits-system-check"
+    },
+    {
+      "id": "has-ni-record-gaps",
+      "description": "Must have gaps in National Insurance record to fill",
+      "condition": {
+        "field": "ni_record_has_gaps",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "NI credits fill gaps in your record. Check your NI record online to see if you have any gaps.",
+      "evidence_source": "hmrc-ni-record"
+    },
+    {
+      "id": "carer-hours-minimum",
+      "description": "For carer's credits (when not on Carer's Allowance): must care for 20+ hours per week",
+      "condition": {
+        "field": "caring_hours_per_week",
+        "operator": ">=",
+        "value": 20
+      },
+      "reason_if_failed": "You must care for one or more sick or disabled person for at least 20 hours per week to qualify for carer's credits",
+      "evidence_source": "citizen-provided"
+    }
+  ],
+  "explanation_template": "National Insurance credits eligibility: {outcome}. Situation: {qualifying_situation}. Credit type: {credit_type} (Class 1 counts toward State Pension and other benefits; Class 3 counts toward State Pension only)",
+  "edge_cases": [
+    {
+      "id": "wrongly-imprisoned",
+      "description": "Conviction quashed by Court of Appeal (or Court of Criminal Appeal in Scotland)",
+      "detection": "conviction_quashed",
+      "action": "Manual application required. Write to HMRC PT Operations North East England, BX9 1AN with National Insurance number, dates, and details of quashed conviction. Class 1 credits may be awarded."
+    },
+    {
+      "id": "armed-forces-partner-overseas",
+      "description": "Married to or civil partner of armed forces member on overseas posting",
+      "detection": "armed_forces_overseas_posting",
+      "action": "Class 1 credits for postings after 6 April 2010. Class 3 for postings after 6 April 1975 if reaching State Pension age on or after 6 April 2016. Separate application required."
+    },
+    {
+      "id": "transfer-credits-spouse",
+      "description": "Transferring Child Benefit credits between spouses/partners",
+      "detection": "credit_transfer_request",
+      "action": "Parent/guardian registered for Child Benefit can transfer Class 3 credits to spouse/partner living with them if donor has paid a qualifying year of NI contributions. Separate application required."
+    },
+    {
+      "id": "historical-hrp-claim",
+      "description": "Home Responsibilities Protection for periods before 6 April 2010",
+      "detection": "pre_2010_parent_carer",
+      "action": "Claim HRP to get Class 3 credits for periods between 6 April 1978 and 5 April 2010 where Child Benefit received for child under 16 but HRP not automatically awarded. Separate application required."
+    },
+    {
+      "id": "statutory-pay-low-earnings",
+      "description": "On Statutory Sick/Maternity/Paternity/Adoption Pay but earnings insufficient for qualifying year",
+      "detection": "statutory_pay_below_threshold",
+      "action": "Manual application required. Write to HMRC PT Operations North East England, BX9 1AN with NI number, dates, and pay details. Class 1 credits may be awarded."
+    },
+    {
+      "id": "training-non-jobcentre",
+      "description": "On government-approved training course not arranged by Jobcentre Plus",
+      "detection": "training_course_non_jobcentre",
+      "action": "Manual application if over 18 and course lasts no longer than 1 year. Write to HMRC PT Operations North East England, BX9 1AN with NI number, course details, and dates. Class 1 credits may be awarded."
+    },
+    {
+      "id": "specified-adult-childcare",
+      "description": "Grandparent or eligible family member caring for child under 12",
+      "detection": "grandparent_childcare",
+      "action": "Apply for Specified Adult Childcare Class 3 credits if: eligible family member over 16 but under State Pension age, cared for child under 12 since 6 April 2011, child's parent/guardian has Child Benefit and agrees to transfer. Separate application required."
+    }
+  ]
+}

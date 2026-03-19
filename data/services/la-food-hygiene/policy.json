@@ -1,0 +1,105 @@
+{
+  "id": "la.food-hygiene.eligibility",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "is-food-business",
+      "description": "Business must sell, cook, store, handle, prepare or distribute food",
+      "condition": {
+        "field": "business_type",
+        "operator": "in",
+        "value": [
+          "selling",
+          "cooking",
+          "storing",
+          "handling",
+          "preparing",
+          "distributing"
+        ]
+      },
+      "reason_if_failed": "This registration is only for food businesses. If you don't handle food, you don't need to register.",
+      "evidence_source": "business-declaration"
+    },
+    {
+      "id": "has-business-premises",
+      "description": "Business must have a location or operating address",
+      "condition": {
+        "field": "business_address",
+        "operator": "exists"
+      },
+      "reason_if_failed": "You must provide the location where your food business operates (can be a home address, market location, or mobile vehicle base)",
+      "evidence_source": "business-declaration"
+    },
+    {
+      "id": "correct-local-authority",
+      "description": "Business must be located within the local authority's jurisdiction",
+      "condition": {
+        "field": "business_postcode_jurisdiction",
+        "operator": "==",
+        "value": "local_authority_area"
+      },
+      "reason_if_failed": "You need to register with the local authority where your food business is located",
+      "alternative_service": "la.food-hygiene.find-local-authority",
+      "triggers_handoff": true
+    },
+    {
+      "id": "business-owner-verified",
+      "description": "Person registering must be the business owner or responsible person",
+      "condition": {
+        "field": "business_relationship",
+        "operator": "in",
+        "value": [
+          "owner",
+          "partner",
+          "director",
+          "responsible-person"
+        ]
+      },
+      "reason_if_failed": "Only the business owner or someone legally responsible for the food business can register",
+      "evidence_source": "identity-verified"
+    },
+    {
+      "id": "not-already-registered",
+      "description": "Business must not already be registered with this local authority",
+      "condition": {
+        "field": "existing_registration",
+        "operator": "not-exists"
+      },
+      "reason_if_failed": "This business is already registered. Contact your local authority to update your existing registration.",
+      "triggers_handoff": true
+    }
+  ],
+  "explanation_template": "Food hygiene registration eligibility: {outcome}. Registration is free and must be completed at least 28 days before you start trading.",
+  "edge_cases": [
+    {
+      "id": "mobile-food-business",
+      "description": "Mobile food business operating across multiple local authority areas",
+      "detection": "business_type === 'mobile'",
+      "action": "Must register with the local authority where the vehicle is kept overnight. Additional notifications may be needed for other areas."
+    },
+    {
+      "id": "temporary-or-seasonal",
+      "description": "Temporary food business (e.g., festival stall, seasonal market)",
+      "detection": "business_duration === 'temporary' || business_duration === 'seasonal'",
+      "action": "Still required to register at least 28 days before first trading day. Mark as temporary in application."
+    },
+    {
+      "id": "home-based-business",
+      "description": "Food business operating from home address",
+      "detection": "business_address === residential_address",
+      "action": "Home-based food businesses must register. Domestic kitchen may need to meet food hygiene standards."
+    },
+    {
+      "id": "late-registration",
+      "description": "Business is already trading but not registered",
+      "detection": "trading_status === 'already-trading' && existing_registration === null",
+      "action": "Register immediately. Trading without registration is illegal and may result in enforcement action. Explain circumstances to local authority."
+    },
+    {
+      "id": "low-risk-business",
+      "description": "Business only sells pre-wrapped, low-risk food",
+      "detection": "food_handling_type === 'pre-wrapped-only'",
+      "action": "Still required to register even if only selling packaged food. May result in lower inspection frequency."
+    }
+  ]
+}

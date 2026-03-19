@@ -1,0 +1,177 @@
+{
+  "id": "dwp.attendance-allowance.eligibility",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "state-pension-age",
+      "description": "Applicant must have reached State Pension age",
+      "condition": {
+        "field": "age",
+        "operator": ">=",
+        "value": "state_pension_age"
+      },
+      "reason_if_failed": "You must have reached State Pension age to claim Attendance Allowance. If you're under State Pension age, you may be able to claim Personal Independence Payment (PIP) instead.",
+      "evidence_source": "identity-verified",
+      "alternative_service": "dwp.personal-independence-payment"
+    },
+    {
+      "id": "has-disability-or-condition",
+      "description": "Applicant must have a physical disability, mental disability, or health condition",
+      "condition": {
+        "field": "disability_or_health_condition",
+        "operator": "exists"
+      },
+      "reason_if_failed": "You must have a disability or health condition that requires personal care or supervision",
+      "evidence_source": "citizen-provided"
+    },
+    {
+      "id": "care-needs-severity",
+      "description": "Disability or condition must be severe enough to need help caring for yourself or supervision",
+      "condition": {
+        "field": "care_needs_level",
+        "operator": "in",
+        "value": [
+          "frequent-day",
+          "supervision-night",
+          "both-day-and-night"
+        ]
+      },
+      "reason_if_failed": "Your disability or condition must be severe enough that you need help with personal care or supervision for your safety",
+      "evidence_source": "citizen-provided"
+    },
+    {
+      "id": "six-month-duration",
+      "description": "Must have needed help for at least 6 months (unless end of life)",
+      "condition": {
+        "field": "duration_of_care_needs",
+        "operator": ">=",
+        "value": 6
+      },
+      "reason_if_failed": "You must have needed help for at least 6 months before you can claim (unless you're claiming under special rules for end of life)",
+      "evidence_source": "citizen-provided"
+    },
+    {
+      "id": "in-great-britain",
+      "description": "Must be in Great Britain when claiming",
+      "condition": {
+        "field": "location_at_claim",
+        "operator": "==",
+        "value": "great_britain"
+      },
+      "reason_if_failed": "You must be in Great Britain when you claim. There are some exceptions for armed forces members and their families.",
+      "evidence_source": "citizen-provided"
+    },
+    {
+      "id": "residency-2-of-3-years",
+      "description": "Must have been in Great Britain for at least 2 of the last 3 years",
+      "condition": {
+        "field": "gb_residency_duration",
+        "operator": ">=",
+        "value": 2
+      },
+      "reason_if_failed": "You must have been in Great Britain for at least 2 of the last 3 years (unless you're a refugee or have humanitarian protection status)",
+      "evidence_source": "citizen-provided"
+    },
+    {
+      "id": "habitually-resident",
+      "description": "Must be habitually resident in UK, Ireland, Isle of Man or Channel Islands",
+      "condition": {
+        "field": "habitual_residence",
+        "operator": "in",
+        "value": [
+          "UK",
+          "Ireland",
+          "Isle of Man",
+          "Channel Islands"
+        ]
+      },
+      "reason_if_failed": "You must be habitually resident in the UK, Ireland, Isle of Man or Channel Islands",
+      "evidence_source": "citizen-provided"
+    },
+    {
+      "id": "not-subject-to-immigration-control",
+      "description": "Must not be subject to immigration control (unless sponsored immigrant)",
+      "condition": {
+        "field": "immigration_status",
+        "operator": "!=",
+        "value": "subject_to_control"
+      },
+      "reason_if_failed": "You cannot claim if you're subject to immigration control (unless you're a sponsored immigrant)",
+      "evidence_source": "identity-verified",
+      "triggers_handoff": true
+    },
+    {
+      "id": "not-getting-other-benefits",
+      "description": "Must not be getting DLA, PIP, ADP, SADLA or AFIP",
+      "condition": {
+        "field": "existing_disability_benefits",
+        "operator": "not-exists"
+      },
+      "reason_if_failed": "You cannot get Attendance Allowance if you already receive Disability Living Allowance, Personal Independence Payment, Adult Disability Payment, Scottish Adult Disability Living Allowance or Armed Forces Independence Payment",
+      "evidence_source": "dwp-benefits-system",
+      "alternative_service": "dwp.disability-benefits-change"
+    },
+    {
+      "id": "not-in-la-funded-care-home",
+      "description": "Cannot usually get if in care home paid for by local authority",
+      "condition": {
+        "field": "care_home_funding",
+        "operator": "!=",
+        "value": "local_authority"
+      },
+      "reason_if_failed": "You cannot usually get Attendance Allowance if you live in a care home and your care is paid for by your local authority. You can still claim if you pay for all your care home costs yourself.",
+      "evidence_source": "citizen-provided"
+    }
+  ],
+  "explanation_template": "Attendance Allowance eligibility: {outcome}. Rate: {rate} per week based on care needs.",
+  "edge_cases": [
+    {
+      "id": "end-of-life",
+      "description": "Medical professional has said applicant might have 12 months or less to live",
+      "detection": "end_of_life_indicator",
+      "action": "Fast-track application under special rules. Automatically award higher rate (£110.40). No face-to-face assessment required. Requires SR1 form from medical professional."
+    },
+    {
+      "id": "scotland-resident",
+      "description": "Applicant lives in Scotland",
+      "detection": "scotland_postcode",
+      "action": "Hand off to Social Security Scotland. Applicant must apply for Pension Age Disability Payment instead of Attendance Allowance."
+    },
+    {
+      "id": "moving-to-scotland",
+      "description": "Applicant is moving from England/Wales to Scotland",
+      "detection": "moving_to_scotland",
+      "action": "Inform applicant: Attendance Allowance will stop 13 weeks after move. Must apply for Pension Age Disability Payment as soon as possible after moving."
+    },
+    {
+      "id": "moving-from-scotland",
+      "description": "Applicant is moving from Scotland to England/Wales and receives Pension Age Disability Payment",
+      "detection": "moving_from_scotland",
+      "action": "Applicant must report move to Social Security Scotland and apply for Attendance Allowance immediately to avoid payment gaps."
+    },
+    {
+      "id": "unclear-disability-impact",
+      "description": "Unclear how disability or health condition affects applicant",
+      "detection": "unclear_care_needs_assessment",
+      "action": "Arrange face-to-face assessment with medical professional to examine applicant and clarify care needs."
+    },
+    {
+      "id": "refugee-or-humanitarian-protection",
+      "description": "Applicant is refugee or has humanitarian protection status",
+      "detection": "refugee_status",
+      "action": "Waive the 2-of-3-years Great Britain residency requirement. Process application under standard rules."
+    },
+    {
+      "id": "armed-forces-exception",
+      "description": "Applicant is member or family member of armed forces",
+      "detection": "armed_forces_connection",
+      "action": "Apply exceptions to Great Britain presence requirement. Process application with armed forces considerations."
+    },
+    {
+      "id": "getting-constant-attendance-allowance",
+      "description": "Applicant receives Constant Attendance Allowance",
+      "detection": "constant_attendance_allowance",
+      "action": "If approved, reduce Attendance Allowance by the amount of Constant Attendance Allowance received."
+    }
+  ]
+}

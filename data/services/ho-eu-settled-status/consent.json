@@ -1,0 +1,147 @@
+{
+  "id": "ho.eu-settled-status.consent",
+  "version": "1.0.0",
+  "grants": [
+    {
+      "id": "identity-verification",
+      "description": "Verify your identity using your passport or national identity card, and provide a digital photo of your face",
+      "data_shared": [
+        "full_name",
+        "date_of_birth",
+        "nationality",
+        "passport_or_id_number",
+        "facial_biometric_photo"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To confirm your identity before processing your EU Settlement Scheme application",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "biometric-data-non-eu",
+      "description": "Provide your fingerprints if you do not have a valid biometric residence card",
+      "data_shared": [
+        "fingerprints"
+      ],
+      "source": "ukvcas-service-point",
+      "purpose": "To verify your identity if you do not have a biometric residence card or it expired more than 18 months ago",
+      "duration": "until-revoked",
+      "required": false
+    },
+    {
+      "id": "automated-residence-check",
+      "description": "Allow the Home Office to check your National Insurance number against HMRC tax records and DWP benefit records to verify your continuous residence",
+      "data_shared": [
+        "national_insurance_number",
+        "tax_records",
+        "benefit_claims",
+        "employment_history"
+      ],
+      "source": "hmrc-dwp",
+      "purpose": "To automatically verify how long you have been continuously resident in the UK, reducing the need for you to provide documents",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "travel-records-check",
+      "description": "Allow the Home Office to access your travel records to verify dates you entered and left the UK",
+      "data_shared": [
+        "border_crossing_records",
+        "entry_exit_dates"
+      ],
+      "source": "uk-border-force",
+      "purpose": "To verify your continuous residence and check for absences that may affect your eligibility for settled or pre-settled status",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "criminal-record-check",
+      "description": "Allow the Home Office to check UK and international criminal databases for convictions, and declare any convictions that appear in your criminal record",
+      "data_shared": [
+        "criminal_convictions",
+        "security_threat_indicators"
+      ],
+      "source": "police-national-computer",
+      "purpose": "To assess whether you have committed serious or repeated crimes, or pose a security threat, which may affect your eligibility",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "residence-evidence-documents",
+      "description": "Provide documents proving your continuous residence in the UK if automated checks are insufficient",
+      "data_shared": [
+        "utility_bills",
+        "bank_statements",
+        "payslips",
+        "tenancy_agreements",
+        "council_tax_records",
+        "gp_registration",
+        "education_records"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To prove you have been continuously resident in the UK for the required period",
+      "duration": "session",
+      "required": false
+    },
+    {
+      "id": "family-relationship-evidence",
+      "description": "Provide documents proving your family relationship to an EU/EEA/Swiss national, if you are applying as their family member",
+      "data_shared": [
+        "marriage_certificate",
+        "civil_partnership_certificate",
+        "birth_certificate",
+        "adoption_certificate",
+        "proof_of_dependency",
+        "cohabitation_evidence"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To prove your eligibility to apply as the family member of someone from the EU, Switzerland, Norway, Iceland or Liechtenstein",
+      "duration": "session",
+      "required": false
+    },
+    {
+      "id": "family-member-status-verification",
+      "description": "Allow the Home Office to check the settled or pre-settled status of your EU/EEA/Swiss family member",
+      "data_shared": [
+        "family_member_application_number",
+        "family_member_status"
+      ],
+      "source": "home-office-internal",
+      "purpose": "To verify that your family member has the required status under the EU Settlement Scheme",
+      "duration": "session",
+      "required": false
+    },
+    {
+      "id": "reasonable-grounds-evidence",
+      "description": "Provide evidence explaining why you are applying after the deadline, if applicable",
+      "data_shared": [
+        "medical_records",
+        "domestic_violence_support_letters",
+        "care_needs_documentation",
+        "guardian_statements"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To assess whether you have reasonable grounds for the delay in applying to the scheme",
+      "duration": "session",
+      "required": false
+    }
+  ],
+  "revocation": {
+    "mechanism": "Contact the EU Settlement Scheme Resolution Centre or revoke through your UKVI account",
+    "effect": "Application will be cancelled if consent is revoked before a decision is made. If you have settled or pre-settled status, revoking consent will not affect your status, but may affect your ability to prove it or update your details."
+  },
+  "delegation": {
+    "agent_identity": "GOV.UK AI Agent",
+    "scopes": [
+      "read-personal-data",
+      "submit-identity-documents",
+      "submit-residence-evidence",
+      "submit-family-relationship-evidence",
+      "declare-criminal-record",
+      "request-automated-checks",
+      "receive-certificate-of-application",
+      "view-application-status"
+    ],
+    "limitations": "Agent cannot make decisions about your criminal record declaration without your explicit review. Agent cannot submit biometric data on your behalf - you must attend UKVCAS in person if required. Agent cannot appeal a decision on your behalf. Agent cannot confirm domestic violence or abuse circumstances without safeguarding assessment. Agent cannot apply for a child without explicit parental or guardian consent for each child. Agent cannot change your claimed nationality or family relationships without your confirmation."
+  }
+}

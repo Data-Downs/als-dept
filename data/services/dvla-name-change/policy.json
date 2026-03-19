@@ -1,0 +1,113 @@
+{
+  "id": "dvla-name-change.eligibility",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "has-licence-or-lost",
+      "description": "Applicant must have an existing driving licence or have lost/stolen licence",
+      "condition": {
+        "field": "driving_licence_status",
+        "operator": "in",
+        "value": [
+          "valid",
+          "lost",
+          "stolen",
+          "destroyed"
+        ]
+      },
+      "reason_if_failed": "You must have an existing driving licence to change the name. Apply for a new licence if you have never held one.",
+      "alternative_service": "dvla.apply-first-licence"
+    },
+    {
+      "id": "has-name-change-evidence",
+      "description": "Applicant must have legal evidence of name change",
+      "condition": {
+        "field": "name_change_evidence",
+        "operator": "exists"
+      },
+      "reason_if_failed": "You must provide original evidence of your name change (marriage certificate, civil partnership certificate, deed poll, or statutory declaration). Photocopies are not accepted.",
+      "evidence_source": "citizen-provided"
+    },
+    {
+      "id": "uk-resident",
+      "description": "Applicant must be a UK resident (excluding Northern Ireland for this service)",
+      "condition": {
+        "field": "jurisdiction",
+        "operator": "in",
+        "value": [
+          "England",
+          "Wales",
+          "Scotland"
+        ]
+      },
+      "reason_if_failed": "This service is for England, Wales and Scotland residents only. Northern Ireland has a different process.",
+      "alternative_service": "dva-ni.change-licence-name",
+      "triggers_handoff": true
+    },
+    {
+      "id": "documents-not-laminated",
+      "description": "Evidence documents must not be laminated",
+      "condition": {
+        "field": "documents_laminated",
+        "operator": "==",
+        "value": false
+      },
+      "reason_if_failed": "Laminated certificates cannot be accepted. You must provide original, unlaminated documents."
+    },
+    {
+      "id": "photo-required-if-paper",
+      "description": "If applicant has paper licence, must provide passport-type photo",
+      "condition": {
+        "field": "photo_provided",
+        "operator": "exists"
+      },
+      "reason_if_failed": "You have a paper driving licence, so you must send a recent printed passport-type photo with your application.",
+      "evidence_source": "citizen-provided"
+    }
+  ],
+  "explanation_template": "Driving licence name change eligibility: {outcome}",
+  "edge_cases": [
+    {
+      "id": "lost-stolen-destroyed",
+      "description": "Licence has been lost, stolen or destroyed",
+      "detection": "driving_licence_status in ['lost', 'stolen', 'destroyed']",
+      "action": "Applicant must explain what happened on form D1. Fee of £20 applies, payable to DVLA by cheque or postal order."
+    },
+    {
+      "id": "also-changing-photo",
+      "description": "Applicant wants to change photo at the same time as name",
+      "detection": "change_photo == true",
+      "action": "Fee of £17 applies (unless over 70 or medical short period licence). Must send recent printed passport-type photo. Cheque or postal order payable to DVLA."
+    },
+    {
+      "id": "over-70-or-medical",
+      "description": "Applicant is over 70 or has medical short period licence",
+      "detection": "age >= 70 OR licence_type == 'medical-short-period'",
+      "action": "No fee for photo change. Still must send photo if changing photo."
+    },
+    {
+      "id": "lorry-bus-licence",
+      "description": "Applicant has a lorry or bus licence",
+      "detection": "licence_type in ['lorry', 'bus']",
+      "action": "Use form D2 'Application for a lorry/bus licence'. Send to DVLA Swansea SA99 1BR (different address from car/motorbike)."
+    },
+    {
+      "id": "changing-gender",
+      "description": "Applicant is also changing gender on licence",
+      "detection": "change_gender == true",
+      "action": "Same process as name change. Provide evidence of gender change. No additional fee."
+    },
+    {
+      "id": "hereditary-title",
+      "description": "Applicant is changing title to a hereditary title",
+      "detection": "hereditary_title == true",
+      "action": "Evidence required for hereditary titles (e.g. Lord, Lady). No evidence needed for standard titles (Mr, Mrs, Ms, Dr, etc)."
+    },
+    {
+      "id": "also-update-v5c",
+      "description": "Applicant is a vehicle owner",
+      "detection": "vehicle_owner == true",
+      "action": "Reminder: You must also update your V5C vehicle registration certificate (log book) if you own a vehicle."
+    }
+  ]
+}

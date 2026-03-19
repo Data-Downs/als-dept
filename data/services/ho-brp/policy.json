@@ -1,0 +1,90 @@
+{
+  "id": "ho-brp.eligibility",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "non-uk-national",
+      "description": "Applicant must be a non-UK national",
+      "condition": {
+        "field": "nationality",
+        "operator": "!=",
+        "value": "UK"
+      },
+      "reason_if_failed": "BRPs are only issued to non-UK nationals. UK nationals do not need a BRP.",
+      "evidence_source": "passport"
+    },
+    {
+      "id": "leave-granted",
+      "description": "Applicant must have been granted leave to remain in the UK",
+      "condition": {
+        "field": "visa_status",
+        "operator": "==",
+        "value": "granted"
+      },
+      "reason_if_failed": "You must have been granted a visa or leave to remain before you can collect a BRP.",
+      "evidence_source": "home-office-visa-records",
+      "alternative_service": "ukvi.apply-visa"
+    },
+    {
+      "id": "leave-duration",
+      "description": "Leave to remain must be for more than 6 months",
+      "condition": {
+        "field": "leave_duration_months",
+        "operator": ">=",
+        "value": 6
+      },
+      "reason_if_failed": "BRPs are only issued for leave to remain granted for more than 6 months.",
+      "evidence_source": "home-office-visa-records"
+    },
+    {
+      "id": "collection-window",
+      "description": "Collection must be within 10 days of arrival in the UK",
+      "condition": {
+        "field": "days_since_arrival",
+        "operator": "<=",
+        "value": 10
+      },
+      "reason_if_failed": "You must collect your BRP within 10 days of arriving in the UK. Contact the Home Office if you've missed this deadline.",
+      "evidence_source": "arrival-date",
+      "triggers_handoff": true
+    },
+    {
+      "id": "arrival-letter",
+      "description": "Applicant must have a valid arrival confirmation letter",
+      "condition": {
+        "field": "arrival_letter_reference",
+        "operator": "exists"
+      },
+      "reason_if_failed": "You need your arrival confirmation letter which names the post office where you must collect your BRP.",
+      "evidence_source": "citizen-provided",
+      "triggers_handoff": true
+    }
+  ],
+  "explanation_template": "BRP collection eligibility: {outcome}",
+  "edge_cases": [
+    {
+      "id": "missed-collection-window",
+      "description": "Applicant is unable to collect within 10 days due to exceptional circumstances",
+      "detection": "days_since_arrival > 10",
+      "action": "Route to Home Office contact centre. May require evidence of exceptional circumstances (medical emergency, travel disruption)."
+    },
+    {
+      "id": "lost-arrival-letter",
+      "description": "Applicant has lost their arrival confirmation letter with post office details",
+      "detection": "arrival_letter_lost",
+      "action": "Contact Home Office to request replacement collection details. Service will be handed off."
+    },
+    {
+      "id": "child-collection",
+      "description": "BRP is for a child under 18",
+      "detection": "age < 18",
+      "action": "Parent or legal guardian must collect on behalf of child. Additional ID verification required."
+    },
+    {
+      "id": "vulnerable-person",
+      "description": "Applicant has accessibility needs or requires assistance",
+      "detection": "accessibility_needs",
+      "action": "Arrange support for post office collection. May need alternative collection arrangements."
+    }
+  ]
+}

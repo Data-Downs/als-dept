@@ -1,0 +1,100 @@
+{
+  "id": "hmrc.register-sole-trader.eligibility",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "self-employed",
+      "description": "Applicant must be self-employed or starting self-employment",
+      "condition": {
+        "field": "employment_status",
+        "operator": "in",
+        "value": [
+          "self-employed",
+          "starting-self-employment"
+        ]
+      },
+      "reason_if_failed": "You only need to register as a sole trader if you are self-employed",
+      "evidence_source": "citizen-provided"
+    },
+    {
+      "id": "has-nino",
+      "description": "Applicant must have a National Insurance number",
+      "condition": {
+        "field": "national_insurance_number",
+        "operator": "exists"
+      },
+      "reason_if_failed": "You need a National Insurance number to register for Self Assessment",
+      "alternative_service": "hmrc.apply-nino"
+    },
+    {
+      "id": "uk-connection",
+      "description": "Applicant must be UK resident or have UK-sourced income",
+      "condition": {
+        "field": "uk_tax_resident",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "You must be a UK resident or have UK income to register with HMRC",
+      "triggers_handoff": true
+    },
+    {
+      "id": "not-already-registered",
+      "description": "Applicant must not already be registered for Self Assessment",
+      "condition": {
+        "field": "self_assessment_utr",
+        "operator": "not-exists"
+      },
+      "reason_if_failed": "You are already registered for Self Assessment. Use your existing UTR.",
+      "alternative_service": "hmrc.sign-in-self-assessment"
+    },
+    {
+      "id": "age-minimum",
+      "description": "Applicant must be at least 16 years old",
+      "condition": {
+        "field": "age",
+        "operator": ">=",
+        "value": 16
+      },
+      "reason_if_failed": "You must be at least 16 years old to be self-employed in the UK",
+      "evidence_source": "identity-verified"
+    },
+    {
+      "id": "within-deadline",
+      "description": "Registration must be completed by 5 October in the second tax year of trading",
+      "condition": {
+        "field": "registration_deadline_passed",
+        "operator": "!=",
+        "value": true
+      },
+      "reason_if_failed": "You have missed the registration deadline. You may face penalties. Contact HMRC for guidance.",
+      "triggers_handoff": true
+    }
+  ],
+  "explanation_template": "Sole trader registration eligibility: {outcome}",
+  "edge_cases": [
+    {
+      "id": "partnership",
+      "description": "Applicant is registering a partnership, not sole trader",
+      "detection": "business_structure == 'partnership'",
+      "action": "Route to partnership registration. Different forms and process required."
+    },
+    {
+      "id": "limited-company",
+      "description": "Applicant should register a limited company instead",
+      "detection": "business_structure == 'limited-company'",
+      "action": "Route to Companies House registration. HMRC Corporation Tax registration separate."
+    },
+    {
+      "id": "non-resident-income",
+      "description": "Applicant is non-UK resident with UK income",
+      "detection": "uk_tax_resident == false AND uk_income == true",
+      "action": "Hand off to HMRC specialist team for non-resident Self Assessment guidance."
+    },
+    {
+      "id": "under-threshold",
+      "description": "Trading income below reporting threshold (£1,000 trading allowance)",
+      "detection": "expected_turnover < 1000",
+      "action": "Inform applicant they may not need to register if income stays below £1,000. Registration optional."
+    }
+  ]
+}

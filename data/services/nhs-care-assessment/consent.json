@@ -1,0 +1,104 @@
+{
+  "id": "nhs.care-assessment.consent",
+  "version": "1.0.0",
+  "grants": [
+    {
+      "id": "identity-verification",
+      "description": "Verify your identity using your NHS number, name, date of birth, and address",
+      "data_shared": [
+        "full_name",
+        "date_of_birth",
+        "nhs_number",
+        "address",
+        "contact_details"
+      ],
+      "source": "nhs-login",
+      "purpose": "To confirm your identity and link your assessment to the correct person and local authority",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "health-records-access",
+      "description": "Allow the care assessor to access your health records from your GP and other healthcare providers",
+      "data_shared": [
+        "medical_history",
+        "current_medications",
+        "diagnoses",
+        "hospital_records",
+        "specialist_reports"
+      ],
+      "source": "nhs-gp-records",
+      "purpose": "To understand your health conditions and how they affect your ability to care for yourself",
+      "duration": "until-revoked",
+      "required": false
+    },
+    {
+      "id": "daily-living-information",
+      "description": "Share information about your daily activities, mobility, and personal care needs",
+      "data_shared": [
+        "mobility_details",
+        "personal_care_needs",
+        "daily_activities",
+        "home_environment",
+        "current_support"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To assess what care and support you need to live independently and safely",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "contact-healthcare-professionals",
+      "description": "Allow the care assessor to contact your GP, hospital consultants, or other healthcare professionals",
+      "data_shared": [
+        "healthcare_provider_contacts",
+        "assessment_findings"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To gather additional information about your health and care needs for a comprehensive assessment",
+      "duration": "until-revoked",
+      "required": false
+    },
+    {
+      "id": "financial-information",
+      "description": "Share your financial information to determine if you qualify for local authority funding for care",
+      "data_shared": [
+        "income",
+        "savings",
+        "property_ownership",
+        "benefits_received"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To calculate if you are eligible for financial support towards the cost of care (means test)",
+      "duration": "until-revoked",
+      "required": false
+    },
+    {
+      "id": "family-carer-involvement",
+      "description": "Allow us to involve your family members or carers in the assessment if you wish",
+      "data_shared": [
+        "carer_details",
+        "family_circumstances",
+        "informal_care_arrangements"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To understand your current support network and involve those who care for you in planning",
+      "duration": "until-revoked",
+      "required": false
+    }
+  ],
+  "revocation": {
+    "mechanism": "Contact your local authority social services team or revoke through your NHS account. You can withdraw consent at any time.",
+    "effect": "Assessment will be paused or cancelled if key consents are revoked. You can request a new assessment at any time. Existing care plans may continue if already in place."
+  },
+  "delegation": {
+    "agent_identity": "NHS AI Care Agent",
+    "scopes": [
+      "read-personal-data",
+      "submit-assessment-request",
+      "provide-daily-living-information",
+      "schedule-assessment-appointment"
+    ],
+    "limitations": "Agent cannot consent to health records access on your behalf. Agent cannot make decisions about care preferences or care home placement. Agent cannot sign legal documents related to your care. Agent cannot consent to means testing without explicit authorization. For safeguarding concerns or capacity issues, human assessor involvement is mandatory."
+  }
+}

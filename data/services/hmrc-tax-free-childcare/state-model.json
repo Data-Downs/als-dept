@@ -1,0 +1,157 @@
+{
+  "id": "hmrc.tax-free-childcare.states",
+  "version": "1.0.0",
+  "states": [
+    {
+      "id": "not-started",
+      "type": "initial"
+    },
+    {
+      "id": "identity-verified"
+    },
+    {
+      "id": "basic-eligibility-checked"
+    },
+    {
+      "id": "consent-given"
+    },
+    {
+      "id": "child-details-provided"
+    },
+    {
+      "id": "work-status-confirmed"
+    },
+    {
+      "id": "partner-details-added"
+    },
+    {
+      "id": "income-verified"
+    },
+    {
+      "id": "provider-confirmed"
+    },
+    {
+      "id": "details-submitted"
+    },
+    {
+      "id": "assessment"
+    },
+    {
+      "id": "decision",
+      "receipt": true
+    },
+    {
+      "id": "account-created",
+      "receipt": true
+    },
+    {
+      "id": "completed",
+      "type": "terminal",
+      "receipt": true
+    },
+    {
+      "id": "rejected",
+      "type": "terminal",
+      "receipt": true
+    },
+    {
+      "id": "handed-off",
+      "type": "terminal",
+      "receipt": true
+    }
+  ],
+  "transitions": [
+    {
+      "from": "not-started",
+      "to": "identity-verified",
+      "trigger": "verify-identity"
+    },
+    {
+      "from": "identity-verified",
+      "to": "basic-eligibility-checked",
+      "trigger": "check-basic-eligibility"
+    },
+    {
+      "from": "basic-eligibility-checked",
+      "to": "consent-given",
+      "trigger": "grant-consent",
+      "condition": "eligible"
+    },
+    {
+      "from": "basic-eligibility-checked",
+      "to": "rejected",
+      "trigger": "reject",
+      "condition": "not-eligible"
+    },
+    {
+      "from": "basic-eligibility-checked",
+      "to": "handed-off",
+      "trigger": "handoff",
+      "condition": "edge-case-requires-decision"
+    },
+    {
+      "from": "consent-given",
+      "to": "child-details-provided",
+      "trigger": "submit-child-details"
+    },
+    {
+      "from": "child-details-provided",
+      "to": "work-status-confirmed",
+      "trigger": "confirm-work-status"
+    },
+    {
+      "from": "work-status-confirmed",
+      "to": "partner-details-added",
+      "trigger": "add-partner-details",
+      "condition": "has-partner"
+    },
+    {
+      "from": "work-status-confirmed",
+      "to": "income-verified",
+      "trigger": "skip-partner",
+      "condition": "no-partner"
+    },
+    {
+      "from": "partner-details-added",
+      "to": "income-verified",
+      "trigger": "verify-income"
+    },
+    {
+      "from": "income-verified",
+      "to": "provider-confirmed",
+      "trigger": "confirm-provider"
+    },
+    {
+      "from": "provider-confirmed",
+      "to": "details-submitted",
+      "trigger": "submit-application"
+    },
+    {
+      "from": "details-submitted",
+      "to": "assessment",
+      "trigger": "begin-assessment"
+    },
+    {
+      "from": "assessment",
+      "to": "decision",
+      "trigger": "make-decision"
+    },
+    {
+      "from": "decision",
+      "to": "account-created",
+      "trigger": "approve",
+      "condition": "application-approved"
+    },
+    {
+      "from": "decision",
+      "to": "rejected",
+      "trigger": "reject-application",
+      "condition": "application-rejected"
+    },
+    {
+      "from": "account-created",
+      "to": "completed",
+      "trigger": "complete-setup"
+    }
+  ]
+}

@@ -1,0 +1,143 @@
+{
+  "id": "la-disabled-facilities-grant.eligibility",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "disability-requirement",
+      "description": "Applicant or someone in the household must be disabled",
+      "condition": {
+        "field": "has_disability",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "This grant is for disabled people who need home adaptations. You must have a physical disability, learning disability, age-related needs, autism, cognitive impairment, progressive condition, terminal illness, or mental health condition.",
+      "evidence_source": "citizen-declared"
+    },
+    {
+      "id": "intent-to-occupy",
+      "description": "Disabled person must intend to live in the property during the grant period (usually 5 years)",
+      "condition": {
+        "field": "intent_to_occupy",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "The disabled person must intend to live in the property for at least 5 years (or shorter period if terminally ill).",
+      "evidence_source": "citizen-declared"
+    },
+    {
+      "id": "applicant-status",
+      "description": "Applicant must be owner, tenant, or landlord of the property",
+      "condition": {
+        "field": "applicant_status",
+        "operator": "in",
+        "value": [
+          "owner",
+          "tenant",
+          "landlord"
+        ]
+      },
+      "reason_if_failed": "You must be the property owner, tenant, or landlord to apply for this grant.",
+      "evidence_source": "land-registry"
+    },
+    {
+      "id": "property-location",
+      "description": "Property must be in England, Wales, or Northern Ireland",
+      "condition": {
+        "field": "property_jurisdiction",
+        "operator": "in",
+        "value": [
+          "England",
+          "Wales",
+          "Northern Ireland"
+        ]
+      },
+      "reason_if_failed": "Disabled Facilities Grants are not available in Scotland. Find out about support for equipment and adaptations from your local council.",
+      "alternative_service": "scotland-adaptations-support"
+    },
+    {
+      "id": "work-not-started",
+      "description": "Work must not have started before council approval",
+      "condition": {
+        "field": "work_started_before_approval",
+        "operator": "==",
+        "value": false
+      },
+      "reason_if_failed": "You might not get any grant if you start work on your property before the council approves your application.",
+      "evidence_source": "citizen-declared"
+    },
+    {
+      "id": "means-test-over-18",
+      "description": "For adults over 18, household income and savings over £6,000 will be assessed",
+      "condition": {
+        "field": "applicant_age",
+        "operator": ">=",
+        "value": 18
+      },
+      "reason_if_failed": "N/A - this is an assessment rule, not a rejection criterion",
+      "evidence_source": "dwp-benefits-data"
+    },
+    {
+      "id": "work-necessary",
+      "description": "Work must be necessary and appropriate to meet disabled person's needs",
+      "condition": {
+        "field": "ot_assessment_outcome",
+        "operator": "==",
+        "value": "necessary"
+      },
+      "reason_if_failed": "The occupational therapist assessment found that the proposed work is not necessary or appropriate to meet your needs.",
+      "evidence_source": "ot-assessment",
+      "triggers_handoff": true
+    },
+    {
+      "id": "work-reasonable",
+      "description": "Work must be reasonable given the age and condition of the property",
+      "condition": {
+        "field": "work_feasibility",
+        "operator": "==",
+        "value": "reasonable"
+      },
+      "reason_if_failed": "The council has determined that the proposed work is not reasonable given the age and condition of your property.",
+      "evidence_source": "surveyor-assessment",
+      "triggers_handoff": true
+    }
+  ],
+  "explanation_template": "Disabled Facilities Grant eligibility: {outcome}. Maximum grant: £30,000 (England), £36,000 (Wales), £25,000 (Northern Ireland). Means test applies unless under 18 or landlord application.",
+  "edge_cases": [
+    {
+      "id": "child-under-18",
+      "description": "Disabled child under 18 - no parental means test",
+      "detection": "disabled_person_age < 18",
+      "action": "Skip means test. Grant based solely on need, not household income or savings."
+    },
+    {
+      "id": "landlord-application",
+      "description": "Landlord applying for tenant's adaptations",
+      "detection": "applicant_status == 'landlord'",
+      "action": "Skip means test. Council may require property to be let to another disabled person if tenant moves within 5 years."
+    },
+    {
+      "id": "terminal-illness",
+      "description": "Applicant or disabled person has terminal illness",
+      "detection": "terminal_illness == true",
+      "action": "Grant period can be shorter than 5 years. Expedite assessment and decision process."
+    },
+    {
+      "id": "repeat-application",
+      "description": "Applying for another grant for the same property due to condition change",
+      "detection": "previous_grant_received == true",
+      "action": "Allowed. Assess changed needs and whether previous adaptations are still appropriate."
+    },
+    {
+      "id": "planning-permission-required",
+      "description": "Work requires planning permission or building regulations approval",
+      "detection": "planning_permission_needed == true",
+      "action": "Applicant must apply separately for planning permission. Council may require qualified architect or surveyor. Grant can cover their fees."
+    },
+    {
+      "id": "work-started-early",
+      "description": "Work started before council approval",
+      "detection": "work_started_before_approval == true",
+      "action": "Application likely to be rejected. Refer to council appeals process."
+    }
+  ]
+}

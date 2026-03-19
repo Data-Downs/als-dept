@@ -1,0 +1,89 @@
+{
+  "id": "dwp-uc-carer.consent",
+  "version": "1.0.0",
+  "grants": [
+    {
+      "id": "identity-verification",
+      "description": "Verify your identity using your GOV.UK One Login or existing Universal Credit account",
+      "data_shared": [
+        "full_name",
+        "date_of_birth",
+        "national_insurance_number"
+      ],
+      "source": "one-login",
+      "purpose": "To confirm your identity and link the carer's element to your Universal Credit claim",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "care-recipient-benefit-check",
+      "description": "Check the benefit status of the person you care for",
+      "data_shared": [
+        "care_recipient_name",
+        "care_recipient_nino",
+        "care_recipient_benefit_type",
+        "care_recipient_benefit_rate",
+        "care_recipient_benefit_award_dates"
+      ],
+      "source": "dwp-benefits-database",
+      "purpose": "To verify that the person you care for receives a qualifying disability benefit at the required rate",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "care-arrangement-details",
+      "description": "Provide details about your caring responsibilities",
+      "data_shared": [
+        "care_hours_per_week",
+        "relationship_to_care_recipient",
+        "care_recipient_address",
+        "type_of_care_provided",
+        "care_start_date"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To assess your eligibility for the carer's element and calculate the correct payment",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "uc-payment-data",
+      "description": "Access your Universal Credit payment details to add the carer's element",
+      "data_shared": [
+        "uc_claim_reference",
+        "current_uc_payment_amount",
+        "existing_uc_elements",
+        "household_composition"
+      ],
+      "source": "dwp-uc-system",
+      "purpose": "To determine if you're eligible for the carer's element and to calculate the revised Universal Credit payment including the carer's element",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "severe-disability-premium-warning",
+      "description": "Acknowledge that the person you care for may lose their severe disability premium",
+      "data_shared": [
+        "care_recipient_sdp_status",
+        "sdp_warning_acknowledged"
+      ],
+      "source": "citizen-acknowledged",
+      "purpose": "To ensure you understand the potential impact on the care recipient's benefits before proceeding with the claim",
+      "duration": "session",
+      "required": true
+    }
+  ],
+  "revocation": {
+    "mechanism": "Report change of circumstances through your Universal Credit account, call the UC helpline, or speak to your work coach",
+    "effect": "The carer's element will be removed from your Universal Credit payment. You may need to repay any overpayment if you continued to receive the element after your caring responsibilities ended."
+  },
+  "delegation": {
+    "agent_identity": "GOV.UK AI Agent",
+    "scopes": [
+      "read-uc-claim-data",
+      "read-care-recipient-benefits",
+      "submit-carer-element-application",
+      "report-care-hours"
+    ],
+    "limitations": "Agent cannot: provide false information about care hours or care recipient details; acknowledge severe disability premium impact on your behalf without your explicit confirmation; consent to verification checks with the care recipient; change the care recipient's benefits or contact them directly. Agent must hand off to human if: safeguarding concerns are identified; care arrangement appears to be commercial/paid employment; multiple conflicting carer claims exist for same care recipient."
+  }
+}

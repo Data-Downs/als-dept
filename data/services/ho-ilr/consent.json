@@ -1,0 +1,120 @@
+{
+  "id": "ho-ilr.consent",
+  "version": "1.0.0",
+  "grants": [
+    {
+      "id": "identity-verification",
+      "description": "Verify your identity using passport, visa records and biometric residence permit",
+      "data_shared": [
+        "full_name",
+        "date_of_birth",
+        "nationality",
+        "passport_number",
+        "brp_number",
+        "biometric_data"
+      ],
+      "source": "home-office-visa-records",
+      "purpose": "To confirm your identity and current immigration status before processing your ILR application",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "immigration-history",
+      "description": "Access your complete UK immigration history including all visas, entry/exit records, and any previous applications",
+      "data_shared": [
+        "visa_history",
+        "entry_exit_dates",
+        "border_crossing_records",
+        "previous_applications",
+        "immigration_breaches"
+      ],
+      "source": "home-office-casework",
+      "purpose": "To verify you have met the continuous residence and qualifying period requirements",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "criminal-record-check",
+      "description": "Check your UK criminal record and overseas criminal history declarations",
+      "data_shared": [
+        "criminal_convictions",
+        "police_cautions",
+        "pending_charges",
+        "overseas_criminal_record"
+      ],
+      "source": "police-national-computer",
+      "purpose": "To assess whether you meet the good character requirement for settlement",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "financial-verification",
+      "description": "Share your tax and employment records to verify income and lawful work",
+      "data_shared": [
+        "employment_history",
+        "tax_returns",
+        "national_insurance_contributions",
+        "salary_information",
+        "benefits_received"
+      ],
+      "source": "hmrc",
+      "purpose": "To verify you meet income requirements (if applicable) and have been working lawfully in the UK",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "biometric-data",
+      "description": "Provide fingerprints and facial photograph at a biometric appointment",
+      "data_shared": [
+        "fingerprints",
+        "facial_photograph"
+      ],
+      "source": "citizen-provided",
+      "purpose": "For identity verification and production of biometric residence permit if ILR is granted",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "address-history",
+      "description": "Verify your residential addresses in the UK for the qualifying period",
+      "data_shared": [
+        "address_history",
+        "council_tax_records",
+        "utility_bills",
+        "tenancy_agreements"
+      ],
+      "source": "local-authorities",
+      "purpose": "To confirm continuous residence in the UK and assist with identity verification",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "family-relationships",
+      "description": "Verify relationships with UK-settled family members (if applying through family route)",
+      "data_shared": [
+        "marriage_certificate",
+        "birth_certificates",
+        "family_member_immigration_status"
+      ],
+      "source": "gro-hmpo",
+      "purpose": "To confirm eligibility for family-based ILR applications",
+      "duration": "session",
+      "required": false
+    }
+  ],
+  "revocation": {
+    "mechanism": "Contact Home Office or revoke through UKVI online account before decision is made",
+    "effect": "Application will be cancelled and fees will not be refunded if consent is revoked after submission. Biometric data may be retained for immigration enforcement purposes."
+  },
+  "delegation": {
+    "agent_identity": "GOV.UK AI Agent",
+    "scopes": [
+      "read-immigration-history",
+      "read-personal-data",
+      "check-eligibility",
+      "prepare-application",
+      "upload-evidence"
+    ],
+    "limitations": "Agent cannot submit biometric data on your behalf - you must attend appointment in person. Agent cannot make payment without your explicit authorization. Agent cannot answer good character questions about criminal history or immigration breaches on your behalf - you must declare these yourself. Agent cannot sign the application declaration - you must review and sign personally."
+  }
+}

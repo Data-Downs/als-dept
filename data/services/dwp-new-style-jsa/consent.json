@@ -1,0 +1,102 @@
+{
+  "id": "dwp.new-style-jsa.consent",
+  "version": "1.0.0",
+  "grants": [
+    {
+      "id": "identity-verification",
+      "description": "Verify your identity using your GOV.UK One Login credentials",
+      "data_shared": [
+        "full_name",
+        "date_of_birth",
+        "national_insurance_number"
+      ],
+      "source": "one-login",
+      "purpose": "To confirm you are who you say you are and check your eligibility for New Style JSA",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "ni-contributions-check",
+      "description": "Check your National Insurance contribution record with HMRC",
+      "data_shared": [
+        "national_insurance_number",
+        "employment_history",
+        "class1_ni_contributions",
+        "ni_credits"
+      ],
+      "source": "hmrc",
+      "purpose": "To verify you have paid Class 1 National Insurance contributions in the last 2 to 3 years, which determines your eligibility",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "employment-history",
+      "description": "Provide details of your employment for the past 6 months",
+      "data_shared": [
+        "employer_names",
+        "employer_contact_details",
+        "employment_dates",
+        "weekly_work_hours",
+        "current_earnings"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To confirm you are not working 16 or more hours per week and to calculate your JSA entitlement",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "pension-income",
+      "description": "Provide details of any private or workplace pension income",
+      "data_shared": [
+        "pension_provider",
+        "pension_amount",
+        "annuity_details"
+      ],
+      "source": "citizen-provided",
+      "purpose": "Pension income may affect the amount of New Style JSA you receive",
+      "duration": "session",
+      "required": false
+    },
+    {
+      "id": "bank-details",
+      "description": "Provide your bank or building society account details for payment",
+      "data_shared": [
+        "account_holder_name",
+        "account_number",
+        "sort_code"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To pay your New Style JSA benefit directly into your account every 2 weeks",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "claimant-commitment",
+      "description": "Agree to a Claimant Commitment setting out what you will do to look for work",
+      "data_shared": [
+        "job_search_activities",
+        "weekly_job_search_hours",
+        "work_coach_appointments",
+        "training_or_schemes"
+      ],
+      "source": "citizen-agreed",
+      "purpose": "This agreement is a legal requirement to receive JSA. You must do what you've agreed to or your payment may be reduced or stopped (sanctioned)",
+      "duration": "until-revoked",
+      "required": true
+    }
+  ],
+  "revocation": {
+    "mechanism": "Contact Jobcentre Plus by phone (0800 169 0310) or in writing to revoke consent and end your claim",
+    "effect": "Your JSA claim will end immediately if you revoke consent. You will need to reapply if you want to claim again."
+  },
+  "delegation": {
+    "agent_identity": "GOV.UK AI Agent",
+    "scopes": [
+      "read-eligibility-criteria",
+      "submit-application-details",
+      "check-ni-contributions",
+      "provide-employment-history"
+    ],
+    "limitations": "Agent CANNOT attend your JSA interview on your behalf. Agent CANNOT agree to the Claimant Commitment on your behalf. Agent CANNOT apply for jobs or attend job interviews on your behalf. Agent CANNOT attend work coach appointments on your behalf. You must personally attend the interview at your local Jobcentre Plus office to complete your claim."
+  }
+}

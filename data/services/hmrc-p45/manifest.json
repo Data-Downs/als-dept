@@ -1,0 +1,19 @@
+{
+  "id": "hmrc-p45",
+  "version": "1.0.0",
+  "name": "Obtain P45 from employer",
+  "description": "Employer must provide on last day. Required for new job or benefit claim.",
+  "department": "HMRC",
+  "input_schema": {
+    "type": "object"
+  },
+  "output_schema": {
+    "type": "object"
+  },
+  "source": "graph",
+  "serviceType": "document",
+  "govuk_url": "https://www.gov.uk/paye-forms-p45-p60-p11d/p45",
+  "eligibility_summary": "All employees are entitled to a P45 when leaving a job. The employer is legally required to issue it. Needed for a new employer, tax refund, or benefit claim.",
+  "proactive": true,
+  "gated": false
+}

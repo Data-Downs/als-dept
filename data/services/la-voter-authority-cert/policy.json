@@ -1,0 +1,97 @@
+{
+  "id": "la.voter-authority-cert.eligibility",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "registered-to-vote",
+      "description": "Applicant must be registered to vote",
+      "condition": {
+        "field": "electoral_register_status",
+        "operator": "==",
+        "value": "registered"
+      },
+      "reason_if_failed": "You must be registered to vote before applying for a Voter Authority Certificate",
+      "evidence_source": "electoral-register",
+      "alternative_service": "gov-uk.register-to-vote"
+    },
+    {
+      "id": "eligible-jurisdiction",
+      "description": "Applicant must be voting in England, Scotland or Wales",
+      "condition": {
+        "field": "voting_jurisdiction",
+        "operator": "in",
+        "value": [
+          "England",
+          "Scotland",
+          "Wales"
+        ]
+      },
+      "reason_if_failed": "This service is for voters in England, Scotland and Wales only. Different rules apply in Northern Ireland.",
+      "alternative_service": "eoni.electoral-identity-card"
+    },
+    {
+      "id": "lacks-accepted-id",
+      "description": "Applicant must lack accepted photo ID, or photo no longer looks like them, or name mismatch",
+      "condition": {
+        "field": "has_accepted_photo_id",
+        "operator": "==",
+        "value": false
+      },
+      "reason_if_failed": "You only need a Voter Authority Certificate if you do not have accepted photo ID (passport, driving licence, certain bus passes)",
+      "evidence_source": "citizen-declaration"
+    },
+    {
+      "id": "identity-proof",
+      "description": "Applicant must provide National Insurance number OR alternative identity documents",
+      "condition": {
+        "field": "identity_documents",
+        "operator": "exists"
+      },
+      "reason_if_failed": "You must provide either a National Insurance number or alternative documents (birth certificate, bank statement, utility bill) to prove your identity",
+      "evidence_source": "citizen-provided"
+    },
+    {
+      "id": "digital-photo",
+      "description": "Applicant must provide a suitable digital photo",
+      "condition": {
+        "field": "digital_photo",
+        "operator": "exists"
+      },
+      "reason_if_failed": "You must provide a digital photo that meets Electoral Commission requirements",
+      "evidence_source": "citizen-provided"
+    }
+  ],
+  "explanation_template": "Voter Authority Certificate eligibility: {outcome}",
+  "edge_cases": [
+    {
+      "id": "no-ni-number",
+      "description": "Applicant does not have a National Insurance number",
+      "detection": "ni_number == null",
+      "action": "Route to alternative identity verification. Require birth certificate, bank statement and utility bill."
+    },
+    {
+      "id": "photo-help-needed",
+      "description": "Applicant needs help taking a suitable digital photo",
+      "detection": "photo_assistance_requested",
+      "action": "Hand off to electoral registration office for in-person photo assistance"
+    },
+    {
+      "id": "name-mismatch",
+      "description": "Name on photo ID differs from electoral register",
+      "detection": "name_mismatch",
+      "action": "Inform applicant they can either re-register to vote with correct name, or take name change document to polling station. May still need VAC if photo ID is not accepted type."
+    },
+    {
+      "id": "photo-outdated",
+      "description": "Photo on existing ID no longer looks like applicant",
+      "detection": "photo_outdated",
+      "action": "Process VAC application to provide current photo ID"
+    },
+    {
+      "id": "overseas-voter",
+      "description": "Applicant is registered as overseas voter",
+      "detection": "overseas_voter",
+      "action": "Overseas voters cannot vote in person at UK polling stations. Hand off to electoral registration office."
+    }
+  ]
+}

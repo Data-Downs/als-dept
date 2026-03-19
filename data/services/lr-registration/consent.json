@@ -1,0 +1,104 @@
+{
+  "id": "lr-registration.consent",
+  "version": "1.0.0",
+  "grants": [
+    {
+      "id": "identity-verification",
+      "description": "Verify your identity if applying without a solicitor or conveyancer",
+      "data_shared": [
+        "full_name",
+        "date_of_birth",
+        "current_address",
+        "photo_id"
+      ],
+      "source": "citizen-provided",
+      "purpose": "HM Land Registry requires proof of identity for all applications not made by legal professionals",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "property-deeds-sharing",
+      "description": "Share property deeds and ownership evidence with HM Land Registry",
+      "data_shared": [
+        "property_deeds",
+        "title_documents",
+        "transfer_documents",
+        "sale_contract",
+        "inheritance_documents"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To establish legal ownership and register the property",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "public-register-consent",
+      "description": "Consent to property details being made publicly available",
+      "data_shared": [
+        "owner_names",
+        "property_address",
+        "property_boundaries",
+        "purchase_price"
+      ],
+      "source": "land-registry",
+      "purpose": "Property information is legally required to be available to the public. You cannot opt out.",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "land-charges-search",
+      "description": "Authorise search of Land Charges Department records for previous owners since 1925",
+      "data_shared": [
+        "previous_owner_names",
+        "property_history",
+        "charges",
+        "restrictions"
+      ],
+      "source": "land-charges-department",
+      "purpose": "To identify any charges or restrictions on the property from previous ownership",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "stamp-duty-information",
+      "description": "Share Stamp Duty Land Tax or Land Transaction Tax information with HM Land Registry",
+      "data_shared": [
+        "land_transaction_return",
+        "stamp_duty_paid",
+        "transaction_value"
+      ],
+      "source": "hmrc-or-welsh-revenue",
+      "purpose": "Required documentation for property purchases to complete registration",
+      "duration": "session",
+      "required": false
+    },
+    {
+      "id": "solicitor-agent-delegation",
+      "description": "Authorise your solicitor or conveyancer to act on your behalf",
+      "data_shared": [
+        "all_property_documents",
+        "identity_information",
+        "financial_details"
+      ],
+      "source": "citizen-delegated",
+      "purpose": "If using legal professional, they will handle the entire registration process on your behalf",
+      "duration": "until-revoked",
+      "required": false
+    }
+  ],
+  "revocation": {
+    "mechanism": "Contact HM Land Registry Citizen Centre in writing or through your solicitor",
+    "effect": "Registration will be cancelled if consent is revoked before completion. Property will remain unregistered or ownership will not be transferred."
+  },
+  "delegation": {
+    "agent_identity": "Solicitor, Conveyancer, or GOV.UK AI Agent",
+    "scopes": [
+      "read-property-documents",
+      "submit-application-to-land-registry",
+      "receive-land-charges-search-results",
+      "prepare-required-forms",
+      "calculate-fees"
+    ],
+    "limitations": "Agent cannot make payment without explicit authorization. Agent cannot change property boundaries without surveyor certification. Agent cannot alter deed information without your confirmation. If using AI agent, complex cases (inheritance disputes, unregistered interests, agricultural land) will be handed off to human professional."
+  }
+}

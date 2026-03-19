@@ -1,0 +1,19 @@
+{
+  "id": "dwp-attendance-allowance",
+  "version": "1.0.0",
+  "name": "Attendance Allowance",
+  "description": "For over-65s with care needs. Not means-tested. Two rates depending on day/night needs.",
+  "department": "DWP",
+  "input_schema": {
+    "type": "object"
+  },
+  "output_schema": {
+    "type": "object"
+  },
+  "source": "graph",
+  "serviceType": "benefit",
+  "govuk_url": "https://www.gov.uk/attendance-allowance",
+  "eligibility_summary": "For people who have reached State Pension age and need help with personal care due to a physical or mental condition. Not means-tested. Two rates: lower (day or night care) and higher (day and night care).",
+  "proactive": true,
+  "gated": false
+}

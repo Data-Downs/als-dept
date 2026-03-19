@@ -1,0 +1,171 @@
+{
+  "id": "dwp.new-style-esa.states",
+  "version": "1.0.0",
+  "states": [
+    {
+      "id": "not-started",
+      "type": "initial"
+    },
+    {
+      "id": "identity-verified"
+    },
+    {
+      "id": "eligibility-checked"
+    },
+    {
+      "id": "consent-given"
+    },
+    {
+      "id": "details-submitted"
+    },
+    {
+      "id": "fit-note-validated"
+    },
+    {
+      "id": "claimant-commitment-agreed"
+    },
+    {
+      "id": "assessment-rate-payment",
+      "receipt": true
+    },
+    {
+      "id": "capability-questionnaire-sent"
+    },
+    {
+      "id": "questionnaire-received"
+    },
+    {
+      "id": "work-capability-assessment",
+      "receipt": true
+    },
+    {
+      "id": "group-placement"
+    },
+    {
+      "id": "decision",
+      "receipt": true
+    },
+    {
+      "id": "payment-setup"
+    },
+    {
+      "id": "completed",
+      "type": "terminal",
+      "receipt": true
+    },
+    {
+      "id": "rejected",
+      "type": "terminal",
+      "receipt": true
+    },
+    {
+      "id": "handed-off",
+      "type": "terminal",
+      "receipt": true
+    }
+  ],
+  "transitions": [
+    {
+      "from": "not-started",
+      "to": "identity-verified",
+      "trigger": "verify-identity"
+    },
+    {
+      "from": "identity-verified",
+      "to": "eligibility-checked",
+      "trigger": "check-eligibility"
+    },
+    {
+      "from": "eligibility-checked",
+      "to": "consent-given",
+      "trigger": "grant-consent",
+      "condition": "eligible"
+    },
+    {
+      "from": "eligibility-checked",
+      "to": "rejected",
+      "trigger": "reject",
+      "condition": "not-eligible"
+    },
+    {
+      "from": "eligibility-checked",
+      "to": "handed-off",
+      "trigger": "handoff",
+      "condition": "edge-case"
+    },
+    {
+      "from": "consent-given",
+      "to": "details-submitted",
+      "trigger": "submit-details"
+    },
+    {
+      "from": "details-submitted",
+      "to": "fit-note-validated",
+      "trigger": "validate-fit-note"
+    },
+    {
+      "from": "fit-note-validated",
+      "to": "claimant-commitment-agreed",
+      "trigger": "agree-claimant-commitment",
+      "condition": "not-end-of-life"
+    },
+    {
+      "from": "fit-note-validated",
+      "to": "assessment-rate-payment",
+      "trigger": "skip-commitment",
+      "condition": "end-of-life"
+    },
+    {
+      "from": "claimant-commitment-agreed",
+      "to": "assessment-rate-payment",
+      "trigger": "start-assessment-rate"
+    },
+    {
+      "from": "assessment-rate-payment",
+      "to": "capability-questionnaire-sent",
+      "trigger": "send-questionnaire",
+      "condition": "requires-assessment"
+    },
+    {
+      "from": "assessment-rate-payment",
+      "to": "group-placement",
+      "trigger": "place-in-support-group",
+      "condition": "end-of-life-or-hospital"
+    },
+    {
+      "from": "capability-questionnaire-sent",
+      "to": "questionnaire-received",
+      "trigger": "receive-questionnaire"
+    },
+    {
+      "from": "questionnaire-received",
+      "to": "work-capability-assessment",
+      "trigger": "begin-assessment"
+    },
+    {
+      "from": "work-capability-assessment",
+      "to": "group-placement",
+      "trigger": "complete-assessment"
+    },
+    {
+      "from": "group-placement",
+      "to": "decision",
+      "trigger": "make-decision"
+    },
+    {
+      "from": "decision",
+      "to": "payment-setup",
+      "trigger": "approve"
+    },
+    {
+      "from": "decision",
+      "to": "rejected",
+      "trigger": "reject-application"
+    },
+    {
+      "from": "payment-setup",
+      "to": "completed",
+      "trigger": "complete"
+    }
+  ]
+}

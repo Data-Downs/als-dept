@@ -1,0 +1,19 @@
+{
+  "id": "other-tv-licence-pension",
+  "version": "1.0.0",
+  "name": "TV Licence concession",
+  "description": "Free if aged 75+ AND receiving Pension Credit.",
+  "department": "TV Licensing",
+  "input_schema": {
+    "type": "object"
+  },
+  "output_schema": {
+    "type": "object"
+  },
+  "source": "graph",
+  "serviceType": "entitlement",
+  "govuk_url": "https://www.gov.uk/tv-licence/get-a-free-or-discounted-tv-licence",
+  "eligibility_summary": "Free TV licence for households where at least one person is 75 or over AND receives Pension Credit. The 75+ person or their partner must be the Pension Credit claimant.",
+  "proactive": true,
+  "gated": true
+}

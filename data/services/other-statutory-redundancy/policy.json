@@ -1,0 +1,86 @@
+{
+  "id": "other.statutory-redundancy.eligibility",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "employment-duration",
+      "description": "Employee must have 2 or more years of continuous employment",
+      "condition": {
+        "field": "years_continuous_employment",
+        "operator": ">=",
+        "value": 2
+      },
+      "reason_if_failed": "You must have at least 2 years of continuous employment to qualify for statutory redundancy pay",
+      "evidence_source": "employment-records"
+    },
+    {
+      "id": "compulsory-redundancy",
+      "description": "Redundancy must be compulsory, not voluntary",
+      "condition": {
+        "field": "redundancy_type",
+        "operator": "==",
+        "value": "compulsory"
+      },
+      "reason_if_failed": "Statutory redundancy pay only applies to compulsory redundancies",
+      "evidence_source": "employer-notice"
+    },
+    {
+      "id": "employee-status",
+      "description": "Must be an employee (not self-employed or contractor)",
+      "condition": {
+        "field": "employment_status",
+        "operator": "==",
+        "value": "employee"
+      },
+      "reason_if_failed": "Only employees are entitled to statutory redundancy pay. Self-employed and contractors do not qualify",
+      "evidence_source": "hmrc-employment-records"
+    },
+    {
+      "id": "age-verifiable",
+      "description": "Age must be verifiable for calculation purposes",
+      "condition": {
+        "field": "date_of_birth",
+        "operator": "exists"
+      },
+      "reason_if_failed": "Date of birth is required to calculate your statutory redundancy entitlement",
+      "evidence_source": "identity-verified"
+    },
+    {
+      "id": "weekly-pay-provided",
+      "description": "Weekly pay must be provided (subject to £643 cap)",
+      "condition": {
+        "field": "weekly_pay",
+        "operator": "exists"
+      },
+      "reason_if_failed": "Your average weekly pay is needed to calculate the redundancy amount",
+      "evidence_source": "employer-payslips"
+    }
+  ],
+  "explanation_template": "Statutory redundancy pay eligibility: {outcome}. Calculated amount: {amount}",
+  "edge_cases": [
+    {
+      "id": "employer-insolvent",
+      "description": "Employer cannot pay because they are insolvent",
+      "detection": "employer_status == 'insolvent'",
+      "action": "Hand off to Insolvency Service redundancy payments service. Contact 0330 331 0020 or redundancypaymentsonline@insolvency.gov.uk"
+    },
+    {
+      "id": "employer-refuses",
+      "description": "Employer refuses to pay statutory redundancy",
+      "detection": "employer_refuses_payment == true",
+      "action": "Hand off to Employment Tribunal via Acas. Contact Acas on 0300 123 1100 for early conciliation before tribunal claim"
+    },
+    {
+      "id": "disputed-employment-length",
+      "description": "Dispute over length of continuous employment",
+      "detection": "employment_length_disputed == true",
+      "action": "Contact Acas for advice and potential mediation. May require Employment Tribunal if unresolved"
+    },
+    {
+      "id": "complex-calculation",
+      "description": "Complex situation (multiple employers, breaks in service, part-time hours)",
+      "detection": "complex_employment_history == true",
+      "action": "Hand off to Acas advisory service for detailed calculation guidance"
+    }
+  ]
+}

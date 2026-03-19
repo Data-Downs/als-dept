@@ -1,0 +1,19 @@
+{
+  "id": "hmrc-tax-on-pension",
+  "version": "1.0.0",
+  "name": "Income tax on pension",
+  "description": "State Pension is taxable income. PAYE applied to private/workplace pension automatically.",
+  "department": "HMRC",
+  "input_schema": {
+    "type": "object"
+  },
+  "output_schema": {
+    "type": "object"
+  },
+  "source": "graph",
+  "serviceType": "obligation",
+  "govuk_url": "https://www.gov.uk/tax-on-pension",
+  "eligibility_summary": "State Pension is taxable income, though paid without deduction. Private and workplace pensions are taxed via PAYE. Anyone whose total income exceeds the Personal Allowance (£12,570) will owe tax.",
+  "proactive": true,
+  "gated": true
+}

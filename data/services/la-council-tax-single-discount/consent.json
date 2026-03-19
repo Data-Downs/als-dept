@@ -1,0 +1,100 @@
+{
+  "id": "la.council-tax-single-discount.consent",
+  "version": "1.0.0",
+  "grants": [
+    {
+      "id": "identity-verification",
+      "description": "Verify your identity using your GOV.UK One Login credentials",
+      "data_shared": [
+        "full_name",
+        "date_of_birth",
+        "national_insurance_number"
+      ],
+      "source": "one-login",
+      "purpose": "To confirm your identity before processing your discount application",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "council-tax-records-access",
+      "description": "Allow the council to access your Council Tax records",
+      "data_shared": [
+        "council_tax_account_number",
+        "property_address",
+        "liability_status",
+        "payment_history",
+        "previous_discount_claims"
+      ],
+      "source": "local-authority-council-tax-system",
+      "purpose": "To verify you are liable for Council Tax and check your account status",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "electoral-register-check",
+      "description": "Allow the council to check the electoral register for your property",
+      "data_shared": [
+        "electoral_register_entries",
+        "registered_voters_at_address"
+      ],
+      "source": "electoral-register",
+      "purpose": "To verify no other adults are registered as living at your property",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "property-occupancy-confirmation",
+      "description": "Confirm details about who lives in your property",
+      "data_shared": [
+        "household_composition",
+        "names_of_other_residents",
+        "ages_of_other_residents",
+        "disregarded_persons_details"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To determine if you are the only adult resident or if others are disregarded for Council Tax",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "supporting-evidence",
+      "description": "Share evidence of bereavement, separation, or change in household",
+      "data_shared": [
+        "death_certificate",
+        "decree_absolute",
+        "separation_agreement",
+        "change_of_address_evidence"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To verify your reason for applying for the single person discount",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "future-verification",
+      "description": "Allow the council to periodically verify your continued eligibility",
+      "data_shared": [
+        "electoral_register_updates",
+        "council_tax_account_changes"
+      ],
+      "source": "local-authority-council-tax-system,electoral-register",
+      "purpose": "To ensure you remain eligible for the discount and detect any changes in household composition",
+      "duration": "until-revoked",
+      "required": true
+    }
+  ],
+  "revocation": {
+    "mechanism": "Contact your local council or revoke through your GOV.UK account",
+    "effect": "Your application will be cancelled if consent is revoked before completion. If discount is already granted, it will be removed from your Council Tax account."
+  },
+  "delegation": {
+    "agent_identity": "GOV.UK AI Agent",
+    "scopes": [
+      "read-personal-data",
+      "read-council-tax-records",
+      "submit-to-local-authority",
+      "upload-evidence"
+    ],
+    "limitations": "Agent cannot make decisions about household composition without your explicit confirmation. Agent cannot confirm that other residents are students or disregarded persons without you providing evidence. Agent must flag complex living arrangements (live-in carers, shared custody, temporary absences) for human review. Agent cannot appeal a decision on your behalf."
+  }
+}

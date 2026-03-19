@@ -1,0 +1,19 @@
+{
+  "id": "nhs-free-prescriptions-pregnancy",
+  "version": "1.0.0",
+  "name": "Free prescriptions & dental (pregnancy)",
+  "description": "Automatic from positive pregnancy test. Continues until baby is 1 year old.",
+  "department": "NHS",
+  "input_schema": {
+    "type": "object"
+  },
+  "output_schema": {
+    "type": "object"
+  },
+  "source": "graph",
+  "serviceType": "entitlement",
+  "govuk_url": "https://www.gov.uk/help-nhs-costs/maternity-exemption-certificates",
+  "eligibility_summary": "Free NHS prescriptions and dental treatment for all pregnant women and for 12 months after the birth. Apply for a Maternity Exemption Certificate via midwife or GP.",
+  "proactive": true,
+  "gated": false
+}

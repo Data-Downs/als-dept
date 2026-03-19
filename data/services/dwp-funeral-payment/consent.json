@@ -1,0 +1,106 @@
+{
+  "id": "dwp.funeral-payment.consent",
+  "version": "1.0.0",
+  "grants": [
+    {
+      "id": "identity-verification",
+      "description": "Verify your identity using your GOV.UK One Login credentials",
+      "data_shared": [
+        "full_name",
+        "date_of_birth",
+        "national_insurance_number",
+        "address"
+      ],
+      "source": "one-login",
+      "purpose": "To confirm your identity before processing the Funeral Expenses Payment claim",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "benefit-status-check",
+      "description": "Check your current benefit status with DWP",
+      "data_shared": [
+        "qualifying_benefit_type",
+        "benefit_start_date",
+        "benefit_status",
+        "partner_benefit_status"
+      ],
+      "source": "dwp-benefit-records",
+      "purpose": "To confirm you or your partner receive a qualifying benefit for Funeral Expenses Payment",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "deceased-information",
+      "description": "Share information about the deceased person",
+      "data_shared": [
+        "deceased_full_name",
+        "deceased_date_of_birth",
+        "deceased_date_of_death",
+        "deceased_national_insurance_number",
+        "your_relationship_to_deceased"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To verify your relationship with the deceased and confirm eligibility for the payment",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "funeral-documentation",
+      "description": "Share funeral invoice or signed contract",
+      "data_shared": [
+        "funeral_director_details",
+        "funeral_date",
+        "funeral_location",
+        "itemised_costs",
+        "total_cost",
+        "invoice_or_contract_document"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To assess the funeral costs and determine the payment amount",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "estate-information",
+      "description": "Share information about the deceased's estate and other available funds",
+      "data_shared": [
+        "estate_value",
+        "insurance_policies",
+        "pre_paid_funeral_plan",
+        "other_contributions"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To calculate the final payment amount, as any money from the estate will be deducted from the payment",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "close-relative-information",
+      "description": "Share information about close relatives of the deceased",
+      "data_shared": [
+        "close_relative_names",
+        "close_relative_employment_status",
+        "close_relative_benefit_status"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To determine if a close relative in work or not on a qualifying benefit affects your eligibility",
+      "duration": "session",
+      "required": false
+    }
+  ],
+  "revocation": {
+    "mechanism": "Contact the Bereavement Service helpline on 0800 151 2012 or revoke through your GOV.UK account",
+    "effect": "Your claim will be cancelled if consent is revoked before a decision is made. If payment has already been made, you may need to repay it."
+  },
+  "delegation": {
+    "agent_identity": "GOV.UK AI Agent",
+    "scopes": [
+      "read-personal-data",
+      "read-benefit-status",
+      "submit-claim-to-dwp",
+      "upload-funeral-documentation"
+    ],
+    "limitations": "Agent cannot declare estate information without your explicit confirmation. Agent cannot declare close relative information without verification. Agent cannot appeal a decision on your behalf. Agent cannot provide false or misleading information about your relationship with the deceased."
+  }
+}

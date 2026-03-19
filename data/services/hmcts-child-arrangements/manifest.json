@@ -1,0 +1,19 @@
+{
+  "id": "hmcts-child-arrangements",
+  "version": "1.0.0",
+  "name": "Child Arrangements Order",
+  "description": "If no agreement on living arrangements. Mediation usually required first.",
+  "department": "HMCTS",
+  "input_schema": {
+    "type": "object"
+  },
+  "output_schema": {
+    "type": "object"
+  },
+  "source": "graph",
+  "serviceType": "legal_process",
+  "govuk_url": "https://www.gov.uk/looking-after-children-divorce/apply-for-court-order",
+  "eligibility_summary": "A court order specifying where children live and how much time they spend with each parent. Required only when parents cannot agree through negotiation or mediation. MIAM (mediation) must usually be attempted first.",
+  "proactive": false,
+  "gated": true
+}

@@ -1,0 +1,19 @@
+{
+  "id": "hmcts-divorce",
+  "version": "1.0.0",
+  "name": "Divorce application (D8)",
+  "description": "Online or paper. Conditional order after 20 weeks; final order 6 weeks later.",
+  "department": "HMCTS",
+  "input_schema": {
+    "type": "object"
+  },
+  "output_schema": {
+    "type": "object"
+  },
+  "source": "graph",
+  "serviceType": "legal_process",
+  "govuk_url": "https://www.gov.uk/divorce",
+  "eligibility_summary": "No-fault divorce since April 2022 — no reasons needed. Apply online or on paper. Minimum timescale: 26 weeks (20 weeks to Conditional Order + 6 weeks to Final Order). Can apply jointly or individually.",
+  "proactive": true,
+  "gated": false
+}

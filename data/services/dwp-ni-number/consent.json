@@ -1,0 +1,103 @@
+{
+  "id": "dwp-ni-number.consent",
+  "version": "1.0.0",
+  "grants": [
+    {
+      "id": "identity-verification",
+      "description": "Verify your identity using passport or national identity card details",
+      "data_shared": [
+        "full_name",
+        "date_of_birth",
+        "nationality",
+        "passport_number",
+        "document_expiry_date"
+      ],
+      "source": "citizen-provided-documents",
+      "purpose": "To confirm your identity and right to work in the UK before issuing a National Insurance number",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "photo-upload",
+      "description": "Upload photos of yourself holding your passport and other identity documents",
+      "data_shared": [
+        "selfie_with_passport",
+        "passport_photo_page",
+        "national_id_card_images"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To verify your identity documents are genuine and match your appearance",
+      "duration": "session",
+      "required": false
+    },
+    {
+      "id": "right-to-work-verification",
+      "description": "Share your right to work status and immigration documents if applicable",
+      "data_shared": [
+        "visa_status",
+        "brp_number",
+        "evisa_details",
+        "work_permit_details"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To confirm you have the right to work in the UK, which is required to receive a National Insurance number",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "address-confirmation",
+      "description": "Provide your current UK address for DWP records and correspondence",
+      "data_shared": [
+        "address_line_1",
+        "address_line_2",
+        "city",
+        "postcode"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To confirm you live in the UK and to send your National Insurance number notification letter",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "employment-details",
+      "description": "Share details about your current or prospective employment status",
+      "data_shared": [
+        "employment_status",
+        "employer_name",
+        "job_start_date",
+        "job_offer_letter"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To confirm you meet the requirement of working, looking for work, or having a job offer",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "existing-ni-check",
+      "description": "Check DWP records to see if you already have a National Insurance number",
+      "data_shared": [
+        "full_name",
+        "date_of_birth",
+        "previous_addresses"
+      ],
+      "source": "dwp-records",
+      "purpose": "To prevent duplicate applications and inform you if you already have a National Insurance number",
+      "duration": "session",
+      "required": true
+    }
+  ],
+  "revocation": {
+    "mechanism": "Contact DWP National Insurance number application helpline on 0800 141 2079 or email confirmation link",
+    "effect": "Application will be cancelled if consent is revoked before registration is complete. You will need to reapply if you still need a National Insurance number."
+  },
+  "delegation": {
+    "agent_identity": "GOV.UK AI Agent",
+    "scopes": [
+      "read-personal-data",
+      "check-existing-ni-number",
+      "submit-to-dwp",
+      "upload-document-photos"
+    ],
+    "limitations": "Agent cannot attend in-person appointments on your behalf. Agent cannot provide original identity documents. Agent cannot confirm your right to work without you providing documentary evidence. If manual verification is required, you will be contacted directly by DWP."
+  }
+}

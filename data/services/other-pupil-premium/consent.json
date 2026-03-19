@@ -1,0 +1,76 @@
+{
+  "id": "other-pupil-premium.consent",
+  "version": "1.0.0",
+  "grants": [
+    {
+      "id": "identity-verification",
+      "description": "Verify your identity using your GOV.UK One Login credentials",
+      "data_shared": [
+        "full_name",
+        "date_of_birth",
+        "national_insurance_number"
+      ],
+      "source": "one-login",
+      "purpose": "To confirm you are the parent or guardian of the child and entitled to share their information",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "fsm-eligibility-check",
+      "description": "Check your child's Free School Meals eligibility history with local authority and DfE records",
+      "data_shared": [
+        "child_name",
+        "child_date_of_birth",
+        "child_school",
+        "fsm_eligibility_history"
+      ],
+      "source": "dfe-fsm-database",
+      "purpose": "To determine if your child has ever qualified for Free School Meals and is therefore eligible for Pupil Premium funding",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "school-notification",
+      "description": "Share your child's Pupil Premium eligibility status with their school",
+      "data_shared": [
+        "child_name",
+        "child_date_of_birth",
+        "pupil_premium_eligibility",
+        "fsm_qualification_date",
+        "parent_contact_details"
+      ],
+      "source": "citizen-provided",
+      "purpose": "The school will use this information to claim Pupil Premium funding from DfE and allocate resources to support your child's education",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "child-details",
+      "description": "Confirm your child's current school and year group",
+      "data_shared": [
+        "child_full_name",
+        "child_date_of_birth",
+        "school_name",
+        "school_urn",
+        "year_group"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To ensure the school receives the correct funding allocation for your child",
+      "duration": "session",
+      "required": true
+    }
+  ],
+  "revocation": {
+    "mechanism": "Contact your child's school or the local authority to withdraw consent for data sharing",
+    "effect": "The school will no longer receive Pupil Premium funding for your child, which may reduce resources available to support their education"
+  },
+  "delegation": {
+    "agent_identity": "GOV.UK AI Agent",
+    "scopes": [
+      "read-personal-data",
+      "check-fsm-history",
+      "notify-school"
+    ],
+    "limitations": "Agent cannot change your child's school details without your explicit confirmation. Agent cannot revoke consent on your behalf. Agent can only check FSM history, not apply for FSM."
+  }
+}

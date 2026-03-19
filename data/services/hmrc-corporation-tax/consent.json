@@ -1,0 +1,75 @@
+{
+  "id": "hmrc.corporation-tax.consent",
+  "version": "1.0.0",
+  "grants": [
+    {
+      "id": "identity-verification",
+      "description": "Verify your identity as a company director or authorized person using GOV.UK credentials",
+      "data_shared": [
+        "full_name",
+        "date_of_birth",
+        "director_appointment_date"
+      ],
+      "source": "one-login",
+      "purpose": "To confirm you are authorized to register the company for Corporation Tax",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "companies-house-data",
+      "description": "Share your company details from Companies House with HMRC",
+      "data_shared": [
+        "company_name",
+        "company_number",
+        "registered_office_address",
+        "company_type",
+        "sic_codes",
+        "incorporation_date",
+        "director_details"
+      ],
+      "source": "companies-house",
+      "purpose": "HMRC will use this to create your Corporation Tax record and verify your company details",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "accounting-period-confirmation",
+      "description": "Confirm when your company started trading and your accounting period",
+      "data_shared": [
+        "trading_start_date",
+        "accounting_period_end_date",
+        "first_accounts_date"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To determine when your first Corporation Tax return is due and calculate filing deadlines",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "contact-details",
+      "description": "Provide contact details for HMRC correspondence about Corporation Tax",
+      "data_shared": [
+        "contact_email",
+        "contact_phone",
+        "correspondence_address"
+      ],
+      "source": "citizen-provided",
+      "purpose": "HMRC will use these to send your Corporation Tax Unique Taxpayer Reference (UTR) and future correspondence",
+      "duration": "until-revoked",
+      "required": true
+    }
+  ],
+  "revocation": {
+    "mechanism": "Contact HMRC Corporation Tax helpline or through your HMRC online account",
+    "effect": "Registration will be cancelled if consent is revoked before completion. Once registered, you must formally close your Corporation Tax account through HMRC if the company ceases trading."
+  },
+  "delegation": {
+    "agent_identity": "GOV.UK AI Agent",
+    "scopes": [
+      "read-companies-house-data",
+      "submit-registration-to-hmrc",
+      "confirm-accounting-periods"
+    ],
+    "limitations": "Agent cannot change your company's registered office address. Agent cannot appoint tax agents or accountants on your behalf. Agent cannot make any tax payments. Agent requires explicit confirmation before submitting the registration."
+  }
+}

@@ -1,0 +1,86 @@
+{
+  "id": "nhs.gp-register.consent",
+  "version": "1.0.0",
+  "grants": [
+    {
+      "id": "identity-verification",
+      "description": "Verify your identity using NHS login or GOV.UK One Login",
+      "data_shared": [
+        "full_name",
+        "date_of_birth",
+        "nhs_number"
+      ],
+      "source": "nhs-login",
+      "purpose": "To confirm your identity and link your registration to your NHS record",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "medical-records-transfer",
+      "description": "Transfer your medical records from your previous GP practice to your new practice",
+      "data_shared": [
+        "full_medical_history",
+        "prescriptions",
+        "test_results",
+        "referrals",
+        "immunisation_records"
+      ],
+      "source": "previous-gp-practice",
+      "purpose": "Your new GP needs your medical history to provide safe and effective care. Records transfer automatically.",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "address-confirmation",
+      "description": "Confirm your current address to verify you are in the practice's catchment area",
+      "data_shared": [
+        "address_line_1",
+        "address_line_2",
+        "city",
+        "postcode"
+      ],
+      "source": "citizen-provided",
+      "purpose": "GP practices must accept patients living in their catchment area. Your address confirms eligibility.",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "contact-details",
+      "description": "Share your contact details so the practice can reach you for appointments and test results",
+      "data_shared": [
+        "phone_number",
+        "email_address"
+      ],
+      "source": "citizen-provided",
+      "purpose": "The practice needs to contact you for appointments, test results, and important health information",
+      "duration": "until-revoked",
+      "required": false
+    },
+    {
+      "id": "demographic-information",
+      "description": "Share demographic information for health statistics and to ensure equitable healthcare provision",
+      "data_shared": [
+        "sex",
+        "ethnicity",
+        "language_preference"
+      ],
+      "source": "citizen-provided",
+      "purpose": "NHS collects demographic data to monitor health inequalities and plan services. This information is confidential.",
+      "duration": "until-revoked",
+      "required": false
+    }
+  ],
+  "revocation": {
+    "mechanism": "Contact your GP practice or update through your NHS account",
+    "effect": "Revoking consent will cancel your registration. Medical records consent cannot be revoked without de-registering."
+  },
+  "delegation": {
+    "agent_identity": "GOV.UK AI Agent",
+    "scopes": [
+      "read-personal-data",
+      "submit-registration",
+      "consent-to-records-transfer"
+    ],
+    "limitations": "Agent can submit registration on your behalf and consent to medical records transfer. Agent CANNOT access your medical records. Agent CANNOT register you without your explicit instruction. Agent CANNOT change your registered GP without your confirmation."
+  }
+}

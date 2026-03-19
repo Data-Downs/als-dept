@@ -1,0 +1,19 @@
+{
+  "id": "dwp-carers-allowance",
+  "version": "1.0.0",
+  "name": "Carer's Allowance",
+  "description": "If caring 35+ hours/week and person cared for receives PIP or Attendance Allowance.",
+  "department": "DWP",
+  "input_schema": {
+    "type": "object"
+  },
+  "output_schema": {
+    "type": "object"
+  },
+  "source": "graph",
+  "serviceType": "benefit",
+  "govuk_url": "https://www.gov.uk/carers-allowance",
+  "eligibility_summary": "£81.90/week (2024/25) for carers spending at least 35 hours/week caring for someone receiving a qualifying disability benefit. Also provides NI credits and a gateway to UC Carer element.",
+  "proactive": true,
+  "gated": true
+}

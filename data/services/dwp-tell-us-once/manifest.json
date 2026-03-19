@@ -1,0 +1,19 @@
+{
+  "id": "dwp-tell-us-once",
+  "version": "1.0.0",
+  "name": "Tell Us Once",
+  "description": "Notifies HMRC, DVLA, DWP, passport office and local authority in one step after a death.",
+  "department": "DWP",
+  "input_schema": {
+    "type": "object"
+  },
+  "output_schema": {
+    "type": "object"
+  },
+  "source": "graph",
+  "serviceType": "registration",
+  "govuk_url": "https://www.gov.uk/after-a-death/organisations-you-need-to-contact-and-tell-us-once",
+  "eligibility_summary": "Available in most of England, Wales and Scotland after a death is registered. Notifies up to 23 government organisations in a single interaction. Saves significant time and effort.",
+  "proactive": true,
+  "gated": true
+}

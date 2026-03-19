@@ -1,0 +1,125 @@
+{
+  "id": "dwp.maternity-allowance.eligibility",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "pregnancy-stage",
+      "description": "Applicant must be at least 26 weeks pregnant",
+      "condition": {
+        "field": "weeks_pregnant",
+        "operator": ">=",
+        "value": 26
+      },
+      "reason_if_failed": "You can only apply for Maternity Allowance once you've been pregnant for 26 weeks",
+      "evidence_source": "matb1-certificate"
+    },
+    {
+      "id": "employment-test-period",
+      "description": "Applicant must have been employed or self-employed for at least 26 weeks in the 66 weeks before baby's due date",
+      "condition": {
+        "field": "weeks_worked_in_test_period",
+        "operator": ">=",
+        "value": 26
+      },
+      "reason_if_failed": "You must have worked at least 26 weeks in the 66 weeks before your baby is due. Check if you qualify for other maternity benefits.",
+      "evidence_source": "hmrc-employment-history",
+      "alternative_service": "dwp.universal-credit"
+    },
+    {
+      "id": "earnings-threshold-employed",
+      "description": "If employed, must have earned £30/week or more in at least 13 weeks",
+      "condition": {
+        "field": "weeks_earning_over_30",
+        "operator": ">=",
+        "value": 13
+      },
+      "reason_if_failed": "If you were employed, you must have earned at least £30 per week in 13 of those weeks",
+      "evidence_source": "payslips"
+    },
+    {
+      "id": "not-eligible-for-smp",
+      "description": "Applicant must not be eligible for Statutory Maternity Pay",
+      "condition": {
+        "field": "smp_eligible",
+        "operator": "!=",
+        "value": true
+      },
+      "reason_if_failed": "You should claim Statutory Maternity Pay from your employer instead",
+      "evidence_source": "smp1-form",
+      "alternative_service": "employer.statutory-maternity-pay"
+    },
+    {
+      "id": "self-employed-registration",
+      "description": "If self-employed, must have been registered with HMRC for at least 26 weeks in the test period",
+      "condition": {
+        "field": "self_employed_weeks_registered",
+        "operator": ">=",
+        "value": 26
+      },
+      "reason_if_failed": "If you're self-employed, you must have been registered with HMRC for at least 26 weeks",
+      "evidence_source": "hmrc-self-employment-record"
+    },
+    {
+      "id": "timely-application",
+      "description": "Application should be made within 3 months of desired start date for full entitlement",
+      "condition": {
+        "field": "days_until_start_date",
+        "operator": "<=",
+        "value": 90
+      },
+      "reason_if_failed": "You can still apply, but you may not receive the full amount you're entitled to if you claim more than 3 months after your desired start date",
+      "evidence_source": "citizen-provided"
+    }
+  ],
+  "explanation_template": "Maternity Allowance eligibility: {outcome}. Payment amount depends on employment status and National Insurance contributions.",
+  "edge_cases": [
+    {
+      "id": "stillbirth-after-24-weeks",
+      "description": "Baby was stillborn from the start of the 24th week of pregnancy",
+      "detection": "stillbirth_week >= 24",
+      "action": "Applicant still qualifies for Maternity Allowance. Require stillbirth certificate as evidence."
+    },
+    {
+      "id": "born-alive-any-time",
+      "description": "Baby was born alive at any point during the pregnancy",
+      "detection": "born_alive == true",
+      "action": "Applicant qualifies regardless of when birth occurred. Require birth certificate as evidence."
+    },
+    {
+      "id": "unpaid-work-spouse-business",
+      "description": "Applicant does unpaid work for spouse/civil partner's business (14-week variant)",
+      "detection": "unpaid_work_spouse_business == true && weeks_unpaid_work >= 26",
+      "action": "Route to 14-week Maternity Allowance assessment. Verify spouse is registered self-employed and pays Class 2 NI. Maximum £27/week for 14 weeks."
+    },
+    {
+      "id": "insufficient-class2-ni",
+      "description": "Self-employed applicant has paid less than 13 weeks of Class 2 NI contributions",
+      "detection": "class2_ni_weeks < 13 && self_employed == true",
+      "action": "Offer to top-up Class 2 NI contributions to increase payment amount. Inform HMRC will contact applicant. Initial payment may be £27/week until resolved."
+    },
+    {
+      "id": "universal-credit-interaction",
+      "description": "Applicant is receiving Universal Credit",
+      "detection": "receives_universal_credit == true",
+      "action": "Inform that UC payment will be reduced by Maternity Allowance amount. Advise to report change on UC account. May get extra UC for children and childcare costs."
+    },
+    {
+      "id": "jsa-recipient",
+      "description": "Applicant is currently receiving Jobseeker's Allowance",
+      "detection": "receives_jsa == true",
+      "action": "Inform that JSA will stop when Maternity Allowance starts. Total benefit may increase or stay the same."
+    },
+    {
+      "id": "multiple-jobs-unemployment",
+      "description": "Applicant has had multiple jobs or periods of unemployment in test period",
+      "detection": "multiple_employers == true || unemployment_periods > 0",
+      "action": "Still qualifies if total weeks worked meets threshold. Weeks don't need to be consecutive. Verify all employment and earnings."
+    },
+    {
+      "id": "benefit-cap-risk",
+      "description": "Applicant may be affected by benefit cap",
+      "detection": "total_benefits_high == true",
+      "action": "Inform about benefit cap limits. Advise to use benefits calculator to understand impact on total benefits."
+    }
+  ]
+}

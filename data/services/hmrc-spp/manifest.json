@@ -1,0 +1,19 @@
+{
+  "id": "hmrc-spp",
+  "version": "1.0.0",
+  "name": "Statutory Paternity Pay",
+  "description": "2 weeks at statutory rate. Must be arranged before baby is 8 weeks old.",
+  "department": "HMRC",
+  "input_schema": {
+    "type": "object"
+  },
+  "output_schema": {
+    "type": "object"
+  },
+  "source": "graph",
+  "serviceType": "entitlement",
+  "govuk_url": "https://www.gov.uk/paternity-pay-leave",
+  "eligibility_summary": "1 or 2 weeks of paternity leave and pay. Must be the baby's father, partner of the mother, or the adopter's partner. Requires 26 weeks of continuous employment.",
+  "proactive": true,
+  "gated": false
+}

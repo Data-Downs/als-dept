@@ -1,0 +1,107 @@
+{
+  "id": "ho.life-in-uk.eligibility",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "age-minimum",
+      "description": "Applicant must be at least 18 years old",
+      "condition": {
+        "field": "age",
+        "operator": ">=",
+        "value": 18
+      },
+      "reason_if_failed": "You must be at least 18 years old to take the Life in the UK Test",
+      "evidence_source": "identity-verified"
+    },
+    {
+      "id": "age-maximum",
+      "description": "Applicant must be under 65 years old",
+      "condition": {
+        "field": "age",
+        "operator": "<=",
+        "value": 64
+      },
+      "reason_if_failed": "You do not need to take the test if you are 65 or over",
+      "evidence_source": "identity-verified"
+    },
+    {
+      "id": "has-valid-id",
+      "description": "Applicant must have an accepted form of ID",
+      "condition": {
+        "field": "id_type",
+        "operator": "in",
+        "value": [
+          "evisa-share-code",
+          "passport",
+          "eu-id-card",
+          "travel-document",
+          "brp",
+          "brc"
+        ]
+      },
+      "reason_if_failed": "You must have a valid passport, EU ID card, travel document, BRP/BRC, or eVisa share code to book the test",
+      "evidence_source": "identity-verification",
+      "triggers_handoff": true
+    },
+    {
+      "id": "name-matches-id",
+      "description": "Name provided must exactly match the name on ID document",
+      "condition": {
+        "field": "name_match",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "The name you provide must be an exact match with the name on your ID document",
+      "evidence_source": "identity-verification"
+    },
+    {
+      "id": "not-previously-passed",
+      "description": "Applicant must not have already passed the test for this application type",
+      "condition": {
+        "field": "previously_passed",
+        "operator": "!=",
+        "value": true
+      },
+      "reason_if_failed": "You do not need to take the test again if you have already passed it for this application",
+      "evidence_source": "home-office-records"
+    },
+    {
+      "id": "booking-advance-notice",
+      "description": "Test must be booked at least 3 days in advance",
+      "condition": {
+        "field": "days_until_test",
+        "operator": ">=",
+        "value": 3
+      },
+      "reason_if_failed": "You must book your test at least 3 days (72 hours) in advance",
+      "evidence_source": "citizen-provided"
+    }
+  ],
+  "explanation_template": "Life in the UK Test eligibility: {outcome}",
+  "edge_cases": [
+    {
+      "id": "long-term-condition",
+      "description": "Applicant has a long-term physical or mental condition",
+      "detection": "disability_exemption_claimed",
+      "action": "Exempt from test. Requires exemption form or doctor's letter. Route to manual verification by Home Office."
+    },
+    {
+      "id": "gender-change",
+      "description": "Applicant has changed gender and requires sensitive booking",
+      "detection": "gender_change_flag",
+      "action": "Email sensitivebookings@homeoffice.gov.uk before booking to ensure previous gender does not appear on test result. Manual process required."
+    },
+    {
+      "id": "disability-accommodation",
+      "description": "Applicant requires special accommodations due to disability",
+      "detection": "special_accommodations_requested",
+      "action": "Route to test centre selection with accessibility requirements. May require additional equipment or help accessing centre."
+    },
+    {
+      "id": "brp-expiry-check",
+      "description": "BRP or BRC used for ID is near or past expiry",
+      "detection": "brp_expiry_within_18_months",
+      "action": "Check that test date is no later than 18 months after BRP/BRC expiry date. If outside window, request alternative ID."
+    }
+  ]
+}

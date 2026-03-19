@@ -1,0 +1,19 @@
+{
+  "id": "other-right-to-work",
+  "version": "1.0.0",
+  "name": "Right to work check",
+  "description": "Employer obligation to verify before hiring. Online share code or document check.",
+  "department": "Employer",
+  "input_schema": {
+    "type": "object"
+  },
+  "output_schema": {
+    "type": "object"
+  },
+  "source": "graph",
+  "serviceType": "obligation",
+  "govuk_url": "https://www.gov.uk/check-job-applicant-right-to-work",
+  "eligibility_summary": "Employers are legally required to verify that every employee has the right to work in the UK before they start. For non-UK/Irish nationals this is typically done via a Home Office share code online service.",
+  "proactive": true,
+  "gated": true
+}

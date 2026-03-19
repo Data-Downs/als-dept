@@ -1,0 +1,112 @@
+{
+  "id": "hmrc.guardians-allowance.consent",
+  "version": "1.0.0",
+  "grants": [
+    {
+      "id": "identity-verification",
+      "description": "Verify your identity using your GOV.UK One Login credentials",
+      "data_shared": [
+        "full_name",
+        "date_of_birth",
+        "national_insurance_number",
+        "address"
+      ],
+      "source": "one-login",
+      "purpose": "To confirm your identity before processing your Guardian's Allowance claim",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "child-benefit-verification",
+      "description": "Check your Child Benefit records to verify eligibility for Guardian's Allowance",
+      "data_shared": [
+        "child_benefit_status",
+        "child_benefit_number",
+        "children_on_claim"
+      ],
+      "source": "hmrc-child-benefit",
+      "purpose": "Guardian's Allowance requires that you qualify for Child Benefit for the child",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "child-details",
+      "description": "Share details about the child you are claiming Guardian's Allowance for",
+      "data_shared": [
+        "child_full_name",
+        "child_date_of_birth",
+        "child_address",
+        "relationship_to_child"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To identify the child and verify your guardianship arrangement",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "parent-details",
+      "description": "Share details about the child's deceased parent(s) or surviving parent circumstances",
+      "data_shared": [
+        "parent_names",
+        "parent_dates_of_birth",
+        "parent_death_dates",
+        "surviving_parent_circumstances"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To verify that the child's parents have died or meet the special circumstances for one surviving parent",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "document-upload",
+      "description": "Upload the child's birth certificate and parent death certificates",
+      "data_shared": [
+        "birth_certificate_scan",
+        "death_certificate_scans"
+      ],
+      "source": "citizen-provided",
+      "purpose": "HMRC requires original or certified copies of these documents to process your claim",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "bank-details",
+      "description": "Provide your bank account details for Guardian's Allowance payments",
+      "data_shared": [
+        "account_holder_name",
+        "sort_code",
+        "account_number"
+      ],
+      "source": "citizen-provided",
+      "purpose": "Guardian's Allowance will be paid into this account, usually every 4 weeks alongside Child Benefit",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "residence-verification",
+      "description": "Verify the deceased parent(s) connection to the UK",
+      "data_shared": [
+        "parent_birth_country",
+        "parent_residence_history"
+      ],
+      "source": "citizen-provided",
+      "purpose": "At least one parent must have been born in UK/EEA/Switzerland or lived in UK since age 16 for 52 weeks in any 2-year period",
+      "duration": "until-revoked",
+      "required": true
+    }
+  ],
+  "revocation": {
+    "mechanism": "Contact HMRC Guardian's Allowance Unit by phone or post, or revoke through your GOV.UK account",
+    "effect": "Your Guardian's Allowance claim will be cancelled and payments will stop. You may lose backdated payments if you revoke before a decision is made."
+  },
+  "delegation": {
+    "agent_identity": "GOV.UK AI Agent",
+    "scopes": [
+      "read-personal-data",
+      "read-child-benefit-data",
+      "submit-claim-to-hmrc",
+      "upload-documents"
+    ],
+    "limitations": "Agent cannot provide bank details on your behalf without explicit confirmation. Agent cannot make false declarations about parent deaths or whereabouts. Agent cannot upload documents without your explicit approval of each document. Agent must route to human assistance for complex surviving parent situations (prison, hospital order, untraceable)."
+  }
+}

@@ -1,0 +1,132 @@
+{
+  "id": "hmrc-lisa.eligibility",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "first-time-buyer",
+      "description": "Applicant must be a first-time buyer",
+      "condition": {
+        "field": "is_first_time_buyer",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "You can only use your Lifetime ISA for your first home purchase",
+      "evidence_source": "citizen-declaration"
+    },
+    {
+      "id": "property-price-limit",
+      "description": "Property must cost £450,000 or less",
+      "condition": {
+        "field": "property_price",
+        "operator": "<=",
+        "value": 450000
+      },
+      "reason_if_failed": "The property must cost £450,000 or less to use your Lifetime ISA",
+      "evidence_source": "conveyancer-confirmation"
+    },
+    {
+      "id": "twelve-month-holding",
+      "description": "Must have held LISA for at least 12 months since first payment",
+      "condition": {
+        "field": "months_since_first_payment",
+        "operator": ">=",
+        "value": 12
+      },
+      "reason_if_failed": "You must have held your Lifetime ISA for at least 12 months since your first payment",
+      "evidence_source": "isa-provider-records"
+    },
+    {
+      "id": "mortgage-required",
+      "description": "Purchase must be made with a mortgage",
+      "condition": {
+        "field": "buying_with_mortgage",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "You must be buying the property with a mortgage to use your Lifetime ISA",
+      "evidence_source": "mortgage-lender-confirmation"
+    },
+    {
+      "id": "not-private-mortgage",
+      "description": "Cannot use private mortgage from relatives",
+      "condition": {
+        "field": "mortgage_from_relative",
+        "operator": "==",
+        "value": false
+      },
+      "reason_if_failed": "You cannot use your Lifetime ISA if you're getting a private mortgage from a relative, spouse, or civil partner",
+      "evidence_source": "mortgage-lender-confirmation"
+    },
+    {
+      "id": "conveyancer-required",
+      "description": "Must use a conveyancer or solicitor",
+      "condition": {
+        "field": "has_conveyancer",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "You must use a conveyancer or solicitor to act for you in the purchase. The ISA provider will pay funds directly to them.",
+      "evidence_source": "conveyancer-details"
+    },
+    {
+      "id": "uk-resident",
+      "description": "Must be a UK resident or armed forces/crown servant",
+      "condition": {
+        "field": "residence_status",
+        "operator": "in",
+        "value": [
+          "uk_resident",
+          "armed_forces",
+          "crown_servant",
+          "crown_servant_spouse"
+        ]
+      },
+      "reason_if_failed": "You must be a UK resident, member of armed forces, crown servant, or their spouse/civil partner to use a Lifetime ISA",
+      "evidence_source": "identity-verified"
+    },
+    {
+      "id": "minimum-age",
+      "description": "Must be at least 18 years old to have opened LISA",
+      "condition": {
+        "field": "age",
+        "operator": ">=",
+        "value": 18
+      },
+      "reason_if_failed": "You must have been at least 18 when you opened your Lifetime ISA",
+      "evidence_source": "identity-verified"
+    }
+  ],
+  "explanation_template": "Lifetime ISA first home purchase eligibility: {outcome}",
+  "edge_cases": [
+    {
+      "id": "joint-purchase-both-lisa",
+      "description": "Both buyers have Lifetime ISAs and want to use both bonuses",
+      "detection": "joint_purchase && both_have_lisa",
+      "action": "Both can use their LISAs if both are first-time buyers and meet all conditions. Process each application separately with same conveyancer details."
+    },
+    {
+      "id": "has-help-to-buy-isa",
+      "description": "Applicant has both Help to Buy ISA and Lifetime ISA",
+      "detection": "has_help_to_buy_isa && has_lifetime_isa",
+      "action": "Inform applicant they can only use the government bonus from one ISA for the purchase. Confirm which bonus they want to claim before proceeding."
+    },
+    {
+      "id": "under-twelve-months",
+      "description": "Attempting to use LISA before 12-month holding period",
+      "detection": "months_since_first_payment < 12",
+      "action": "Reject application. Inform applicant they must wait until 12 months after first payment. Alternative: withdraw with 25% unauthorised withdrawal charge."
+    },
+    {
+      "id": "property-over-limit",
+      "description": "Property exceeds £450,000 limit",
+      "detection": "property_price > 450000",
+      "action": "Reject application. Cannot use LISA for this purchase. Funds remain in account for later life or can be withdrawn with 25% charge for other purposes."
+    },
+    {
+      "id": "relative-mortgage",
+      "description": "Private mortgage from family member detected",
+      "detection": "mortgage_from_relative == true",
+      "action": "Reject application. Cannot use LISA with private mortgage from relatives. Applicant must use standard mortgage or withdraw with 25% charge."
+    }
+  ]
+}

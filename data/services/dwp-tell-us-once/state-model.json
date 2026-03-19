@@ -1,0 +1,88 @@
+{
+  "id": "dwp.tell-us-once.states",
+  "version": "1.0.0",
+  "states": [
+    {
+      "id": "not-started",
+      "type": "initial"
+    },
+    {
+      "id": "reference-validated"
+    },
+    {
+      "id": "consent-given"
+    },
+    {
+      "id": "deceased-details-provided"
+    },
+    {
+      "id": "representative-details-provided"
+    },
+    {
+      "id": "additional-details-provided"
+    },
+    {
+      "id": "notification-submitted",
+      "receipt": true
+    },
+    {
+      "id": "all-organisations-notified",
+      "type": "terminal",
+      "receipt": true
+    },
+    {
+      "id": "handed-off",
+      "type": "terminal",
+      "receipt": true
+    }
+  ],
+  "transitions": [
+    {
+      "from": "not-started",
+      "to": "reference-validated",
+      "trigger": "validate-reference-number"
+    },
+    {
+      "from": "not-started",
+      "to": "handed-off",
+      "trigger": "handoff",
+      "condition": "ineligible-or-expired"
+    },
+    {
+      "from": "reference-validated",
+      "to": "consent-given",
+      "trigger": "grant-consent"
+    },
+    {
+      "from": "consent-given",
+      "to": "deceased-details-provided",
+      "trigger": "provide-deceased-details"
+    },
+    {
+      "from": "deceased-details-provided",
+      "to": "representative-details-provided",
+      "trigger": "provide-representative-details"
+    },
+    {
+      "from": "representative-details-provided",
+      "to": "additional-details-provided",
+      "trigger": "provide-additional-details"
+    },
+    {
+      "from": "additional-details-provided",
+      "to": "notification-submitted",
+      "trigger": "submit-notification"
+    },
+    {
+      "from": "notification-submitted",
+      "to": "all-organisations-notified",
+      "trigger": "confirm-notifications-sent"
+    },
+    {
+      "from": "consent-given",
+      "to": "handed-off",
+      "trigger": "handoff",
+      "condition": "cannot-complete-online"
+    }
+  ]
+}

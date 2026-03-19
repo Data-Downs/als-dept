@@ -1,0 +1,19 @@
+{
+  "id": "la-disabled-facilities-grant",
+  "version": "1.0.0",
+  "name": "Disabled Facilities Grant",
+  "description": "Up to £30k for home adaptations. Means-tested. Apply via local authority.",
+  "department": "Local Authority",
+  "input_schema": {
+    "type": "object"
+  },
+  "output_schema": {
+    "type": "object"
+  },
+  "source": "graph",
+  "serviceType": "grant",
+  "govuk_url": "https://www.gov.uk/disabled-facilities-grants",
+  "eligibility_summary": "Up to £30,000 (England) towards adaptations to help a disabled person live independently at home: ramps, stairlifts, wider doorways, accessible bathrooms. Means-tested for applicants over 18. Occupational Therapist assessment required.",
+  "proactive": true,
+  "gated": false
+}

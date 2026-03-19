@@ -1,0 +1,74 @@
+{
+  "id": "hmrc.register-sole-trader.consent",
+  "version": "1.0.0",
+  "grants": [
+    {
+      "id": "identity-verification",
+      "description": "Verify your identity using your GOV.UK One Login credentials",
+      "data_shared": [
+        "full_name",
+        "date_of_birth",
+        "national_insurance_number"
+      ],
+      "source": "one-login",
+      "purpose": "To confirm your identity and link your Self Assessment record to your National Insurance number",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "business-information",
+      "description": "Share details about your self-employment with HMRC",
+      "data_shared": [
+        "trade_name",
+        "business_description",
+        "trade_start_date",
+        "business_address"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To register your sole trader business for Self Assessment tax purposes",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "contact-details",
+      "description": "Provide contact information for HMRC correspondence",
+      "data_shared": [
+        "address_line_1",
+        "address_line_2",
+        "city",
+        "postcode",
+        "phone_number",
+        "email_address"
+      ],
+      "source": "citizen-provided",
+      "purpose": "HMRC will use these details to send your Unique Taxpayer Reference and Self Assessment correspondence",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "income-estimates",
+      "description": "Provide estimated turnover and income details",
+      "data_shared": [
+        "expected_annual_turnover",
+        "expected_annual_profit"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To help HMRC set up your Self Assessment record and determine if advance payments are needed",
+      "duration": "session",
+      "required": true
+    }
+  ],
+  "revocation": {
+    "mechanism": "Contact HMRC Self Assessment helpline or cease trading through your tax return",
+    "effect": "Registration cannot be cancelled once complete. You must inform HMRC when you stop trading."
+  },
+  "delegation": {
+    "agent_identity": "GOV.UK AI Agent",
+    "scopes": [
+      "read-personal-data",
+      "submit-to-hmrc",
+      "receive-utr"
+    ],
+    "limitations": "Agent cannot change your National Insurance number. Agent cannot sign legal declarations on your behalf. Agent cannot access your tax records after registration is complete."
+  }
+}

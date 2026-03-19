@@ -1,0 +1,91 @@
+{
+  "id": "dwp.sure-start-grant.consent",
+  "version": "1.0.0",
+  "grants": [
+    {
+      "id": "identity-verification",
+      "description": "Verify your identity using your GOV.UK One Login credentials",
+      "data_shared": [
+        "full_name",
+        "date_of_birth",
+        "national_insurance_number"
+      ],
+      "source": "one-login",
+      "purpose": "To confirm your identity before processing your Sure Start Maternity Grant application",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "benefits-data-sharing",
+      "description": "Check your current benefit entitlements with DWP",
+      "data_shared": [
+        "benefit_type",
+        "benefit_status",
+        "claim_start_date",
+        "partner_details"
+      ],
+      "source": "dwp-benefits-system",
+      "purpose": "To verify you are receiving a qualifying benefit (Universal Credit, Income Support, JSA, ESA, Pension Credit, or SMI loan) required for eligibility",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "pregnancy-birth-evidence",
+      "description": "Provide evidence of pregnancy or childbirth from a health professional",
+      "data_shared": [
+        "due_date",
+        "birth_date",
+        "multiple_birth_indicator",
+        "health_professional_details"
+      ],
+      "source": "health-professional",
+      "purpose": "To confirm the pregnancy or birth and verify timing of claim. This is provided via MAT B1 form or health professional statement",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "household-composition",
+      "description": "Share details about children under 16 in your household",
+      "data_shared": [
+        "number_of_children",
+        "children_dates_of_birth",
+        "multiple_birth_history"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To determine if this is your first child or if you qualify under special circumstances (twins, triplets, etc.)",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "special-circumstances",
+      "description": "Share additional information if applying under special circumstances",
+      "data_shared": [
+        "refugee_status",
+        "humanitarian_protection_status",
+        "ukraine_afghanistan_arrival",
+        "adoption_details",
+        "surrogacy_details",
+        "guardianship_details",
+        "family_member_claimant_details"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To assess eligibility if you have refugee status, are adopting, using surrogacy, or claiming for a family member",
+      "duration": "session",
+      "required": false
+    }
+  ],
+  "revocation": {
+    "mechanism": "Contact DWP Sure Start Maternity Grant helpline on 0800 169 0140 or write to Freepost DWP SSMG",
+    "effect": "Application will be cancelled if consent is revoked before decision is made. You will need to reapply with fresh consent if you wish to claim the grant later (within deadline)"
+  },
+  "delegation": {
+    "agent_identity": "GOV.UK AI Agent",
+    "scopes": [
+      "read-benefits-status",
+      "read-household-data",
+      "submit-application-form",
+      "track-application-status"
+    ],
+    "limitations": "Agent cannot obtain or submit MAT B1 form on your behalf - this must come from your doctor or midwife. Agent cannot change your benefit claims. Agent cannot provide false information about your household composition or special circumstances. Agent cannot appeal a decision on your behalf - you must request mandatory reconsideration yourself."
+  }
+}

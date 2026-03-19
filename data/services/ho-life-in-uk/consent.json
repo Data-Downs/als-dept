@@ -1,0 +1,88 @@
+{
+  "id": "ho.life-in-uk.consent",
+  "version": "1.0.0",
+  "grants": [
+    {
+      "id": "identity-verification",
+      "description": "Verify your identity using your eVisa share code or accepted ID document",
+      "data_shared": [
+        "full_name",
+        "date_of_birth",
+        "nationality",
+        "id_document_number",
+        "id_document_type"
+      ],
+      "source": "ukvi-account-or-id-document",
+      "purpose": "To confirm your identity and eligibility to book the Life in the UK Test",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "personal-details",
+      "description": "Provide personal details for test booking",
+      "data_shared": [
+        "email_address",
+        "contact_details"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To send you booking confirmation and communicate about your test",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "photo-capture",
+      "description": "Have your photo taken at the test centre on the day of your test",
+      "data_shared": [
+        "facial_photograph"
+      ],
+      "source": "test-centre-capture",
+      "purpose": "To confirm your identity on the day of the test and prevent fraud",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "test-centre-data-sharing",
+      "description": "Share your booking and test data with PSI e-Assessments (test centre operator)",
+      "data_shared": [
+        "full_name",
+        "id_document_details",
+        "test_centre_selection",
+        "test_date_time",
+        "special_accommodations_if_requested"
+      ],
+      "source": "home-office",
+      "purpose": "PSI e-Assessments operates the test centres and administers the Life in the UK Test on behalf of the Home Office",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "result-sharing-with-home-office",
+      "description": "Share your test result and unique reference number with UK Visas and Immigration",
+      "data_shared": [
+        "test_result",
+        "unique_reference_number",
+        "test_date",
+        "pass_or_fail_status"
+      ],
+      "source": "psi-e-assessments",
+      "purpose": "The Home Office will use your unique reference number to verify you have passed the test when you apply for settlement or citizenship",
+      "duration": "until-revoked",
+      "required": true
+    }
+  ],
+  "revocation": {
+    "mechanism": "Cancel your test booking through your Life in the UK Test account at least 72 hours before test date for refund",
+    "effect": "If you cancel within 72 hours or fail to attend, no refund will be given and you must rebook and pay again"
+  },
+  "delegation": {
+    "agent_identity": "GOV.UK AI Agent",
+    "scopes": [
+      "read-personal-data",
+      "check-eligibility",
+      "select-test-centre",
+      "make-payment",
+      "book-test"
+    ],
+    "limitations": "Agent cannot attend the test centre on your behalf. Agent cannot take the test for you. Agent cannot override the requirement for you to bring original ID to the test centre. Agent cannot request exemptions without medical evidence. Agent cannot cancel booking within 72 hours of test date without forfeiting refund."
+  }
+}

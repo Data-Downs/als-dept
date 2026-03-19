@@ -1,0 +1,124 @@
+{
+  "id": "lr-registration.eligibility",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "jurisdiction",
+      "description": "Property must be located in England or Wales",
+      "condition": {
+        "field": "property_jurisdiction",
+        "operator": "in",
+        "value": [
+          "England",
+          "Wales"
+        ]
+      },
+      "reason_if_failed": "HM Land Registry only deals with property in England and Wales",
+      "alternative_service": "scotland: Registers of Scotland, northern-ireland: Land and Property Services",
+      "evidence_source": "property-deeds"
+    },
+    {
+      "id": "registration-required",
+      "description": "Property must be unregistered or ownership is changing",
+      "condition": {
+        "field": "registration_status",
+        "operator": "in",
+        "value": [
+          "unregistered",
+          "ownership-change"
+        ]
+      },
+      "reason_if_failed": "Property is already registered and ownership is not changing",
+      "evidence_source": "land-registry-search"
+    },
+    {
+      "id": "leasehold-duration",
+      "description": "Leasehold property must have more than 7 years remaining on the lease",
+      "condition": {
+        "field": "lease_years_remaining",
+        "operator": ">=",
+        "value": 7
+      },
+      "reason_if_failed": "You do not usually need to register leasehold property with 7 years or less on the lease",
+      "evidence_source": "lease-agreement",
+      "triggers_handoff": false
+    },
+    {
+      "id": "proof-of-ownership",
+      "description": "Applicant must provide valid deeds or evidence of ownership",
+      "condition": {
+        "field": "ownership_evidence",
+        "operator": "exists"
+      },
+      "reason_if_failed": "You must provide property deeds or other evidence of ownership",
+      "evidence_source": "property-deeds",
+      "triggers_handoff": true
+    },
+    {
+      "id": "identity-verification",
+      "description": "Identity must be verified if not using a legal professional",
+      "condition": {
+        "field": "identity_verified_or_professional",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "You must verify your identity if applying without a solicitor or conveyancer",
+      "evidence_source": "id-verification-form"
+    },
+    {
+      "id": "land-charges-search",
+      "description": "Land Charges Department search must be completed for unregistered property",
+      "condition": {
+        "field": "land_charges_search_completed",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "You must apply for a search from the Land Charges Department before first registration",
+      "evidence_source": "land-charges-department"
+    },
+    {
+      "id": "priority-period",
+      "description": "Application must be submitted within priority period after completion",
+      "condition": {
+        "field": "within_priority_period",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "Application must be submitted promptly after completion to maintain priority",
+      "triggers_handoff": true
+    }
+  ],
+  "explanation_template": "Land Registry registration eligibility: {outcome}",
+  "edge_cases": [
+    {
+      "id": "agricultural-land",
+      "description": "Property is agricultural land requiring Rural Land Register",
+      "detection": "property_type == 'agricultural'",
+      "action": "Must also register with Rural Land Register. Provide additional documentation."
+    },
+    {
+      "id": "unregistered-interests",
+      "description": "Property has unregistered interests (short-term lease, right of occupation)",
+      "detection": "unregistered_interests_exist",
+      "action": "Complete disclosable interests form and include detailed guidance documentation."
+    },
+    {
+      "id": "pre-1990-property",
+      "description": "Property owned before 1990 and never mortgaged",
+      "detection": "property_owned_before_1990 && never_mortgaged",
+      "action": "Voluntary registration. May require additional historical documentation."
+    },
+    {
+      "id": "complex-ownership",
+      "description": "Complex ownership structure or inheritance dispute",
+      "detection": "ownership_complexity == 'high'",
+      "action": "Strongly recommend professional legal representation. Hand off to solicitor/conveyancer."
+    },
+    {
+      "id": "leasehold-registration",
+      "description": "Leasehold property requiring certified lease copy",
+      "detection": "tenure_type == 'leasehold'",
+      "action": "Must include certified copy of the lease with application."
+    }
+  ]
+}

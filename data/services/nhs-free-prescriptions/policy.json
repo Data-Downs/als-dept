@@ -1,0 +1,181 @@
+{
+  "id": "nhs-free-prescriptions.eligibility",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "age-under-16",
+      "description": "Applicants under 16 automatically qualify for free prescriptions",
+      "condition": {
+        "field": "age",
+        "operator": "<=",
+        "value": 15
+      },
+      "reason_if_failed": "Age-based exemption not applicable",
+      "evidence_source": "identity-verified"
+    },
+    {
+      "id": "age-over-60",
+      "description": "Applicants aged 60 or over automatically qualify for free prescriptions",
+      "condition": {
+        "field": "age",
+        "operator": ">=",
+        "value": 60
+      },
+      "reason_if_failed": "Age-based exemption not applicable",
+      "evidence_source": "identity-verified"
+    },
+    {
+      "id": "full-time-education",
+      "description": "16-18 year olds in full-time education qualify",
+      "condition": {
+        "field": "in_full_time_education",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "Education exemption requires proof of full-time education",
+      "evidence_source": "citizen-provided"
+    },
+    {
+      "id": "qualifying-benefit-pip",
+      "description": "Receiving Personal Independence Payment (PIP)",
+      "condition": {
+        "field": "receives_pip",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "PIP benefit not confirmed",
+      "evidence_source": "dwp-benefit-check"
+    },
+    {
+      "id": "qualifying-benefit-dla",
+      "description": "Receiving Disability Living Allowance (DLA)",
+      "condition": {
+        "field": "receives_dla",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "DLA benefit not confirmed",
+      "evidence_source": "dwp-benefit-check"
+    },
+    {
+      "id": "qualifying-benefit-esa",
+      "description": "Receiving Employment and Support Allowance (ESA) with support component",
+      "condition": {
+        "field": "receives_esa_support",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "ESA with support component not confirmed",
+      "evidence_source": "dwp-benefit-check"
+    },
+    {
+      "id": "qualifying-benefit-uc",
+      "description": "Receiving Universal Credit with health-related limited capability for work",
+      "condition": {
+        "field": "receives_uc_health",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "Universal Credit with health conditions not confirmed",
+      "evidence_source": "dwp-benefit-check"
+    },
+    {
+      "id": "medical-diabetes",
+      "description": "Diagnosed with diabetes requiring insulin or medication",
+      "condition": {
+        "field": "has_diabetes_treatment",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "Diabetes diagnosis requiring treatment not confirmed",
+      "evidence_source": "gp-verification",
+      "triggers_handoff": true
+    },
+    {
+      "id": "medical-epilepsy",
+      "description": "Diagnosed with epilepsy requiring continuous anti-convulsive therapy",
+      "condition": {
+        "field": "has_epilepsy_treatment",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "Epilepsy requiring continuous treatment not confirmed",
+      "evidence_source": "gp-verification",
+      "triggers_handoff": true
+    },
+    {
+      "id": "medical-thyroid",
+      "description": "Diagnosed with hypothyroidism requiring thyroid hormone replacement",
+      "condition": {
+        "field": "has_hypothyroidism",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "Hypothyroidism requiring hormone replacement not confirmed",
+      "evidence_source": "gp-verification",
+      "triggers_handoff": true
+    },
+    {
+      "id": "medical-permanent-fistula",
+      "description": "Has a permanent fistula requiring continuous dressing or appliance",
+      "condition": {
+        "field": "has_permanent_fistula",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "Permanent fistula not confirmed",
+      "evidence_source": "gp-verification",
+      "triggers_handoff": true
+    },
+    {
+      "id": "medical-continuing-disability",
+      "description": "Has a continuing physical disability preventing leaving home without help",
+      "condition": {
+        "field": "has_continuing_disability",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "Continuing physical disability not confirmed",
+      "evidence_source": "gp-verification",
+      "triggers_handoff": true
+    },
+    {
+      "id": "maternity-exemption",
+      "description": "Pregnant or had a baby in the last 12 months",
+      "condition": {
+        "field": "maternity_exemption",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "Maternity exemption not applicable",
+      "evidence_source": "maternity-certificate"
+    }
+  ],
+  "explanation_template": "Free prescription eligibility: {outcome}. Valid exemption reasons: {qualifying_criteria}",
+  "edge_cases": [
+    {
+      "id": "medical-evidence-required",
+      "description": "Medical condition claimed requires clinical verification",
+      "detection": "medical_condition_claimed",
+      "action": "Route to GP verification. Clinical evidence must be provided within 28 days."
+    },
+    {
+      "id": "benefit-verification-pending",
+      "description": "DWP benefit status check returns pending or unclear result",
+      "detection": "benefit_status_pending",
+      "action": "Handoff to manual verification. Applicant should contact DWP to confirm benefit status."
+    },
+    {
+      "id": "temporary-condition",
+      "description": "Medical condition may be temporary rather than qualifying permanent condition",
+      "detection": "temporary_condition_flag",
+      "action": "Handoff to clinical assessment. Exemption may be time-limited pending review."
+    },
+    {
+      "id": "war-pension-exemption",
+      "description": "Applicant has war pension exemption certificate for prescribed condition",
+      "detection": "war_pension_certificate",
+      "action": "Route to specialist verification. War pension office confirmation required."
+    }
+  ]
+}

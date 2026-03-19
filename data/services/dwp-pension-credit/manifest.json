@@ -1,0 +1,19 @@
+{
+  "id": "dwp-pension-credit",
+  "version": "1.0.0",
+  "name": "Pension Credit",
+  "description": "Tops up income to £218/week (single). Gateway benefit — unlocks Winter Fuel Payment and free TV Licence.",
+  "department": "DWP",
+  "input_schema": {
+    "type": "object"
+  },
+  "output_schema": {
+    "type": "object"
+  },
+  "source": "graph",
+  "serviceType": "benefit",
+  "govuk_url": "https://www.gov.uk/pension-credit",
+  "eligibility_summary": "Tops up weekly income to at least £218.15 (single) or £332.95 (couple) in 2024/25. Gateway benefit — unlocks Winter Fuel Payment, free TV Licence (75+) and other entitlements. About 1 in 3 eligible pensioners don't claim.",
+  "proactive": true,
+  "gated": true
+}

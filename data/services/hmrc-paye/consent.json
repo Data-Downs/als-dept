@@ -1,0 +1,92 @@
+{
+  "id": "hmrc-paye.consent",
+  "version": "1.0.0",
+  "grants": [
+    {
+      "id": "identity-verification",
+      "description": "Verify your identity using your GOV.UK One Login or HMRC Government Gateway credentials",
+      "data_shared": [
+        "full_name",
+        "date_of_birth",
+        "national_insurance_number"
+      ],
+      "source": "one-login",
+      "purpose": "To confirm your identity as the business owner or authorised representative registering for PAYE",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "business-information",
+      "description": "Share your business details with HMRC for employer registration",
+      "data_shared": [
+        "company_name",
+        "company_number",
+        "business_address",
+        "business_type",
+        "sector",
+        "vat_number"
+      ],
+      "source": "companies-house",
+      "purpose": "HMRC needs to link your employer registration to your existing business records",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "director-information",
+      "description": "Share director or business owner personal information",
+      "data_shared": [
+        "director_names",
+        "director_dates_of_birth",
+        "director_national_insurance_numbers",
+        "contact_phone",
+        "contact_email"
+      ],
+      "source": "citizen-provided",
+      "purpose": "HMRC needs to identify who is responsible for the business and running payroll",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "employment-information",
+      "description": "Provide details about your employees and payment arrangements",
+      "data_shared": [
+        "number_of_employees",
+        "first_payday_date",
+        "payment_frequency",
+        "estimated_total_payroll",
+        "uses_subcontractors"
+      ],
+      "source": "citizen-provided",
+      "purpose": "HMRC needs to understand your payroll obligations and set up your employer account correctly",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "bank-details",
+      "description": "Provide business bank account details for HMRC correspondence",
+      "data_shared": [
+        "bank_account_name",
+        "sort_code",
+        "account_number"
+      ],
+      "source": "citizen-provided",
+      "purpose": "For HMRC to send refunds or process payments related to your PAYE obligations",
+      "duration": "until-revoked",
+      "required": false
+    }
+  ],
+  "revocation": {
+    "mechanism": "Contact HMRC PAYE helpline or manage through your HMRC online account",
+    "effect": "Revoking consent will cancel the registration application if not yet completed. Once registered, you must formally de-register as an employer if you stop employing people."
+  },
+  "delegation": {
+    "agent_identity": "GOV.UK AI Agent",
+    "scopes": [
+      "read-business-data",
+      "read-personal-data",
+      "submit-registration-to-hmrc",
+      "check-companies-house-data"
+    ],
+    "limitations": "Agent cannot provide false information on your behalf. Agent cannot register you without your explicit confirmation of all details. Agent cannot make changes to your business structure or employment arrangements. Agent cannot access your HMRC account after registration is complete without separate authorisation."
+  }
+}

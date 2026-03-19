@@ -1,0 +1,71 @@
+{
+  "id": "nhs.care-assessment.eligibility",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "age-minimum",
+      "description": "Applicant must be at least 18 years old",
+      "condition": {
+        "field": "age",
+        "operator": ">=",
+        "value": 18
+      },
+      "reason_if_failed": "Care needs assessments are for adults aged 18 and over. Contact children's services if you need support for someone under 18.",
+      "alternative_service": "local-authority.childrens-social-care"
+    },
+    {
+      "id": "local-authority-resident",
+      "description": "Applicant must be ordinarily resident in the local authority area",
+      "condition": {
+        "field": "local_authority",
+        "operator": "exists"
+      },
+      "reason_if_failed": "You need to apply to the local authority where you live. We will help you identify the correct local authority.",
+      "evidence_source": "address-confirmation"
+    },
+    {
+      "id": "care-needs-indication",
+      "description": "Applicant indicates they have difficulty with daily activities or personal care",
+      "condition": {
+        "field": "has_care_needs",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "Care needs assessments are for people who need support with daily living. If you're looking for other services, we can signpost you.",
+      "alternative_service": "nhs.nhs111-online"
+    }
+  ],
+  "explanation_template": "Care needs assessment eligibility: {outcome}. Any adult can request an assessment if they appear to have care needs.",
+  "edge_cases": [
+    {
+      "id": "safeguarding-concern",
+      "description": "Applicant or assessor identifies immediate safeguarding risk (abuse, neglect, exploitation)",
+      "detection": "safeguarding_flag",
+      "action": "Immediate handoff to safeguarding team. Assessment paused pending safeguarding investigation. Urgent response within 24 hours."
+    },
+    {
+      "id": "lack-of-capacity",
+      "description": "Applicant may lack mental capacity to consent to assessment or make care decisions",
+      "detection": "capacity_concern",
+      "action": "Mental Capacity Act assessment required. Independent advocate may be needed. Family member or attorney involvement required."
+    },
+    {
+      "id": "hospital-discharge",
+      "description": "Applicant is being discharged from hospital and needs fast-track assessment",
+      "detection": "hospital_discharge",
+      "action": "Fast-track pathway. Assessment must begin within 24 hours to prevent delayed discharge."
+    },
+    {
+      "id": "carer-breakdown",
+      "description": "Applicant's informal carer is unable to continue caring",
+      "detection": "carer_crisis",
+      "action": "Urgent assessment required. Parallel carer's assessment may be needed. Temporary care arrangements may be necessary."
+    },
+    {
+      "id": "terminal-illness",
+      "description": "Applicant has a terminal diagnosis and needs end-of-life care planning",
+      "detection": "palliative_care",
+      "action": "Fast-track continuing healthcare assessment may be appropriate. Palliative care team involvement."
+    }
+  ]
+}

@@ -1,0 +1,76 @@
+{
+  "id": "la-business-rates.consent",
+  "version": "1.0.0",
+  "grants": [
+    {
+      "id": "identity-verification",
+      "description": "Verify your identity as the business owner or property occupier",
+      "data_shared": [
+        "full_name",
+        "business_name",
+        "business_registration_number",
+        "contact_details"
+      ],
+      "source": "gov-uk-verify",
+      "purpose": "To confirm you are authorized to register this property for business rates",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "property-details",
+      "description": "Share property details from Valuation Office Agency records",
+      "data_shared": [
+        "property_address",
+        "rateable_value",
+        "property_description",
+        "floor_area",
+        "property_use"
+      ],
+      "source": "voa-property-register",
+      "purpose": "To verify the property is liable for business rates and calculate the correct amount",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "relief-eligibility",
+      "description": "Share business information to assess eligibility for Small Business Rate Relief",
+      "data_shared": [
+        "number_of_properties",
+        "total_rateable_value",
+        "business_type",
+        "annual_turnover"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To determine if you qualify for relief schemes that reduce or eliminate your bill",
+      "duration": "until-revoked",
+      "required": false
+    },
+    {
+      "id": "payment-authorization",
+      "description": "Authorize payment of business rates bill to local authority",
+      "data_shared": [
+        "payment_method",
+        "bank_account_details",
+        "payment_schedule_preference"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To process your business rates payment and set up instalment plan if requested",
+      "duration": "until-revoked",
+      "required": true
+    }
+  ],
+  "revocation": {
+    "mechanism": "Contact your local council or revoke through your GOV.UK account",
+    "effect": "Registration will be cancelled. You remain legally liable for business rates but must contact council to arrange alternative payment."
+  },
+  "delegation": {
+    "agent_identity": "GOV.UK AI Agent",
+    "scopes": [
+      "read-property-data",
+      "assess-relief-eligibility",
+      "calculate-amount",
+      "submit-registration"
+    ],
+    "limitations": "Agent cannot make payment on your behalf. Agent cannot challenge your rateable value. Agent cannot confirm self-catering or home business criteria without your explicit declaration. Agent must handoff for disputes or complex property arrangements."
+  }
+}

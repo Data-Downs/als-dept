@@ -1,0 +1,98 @@
+{
+  "id": "hmrc.update-records.eligibility",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "ni-number-required",
+      "description": "Applicant must have a valid National Insurance number (not temporary)",
+      "condition": {
+        "field": "national_insurance_number",
+        "operator": "exists"
+      },
+      "reason_if_failed": "You need a National Insurance number to update HMRC records. A temporary reference number will not work.",
+      "evidence_source": "identity-verified",
+      "alternative_service": "dwp.apply-ni-number"
+    },
+    {
+      "id": "hmrc-registered",
+      "description": "Applicant must be registered with HMRC",
+      "condition": {
+        "field": "hmrc_record_exists",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "You must be registered with HMRC before you can update your records",
+      "triggers_handoff": true
+    },
+    {
+      "id": "identity-verified",
+      "description": "Applicant must verify their identity through GOV.UK sign in",
+      "condition": {
+        "field": "identity_verification_level",
+        "operator": ">=",
+        "value": "medium"
+      },
+      "reason_if_failed": "You must verify your identity using GOV.UK sign in details",
+      "evidence_source": "one-login"
+    },
+    {
+      "id": "valid-update-reason",
+      "description": "Change must be for a valid reason (marriage, divorce, house move, name deed poll, etc.)",
+      "condition": {
+        "field": "change_reason",
+        "operator": "in",
+        "value": [
+          "marriage",
+          "civil-partnership",
+          "divorce",
+          "separation",
+          "house-move",
+          "name-change",
+          "income-change",
+          "gender-change"
+        ]
+      },
+      "reason_if_failed": "You can only update HMRC records for specific life events or changes",
+      "triggers_handoff": true
+    }
+  ],
+  "explanation_template": "HMRC record update eligibility: {outcome}. Affects tax code, benefits and correspondence.",
+  "edge_cases": [
+    {
+      "id": "death-of-partner",
+      "description": "Reporting death of spouse or civil partner",
+      "detection": "change_reason == 'bereavement'",
+      "action": "Route to bereavement service. Requires death certificate. HMRC will update tax code and DWP will be notified for benefits."
+    },
+    {
+      "id": "gender-recognition-certificate",
+      "description": "Applicant has Gender Recognition Certificate",
+      "detection": "has_gender_recognition_certificate == true",
+      "action": "Records updated automatically. Restrict record access to specialist staff. Transfer to Public Department 1."
+    },
+    {
+      "id": "tax-agent-update",
+      "description": "Update requested by tax agent (accountant)",
+      "detection": "user_role == 'tax-agent'",
+      "action": "Route to tax agent portal. Different process and verification requirements."
+    },
+    {
+      "id": "business-records",
+      "description": "Change affects business records",
+      "detection": "has_business == true",
+      "action": "Inform applicant they must separately update business records with HMRC."
+    },
+    {
+      "id": "self-assessment-taxpayer",
+      "description": "Applicant submits Self Assessment returns",
+      "detection": "self_assessment_taxpayer == true",
+      "action": "Both PAYE and Self Assessment records will be updated. Next return will reflect changes."
+    },
+    {
+      "id": "child-benefit-recipient",
+      "description": "Applicant receives Child Benefit",
+      "detection": "receives_child_benefit == true",
+      "action": "Inform applicant they must separately notify HMRC Child Benefit Office of relationship changes."
+    }
+  ]
+}

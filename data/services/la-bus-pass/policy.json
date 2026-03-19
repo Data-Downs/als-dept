@@ -1,0 +1,78 @@
+{
+  "id": "la-bus-pass.eligibility",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "england-resident",
+      "description": "Applicant must be resident in England",
+      "condition": {
+        "field": "jurisdiction",
+        "operator": "==",
+        "value": "England"
+      },
+      "reason_if_failed": "This service is for England residents only. Scotland and Northern Ireland have separate schemes.",
+      "alternative_service": "scotland-bus-pass",
+      "evidence_source": "address-verification"
+    },
+    {
+      "id": "age-or-disability",
+      "description": "Applicant must be State Pension age OR have a qualifying disability",
+      "condition": {
+        "field": "state_pension_age_reached",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "You must have reached State Pension age or have a qualifying disability to apply",
+      "evidence_source": "dwp-pension-records",
+      "alternative_service": "la-bus-pass.disability"
+    },
+    {
+      "id": "local-authority-boundary",
+      "description": "Applicant must reside within a local authority boundary in England",
+      "condition": {
+        "field": "local_authority_code",
+        "operator": "exists"
+      },
+      "reason_if_failed": "We need to confirm which local authority you belong to",
+      "evidence_source": "address-verification",
+      "triggers_handoff": true
+    },
+    {
+      "id": "not-already-issued",
+      "description": "Applicant must not already have an active bus pass",
+      "condition": {
+        "field": "active_bus_pass",
+        "operator": "not-exists"
+      },
+      "reason_if_failed": "You already have an active bus pass. Contact your local authority to replace a lost or damaged pass.",
+      "alternative_service": "la-bus-pass.replacement"
+    }
+  ],
+  "explanation_template": "Free bus pass eligibility: {outcome}",
+  "edge_cases": [
+    {
+      "id": "disability-under-spa",
+      "description": "Applicant is under State Pension age but has a qualifying disability",
+      "detection": "has_qualifying_disability AND NOT state_pension_age_reached",
+      "action": "Route to disability assessment pathway. Evidence required: PIP award letter, blue badge, or medical certification."
+    },
+    {
+      "id": "scotland-ni-resident",
+      "description": "Applicant resides in Scotland or Northern Ireland",
+      "detection": "jurisdiction IN ['Scotland', 'Northern Ireland']",
+      "action": "Redirect to respective national scheme. Scotland/NI passes available from age 60."
+    },
+    {
+      "id": "address-dispute",
+      "description": "Applicant's address falls on local authority boundary",
+      "detection": "boundary_dispute",
+      "action": "Manual review required to determine correct issuing authority."
+    },
+    {
+      "id": "temporary-resident",
+      "description": "Applicant is temporarily in England but permanent resident elsewhere",
+      "detection": "temporary_residence",
+      "action": "Pass only valid for permanent England residents. Handoff to council for case-by-case assessment."
+    }
+  ]
+}

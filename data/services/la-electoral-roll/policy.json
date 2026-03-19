@@ -1,0 +1,104 @@
+{
+  "id": "la-electoral-roll.eligibility",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "age-minimum-england-ni",
+      "description": "Applicant in England or Northern Ireland must be at least 16 years old",
+      "condition": {
+        "field": "age",
+        "operator": ">=",
+        "value": 16
+      },
+      "reason_if_failed": "You must be at least 16 years old to register to vote in England or Northern Ireland",
+      "evidence_source": "citizen-provided"
+    },
+    {
+      "id": "age-minimum-scotland-wales",
+      "description": "Applicant in Scotland or Wales must be at least 14 years old",
+      "condition": {
+        "field": "age",
+        "operator": ">=",
+        "value": 14
+      },
+      "reason_if_failed": "You must be at least 14 years old to register to vote in Scotland or Wales",
+      "evidence_source": "citizen-provided"
+    },
+    {
+      "id": "uk-address-required",
+      "description": "Applicant must have a UK address (or be an overseas voter with previous UK address)",
+      "condition": {
+        "field": "uk_address",
+        "operator": "exists"
+      },
+      "reason_if_failed": "You must have a UK address to register. If you live abroad, use the overseas voter service.",
+      "alternative_service": "la-electoral-roll.overseas"
+    },
+    {
+      "id": "eligible-nationality-england-ni",
+      "description": "Applicant in England/Northern Ireland must be British, Irish, qualifying Commonwealth or EU citizen",
+      "condition": {
+        "field": "nationality",
+        "operator": "in",
+        "value": [
+          "british",
+          "irish",
+          "commonwealth",
+          "qualifying_eu"
+        ]
+      },
+      "reason_if_failed": "You must be a British, Irish, Commonwealth (with permission to stay), or qualifying EU citizen to register in England or Northern Ireland",
+      "evidence_source": "citizen-provided"
+    },
+    {
+      "id": "eligible-nationality-scotland-wales",
+      "description": "Applicant in Scotland/Wales must have permission to stay in UK or not need permission",
+      "condition": {
+        "field": "has_permission_to_stay",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "You must have permission to enter or stay in the UK, or not need permission, to register in Scotland or Wales",
+      "evidence_source": "citizen-provided"
+    }
+  ],
+  "explanation_template": "Electoral roll registration eligibility: {outcome}",
+  "edge_cases": [
+    {
+      "id": "anonymous-registration",
+      "description": "Applicant needs anonymous registration due to safety concerns",
+      "detection": "safety_concerns_flag",
+      "action": "Route to anonymous registration process. Contact local Electoral Registration Office."
+    },
+    {
+      "id": "overseas-voter",
+      "description": "Applicant lives abroad and wants to register as overseas voter",
+      "detection": "overseas_address",
+      "action": "Route to overseas voter registration service. Requires previous UK address and passport details. Registration must be renewed every 3 years."
+    },
+    {
+      "id": "northern-ireland",
+      "description": "Applicant is in Northern Ireland (different registration system)",
+      "detection": "address_northern_ireland",
+      "action": "Route to Electoral Office for Northern Ireland (EONI) registration system."
+    },
+    {
+      "id": "crown-servant",
+      "description": "Applicant is a Crown servant or British Council employee",
+      "detection": "crown_servant_status",
+      "action": "Route to specialized registration process for Crown servants and British Council employees."
+    },
+    {
+      "id": "armed-forces",
+      "description": "Applicant is a member of the armed forces",
+      "detection": "armed_forces_status",
+      "action": "Route to armed forces voter registration service."
+    },
+    {
+      "id": "moving-address",
+      "description": "Applicant is moving and needs to update both old and new addresses",
+      "detection": "previous_uk_address",
+      "action": "De-register from old Electoral Registration Office and register at new address."
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "id": "dvsa-theory-test",
+  "version": "1.0.0",
+  "name": "Theory Test",
+  "description": "Must pass before booking the practical driving test. £23. Includes multiple choice and hazard perception.",
+  "department": "DVSA",
+  "input_schema": {
+    "type": "object"
+  },
+  "output_schema": {
+    "type": "object"
+  },
+  "source": "graph",
+  "serviceType": "application",
+  "govuk_url": "https://www.gov.uk/book-theory-test",
+  "eligibility_summary": "All learner drivers must pass a theory test before they can book a practical driving test. Costs £23. Consists of a multiple-choice section and a hazard perception video clip test. Must have a valid provisional driving licence to book.",
+  "proactive": true,
+  "gated": true
+}

@@ -1,0 +1,104 @@
+{
+  "id": "la-carers-assessment.consent",
+  "version": "1.0.0",
+  "grants": [
+    {
+      "id": "identity-verification",
+      "description": "Verify your identity to access the Carer's Assessment service",
+      "data_shared": [
+        "full_name",
+        "date_of_birth",
+        "address",
+        "contact_details"
+      ],
+      "source": "one-login",
+      "purpose": "To confirm your identity and ensure you receive the correct assessment from your local authority",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "cared-for-person-details",
+      "description": "Share information about the person you care for",
+      "data_shared": [
+        "cared_for_name",
+        "cared_for_date_of_birth",
+        "cared_for_relationship",
+        "cared_for_conditions",
+        "cared_for_needs"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To understand your caring role and the support needs that arise from it",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "caring-role-information",
+      "description": "Share details about your caring responsibilities and how they affect you",
+      "data_shared": [
+        "hours_of_care",
+        "caring_tasks",
+        "duration_of_caring_role",
+        "other_responsibilities",
+        "employment_status",
+        "impact_on_wellbeing"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To assess your support needs and identify what help would be most beneficial",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "health-and-wellbeing",
+      "description": "Share information about your own health and wellbeing",
+      "data_shared": [
+        "physical_health",
+        "mental_health",
+        "medication",
+        "ability_to_continue_caring"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To understand how caring affects your health and what support you need to stay well",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "gp-information-sharing",
+      "description": "Allow local authority to contact your GP for relevant health information",
+      "data_shared": [
+        "gp_name",
+        "gp_surgery_address",
+        "medical_records_relevant_to_caring"
+      ],
+      "source": "nhs-gp-records",
+      "purpose": "To verify health information that may affect your ability to continue caring",
+      "duration": "session",
+      "required": false
+    },
+    {
+      "id": "support-services-referral",
+      "description": "Allow local authority to share your information with support services and care providers",
+      "data_shared": [
+        "assessment_outcome",
+        "support_needs",
+        "contact_details"
+      ],
+      "source": "local-authority",
+      "purpose": "To arrange respite care, support groups, grants, or other services identified in your assessment",
+      "duration": "until-revoked",
+      "required": true
+    }
+  ],
+  "revocation": {
+    "mechanism": "Contact your local authority social care team or revoke through your council account",
+    "effect": "Assessment will be cancelled and no support services will be arranged. Existing support may be reviewed."
+  },
+  "delegation": {
+    "agent_identity": "GOV.UK AI Agent",
+    "scopes": [
+      "read-personal-data",
+      "submit-assessment-request",
+      "schedule-assessment-appointment"
+    ],
+    "limitations": "Agent cannot provide medical information on your behalf. Agent cannot consent to treatment or care arrangements. Agent cannot make decisions about the person you care for. Final approval of support plan requires your explicit confirmation. Agent cannot revoke consent on your behalf."
+  }
+}

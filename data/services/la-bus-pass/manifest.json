@@ -1,0 +1,19 @@
+{
+  "id": "la-bus-pass",
+  "version": "1.0.0",
+  "name": "Free bus pass",
+  "description": "Available from State Pension age. Apply via local council.",
+  "department": "Local Authority",
+  "input_schema": {
+    "type": "object"
+  },
+  "output_schema": {
+    "type": "object"
+  },
+  "source": "graph",
+  "serviceType": "entitlement",
+  "govuk_url": "https://www.gov.uk/apply-for-elderly-person-bus-pass",
+  "eligibility_summary": "Free off-peak bus travel anywhere in England from State Pension age. Also available to some disabled people. Apply via local council — usually processed in a few weeks.",
+  "proactive": true,
+  "gated": true
+}

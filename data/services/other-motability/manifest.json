@@ -1,0 +1,19 @@
+{
+  "id": "other-motability",
+  "version": "1.0.0",
+  "name": "Motability scheme",
+  "description": "Car or scooter lease using mobility component. Requires Enhanced Rate PIP mobility.",
+  "department": "Motability",
+  "input_schema": {
+    "type": "object"
+  },
+  "output_schema": {
+    "type": "object"
+  },
+  "source": "graph",
+  "serviceType": "entitlement",
+  "govuk_url": "https://www.motability.co.uk/",
+  "eligibility_summary": "Lease a car, powered wheelchair or scooter by using the Enhanced Rate of the Mobility Component of PIP. The allowance is paid directly to Motability. No credit check required.",
+  "proactive": true,
+  "gated": true
+}

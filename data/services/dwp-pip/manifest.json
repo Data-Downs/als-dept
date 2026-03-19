@@ -1,0 +1,19 @@
+{
+  "id": "dwp-pip",
+  "version": "1.0.0",
+  "name": "Personal Independence Payment (PIP)",
+  "description": "For under-65s with disability. Not means-tested. Daily living and/or mobility components.",
+  "department": "DWP",
+  "input_schema": {
+    "type": "object"
+  },
+  "output_schema": {
+    "type": "object"
+  },
+  "source": "graph",
+  "serviceType": "benefit",
+  "govuk_url": "https://www.gov.uk/pip",
+  "eligibility_summary": "For people aged 16 to 64 with a long-term health condition or disability. Not means-tested. Has daily living and mobility components, each at standard or enhanced rate. Opens access to many other benefits.",
+  "proactive": true,
+  "gated": false
+}

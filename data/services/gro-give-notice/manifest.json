@@ -1,0 +1,19 @@
+{
+  "id": "gro-give-notice",
+  "version": "1.0.0",
+  "name": "Give notice of marriage",
+  "description": "At local register office. Legally required at least 28 days before ceremony.",
+  "department": "GRO",
+  "input_schema": {
+    "type": "object"
+  },
+  "output_schema": {
+    "type": "object"
+  },
+  "source": "graph",
+  "serviceType": "obligation",
+  "govuk_url": "https://www.gov.uk/marriages-civil-partnerships/giving-notice",
+  "eligibility_summary": "Both parties to a marriage or civil partnership must give notice at their local register office at least 28 days before the ceremony. Legally required.",
+  "proactive": true,
+  "gated": false
+}

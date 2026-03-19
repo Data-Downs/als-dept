@@ -1,0 +1,161 @@
+{
+  "id": "ho.eu-settled-status.states",
+  "version": "1.0.0",
+  "states": [
+    {
+      "id": "not-started",
+      "type": "initial"
+    },
+    {
+      "id": "identity-verified"
+    },
+    {
+      "id": "eligibility-pathway-determined"
+    },
+    {
+      "id": "eligibility-checked"
+    },
+    {
+      "id": "consent-given"
+    },
+    {
+      "id": "residence-evidence-submitted"
+    },
+    {
+      "id": "family-evidence-submitted"
+    },
+    {
+      "id": "criminal-record-declared"
+    },
+    {
+      "id": "application-validated",
+      "receipt": true
+    },
+    {
+      "id": "certificate-of-application-issued",
+      "receipt": true
+    },
+    {
+      "id": "assessment"
+    },
+    {
+      "id": "decision",
+      "receipt": true
+    },
+    {
+      "id": "settled-status-granted",
+      "type": "terminal",
+      "receipt": true
+    },
+    {
+      "id": "pre-settled-status-granted",
+      "type": "terminal",
+      "receipt": true
+    },
+    {
+      "id": "rejected",
+      "type": "terminal",
+      "receipt": true
+    },
+    {
+      "id": "handed-off",
+      "type": "terminal",
+      "receipt": true
+    }
+  ],
+  "transitions": [
+    {
+      "from": "not-started",
+      "to": "identity-verified",
+      "trigger": "verify-identity"
+    },
+    {
+      "from": "identity-verified",
+      "to": "eligibility-pathway-determined",
+      "trigger": "determine-pathway"
+    },
+    {
+      "from": "eligibility-pathway-determined",
+      "to": "eligibility-checked",
+      "trigger": "check-eligibility"
+    },
+    {
+      "from": "eligibility-checked",
+      "to": "consent-given",
+      "trigger": "grant-consent",
+      "condition": "eligible"
+    },
+    {
+      "from": "eligibility-checked",
+      "to": "rejected",
+      "trigger": "reject",
+      "condition": "not-eligible"
+    },
+    {
+      "from": "eligibility-checked",
+      "to": "handed-off",
+      "trigger": "handoff",
+      "condition": "edge-case-requires-manual-process"
+    },
+    {
+      "from": "consent-given",
+      "to": "residence-evidence-submitted",
+      "trigger": "submit-residence-evidence"
+    },
+    {
+      "from": "residence-evidence-submitted",
+      "to": "family-evidence-submitted",
+      "trigger": "submit-family-evidence",
+      "condition": "family-member-application"
+    },
+    {
+      "from": "residence-evidence-submitted",
+      "to": "criminal-record-declared",
+      "trigger": "skip-family-evidence",
+      "condition": "not-family-member-application"
+    },
+    {
+      "from": "family-evidence-submitted",
+      "to": "criminal-record-declared",
+      "trigger": "declare-criminal-record"
+    },
+    {
+      "from": "criminal-record-declared",
+      "to": "application-validated",
+      "trigger": "validate-application"
+    },
+    {
+      "from": "application-validated",
+      "to": "certificate-of-application-issued",
+      "trigger": "issue-certificate"
+    },
+    {
+      "from": "certificate-of-application-issued",
+      "to": "assessment",
+      "trigger": "begin-assessment"
+    },
+    {
+      "from": "assessment",
+      "to": "decision",
+      "trigger": "make-decision"
+    },
+    {
+      "from": "decision",
+      "to": "settled-status-granted",
+      "trigger": "grant-settled-status",
+      "condition": "five-years-continuous-residence-or-eligible-exception"
+    },
+    {
+      "from": "decision",
+      "to": "pre-settled-status-granted",
+      "trigger": "grant-pre-settled-status",
+      "condition": "less-than-five-years-continuous-residence"
+    },
+    {
+      "from": "decision",
+      "to": "rejected",
+      "trigger": "reject-application",
+      "condition": "does-not-meet-requirements"
+    }
+  ]
+}

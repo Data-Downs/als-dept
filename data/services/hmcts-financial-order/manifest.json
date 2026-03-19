@@ -1,0 +1,19 @@
+{
+  "id": "hmcts-financial-order",
+  "version": "1.0.0",
+  "name": "Financial Consent Order",
+  "description": "Legally binding division of assets and pension. Strongly advised before final divorce order.",
+  "department": "HMCTS",
+  "input_schema": {
+    "type": "object"
+  },
+  "output_schema": {
+    "type": "object"
+  },
+  "source": "graph",
+  "serviceType": "legal_process",
+  "govuk_url": "https://www.gov.uk/money-property-when-relationship-ends/reaching-an-agreement",
+  "eligibility_summary": "A court-approved agreement making division of assets, property and pension legally binding. Strongly advised before the Final Divorce Order — without it, either party can make future financial claims. Usually drafted by solicitors.",
+  "proactive": true,
+  "gated": true
+}

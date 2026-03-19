@@ -1,0 +1,145 @@
+{
+  "id": "other-help-to-buy.eligibility",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "age-minimum",
+      "description": "Applicant must be at least 18 years old",
+      "condition": {
+        "field": "age",
+        "operator": ">=",
+        "value": 18
+      },
+      "reason_if_failed": "You must be 18 or older to apply for the First Homes scheme",
+      "evidence_source": "identity-verified"
+    },
+    {
+      "id": "first-time-buyer",
+      "description": "Applicant must be a first-time buyer",
+      "condition": {
+        "field": "has_owned_property",
+        "operator": "==",
+        "value": false
+      },
+      "reason_if_failed": "You must be a first-time buyer to be eligible for the First Homes scheme",
+      "evidence_source": "land-registry"
+    },
+    {
+      "id": "mortgage-requirement",
+      "description": "Applicant must be able to get a mortgage for at least half the property price",
+      "condition": {
+        "field": "mortgage_capacity_percentage",
+        "operator": ">=",
+        "value": 50
+      },
+      "reason_if_failed": "You must be able to get a mortgage for at least half the price of the home",
+      "evidence_source": "mortgage-adviser",
+      "triggers_handoff": true
+    },
+    {
+      "id": "income-cap-standard",
+      "description": "Annual income must not exceed £80,000 (outside London)",
+      "condition": {
+        "field": "annual_income",
+        "operator": "<=",
+        "value": 80000
+      },
+      "reason_if_failed": "Your annual income exceeds the £80,000 cap for areas outside London",
+      "evidence_source": "hmrc-tax-records"
+    },
+    {
+      "id": "income-cap-london",
+      "description": "Annual income must not exceed £90,000 (London only)",
+      "condition": {
+        "field": "annual_income",
+        "operator": "<=",
+        "value": 90000
+      },
+      "reason_if_failed": "Your annual income exceeds the £90,000 cap for London properties",
+      "evidence_source": "hmrc-tax-records"
+    },
+    {
+      "id": "joint-all-first-time",
+      "description": "For joint applications, all applicants must be first-time buyers",
+      "condition": {
+        "field": "all_applicants_first_time",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "All buyers in a joint application must be first-time buyers",
+      "evidence_source": "land-registry"
+    },
+    {
+      "id": "price-cap-standard",
+      "description": "Property price after discount must not exceed £250,000 (outside London)",
+      "condition": {
+        "field": "discounted_price",
+        "operator": "<=",
+        "value": 250000
+      },
+      "reason_if_failed": "The property price after discount exceeds the £250,000 cap for areas outside London",
+      "evidence_source": "rics-surveyor"
+    },
+    {
+      "id": "price-cap-london",
+      "description": "Property price after discount must not exceed £420,000 (London only)",
+      "condition": {
+        "field": "discounted_price",
+        "operator": "<=",
+        "value": 420000
+      },
+      "reason_if_failed": "The property price after discount exceeds the £420,000 cap for London properties",
+      "evidence_source": "rics-surveyor"
+    },
+    {
+      "id": "england-only",
+      "description": "Property must be located in England",
+      "condition": {
+        "field": "property_jurisdiction",
+        "operator": "==",
+        "value": "England"
+      },
+      "reason_if_failed": "The First Homes scheme is only available for properties in England",
+      "alternative_service": "devolved-nations.housing-schemes"
+    }
+  ],
+  "explanation_template": "First Homes scheme eligibility: {outcome}",
+  "edge_cases": [
+    {
+      "id": "joint-application",
+      "description": "Multiple buyers applying together",
+      "detection": "number_of_applicants > 1",
+      "action": "All applicants must meet first-time buyer criteria. Joint income is the total of all applicants' income from the previous tax year. Only one applicant needs to meet local criteria (e.g., key worker or area resident)."
+    },
+    {
+      "id": "armed-forces-exemption",
+      "description": "Applicant is a member of armed forces or qualifying family member",
+      "detection": "armed_forces_status",
+      "action": "Exempt from local criteria (key worker, area resident requirements). Still must meet all other First Homes eligibility criteria including income caps and first-time buyer status."
+    },
+    {
+      "id": "local-council-criteria",
+      "description": "Local council has set additional eligibility requirements",
+      "detection": "local_criteria_exists",
+      "action": "Priority may be given to key workers, area residents, or lower income households for first 3 months of property sale. After 3 months, these local criteria no longer apply."
+    },
+    {
+      "id": "mortgage-declined",
+      "description": "Mortgage application is declined after initial eligibility check",
+      "detection": "mortgage_declined",
+      "action": "Application cannot proceed. Applicant may need to improve credit rating, increase deposit, or seek mortgage advice. Reservation fee will be refunded if paid."
+    },
+    {
+      "id": "circumstances-changed",
+      "description": "Applicant's circumstances change before contract exchange",
+      "detection": "eligibility_changed",
+      "action": "Applicant must inform conveyancer immediately. If no longer eligible (e.g., income increased above cap, purchased another property), application will be rejected."
+    },
+    {
+      "id": "reservation-fee",
+      "description": "New build property requires reservation fee",
+      "detection": "property_type == new_build",
+      "action": "Applicant may need to pay reservation fee to developer. Fee is refundable if application is unsuccessful."
+    }
+  ]
+}

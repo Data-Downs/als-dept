@@ -1,0 +1,112 @@
+{
+  "id": "ho-brp.states",
+  "version": "1.0.0",
+  "states": [
+    {
+      "id": "not-started",
+      "type": "initial"
+    },
+    {
+      "id": "identity-verified"
+    },
+    {
+      "id": "eligibility-checked"
+    },
+    {
+      "id": "consent-given"
+    },
+    {
+      "id": "collection-details-submitted"
+    },
+    {
+      "id": "assessment"
+    },
+    {
+      "id": "collection-authorized",
+      "receipt": true
+    },
+    {
+      "id": "collection-reminder-sent"
+    },
+    {
+      "id": "completed",
+      "type": "terminal",
+      "receipt": true
+    },
+    {
+      "id": "rejected",
+      "type": "terminal",
+      "receipt": true
+    },
+    {
+      "id": "handed-off",
+      "type": "terminal",
+      "receipt": true
+    }
+  ],
+  "transitions": [
+    {
+      "from": "not-started",
+      "to": "identity-verified",
+      "trigger": "verify-identity"
+    },
+    {
+      "from": "identity-verified",
+      "to": "eligibility-checked",
+      "trigger": "check-eligibility"
+    },
+    {
+      "from": "eligibility-checked",
+      "to": "consent-given",
+      "trigger": "grant-consent",
+      "condition": "eligible"
+    },
+    {
+      "from": "eligibility-checked",
+      "to": "rejected",
+      "trigger": "reject",
+      "condition": "not-eligible"
+    },
+    {
+      "from": "eligibility-checked",
+      "to": "handed-off",
+      "trigger": "handoff",
+      "condition": "edge-case"
+    },
+    {
+      "from": "consent-given",
+      "to": "collection-details-submitted",
+      "trigger": "submit-collection-details"
+    },
+    {
+      "from": "collection-details-submitted",
+      "to": "assessment",
+      "trigger": "begin-assessment"
+    },
+    {
+      "from": "assessment",
+      "to": "collection-authorized",
+      "trigger": "authorize-collection"
+    },
+    {
+      "from": "assessment",
+      "to": "rejected",
+      "trigger": "reject-collection"
+    },
+    {
+      "from": "collection-authorized",
+      "to": "collection-reminder-sent",
+      "trigger": "send-reminder"
+    },
+    {
+      "from": "collection-reminder-sent",
+      "to": "completed",
+      "trigger": "confirm-collected"
+    },
+    {
+      "from": "collection-authorized",
+      "to": "completed",
+      "trigger": "confirm-collected"
+    }
+  ]
+}

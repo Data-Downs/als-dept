@@ -1,0 +1,124 @@
+{
+  "id": "dwp.funeral-payment.eligibility",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "qualifying-benefit",
+      "description": "Claimant or partner must receive a qualifying benefit",
+      "condition": {
+        "field": "qualifying_benefit",
+        "operator": "in",
+        "value": [
+          "universal_credit",
+          "income_support",
+          "income_based_jsa",
+          "income_related_esa",
+          "pension_credit",
+          "housing_benefit",
+          "support_for_mortgage_interest"
+        ]
+      },
+      "reason_if_failed": "You or your partner must receive Universal Credit, Income Support, income-based Jobseeker's Allowance, income-related Employment and Support Allowance, Pension Credit, Housing Benefit, or a Support for Mortgage Interest loan",
+      "evidence_source": "dwp-benefit-records",
+      "alternative_service": "dwp.other-funeral-help"
+    },
+    {
+      "id": "claim-deadline",
+      "description": "Must claim within 6 months of the funeral",
+      "condition": {
+        "field": "days_since_funeral",
+        "operator": "<=",
+        "value": 180
+      },
+      "reason_if_failed": "You must apply within 6 months of the funeral. Your claim is now out of time.",
+      "evidence_source": "funeral-documentation"
+    },
+    {
+      "id": "funeral-location",
+      "description": "Funeral must be in the UK, EEA, or Switzerland",
+      "condition": {
+        "field": "funeral_country",
+        "operator": "in",
+        "value": [
+          "uk",
+          "eea",
+          "switzerland"
+        ]
+      },
+      "reason_if_failed": "Funeral Expenses Payment only covers funerals arranged in the UK, the European Economic Area (EEA), or Switzerland",
+      "evidence_source": "funeral-documentation"
+    },
+    {
+      "id": "relationship-eligible",
+      "description": "Must have eligible relationship with deceased",
+      "condition": {
+        "field": "relationship",
+        "operator": "in",
+        "value": [
+          "partner",
+          "parent_of_stillborn_24_weeks",
+          "parent_of_child_under_16",
+          "parent_of_child_under_20_in_education",
+          "close_relative_partner_cannot_claim",
+          "friend_partner_cannot_claim"
+        ]
+      },
+      "reason_if_failed": "You must be the partner of the deceased, parent of a stillborn baby after 24 weeks, parent of a deceased child under 16 (or under 20 in approved education), or a close relative/friend where the partner cannot claim",
+      "evidence_source": "citizen-declared",
+      "triggers_handoff": true
+    },
+    {
+      "id": "has-funeral-documentation",
+      "description": "Must have invoice or signed contract from funeral director",
+      "condition": {
+        "field": "funeral_documentation",
+        "operator": "in",
+        "value": [
+          "invoice",
+          "signed_contract"
+        ]
+      },
+      "reason_if_failed": "You need an invoice or signed contract from the funeral director. Estimates are not accepted.",
+      "evidence_source": "funeral-documentation"
+    }
+  ],
+  "explanation_template": "Funeral Expenses Payment eligibility: {outcome}",
+  "edge_cases": [
+    {
+      "id": "pre-paid-plan",
+      "description": "Deceased had a pre-paid funeral plan",
+      "detection": "has_pre_paid_plan",
+      "action": "Payment limited to £120 for items not covered by the plan. Assessment must verify plan coverage."
+    },
+    {
+      "id": "close-relative-working",
+      "description": "Close relative of deceased is in work or not on qualifying benefit",
+      "detection": "close_relative_working_or_not_on_benefit",
+      "action": "May not be eligible for payment. Requires manual assessment of family circumstances."
+    },
+    {
+      "id": "awaiting-benefit-decision",
+      "description": "Claimant is waiting for decision on qualifying benefit",
+      "detection": "benefit_application_pending",
+      "action": "Allow claim to proceed. Payment decision will be made once benefit claim is decided."
+    },
+    {
+      "id": "universal-credit-claimant",
+      "description": "Claimant receives Universal Credit",
+      "detection": "on_universal_credit",
+      "action": "Decision on claim will not be made until after next Universal Credit payment."
+    },
+    {
+      "id": "estate-recovery",
+      "description": "Deceased has estate with sufficient funds",
+      "detection": "deceased_estate_value",
+      "action": "Payment will be deducted from any money received from the estate (excluding house or personal effects left to surviving spouse/civil partner)."
+    },
+    {
+      "id": "partner-unable-to-claim",
+      "description": "Partner of deceased exists but cannot claim (e.g. in prison, abroad)",
+      "detection": "partner_exists_but_cannot_claim",
+      "action": "Close relative or friend may be eligible. Verify partner's circumstances and reason for inability to claim."
+    }
+  ]
+}

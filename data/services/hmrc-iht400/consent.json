@@ -1,0 +1,109 @@
+{
+  "id": "hmrc-iht400.consent",
+  "version": "1.0.0",
+  "grants": [
+    {
+      "id": "executor-identity-verification",
+      "description": "Verify your identity as the executor or administrator of the estate",
+      "data_shared": [
+        "full_name",
+        "date_of_birth",
+        "national_insurance_number",
+        "address"
+      ],
+      "source": "one-login",
+      "purpose": "To confirm you have legal authority to act on behalf of the estate",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "deceased-details",
+      "description": "Provide details of the deceased person whose estate you are administering",
+      "data_shared": [
+        "deceased_full_name",
+        "deceased_date_of_birth",
+        "deceased_date_of_death",
+        "deceased_national_insurance_number",
+        "deceased_last_address",
+        "deceased_marital_status"
+      ],
+      "source": "death-certificate-registry",
+      "purpose": "To identify the estate and calculate applicable nil-rate bands and exemptions",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "estate-valuation-data",
+      "description": "Share property, bank account, and asset valuations with HMRC",
+      "data_shared": [
+        "property_valuations",
+        "bank_account_balances",
+        "investment_holdings",
+        "personal_possessions_value",
+        "debts_and_liabilities"
+      ],
+      "source": "land-registry,banks,investment-platforms,citizen-provided",
+      "purpose": "To calculate the gross and net value of the estate for Inheritance Tax assessment",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "gift-records",
+      "description": "Declare gifts made by the deceased in the 7 years before death",
+      "data_shared": [
+        "gift_recipient_names",
+        "gift_dates",
+        "gift_values",
+        "gift_descriptions"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To assess whether taper relief applies and calculate total taxable estate including potentially exempt transfers",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "will-and-probate",
+      "description": "Share details of the will and intended distribution of the estate",
+      "data_shared": [
+        "will_date",
+        "beneficiary_names",
+        "beneficiary_relationships",
+        "charitable_bequests",
+        "specific_legacies"
+      ],
+      "source": "probate-registry",
+      "purpose": "To determine applicable exemptions (spouse, charity) and residence nil-rate band eligibility",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "payment-authorization",
+      "description": "Authorize payment of Inheritance Tax from estate funds or personal funds",
+      "data_shared": [
+        "bank_account_number",
+        "sort_code",
+        "payment_amount",
+        "payment_reference"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To pay the calculated Inheritance Tax before probate can be granted",
+      "duration": "session",
+      "required": true
+    }
+  ],
+  "revocation": {
+    "mechanism": "Contact HMRC Inheritance Tax helpline on 0300 123 1072 or through your HMRC online account",
+    "effect": "Return will not be processed and probate cannot be granted. Outstanding tax liability remains. Penalties may apply if payment deadline is missed."
+  },
+  "delegation": {
+    "agent_identity": "GOV.UK AI Agent",
+    "scopes": [
+      "read-deceased-records",
+      "read-estate-valuation",
+      "calculate-inheritance-tax",
+      "apply-standard-reliefs",
+      "draft-iht400-form"
+    ],
+    "limitations": "Agent CANNOT make payment on your behalf without explicit confirmation of amount. Agent CANNOT submit the final IHT400 return without your review and approval. Agent CANNOT handle complex cases involving trusts, business relief, agricultural relief, or foreign domicile - these require handoff to human specialist or professional advisor. Agent CANNOT provide tax planning advice or recommend ways to reduce liability. Agent CANNOT verify authenticity of asset valuations - you remain responsible for accuracy."
+  }
+}

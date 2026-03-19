@@ -1,0 +1,131 @@
+{
+  "id": "nhs-healthy-start.states",
+  "version": "1.0.0",
+  "states": [
+    {
+      "id": "not-started",
+      "type": "initial"
+    },
+    {
+      "id": "identity-verified"
+    },
+    {
+      "id": "eligibility-checked"
+    },
+    {
+      "id": "consent-given"
+    },
+    {
+      "id": "pregnancy-or-child-confirmed"
+    },
+    {
+      "id": "benefits-verified"
+    },
+    {
+      "id": "details-submitted"
+    },
+    {
+      "id": "assessment"
+    },
+    {
+      "id": "decision",
+      "receipt": true
+    },
+    {
+      "id": "card-issued",
+      "receipt": true
+    },
+    {
+      "id": "completed",
+      "type": "terminal",
+      "receipt": true
+    },
+    {
+      "id": "rejected",
+      "type": "terminal",
+      "receipt": true
+    },
+    {
+      "id": "handed-off",
+      "type": "terminal",
+      "receipt": true
+    }
+  ],
+  "transitions": [
+    {
+      "from": "not-started",
+      "to": "identity-verified",
+      "trigger": "verify-identity"
+    },
+    {
+      "from": "identity-verified",
+      "to": "eligibility-checked",
+      "trigger": "check-eligibility"
+    },
+    {
+      "from": "eligibility-checked",
+      "to": "consent-given",
+      "trigger": "grant-consent",
+      "condition": "eligible"
+    },
+    {
+      "from": "eligibility-checked",
+      "to": "rejected",
+      "trigger": "reject",
+      "condition": "not-eligible"
+    },
+    {
+      "from": "eligibility-checked",
+      "to": "handed-off",
+      "trigger": "handoff",
+      "condition": "edge-case"
+    },
+    {
+      "from": "consent-given",
+      "to": "pregnancy-or-child-confirmed",
+      "trigger": "confirm-pregnancy-or-children"
+    },
+    {
+      "from": "pregnancy-or-child-confirmed",
+      "to": "benefits-verified",
+      "trigger": "verify-benefits"
+    },
+    {
+      "from": "benefits-verified",
+      "to": "details-submitted",
+      "trigger": "submit-details",
+      "condition": "benefits-confirmed"
+    },
+    {
+      "from": "benefits-verified",
+      "to": "rejected",
+      "trigger": "reject",
+      "condition": "benefits-not-confirmed"
+    },
+    {
+      "from": "details-submitted",
+      "to": "assessment",
+      "trigger": "begin-assessment"
+    },
+    {
+      "from": "assessment",
+      "to": "decision",
+      "trigger": "make-decision"
+    },
+    {
+      "from": "decision",
+      "to": "card-issued",
+      "trigger": "approve"
+    },
+    {
+      "from": "decision",
+      "to": "rejected",
+      "trigger": "reject-application"
+    },
+    {
+      "from": "card-issued",
+      "to": "completed",
+      "trigger": "complete"
+    }
+  ]
+}

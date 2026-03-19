@@ -1,0 +1,116 @@
+{
+  "id": "dwp.winter-fuel.consent",
+  "version": "1.0.0",
+  "grants": [
+    {
+      "id": "identity-verification",
+      "description": "Verify your identity using your GOV.UK One Login credentials or National Insurance number",
+      "data_shared": [
+        "full_name",
+        "date_of_birth",
+        "national_insurance_number"
+      ],
+      "source": "one-login",
+      "purpose": "To confirm your identity and check your eligibility for Winter Fuel Payment",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "benefit-status-check",
+      "description": "Check your current benefit status with DWP to determine if you automatically qualify",
+      "data_shared": [
+        "state_pension_status",
+        "pension_credit_status",
+        "universal_credit_status",
+        "other_qualifying_benefits"
+      ],
+      "source": "dwp-benefit-records",
+      "purpose": "To determine if you receive Pension Credit or another qualifying benefit, which is now required for Winter Fuel Payment from 2024/25",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "address-verification",
+      "description": "Confirm your current residential address in England or Wales",
+      "data_shared": [
+        "address_line_1",
+        "address_line_2",
+        "city",
+        "postcode",
+        "country"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To verify you live in England or Wales, as this payment is only available to residents of these countries",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "qualifying-week-status",
+      "description": "Check your circumstances during the qualifying week of 15-21 September 2025",
+      "data_shared": [
+        "hospital_admission_dates",
+        "prison_status",
+        "care_home_residency"
+      ],
+      "source": "nhs-records, moj-records, care-home-registry",
+      "purpose": "To determine if you meet the qualifying week requirements and are not excluded due to hospital stay, imprisonment, or care home residency",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "bank-details",
+      "description": "Provide or confirm bank or building society details for payment",
+      "data_shared": [
+        "account_name",
+        "sort_code",
+        "account_number"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To pay your Winter Fuel Payment into your bank account. Usually paid into the same account as your State Pension or other benefits.",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "household-composition",
+      "description": "Share information about others in your household who may be eligible for Winter Fuel Payment",
+      "data_shared": [
+        "partner_name",
+        "partner_date_of_birth",
+        "joint_benefit_claim_status",
+        "other_eligible_household_members"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To calculate the correct payment amount, which varies depending on whether you live alone or with others who are eligible",
+      "duration": "session",
+      "required": false
+    },
+    {
+      "id": "income-verification",
+      "description": "Check your income with HMRC to determine if it exceeds £35,000 threshold",
+      "data_shared": [
+        "annual_income",
+        "tax_code",
+        "self_assessment_status"
+      ],
+      "source": "hmrc-records",
+      "purpose": "If your income is over £35,000, HMRC will take back the Winter Fuel Payment through your tax code or Self Assessment",
+      "duration": "session",
+      "required": false
+    }
+  ],
+  "revocation": {
+    "mechanism": "Contact the Winter Fuel Payment Centre by phone (0800 731 0160) or post, or opt out through GOV.UK account (from 1 April 2026 for future years)",
+    "effect": "If you opt out, you will not receive the payment. If you revoke consent during the claim process, your application will be cancelled. You can opt back in by contacting the Winter Fuel Payment Centre before 31 March."
+  },
+  "delegation": {
+    "agent_identity": "GOV.UK AI Agent",
+    "scopes": [
+      "read-personal-data",
+      "read-benefit-status",
+      "check-eligibility",
+      "view-payment-status",
+      "report-change-of-circumstances"
+    ],
+    "limitations": "Agent cannot make a claim on your behalf without your explicit confirmation. Agent cannot change bank details without your explicit verification. Agent cannot opt out of Winter Fuel Payment without your explicit instruction. Agent cannot submit false information about household composition or qualifying week circumstances. For manual claims, agent can gather information and prepare the claim form, but you must review and approve before submission."
+  }
+}

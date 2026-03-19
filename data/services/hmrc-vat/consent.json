@@ -1,0 +1,88 @@
+{
+  "id": "hmrc-vat.consent",
+  "version": "1.0.0",
+  "grants": [
+    {
+      "id": "identity-verification",
+      "description": "Verify your business identity using Unique Taxpayer Reference (UTR) or Company Number",
+      "data_shared": [
+        "business_name",
+        "business_utr",
+        "company_number",
+        "business_address"
+      ],
+      "source": "companies-house-or-hmrc",
+      "purpose": "To confirm the legal identity of the business registering for VAT",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "business-financial-data",
+      "description": "Share business turnover and financial information with HMRC",
+      "data_shared": [
+        "turnover_12_months",
+        "expected_turnover",
+        "taxable_supplies",
+        "exempt_supplies",
+        "business_activities"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To determine mandatory or voluntary VAT registration eligibility and appropriate VAT scheme",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "bank-account-details",
+      "description": "Provide business bank account for VAT refunds and direct debit payments",
+      "data_shared": [
+        "bank_name",
+        "account_number",
+        "sort_code",
+        "account_holder_name"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To process VAT refunds and set up direct debit for VAT payments",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "business-records-access",
+      "description": "Allow HMRC to verify turnover and business records if required",
+      "data_shared": [
+        "sales_records",
+        "purchase_records",
+        "invoice_data"
+      ],
+      "source": "citizen-business-records",
+      "purpose": "To verify VAT registration eligibility and compliance with VAT obligations",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "representative-details",
+      "description": "Provide details of business representative or accountant (if applicable)",
+      "data_shared": [
+        "representative_name",
+        "representative_contact",
+        "agent_reference"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To allow authorised representatives to manage VAT on behalf of the business",
+      "duration": "until-revoked",
+      "required": false
+    }
+  ],
+  "revocation": {
+    "mechanism": "Contact HMRC VAT helpline, revoke through HMRC online account, or submit VAT7 form to deregister",
+    "effect": "Registration application will be cancelled if consent revoked before completion. After registration, deregistration process must be followed separately."
+  },
+  "delegation": {
+    "agent_identity": "GOV.UK AI Agent acting on behalf of business owner/director",
+    "scopes": [
+      "read-business-data",
+      "provide-turnover-information",
+      "submit-registration-application"
+    ],
+    "limitations": "Agent cannot select VAT accounting scheme without explicit business owner approval. Agent cannot provide or change bank account details without explicit confirmation from account holder. Agent cannot authorise tax representatives without business owner approval. Complex cases (VAT groups, overseas businesses, late registration) must be handed off to human HMRC advisor."
+  }
+}

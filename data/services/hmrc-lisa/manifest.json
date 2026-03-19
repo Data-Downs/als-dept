@@ -1,0 +1,19 @@
+{
+  "id": "hmrc-lisa",
+  "version": "1.0.0",
+  "name": "Lifetime ISA withdrawal",
+  "description": "Claim 25% government bonus. Conveyancer requests from ISA provider before completion.",
+  "department": "HMRC",
+  "input_schema": {
+    "type": "object"
+  },
+  "output_schema": {
+    "type": "object"
+  },
+  "source": "graph",
+  "serviceType": "entitlement",
+  "govuk_url": "https://www.gov.uk/lifetime-isa",
+  "eligibility_summary": "First-time buyers can use their LISA savings (including the 25% government bonus) to purchase a property. Conveyancer requests the funds directly from the ISA provider before completion.",
+  "proactive": true,
+  "gated": false
+}

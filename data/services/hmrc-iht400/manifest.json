@@ -1,0 +1,19 @@
+{
+  "id": "hmrc-iht400",
+  "version": "1.0.0",
+  "name": "Inheritance Tax return (IHT400)",
+  "description": "If estate exceeds £325k threshold. Tax must be paid before probate is granted.",
+  "department": "HMRC",
+  "input_schema": {
+    "type": "object"
+  },
+  "output_schema": {
+    "type": "object"
+  },
+  "source": "graph",
+  "serviceType": "obligation",
+  "govuk_url": "https://www.gov.uk/inheritance-tax",
+  "eligibility_summary": "Required if the estate's value exceeds the nil-rate band (£325,000, or up to £500,000 with the residence nil-rate band). Tax must be paid within 6 months of death — before probate is granted.",
+  "proactive": true,
+  "gated": true
+}

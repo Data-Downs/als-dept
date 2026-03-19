@@ -1,0 +1,89 @@
+{
+  "id": "other.employers-liability.eligibility",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "is-employer",
+      "description": "Applicant must be an employer with at least one employee",
+      "condition": {
+        "field": "number_of_employees",
+        "operator": ">=",
+        "value": 1
+      },
+      "reason_if_failed": "You only need Employers' Liability insurance if you have employees",
+      "evidence_source": "business-registration"
+    },
+    {
+      "id": "not-family-only",
+      "description": "Must employ someone other than close family members",
+      "condition": {
+        "field": "all_employees_family",
+        "operator": "!=",
+        "value": true
+      },
+      "reason_if_failed": "You do not need EL insurance if you only employ close family members (spouse, civil partner, parents, children, siblings, or step-family)",
+      "alternative_service": "hmrc.register-employer"
+    },
+    {
+      "id": "uk-based-employees",
+      "description": "Must have at least one employee based in England, Scotland or Wales",
+      "condition": {
+        "field": "has_uk_employees",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "You do not need EL insurance if all your employees are based outside England, Scotland and Wales",
+      "evidence_source": "payroll-records"
+    },
+    {
+      "id": "minimum-cover",
+      "description": "Insurance must provide at least £5 million cover",
+      "condition": {
+        "field": "cover_amount",
+        "operator": ">=",
+        "value": 5000000
+      },
+      "reason_if_failed": "Your EL insurance must provide at least £5 million cover to meet legal requirements",
+      "triggers_handoff": true
+    },
+    {
+      "id": "authorised-insurer",
+      "description": "Insurance must be from an FCA-authorised insurer",
+      "condition": {
+        "field": "insurer_fca_authorised",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "Your insurer must be authorised by the Financial Conduct Authority. Check the FCA register.",
+      "evidence_source": "fca-register",
+      "triggers_handoff": true
+    }
+  ],
+  "explanation_template": "Employers' Liability insurance requirement: {outcome}",
+  "edge_cases": [
+    {
+      "id": "multiple-locations",
+      "description": "Employer operates from multiple workplace locations",
+      "detection": "workplace_count > 1",
+      "action": "Certificate must be displayed at each workplace location where employees work. Digital display on company intranet is acceptable if all employees can access it."
+    },
+    {
+      "id": "high-risk-industry",
+      "description": "Business operates in high-risk sector (construction, manufacturing, etc.)",
+      "detection": "sic_code in high_risk_sectors",
+      "action": "Higher premiums likely. Agent should recommend insurance broker for specialist advice. Route to BIBA broker search."
+    },
+    {
+      "id": "ceased-trading",
+      "description": "Business has ceased trading but had previous employees",
+      "detection": "business_status == 'ceased'",
+      "action": "Must maintain records of past EL insurance for at least 40 years. Contact insurer about run-off cover."
+    },
+    {
+      "id": "limited-company-director",
+      "description": "Sole director of limited company with no other employees",
+      "detection": "sole_director && number_of_employees == 0",
+      "action": "Company directors are not legally employees, but EL insurance is recommended. Check with professional advisor."
+    }
+  ]
+}

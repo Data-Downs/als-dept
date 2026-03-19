@@ -1,0 +1,138 @@
+{
+  "id": "hmrc-spp.eligibility",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "relationship-requirement",
+      "description": "Must be the father, partner of the mother, adopter's partner, or intended parent (surrogacy)",
+      "condition": {
+        "field": "relationship_to_child",
+        "operator": "in",
+        "value": [
+          "father",
+          "partner",
+          "adopter_partner",
+          "intended_parent"
+        ]
+      },
+      "reason_if_failed": "You must be the father, partner of the mother/adopter, or intended parent to claim Statutory Paternity Pay",
+      "evidence_source": "citizen-provided"
+    },
+    {
+      "id": "employment-duration",
+      "description": "Must have 26 weeks continuous employment by the qualifying week (15th week before due date)",
+      "condition": {
+        "field": "continuous_employment_weeks",
+        "operator": ">=",
+        "value": 26
+      },
+      "reason_if_failed": "You must have been continuously employed for at least 26 weeks up to the qualifying week (15th week before the baby is due)",
+      "evidence_source": "hmrc-employment-records"
+    },
+    {
+      "id": "minimum-earnings",
+      "description": "Must earn an average of at least £125 per week before tax",
+      "condition": {
+        "field": "average_weekly_earnings",
+        "operator": ">=",
+        "value": 125
+      },
+      "reason_if_failed": "You must earn an average of at least £125 per week (before tax) to qualify for Statutory Paternity Pay",
+      "evidence_source": "hmrc-earnings-records"
+    },
+    {
+      "id": "employed-at-birth",
+      "description": "Must be employed by employer up to the date of birth or placement",
+      "condition": {
+        "field": "employed_at_relevant_date",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "You must still be employed by your employer at the date of birth or placement",
+      "evidence_source": "employer-confirmation"
+    },
+    {
+      "id": "notice-period-due-date",
+      "description": "Must give employer at least 15 weeks notice of baby's due date",
+      "condition": {
+        "field": "notice_given_weeks_before_due_date",
+        "operator": ">=",
+        "value": 15
+      },
+      "reason_if_failed": "You must tell your employer the baby's due date at least 15 weeks before the baby is expected",
+      "evidence_source": "citizen-provided"
+    },
+    {
+      "id": "notice-period-leave-start",
+      "description": "Must give employer at least 28 days notice before leave starts",
+      "condition": {
+        "field": "notice_given_days_before_leave",
+        "operator": ">=",
+        "value": 28
+      },
+      "reason_if_failed": "You must tell your employer at least 28 days before you want to take Paternity Leave",
+      "evidence_source": "citizen-provided"
+    },
+    {
+      "id": "no-adoption-appointment-pay",
+      "description": "Cannot have taken paid time off for adoption appointments",
+      "condition": {
+        "field": "taken_paid_adoption_appointments",
+        "operator": "==",
+        "value": false
+      },
+      "reason_if_failed": "You cannot get Paternity Pay and Leave if you've already taken paid time off to attend adoption appointments",
+      "alternative_service": "hmrc.adoption-leave"
+    },
+    {
+      "id": "leave-within-timeframe",
+      "description": "Leave must end within 52 weeks of birth or placement",
+      "condition": {
+        "field": "leave_end_date_weeks_from_birth",
+        "operator": "<=",
+        "value": 52
+      },
+      "reason_if_failed": "Your leave must end within 52 weeks of the birth or placement date",
+      "evidence_source": "citizen-provided"
+    }
+  ],
+  "explanation_template": "Statutory Paternity Pay eligibility: {outcome}",
+  "edge_cases": [
+    {
+      "id": "baby-loss",
+      "description": "Baby is stillborn from 24 weeks of pregnancy or born alive at any point",
+      "detection": "stillbirth_or_neonatal_death",
+      "action": "Still eligible for Statutory Paternity Pay if baby was stillborn from 24 weeks or born alive. Can take leave within 8 weeks of death. May also be eligible for Statutory Parental Bereavement Pay and Leave. Handoff to bereavement support."
+    },
+    {
+      "id": "multiple-births",
+      "description": "Having twins, triplets, or more",
+      "detection": "multiple_births",
+      "action": "Same amount of leave applies regardless of number of babies born (1 or 2 weeks total)"
+    },
+    {
+      "id": "overseas-adoption",
+      "description": "Adopting a child from overseas",
+      "detection": "adoption_type == overseas",
+      "action": "Different notice periods and qualifying week definition apply. Use form for overseas adoption with different timings."
+    },
+    {
+      "id": "surrogacy-arrangement",
+      "description": "Having a baby through surrogacy",
+      "detection": "relationship_to_child == intended_parent",
+      "action": "Additional requirements: must be in a couple, must intend to apply for parental order within 6 months. Requires written statement."
+    },
+    {
+      "id": "spl-interaction",
+      "description": "Applicant wants to take Shared Parental Leave",
+      "detection": "wants_shared_parental_leave",
+      "action": "Cannot take Paternity Leave after starting Shared Parental Leave (until April 2026 when rules change)"
+    },
+    {
+      "id": "new-employee-2026",
+      "description": "Baby due between 5 April 2026 and 25 July 2026 with less than 26 weeks employment",
+      "detection": "due_date >= 2026-04-05 AND due_date <= 2026-07-25 AND continuous_employment_weeks < 26",
+      "action": "From 6 April 2026: eligible from first day of employment for Paternity Leave. Do not need 15 weeks notice of due date. Still need 28 days notice of leave start."
+    }
+  ]
+}

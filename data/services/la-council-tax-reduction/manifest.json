@@ -1,0 +1,19 @@
+{
+  "id": "la-council-tax-reduction",
+  "version": "1.0.0",
+  "name": "Council Tax Reduction",
+  "description": "Apply to local council. Can reduce bill to zero on very low income.",
+  "department": "Local Authority",
+  "input_schema": {
+    "type": "object"
+  },
+  "output_schema": {
+    "type": "object"
+  },
+  "source": "graph",
+  "serviceType": "benefit",
+  "govuk_url": "https://www.gov.uk/apply-council-tax-reduction",
+  "eligibility_summary": "A means-tested discount on your Council Tax bill. Administered by local councils — schemes vary by area. Can reduce the bill significantly or to zero on very low income.",
+  "proactive": true,
+  "gated": true
+}

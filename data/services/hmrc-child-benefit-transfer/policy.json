@@ -1,0 +1,105 @@
+{
+  "id": "hmrc.child-benefit-transfer.eligibility",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "uk-resident",
+      "description": "Applicant must live in the UK",
+      "condition": {
+        "field": "uk_resident",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "You must live in the UK to claim Child Benefit",
+      "evidence_source": "identity-verified"
+    },
+    {
+      "id": "child-lives-with-applicant",
+      "description": "Child must now primarily live with the applicant",
+      "condition": {
+        "field": "child_primary_residence",
+        "operator": "==",
+        "value": "applicant"
+      },
+      "reason_if_failed": "Child Benefit can only be claimed by the person the child primarily lives with",
+      "evidence_source": "citizen-provided"
+    },
+    {
+      "id": "child-age-limit",
+      "description": "Child must be under 16, or under 20 if in approved education or training",
+      "condition": {
+        "field": "child_age",
+        "operator": "<=",
+        "value": 20
+      },
+      "reason_if_failed": "Child Benefit is only available for children under 16, or under 20 if in approved education or training",
+      "evidence_source": "child-benefit-records"
+    },
+    {
+      "id": "current-claim-exists",
+      "description": "There must be an existing Child Benefit claim for this child",
+      "condition": {
+        "field": "existing_claim_number",
+        "operator": "exists"
+      },
+      "reason_if_failed": "No existing Child Benefit claim found for this child. You may need to make a new claim instead.",
+      "alternative_service": "hmrc.child-benefit-claim",
+      "evidence_source": "hmrc-records"
+    },
+    {
+      "id": "other-parent-stopping-claim",
+      "description": "The other parent must confirm they are stopping their claim",
+      "condition": {
+        "field": "other_parent_confirmation",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "Both parents cannot claim Child Benefit for the same child. The current claimant must stop their claim first.",
+      "triggers_handoff": true
+    },
+    {
+      "id": "responsible-for-child",
+      "description": "Applicant must be responsible for bringing up the child",
+      "condition": {
+        "field": "responsible_for_child",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "You must be responsible for bringing up the child to claim Child Benefit",
+      "evidence_source": "citizen-provided"
+    }
+  ],
+  "explanation_template": "Child Benefit transfer eligibility: {outcome}",
+  "edge_cases": [
+    {
+      "id": "parental-dispute",
+      "description": "Both parents claim the child lives with them or dispute living arrangements",
+      "detection": "conflicting_residence_claims",
+      "action": "HMRC will decide who gets Child Benefit. Route to manual assessment. Both parents may need to provide evidence of child's living arrangements."
+    },
+    {
+      "id": "shared-care",
+      "description": "Child spends equal time with both parents",
+      "detection": "shared_care_arrangement",
+      "action": "Parents must agree who claims. If no agreement, HMRC decides. Only one parent can receive Child Benefit."
+    },
+    {
+      "id": "high-income-charge",
+      "description": "New claimant or their partner earns over £60,000",
+      "detection": "income_over_threshold",
+      "action": "Inform applicant they may need to pay High Income Child Benefit Charge. They can opt out of payments but still get National Insurance credits."
+    },
+    {
+      "id": "child-in-care",
+      "description": "Child is in local authority care",
+      "detection": "child_in_care",
+      "action": "Check if local council is paying maintenance. If yes, Child Benefit cannot be claimed. Route to specialist advisor."
+    },
+    {
+      "id": "child-over-16-education",
+      "description": "Child is 16-19 and education status needs verification",
+      "detection": "child_16_to_19",
+      "action": "Verify child is in approved education or training. May require evidence from education provider."
+    }
+  ]
+}

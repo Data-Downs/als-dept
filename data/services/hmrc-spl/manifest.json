@@ -1,0 +1,19 @@
+{
+  "id": "hmrc-spl",
+  "version": "1.0.0",
+  "name": "Shared Parental Leave & Pay",
+  "description": "Split remaining leave/pay between parents. Complex eligibility — both employers involved.",
+  "department": "HMRC",
+  "input_schema": {
+    "type": "object"
+  },
+  "output_schema": {
+    "type": "object"
+  },
+  "source": "graph",
+  "serviceType": "entitlement",
+  "govuk_url": "https://www.gov.uk/shared-parental-leave-and-pay",
+  "eligibility_summary": "Allows eligible parents to split up to 50 weeks of leave and 37 weeks of pay between them. Both parents must individually meet employment/earnings tests.",
+  "proactive": true,
+  "gated": true
+}

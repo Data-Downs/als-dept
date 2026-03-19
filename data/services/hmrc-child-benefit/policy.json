@@ -1,0 +1,149 @@
+{
+  "id": "hmrc.child-benefit.eligibility",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "child-age-education",
+      "description": "Child must be under 16, or under 20 if in approved education or training",
+      "condition": {
+        "field": "child_age_and_education_status",
+        "operator": "in",
+        "value": [
+          "under-16",
+          "16-19-in-approved-education"
+        ]
+      },
+      "reason_if_failed": "Child Benefit is only available for children under 16, or under 20 if they stay in approved education or training",
+      "evidence_source": "citizen-provided"
+    },
+    {
+      "id": "responsible-for-child",
+      "description": "Claimant must be responsible for the child (living with them or paying equivalent support)",
+      "condition": {
+        "field": "responsibility_status",
+        "operator": "in",
+        "value": [
+          "living-with-child",
+          "paying-equivalent-support"
+        ]
+      },
+      "reason_if_failed": "You must be responsible for the child - either living with them or paying at least the same amount as Child Benefit towards their care",
+      "evidence_source": "citizen-provided"
+    },
+    {
+      "id": "uk-resident",
+      "description": "Claimant must live in the UK or have special circumstances (Crown servant, certain countries)",
+      "condition": {
+        "field": "residency_status",
+        "operator": "in",
+        "value": [
+          "uk-resident",
+          "crown-servant",
+          "eligible-abroad"
+        ]
+      },
+      "reason_if_failed": "You normally need to live in the UK to claim Child Benefit",
+      "alternative_service": "hmrc.contact-overseas-benefits",
+      "evidence_source": "identity-verified"
+    },
+    {
+      "id": "not-already-claimed",
+      "description": "Child Benefit not already claimed by someone else for this child",
+      "condition": {
+        "field": "existing_claim_for_child",
+        "operator": "not-exists"
+      },
+      "reason_if_failed": "Only one person can get Child Benefit for a child. Someone else is already claiming for this child.",
+      "triggers_handoff": true
+    },
+    {
+      "id": "child-not-working-full-time",
+      "description": "Child not working 24+ hours per week (unless still in approved education/training)",
+      "condition": {
+        "field": "child_employment_status",
+        "operator": "!=",
+        "value": "working-24-plus-hours"
+      },
+      "reason_if_failed": "Child Benefit stops if your child starts paid work for 24 hours or more a week and is no longer in approved education or training",
+      "evidence_source": "citizen-provided"
+    },
+    {
+      "id": "child-not-on-certain-benefits",
+      "description": "Child not receiving benefits like ESA or Universal Credit in their own right",
+      "condition": {
+        "field": "child_benefits_status",
+        "operator": "!=",
+        "value": "receiving-own-benefits"
+      },
+      "reason_if_failed": "Child Benefit stops if your child starts getting certain benefits in their own right, such as Employment and Support Allowance or Universal Credit",
+      "evidence_source": "hmrc-benefit-records"
+    },
+    {
+      "id": "birth-registered",
+      "description": "Child's birth or adoption must be registered (or claim in progress)",
+      "condition": {
+        "field": "birth_registration_status",
+        "operator": "exists"
+      },
+      "reason_if_failed": "You can claim Child Benefit 48 hours after you've registered the birth, or once a child comes to live with you",
+      "evidence_source": "birth-certificate"
+    }
+  ],
+  "explanation_template": "Child Benefit eligibility: {outcome}. Backdatable for up to 3 months from the date of claim.",
+  "edge_cases": [
+    {
+      "id": "high-income-charge",
+      "description": "Either claimant or partner earns over £60,000 adjusted net income",
+      "detection": "income_over_60k",
+      "action": "Inform claimant about High Income Child Benefit Charge. They can still claim but may need to pay tax charge. Option to opt out of payments while keeping NI credits."
+    },
+    {
+      "id": "split-families",
+      "description": "Family has split and children live separately with different parents",
+      "detection": "split_family",
+      "action": "Each parent claims for child they're responsible for. Each gets £26.05 for their eldest child (not £26.05 + £17.25). Route to specialist guidance."
+    },
+    {
+      "id": "joined-families",
+      "description": "Claimant moving in with partner who also claims Child Benefit",
+      "detection": "joined_family",
+      "action": "Only one can claim at higher rate (£26.05) for eldest child in household. Must report change. May need to repay if both claim higher rate."
+    },
+    {
+      "id": "under-16-claimant",
+      "description": "Claimant is under 16 years old and has their own child",
+      "detection": "claimant_under_16",
+      "action": "Can claim for own child, or someone responsible for claimant can claim on their behalf. Claimant usually gets more if they claim themselves. Route to specialist support."
+    },
+    {
+      "id": "fostering-with-council-payments",
+      "description": "Fostering a child while local council pays towards accommodation/maintenance",
+      "detection": "fostering_with_council_support",
+      "action": "May not qualify if council paying anything towards child's accommodation or maintenance. Route to Child Benefit Office for case-by-case assessment."
+    },
+    {
+      "id": "pre-settled-status",
+      "description": "Claimant has pre-settled status under EU Settlement Scheme",
+      "detection": "pre_settled_status",
+      "action": "Must meet additional criteria: working (earning above NI primary threshold for 3 months), looking for work (91 days max), sufficient resources, or studying with sufficient resources. Cannot claim if on certain means-tested benefits."
+    },
+    {
+      "id": "child-in-hospital-care",
+      "description": "Child goes into hospital or local authority care",
+      "detection": "child_in_hospital_or_care",
+      "action": "Different eligibility rules apply. Route to Child Benefit Office for guidance. May still be eligible depending on circumstances."
+    },
+    {
+      "id": "adoption-in-progress",
+      "description": "Adopting a child, adoption not yet complete",
+      "detection": "adoption_in_progress",
+      "action": "Can claim as soon as child comes to live with claimant - don't wait for adoption completion. May be able to claim for period before adoption. Route to Child Benefit Office."
+    },
+    {
+      "id": "informal-care-arrangement",
+      "description": "Looking after friend or relative's child informally",
+      "detection": "informal_care",
+      "action": "May be eligible if not receiving council payments towards child's accommodation or maintenance. Must agree with other responsible person who claims. HMRC will decide if agreement cannot be reached. Check Guardian's Allowance eligibility if parents deceased."
+    }
+  ]
+}

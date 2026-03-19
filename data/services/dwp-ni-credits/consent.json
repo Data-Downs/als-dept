@@ -1,0 +1,103 @@
+{
+  "id": "dwp.ni-credits.consent",
+  "version": "1.0.0",
+  "grants": [
+    {
+      "id": "identity-verification",
+      "description": "Verify your identity using your GOV.UK One Login credentials",
+      "data_shared": [
+        "full_name",
+        "date_of_birth",
+        "national_insurance_number"
+      ],
+      "source": "one-login",
+      "purpose": "To confirm your identity and access your National Insurance record",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "ni-record-access",
+      "description": "Access your National Insurance record to check for gaps",
+      "data_shared": [
+        "ni_contributions_history",
+        "ni_credits_history",
+        "qualifying_years"
+      ],
+      "source": "hmrc-ni-record",
+      "purpose": "To identify gaps in your NI record and determine which periods need credits",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "benefits-data-sharing",
+      "description": "Check your current and past benefit claims with DWP",
+      "data_shared": [
+        "universal_credit_status",
+        "jsa_status",
+        "esa_status",
+        "carers_allowance_status",
+        "income_support_status",
+        "maternity_allowance_status",
+        "benefit_claim_dates"
+      ],
+      "source": "dwp-benefits-system",
+      "purpose": "To determine if you automatically qualify for NI credits through existing benefit claims",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "child-benefit-data-sharing",
+      "description": "Check Child Benefit records with HMRC",
+      "data_shared": [
+        "child_benefit_registration",
+        "child_details",
+        "child_benefit_dates"
+      ],
+      "source": "hmrc-child-benefit",
+      "purpose": "To confirm eligibility for parent/guardian NI credits through Child Benefit registration",
+      "duration": "session",
+      "required": false
+    },
+    {
+      "id": "employment-history-sharing",
+      "description": "Access your employment and earnings history",
+      "data_shared": [
+        "employment_status",
+        "earnings_history",
+        "statutory_pay_records"
+      ],
+      "source": "hmrc-paye",
+      "purpose": "To confirm periods where you were not earning enough to make a qualifying year, or receiving Statutory Sick/Maternity/Paternity/Adoption Pay",
+      "duration": "session",
+      "required": false
+    },
+    {
+      "id": "caring-evidence-submission",
+      "description": "Provide evidence of caring responsibilities",
+      "data_shared": [
+        "care_recipient_details",
+        "caring_hours",
+        "caring_period",
+        "supporting_documents"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To support your application for carer's credits if you're not receiving Carer's Allowance",
+      "duration": "until-revoked",
+      "required": false
+    }
+  ],
+  "revocation": {
+    "mechanism": "Contact DWP or revoke through your GOV.UK account",
+    "effect": "Application will be cancelled if consent is revoked before completion. Already-awarded credits will not be affected."
+  },
+  "delegation": {
+    "agent_identity": "GOV.UK AI Agent",
+    "scopes": [
+      "read-ni-record",
+      "read-benefits-status",
+      "submit-credits-application",
+      "upload-evidence"
+    ],
+    "limitations": "Agent cannot revoke existing credits. Agent cannot transfer credits between individuals without explicit confirmation from both parties. Agent cannot make decisions on historical HRP claims or edge cases (wrongly imprisoned, armed forces partners) - these require human assessment and will be handed off."
+  }
+}

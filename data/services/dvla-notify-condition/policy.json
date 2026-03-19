@@ -1,0 +1,106 @@
+{
+  "id": "dvla-notify-condition.eligibility",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "has-driving-licence",
+      "description": "Applicant must hold a valid UK driving licence",
+      "condition": {
+        "field": "driving_licence_number",
+        "operator": "exists"
+      },
+      "reason_if_failed": "You can only notify DVLA of a medical condition if you hold a UK driving licence",
+      "alternative_service": "dvla.apply-provisional-licence"
+    },
+    {
+      "id": "uk-resident",
+      "description": "Applicant must be a GB resident (not Northern Ireland)",
+      "condition": {
+        "field": "jurisdiction",
+        "operator": "in",
+        "value": [
+          "England",
+          "Wales",
+          "Scotland"
+        ]
+      },
+      "reason_if_failed": "This service is for Great Britain residents. Northern Ireland residents must use a different process.",
+      "alternative_service": "nidva.notify-condition",
+      "triggers_handoff": true
+    },
+    {
+      "id": "has-notifiable-condition",
+      "description": "Condition must be on DVLA's list of notifiable medical conditions",
+      "condition": {
+        "field": "condition_on_notifiable_list",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "Your condition is not on the list of conditions that must be reported to DVLA. You do not need to take action.",
+      "evidence_source": "condition-lookup"
+    },
+    {
+      "id": "car-motorcycle-licence",
+      "description": "For online notification, must have car or motorcycle licence only",
+      "condition": {
+        "field": "licence_type",
+        "operator": "in",
+        "value": [
+          "car",
+          "motorcycle"
+        ]
+      },
+      "reason_if_failed": "You cannot use the online service for bus, lorry or coach licences. You must check the A-Z list and complete a paper form.",
+      "triggers_handoff": true
+    },
+    {
+      "id": "legal-duty-acknowledged",
+      "description": "Applicant must acknowledge the legal duty to notify and potential penalties",
+      "condition": {
+        "field": "legal_duty_acknowledged",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "You must acknowledge that failing to notify DVLA can result in a fine up to £1,000 and may invalidate your insurance"
+    }
+  ],
+  "explanation_template": "Medical condition notification requirement: {outcome}. Legal duty: Failure to notify can result in fines up to £1,000 and invalidated insurance.",
+  "edge_cases": [
+    {
+      "id": "doctor-advised-stop-driving",
+      "description": "Doctor has advised to stop driving for 3 months or more",
+      "detection": "doctor_stop_driving_3_months",
+      "action": "Offer voluntary licence surrender. Must still notify DVLA even if surrendering licence."
+    },
+    {
+      "id": "condition-affects-safe-driving",
+      "description": "Condition currently affects ability to drive safely",
+      "detection": "currently_unsafe_to_drive",
+      "action": "Immediate notification required. Consider voluntary licence surrender. Do not drive until DVLA assessment complete."
+    },
+    {
+      "id": "paper-form-required",
+      "description": "Condition requires paper form submission rather than online notification",
+      "detection": "requires_paper_form",
+      "action": "Direct user to print appropriate form from A-Z list. Cannot complete online."
+    },
+    {
+      "id": "multiple-conditions",
+      "description": "Applicant has multiple notifiable conditions",
+      "detection": "multiple_notifiable_conditions",
+      "action": "Each condition must be reported separately. User may need multiple forms or online notifications."
+    },
+    {
+      "id": "hgv-psv-licence-holder",
+      "description": "Applicant holds bus, lorry or coach licence",
+      "detection": "licence_type_hgv_psv",
+      "action": "Cannot use online service. Must use A-Z list to find condition-specific form."
+    },
+    {
+      "id": "condition-worsened",
+      "description": "Previously reported condition has significantly worsened",
+      "detection": "condition_deterioration",
+      "action": "Must notify DVLA of change in condition. May require new medical assessment."
+    }
+  ]
+}

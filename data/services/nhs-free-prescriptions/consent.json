@@ -1,0 +1,87 @@
+{
+  "id": "nhs-free-prescriptions.consent",
+  "version": "1.0.0",
+  "grants": [
+    {
+      "id": "identity-verification",
+      "description": "Verify your identity using your NHS login or GOV.UK One Login credentials",
+      "data_shared": [
+        "full_name",
+        "date_of_birth",
+        "nhs_number",
+        "address"
+      ],
+      "source": "one-login-or-nhs-login",
+      "purpose": "To confirm you are who you say you are before processing your exemption application",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "dwp-benefit-check",
+      "description": "Check your benefit status with the Department for Work and Pensions",
+      "data_shared": [
+        "national_insurance_number",
+        "benefit_claims",
+        "benefit_status"
+      ],
+      "source": "dwp",
+      "purpose": "To verify if you are receiving qualifying benefits (PIP, DLA, ESA, UC) that entitle you to free prescriptions",
+      "duration": "session",
+      "required": false
+    },
+    {
+      "id": "nhs-medical-records",
+      "description": "Access your NHS medical records to verify qualifying medical conditions",
+      "data_shared": [
+        "diagnosis_codes",
+        "medication_history",
+        "gp_practice"
+      ],
+      "source": "nhs-spine",
+      "purpose": "To confirm diagnosis of qualifying medical conditions (diabetes, epilepsy, thyroid conditions, etc.) that entitle you to free prescriptions",
+      "duration": "session",
+      "required": false
+    },
+    {
+      "id": "gp-verification",
+      "description": "Contact your GP to verify your medical condition and ongoing treatment",
+      "data_shared": [
+        "medical_condition",
+        "treatment_details",
+        "gp_contact"
+      ],
+      "source": "gp-practice",
+      "purpose": "To obtain clinical confirmation of your qualifying medical condition and that you require continuous treatment",
+      "duration": "until-revoked",
+      "required": false
+    },
+    {
+      "id": "exemption-certificate-issuance",
+      "description": "Share your exemption certificate details with NHS Business Services Authority",
+      "data_shared": [
+        "exemption_type",
+        "exemption_code",
+        "validity_period",
+        "nhs_number"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To issue your medical exemption certificate (MedEx) and record it in the NHS exemption checking system",
+      "duration": "until-revoked",
+      "required": true
+    }
+  ],
+  "revocation": {
+    "mechanism": "Contact NHS Business Services Authority or revoke through your NHS account",
+    "effect": "Application will be cancelled if consent is revoked before completion. Existing exemption certificates remain valid until expiry date."
+  },
+  "delegation": {
+    "agent_identity": "NHS AI Agent",
+    "scopes": [
+      "read-personal-data",
+      "check-benefit-status",
+      "submit-exemption-application",
+      "access-nhs-records"
+    ],
+    "limitations": "Agent cannot approve medical evidence without clinical verification from a qualified healthcare professional. Agent cannot override GP assessment of medical conditions. Agent cannot issue exemption certificates for medical conditions without documented clinical evidence. Agent must handoff to human clinician if medical condition requires assessment."
+  }
+}

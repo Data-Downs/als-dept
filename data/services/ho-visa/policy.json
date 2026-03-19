@@ -1,0 +1,142 @@
+{
+  "id": "ho-visa.eligibility",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "not-uk-national",
+      "description": "Applicant must not be a UK national",
+      "condition": {
+        "field": "nationality",
+        "operator": "!=",
+        "value": "UK"
+      },
+      "reason_if_failed": "UK nationals do not require a visa to enter the UK",
+      "evidence_source": "passport"
+    },
+    {
+      "id": "not-irish-national",
+      "description": "Applicant must not be an Irish national",
+      "condition": {
+        "field": "nationality",
+        "operator": "!=",
+        "value": "Ireland"
+      },
+      "reason_if_failed": "Irish nationals do not require a visa to enter the UK",
+      "evidence_source": "passport"
+    },
+    {
+      "id": "valid-passport",
+      "description": "Applicant must have a valid passport with at least 6 months validity",
+      "condition": {
+        "field": "passport_expiry_months",
+        "operator": ">=",
+        "value": 6
+      },
+      "reason_if_failed": "Your passport must be valid for at least 6 months beyond your intended stay",
+      "evidence_source": "passport-scan"
+    },
+    {
+      "id": "purpose-stated",
+      "description": "Applicant must state a valid purpose for UK entry",
+      "condition": {
+        "field": "purpose_of_visit",
+        "operator": "in",
+        "value": [
+          "work",
+          "study",
+          "family",
+          "tourism",
+          "business",
+          "medical",
+          "transit"
+        ]
+      },
+      "reason_if_failed": "You must provide a valid reason for your UK visit",
+      "evidence_source": "citizen-provided"
+    },
+    {
+      "id": "no-entry-ban",
+      "description": "Applicant must not be subject to a UK entry ban",
+      "condition": {
+        "field": "entry_ban_status",
+        "operator": "!=",
+        "value": "banned"
+      },
+      "reason_if_failed": "You are currently subject to a UK entry ban. You must appeal the ban before applying for a visa.",
+      "triggers_handoff": true,
+      "evidence_source": "home-office-records"
+    },
+    {
+      "id": "financial-requirement",
+      "description": "Applicant must demonstrate sufficient funds for their stay",
+      "condition": {
+        "field": "proof_of_funds",
+        "operator": "exists"
+      },
+      "reason_if_failed": "You must provide evidence of sufficient funds to support yourself during your UK stay",
+      "evidence_source": "bank-statements"
+    },
+    {
+      "id": "tb-test-requirement",
+      "description": "Applicants from designated countries must provide a TB test certificate",
+      "condition": {
+        "field": "tb_certificate_required",
+        "operator": "==",
+        "value": false
+      },
+      "reason_if_failed": "Based on your country of residence, you must provide a valid tuberculosis test certificate from an approved clinic",
+      "evidence_source": "medical-certificate"
+    },
+    {
+      "id": "no-criminal-concerns",
+      "description": "Applicant must not have serious criminal convictions that would make them inadmissible",
+      "condition": {
+        "field": "serious_criminal_record",
+        "operator": "!=",
+        "value": true
+      },
+      "reason_if_failed": "You have criminal convictions that may make you inadmissible to the UK. Your application requires special consideration.",
+      "triggers_handoff": true,
+      "evidence_source": "criminal-records-check"
+    }
+  ],
+  "explanation_template": "UK visa eligibility for {purpose_of_visit}: {outcome}",
+  "edge_cases": [
+    {
+      "id": "asylum-seeker",
+      "description": "Applicant is seeking asylum in the UK",
+      "detection": "purpose_of_visit == 'asylum' OR asylum_claim_indicated == true",
+      "action": "Route to asylum application process. Completely different procedures apply. Do not proceed with standard visa application."
+    },
+    {
+      "id": "stateless-person",
+      "description": "Applicant is stateless with no recognized nationality",
+      "detection": "nationality == 'stateless' OR travel_document_type == 'refugee-travel-document'",
+      "action": "Route to specialist caseworker. Additional documentation and assessment required for stateless persons."
+    },
+    {
+      "id": "previous-refusal",
+      "description": "Applicant has had previous UK visa applications refused",
+      "detection": "previous_uk_visa_refusals > 0",
+      "action": "Flag for enhanced scrutiny. Applicant must address reasons for previous refusal and provide additional evidence of changed circumstances."
+    },
+    {
+      "id": "minor-unaccompanied",
+      "description": "Applicant is an unaccompanied minor under 18",
+      "detection": "age < 18 AND unaccompanied == true",
+      "action": "Route to safeguarding team. Additional parental consent, welfare checks, and suitable arrangements in UK must be verified."
+    },
+    {
+      "id": "urgent-humanitarian",
+      "description": "Application involves urgent humanitarian or compassionate circumstances",
+      "detection": "humanitarian_emergency == true OR compassionate_grounds == true",
+      "action": "Fast-track to priority processing team. May bypass standard timelines. Requires supporting evidence of emergency."
+    },
+    {
+      "id": "disputed-nationality",
+      "description": "Applicant's nationality or identity documents are disputed or unclear",
+      "detection": "nationality_verification_failed == true",
+      "action": "Route to identity verification team. May require liaison with applicant's claimed country of origin. Application suspended until resolved."
+    }
+  ]
+}

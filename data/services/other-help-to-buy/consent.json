@@ -1,0 +1,128 @@
+{
+  "id": "other-help-to-buy.consent",
+  "version": "1.0.0",
+  "grants": [
+    {
+      "id": "identity-verification",
+      "description": "Verify your identity using your GOV.UK One Login credentials",
+      "data_shared": [
+        "full_name",
+        "date_of_birth",
+        "national_insurance_number",
+        "address"
+      ],
+      "source": "one-login",
+      "purpose": "To confirm your identity and eligibility for the First Homes scheme",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "income-verification",
+      "description": "Share your income details from HMRC tax records for the previous tax year",
+      "data_shared": [
+        "annual_income",
+        "employment_status",
+        "tax_year_earnings"
+      ],
+      "source": "hmrc",
+      "purpose": "To verify you meet the income cap requirements (£80,000 or £90,000 for London)",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "property-ownership-check",
+      "description": "Check your property ownership history with Land Registry",
+      "data_shared": [
+        "property_ownership_history",
+        "first_time_buyer_status"
+      ],
+      "source": "land-registry",
+      "purpose": "To confirm you are a first-time buyer",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "financial-assessment",
+      "description": "Share your financial information for mortgage eligibility assessment",
+      "data_shared": [
+        "deposit_amount",
+        "mortgage_capacity",
+        "credit_history",
+        "bank_statements"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To assess your ability to get a mortgage for at least 50% of the property price",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "property-details",
+      "description": "Share details about the property you wish to purchase",
+      "data_shared": [
+        "property_address",
+        "property_price",
+        "discounted_price",
+        "developer_name",
+        "rics_valuation"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To verify the property meets First Homes scheme requirements and price caps",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "conveyancer-authorization",
+      "description": "Authorize your conveyancer to act on your behalf and share details with the council",
+      "data_shared": [
+        "conveyancer_name",
+        "conveyancer_contact",
+        "legal_documents"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To allow your conveyancer to complete the legal purchase process and liaise with the local council",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "local-council-sharing",
+      "description": "Share your application details with the local council for eligibility assessment",
+      "data_shared": [
+        "all_application_data",
+        "eligibility_evidence",
+        "local_connection_proof"
+      ],
+      "source": "homes-england",
+      "purpose": "To allow the council to assess your eligibility including any local criteria",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "joint-applicant-data",
+      "description": "Share details of all joint applicants (if applicable)",
+      "data_shared": [
+        "co_applicant_names",
+        "co_applicant_income",
+        "co_applicant_first_time_status"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To verify all joint buyers meet eligibility criteria and assess combined income",
+      "duration": "until-revoked",
+      "required": false
+    }
+  ],
+  "revocation": {
+    "mechanism": "Contact the developer or local council, or revoke through your GOV.UK account before contracts are exchanged",
+    "effect": "Application will be cancelled. If reservation fee was paid, it will be refunded. After contract exchange, revocation is not possible as you are legally committed to the purchase."
+  },
+  "delegation": {
+    "agent_identity": "GOV.UK AI Agent",
+    "scopes": [
+      "read-eligibility-criteria",
+      "submit-initial-enquiry",
+      "gather-evidence",
+      "communicate-with-developer",
+      "track-application-status"
+    ],
+    "limitations": "Agent cannot: appoint a conveyancer on your behalf; apply for a mortgage; exchange contracts; make financial commitments; pay reservation fees or deposits; authorize legal documents; make decisions about property selection; represent you in negotiations with developers. Agent cannot proceed past eligibility check without explicit citizen authorization for each major step (conveyancer appointment, mortgage application, contract exchange)."
+  }
+}

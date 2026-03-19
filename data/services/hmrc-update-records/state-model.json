@@ -1,0 +1,92 @@
+{
+  "id": "hmrc.update-records.states",
+  "version": "1.0.0",
+  "states": [
+    {
+      "id": "not-started",
+      "type": "initial"
+    },
+    {
+      "id": "identity-verified"
+    },
+    {
+      "id": "eligibility-checked"
+    },
+    {
+      "id": "consent-given"
+    },
+    {
+      "id": "change-type-selected"
+    },
+    {
+      "id": "details-provided"
+    },
+    {
+      "id": "impact-reviewed",
+      "receipt": true
+    },
+    {
+      "id": "changes-submitted",
+      "receipt": true
+    },
+    {
+      "id": "completed",
+      "type": "terminal",
+      "receipt": true
+    },
+    {
+      "id": "handed-off",
+      "type": "terminal",
+      "receipt": true
+    }
+  ],
+  "transitions": [
+    {
+      "from": "not-started",
+      "to": "identity-verified",
+      "trigger": "verify-identity"
+    },
+    {
+      "from": "identity-verified",
+      "to": "eligibility-checked",
+      "trigger": "check-eligibility"
+    },
+    {
+      "from": "eligibility-checked",
+      "to": "consent-given",
+      "trigger": "grant-consent",
+      "condition": "eligible"
+    },
+    {
+      "from": "eligibility-checked",
+      "to": "handed-off",
+      "trigger": "handoff",
+      "condition": "not-eligible-or-edge-case"
+    },
+    {
+      "from": "consent-given",
+      "to": "change-type-selected",
+      "trigger": "select-change-type"
+    },
+    {
+      "from": "change-type-selected",
+      "to": "details-provided",
+      "trigger": "provide-details"
+    },
+    {
+      "from": "details-provided",
+      "to": "impact-reviewed",
+      "trigger": "review-impact"
+    },
+    {
+      "from": "impact-reviewed",
+      "to": "changes-submitted",
+      "trigger": "submit-changes"
+    },
+    {
+      "from": "changes-submitted",
+      "to": "completed",
+      "trigger": "complete"
+    }
+  ]
+}

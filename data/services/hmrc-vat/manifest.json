@@ -1,0 +1,19 @@
+{
+  "id": "hmrc-vat",
+  "version": "1.0.0",
+  "name": "VAT registration",
+  "description": "Mandatory if turnover exceeds £90k. Voluntary registration below threshold can be beneficial.",
+  "department": "HMRC",
+  "input_schema": {
+    "type": "object"
+  },
+  "output_schema": {
+    "type": "object"
+  },
+  "source": "graph",
+  "serviceType": "obligation",
+  "govuk_url": "https://www.gov.uk/vat-registration",
+  "eligibility_summary": "Mandatory once taxable turnover exceeds £90,000 in any rolling 12-month period. Voluntary registration below the threshold can allow VAT reclaim on purchases.",
+  "proactive": true,
+  "gated": false
+}

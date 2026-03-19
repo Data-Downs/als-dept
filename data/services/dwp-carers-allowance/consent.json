@@ -1,0 +1,152 @@
+{
+  "id": "dwp-carers-allowance.consent",
+  "version": "1.0.0",
+  "grants": [
+    {
+      "id": "identity-verification",
+      "description": "Verify your identity and National Insurance number",
+      "data_shared": [
+        "full_name",
+        "date_of_birth",
+        "national_insurance_number",
+        "address"
+      ],
+      "source": "one-login",
+      "purpose": "To confirm your identity and match your records with DWP systems",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "income-verification",
+      "description": "Share your income and employment details with DWP",
+      "data_shared": [
+        "employment_status",
+        "employer_details",
+        "gross_income",
+        "tax_paid",
+        "national_insurance_paid",
+        "pension_contributions",
+        "p45_details",
+        "self_employment_income"
+      ],
+      "source": "hmrc-paye-rtl",
+      "purpose": "To verify your earnings are £196 or less per week after tax, National Insurance and expenses",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "care-recipient-benefit-verification",
+      "description": "Check the disability benefit status of the person you care for",
+      "data_shared": [
+        "care_recipient_name",
+        "care_recipient_dob",
+        "care_recipient_ni_number",
+        "care_recipient_benefit_type",
+        "care_recipient_benefit_rate",
+        "care_recipient_dla_reference"
+      ],
+      "source": "dwp-benefits-system",
+      "purpose": "To confirm the person you care for receives a qualifying disability benefit at the required rate",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "existing-benefits-check",
+      "description": "Check your existing benefit claims and entitlements",
+      "data_shared": [
+        "universal_credit_status",
+        "pension_credit_status",
+        "state_pension_amount",
+        "other_dwp_benefits"
+      ],
+      "source": "dwp-benefits-system",
+      "purpose": "To understand how Carer's Allowance will interact with your other benefits and inform you of the impact",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "care-recipient-benefits-impact-check",
+      "description": "Check benefits of the person you care for to assess impact",
+      "data_shared": [
+        "care_recipient_severe_disability_premium",
+        "care_recipient_pension_credit",
+        "care_recipient_council_tax_reduction"
+      ],
+      "source": "dwp-benefits-system",
+      "purpose": "To inform you and the person you care for if their benefits (such as severe disability premium) will be affected by your Carer's Allowance claim",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "care-details",
+      "description": "Provide details about the care you provide",
+      "data_shared": [
+        "hours_caring_per_week",
+        "care_activities",
+        "care_start_date",
+        "care_recipient_relationship"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To verify you provide at least 35 hours of care per week",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "bank-details",
+      "description": "Provide bank account details for payment",
+      "data_shared": [
+        "bank_account_number",
+        "sort_code",
+        "account_holder_name"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To pay your Carer's Allowance weekly or every 4 weeks",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "education-details",
+      "description": "Provide details of any education or training courses",
+      "data_shared": [
+        "course_name",
+        "hours_per_week",
+        "full_time_status",
+        "education_provider"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To verify you're not in full-time education or studying 21+ hours per week",
+      "duration": "until-revoked",
+      "required": false
+    },
+    {
+      "id": "immigration-status",
+      "description": "Verify your immigration status and right to claim benefits",
+      "data_shared": [
+        "nationality",
+        "immigration_status",
+        "settled_status",
+        "refugee_status",
+        "years_in_uk"
+      ],
+      "source": "home-office-immigration-status",
+      "purpose": "To verify you're not subject to immigration control and meet residency requirements",
+      "duration": "until-revoked",
+      "required": false
+    }
+  ],
+  "revocation": {
+    "mechanism": "Contact the Carer's Allowance Unit on 0800 731 0297 or write to them. You can also revoke consent through your GOV.UK account.",
+    "effect": "Your application will be cancelled if consent is revoked before a decision. If you revoke consent after approval, your Carer's Allowance will stop and you must report the change in circumstances."
+  },
+  "delegation": {
+    "agent_identity": "GOV.UK AI Agent",
+    "scopes": [
+      "read-personal-data",
+      "read-care-recipient-benefit-status",
+      "read-income-data",
+      "submit-application-to-dwp",
+      "check-benefit-interactions"
+    ],
+    "limitations": "Agent cannot provide bank details on your behalf. Agent cannot make decisions about benefit trade-offs (e.g., if your claim will stop the care recipient's severe disability premium, you must explicitly confirm you want to proceed). Agent cannot declare care hours or care activities without your explicit confirmation. Agent cannot complete the application if complex benefit interactions require human decision-making (will hand off to DWP adviser)."
+  }
+}

@@ -1,0 +1,101 @@
+{
+  "id": "hmrc-sdlt.consent",
+  "version": "1.0.0",
+  "grants": [
+    {
+      "id": "identity-verification",
+      "description": "Verify your identity using your GOV.UK One Login or Government Gateway credentials",
+      "data_shared": [
+        "full_name",
+        "date_of_birth",
+        "national_insurance_number",
+        "unique_taxpayer_reference"
+      ],
+      "source": "one-login",
+      "purpose": "To confirm your identity and link the SDLT return to your HMRC tax records",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "property-transaction-details",
+      "description": "Share details of the property transaction with HMRC",
+      "data_shared": [
+        "property_address",
+        "purchase_price",
+        "completion_date",
+        "property_type",
+        "transaction_type",
+        "seller_details"
+      ],
+      "source": "land-registry OR citizen-provided",
+      "purpose": "To calculate SDLT liability and process the return. HMRC shares this data with Land Registry to register the property.",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "additional-property-check",
+      "description": "Check whether you own other residential properties to determine SDLT surcharge",
+      "data_shared": [
+        "property_ownership_history",
+        "current_property_holdings"
+      ],
+      "source": "land-registry",
+      "purpose": "To determine if the 5% additional property surcharge applies",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "payment-details",
+      "description": "Share payment details to pay SDLT (if tax is due)",
+      "data_shared": [
+        "bank_account_details",
+        "payment_card_details"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To collect SDLT payment owed to HMRC",
+      "duration": "session",
+      "required": false
+    },
+    {
+      "id": "solicitor-agent-details",
+      "description": "Share details of your solicitor or conveyancer (if applicable)",
+      "data_shared": [
+        "solicitor_name",
+        "solicitor_firm",
+        "solicitor_contact_details",
+        "solicitor_reference"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To coordinate filing and payment if your solicitor is handling the transaction on your behalf",
+      "duration": "session",
+      "required": false
+    },
+    {
+      "id": "correspondence-address",
+      "description": "Confirm address for HMRC correspondence regarding this SDLT return",
+      "data_shared": [
+        "correspondence_address",
+        "email_address",
+        "phone_number"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To send the SDLT certificate and any follow-up correspondence",
+      "duration": "until-revoked",
+      "required": true
+    }
+  ],
+  "revocation": {
+    "mechanism": "Contact HMRC or revoke through your Government Gateway account before return submission",
+    "effect": "Return will not be processed if consent is revoked before submission. You will need to file manually or through a solicitor. You cannot revoke consent after the return has been submitted."
+  },
+  "delegation": {
+    "agent_identity": "GOV.UK AI Agent",
+    "scopes": [
+      "read-property-transaction-details",
+      "calculate-sdlt-liability",
+      "submit-sdlt-return",
+      "read-land-registry-data"
+    ],
+    "limitations": "Agent cannot make payment on your behalf without explicit confirmation of the amount. Agent cannot file late returns (after 14-day deadline) without manual HMRC review. Agent cannot handle complex shared ownership elections or leasehold NPV calculations without citizen confirmation. Agent cannot act on behalf of corporate buyers or trusts. If you have a solicitor, the agent will defer to their filing unless explicitly instructed otherwise."
+  }
+}

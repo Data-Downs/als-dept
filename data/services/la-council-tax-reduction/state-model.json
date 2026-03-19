@@ -1,0 +1,129 @@
+{
+  "id": "la-council-tax-reduction.states",
+  "version": "1.0.0",
+  "states": [
+    {
+      "id": "not-started",
+      "type": "initial"
+    },
+    {
+      "id": "identity-verified"
+    },
+    {
+      "id": "eligibility-checked"
+    },
+    {
+      "id": "consent-given"
+    },
+    {
+      "id": "financial-details-submitted"
+    },
+    {
+      "id": "household-details-submitted"
+    },
+    {
+      "id": "evidence-uploaded"
+    },
+    {
+      "id": "means-test-assessment"
+    },
+    {
+      "id": "additional-information-requested"
+    },
+    {
+      "id": "decision",
+      "receipt": true
+    },
+    {
+      "id": "completed",
+      "type": "terminal",
+      "receipt": true
+    },
+    {
+      "id": "rejected",
+      "type": "terminal",
+      "receipt": true
+    },
+    {
+      "id": "handed-off",
+      "type": "terminal",
+      "receipt": true
+    }
+  ],
+  "transitions": [
+    {
+      "from": "not-started",
+      "to": "identity-verified",
+      "trigger": "verify-identity"
+    },
+    {
+      "from": "identity-verified",
+      "to": "eligibility-checked",
+      "trigger": "check-eligibility"
+    },
+    {
+      "from": "eligibility-checked",
+      "to": "consent-given",
+      "trigger": "grant-consent",
+      "condition": "eligible"
+    },
+    {
+      "from": "eligibility-checked",
+      "to": "rejected",
+      "trigger": "reject",
+      "condition": "not-eligible"
+    },
+    {
+      "from": "eligibility-checked",
+      "to": "handed-off",
+      "trigger": "handoff",
+      "condition": "edge-case"
+    },
+    {
+      "from": "consent-given",
+      "to": "financial-details-submitted",
+      "trigger": "submit-financial-details"
+    },
+    {
+      "from": "financial-details-submitted",
+      "to": "household-details-submitted",
+      "trigger": "submit-household-details"
+    },
+    {
+      "from": "household-details-submitted",
+      "to": "evidence-uploaded",
+      "trigger": "upload-evidence"
+    },
+    {
+      "from": "evidence-uploaded",
+      "to": "means-test-assessment",
+      "trigger": "begin-assessment"
+    },
+    {
+      "from": "means-test-assessment",
+      "to": "additional-information-requested",
+      "trigger": "request-information",
+      "condition": "incomplete-information"
+    },
+    {
+      "from": "additional-information-requested",
+      "to": "means-test-assessment",
+      "trigger": "provide-information"
+    },
+    {
+      "from": "means-test-assessment",
+      "to": "decision",
+      "trigger": "make-decision"
+    },
+    {
+      "from": "decision",
+      "to": "completed",
+      "trigger": "approve"
+    },
+    {
+      "from": "decision",
+      "to": "rejected",
+      "trigger": "reject-application"
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "id": "la-council-tax",
+  "version": "1.0.0",
+  "name": "Council Tax registration",
+  "description": "Register at new address and close account at old. Various discounts may apply.",
+  "department": "Local Authority",
+  "input_schema": {
+    "type": "object"
+  },
+  "output_schema": {
+    "type": "object"
+  },
+  "source": "graph",
+  "serviceType": "obligation",
+  "govuk_url": "https://www.gov.uk/council-tax",
+  "eligibility_summary": "Any adult who is the resident or owner of a domestic property is liable for Council Tax. Register at your new address and close the account at your old address. Various discounts and exemptions may apply.",
+  "proactive": true,
+  "gated": false
+}

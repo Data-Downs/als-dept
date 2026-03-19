@@ -1,0 +1,19 @@
+{
+  "id": "other-help-to-buy",
+  "version": "1.0.0",
+  "name": "First Homes / Help to Buy scheme",
+  "description": "Must be arranged before purchase completes. Various first-time buyer schemes available.",
+  "department": "Homes England",
+  "input_schema": {
+    "type": "object"
+  },
+  "output_schema": {
+    "type": "object"
+  },
+  "source": "graph",
+  "serviceType": "grant",
+  "govuk_url": "https://www.gov.uk/first-homes-scheme",
+  "eligibility_summary": "First Homes offers new-build properties at a minimum 30% discount to first-time buyers. Other schemes include Shared Ownership and Mortgage Guarantee. Must be a first-time buyer. Income caps and property price limits apply.",
+  "proactive": true,
+  "gated": false
+}

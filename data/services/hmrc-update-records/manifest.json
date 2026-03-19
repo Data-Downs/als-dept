@@ -1,0 +1,19 @@
+{
+  "id": "hmrc-update-records",
+  "version": "1.0.0",
+  "name": "Update HMRC records",
+  "description": "Name, address and marital status. Affects tax code, benefits and correspondence.",
+  "department": "HMRC",
+  "input_schema": {
+    "type": "object"
+  },
+  "output_schema": {
+    "type": "object"
+  },
+  "source": "graph",
+  "serviceType": "obligation",
+  "govuk_url": "https://www.gov.uk/tell-hmrc-change-of-details",
+  "eligibility_summary": "Notify HMRC of any change to name, address or marital status. Affects tax code, correspondence and benefit entitlements. Required after moving, marriage, divorce or name change.",
+  "proactive": true,
+  "gated": false
+}

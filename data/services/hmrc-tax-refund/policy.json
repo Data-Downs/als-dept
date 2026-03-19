@@ -1,0 +1,104 @@
+{
+  "id": "hmrc.tax-refund.eligibility",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "has-paid-paye",
+      "description": "Applicant must have paid PAYE tax in the current tax year",
+      "condition": {
+        "field": "paye_paid_current_year",
+        "operator": "exists"
+      },
+      "reason_if_failed": "You must have paid PAYE income tax this tax year to claim a refund",
+      "evidence_source": "hmrc-paye-records"
+    },
+    {
+      "id": "has-stopped-work",
+      "description": "Applicant must have left employment during the tax year",
+      "condition": {
+        "field": "employment_end_date",
+        "operator": "exists"
+      },
+      "reason_if_failed": "This form is for people who have stopped working. If you're still employed, check your tax code with your employer instead.",
+      "alternative_service": "hmrc.check-tax-code"
+    },
+    {
+      "id": "not-returning-to-work",
+      "description": "Applicant must not be returning to work before the end of the tax year (April 5th)",
+      "condition": {
+        "field": "returning_to_work_before_april",
+        "operator": "==",
+        "value": false
+      },
+      "reason_if_failed": "If you're returning to work before April 5th, your new employer will adjust your tax code and you'll be refunded automatically",
+      "evidence_source": "citizen-declaration"
+    },
+    {
+      "id": "has-p45",
+      "description": "Applicant should have a P45 from their last employer",
+      "condition": {
+        "field": "p45_details",
+        "operator": "exists"
+      },
+      "reason_if_failed": "You'll need your P45 form to complete this application. Contact your previous employer if you don't have it.",
+      "triggers_handoff": true
+    },
+    {
+      "id": "uk-taxpayer",
+      "description": "Applicant must be a UK taxpayer or have UK tax obligations",
+      "condition": {
+        "field": "uk_taxpayer",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "This service is for UK taxpayers only",
+      "evidence_source": "identity-verified"
+    },
+    {
+      "id": "no-excessive-other-income",
+      "description": "Other income must not exceed personal allowance (£12,570 for 2024/25)",
+      "condition": {
+        "field": "other_taxable_income",
+        "operator": "<=",
+        "value": 12570
+      },
+      "reason_if_failed": "Your other income may affect your refund eligibility. You may need to complete a Self Assessment instead.",
+      "alternative_service": "hmrc.self-assessment",
+      "triggers_handoff": true
+    }
+  ],
+  "explanation_template": "Income tax refund (P50) eligibility: {outcome}",
+  "edge_cases": [
+    {
+      "id": "multiple-employments",
+      "description": "Applicant had multiple jobs in the same tax year",
+      "detection": "multiple_p45_forms",
+      "action": "Request all P45 forms. Calculate cumulative PAYE and allowances. May require manual assessment."
+    },
+    {
+      "id": "receiving-benefits",
+      "description": "Applicant is receiving Jobseeker's Allowance or other taxable benefits",
+      "detection": "receiving_jsa_or_benefits",
+      "action": "Taxable benefits count as income and may reduce or eliminate refund. Route to specialist assessment."
+    },
+    {
+      "id": "emergency-tax-code",
+      "description": "Applicant was on an emergency tax code (BR, 0T, etc.)",
+      "detection": "emergency_tax_code",
+      "action": "Emergency tax codes often lead to overpayment. Likely eligible but verify cumulative position."
+    },
+    {
+      "id": "left-uk",
+      "description": "Applicant has left the UK permanently during the tax year",
+      "detection": "left_uk_permanently",
+      "action": "Different rules apply for non-residents. Route to P85 (leaving UK) process instead."
+    },
+    {
+      "id": "self-employment-income",
+      "description": "Applicant has self-employment income alongside PAYE",
+      "detection": "self_employment_income",
+      "action": "Self-employment income complicates the refund calculation. May need Self Assessment instead.",
+      "triggers_handoff": true
+    }
+  ]
+}

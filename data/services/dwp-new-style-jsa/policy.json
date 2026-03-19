@@ -1,0 +1,134 @@
+{
+  "id": "dwp.new-style-jsa.eligibility",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "age-minimum",
+      "description": "Applicant must be at least 18 years old",
+      "condition": {
+        "field": "age",
+        "operator": ">=",
+        "value": 18
+      },
+      "reason_if_failed": "You must be at least 18 years old to claim New Style JSA",
+      "evidence_source": "identity-verified"
+    },
+    {
+      "id": "age-maximum",
+      "description": "Applicant must be under State Pension age",
+      "condition": {
+        "field": "age",
+        "operator": "<=",
+        "value": "state_pension_age"
+      },
+      "reason_if_failed": "You cannot claim JSA if you have reached State Pension age. Check if you can claim State Pension instead.",
+      "alternative_service": "dwp.state-pension",
+      "triggers_handoff": true
+    },
+    {
+      "id": "ni-contributions",
+      "description": "Applicant must have paid Class 1 National Insurance contributions in the last 2 full tax years",
+      "condition": {
+        "field": "class1_ni_contributions",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "You need to have paid Class 1 National Insurance contributions as an employee in the last 2 to 3 years. If you were self-employed and only paid Class 2 contributions, you are not eligible unless you were a share fisherman or volunteer development worker.",
+      "evidence_source": "hmrc-ni-record"
+    },
+    {
+      "id": "uk-residency",
+      "description": "Applicant must be in Great Britain (England, Scotland, or Wales)",
+      "condition": {
+        "field": "location",
+        "operator": "in",
+        "value": [
+          "England",
+          "Scotland",
+          "Wales"
+        ]
+      },
+      "reason_if_failed": "This service is for people in England, Scotland and Wales only. If you're in Northern Ireland, contact Jobseeker's Allowance Processing Centre.",
+      "alternative_service": "dwp.jsa-northern-ireland"
+    },
+    {
+      "id": "work-hours",
+      "description": "Applicant must not be working 16 or more hours per week",
+      "condition": {
+        "field": "weekly_work_hours",
+        "operator": "<=",
+        "value": 16
+      },
+      "reason_if_failed": "You cannot usually get New Style JSA if you work 16 or more hours per week",
+      "evidence_source": "employment-history"
+    },
+    {
+      "id": "not-trade-dispute",
+      "description": "Applicant must not be involved in a trade dispute",
+      "condition": {
+        "field": "trade_dispute_involved",
+        "operator": "==",
+        "value": false
+      },
+      "reason_if_failed": "You will not be eligible if you're involved in a disagreement with your employer about employment-related issues (a 'trade dispute')",
+      "triggers_handoff": true
+    },
+    {
+      "id": "able-to-work",
+      "description": "Applicant must not have an illness or disability which stops them from working",
+      "condition": {
+        "field": "illness_prevents_work",
+        "operator": "==",
+        "value": false
+      },
+      "reason_if_failed": "You will not be eligible if you have an illness or disability which stops you from working. Check if you can get Employment and Support Allowance instead.",
+      "alternative_service": "dwp.employment-support-allowance",
+      "triggers_handoff": true
+    }
+  ],
+  "explanation_template": "New Style JSA eligibility: {outcome}. You can get up to {max_amount} per week for up to 182 days (6 months) based on your age and circumstances.",
+  "edge_cases": [
+    {
+      "id": "self-employed-only",
+      "description": "Applicant was self-employed and only paid Class 2 National Insurance contributions",
+      "detection": "self_employed_class2_only",
+      "action": "Not eligible unless you were a share fisherman or volunteer development worker. Consider applying for Universal Credit instead."
+    },
+    {
+      "id": "full-time-student",
+      "description": "Applicant is a full-time student",
+      "detection": "full_time_student",
+      "action": "You may be eligible if: qualification is Level 4 or below, you don't get maintenance loan/grant/bursary, and you can meet work-related requirements. Route to work coach assessment."
+    },
+    {
+      "id": "part-time-student",
+      "description": "Applicant is a part-time student",
+      "detection": "part_time_student",
+      "action": "You may be eligible for JSA. Continue with application."
+    },
+    {
+      "id": "claiming-with-uc",
+      "description": "Applicant is also claiming Universal Credit",
+      "detection": "claiming_universal_credit",
+      "action": "You can claim both New Style JSA and Universal Credit. Your JSA will count as income and reduce your UC payment, but you'll get different National Insurance credits. Continue with application."
+    },
+    {
+      "id": "ni-credits-only",
+      "description": "Applicant has National Insurance credits but did not pay contributions",
+      "detection": "ni_credits_only",
+      "action": "National Insurance credits can count for one of the required two tax years. Check HMRC records to verify eligibility."
+    },
+    {
+      "id": "recent-benefits",
+      "description": "Applicant recently claimed JSA, ESA, Carer's Allowance, or Maternity Allowance",
+      "detection": "recent_contributory_benefits",
+      "action": "You might be eligible based on contributions from different tax years. Route to specialist assessment."
+    },
+    {
+      "id": "armed-forces-partner",
+      "description": "Applicant lived abroad with partner serving in armed forces",
+      "detection": "armed_forces_partner_abroad",
+      "action": "You might be eligible based on contributions from different tax years. Route to specialist assessment."
+    }
+  ]
+}

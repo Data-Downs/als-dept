@@ -1,0 +1,89 @@
+{
+  "id": "hmrc.carers-credit.consent",
+  "version": "1.0.0",
+  "grants": [
+    {
+      "id": "identity-verification",
+      "description": "Verify your identity using your National Insurance number",
+      "data_shared": [
+        "full_name",
+        "date_of_birth",
+        "national_insurance_number",
+        "address"
+      ],
+      "source": "one-login",
+      "purpose": "To confirm your identity and access your National Insurance record for crediting",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "ni-record-access",
+      "description": "Access your National Insurance record to assess gaps and apply credits",
+      "data_shared": [
+        "ni_contribution_history",
+        "ni_gaps",
+        "existing_credits"
+      ],
+      "source": "hmrc-ni-system",
+      "purpose": "To determine which tax years need Carer's Credit and to apply the credits to your record",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "care-recipient-information",
+      "description": "Share information about the person you care for",
+      "data_shared": [
+        "care_recipient_name",
+        "care_recipient_dob",
+        "care_recipient_ni_number",
+        "relationship_to_care_recipient",
+        "caring_hours_per_week",
+        "caring_start_date"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To verify your caring responsibilities and the care recipient's eligibility for qualifying benefits",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "benefits-verification",
+      "description": "Verify the care recipient's disability benefits with DWP",
+      "data_shared": [
+        "care_recipient_benefit_type",
+        "care_recipient_benefit_rate",
+        "benefit_payment_status"
+      ],
+      "source": "dwp-benefits-system",
+      "purpose": "To confirm the person you care for receives a qualifying disability benefit at the required rate",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "care-certificate",
+      "description": "Share Care Certificate signed by health or social care professional (if applicable)",
+      "data_shared": [
+        "care_certificate_details",
+        "professional_signature",
+        "professional_registration_number"
+      ],
+      "source": "citizen-provided",
+      "purpose": "Alternative evidence of caring responsibilities if care recipient does not receive a qualifying benefit",
+      "duration": "session",
+      "required": false
+    }
+  ],
+  "revocation": {
+    "mechanism": "Contact HMRC Carer's Allowance Unit or revoke through your GOV.UK account",
+    "effect": "Application will be cancelled if consent is revoked before decision. Existing credits on your NI record will not be removed."
+  },
+  "delegation": {
+    "agent_identity": "GOV.UK AI Agent",
+    "scopes": [
+      "read-personal-data",
+      "read-ni-record",
+      "prepare-application",
+      "submit-to-hmrc"
+    ],
+    "limitations": "Agent cannot obtain Care Certificate signatures from health or social care professionals. Agent cannot submit application without your explicit confirmation of caring details and care recipient information. Agent cannot change your National Insurance record directly."
+  }
+}

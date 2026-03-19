@@ -1,0 +1,19 @@
+{
+  "id": "other-pupil-premium",
+  "version": "1.0.0",
+  "name": "Pupil Premium",
+  "description": "DfE funding direct to school. Automatic if child has ever qualified for Free School Meals.",
+  "department": "DfE / School",
+  "input_schema": {
+    "type": "object"
+  },
+  "output_schema": {
+    "type": "object"
+  },
+  "source": "graph",
+  "serviceType": "entitlement",
+  "govuk_url": "https://www.gov.uk/government/publications/pupil-premium",
+  "eligibility_summary": "Additional funding paid directly to the school (£1,480/year per eligible pupil at primary, £1,050 at secondary). Automatic once Free School Meals eligibility is confirmed. Parents should ensure the school knows the child is eligible.",
+  "proactive": true,
+  "gated": true
+}

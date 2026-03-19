@@ -1,0 +1,119 @@
+{
+  "id": "hmrc.ni-check.states",
+  "version": "1.0.0",
+  "states": [
+    {
+      "id": "not-started",
+      "type": "initial"
+    },
+    {
+      "id": "identity-verified"
+    },
+    {
+      "id": "consent-given"
+    },
+    {
+      "id": "account-accessed"
+    },
+    {
+      "id": "record-viewed",
+      "receipt": true
+    },
+    {
+      "id": "gaps-identified"
+    },
+    {
+      "id": "forecast-reviewed"
+    },
+    {
+      "id": "voluntary-contribution-initiated"
+    },
+    {
+      "id": "payment-made",
+      "receipt": true
+    },
+    {
+      "id": "completed",
+      "type": "terminal",
+      "receipt": true
+    },
+    {
+      "id": "handed-off",
+      "type": "terminal",
+      "receipt": true
+    }
+  ],
+  "transitions": [
+    {
+      "from": "not-started",
+      "to": "identity-verified",
+      "trigger": "verify-identity"
+    },
+    {
+      "from": "identity-verified",
+      "to": "consent-given",
+      "trigger": "grant-consent"
+    },
+    {
+      "from": "consent-given",
+      "to": "account-accessed",
+      "trigger": "access-account"
+    },
+    {
+      "from": "account-accessed",
+      "to": "record-viewed",
+      "trigger": "view-record"
+    },
+    {
+      "from": "record-viewed",
+      "to": "gaps-identified",
+      "trigger": "identify-gaps",
+      "condition": "gaps-exist"
+    },
+    {
+      "from": "record-viewed",
+      "to": "completed",
+      "trigger": "complete",
+      "condition": "no-gaps-or-no-action"
+    },
+    {
+      "from": "gaps-identified",
+      "to": "forecast-reviewed",
+      "trigger": "review-forecast"
+    },
+    {
+      "from": "forecast-reviewed",
+      "to": "voluntary-contribution-initiated",
+      "trigger": "initiate-payment",
+      "condition": "will-benefit-and-can-pay-online"
+    },
+    {
+      "from": "forecast-reviewed",
+      "to": "handed-off",
+      "trigger": "handoff",
+      "condition": "cannot-pay-online-or-complex-case"
+    },
+    {
+      "from": "forecast-reviewed",
+      "to": "completed",
+      "trigger": "complete",
+      "condition": "decided-not-to-pay"
+    },
+    {
+      "from": "voluntary-contribution-initiated",
+      "to": "payment-made",
+      "trigger": "make-payment"
+    },
+    {
+      "from": "payment-made",
+      "to": "completed",
+      "trigger": "complete"
+    },
+    {
+      "from": "account-accessed",
+      "to": "handed-off",
+      "trigger": "handoff",
+      "condition": "edge-case"
+    }
+  ]
+}

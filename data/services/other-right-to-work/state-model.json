@@ -1,0 +1,94 @@
+{
+  "id": "other-right-to-work.states",
+  "version": "1.0.0",
+  "states": [
+    {
+      "id": "not-started",
+      "type": "initial"
+    },
+    {
+      "id": "employer-verified"
+    },
+    {
+      "id": "check-method-selected"
+    },
+    {
+      "id": "applicant-details-entered"
+    },
+    {
+      "id": "consent-given"
+    },
+    {
+      "id": "verification-performed"
+    },
+    {
+      "id": "result-recorded",
+      "receipt": true
+    },
+    {
+      "id": "completed",
+      "type": "terminal",
+      "receipt": true
+    },
+    {
+      "id": "verification-failed",
+      "type": "terminal",
+      "receipt": true
+    },
+    {
+      "id": "handed-off",
+      "type": "terminal",
+      "receipt": true
+    }
+  ],
+  "transitions": [
+    {
+      "from": "not-started",
+      "to": "employer-verified",
+      "trigger": "verify-employer"
+    },
+    {
+      "from": "employer-verified",
+      "to": "check-method-selected",
+      "trigger": "select-check-method"
+    },
+    {
+      "from": "check-method-selected",
+      "to": "applicant-details-entered",
+      "trigger": "enter-applicant-details"
+    },
+    {
+      "from": "applicant-details-entered",
+      "to": "consent-given",
+      "trigger": "grant-consent"
+    },
+    {
+      "from": "consent-given",
+      "to": "verification-performed",
+      "trigger": "perform-verification"
+    },
+    {
+      "from": "verification-performed",
+      "to": "result-recorded",
+      "trigger": "record-result",
+      "condition": "verification-successful"
+    },
+    {
+      "from": "verification-performed",
+      "to": "verification-failed",
+      "trigger": "fail-verification",
+      "condition": "verification-unsuccessful"
+    },
+    {
+      "from": "verification-performed",
+      "to": "handed-off",
+      "trigger": "handoff",
+      "condition": "requires-home-office-check"
+    },
+    {
+      "from": "result-recorded",
+      "to": "completed",
+      "trigger": "complete"
+    }
+  ]
+}

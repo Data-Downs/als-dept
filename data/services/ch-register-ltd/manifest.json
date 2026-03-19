@@ -1,0 +1,19 @@
+{
+  "id": "ch-register-ltd",
+  "version": "1.0.0",
+  "name": "Register limited company (IN01)",
+  "description": "Company name must be available. Same-day registration possible online.",
+  "department": "Companies House",
+  "input_schema": {
+    "type": "object"
+  },
+  "output_schema": {
+    "type": "object"
+  },
+  "source": "graph",
+  "serviceType": "registration",
+  "govuk_url": "https://www.gov.uk/limited-company-formation/register-your-company",
+  "eligibility_summary": "Anyone can register a limited company in the UK. Same-day registration online for £50. Company name must be available and not too similar to existing names. At least one director required.",
+  "proactive": true,
+  "gated": false
+}

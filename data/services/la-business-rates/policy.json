@@ -1,0 +1,116 @@
+{
+  "id": "la-business-rates.eligibility",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "non-domestic-property",
+      "description": "Property must be non-domestic and used for business purposes",
+      "condition": {
+        "field": "property_type",
+        "operator": "in",
+        "value": [
+          "shop",
+          "office",
+          "pub",
+          "warehouse",
+          "factory",
+          "self-catering",
+          "part-business"
+        ]
+      },
+      "reason_if_failed": "Business rates only apply to non-domestic properties used for business purposes",
+      "evidence_source": "property-registry"
+    },
+    {
+      "id": "not-exempt",
+      "description": "Property must not be exempt from business rates",
+      "condition": {
+        "field": "exempt_category",
+        "operator": "not-exists"
+      },
+      "reason_if_failed": "Your property is exempt from business rates (e.g. farm buildings, welfare facilities for disabled people)",
+      "alternative_service": "council-tax-only"
+    },
+    {
+      "id": "has-rateable-value",
+      "description": "Property must have a rateable value assigned by VOA",
+      "condition": {
+        "field": "rateable_value",
+        "operator": "exists"
+      },
+      "reason_if_failed": "Your property does not have a rateable value. Contact the Valuation Office Agency.",
+      "triggers_handoff": true
+    },
+    {
+      "id": "england-wales-jurisdiction",
+      "description": "Service is for properties in England or Wales only",
+      "condition": {
+        "field": "jurisdiction",
+        "operator": "in",
+        "value": [
+          "England",
+          "Wales"
+        ]
+      },
+      "reason_if_failed": "Business rates are handled differently in Scotland and Northern Ireland",
+      "alternative_service": "scotland-ni-business-rates",
+      "triggers_handoff": true
+    },
+    {
+      "id": "self-catering-criteria-england",
+      "description": "Self-catering properties in England must meet availability and occupancy criteria",
+      "condition": {
+        "field": "self_catering_eligible",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "Self-catering properties must be available for at least 140 nights and let for at least 70 nights to pay business rates. Otherwise you pay Council Tax.",
+      "alternative_service": "council-tax-only",
+      "evidence_source": "self-catering-declaration"
+    },
+    {
+      "id": "home-business-criteria",
+      "description": "Home-based businesses must meet business use criteria",
+      "condition": {
+        "field": "home_business_rateable",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "Small home offices usually only pay Council Tax. You may need business rates if you receive customers, employ staff, or have made structural changes.",
+      "alternative_service": "council-tax-only"
+    }
+  ],
+  "explanation_template": "Business rates eligibility: {outcome}. Rateable value: £{rateable_value}. Relief available: {relief_status}",
+  "edge_cases": [
+    {
+      "id": "farm-buildings",
+      "description": "Farm buildings used for agricultural purposes are exempt",
+      "detection": "property_use == 'agriculture'",
+      "action": "Property is exempt. No business rates payable. Confirm with VOA if uncertain."
+    },
+    {
+      "id": "stables-farming",
+      "description": "Stables used for farming horses are exempt",
+      "detection": "property_type == 'stables' AND farming_use == true",
+      "action": "Exempt from business rates. May pay Council Tax if in domestic garden. Contact VOA to confirm."
+    },
+    {
+      "id": "severe-disruption",
+      "description": "Property affected by flooding, roadworks, or severe local disruption",
+      "detection": "severe_disruption",
+      "action": "Temporary reduction may be available. Report to VOA for assessment."
+    },
+    {
+      "id": "part-business-domestic",
+      "description": "Property is part business, part domestic (e.g. live above shop)",
+      "detection": "property_type == 'part-business'",
+      "action": "You pay both business rates and Council Tax. Separate bills will be issued."
+    },
+    {
+      "id": "rateable-value-dispute",
+      "description": "Business owner disputes the rateable value",
+      "detection": "challenge_rateable_value",
+      "action": "Route to VOA business rates valuation account for challenge. Deadline: 31 March 2026 for current values."
+    }
+  ]
+}

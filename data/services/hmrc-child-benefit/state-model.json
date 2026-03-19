@@ -1,0 +1,131 @@
+{
+  "id": "hmrc.child-benefit.states",
+  "version": "1.0.0",
+  "states": [
+    {
+      "id": "not-started",
+      "type": "initial"
+    },
+    {
+      "id": "identity-verified"
+    },
+    {
+      "id": "eligibility-checked"
+    },
+    {
+      "id": "consent-given"
+    },
+    {
+      "id": "child-details-submitted"
+    },
+    {
+      "id": "bank-details-submitted"
+    },
+    {
+      "id": "high-income-disclosure"
+    },
+    {
+      "id": "payment-preference-set"
+    },
+    {
+      "id": "details-submitted"
+    },
+    {
+      "id": "assessment"
+    },
+    {
+      "id": "decision",
+      "receipt": true
+    },
+    {
+      "id": "completed",
+      "type": "terminal",
+      "receipt": true
+    },
+    {
+      "id": "rejected",
+      "type": "terminal",
+      "receipt": true
+    },
+    {
+      "id": "handed-off",
+      "type": "terminal",
+      "receipt": true
+    }
+  ],
+  "transitions": [
+    {
+      "from": "not-started",
+      "to": "identity-verified",
+      "trigger": "verify-identity"
+    },
+    {
+      "from": "identity-verified",
+      "to": "eligibility-checked",
+      "trigger": "check-eligibility"
+    },
+    {
+      "from": "eligibility-checked",
+      "to": "consent-given",
+      "trigger": "grant-consent",
+      "condition": "eligible"
+    },
+    {
+      "from": "eligibility-checked",
+      "to": "rejected",
+      "trigger": "reject",
+      "condition": "not-eligible"
+    },
+    {
+      "from": "eligibility-checked",
+      "to": "handed-off",
+      "trigger": "handoff",
+      "condition": "edge-case"
+    },
+    {
+      "from": "consent-given",
+      "to": "child-details-submitted",
+      "trigger": "submit-child-details"
+    },
+    {
+      "from": "child-details-submitted",
+      "to": "bank-details-submitted",
+      "trigger": "submit-bank-details"
+    },
+    {
+      "from": "bank-details-submitted",
+      "to": "high-income-disclosure",
+      "trigger": "check-income"
+    },
+    {
+      "from": "high-income-disclosure",
+      "to": "payment-preference-set",
+      "trigger": "set-payment-preference"
+    },
+    {
+      "from": "payment-preference-set",
+      "to": "details-submitted",
+      "trigger": "confirm-all-details"
+    },
+    {
+      "from": "details-submitted",
+      "to": "assessment",
+      "trigger": "begin-assessment"
+    },
+    {
+      "from": "assessment",
+      "to": "decision",
+      "trigger": "make-decision"
+    },
+    {
+      "from": "decision",
+      "to": "completed",
+      "trigger": "approve"
+    },
+    {
+      "from": "decision",
+      "to": "rejected",
+      "trigger": "reject-application"
+    }
+  ]
+}

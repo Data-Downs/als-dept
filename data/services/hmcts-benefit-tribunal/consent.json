@@ -1,0 +1,87 @@
+{
+  "id": "hmcts-benefit-tribunal.consent",
+  "version": "1.0.0",
+  "grants": [
+    {
+      "id": "identity-verification",
+      "description": "Verify your identity and provide your National Insurance number",
+      "data_shared": [
+        "full_name",
+        "date_of_birth",
+        "national_insurance_number",
+        "address"
+      ],
+      "source": "one-login",
+      "purpose": "To confirm your identity and link your appeal to the correct benefit decision",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "appeal-details-sharing",
+      "description": "Share your appeal and supporting evidence with DWP (the respondent)",
+      "data_shared": [
+        "appeal_grounds",
+        "mandatory_reconsideration_notice",
+        "personal_statement",
+        "supporting_evidence"
+      ],
+      "source": "citizen-provided",
+      "purpose": "DWP must receive your appeal so they can respond and explain their decision. This is required for a fair hearing.",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "medical-evidence-sharing",
+      "description": "Share medical or specialist evidence with the tribunal and DWP",
+      "data_shared": [
+        "medical_reports",
+        "care_plans",
+        "specialist_assessments",
+        "health_records"
+      ],
+      "source": "citizen-provided",
+      "purpose": "The tribunal needs evidence to understand your condition or circumstances and make a fair decision",
+      "duration": "until-revoked",
+      "required": false
+    },
+    {
+      "id": "representative-access",
+      "description": "Grant access to your appointed representative (if you choose to have one)",
+      "data_shared": [
+        "full_appeal_file",
+        "correspondence",
+        "hearing_details",
+        "decision_documents"
+      ],
+      "source": "hmcts-tribunal",
+      "purpose": "Your representative can act on your behalf, respond to letters, and receive all information about your appeal",
+      "duration": "until-revoked",
+      "required": false
+    },
+    {
+      "id": "hearing-recording",
+      "description": "Request and receive an audio recording of your tribunal hearing",
+      "data_shared": [
+        "hearing_audio_recording"
+      ],
+      "source": "hmcts-tribunal",
+      "purpose": "You can request an audio recording of your hearing within 18 months for your records",
+      "duration": "session",
+      "required": false
+    }
+  ],
+  "revocation": {
+    "mechanism": "Contact HMCTS Benefit Appeals in writing or via your online account to withdraw your appeal",
+    "effect": "Appeal will be withdrawn. Tribunal will close the case. You may be able to submit a new appeal if still within time limits."
+  },
+  "delegation": {
+    "agent_identity": "GOV.UK AI Agent",
+    "scopes": [
+      "read-appeal-status",
+      "prepare-appeal-documents",
+      "upload-evidence",
+      "submit-statements"
+    ],
+    "limitations": "Agent cannot submit the final appeal without your explicit confirmation. Agent cannot appoint or change your representative without your confirmation. Agent cannot attend the tribunal hearing on your behalf - you or your appointed representative must attend. Agent cannot withdraw your appeal without your explicit instruction. Agent cannot request set-aside or Upper Tribunal appeal without your explicit instruction."
+  }
+}

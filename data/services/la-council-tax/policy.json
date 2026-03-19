@@ -1,0 +1,115 @@
+{
+  "id": "la-council-tax.eligibility",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "age-minimum",
+      "description": "Liable party must be at least 18 years old",
+      "condition": {
+        "field": "age",
+        "operator": ">=",
+        "value": 18
+      },
+      "reason_if_failed": "You must be at least 18 years old to be liable for Council Tax",
+      "evidence_source": "identity-verified"
+    },
+    {
+      "id": "property-resident-or-owner",
+      "description": "Must be resident or owner of domestic property",
+      "condition": {
+        "field": "occupancy_status",
+        "operator": "in",
+        "value": [
+          "resident",
+          "owner",
+          "tenant"
+        ]
+      },
+      "reason_if_failed": "You must be a resident or owner of the property to register for Council Tax",
+      "evidence_source": "property-details-provided"
+    },
+    {
+      "id": "domestic-property",
+      "description": "Property must be a domestic dwelling",
+      "condition": {
+        "field": "property_type",
+        "operator": "==",
+        "value": "domestic"
+      },
+      "reason_if_failed": "Only domestic properties are subject to Council Tax. Commercial properties pay business rates instead.",
+      "alternative_service": "business-rates",
+      "triggers_handoff": true
+    },
+    {
+      "id": "not-exempt-property",
+      "description": "Property must not be in an exempt category",
+      "condition": {
+        "field": "exempt_category",
+        "operator": "not-exists"
+      },
+      "reason_if_failed": "This property is exempt from Council Tax",
+      "evidence_source": "property-assessment"
+    },
+    {
+      "id": "valid-uk-address",
+      "description": "Property must have valid UK address within council jurisdiction",
+      "condition": {
+        "field": "postcode",
+        "operator": "exists"
+      },
+      "reason_if_failed": "You must provide a valid UK property address within the local authority area",
+      "evidence_source": "address-lookup"
+    }
+  ],
+  "explanation_template": "Council Tax liability: {outcome}. Band {band}, annual charge £{amount}. Discounts applied: {discounts}",
+  "edge_cases": [
+    {
+      "id": "second-home",
+      "description": "Property is a second home (furnished but not main residence)",
+      "detection": "occupancy_status=second-home",
+      "action": "Apply second home premium (up to 200% additional charge). Confirm with council for local policy."
+    },
+    {
+      "id": "empty-property",
+      "description": "Property has been empty for 1+ years",
+      "detection": "empty_period>=12-months",
+      "action": "Apply empty home premium (1-4x normal rate depending on duration). May qualify for 12-month exception if being sold/renovated."
+    },
+    {
+      "id": "all-students",
+      "description": "All household members are full-time students",
+      "detection": "all_occupants_student=true",
+      "action": "Property exempt from Council Tax. Require student certificates from educational institutions."
+    },
+    {
+      "id": "severely-mentally-impaired",
+      "description": "Household member is severely mentally impaired",
+      "detection": "smi_occupant=true",
+      "action": "May qualify for 25-100% discount depending on household composition. Requires GP certificate and benefits eligibility."
+    },
+    {
+      "id": "disabled-band-reduction",
+      "description": "Property adapted for disabled occupant with extra space/facilities",
+      "detection": "disabled_adaptation=true",
+      "action": "May qualify for band reduction (one band lower). Requires assessment of extra room/wheelchair space."
+    },
+    {
+      "id": "probate-period",
+      "description": "Property owner deceased, probate not yet granted or within 6 months",
+      "detection": "probate_status=pending|recent",
+      "action": "No Council Tax due until probate granted, then 6-month exemption if property remains empty and in deceased's name."
+    },
+    {
+      "id": "major-renovations",
+      "description": "Property uninhabitable due to major structural works",
+      "detection": "renovation_status=major-works",
+      "action": "May be removed from Council Tax list during works. Must notify council when habitable again."
+    },
+    {
+      "id": "single-occupant",
+      "description": "Only one adult resident, all others disregarded",
+      "detection": "single_liable_adult=true",
+      "action": "25% single person discount applies automatically."
+    }
+  ]
+}

@@ -1,0 +1,93 @@
+{
+  "id": "gro.register-birth.consent",
+  "version": "1.0.0",
+  "grants": [
+    {
+      "id": "identity-verification",
+      "description": "Verify your identity as the qualified informant registering the birth",
+      "data_shared": [
+        "full_name",
+        "date_of_birth",
+        "address",
+        "relationship_to_child"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To confirm you are authorized to register this birth and to create an accurate birth record",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "birth-details-collection",
+      "description": "Provide the baby's birth details for the official birth record",
+      "data_shared": [
+        "baby_name",
+        "baby_surname",
+        "baby_sex",
+        "place_of_birth",
+        "date_of_birth",
+        "time_of_birth"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To create the official birth registration and certificate for the child",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "parent-details-collection",
+      "description": "Provide both parents' details for the birth certificate",
+      "data_shared": [
+        "parent_names",
+        "parent_surnames",
+        "parent_dates_of_birth",
+        "parent_places_of_birth",
+        "parent_occupations",
+        "parent_address",
+        "mother_maiden_surname",
+        "marriage_civil_partnership_date"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To record parental information on the birth certificate and establish legal parentage",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "health-record-reference",
+      "description": "Share the child's personal health record (red book) if available",
+      "data_shared": [
+        "nhs_number",
+        "health_record_number"
+      ],
+      "source": "nhs",
+      "purpose": "To cross-reference the birth registration with NHS records",
+      "duration": "session",
+      "required": false
+    },
+    {
+      "id": "data-sharing-child-benefit",
+      "description": "Share birth registration data with HMRC for Child Benefit eligibility",
+      "data_shared": [
+        "birth_registration_number",
+        "child_name",
+        "date_of_birth",
+        "parent_details"
+      ],
+      "source": "gro-register-office",
+      "purpose": "To enable you to claim Child Benefit and Child Tax Credit without providing duplicate information",
+      "duration": "until-revoked",
+      "required": false
+    }
+  ],
+  "revocation": {
+    "mechanism": "Contact the General Register Office to request correction or amendment to the birth record",
+    "effect": "Birth registration cannot be reversed, but corrections can be made through a formal amendment process. Registered information will remain on record."
+  },
+  "delegation": {
+    "agent_identity": "GOV.UK AI Agent",
+    "scopes": [
+      "read-eligibility-criteria",
+      "verify-document-requirements",
+      "schedule-appointment"
+    ],
+    "limitations": "Agent cannot register the birth on your behalf. Agent cannot provide false information. Agent cannot appear in person at the register office. The qualified informant must attend in person with required documents."
+  }
+}

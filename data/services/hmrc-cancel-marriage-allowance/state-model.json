@@ -1,0 +1,103 @@
+{
+  "id": "hmrc.cancel-marriage-allowance.states",
+  "version": "1.0.0",
+  "states": [
+    {
+      "id": "not-started",
+      "type": "initial"
+    },
+    {
+      "id": "identity-verified"
+    },
+    {
+      "id": "eligibility-checked"
+    },
+    {
+      "id": "consent-given"
+    },
+    {
+      "id": "reason-provided"
+    },
+    {
+      "id": "impact-calculated",
+      "receipt": true
+    },
+    {
+      "id": "cancellation-confirmed"
+    },
+    {
+      "id": "cancellation-processed",
+      "receipt": true
+    },
+    {
+      "id": "completed",
+      "type": "terminal",
+      "receipt": true
+    },
+    {
+      "id": "rejected",
+      "type": "terminal",
+      "receipt": true
+    },
+    {
+      "id": "handed-off",
+      "type": "terminal",
+      "receipt": true
+    }
+  ],
+  "transitions": [
+    {
+      "from": "not-started",
+      "to": "identity-verified",
+      "trigger": "verify-identity"
+    },
+    {
+      "from": "identity-verified",
+      "to": "eligibility-checked",
+      "trigger": "check-eligibility"
+    },
+    {
+      "from": "eligibility-checked",
+      "to": "consent-given",
+      "trigger": "grant-consent",
+      "condition": "eligible"
+    },
+    {
+      "from": "eligibility-checked",
+      "to": "rejected",
+      "trigger": "reject",
+      "condition": "no-active-claim"
+    },
+    {
+      "from": "eligibility-checked",
+      "to": "handed-off",
+      "trigger": "handoff",
+      "condition": "requires-phone-service"
+    },
+    {
+      "from": "consent-given",
+      "to": "reason-provided",
+      "trigger": "provide-reason"
+    },
+    {
+      "from": "reason-provided",
+      "to": "impact-calculated",
+      "trigger": "calculate-impact"
+    },
+    {
+      "from": "impact-calculated",
+      "to": "cancellation-confirmed",
+      "trigger": "confirm-cancellation"
+    },
+    {
+      "from": "cancellation-confirmed",
+      "to": "cancellation-processed",
+      "trigger": "process-cancellation"
+    },
+    {
+      "from": "cancellation-processed",
+      "to": "completed",
+      "trigger": "complete"
+    }
+  ]
+}

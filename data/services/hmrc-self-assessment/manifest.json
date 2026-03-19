@@ -1,0 +1,19 @@
+{
+  "id": "hmrc-self-assessment",
+  "version": "1.0.0",
+  "name": "Register for Self Assessment",
+  "description": "Required for sole traders and company directors. Register by 5 October in second year of trading.",
+  "department": "HMRC",
+  "input_schema": {
+    "type": "object"
+  },
+  "output_schema": {
+    "type": "object"
+  },
+  "source": "graph",
+  "serviceType": "obligation",
+  "govuk_url": "https://www.gov.uk/register-for-self-assessment",
+  "eligibility_summary": "Required for the self-employed, company directors, landlords, and those with income not taxed at source. Register by 5 October in the second year of trading.",
+  "proactive": true,
+  "gated": false
+}

@@ -1,0 +1,144 @@
+{
+  "id": "dwp.new-style-esa.consent",
+  "version": "1.0.0",
+  "grants": [
+    {
+      "id": "identity-verification",
+      "description": "Verify your identity using your GOV.UK One Login credentials",
+      "data_shared": [
+        "full_name",
+        "date_of_birth",
+        "national_insurance_number",
+        "address"
+      ],
+      "source": "one-login",
+      "purpose": "To confirm your identity and verify you're under State Pension age before processing your ESA claim",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "ni-record-access",
+      "description": "Access your National Insurance contribution record from HMRC",
+      "data_shared": [
+        "ni_contributions_history",
+        "employment_history",
+        "ni_credits"
+      ],
+      "source": "hmrc",
+      "purpose": "To verify you've paid enough National Insurance contributions in the last 2-3 years to qualify for New Style ESA",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "medical-evidence",
+      "description": "Share your fit note and medical information with DWP",
+      "data_shared": [
+        "fit_note",
+        "gp_details",
+        "health_condition_details",
+        "hospital_records",
+        "medication_details"
+      ],
+      "source": "gp-or-medical-professional",
+      "purpose": "To assess how your health condition affects your ability to work and determine your eligibility for ESA",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "work-capability-assessment",
+      "description": "Participate in a Work Capability Assessment and share the results with DWP",
+      "data_shared": [
+        "assessment_questionnaire_responses",
+        "functional_limitations",
+        "assessment_recording",
+        "assessor_report"
+      ],
+      "source": "health-assessment-advisory-service",
+      "purpose": "To determine if your illness or disability affects how much you can work and which ESA group you should be placed in",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "employment-income-details",
+      "description": "Share details of any current employment or income",
+      "data_shared": [
+        "employer_details",
+        "work_hours_per_week",
+        "weekly_earnings",
+        "ssp_details",
+        "ssp_end_date"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To determine if you're eligible while working and calculate the correct payment amount",
+      "duration": "until-revoked",
+      "required": false
+    },
+    {
+      "id": "benefit-claims-cross-check",
+      "description": "Check if you're claiming other benefits like Universal Credit or JSA",
+      "data_shared": [
+        "universal_credit_claim_status",
+        "jsa_claim_status",
+        "other_benefit_claims"
+      ],
+      "source": "dwp-internal",
+      "purpose": "To ensure you're not claiming benefits that prevent ESA eligibility and to coordinate payments correctly",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "pension-income",
+      "description": "Share details of any private pension income",
+      "data_shared": [
+        "private_pension_provider",
+        "weekly_pension_amount"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To calculate your ESA payment correctly (pension income over £85/week affects your ESA amount)",
+      "duration": "until-revoked",
+      "required": false
+    },
+    {
+      "id": "bank-details",
+      "description": "Provide your bank or building society details for payment",
+      "data_shared": [
+        "account_number",
+        "sort_code",
+        "account_holder_name"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To pay your ESA every 2 weeks",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "ongoing-monitoring",
+      "description": "Allow DWP to monitor your claim and request updated fit notes or evidence",
+      "data_shared": [
+        "updated_fit_notes",
+        "changes_in_circumstances",
+        "ongoing_medical_evidence"
+      ],
+      "source": "gp-or-citizen-provided",
+      "purpose": "To ensure you continue to receive the correct amount of ESA and remain eligible",
+      "duration": "until-revoked",
+      "required": true
+    }
+  ],
+  "revocation": {
+    "mechanism": "Contact Jobcentre Plus on 0800 169 0310 or write to your local Jobcentre Plus office. You can also report changes through your GOV.UK account.",
+    "effect": "Your ESA claim will be cancelled if consent is revoked before completion. You may be asked to repay any ESA already paid if eligibility changes."
+  },
+  "delegation": {
+    "agent_identity": "GOV.UK AI Agent",
+    "scopes": [
+      "read-personal-data",
+      "read-ni-record",
+      "read-medical-evidence",
+      "submit-application-details",
+      "fill-capability-questionnaire",
+      "report-changes-of-circumstances"
+    ],
+    "limitations": "Agent CANNOT: (1) Attend your Work Capability Assessment appointment on your behalf - you must participate personally; (2) Agree to your Claimant Commitment without your explicit verbal or written confirmation; (3) Decide whether to accept work-related activities - you must make this decision; (4) Provide medical evidence it doesn't have access to; (5) Apply for mandatory reconsideration or appeal without your explicit instruction; (6) Agree to sanctions or hardship payment terms without your knowledge; (7) Authorize appointee access for someone else; (8) Make decisions about whether you should apply for end-of-life special rules - this is your choice with medical professional support."
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "id": "hmrc-corporation-tax",
+  "version": "1.0.0",
+  "name": "Register for Corporation Tax",
+  "description": "Required within 3 months of starting to trade. Limited companies only.",
+  "department": "HMRC",
+  "input_schema": {
+    "type": "object"
+  },
+  "output_schema": {
+    "type": "object"
+  },
+  "source": "graph",
+  "serviceType": "obligation",
+  "govuk_url": "https://www.gov.uk/register-for-corporation-tax",
+  "eligibility_summary": "All limited companies must register for Corporation Tax within 3 months of starting to trade, even if making a loss. Applies to any company registered at Companies House.",
+  "proactive": true,
+  "gated": true
+}

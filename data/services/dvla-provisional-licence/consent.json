@@ -1,0 +1,84 @@
+{
+  "id": "dvla-provisional-licence.consent",
+  "version": "1.0.0",
+  "grants": [
+    {
+      "id": "identity-verification",
+      "description": "Verify your identity using your GOV.UK One Login credentials and photo ID",
+      "data_shared": [
+        "full_name",
+        "date_of_birth",
+        "place_of_birth",
+        "national_insurance_number"
+      ],
+      "source": "one-login",
+      "purpose": "To confirm you are who you say you are and meet age requirements for a provisional licence",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "address-confirmation",
+      "description": "Confirm your current address for the licence and DVLA records",
+      "data_shared": [
+        "address_line_1",
+        "address_line_2",
+        "city",
+        "postcode"
+      ],
+      "source": "citizen-provided",
+      "purpose": "The provisional licence will be posted to this address and it will be recorded on your driving record",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "photo-submission",
+      "description": "Share your photo for your provisional driving licence",
+      "data_shared": [
+        "passport_photo"
+      ],
+      "source": "hmpo-passport-office",
+      "purpose": "DVLA will use your most recent passport photo for the provisional licence card",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "residency-verification",
+      "description": "Share your immigration status and residency history",
+      "data_shared": [
+        "nationality",
+        "immigration_status",
+        "residency_history"
+      ],
+      "source": "home-office",
+      "purpose": "To verify you have been given permission to live in Great Britain for at least 185 days",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "medical-declaration",
+      "description": "Declare any medical conditions that may affect your ability to drive safely",
+      "data_shared": [
+        "medical_conditions",
+        "visual_acuity_status",
+        "medication_details"
+      ],
+      "source": "citizen-provided",
+      "purpose": "DVLA must assess whether any medical conditions affect your fitness to drive",
+      "duration": "until-revoked",
+      "required": true
+    }
+  ],
+  "revocation": {
+    "mechanism": "Contact DVLA or revoke through your GOV.UK account",
+    "effect": "Application will be cancelled if consent is revoked before completion. Already-issued licences are not affected by consent revocation."
+  },
+  "delegation": {
+    "agent_identity": "GOV.UK AI Agent",
+    "scopes": [
+      "read-personal-data",
+      "submit-application-details",
+      "check-eligibility"
+    ],
+    "limitations": "Agent cannot make payment on your behalf. Agent cannot submit medical declarations without your explicit confirmation. Agent cannot change your address without your explicit confirmation. Agent cannot override eyesight test requirements."
+  }
+}

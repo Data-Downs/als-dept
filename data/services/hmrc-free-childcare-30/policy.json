@@ -1,0 +1,136 @@
+{
+  "id": "hmrc.free-childcare-30.eligibility",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "child-age-minimum",
+      "description": "Child must be at least 3 years old",
+      "condition": {
+        "field": "child_age_years",
+        "operator": ">=",
+        "value": 3
+      },
+      "reason_if_failed": "Your child must be at least 3 years old to qualify for 30 hours free childcare",
+      "evidence_source": "birth-certificate",
+      "alternative_service": "hmrc.free-childcare-15"
+    },
+    {
+      "id": "child-age-maximum",
+      "description": "Child must be under 5 years old (not yet in reception)",
+      "condition": {
+        "field": "child_age_years",
+        "operator": "<=",
+        "value": 4
+      },
+      "reason_if_failed": "Your child is too old for this scheme. Children in reception class or older are not eligible.",
+      "evidence_source": "birth-certificate"
+    },
+    {
+      "id": "parent-working",
+      "description": "Parent (or both parents if couple) must be in paid work",
+      "condition": {
+        "field": "parents_working",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "You (or both parents if in a couple) must be in paid work to qualify",
+      "evidence_source": "hmrc-employment-records",
+      "alternative_service": "hmrc.free-childcare-15"
+    },
+    {
+      "id": "parent-minimum-income",
+      "description": "Each working parent must earn at least the equivalent of 16 hours at National Minimum Wage per week",
+      "condition": {
+        "field": "parent_weekly_income",
+        "operator": ">=",
+        "value": "16h_nmw"
+      },
+      "reason_if_failed": "You must earn at least the equivalent of 16 hours at National Minimum Wage per week",
+      "evidence_source": "hmrc-tax-records"
+    },
+    {
+      "id": "parent-maximum-income",
+      "description": "Neither parent can earn more than £100,000 per year",
+      "condition": {
+        "field": "parent_annual_income",
+        "operator": "<=",
+        "value": 100000
+      },
+      "reason_if_failed": "You cannot earn more than £100,000 per year to qualify for 30 hours free childcare",
+      "evidence_source": "hmrc-tax-records"
+    },
+    {
+      "id": "partner-maximum-income",
+      "description": "Partner (if applicable) cannot earn more than £100,000 per year",
+      "condition": {
+        "field": "partner_annual_income",
+        "operator": "<=",
+        "value": 100000
+      },
+      "reason_if_failed": "Your partner cannot earn more than £100,000 per year to qualify",
+      "evidence_source": "hmrc-tax-records"
+    },
+    {
+      "id": "uk-resident",
+      "description": "Parent must be a UK resident",
+      "condition": {
+        "field": "uk_resident",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "You must be a UK resident to apply for this scheme",
+      "evidence_source": "identity-verified"
+    },
+    {
+      "id": "not-on-income-support",
+      "description": "Parent must not be receiving Income Support",
+      "condition": {
+        "field": "receiving_income_support",
+        "operator": "!=",
+        "value": true
+      },
+      "reason_if_failed": "If you receive Income Support, you may not meet the minimum income requirement",
+      "evidence_source": "hmrc-benefit-records",
+      "triggers_handoff": true
+    }
+  ],
+  "explanation_template": "30 hours free childcare eligibility: {outcome}",
+  "edge_cases": [
+    {
+      "id": "adopted-child",
+      "description": "Child is adopted and requires different documentation",
+      "detection": "child_adoption_status",
+      "action": "Request adoption certificate instead of birth certificate. Standard eligibility applies."
+    },
+    {
+      "id": "foster-child",
+      "description": "Child is in foster care",
+      "detection": "child_foster_status",
+      "action": "Route to specialist team. Foster carers may have different eligibility criteria."
+    },
+    {
+      "id": "parent-disabled",
+      "description": "Parent has disability affecting ability to work",
+      "detection": "parent_disability_status",
+      "action": "Parent may still qualify if receiving certain disability benefits. Route to specialist assessment."
+    },
+    {
+      "id": "self-employed",
+      "description": "One or both parents are self-employed",
+      "detection": "self_employment_status",
+      "action": "Income verification requires Self Assessment tax returns. May need manual review of accounts."
+    },
+    {
+      "id": "parental-leave",
+      "description": "Parent is on statutory maternity, paternity, or adoption leave",
+      "detection": "parental_leave_status",
+      "action": "Parent may still qualify if returning to work within expected timeframe. Verify employment status with employer."
+    },
+    {
+      "id": "special-needs-child",
+      "description": "Child has special educational needs or disabilities",
+      "detection": "child_send_status",
+      "action": "Standard eligibility applies but may need additional information for childcare provider. Signpost to Early Years Special Educational Needs support."
+    }
+  ]
+}

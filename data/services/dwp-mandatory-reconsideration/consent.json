@@ -1,0 +1,89 @@
+{
+  "id": "dwp.mandatory-reconsideration.consent",
+  "version": "1.0.0",
+  "grants": [
+    {
+      "id": "identity-verification",
+      "description": "Verify your identity using your National Insurance number, date of birth, and full name",
+      "data_shared": [
+        "full_name",
+        "date_of_birth",
+        "national_insurance_number",
+        "address"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To confirm you are the person who received the benefit decision and can request reconsideration",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "decision-details-access",
+      "description": "Share details of the original benefit decision you are challenging",
+      "data_shared": [
+        "decision_letter_date",
+        "benefit_type",
+        "decision_reference_number",
+        "original_decision_outcome"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To identify which decision is being challenged and verify eligibility for mandatory reconsideration",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "full-review-consent",
+      "description": "Consent to a full review of your benefit claim with risk of decreased or stopped benefit",
+      "data_shared": [
+        "entire_benefit_claim_history",
+        "all_original_evidence",
+        "any_new_evidence_provided"
+      ],
+      "source": "dwp-records",
+      "purpose": "Mandatory reconsideration reviews your ENTIRE claim, not just one aspect. Your benefit may stop, stay the same, increase or decrease.",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "reconsideration-grounds",
+      "description": "Provide your explanation of why you believe the decision was wrong",
+      "data_shared": [
+        "disagreement_explanation",
+        "error_description",
+        "missed_evidence_details"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To give DWP decision-makers your reasons for requesting reconsideration",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "supporting-evidence",
+      "description": "Share any new or additional evidence to support your mandatory reconsideration request",
+      "data_shared": [
+        "medical_evidence",
+        "financial_documents",
+        "care_plans",
+        "specialist_reports"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To provide evidence that was not included in the original decision or supports your disagreement",
+      "duration": "session",
+      "required": false
+    }
+  ],
+  "revocation": {
+    "mechanism": "Contact the DWP office handling your request by phone or letter before the mandatory reconsideration notice is issued",
+    "effect": "Your mandatory reconsideration request will be cancelled and the original decision will stand. You may still have time to submit a new request if within the 1-month time limit."
+  },
+  "delegation": {
+    "agent_identity": "GOV.UK AI Agent",
+    "scopes": [
+      "read-decision-details",
+      "check-eligibility",
+      "prepare-reconsideration-request",
+      "submit-grounds-explanation",
+      "submit-evidence"
+    ],
+    "limitations": "Agent CANNOT proceed past the risk acknowledgment without your explicit consent that you understand your benefit may decrease or stop. Agent CANNOT accept a negative mandatory reconsideration outcome without your explicit decision on whether to appeal to tribunal. Agent CANNOT provide legal advice - you should seek free advice from Citizens Advice or a legal adviser. Agent CANNOT pay for medical evidence on your behalf."
+  }
+}

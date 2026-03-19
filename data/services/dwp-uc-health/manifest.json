@@ -1,0 +1,19 @@
+{
+  "id": "dwp-uc-health",
+  "version": "1.0.0",
+  "name": "UC limited capability element",
+  "description": "Higher UC payment after Work Capability Assessment. Requires fit note and medical evidence.",
+  "department": "DWP",
+  "input_schema": {
+    "type": "object"
+  },
+  "output_schema": {
+    "type": "object"
+  },
+  "source": "graph",
+  "serviceType": "entitlement",
+  "govuk_url": "https://www.gov.uk/universal-credit/what-youll-get",
+  "eligibility_summary": "Extra Universal Credit for those whose health condition limits or prevents work. Requires a Work Capability Assessment (WCA). Limited Capability for Work and Work-Related Activity (LCWRA) adds £416/month.",
+  "proactive": true,
+  "gated": true
+}

@@ -1,0 +1,102 @@
+{
+  "id": "hmcts.financial-order.eligibility",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "married-or-civil-partnership",
+      "description": "Applicant must be married or in a civil partnership (or divorcing/dissolving)",
+      "condition": {
+        "field": "marital_status",
+        "operator": "in",
+        "value": [
+          "married",
+          "civil-partnership",
+          "divorcing",
+          "dissolving-civil-partnership"
+        ]
+      },
+      "reason_if_failed": "Financial consent orders are only available if you are married or in a civil partnership. If you were not married or in a civil partnership, you'll need different legal advice.",
+      "alternative_service": "citizens-advice",
+      "evidence_source": "identity-verified"
+    },
+    {
+      "id": "conditional-order-granted",
+      "description": "Conditional order or decree nisi must have been granted",
+      "condition": {
+        "field": "conditional_order_status",
+        "operator": "==",
+        "value": "granted"
+      },
+      "reason_if_failed": "The court cannot approve a consent order before you have your conditional order or decree nisi. Apply for a consent order after you receive this.",
+      "evidence_source": "hmcts-divorce-court"
+    },
+    {
+      "id": "uk-jurisdiction",
+      "description": "Divorce or dissolution must be under England and Wales jurisdiction",
+      "condition": {
+        "field": "jurisdiction",
+        "operator": "in",
+        "value": [
+          "England",
+          "Wales"
+        ]
+      },
+      "reason_if_failed": "This service is for England and Wales only. Scotland and Northern Ireland have different processes.",
+      "alternative_service": "scotland-ni-financial-order",
+      "triggers_handoff": true
+    },
+    {
+      "id": "draft-order-prepared",
+      "description": "Draft consent order must be prepared and agreed by both parties",
+      "condition": {
+        "field": "draft_consent_order",
+        "operator": "exists"
+      },
+      "reason_if_failed": "You need to prepare a draft consent order before applying. This is usually drafted by a solicitor. If you cannot agree, you'll need to apply for a financial order instead.",
+      "alternative_service": "hmcts.financial-order-contested"
+    },
+    {
+      "id": "both-parties-agree",
+      "description": "Both parties must agree to the terms of the consent order",
+      "condition": {
+        "field": "both_parties_consent",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "Both parties must agree to the financial division. If you cannot agree, you'll need to apply for a financial order and ask the court to decide.",
+      "alternative_service": "hmcts.financial-order-contested",
+      "triggers_handoff": true
+    }
+  ],
+  "explanation_template": "Financial consent order eligibility: {outcome}",
+  "edge_cases": [
+    {
+      "id": "after-final-order",
+      "description": "Applying after final order or decree absolute has been granted",
+      "detection": "final_order_status == 'granted'",
+      "action": "Warn that there may be financial consequences, particularly for pensions. Legal advice strongly recommended. Proceed with caution."
+    },
+    {
+      "id": "domestic-abuse",
+      "description": "Domestic abuse present in the relationship",
+      "detection": "domestic_abuse_flag",
+      "action": "Route to specialist support. Consider whether consent order process is appropriate or if contested financial order with protective measures is needed."
+    },
+    {
+      "id": "unfair-agreement",
+      "description": "Judge considers the proposed agreement unfair",
+      "action": "Application will be rejected with request for amendments. Parties may need legal advice to revise the consent order."
+    },
+    {
+      "id": "complex-assets",
+      "description": "Complex assets such as overseas property, business interests, or trusts",
+      "detection": "complex_assets",
+      "action": "May require additional documentation and legal advice. Court may request more information before approval."
+    },
+    {
+      "id": "children-needs",
+      "description": "Agreement does not adequately address children's housing or maintenance needs",
+      "action": "Court prioritizes children's arrangements. May reject order and request amendments to ensure children's needs are met first."
+    }
+  ]
+}

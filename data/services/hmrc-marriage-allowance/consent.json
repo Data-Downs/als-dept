@@ -1,0 +1,104 @@
+{
+  "id": "hmrc.marriage-allowance.consent",
+  "version": "1.0.0",
+  "grants": [
+    {
+      "id": "identity-verification",
+      "description": "Verify your identity using your GOV.UK One Login credentials",
+      "data_shared": [
+        "full_name",
+        "date_of_birth",
+        "national_insurance_number",
+        "address"
+      ],
+      "source": "one-login",
+      "purpose": "To confirm you are who you say you are before processing the Marriage Allowance claim",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "partner-identity-verification",
+      "description": "Provide your partner's identity details to verify their eligibility",
+      "data_shared": [
+        "partner_full_name",
+        "partner_date_of_birth",
+        "partner_national_insurance_number"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To verify your partner's identity and check their tax status for Marriage Allowance eligibility",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "applicant-tax-record-access",
+      "description": "Access your tax records to verify your income and Personal Allowance",
+      "data_shared": [
+        "annual_income",
+        "tax_paid",
+        "personal_allowance",
+        "tax_code",
+        "employment_details"
+      ],
+      "source": "hmrc-tax-records",
+      "purpose": "To confirm your income is below the Personal Allowance threshold and calculate the transferable amount",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "partner-tax-record-access",
+      "description": "Access your partner's tax records to verify they pay basic rate Income Tax",
+      "data_shared": [
+        "partner_annual_income",
+        "partner_tax_paid",
+        "partner_personal_allowance",
+        "partner_tax_code",
+        "partner_employment_details"
+      ],
+      "source": "hmrc-tax-records",
+      "purpose": "To confirm your partner pays Income Tax at the basic rate and will benefit from the transferred Personal Allowance",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "backdating-consent",
+      "description": "Access historical tax records for backdating claim up to 4 years (to 6 April 2021)",
+      "data_shared": [
+        "historical_income_data",
+        "historical_tax_codes",
+        "historical_personal_allowances"
+      ],
+      "source": "hmrc-tax-records",
+      "purpose": "To calculate backdated Marriage Allowance and issue refunds for previous tax years",
+      "duration": "session",
+      "required": false
+    },
+    {
+      "id": "relationship-status-verification",
+      "description": "Confirm your marriage or civil partnership status",
+      "data_shared": [
+        "relationship_status",
+        "marriage_date",
+        "partner_details"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To verify you are eligible to claim Marriage Allowance as a married couple or civil partnership",
+      "duration": "until-revoked",
+      "required": true
+    }
+  ],
+  "revocation": {
+    "mechanism": "Cancel online at gov.uk/marriage-allowance or by calling Marriage Allowance enquiries on 0300 200 3300",
+    "effect": "Marriage Allowance will stop at the end of the current tax year (5 April). If relationship has ended, it may be backdated to start of tax year (6 April). Either partner can cancel if relationship has ended. Otherwise, the person who made the claim must cancel."
+  },
+  "delegation": {
+    "agent_identity": "GOV.UK AI Agent",
+    "scopes": [
+      "read-personal-tax-data",
+      "read-partner-tax-data",
+      "check-eligibility",
+      "submit-marriage-allowance-claim",
+      "select-backdating-years"
+    ],
+    "limitations": "Agent cannot provide partner's National Insurance number without your explicit confirmation. Agent cannot cancel Marriage Allowance on your behalf. Agent cannot change your relationship status. Agent cannot override HMRC eligibility decisions. For complex cases involving Self Assessment, dividends, savings interest, or other income sources, you must call the Income Tax helpline directly."
+  }
+}

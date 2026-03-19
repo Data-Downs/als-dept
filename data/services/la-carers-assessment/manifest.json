@@ -1,0 +1,19 @@
+{
+  "id": "la-carers-assessment",
+  "version": "1.0.0",
+  "name": "Carer's Assessment",
+  "description": "Request from local council. Identifies support needs and may unlock local funding.",
+  "department": "Local Authority",
+  "input_schema": {
+    "type": "object"
+  },
+  "output_schema": {
+    "type": "object"
+  },
+  "source": "graph",
+  "serviceType": "application",
+  "govuk_url": "https://www.gov.uk/carers-assessment",
+  "eligibility_summary": "Any adult carer can request a free Carer's Assessment from their local authority. Identifies the carer's own needs and may unlock local support, respite care, or one-off grants.",
+  "proactive": true,
+  "gated": false
+}

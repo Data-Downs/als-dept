@@ -1,0 +1,19 @@
+{
+  "id": "dwp-access-to-work",
+  "version": "1.0.0",
+  "name": "Access to Work",
+  "description": "Grants for workplace adaptations, travel costs and support workers. Apply before starting job.",
+  "department": "DWP",
+  "input_schema": {
+    "type": "object"
+  },
+  "output_schema": {
+    "type": "object"
+  },
+  "source": "graph",
+  "serviceType": "grant",
+  "govuk_url": "https://www.gov.uk/access-to-work",
+  "eligibility_summary": "Grants to help disabled people and those with health conditions to start or stay in work. Covers workplace adaptations, travel costs, support workers, communication support, and mental health support.",
+  "proactive": true,
+  "gated": true
+}

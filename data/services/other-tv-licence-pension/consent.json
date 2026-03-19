@@ -1,0 +1,73 @@
+{
+  "id": "other-tv-licence-pension.consent",
+  "version": "1.0.0",
+  "grants": [
+    {
+      "id": "identity-verification",
+      "description": "Verify your identity and age using your GOV.UK One Login credentials",
+      "data_shared": [
+        "full_name",
+        "date_of_birth",
+        "national_insurance_number"
+      ],
+      "source": "one-login",
+      "purpose": "To confirm you are aged 75 or over and verify your identity",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "pension-credit-status",
+      "description": "Check your Pension Credit status with the Department for Work and Pensions (DWP)",
+      "data_shared": [
+        "pension_credit_claim_status",
+        "pension_credit_start_date",
+        "claimant_name",
+        "partner_details"
+      ],
+      "source": "dwp-pension-credit-service",
+      "purpose": "To verify you are receiving Pension Credit and are eligible for a free TV licence",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "address-confirmation",
+      "description": "Confirm your home address for the TV licence registration",
+      "data_shared": [
+        "address_line_1",
+        "address_line_2",
+        "city",
+        "postcode"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To register your free TV licence to the correct household address",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "household-information",
+      "description": "Share information about your household to confirm licence eligibility",
+      "data_shared": [
+        "household_composition",
+        "partner_age",
+        "accommodation_type"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To ensure the free licence is correctly applied to your household",
+      "duration": "session",
+      "required": true
+    }
+  ],
+  "revocation": {
+    "mechanism": "Contact TV Licensing or revoke through your GOV.UK account",
+    "effect": "Application will be cancelled if consent is revoked before completion. You will need to reapply and grant consent again."
+  },
+  "delegation": {
+    "agent_identity": "GOV.UK AI Agent",
+    "scopes": [
+      "read-personal-data",
+      "check-pension-credit-status",
+      "submit-to-tv-licensing"
+    ],
+    "limitations": "Agent cannot apply for Pension Credit on your behalf. Agent cannot change your address without your explicit confirmation. Agent cannot cancel an existing paid TV licence without your explicit instruction."
+  }
+}

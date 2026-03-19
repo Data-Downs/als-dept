@@ -1,0 +1,155 @@
+{
+  "id": "ho-visa.states",
+  "version": "1.0.0",
+  "states": [
+    {
+      "id": "not-started",
+      "type": "initial"
+    },
+    {
+      "id": "identity-verified"
+    },
+    {
+      "id": "eligibility-checked"
+    },
+    {
+      "id": "consent-given"
+    },
+    {
+      "id": "visa-type-selected"
+    },
+    {
+      "id": "documents-uploaded"
+    },
+    {
+      "id": "payment-made",
+      "receipt": true
+    },
+    {
+      "id": "biometrics-scheduled"
+    },
+    {
+      "id": "biometrics-collected"
+    },
+    {
+      "id": "details-submitted"
+    },
+    {
+      "id": "assessment"
+    },
+    {
+      "id": "interview-required"
+    },
+    {
+      "id": "decision",
+      "receipt": true
+    },
+    {
+      "id": "completed",
+      "type": "terminal",
+      "receipt": true
+    },
+    {
+      "id": "rejected",
+      "type": "terminal",
+      "receipt": true
+    },
+    {
+      "id": "handed-off",
+      "type": "terminal",
+      "receipt": true
+    }
+  ],
+  "transitions": [
+    {
+      "from": "not-started",
+      "to": "identity-verified",
+      "trigger": "verify-identity"
+    },
+    {
+      "from": "identity-verified",
+      "to": "eligibility-checked",
+      "trigger": "check-eligibility"
+    },
+    {
+      "from": "eligibility-checked",
+      "to": "consent-given",
+      "trigger": "grant-consent",
+      "condition": "eligible"
+    },
+    {
+      "from": "eligibility-checked",
+      "to": "rejected",
+      "trigger": "reject",
+      "condition": "not-eligible"
+    },
+    {
+      "from": "eligibility-checked",
+      "to": "handed-off",
+      "trigger": "handoff",
+      "condition": "edge-case"
+    },
+    {
+      "from": "consent-given",
+      "to": "visa-type-selected",
+      "trigger": "select-visa-type"
+    },
+    {
+      "from": "visa-type-selected",
+      "to": "documents-uploaded",
+      "trigger": "upload-documents"
+    },
+    {
+      "from": "documents-uploaded",
+      "to": "payment-made",
+      "trigger": "make-payment"
+    },
+    {
+      "from": "payment-made",
+      "to": "biometrics-scheduled",
+      "trigger": "schedule-biometrics"
+    },
+    {
+      "from": "biometrics-scheduled",
+      "to": "biometrics-collected",
+      "trigger": "collect-biometrics"
+    },
+    {
+      "from": "biometrics-collected",
+      "to": "details-submitted",
+      "trigger": "submit-details"
+    },
+    {
+      "from": "details-submitted",
+      "to": "assessment",
+      "trigger": "begin-assessment"
+    },
+    {
+      "from": "assessment",
+      "to": "interview-required",
+      "trigger": "require-interview",
+      "condition": "needs-interview"
+    },
+    {
+      "from": "assessment",
+      "to": "decision",
+      "trigger": "make-decision",
+      "condition": "no-interview-needed"
+    },
+    {
+      "from": "interview-required",
+      "to": "decision",
+      "trigger": "complete-interview"
+    },
+    {
+      "from": "decision",
+      "to": "completed",
+      "trigger": "approve"
+    },
+    {
+      "from": "decision",
+      "to": "rejected",
+      "trigger": "reject-application"
+    }
+  ]
+}

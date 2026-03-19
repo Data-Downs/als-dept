@@ -1,0 +1,93 @@
+{
+  "id": "opg.lpa-activation.eligibility",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "is-attorney",
+      "description": "Person notifying must be a registered attorney on the LPA",
+      "condition": {
+        "field": "attorney_status",
+        "operator": "==",
+        "value": "registered"
+      },
+      "reason_if_failed": "Only registered attorneys can notify OPG of the donor's death",
+      "evidence_source": "lpa-registration-records",
+      "alternative_service": "opg.contact-opg"
+    },
+    {
+      "id": "donor-deceased",
+      "description": "The donor (LPA holder) must be confirmed deceased",
+      "condition": {
+        "field": "donor_status",
+        "operator": "==",
+        "value": "deceased"
+      },
+      "reason_if_failed": "Notification of death can only be made when the donor has passed away",
+      "evidence_source": "death-certificate"
+    },
+    {
+      "id": "lpa-registered",
+      "description": "The LPA must have been registered with OPG",
+      "condition": {
+        "field": "lpa_status",
+        "operator": "==",
+        "value": "registered"
+      },
+      "reason_if_failed": "This LPA is not registered with OPG. Only registered LPAs need to be notified of death.",
+      "triggers_handoff": true
+    },
+    {
+      "id": "has-original-lpa",
+      "description": "Attorney should have the original LPA document to return",
+      "condition": {
+        "field": "original_lpa_document",
+        "operator": "exists"
+      },
+      "reason_if_failed": "You should send the original LPA document. If you cannot locate it, contact OPG for guidance.",
+      "triggers_handoff": true
+    },
+    {
+      "id": "death-certificate-if-overseas",
+      "description": "If donor died outside UK, death certificate must be provided",
+      "condition": {
+        "field": "death_location",
+        "operator": "in",
+        "value": [
+          "England",
+          "Wales",
+          "Scotland",
+          "Northern Ireland"
+        ]
+      },
+      "reason_if_failed": "A death certificate is required if the donor died outside the United Kingdom",
+      "evidence_source": "overseas-death-certificate"
+    }
+  ],
+  "explanation_template": "LPA death notification eligibility: {outcome}",
+  "edge_cases": [
+    {
+      "id": "sole-attorney-deceased",
+      "description": "The sole attorney has also died",
+      "detection": "sole_attorney_also_deceased",
+      "action": "If you are a replacement attorney or family member, contact OPG directly. The LPA will be cancelled."
+    },
+    {
+      "id": "joint-attorneys-all-deceased",
+      "description": "All joint attorneys have died",
+      "detection": "all_attorneys_deceased",
+      "action": "Family member or executor should contact OPG. LPA will be cancelled."
+    },
+    {
+      "id": "cannot-find-original-lpa",
+      "description": "Original LPA document has been lost",
+      "detection": "original_lpa_lost",
+      "action": "Contact OPG to explain the situation. You may need to provide a certified copy or statutory declaration."
+    },
+    {
+      "id": "lpa-already-cancelled",
+      "description": "LPA was already revoked before death",
+      "detection": "lpa_status_revoked",
+      "action": "No action needed. The LPA was already cancelled before the donor's death."
+    }
+  ]
+}

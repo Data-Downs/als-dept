@@ -1,0 +1,89 @@
+{
+  "id": "hmrc.cancel-marriage-allowance.consent",
+  "version": "1.0.0",
+  "grants": [
+    {
+      "id": "identity-verification",
+      "description": "Verify your identity using your GOV.UK One Login credentials",
+      "data_shared": [
+        "full_name",
+        "date_of_birth",
+        "national_insurance_number"
+      ],
+      "source": "one-login",
+      "purpose": "To confirm you are authorised to cancel this Marriage Allowance claim",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "marriage-allowance-records",
+      "description": "Access your Marriage Allowance claim status and history from HMRC records",
+      "data_shared": [
+        "marriage_allowance_claim_id",
+        "claim_start_date",
+        "partner_name",
+        "partner_nino",
+        "current_tax_codes",
+        "claimant_identity"
+      ],
+      "source": "hmrc-marriage-allowance-system",
+      "purpose": "To verify you have an active claim and determine your authority to cancel",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "cancellation-reason",
+      "description": "Provide the reason for cancelling Marriage Allowance",
+      "data_shared": [
+        "cancellation_reason",
+        "relationship_status",
+        "separation_date_if_applicable"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To determine the effective date of cancellation and tax implications",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "tax-impact-acknowledgement",
+      "description": "Acknowledge understanding of tax implications of cancellation",
+      "data_shared": [
+        "effective_cancellation_date",
+        "new_tax_code_for_self",
+        "new_tax_code_for_partner",
+        "potential_underpayment_amount"
+      ],
+      "source": "hmrc-calculation",
+      "purpose": "To ensure you understand the tax consequences, including potential underpayment",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "tax-code-modification",
+      "description": "Authorise HMRC to modify your tax code and your partner's tax code",
+      "data_shared": [
+        "current_tax_code",
+        "new_tax_code",
+        "employer_details_if_applicable"
+      ],
+      "source": "hmrc-paye-system",
+      "purpose": "To remove the 'M' or 'N' suffix from your tax codes and restore normal Personal Allowances",
+      "duration": "until-revoked",
+      "required": true
+    }
+  ],
+  "revocation": {
+    "mechanism": "Contact HMRC Marriage Allowance enquiries on 0300 200 3300 before cancellation is processed",
+    "effect": "Cancellation will be stopped. Marriage Allowance will continue until you cancel again or it is ended by circumstance change."
+  },
+  "delegation": {
+    "agent_identity": "GOV.UK AI Agent",
+    "scopes": [
+      "read-marriage-allowance-status",
+      "read-tax-codes",
+      "calculate-cancellation-impact",
+      "submit-cancellation-request"
+    ],
+    "limitations": "Agent cannot cancel Marriage Allowance without your explicit final confirmation of the cancellation reason and acknowledgement of tax implications. Agent cannot cancel on behalf of your partner unless you confirm the relationship has ended. Agent cannot contact your partner about the cancellation."
+  }
+}

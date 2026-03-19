@@ -1,0 +1,108 @@
+{
+  "id": "dwp.pension-credit.eligibility",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "state-pension-age",
+      "description": "Applicant must have reached State Pension age",
+      "condition": {
+        "field": "reached_state_pension_age",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "You must have reached State Pension age to qualify for Pension Credit. Check when you'll reach State Pension age.",
+      "evidence_source": "identity-verified",
+      "alternative_service": "dwp.universal-credit"
+    },
+    {
+      "id": "gb-resident",
+      "description": "Applicant must live in England, Scotland or Wales",
+      "condition": {
+        "field": "residence",
+        "operator": "in",
+        "value": [
+          "England",
+          "Scotland",
+          "Wales"
+        ]
+      },
+      "reason_if_failed": "This service is for residents of England, Scotland and Wales only. Northern Ireland has a separate Pension Credit service.",
+      "alternative_service": "nidirect.pension-credit"
+    },
+    {
+      "id": "eu-settlement-status",
+      "description": "EU/EEA/Swiss citizens must have settled or pre-settled status",
+      "condition": {
+        "field": "eu_settlement_status",
+        "operator": "in",
+        "value": [
+          "settled",
+          "pre-settled",
+          "not-applicable"
+        ]
+      },
+      "reason_if_failed": "If you're from the EU, Switzerland, Norway, Iceland or Liechtenstein, you need settled or pre-settled status under the EU Settlement Scheme.",
+      "evidence_source": "identity-verified",
+      "triggers_handoff": true
+    },
+    {
+      "id": "income-threshold",
+      "description": "Weekly income below threshold (£227.10 single, £346.60 couple) or has qualifying circumstances",
+      "condition": {
+        "field": "weekly_income_below_threshold_or_qualifying",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "Your income may be too high for Pension Credit, but you might still qualify if you have a disability, care for someone, have savings or have housing costs."
+    },
+    {
+      "id": "not-getting-universal-credit",
+      "description": "Neither applicant nor partner can be getting Universal Credit",
+      "condition": {
+        "field": "household_on_universal_credit",
+        "operator": "==",
+        "value": false
+      },
+      "reason_if_failed": "You cannot get Pension Credit and Universal Credit at the same time. If you or your partner gets Universal Credit, you're not eligible for Pension Credit."
+    }
+  ],
+  "explanation_template": "Pension Credit eligibility: {outcome}. Estimated weekly top-up: £{amount}",
+  "edge_cases": [
+    {
+      "id": "partner-under-state-pension-age",
+      "description": "Partner is under State Pension age",
+      "detection": "partner_under_spa",
+      "action": "Complex eligibility rules apply. If relationship started after 15 May 2019, not eligible for Pension Credit (route to Universal Credit). If before and already claiming, may continue. Requires human assessment."
+    },
+    {
+      "id": "care-home-resident",
+      "description": "Applicant in care home for more than 4 weeks",
+      "detection": "care_home_duration > 4 weeks",
+      "action": "Different calculation rules apply. Must report funding changes. Requires assessment of care home fees, NHS/council funding, and residency status."
+    },
+    {
+      "id": "assessed-income-period",
+      "description": "Applicant has an Assessed Income Period (AIP) - aged 75+ and started claiming before 6 April 2016",
+      "detection": "has_aip",
+      "action": "Different reporting requirements. Applicant does not need to report changes to pensions, savings or investments unless AIP ends due to household change."
+    },
+    {
+      "id": "temporary-absence-gb",
+      "description": "Applicant temporarily outside Great Britain",
+      "detection": "outside_gb",
+      "action": "Can continue for up to 4 weeks (or 8 weeks for bereavement, or 26 weeks for medical treatment). Must notify Pension Service before leaving. Cannot apply while already abroad."
+    },
+    {
+      "id": "deferred-pension",
+      "description": "Applicant has deferred State Pension or private pension entitlement",
+      "detection": "deferred_pension",
+      "action": "Notional income applied. Expected pension amount counts as income even if not being claimed. Cannot build up extra State Pension deferral while on Pension Credit."
+    },
+    {
+      "id": "savings-credit-only",
+      "description": "Applicant reached State Pension age before 6 April 2016 and may qualify for Savings Credit only",
+      "detection": "spa_before_2016 && savings_or_second_pension",
+      "action": "May be eligible for Savings Credit even if income too high for Guarantee Credit. Up to £17.30/week single, £19.36/week couple. Requires separate assessment."
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "id": "dwp-ni-number",
+  "version": "1.0.0",
+  "name": "National Insurance number",
+  "description": "Apply online via DWP. Required before starting work or claiming benefits in the UK.",
+  "department": "DWP",
+  "input_schema": {
+    "type": "object"
+  },
+  "output_schema": {
+    "type": "object"
+  },
+  "source": "graph",
+  "serviceType": "registration",
+  "govuk_url": "https://www.gov.uk/apply-national-insurance-number",
+  "eligibility_summary": "Required before starting work or claiming benefits in the UK. Apply online via DWP. Must have the right to work in the UK. UK citizens should already have one — applies mainly to new arrivals.",
+  "proactive": true,
+  "gated": true
+}

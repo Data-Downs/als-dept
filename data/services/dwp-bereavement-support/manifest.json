@@ -1,0 +1,19 @@
+{
+  "id": "dwp-bereavement-support",
+  "version": "1.0.0",
+  "name": "Bereavement Support Payment",
+  "description": "If partner died, you are under State Pension age, and they had a NI record. Lump sum plus monthly payments.",
+  "department": "DWP",
+  "input_schema": {
+    "type": "object"
+  },
+  "output_schema": {
+    "type": "object"
+  },
+  "source": "graph",
+  "serviceType": "benefit",
+  "govuk_url": "https://www.gov.uk/bereavement-support-payment",
+  "eligibility_summary": "A lump sum (up to £3,500) plus up to 18 monthly payments (up to £350/month) if your spouse or civil partner died and you are under State Pension age. Must claim within 3 months for full amount.",
+  "proactive": true,
+  "gated": false
+}

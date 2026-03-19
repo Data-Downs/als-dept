@@ -1,0 +1,95 @@
+{
+  "id": "hmrc-mtd.states",
+  "version": "1.0.0",
+  "states": [
+    {
+      "id": "not-started",
+      "type": "initial"
+    },
+    {
+      "id": "identity-verified"
+    },
+    {
+      "id": "eligibility-checked"
+    },
+    {
+      "id": "consent-given"
+    },
+    {
+      "id": "software-details-provided"
+    },
+    {
+      "id": "software-connected",
+      "receipt": true
+    },
+    {
+      "id": "enrolment-confirmed",
+      "receipt": true
+    },
+    {
+      "id": "completed",
+      "type": "terminal",
+      "receipt": true
+    },
+    {
+      "id": "exemption-granted",
+      "type": "terminal",
+      "receipt": true
+    },
+    {
+      "id": "handed-off",
+      "type": "terminal",
+      "receipt": true
+    }
+  ],
+  "transitions": [
+    {
+      "from": "not-started",
+      "to": "identity-verified",
+      "trigger": "verify-identity"
+    },
+    {
+      "from": "identity-verified",
+      "to": "eligibility-checked",
+      "trigger": "check-eligibility"
+    },
+    {
+      "from": "eligibility-checked",
+      "to": "consent-given",
+      "trigger": "grant-consent",
+      "condition": "eligible"
+    },
+    {
+      "from": "eligibility-checked",
+      "to": "exemption-granted",
+      "trigger": "grant-exemption",
+      "condition": "exempt"
+    },
+    {
+      "from": "eligibility-checked",
+      "to": "handed-off",
+      "trigger": "handoff",
+      "condition": "complex-case"
+    },
+    {
+      "from": "consent-given",
+      "to": "software-details-provided",
+      "trigger": "provide-software-details"
+    },
+    {
+      "from": "software-details-provided",
+      "to": "software-connected",
+      "trigger": "connect-software"
+    },
+    {
+      "from": "software-connected",
+      "to": "enrolment-confirmed",
+      "trigger": "confirm-enrolment"
+    },
+    {
+      "from": "enrolment-confirmed",
+      "to": "completed",
+      "trigger": "complete"
+    }
+  ]
+}

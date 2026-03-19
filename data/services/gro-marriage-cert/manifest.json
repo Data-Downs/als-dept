@@ -1,0 +1,19 @@
+{
+  "id": "gro-marriage-cert",
+  "version": "1.0.0",
+  "name": "Marriage / CP certificate",
+  "description": "Gateway document for name changes, Marriage Allowance and benefit updates.",
+  "department": "GRO",
+  "input_schema": {
+    "type": "object"
+  },
+  "output_schema": {
+    "type": "object"
+  },
+  "source": "graph",
+  "serviceType": "document",
+  "govuk_url": "https://www.gov.uk/order-copy-birth-death-marriage-certificate",
+  "eligibility_summary": "Issued after a marriage or civil partnership ceremony. Acts as the gateway document for name changes, Marriage Allowance, and updating government records.",
+  "proactive": true,
+  "gated": true
+}

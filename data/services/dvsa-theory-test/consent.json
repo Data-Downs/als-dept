@@ -1,0 +1,99 @@
+{
+  "id": "dvsa.theory-test.consent",
+  "version": "1.0.0",
+  "grants": [
+    {
+      "id": "identity-verification",
+      "description": "Verify your identity using your GOV.UK One Login credentials",
+      "data_shared": [
+        "full_name",
+        "date_of_birth",
+        "address"
+      ],
+      "source": "one-login",
+      "purpose": "To confirm your identity and match your booking to your driving licence record",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "driving-licence-check",
+      "description": "Access your driving licence record from DVLA to verify eligibility",
+      "data_shared": [
+        "driving_licence_number",
+        "licence_category",
+        "licence_status",
+        "entitlements"
+      ],
+      "source": "dvla",
+      "purpose": "To verify you have a valid provisional or full licence and check which theory test you need",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "theory-test-history",
+      "description": "Check your theory test history with DVSA",
+      "data_shared": [
+        "previous_test_dates",
+        "previous_test_results",
+        "theory_pass_certificate_number"
+      ],
+      "source": "dvsa",
+      "purpose": "To verify whether you already have a valid theory test pass or need to retake",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "payment-processing",
+      "description": "Process your payment for the theory test (£23 for car/motorcycle)",
+      "data_shared": [
+        "payment_card_details",
+        "billing_address"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To collect the theory test fee",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "test-centre-notification",
+      "description": "Share your personal details and any special requirements with the test centre",
+      "data_shared": [
+        "full_name",
+        "date_of_birth",
+        "contact_details",
+        "accommodation_requirements"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To enable the test centre to prepare for your visit and provide any required accommodations",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "email-notifications",
+      "description": "Send booking confirmation, reminders and result notifications to your email",
+      "data_shared": [
+        "email_address",
+        "booking_reference",
+        "test_date_time"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To keep you informed about your theory test booking and results",
+      "duration": "until-revoked",
+      "required": true
+    }
+  ],
+  "revocation": {
+    "mechanism": "Cancel your booking through the DVSA theory test booking system or by calling 0300 200 1122",
+    "effect": "Your test booking will be cancelled. Refund policy depends on how much notice you give (at least 3 clear working days for full refund)."
+  },
+  "delegation": {
+    "agent_identity": "GOV.UK AI Agent",
+    "scopes": [
+      "read-driving-licence-data",
+      "read-theory-test-history",
+      "search-available-slots",
+      "select-test-centre"
+    ],
+    "limitations": "Agent cannot make payment on your behalf. Agent cannot confirm final booking without your explicit approval. Agent cannot specify medical or disability accommodations without your explicit instruction. Agent cannot cancel or reschedule an existing booking without your explicit confirmation."
+  }
+}

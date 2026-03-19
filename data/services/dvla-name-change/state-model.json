@@ -1,0 +1,127 @@
+{
+  "id": "dvla-name-change.states",
+  "version": "1.0.0",
+  "states": [
+    {
+      "id": "not-started",
+      "type": "initial"
+    },
+    {
+      "id": "identity-verified"
+    },
+    {
+      "id": "eligibility-checked"
+    },
+    {
+      "id": "consent-given"
+    },
+    {
+      "id": "evidence-confirmed"
+    },
+    {
+      "id": "form-completed"
+    },
+    {
+      "id": "amount-calculated",
+      "receipt": true
+    },
+    {
+      "id": "payment-made",
+      "receipt": true
+    },
+    {
+      "id": "application-ready"
+    },
+    {
+      "id": "submitted",
+      "receipt": true
+    },
+    {
+      "id": "completed",
+      "type": "terminal",
+      "receipt": true
+    },
+    {
+      "id": "rejected",
+      "type": "terminal",
+      "receipt": true
+    },
+    {
+      "id": "handed-off",
+      "type": "terminal",
+      "receipt": true
+    }
+  ],
+  "transitions": [
+    {
+      "from": "not-started",
+      "to": "identity-verified",
+      "trigger": "verify-identity"
+    },
+    {
+      "from": "identity-verified",
+      "to": "eligibility-checked",
+      "trigger": "check-eligibility"
+    },
+    {
+      "from": "eligibility-checked",
+      "to": "consent-given",
+      "trigger": "grant-consent",
+      "condition": "eligible"
+    },
+    {
+      "from": "eligibility-checked",
+      "to": "rejected",
+      "trigger": "reject",
+      "condition": "not-eligible"
+    },
+    {
+      "from": "eligibility-checked",
+      "to": "handed-off",
+      "trigger": "handoff",
+      "condition": "northern-ireland-or-edge-case"
+    },
+    {
+      "from": "consent-given",
+      "to": "evidence-confirmed",
+      "trigger": "confirm-evidence"
+    },
+    {
+      "from": "evidence-confirmed",
+      "to": "form-completed",
+      "trigger": "complete-form"
+    },
+    {
+      "from": "form-completed",
+      "to": "amount-calculated",
+      "trigger": "calculate-amount"
+    },
+    {
+      "from": "amount-calculated",
+      "to": "payment-made",
+      "trigger": "make-payment",
+      "condition": "fee-required"
+    },
+    {
+      "from": "amount-calculated",
+      "to": "application-ready",
+      "trigger": "skip-payment",
+      "condition": "no-fee"
+    },
+    {
+      "from": "payment-made",
+      "to": "application-ready",
+      "trigger": "confirm-payment"
+    },
+    {
+      "from": "application-ready",
+      "to": "submitted",
+      "trigger": "submit-application"
+    },
+    {
+      "from": "submitted",
+      "to": "completed",
+      "trigger": "complete"
+    }
+  ]
+}

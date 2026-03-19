@@ -1,0 +1,77 @@
+{
+  "id": "tpr.workplace-pension.eligibility",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "is-employer",
+      "description": "Entity must be an employer who deducts tax and National Insurance from wages",
+      "condition": {
+        "field": "paye_scheme_reference",
+        "operator": "exists"
+      },
+      "reason_if_failed": "You must be an employer registered for PAYE to have workplace pension duties",
+      "evidence_source": "hmrc-paye-record"
+    },
+    {
+      "id": "has-staff",
+      "description": "Employer must have at least one member of staff",
+      "condition": {
+        "field": "staff_count",
+        "operator": ">=",
+        "value": 1
+      },
+      "reason_if_failed": "Workplace pension duties begin when your first member of staff starts working for you",
+      "evidence_source": "payroll-system"
+    },
+    {
+      "id": "has-eligible-workers",
+      "description": "At least one worker must meet auto-enrollment criteria",
+      "condition": {
+        "field": "eligible_workers_count",
+        "operator": ">=",
+        "value": 1
+      },
+      "reason_if_failed": "You must have at least one worker aged 22 to State Pension age earning £10,000+/year who normally works in the UK",
+      "evidence_source": "payroll-system",
+      "alternative_service": "tpr.pension-duties-checker"
+    },
+    {
+      "id": "before-first-payday",
+      "description": "Scheme must be set up before the first payday after duties start date",
+      "condition": {
+        "field": "days_until_first_payday",
+        "operator": ">=",
+        "value": 0
+      },
+      "reason_if_failed": "You must set up the scheme before your first payday. Contact TPR immediately if you have missed this deadline.",
+      "triggers_handoff": true
+    }
+  ],
+  "explanation_template": "Workplace pension auto-enrollment obligation: {outcome}",
+  "edge_cases": [
+    {
+      "id": "existing-scheme",
+      "description": "Employer already has a workplace pension scheme",
+      "detection": "existing_pension_scheme",
+      "action": "Verify the existing scheme meets auto-enrollment rules. If not, you must set up a qualifying scheme."
+    },
+    {
+      "id": "late-setup",
+      "description": "Employer has already passed first payday without setting up scheme",
+      "detection": "first_payday_passed",
+      "action": "Immediate handoff to TPR. Employer may face penalties. Must backdate enrollment and contributions."
+    },
+    {
+      "id": "multinational-staff",
+      "description": "Workers who are based in UK but travel abroad for work",
+      "detection": "international_workers",
+      "action": "Workers who normally work in the UK are eligible even if they travel abroad. Verify 'normally works in UK' criteria with TPR guidance."
+    },
+    {
+      "id": "fluctuating-earnings",
+      "description": "Workers whose earnings fluctuate around the £10,000 threshold",
+      "detection": "variable_earnings",
+      "action": "Monitor earnings each pay period. Enroll workers within 6 weeks when they first meet the £10,000/year threshold."
+    }
+  ]
+}

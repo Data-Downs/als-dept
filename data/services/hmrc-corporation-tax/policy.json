@@ -1,0 +1,81 @@
+{
+  "id": "hmrc.corporation-tax.eligibility",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "limited-company",
+      "description": "Applicant must be a limited company registered at Companies House",
+      "condition": {
+        "field": "company_type",
+        "operator": "in",
+        "value": [
+          "limited",
+          "plc",
+          "limited-liability-partnership"
+        ]
+      },
+      "reason_if_failed": "Only limited companies registered at Companies House must register for Corporation Tax. Sole traders and partnerships use Self Assessment instead.",
+      "evidence_source": "companies-house",
+      "alternative_service": "hmrc.self-assessment"
+    },
+    {
+      "id": "has-companies-house-number",
+      "description": "Company must have a valid Companies House registration number",
+      "condition": {
+        "field": "company_number",
+        "operator": "exists"
+      },
+      "reason_if_failed": "You must be registered at Companies House before registering for Corporation Tax",
+      "alternative_service": "companies-house.register-company"
+    },
+    {
+      "id": "within-registration-window",
+      "description": "Must register within 3 months of starting to trade or before first accounting period ends",
+      "condition": {
+        "field": "days_since_trading_start",
+        "operator": "<=",
+        "value": 90
+      },
+      "reason_if_failed": "You should have registered within 3 months of starting to trade. Late registration may result in penalties.",
+      "triggers_handoff": true
+    },
+    {
+      "id": "uk-based-or-trading",
+      "description": "Company must be UK-based or trading in the UK",
+      "condition": {
+        "field": "uk_trading_presence",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "Corporation Tax only applies to UK companies or non-UK companies trading through a UK permanent establishment",
+      "triggers_handoff": true
+    }
+  ],
+  "explanation_template": "Corporation Tax registration eligibility: {outcome}",
+  "edge_cases": [
+    {
+      "id": "dormant-company",
+      "description": "Company is dormant (not trading and no significant accounting transactions)",
+      "detection": "company_status == 'dormant'",
+      "action": "Dormant companies may not need to register immediately. You must register when you start trading. Contact HMRC for guidance."
+    },
+    {
+      "id": "group-structure",
+      "description": "Company is part of a corporate group with existing HMRC relationship",
+      "detection": "parent_company_utr",
+      "action": "Group companies have special registration requirements. Route to HMRC group registration team."
+    },
+    {
+      "id": "non-resident-company",
+      "description": "Non-UK company with UK permanent establishment",
+      "detection": "jurisdiction != 'UK'",
+      "action": "Non-resident companies have different registration requirements. Route to HMRC International team."
+    },
+    {
+      "id": "already-registered",
+      "description": "Company already has a Corporation Tax UTR",
+      "detection": "corporation_tax_utr",
+      "action": "Company is already registered. Use existing UTR for filing returns. No need to re-register."
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "id": "hmrc-register-sole-trader",
+  "version": "1.0.0",
+  "name": "Register as sole trader",
+  "description": "Tell HMRC you are self-employed. Done via Self Assessment registration.",
+  "department": "HMRC",
+  "input_schema": {
+    "type": "object"
+  },
+  "output_schema": {
+    "type": "object"
+  },
+  "source": "graph",
+  "serviceType": "registration",
+  "govuk_url": "https://www.gov.uk/set-up-sole-trader",
+  "eligibility_summary": "Anyone starting to work for themselves as a sole trader must register with HMRC. Done via the Self Assessment registration process. Deadline is 5 October in the second tax year of trading.",
+  "proactive": true,
+  "gated": false
+}

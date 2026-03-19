@@ -1,0 +1,19 @@
+{
+  "id": "ho-citizenship",
+  "version": "1.0.0",
+  "name": "British citizenship (naturalisation)",
+  "description": "After 1 year of ILR. Language and residency requirements. AN1 form.",
+  "department": "Home Office",
+  "input_schema": {
+    "type": "object"
+  },
+  "output_schema": {
+    "type": "object"
+  },
+  "source": "graph",
+  "serviceType": "application",
+  "govuk_url": "https://www.gov.uk/become-a-british-citizen/naturalisation",
+  "eligibility_summary": "Apply to become a British citizen after holding ILR for at least 12 months. Must have lived in the UK for 5 years, with no more than 450 days abroad in that period and 90 days in the final year.",
+  "proactive": true,
+  "gated": true
+}

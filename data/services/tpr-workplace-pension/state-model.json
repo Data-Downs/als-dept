@@ -1,0 +1,109 @@
+{
+  "id": "tpr.workplace-pension.states",
+  "version": "1.0.0",
+  "states": [
+    {
+      "id": "not-started",
+      "type": "initial"
+    },
+    {
+      "id": "identity-verified"
+    },
+    {
+      "id": "obligation-confirmed"
+    },
+    {
+      "id": "consent-given"
+    },
+    {
+      "id": "staff-assessed"
+    },
+    {
+      "id": "scheme-selected"
+    },
+    {
+      "id": "contributions-calculated",
+      "receipt": true
+    },
+    {
+      "id": "scheme-registered"
+    },
+    {
+      "id": "staff-notified",
+      "receipt": true
+    },
+    {
+      "id": "declaration-submitted",
+      "receipt": true
+    },
+    {
+      "id": "completed",
+      "type": "terminal",
+      "receipt": true
+    },
+    {
+      "id": "handed-off",
+      "type": "terminal",
+      "receipt": true
+    }
+  ],
+  "transitions": [
+    {
+      "from": "not-started",
+      "to": "identity-verified",
+      "trigger": "verify-identity"
+    },
+    {
+      "from": "identity-verified",
+      "to": "obligation-confirmed",
+      "trigger": "confirm-obligation"
+    },
+    {
+      "from": "obligation-confirmed",
+      "to": "consent-given",
+      "trigger": "grant-consent",
+      "condition": "has-obligation"
+    },
+    {
+      "from": "obligation-confirmed",
+      "to": "handed-off",
+      "trigger": "handoff",
+      "condition": "late-or-complex"
+    },
+    {
+      "from": "consent-given",
+      "to": "staff-assessed",
+      "trigger": "assess-staff"
+    },
+    {
+      "from": "staff-assessed",
+      "to": "scheme-selected",
+      "trigger": "select-scheme"
+    },
+    {
+      "from": "scheme-selected",
+      "to": "contributions-calculated",
+      "trigger": "calculate-contributions"
+    },
+    {
+      "from": "contributions-calculated",
+      "to": "scheme-registered",
+      "trigger": "register-scheme"
+    },
+    {
+      "from": "scheme-registered",
+      "to": "staff-notified",
+      "trigger": "notify-staff"
+    },
+    {
+      "from": "staff-notified",
+      "to": "declaration-submitted",
+      "trigger": "submit-declaration"
+    },
+    {
+      "from": "declaration-submitted",
+      "to": "completed",
+      "trigger": "complete"
+    }
+  ]
+}

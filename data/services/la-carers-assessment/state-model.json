@@ -1,0 +1,131 @@
+{
+  "id": "la-carers-assessment.states",
+  "version": "1.0.0",
+  "states": [
+    {
+      "id": "not-started",
+      "type": "initial"
+    },
+    {
+      "id": "identity-verified"
+    },
+    {
+      "id": "eligibility-checked"
+    },
+    {
+      "id": "consent-given"
+    },
+    {
+      "id": "caring-role-described"
+    },
+    {
+      "id": "support-needs-detailed"
+    },
+    {
+      "id": "details-submitted"
+    },
+    {
+      "id": "assessment-scheduled"
+    },
+    {
+      "id": "assessment-conducted"
+    },
+    {
+      "id": "support-plan-drafted"
+    },
+    {
+      "id": "decision",
+      "receipt": true
+    },
+    {
+      "id": "completed",
+      "type": "terminal",
+      "receipt": true
+    },
+    {
+      "id": "rejected",
+      "type": "terminal",
+      "receipt": true
+    },
+    {
+      "id": "handed-off",
+      "type": "terminal",
+      "receipt": true
+    }
+  ],
+  "transitions": [
+    {
+      "from": "not-started",
+      "to": "identity-verified",
+      "trigger": "verify-identity"
+    },
+    {
+      "from": "identity-verified",
+      "to": "eligibility-checked",
+      "trigger": "check-eligibility"
+    },
+    {
+      "from": "eligibility-checked",
+      "to": "consent-given",
+      "trigger": "grant-consent",
+      "condition": "eligible"
+    },
+    {
+      "from": "eligibility-checked",
+      "to": "rejected",
+      "trigger": "reject",
+      "condition": "not-eligible"
+    },
+    {
+      "from": "eligibility-checked",
+      "to": "handed-off",
+      "trigger": "handoff",
+      "condition": "edge-case"
+    },
+    {
+      "from": "consent-given",
+      "to": "caring-role-described",
+      "trigger": "describe-caring-role"
+    },
+    {
+      "from": "caring-role-described",
+      "to": "support-needs-detailed",
+      "trigger": "detail-support-needs"
+    },
+    {
+      "from": "support-needs-detailed",
+      "to": "details-submitted",
+      "trigger": "submit-details"
+    },
+    {
+      "from": "details-submitted",
+      "to": "assessment-scheduled",
+      "trigger": "schedule-assessment"
+    },
+    {
+      "from": "assessment-scheduled",
+      "to": "assessment-conducted",
+      "trigger": "conduct-assessment"
+    },
+    {
+      "from": "assessment-conducted",
+      "to": "support-plan-drafted",
+      "trigger": "draft-support-plan"
+    },
+    {
+      "from": "support-plan-drafted",
+      "to": "decision",
+      "trigger": "make-decision"
+    },
+    {
+      "from": "decision",
+      "to": "completed",
+      "trigger": "approve"
+    },
+    {
+      "from": "decision",
+      "to": "rejected",
+      "trigger": "reject-application"
+    }
+  ]
+}

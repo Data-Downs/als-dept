@@ -1,0 +1,104 @@
+{
+  "id": "la-send-ehc.consent",
+  "version": "1.0.0",
+  "grants": [
+    {
+      "id": "identity-verification",
+      "description": "Verify your identity (or your child's identity) using GOV.UK One Login",
+      "data_shared": [
+        "full_name",
+        "date_of_birth",
+        "national_insurance_number",
+        "address"
+      ],
+      "source": "one-login",
+      "purpose": "To confirm the identity of the child or young person and the parent/carer making the request",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "medical-records-sharing",
+      "description": "Share medical and health assessments with the local authority",
+      "data_shared": [
+        "gp_records",
+        "hospital_assessments",
+        "specialist_reports",
+        "diagnosis_information",
+        "therapy_records"
+      ],
+      "source": "nhs-gp-and-hospitals",
+      "purpose": "To assess the child's health needs and determine appropriate support in the EHC plan",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "educational-records-sharing",
+      "description": "Share educational records from school, nursery or childminder",
+      "data_shared": [
+        "sen_support_history",
+        "academic_progress",
+        "behaviour_records",
+        "senco_reports",
+        "teacher_assessments"
+      ],
+      "source": "school-or-nursery",
+      "purpose": "To assess the child's educational needs and current level of support being provided",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "social-care-sharing",
+      "description": "Share social care records if the child is known to local authority social services",
+      "data_shared": [
+        "social_worker_assessments",
+        "care_plan",
+        "family_support_history"
+      ],
+      "source": "local-authority-social-care",
+      "purpose": "To assess the child's social care needs and coordinate support across education, health and social care",
+      "duration": "until-revoked",
+      "required": false
+    },
+    {
+      "id": "parent-evidence-submission",
+      "description": "Submit your own letter and evidence describing your child's needs",
+      "data_shared": [
+        "parent_description_of_needs",
+        "supporting_documents",
+        "observations_of_child"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To provide the parent/carer perspective on the child's needs and daily challenges",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "multi-agency-assessment",
+      "description": "Allow the local authority to coordinate with multiple professionals during the 20-week assessment",
+      "data_shared": [
+        "assessment_findings",
+        "professional_recommendations",
+        "coordinated_support_plan"
+      ],
+      "source": "local-authority-assessment-team",
+      "purpose": "To create a comprehensive EHC plan that addresses educational, health and social needs",
+      "duration": "until-revoked",
+      "required": true
+    }
+  ],
+  "revocation": {
+    "mechanism": "Contact your local authority SEND team or revoke through your Local Offer website. Young people aged 16+ can revoke their own consent.",
+    "effect": "Assessment will be paused or cancelled if consent is revoked before completion. Existing EHC plan remains in place until next review if consent is revoked after plan is issued."
+  },
+  "delegation": {
+    "agent_identity": "GOV.UK AI Agent or Independent Supporter",
+    "scopes": [
+      "gather-evidence",
+      "submit-documentation",
+      "track-assessment-progress",
+      "request-information",
+      "coordinate-appointments"
+    ],
+    "limitations": "Agent cannot select schools on your behalf without explicit confirmation. Agent cannot accept or reject the draft or final EHC plan without your explicit approval. Agent cannot initiate SEND Tribunal appeals without your explicit instruction. Agent cannot make decisions about personal budget arrangements. For young people aged 16+, only the young person (not parents) can delegate to an agent unless lasting power of attorney is in place."
+  }
+}

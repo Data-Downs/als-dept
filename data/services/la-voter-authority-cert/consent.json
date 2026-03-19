@@ -1,0 +1,86 @@
+{
+  "id": "la.voter-authority-cert.consent",
+  "version": "1.0.0",
+  "grants": [
+    {
+      "id": "identity-verification",
+      "description": "Verify your identity using your National Insurance number and personal details",
+      "data_shared": [
+        "full_name",
+        "date_of_birth",
+        "address",
+        "national_insurance_number"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To confirm your identity and that you are registered to vote before issuing a Voter Authority Certificate",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "alternative-identity-documents",
+      "description": "Provide alternative identity documents if you do not have a National Insurance number",
+      "data_shared": [
+        "birth_certificate",
+        "bank_statement",
+        "utility_bill"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To verify your identity without a National Insurance number",
+      "duration": "session",
+      "required": false
+    },
+    {
+      "id": "digital-photo",
+      "description": "Submit a digital photo of yourself for the Voter Authority Certificate",
+      "data_shared": [
+        "digital_photo"
+      ],
+      "source": "citizen-provided",
+      "purpose": "Your photo will be printed on the Voter Authority Certificate for use at polling stations",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "electoral-register-check",
+      "description": "Check your details on the electoral register",
+      "data_shared": [
+        "full_name",
+        "address",
+        "electoral_register_status"
+      ],
+      "source": "electoral-register",
+      "purpose": "To confirm you are registered to vote and match your application to your electoral register entry",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "local-council-processing",
+      "description": "Share your application with your local electoral registration office for assessment",
+      "data_shared": [
+        "full_name",
+        "date_of_birth",
+        "address",
+        "national_insurance_number",
+        "digital_photo"
+      ],
+      "source": "application-data",
+      "purpose": "Your local council will assess your application and issue your Voter Authority Certificate if approved",
+      "duration": "until-revoked",
+      "required": true
+    }
+  ],
+  "revocation": {
+    "mechanism": "Contact your local electoral registration office or revoke through your GOV.UK account",
+    "effect": "Application will be cancelled if consent is revoked before the certificate is issued. Any issued certificate will remain valid until its expiry date."
+  },
+  "delegation": {
+    "agent_identity": "GOV.UK AI Agent",
+    "scopes": [
+      "read-personal-data",
+      "read-electoral-register",
+      "submit-photo",
+      "submit-to-council"
+    ],
+    "limitations": "Agent cannot upload a photo without citizen explicit confirmation that the photo meets Electoral Commission requirements. Agent cannot submit the application without citizen final review and approval of all details. Agent cannot provide false information about lack of existing photo ID."
+  }
+}

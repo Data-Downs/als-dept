@@ -1,0 +1,127 @@
+{
+  "id": "la-school-place.eligibility",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "child-age-reception",
+      "description": "Child must be age 4-5 for Reception entry",
+      "condition": {
+        "field": "child_age",
+        "operator": ">=",
+        "value": 4
+      },
+      "reason_if_failed": "Your child must be at least 4 years old by 31 August of the school year to apply for Reception",
+      "evidence_source": "identity-verified"
+    },
+    {
+      "id": "child-age-year7",
+      "description": "Child must be age 11-12 for Year 7 entry",
+      "condition": {
+        "field": "child_age",
+        "operator": ">=",
+        "value": 11
+      },
+      "reason_if_failed": "Your child must be at least 11 years old by 31 August of the school year to apply for Year 7",
+      "evidence_source": "identity-verified"
+    },
+    {
+      "id": "parental-responsibility",
+      "description": "Applicant must have parental responsibility for the child",
+      "condition": {
+        "field": "parental_responsibility",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "You must have parental responsibility to apply for a school place. Contact your local authority for advice.",
+      "triggers_handoff": true
+    },
+    {
+      "id": "uk-resident",
+      "description": "Child must be UK resident or have right to remain",
+      "condition": {
+        "field": "uk_residency_status",
+        "operator": "in",
+        "value": [
+          "citizen",
+          "settled",
+          "pre-settled",
+          "refugee",
+          "humanitarian-protection"
+        ]
+      },
+      "reason_if_failed": "Your child must be a UK resident or have right to remain to apply for a state school place",
+      "evidence_source": "identity-verified"
+    },
+    {
+      "id": "local-authority-area",
+      "description": "Must apply through the local authority where the child lives",
+      "condition": {
+        "field": "child_address_postcode",
+        "operator": "exists"
+      },
+      "reason_if_failed": "You must provide the child's home address to determine which local authority to apply through",
+      "evidence_source": "citizen-provided"
+    },
+    {
+      "id": "deadline-primary",
+      "description": "Primary applications must be submitted by 15 January",
+      "condition": {
+        "field": "application_date",
+        "operator": "<=",
+        "value": "current-year-01-15"
+      },
+      "reason_if_failed": "The deadline for primary Reception applications was 15 January. You can still apply but your application will be considered late.",
+      "evidence_source": "system-timestamp"
+    },
+    {
+      "id": "deadline-secondary",
+      "description": "Secondary applications must be submitted by 31 October",
+      "condition": {
+        "field": "application_date",
+        "operator": "<=",
+        "value": "previous-year-10-31"
+      },
+      "reason_if_failed": "The deadline for secondary Year 7 applications was 31 October. You can still apply but your application will be considered late.",
+      "evidence_source": "system-timestamp"
+    }
+  ],
+  "explanation_template": "School place application eligibility: {outcome}",
+  "edge_cases": [
+    {
+      "id": "send-needs",
+      "description": "Child has special educational needs requiring an Education, Health and Care (EHC) plan",
+      "detection": "has_ehc_plan",
+      "action": "Route to SEND team. School place will be named in EHC plan through separate process."
+    },
+    {
+      "id": "looked-after-child",
+      "description": "Child is in care or previously in care (highest admission priority)",
+      "detection": "looked_after_status",
+      "action": "Flag as priority case. Local authority will coordinate with virtual school head."
+    },
+    {
+      "id": "medical-social-reasons",
+      "description": "Exceptional medical or social reasons for specific school placement",
+      "detection": "medical_social_evidence",
+      "action": "Route to admissions panel. Supporting evidence from medical/social professional required."
+    },
+    {
+      "id": "moving-house",
+      "description": "Family is moving house during application period",
+      "detection": "moving_house",
+      "action": "Accept proof of new address (exchange of contracts, tenancy agreement). Preferences may need updating."
+    },
+    {
+      "id": "out-of-chronological-year",
+      "description": "Parent requesting delayed or accelerated entry (summer born, gifted, etc.)",
+      "detection": "non_standard_year_entry",
+      "action": "Route to admissions panel. Decision made case-by-case with headteacher consultation."
+    },
+    {
+      "id": "multiple-births",
+      "description": "Twins/triplets applying where only one place available at preferred school",
+      "detection": "multiple_birth_siblings",
+      "action": "Local authority will apply multiple birth tie-breaker policy if necessary."
+    }
+  ]
+}

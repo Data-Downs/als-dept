@@ -1,0 +1,115 @@
+{
+  "id": "other-right-to-work.eligibility",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "employer-registered",
+      "description": "Employer must be a legitimate UK business or individual authorized to employ",
+      "condition": {
+        "field": "employer_verified",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "You must be a registered employer to perform right to work checks",
+      "evidence_source": "employer-identity-verification"
+    },
+    {
+      "id": "valid-check-method",
+      "description": "Applicant must provide either online share code, original documents, or IDVT verification",
+      "condition": {
+        "field": "check_method",
+        "operator": "in",
+        "value": [
+          "online-share-code",
+          "document-check",
+          "idvt"
+        ]
+      },
+      "reason_if_failed": "You must use an approved method to verify right to work",
+      "evidence_source": "applicant-provided"
+    },
+    {
+      "id": "share-code-valid",
+      "description": "If using online check, share code must be valid and not expired",
+      "condition": {
+        "field": "share_code_status",
+        "operator": "==",
+        "value": "valid"
+      },
+      "reason_if_failed": "The share code provided is invalid or expired. Ask the applicant for a new share code or check their documents.",
+      "triggers_handoff": true
+    },
+    {
+      "id": "documents-genuine",
+      "description": "Documents must be genuine, original, unchanged and belong to the applicant",
+      "condition": {
+        "field": "documents_genuine",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "Documents appear to be invalid. You must not proceed with employment.",
+      "triggers_handoff": true
+    },
+    {
+      "id": "photos-match",
+      "description": "Photos across all documents must match the applicant",
+      "condition": {
+        "field": "photos_match",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "Photos do not match across documents or applicant. You must not proceed.",
+      "triggers_handoff": true
+    },
+    {
+      "id": "work-permission-valid",
+      "description": "For non-UK/Irish nationals, visa or permission must not be expired and must allow the type of work offered",
+      "condition": {
+        "field": "work_permission_valid",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "Applicant's right to work has expired or does not permit this type of employment",
+      "triggers_handoff": true
+    }
+  ],
+  "explanation_template": "Right to work verification: {outcome}",
+  "edge_cases": [
+    {
+      "id": "no-documents",
+      "description": "Applicant cannot show documents or online immigration status",
+      "detection": "cannot_provide_documents",
+      "action": "Employer must request Home Office to check the applicant's immigration status. Do not proceed with employment until Positive Verification Notice received."
+    },
+    {
+      "id": "certificate-of-application",
+      "description": "Applicant has Certificate of Application requiring Home Office check",
+      "detection": "has_certificate_of_application",
+      "action": "Contact Home Office Employer Enquiry helpline for verification before proceeding."
+    },
+    {
+      "id": "application-registration-card",
+      "description": "Applicant has Application Registration Card",
+      "detection": "has_application_registration_card",
+      "action": "Check that the card states the work offered is permitted. If unclear, contact Home Office."
+    },
+    {
+      "id": "student-worker",
+      "description": "Applicant is a student with work restrictions",
+      "detection": "is_student",
+      "action": "Must verify evidence of study and vacation times. Check work hour limitations on visa."
+    },
+    {
+      "id": "time-limited-permission",
+      "description": "Applicant has time-limited right to work requiring follow-up",
+      "detection": "time_limited_right_to_work",
+      "action": "Schedule follow-up check before permission expires. Set reminder for re-verification."
+    },
+    {
+      "id": "pre-1989-arrival",
+      "description": "Applicant arrived in UK before 1989 with no documents",
+      "detection": "arrived_before_1989",
+      "action": "Must request Home Office verification. These individuals may have indefinite leave to remain but lack documentation."
+    }
+  ]
+}

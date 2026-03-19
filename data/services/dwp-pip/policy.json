@@ -1,0 +1,169 @@
+{
+  "id": "dwp-pip.eligibility",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "age-minimum",
+      "description": "Applicant must be at least 16 years old",
+      "condition": {
+        "field": "age",
+        "operator": ">=",
+        "value": 16
+      },
+      "reason_if_failed": "You must be 16 or over to claim PIP",
+      "alternative_service": "dla.child-disability-living-allowance"
+    },
+    {
+      "id": "age-maximum",
+      "description": "Applicant must be under State Pension age for new claims",
+      "condition": {
+        "field": "under_state_pension_age",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "You cannot usually make a new PIP claim if you're over State Pension age. You can apply for Attendance Allowance instead.",
+      "alternative_service": "dwp.attendance-allowance",
+      "evidence_source": "date_of_birth"
+    },
+    {
+      "id": "long-term-condition",
+      "description": "Applicant must have a long-term health condition or disability",
+      "condition": {
+        "field": "has_health_condition",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "You must have a long-term physical or mental health condition or disability to claim PIP"
+    },
+    {
+      "id": "condition-duration",
+      "description": "Difficulties must be expected to last at least 12 months",
+      "condition": {
+        "field": "expected_duration_months",
+        "operator": ">=",
+        "value": 12
+      },
+      "reason_if_failed": "Your difficulties must be expected to last for at least 12 months from when they started"
+    },
+    {
+      "id": "daily-living-or-mobility",
+      "description": "Applicant must have difficulty with daily living tasks or getting around",
+      "condition": {
+        "field": "has_daily_living_or_mobility_difficulty",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "You must have difficulty doing certain everyday tasks or getting around because of your condition"
+    },
+    {
+      "id": "uk-residency",
+      "description": "Applicant must be living in England or Wales when applying",
+      "condition": {
+        "field": "jurisdiction",
+        "operator": "in",
+        "value": [
+          "England",
+          "Wales"
+        ]
+      },
+      "reason_if_failed": "You must be living in England or Wales to apply for PIP. If you live in Scotland, apply for Adult Disability Payment instead.",
+      "alternative_service": "socialsecurity-scotland.adult-disability-payment"
+    },
+    {
+      "id": "residency-history",
+      "description": "Applicant usually needs to have lived in UK for 2 of last 3 years",
+      "condition": {
+        "field": "lived_in_uk_2_of_3_years",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "You usually need to have lived in England, Scotland or Wales for at least 2 of the last 3 years",
+      "evidence_source": "address_history"
+    },
+    {
+      "id": "immigration-control",
+      "description": "Applicant must not be subject to immigration control",
+      "condition": {
+        "field": "subject_to_immigration_control",
+        "operator": "==",
+        "value": false
+      },
+      "reason_if_failed": "You cannot claim PIP if you are subject to immigration control, unless you're a sponsored immigrant or have refugee/humanitarian protection status",
+      "triggers_handoff": true
+    },
+    {
+      "id": "not-afip",
+      "description": "Cannot get Armed Forces Independence Payment at same time",
+      "condition": {
+        "field": "receiving_afip",
+        "operator": "==",
+        "value": false
+      },
+      "reason_if_failed": "You cannot get PIP and Armed Forces Independence Payment at the same time",
+      "evidence_source": "benefits_received"
+    }
+  ],
+  "explanation_template": "PIP eligibility: {outcome}. You may be eligible for daily living component ({daily_living_rate}), mobility component ({mobility_rate}), or both.",
+  "edge_cases": [
+    {
+      "id": "end-of-life",
+      "description": "Applicant might have 12 months or less to live",
+      "detection": "medical_professional_says_12_months_or_less",
+      "action": "Fast-track claim under special rules for end of life. Automatic higher daily living rate. No face-to-face assessment needed. Requires SR1 form from medical professional."
+    },
+    {
+      "id": "over-state-pension-with-recent-pip",
+      "description": "Over State Pension age but received PIP or ADP in last 12 months",
+      "detection": "over_state_pension_age AND (pip_in_last_12_months OR adp_in_last_12_months)",
+      "action": "Can make new PIP claim as exception to age rule"
+    },
+    {
+      "id": "moving-to-scotland",
+      "description": "Moving from England/Wales to Scotland",
+      "detection": "moving_to_scotland",
+      "action": "Tell DWP you have moved. Make new claim for Adult Disability Payment. PIP stops 13 weeks after move."
+    },
+    {
+      "id": "moving-from-scotland",
+      "description": "Moving from Scotland to England/Wales",
+      "detection": "moving_from_scotland AND receiving_adp",
+      "action": "Tell Social Security Scotland you have moved. Make new PIP claim. ADP stops 13 weeks after move."
+    },
+    {
+      "id": "eu-eea-recent-return",
+      "description": "Recently returned from EU, Switzerland, Norway, Iceland or Liechtenstein",
+      "detection": "recently_returned_from_eea",
+      "action": "May be able to get PIP sooner than standard 2-of-3-years residency requirement"
+    },
+    {
+      "id": "living-abroad-eea",
+      "description": "Lives in EU, Switzerland, Norway, Iceland or Liechtenstein",
+      "detection": "lives_in_eea",
+      "action": "Can only get help with daily living tasks, not mobility component"
+    },
+    {
+      "id": "armed-forces",
+      "description": "Works in Armed Forces or is family member of someone who does",
+      "detection": "armed_forces_connection",
+      "action": "May still be able to claim PIP while living abroad. Special rules apply."
+    },
+    {
+      "id": "receiving-dla",
+      "description": "Currently receiving Disability Living Allowance",
+      "detection": "receiving_dla",
+      "action": "DWP will invite you to apply for PIP. Do not apply until DWP writes to you unless your circumstances change."
+    },
+    {
+      "id": "constant-attendance-allowance",
+      "description": "Currently receiving Constant Attendance Allowance",
+      "detection": "receiving_constant_attendance_allowance",
+      "action": "You can claim PIP but will get less of the daily living part"
+    },
+    {
+      "id": "war-pensioners-mobility",
+      "description": "Currently receiving War Pensioners' Mobility Supplement",
+      "detection": "receiving_war_pensioners_mobility",
+      "action": "You can claim PIP but will not get the mobility part"
+    }
+  ]
+}

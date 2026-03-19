@@ -1,0 +1,75 @@
+{
+  "id": "ho-brp.consent",
+  "version": "1.0.0",
+  "grants": [
+    {
+      "id": "identity-verification",
+      "description": "Verify your identity using your passport and visa details",
+      "data_shared": [
+        "full_name",
+        "date_of_birth",
+        "nationality",
+        "passport_number",
+        "visa_reference_number"
+      ],
+      "source": "passport-and-visa-documents",
+      "purpose": "To confirm your identity and link your collection request to your visa record",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "immigration-status-check",
+      "description": "Check your visa and immigration status with Home Office records",
+      "data_shared": [
+        "visa_status",
+        "leave_duration",
+        "visa_conditions",
+        "arrival_date"
+      ],
+      "source": "home-office-visa-records",
+      "purpose": "To verify you are eligible to collect a BRP and that your visa details match",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "biometric-data-confirmation",
+      "description": "Confirm the biometric data (photo and fingerprints) previously captured will be used on your BRP",
+      "data_shared": [
+        "facial_photograph",
+        "fingerprints"
+      ],
+      "source": "visa-application-biometrics",
+      "purpose": "Your biometric data will be printed on the BRP card for identity verification",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "collection-location",
+      "description": "Provide your arrival date and confirm the post office collection location",
+      "data_shared": [
+        "arrival_date",
+        "arrival_letter_reference",
+        "post_office_location",
+        "contact_phone",
+        "contact_email"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To send you collection authorization and reminders about collecting your BRP within 10 days",
+      "duration": "session",
+      "required": true
+    }
+  ],
+  "revocation": {
+    "mechanism": "Contact the Home Office or revoke through your UKVI account",
+    "effect": "Collection authorization will be cancelled. You will need to contact the Home Office to arrange alternative collection."
+  },
+  "delegation": {
+    "agent_identity": "GOV.UK AI Agent",
+    "scopes": [
+      "read-visa-status",
+      "read-biometric-data",
+      "submit-collection-request"
+    ],
+    "limitations": "Agent cannot collect the BRP on your behalf - you must attend the post office in person. Agent cannot change your biometric data. Agent cannot extend the 10-day collection deadline."
+  }
+}

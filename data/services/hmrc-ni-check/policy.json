@@ -1,0 +1,66 @@
+{
+  "id": "hmrc.ni-check.eligibility",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "has-ni-number",
+      "description": "Applicant must have a National Insurance number",
+      "condition": {
+        "field": "national_insurance_number",
+        "operator": "exists"
+      },
+      "reason_if_failed": "You need a National Insurance number to check your record. Apply for one if you do not have one.",
+      "alternative_service": "hmrc.apply-ni-number"
+    },
+    {
+      "id": "age-minimum",
+      "description": "Applicant must be at least 16 years old",
+      "condition": {
+        "field": "age",
+        "operator": ">=",
+        "value": 16
+      },
+      "reason_if_failed": "You must be at least 16 years old to have a National Insurance record",
+      "evidence_source": "identity-verified"
+    },
+    {
+      "id": "can-verify-identity",
+      "description": "Applicant must be able to verify identity through GOV.UK Sign In",
+      "condition": {
+        "field": "identity_verification_available",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "You need to verify your identity to access your NI record online. Request a printed statement instead.",
+      "alternative_service": "hmrc.ni-statement-by-post",
+      "triggers_handoff": true
+    }
+  ],
+  "explanation_template": "National Insurance record access: {outcome}",
+  "edge_cases": [
+    {
+      "id": "isle-of-man-contributions",
+      "description": "Applicant has paid NI contributions in Isle of Man and reaches State Pension age after 5 April 2016",
+      "detection": "isle_of_man_contributions",
+      "action": "Isle of Man contributions will not appear in your online record. Email nationalinsurance.itd@gov.im for your Isle of Man contribution history."
+    },
+    {
+      "id": "cannot-pay-online",
+      "description": "Applicant has gaps but cannot pay voluntary contributions online",
+      "detection": "online_payment_unavailable",
+      "action": "Call the Future Pension Centre on 0800 731 0175 to arrange payment by other means."
+    },
+    {
+      "id": "near-state-pension-age",
+      "description": "Applicant is within 12 months of State Pension age with complex contribution history",
+      "detection": "complex_near_retirement",
+      "action": "Speak to a pension specialist before paying voluntary contributions. You may not benefit or may need specific advice. Contact Future Pension Centre."
+    },
+    {
+      "id": "current-tax-year",
+      "description": "Applicant wants information about current or previous tax year",
+      "detection": "requesting_current_year",
+      "action": "Current and previous tax year information is not available online. Request a printed statement specifying the years you need."
+    }
+  ]
+}

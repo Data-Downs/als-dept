@@ -1,0 +1,171 @@
+{
+  "id": "opg-lpa.states",
+  "version": "1.0.0",
+  "states": [
+    {
+      "id": "not-started",
+      "type": "initial"
+    },
+    {
+      "id": "identity-verified"
+    },
+    {
+      "id": "eligibility-checked"
+    },
+    {
+      "id": "lpa-type-selected"
+    },
+    {
+      "id": "consent-given"
+    },
+    {
+      "id": "attorneys-appointed"
+    },
+    {
+      "id": "certificate-provider-confirmed"
+    },
+    {
+      "id": "forms-completed"
+    },
+    {
+      "id": "people-notified"
+    },
+    {
+      "id": "notification-period-waiting",
+      "receipt": true
+    },
+    {
+      "id": "payment-made",
+      "receipt": true
+    },
+    {
+      "id": "registration-submitted",
+      "receipt": true
+    },
+    {
+      "id": "opg-assessment"
+    },
+    {
+      "id": "decision",
+      "receipt": true
+    },
+    {
+      "id": "registered",
+      "type": "terminal",
+      "receipt": true
+    },
+    {
+      "id": "rejected",
+      "type": "terminal",
+      "receipt": true
+    },
+    {
+      "id": "handed-off",
+      "type": "terminal",
+      "receipt": true
+    }
+  ],
+  "transitions": [
+    {
+      "from": "not-started",
+      "to": "identity-verified",
+      "trigger": "verify-identity"
+    },
+    {
+      "from": "identity-verified",
+      "to": "eligibility-checked",
+      "trigger": "check-eligibility"
+    },
+    {
+      "from": "eligibility-checked",
+      "to": "lpa-type-selected",
+      "trigger": "select-lpa-type",
+      "condition": "eligible"
+    },
+    {
+      "from": "eligibility-checked",
+      "to": "rejected",
+      "trigger": "reject",
+      "condition": "not-eligible"
+    },
+    {
+      "from": "eligibility-checked",
+      "to": "handed-off",
+      "trigger": "handoff",
+      "condition": "edge-case"
+    },
+    {
+      "from": "lpa-type-selected",
+      "to": "consent-given",
+      "trigger": "grant-consent"
+    },
+    {
+      "from": "consent-given",
+      "to": "attorneys-appointed",
+      "trigger": "appoint-attorneys"
+    },
+    {
+      "from": "attorneys-appointed",
+      "to": "certificate-provider-confirmed",
+      "trigger": "confirm-certificate-provider"
+    },
+    {
+      "from": "certificate-provider-confirmed",
+      "to": "forms-completed",
+      "trigger": "complete-forms"
+    },
+    {
+      "from": "forms-completed",
+      "to": "people-notified",
+      "trigger": "notify-people"
+    },
+    {
+      "from": "people-notified",
+      "to": "notification-period-waiting",
+      "trigger": "begin-waiting-period"
+    },
+    {
+      "from": "notification-period-waiting",
+      "to": "payment-made",
+      "trigger": "make-payment",
+      "condition": "no-objections-received"
+    },
+    {
+      "from": "notification-period-waiting",
+      "to": "handed-off",
+      "trigger": "handle-objection",
+      "condition": "objection-received"
+    },
+    {
+      "from": "payment-made",
+      "to": "registration-submitted",
+      "trigger": "submit-registration"
+    },
+    {
+      "from": "registration-submitted",
+      "to": "opg-assessment",
+      "trigger": "begin-assessment"
+    },
+    {
+      "from": "opg-assessment",
+      "to": "decision",
+      "trigger": "make-decision"
+    },
+    {
+      "from": "decision",
+      "to": "registered",
+      "trigger": "approve-registration"
+    },
+    {
+      "from": "decision",
+      "to": "rejected",
+      "trigger": "reject-registration"
+    },
+    {
+      "from": "opg-assessment",
+      "to": "forms-completed",
+      "trigger": "return-for-correction",
+      "condition": "correctable-errors-found"
+    }
+  ]
+}

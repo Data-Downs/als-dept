@@ -1,0 +1,93 @@
+{
+  "id": "dvla-provisional-licence.eligibility",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "age-minimum",
+      "description": "Applicant must be at least 15 years and 9 months old",
+      "condition": {
+        "field": "age_months",
+        "operator": ">=",
+        "value": 189
+      },
+      "reason_if_failed": "You must be at least 15 years and 9 months old to apply for a provisional driving licence",
+      "evidence_source": "identity-verified"
+    },
+    {
+      "id": "gb-residency",
+      "description": "Applicant must have been given permission to live in Great Britain for at least 185 days",
+      "condition": {
+        "field": "gb_residency_days",
+        "operator": ">=",
+        "value": 185
+      },
+      "reason_if_failed": "You must have been given permission to live in Great Britain for at least 185 days",
+      "evidence_source": "identity-verified",
+      "triggers_handoff": true
+    },
+    {
+      "id": "jurisdiction",
+      "description": "Service is for Great Britain residents only",
+      "condition": {
+        "field": "jurisdiction",
+        "operator": "in",
+        "value": [
+          "England",
+          "Wales",
+          "Scotland"
+        ]
+      },
+      "reason_if_failed": "This service is for Great Britain residents only. Northern Ireland residents should contact DVA.",
+      "alternative_service": "dva.ni-provisional-licence"
+    },
+    {
+      "id": "no-full-licence",
+      "description": "Applicant must not already hold a full driving licence",
+      "condition": {
+        "field": "full_licence_held",
+        "operator": "!=",
+        "value": true
+      },
+      "reason_if_failed": "You already hold a full driving licence. Use the renewal service if you need to update it.",
+      "alternative_service": "dvla.renew-licence"
+    },
+    {
+      "id": "visual-acuity",
+      "description": "Applicant must be able to read a number plate from 20 metres away",
+      "condition": {
+        "field": "can_read_number_plate",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "You must be able to read a number plate from 20 metres away. If you need glasses or contact lenses to do this, you can still drive.",
+      "triggers_handoff": true
+    }
+  ],
+  "explanation_template": "Provisional driving licence eligibility: {outcome}",
+  "edge_cases": [
+    {
+      "id": "visual-impairment",
+      "description": "Applicant has a visual condition that may affect ability to read number plates",
+      "detection": "visual_impairment_declared",
+      "action": "Route to manual assessment. DVLA may require an eyesight test certificate from an optician."
+    },
+    {
+      "id": "medical-condition",
+      "description": "Applicant has a medical condition that must be declared",
+      "detection": "medical_condition_declared",
+      "action": "Route to medical assessment. Specific conditions (epilepsy, diabetes, heart conditions) require DVLA medical review."
+    },
+    {
+      "id": "immigration-status",
+      "description": "Complex immigration status requiring manual verification",
+      "detection": "complex_immigration_status",
+      "action": "Route to immigration status verification team. Additional documentation may be required."
+    },
+    {
+      "id": "previous-disqualification",
+      "description": "Applicant has been previously disqualified from driving",
+      "detection": "previous_disqualification",
+      "action": "Check disqualification period has ended. Route to manual assessment if period active or special conditions apply."
+    }
+  ]
+}

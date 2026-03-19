@@ -1,0 +1,19 @@
+{
+  "id": "hmrc-tax-refund",
+  "version": "1.0.0",
+  "name": "Income tax refund (P50)",
+  "description": "If you have overpaid PAYE and are not returning to work in the same tax year.",
+  "department": "HMRC",
+  "input_schema": {
+    "type": "object"
+  },
+  "output_schema": {
+    "type": "object"
+  },
+  "source": "graph",
+  "serviceType": "entitlement",
+  "govuk_url": "https://www.gov.uk/claim-tax-refund/you-get-a-pension",
+  "eligibility_summary": "Claim a refund if you have overpaid PAYE income tax during the year, typically after losing a job mid-year and not returning to work before April 5th.",
+  "proactive": true,
+  "gated": true
+}

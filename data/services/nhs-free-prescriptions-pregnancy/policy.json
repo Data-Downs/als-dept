@@ -1,0 +1,80 @@
+{
+  "id": "nhs.free-prescriptions-pregnancy.eligibility",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "pregnancy-status",
+      "description": "Applicant must be pregnant or have given birth within the last 12 months",
+      "condition": {
+        "field": "pregnancy_status",
+        "operator": "in",
+        "value": [
+          "currently-pregnant",
+          "gave-birth-within-12-months"
+        ]
+      },
+      "reason_if_failed": "This exemption is only for people who are pregnant or have had a baby in the last 12 months",
+      "evidence_source": "gp-or-midwife-confirmation",
+      "alternative_service": "nhs.free-prescriptions-check"
+    },
+    {
+      "id": "nhs-eligibility",
+      "description": "Applicant must be eligible for NHS care",
+      "condition": {
+        "field": "nhs_eligibility",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "You must be ordinarily resident in the UK to receive free NHS prescriptions and dental treatment",
+      "evidence_source": "identity-verified"
+    },
+    {
+      "id": "gp-registered",
+      "description": "Applicant must be registered with a GP or have a midwife",
+      "condition": {
+        "field": "gp_practice_code",
+        "operator": "exists"
+      },
+      "reason_if_failed": "You need to be registered with a GP or have a midwife to confirm your pregnancy",
+      "triggers_handoff": true
+    },
+    {
+      "id": "due-date-valid",
+      "description": "If pregnant, due date must be in the future (within reasonable timeframe)",
+      "condition": {
+        "field": "due_date",
+        "operator": ">=",
+        "value": "today"
+      },
+      "reason_if_failed": "The due date provided appears to be in the past. Please provide your baby's birth date instead.",
+      "evidence_source": "gp-or-midwife-confirmation"
+    }
+  ],
+  "explanation_template": "Maternity exemption eligibility: {outcome}",
+  "edge_cases": [
+    {
+      "id": "pregnancy-loss",
+      "description": "Applicant has experienced miscarriage or stillbirth",
+      "detection": "pregnancy_outcome",
+      "action": "Exemption continues for 12 months from date of pregnancy loss. Route to sensitive support pathway."
+    },
+    {
+      "id": "multiple-pregnancy",
+      "description": "Applicant is pregnant with twins or multiples",
+      "detection": "multiple_pregnancy",
+      "action": "Standard MatEx applies. No special documentation needed."
+    },
+    {
+      "id": "premature-birth",
+      "description": "Baby born significantly premature",
+      "detection": "premature_birth",
+      "action": "12-month exemption starts from actual birth date, not due date."
+    },
+    {
+      "id": "already-exempt",
+      "description": "Applicant already receives free prescriptions for another reason",
+      "detection": "existing_exemption",
+      "action": "Inform applicant they may already be covered. MatEx provides additional dental coverage."
+    }
+  ]
+}

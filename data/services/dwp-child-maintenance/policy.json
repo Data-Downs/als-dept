@@ -1,0 +1,95 @@
+{
+  "id": "dwp-child-maintenance.eligibility",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "child-age-limit",
+      "description": "Child must be under 16, or under 20 if in approved education or training",
+      "condition": {
+        "field": "child_age_eligible",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "Child maintenance can only be claimed for children under 16, or under 20 if they are in approved education or training",
+      "evidence_source": "citizen-provided"
+    },
+    {
+      "id": "uk-jurisdiction",
+      "description": "Both parents must live in the UK",
+      "condition": {
+        "field": "both_parents_uk_resident",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "The Child Maintenance Service can only be used if both parents live in the UK",
+      "alternative_service": "dwp-child-maintenance-international",
+      "triggers_handoff": true
+    },
+    {
+      "id": "parents-separated",
+      "description": "Parents must not be living together",
+      "condition": {
+        "field": "parents_living_together",
+        "operator": "==",
+        "value": false
+      },
+      "reason_if_failed": "Child maintenance is only for parents who do not live together",
+      "evidence_source": "citizen-provided"
+    },
+    {
+      "id": "no-recent-court-order",
+      "description": "Must not have a child maintenance court order made less than 12 months ago, unless both parents agree",
+      "condition": {
+        "field": "court_order_conflict",
+        "operator": "==",
+        "value": false
+      },
+      "reason_if_failed": "You cannot use CMS if you have a recent court order for child maintenance unless both parents agree to switch",
+      "triggers_handoff": true
+    },
+    {
+      "id": "private-arrangement-failed",
+      "description": "Parents must be unable to agree on a private arrangement",
+      "condition": {
+        "field": "private_arrangement_attempted",
+        "operator": "==",
+        "value": true
+      },
+      "reason_if_failed": "Consider making a family-based arrangement first. CMS is for when parents cannot agree privately.",
+      "alternative_service": "cms-family-based-arrangement"
+    }
+  ],
+  "explanation_template": "Child Maintenance Service eligibility: {outcome}",
+  "edge_cases": [
+    {
+      "id": "domestic-abuse",
+      "description": "Applicant is experiencing or has experienced domestic abuse",
+      "detection": "domestic_abuse_flag",
+      "action": "Expedite application. Do not contact other parent without safety measures. Waive application fee. Provide domestic abuse support information."
+    },
+    {
+      "id": "paying-parent-abroad",
+      "description": "Paying parent lives outside the UK but has assets or income in the UK",
+      "detection": "paying_parent_jurisdiction_non_uk",
+      "action": "Route to international child maintenance team for reciprocal arrangement assessment."
+    },
+    {
+      "id": "special-expenses",
+      "description": "Paying parent has significant expenses that should reduce the payment amount",
+      "detection": "special_expenses_claimed",
+      "action": "Assessment must consider: costs of keeping in regular contact with child, costs for children living with paying parent, boarding school fees, mortgage/rent/council tax on former family home."
+    },
+    {
+      "id": "shared-care",
+      "description": "Child spends at least 52 nights per year with paying parent",
+      "detection": "shared_care_arrangement",
+      "action": "Payment calculation must account for shared care nights. Reduction applies based on number of nights."
+    },
+    {
+      "id": "nil-income",
+      "description": "Paying parent has no income or income below threshold",
+      "detection": "paying_parent_income_nil",
+      "action": "Flat rate payment of £7 per week applies if on certain benefits. Nil rate if in prison, care home, or aged 16-17."
+    }
+  ]
+}

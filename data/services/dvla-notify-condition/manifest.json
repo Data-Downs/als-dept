@@ -1,0 +1,19 @@
+{
+  "id": "dvla-notify-condition",
+  "version": "1.0.0",
+  "name": "Notify DVLA of medical condition",
+  "description": "Legal requirement for many conditions. May affect licence. Check gov.uk list of notifiable conditions.",
+  "department": "DVLA",
+  "input_schema": {
+    "type": "object"
+  },
+  "output_schema": {
+    "type": "object"
+  },
+  "source": "graph",
+  "serviceType": "obligation",
+  "govuk_url": "https://www.gov.uk/health-conditions-and-driving",
+  "eligibility_summary": "A legal duty to notify DVLA of any medical condition or treatment that may affect safe driving. Covers a wide range of physical and mental health conditions. Failure to notify can invalidate insurance.",
+  "proactive": true,
+  "gated": false
+}

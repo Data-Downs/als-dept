@@ -1,0 +1,19 @@
+{
+  "id": "ho-life-in-uk",
+  "version": "1.0.0",
+  "name": "Life in the UK test",
+  "description": "Required for ILR and naturalisation. Must pass before applying.",
+  "department": "Home Office",
+  "input_schema": {
+    "type": "object"
+  },
+  "output_schema": {
+    "type": "object"
+  },
+  "source": "graph",
+  "serviceType": "application",
+  "govuk_url": "https://www.gov.uk/life-in-the-uk-test",
+  "eligibility_summary": "A 45-minute test on British history, culture and values. Required before applying for Indefinite Leave to Remain or British citizenship. Exempt if under 18, over 65, or with certain disabilities.",
+  "proactive": true,
+  "gated": true
+}

@@ -1,0 +1,19 @@
+{
+  "id": "hmrc-paye",
+  "version": "1.0.0",
+  "name": "Register as employer (PAYE)",
+  "description": "Required before first payday if employing anyone.",
+  "department": "HMRC",
+  "input_schema": {
+    "type": "object"
+  },
+  "output_schema": {
+    "type": "object"
+  },
+  "source": "graph",
+  "serviceType": "obligation",
+  "govuk_url": "https://www.gov.uk/register-employer",
+  "eligibility_summary": "Any business employing workers who earn above the Lower Earnings Limit or receive expenses/benefits must register as an employer with HMRC before the first payday.",
+  "proactive": true,
+  "gated": false
+}

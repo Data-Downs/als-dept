@@ -1,0 +1,85 @@
+{
+  "id": "la.free-school-meals.consent",
+  "version": "1.0.0",
+  "grants": [
+    {
+      "id": "identity-verification",
+      "description": "Verify your identity using your GOV.UK One Login or local authority credentials",
+      "data_shared": [
+        "full_name",
+        "date_of_birth",
+        "national_insurance_number"
+      ],
+      "source": "one-login",
+      "purpose": "To confirm your identity and link to your benefits records",
+      "duration": "session",
+      "required": true
+    },
+    {
+      "id": "benefits-check",
+      "description": "Check your benefits status with the Department for Work and Pensions and HMRC",
+      "data_shared": [
+        "benefit_type",
+        "benefit_start_date",
+        "universal_credit_income",
+        "tax_credits_income"
+      ],
+      "source": "dwp-hmrc",
+      "purpose": "To verify you are receiving qualifying benefits and meet income thresholds",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "child-details",
+      "description": "Share your child's details with the local authority and their school",
+      "data_shared": [
+        "child_full_name",
+        "child_date_of_birth",
+        "school_name",
+        "year_group"
+      ],
+      "source": "citizen-provided",
+      "purpose": "To register your child for free school meals and notify their school",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "pupil-premium-registration",
+      "description": "Register eligibility for Pupil Premium funding to support your child's school",
+      "data_shared": [
+        "fsm_eligibility_status",
+        "qualifying_benefit_type"
+      ],
+      "source": "la-assessment",
+      "purpose": "Schools receive extra funding (Pupil Premium) for eligible children, which supports learning",
+      "duration": "until-revoked",
+      "required": false
+    },
+    {
+      "id": "ongoing-eligibility-checks",
+      "description": "Allow the local authority to check your benefits status periodically to maintain eligibility",
+      "data_shared": [
+        "benefit_status",
+        "income_changes"
+      ],
+      "source": "dwp-hmrc",
+      "purpose": "To ensure you remain eligible and avoid interruption to free school meals",
+      "duration": "until-revoked",
+      "required": true
+    }
+  ],
+  "revocation": {
+    "mechanism": "Contact your local authority or withdraw consent through your GOV.UK account",
+    "effect": "Free school meals will stop immediately. You will need to reapply if circumstances change."
+  },
+  "delegation": {
+    "agent_identity": "GOV.UK AI Agent (acting on behalf of Local Authority)",
+    "scopes": [
+      "read-benefits-data",
+      "read-school-register",
+      "submit-application",
+      "check-eligibility"
+    ],
+    "limitations": "Agent cannot override eligibility decisions. Agent cannot access or modify safeguarding records. Cases involving 'no recourse to public funds', care leavers, or child benefit claimants must be handed to human case worker. Agent cannot make changes to benefit claims or school enrollment."
+  }
+}

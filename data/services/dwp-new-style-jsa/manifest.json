@@ -1,0 +1,19 @@
+{
+  "id": "dwp-new-style-jsa",
+  "version": "1.0.0",
+  "name": "New Style Jobseeker's Allowance",
+  "description": "Contributory — paid alongside UC if NI record qualifies. 6-month time limit.",
+  "department": "DWP",
+  "input_schema": {
+    "type": "object"
+  },
+  "output_schema": {
+    "type": "object"
+  },
+  "source": "graph",
+  "serviceType": "benefit",
+  "govuk_url": "https://www.gov.uk/jobseekers-allowance/new-style-jsa",
+  "eligibility_summary": "Contributory benefit for jobseekers based on NI record. Paid for up to 6 months alongside Universal Credit. Requires 2 full tax years of Class 1 NI contributions.",
+  "proactive": true,
+  "gated": true
+}

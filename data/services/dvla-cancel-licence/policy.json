@@ -1,0 +1,85 @@
+{
+  "id": "dvla-cancel-licence.eligibility",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "has-licence",
+      "description": "A valid driving licence must exist to cancel",
+      "condition": {
+        "field": "driving_licence_number",
+        "operator": "exists"
+      },
+      "reason_if_failed": "No driving licence found to cancel. If you believe this is an error, contact DVLA.",
+      "triggers_handoff": true
+    },
+    {
+      "id": "authorized-reporter",
+      "description": "Reporter must be the licence holder, executor, or next of kin",
+      "condition": {
+        "field": "reporter_relationship",
+        "operator": "in",
+        "value": [
+          "self",
+          "executor",
+          "next-of-kin",
+          "tell-us-once"
+        ]
+      },
+      "reason_if_failed": "Only the licence holder, executor, or next of kin can cancel a driving licence",
+      "triggers_handoff": true
+    },
+    {
+      "id": "valid-reason",
+      "description": "A valid reason for cancellation must be provided",
+      "condition": {
+        "field": "cancellation_reason",
+        "operator": "in",
+        "value": [
+          "death",
+          "permanent-move-abroad",
+          "voluntary-surrender"
+        ]
+      },
+      "reason_if_failed": "The reason provided is not valid for licence cancellation",
+      "triggers_handoff": true
+    },
+    {
+      "id": "death-requires-evidence",
+      "description": "Death cancellations require death certificate or Tell Us Once reference",
+      "condition": {
+        "field": "death_evidence",
+        "operator": "exists"
+      },
+      "reason_if_failed": "Death certificate number or Tell Us Once reference required for death notifications",
+      "evidence_source": "death-certificate-or-tell-us-once",
+      "triggers_handoff": true
+    }
+  ],
+  "explanation_template": "Driving licence cancellation eligibility: {outcome}",
+  "edge_cases": [
+    {
+      "id": "tell-us-once-duplicate",
+      "description": "Licence already cancelled via Tell Us Once service",
+      "detection": "tell_us_once_flag",
+      "action": "Inform reporter that cancellation has already been processed. No further action needed."
+    },
+    {
+      "id": "active-court-ban",
+      "description": "Licence holder has an active driving ban",
+      "detection": "court_ban_active",
+      "action": "Route to specialist team. Court ban takes precedence over voluntary cancellation."
+    },
+    {
+      "id": "medical-revocation-pending",
+      "description": "Medical revocation procedure already underway",
+      "detection": "medical_review_active",
+      "action": "Handoff to medical review team. Cannot process voluntary cancellation during medical review."
+    },
+    {
+      "id": "licence-not-found",
+      "description": "Physical licence cannot be returned",
+      "detection": "physical_licence_unavailable",
+      "action": "Accept declaration that licence is unavailable. Proceed with cancellation but flag for monitoring."
+    }
+  ]
+}

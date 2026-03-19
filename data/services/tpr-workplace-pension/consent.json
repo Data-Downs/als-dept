@@ -1,0 +1,78 @@
+{
+  "id": "tpr.workplace-pension.consent",
+  "version": "1.0.0",
+  "grants": [
+    {
+      "id": "employer-identity",
+      "description": "Verify your employer identity and PAYE scheme details",
+      "data_shared": [
+        "company_name",
+        "company_number",
+        "paye_scheme_reference",
+        "employer_address",
+        "duties_start_date"
+      ],
+      "source": "hmrc-paye-record",
+      "purpose": "To confirm you are an employer with workplace pension obligations and to register your duties with TPR",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "staff-details",
+      "description": "Share details of eligible staff for auto-enrollment assessment",
+      "data_shared": [
+        "staff_names",
+        "dates_of_birth",
+        "national_insurance_numbers",
+        "annual_earnings",
+        "work_location"
+      ],
+      "source": "payroll-system",
+      "purpose": "To identify which staff must be auto-enrolled into the workplace pension scheme and calculate their contributions",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "payroll-integration",
+      "description": "Allow pension scheme provider to access payroll data for contribution calculations",
+      "data_shared": [
+        "monthly_earnings",
+        "qualifying_earnings",
+        "pay_periods",
+        "contribution_amounts"
+      ],
+      "source": "payroll-system",
+      "purpose": "To calculate monthly pension contributions and facilitate automatic deductions from staff pay",
+      "duration": "until-revoked",
+      "required": true
+    },
+    {
+      "id": "scheme-registration",
+      "description": "Register your chosen pension scheme with The Pensions Regulator",
+      "data_shared": [
+        "pension_scheme_name",
+        "scheme_provider_details",
+        "pension_scheme_reference_number",
+        "scheme_start_date"
+      ],
+      "source": "employer-provided",
+      "purpose": "To meet your legal duty to declare compliance with auto-enrollment regulations",
+      "duration": "until-revoked",
+      "required": true
+    }
+  ],
+  "revocation": {
+    "mechanism": "Contact The Pensions Regulator or revoke through your TPR online account",
+    "effect": "Revoking consent does not remove your legal obligation. You must continue to operate a workplace pension scheme for eligible staff or face penalties."
+  },
+  "delegation": {
+    "agent_identity": "GOV.UK AI Agent",
+    "scopes": [
+      "read-paye-data",
+      "read-payroll-data",
+      "calculate-contributions",
+      "submit-tpr-declaration"
+    ],
+    "limitations": "Agent cannot select a pension scheme provider on your behalf without explicit confirmation. Agent cannot make payment to the pension scheme on your behalf. Agent cannot opt staff out of the scheme. Agent cannot modify staff earnings data."
+  }
+}

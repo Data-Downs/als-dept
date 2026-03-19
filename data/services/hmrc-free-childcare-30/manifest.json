@@ -1,0 +1,19 @@
+{
+  "id": "hmrc-free-childcare-30",
+  "version": "1.0.0",
+  "name": "Free childcare — 30 hours",
+  "description": "3–4 year olds where both parents work minimum hours.",
+  "department": "HMRC",
+  "input_schema": {
+    "type": "object"
+  },
+  "output_schema": {
+    "type": "object"
+  },
+  "source": "graph",
+  "serviceType": "entitlement",
+  "govuk_url": "https://www.gov.uk/help-paying-childcare/free-childcare-and-education-for-2-to-4-year-olds",
+  "eligibility_summary": "An additional 15 hours (total 30 hours/week) for 3–4 year olds where both parents (or single parent) are in work earning at least NMW for 16 hours/week and neither earns over £100,000.",
+  "proactive": true,
+  "gated": true
+}

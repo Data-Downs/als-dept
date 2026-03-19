@@ -1,0 +1,126 @@
+{
+  "id": "hmrc-sdlt.eligibility",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "jurisdiction",
+      "description": "Property must be in England or Northern Ireland",
+      "condition": {
+        "field": "property_jurisdiction",
+        "operator": "in",
+        "value": [
+          "England",
+          "Northern Ireland"
+        ]
+      },
+      "reason_if_failed": "SDLT applies only to properties in England and Northern Ireland. Use Land and Buildings Transaction Tax for Scotland, or Land Transaction Tax for Wales.",
+      "alternative_service": "scotland: revenue-scotland.lbtt, wales: wra.ltt"
+    },
+    {
+      "id": "filing-deadline",
+      "description": "Return must be filed within 14 days of completion",
+      "condition": {
+        "field": "days_since_completion",
+        "operator": "<=",
+        "value": 14
+      },
+      "reason_if_failed": "SDLT return must be filed within 14 days of completion. You may face penalties and interest charges for late filing.",
+      "evidence_source": "completion-date-provided",
+      "triggers_handoff": true
+    },
+    {
+      "id": "threshold-residential",
+      "description": "For residential property, SDLT applies if purchase price exceeds threshold",
+      "condition": {
+        "field": "purchase_price",
+        "operator": ">=",
+        "value": 125000
+      },
+      "reason_if_failed": "No SDLT is due on residential properties under £125,000 (or £300,000 for eligible first-time buyers), but you must still file a return."
+    },
+    {
+      "id": "threshold-non-residential",
+      "description": "For non-residential/mixed property, SDLT applies if purchase price exceeds £150,000",
+      "condition": {
+        "field": "purchase_price",
+        "operator": ">=",
+        "value": 150000
+      },
+      "reason_if_failed": "No SDLT is due on non-residential properties under £150,000, but you must still file a return for most transactions."
+    },
+    {
+      "id": "transaction-type-valid",
+      "description": "Transaction must be a chargeable property purchase or transfer",
+      "condition": {
+        "field": "transaction_type",
+        "operator": "in",
+        "value": [
+          "freehold-purchase",
+          "leasehold-new",
+          "leasehold-assigned",
+          "shared-ownership",
+          "transfer-with-consideration"
+        ]
+      },
+      "reason_if_failed": "This transaction type may be exempt from SDLT. Check exemptions guidance.",
+      "alternative_service": "hmrc-sdlt-exemptions-guidance"
+    }
+  ],
+  "explanation_template": "SDLT liability: {outcome}. Purchase price: £{purchase_price}. Property type: {property_type}. Estimated SDLT: £{calculated_sdlt}.",
+  "edge_cases": [
+    {
+      "id": "solicitor-filing",
+      "description": "Solicitor or conveyancer is handling the transaction",
+      "detection": "has_solicitor == true",
+      "action": "Agent-based filing. Confirm solicitor will file on your behalf. If not, proceed with self-filing."
+    },
+    {
+      "id": "first-time-buyer-relief",
+      "description": "Applicant is eligible for first-time buyer relief (residential property up to £500k, first home)",
+      "detection": "is_first_time_buyer && purchase_price <= 500000",
+      "action": "Apply first-time buyer relief: 0% up to £300k, 5% on £300k-£500k. Verify all purchasers are first-time buyers."
+    },
+    {
+      "id": "additional-property-surcharge",
+      "description": "Applicant already owns residential property (5% surcharge applies)",
+      "detection": "owns_other_residential_property == true",
+      "action": "Add 5% surcharge to all SDLT rates. Check if replacing main residence within 36 months for potential refund."
+    },
+    {
+      "id": "non-uk-resident-surcharge",
+      "description": "Purchaser is not a UK resident (2% surcharge applies)",
+      "detection": "uk_resident_days < 183",
+      "action": "Add 2% non-UK resident surcharge. May be eligible for refund if become UK resident within specified period."
+    },
+    {
+      "id": "shared-ownership",
+      "description": "Property purchased through shared ownership scheme",
+      "detection": "transaction_type == 'shared-ownership'",
+      "action": "Offer choice: (1) market value election (pay SDLT on full market value once), or (2) pay in stages. Complex calculation required."
+    },
+    {
+      "id": "leasehold-npv",
+      "description": "New leasehold purchase requires net present value calculation for rent",
+      "detection": "transaction_type == 'leasehold-new'",
+      "action": "Calculate SDLT on both lease premium and NPV of rent. If NPV > £125k (residential) or £150k (non-residential), 1% rate applies to excess."
+    },
+    {
+      "id": "multiple-dwellings",
+      "description": "Purchasing 6 or more residential properties in single transaction",
+      "detection": "number_of_dwellings >= 6",
+      "action": "Non-residential rates apply. No multiple dwellings relief available since April 2024."
+    },
+    {
+      "id": "exempt-transaction",
+      "description": "Transaction may be exempt (gift, inheritance, divorce, under £40k)",
+      "detection": "consideration < 40000 || is_gift || is_inheritance || is_divorce_transfer",
+      "action": "Verify exemption applies. No SDLT due and no return required for most exempt transactions."
+    },
+    {
+      "id": "late-filing-penalty",
+      "description": "Filing after 14-day deadline",
+      "detection": "days_since_completion > 14",
+      "action": "Late filing penalties apply. Immediate handoff to HMRC compliance. Agent cannot file late returns without manual review."
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "id": "la-send-ehc",
+  "version": "1.0.0",
+  "name": "SEND EHC plan assessment",
+  "description": "For children with complex needs. Local Authority has 20 weeks to issue the plan.",
+  "department": "Local Authority",
+  "input_schema": {
+    "type": "object"
+  },
+  "output_schema": {
+    "type": "object"
+  },
+  "source": "graph",
+  "serviceType": "application",
+  "govuk_url": "https://www.gov.uk/children-with-special-educational-needs/education-health-care-plans",
+  "eligibility_summary": "An Education, Health and Care (EHC) plan for children and young people aged 0-25 with complex SEND needs that cannot be met through standard school support. Local Authority must complete the assessment within 20 weeks.",
+  "proactive": true,
+  "gated": true
+}
