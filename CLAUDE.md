@@ -13,8 +13,7 @@ The project has two sides:
 
 ```
 apps/
-  citizen-chris/        → Reference citizen app (Next.js, port 3104)
-  citizen-dept/         → Department demo citizen app (Next.js, port 3106)
+  citizen/              → Citizen app for department demos (Next.js, port 3106)
   legibility-studio/    → Admin dashboard for services, traces, gap analysis (Next.js, port 3101)
 
 packages/
@@ -69,11 +68,11 @@ docs/
 - Tests use Vitest with workspace configuration — each package has its own `vitest.config.ts`
 - Never make real API calls in tests — mock external dependencies (Anthropic SDK, databases)
 - Evidence tests use an in-memory DatabaseAdapter, not real SQLite
-- citizen-chris and citizen-dept have unit, component, and API route tests
+- citizen app has unit, component, and API route tests
   - Component tests use `@testing-library/react` with `@vitejs/plugin-react` for JSX transform
   - API route tests use `// @vitest-environment node` override
   - Mock Zustand store via `vi.mock("@/lib/store")` in component tests
-  - E2E: `cd apps/citizen-chris && npx playwright test` (requires dev server)
+  - E2E: `cd apps/citizen && npx playwright test` (requires dev server)
 
 ## Environment
 

@@ -1,0 +1,123 @@
+name: Deploy to Cloudflare Workers
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      deploy_all:
+        description: "Deploy all apps regardless of changes"
+        type: boolean
+        default: false
+
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # ── Detect what changed ──
+  changes:
+    name: Detect changes
+    runs-on: ubuntu-latest
+    outputs:
+      packages: ${{ steps.filter.outputs.packages }}
+      studio: ${{ steps.filter.outputs.studio }}
+      citizen: ${{ steps.filter.outputs.citizen }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            packages:
+              - 'packages/**'
+              - 'data/**'
+              - 'package.json'
+              - 'package-lock.json'
+            studio:
+              - 'apps/legibility-studio/**'
+            citizen:
+              - 'apps/citizen/**'
+
+  # ── Test ──
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Build workspace packages
+        run: npx turbo run build --filter='./packages/*' -- --noCheck
+      - run: npm test
+
+  # ── Studio (deploys first — other apps depend on it) ──
+  deploy-studio:
+    name: Deploy Legibility Studio
+    needs: [test, changes]
+    if: >-
+      inputs.deploy_all ||
+      needs.changes.outputs.packages == 'true' ||
+      needs.changes.outputs.studio == 'true'
+    runs-on: ubuntu-latest
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Build workspace packages
+        run: npx turbo run build --filter='./packages/*' -- --noCheck
+      - name: Build & deploy
+        run: npx @opennextjs/cloudflare build && npx wrangler deploy
+        working-directory: apps/legibility-studio
+      - name: Seed personas into D1
+        run: |
+          STUDIO_URL="https://als-studio.chris-8ab.workers.dev"
+          PERSONAS='{"personas":['
+          FIRST=true
+          for f in data/simulated/users/*.json; do
+            if [ "$FIRST" = true ]; then FIRST=false; else PERSONAS="$PERSONAS,"; fi
+            PERSONAS="$PERSONAS$(cat "$f")"
+          done
+          PERSONAS="$PERSONAS]}"
+          COUNT=$(echo "$PERSONAS" | node -e "const d=JSON.parse(require('fs').readFileSync('/dev/stdin','utf8')); console.log(d.personas.length)")
+          echo "Seeding $COUNT personas..."
+          curl -sf -X POST "$STUDIO_URL/api/v1/seed-personas" \
+            -H "Content-Type: application/json" \
+            -d "$PERSONAS"
+
+  # ── Citizen app (deploys after studio if studio is deploying) ──
+  deploy-citizen:
+    name: Deploy Citizen
+    needs: [test, changes, deploy-studio]
+    if: >-
+      always() &&
+      needs.test.result == 'success' &&
+      (needs.deploy-studio.result == 'success' || needs.deploy-studio.result == 'skipped') &&
+      (inputs.deploy_all ||
+       needs.changes.outputs.packages == 'true' ||
+       needs.changes.outputs.citizen == 'true')
+    runs-on: ubuntu-latest
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Build workspace packages
+        run: npx turbo run build --filter='./packages/*' -- --noCheck
+      - name: Build & deploy
+        run: npx @opennextjs/cloudflare build && npx wrangler deploy
+        working-directory: apps/citizen

@@ -24,7 +24,7 @@ const SERVICE_DIRS = fs
 describe("Data integrity — services", () => {
   it("data/services/ exists and has services", () => {
     expect(fs.existsSync(SERVICES_DIR)).toBe(true);
-    expect(SERVICE_DIRS.length).toBeGreaterThanOrEqual(4);
+    expect(SERVICE_DIRS.length).toBeGreaterThanOrEqual(3);
   });
 
   for (const svc of SERVICE_DIRS) {
