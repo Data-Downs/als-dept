@@ -24,6 +24,7 @@ export async function GET() {
       id: s.id,
       name: s.name,
       department: s.department,
+      departmentKey: s.departmentKey,
       description: s.description,
       hasPolicy: s.hasPolicy,
       hasStateModel: s.hasStateModel,

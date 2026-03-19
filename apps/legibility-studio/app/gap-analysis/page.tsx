@@ -9,6 +9,7 @@ interface Service {
   id: string;
   name: string;
   department: string;
+  departmentKey?: string;
   completeness: number;
   gapCount: number;
   hasPolicy: boolean;
@@ -20,6 +21,7 @@ interface Service {
 }
 
 interface DeptSummary {
+  key: string;
   department: string;
   total: number;
   full: number;
@@ -67,17 +69,25 @@ export default function GapAnalysisPage() {
       .catch(() => setLoading(false));
   }, []);
 
-  // Department summaries
+  // Department summaries — group by departmentKey so "HMRC" and "HM Revenue & Customs" merge
   const deptSummaries = useMemo(() => {
     const groups: Record<string, Service[]> = {};
+    const displayNames: Record<string, string> = {};
     for (const s of services) {
-      const dept = s.department || "Unknown";
-      if (!groups[dept]) groups[dept] = [];
-      groups[dept].push(s);
+      const key = s.departmentKey || s.department || "unknown";
+      if (!groups[key]) groups[key] = [];
+      groups[key].push(s);
+      // Use the longest department name as the display name (catalogue has full names)
+      if (
+        !displayNames[key] ||
+        s.department.length > displayNames[key].length
+      ) {
+        displayNames[key] = s.department;
+      }
     }
 
     return Object.entries(groups)
-      .map(([department, svcs]): DeptSummary => {
+      .map(([key, svcs]): DeptSummary => {
         const full = svcs.filter(
           (s) => (s.source || "full") === "full",
         ).length;
@@ -87,13 +97,15 @@ export default function GapAnalysisPage() {
         ).length;
         const withArtefacts = full + graph;
         return {
-          department,
+          key,
+          department: displayNames[key] || key,
           total: svcs.length,
           full,
           graph,
           catalogue,
           withArtefacts,
-          coverage: svcs.length > 0 ? Math.round((full / svcs.length) * 100) : 0,
+          coverage:
+            svcs.length > 0 ? Math.round((full / svcs.length) * 100) : 0,
           demoCount: svcs.filter((s) => s.priority === "demo").length,
           transactionalCount: svcs.filter(
             (s) => s.priority === "transactional",
@@ -107,7 +119,9 @@ export default function GapAnalysisPage() {
   const tableServices = useMemo(() => {
     let filtered = services;
     if (activeDept) {
-      filtered = filtered.filter((s) => s.department === activeDept);
+      filtered = filtered.filter(
+        (s) => (s.departmentKey || s.department) === activeDept,
+      );
     }
     if (!showReference) {
       filtered = filtered.filter((s) => s.priority !== "reference");
@@ -168,14 +182,14 @@ export default function GapAnalysisPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 mb-8">
         {deptSummaries.slice(0, showReference ? undefined : 12).map((dept) => (
           <button
-            key={dept.department}
+            key={dept.key}
             onClick={() =>
               setActiveDept(
-                activeDept === dept.department ? null : dept.department,
+                activeDept === dept.key ? null : dept.key,
               )
             }
             className={`text-left p-4 rounded-xl border transition-all ${
-              activeDept === dept.department
+              activeDept === dept.key
                 ? "border-govuk-blue bg-blue-50 shadow-sm"
                 : "border-studio-border bg-white hover:shadow-sm"
             }`}
