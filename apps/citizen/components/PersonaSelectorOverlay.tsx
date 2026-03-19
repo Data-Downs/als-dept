@@ -7,7 +7,7 @@ import {
   DEPARTMENTS,
   PERSONA_DEPARTMENTS,
   type DepartmentCode,
-} from "@als/personal-data/src/persona-departments";
+} from "@/lib/departments";
 
 interface PersonaItem {
   id: string;
