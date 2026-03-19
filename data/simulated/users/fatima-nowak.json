@@ -2,9 +2,10 @@
   "id": "fatima-nowak",
   "name": "Fatima Nowak",
   "personaId": "fatima-nowak",
-  "personaName": "Fatima & Tomasz Nowak",
-  "description": "Growing family with EHCP, immigration status, and benefit threshold challenges across 5 departments",
+  "personaName": "Fatima Nowak",
+  "description": "British-born mother of three in Luton. Managing Adam's EHCP, Kasia's FSM, and Lily's school start.",
   "color": "#4c2c92",
+  "householdId": "nowak-family",
   "date_of_birth": "1982-12-08",
   "age": 43,
   "national_insurance_number": "WL293847A",
@@ -244,6 +245,63 @@
       "interactionWithUC": "Carer's element can be added to UC; standalone CA may be more beneficial if not on UC"
     }
   },
+  "relationships": [
+    {
+      "id": "rel-fn-tn",
+      "fromUserId": "fatima-nowak",
+      "toUserId": "tomasz-nowak",
+      "type": "spouse",
+      "verification": "verified",
+      "verificationSource": "General Register Office",
+      "createdAt": "2007-06-15",
+      "active": true,
+      "permissions": [
+        { "scope": "view_status", "grantedBy": "fatima-nowak", "grantedAt": "2007-06-15", "revocable": true },
+        { "scope": "receive_alerts", "grantedBy": "fatima-nowak", "grantedAt": "2007-06-15", "revocable": true }
+      ]
+    },
+    {
+      "id": "rel-fn-kasia",
+      "fromUserId": "fatima-nowak",
+      "toUserId": "kasia-nowak",
+      "type": "parent_of",
+      "verification": "verified",
+      "verificationSource": "General Register Office",
+      "createdAt": "2011-03-12",
+      "active": true,
+      "permissions": [
+        { "scope": "view_status", "grantedBy": "system", "grantedAt": "2011-03-12", "revocable": true },
+        { "scope": "submit_on_behalf", "grantedBy": "system", "grantedAt": "2011-03-12", "revocable": true },
+        { "scope": "receive_alerts", "grantedBy": "system", "grantedAt": "2011-03-12", "revocable": true }
+      ]
+    },
+    {
+      "id": "rel-fn-adam",
+      "fromUserId": "fatima-nowak",
+      "toUserId": "adam-nowak",
+      "type": "parent_of",
+      "verification": "verified",
+      "verificationSource": "General Register Office",
+      "createdAt": "2015-01-08",
+      "active": true,
+      "permissions": [
+        { "scope": "full_authority", "grantedBy": "system", "grantedAt": "2015-01-08", "revocable": false }
+      ]
+    },
+    {
+      "id": "rel-fn-lily",
+      "fromUserId": "fatima-nowak",
+      "toUserId": "lily-nowak",
+      "type": "parent_of",
+      "verification": "verified",
+      "verificationSource": "General Register Office",
+      "createdAt": "2021-05-22",
+      "active": true,
+      "permissions": [
+        { "scope": "full_authority", "grantedBy": "system", "grantedAt": "2021-05-22", "revocable": false }
+      ]
+    }
+  ],
   "_fieldSources": {
     "address": { "source": "Local Authority", "tier": "verified", "topic": "housing" },
     "primaryContact": { "source": "User", "tier": "submitted", "topic": "identity" },

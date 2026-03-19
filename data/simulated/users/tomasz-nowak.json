@@ -1,0 +1,202 @@
+{
+  "id": "tomasz-nowak",
+  "name": "Tomasz Nowak",
+  "personaId": "tomasz-nowak",
+  "personaName": "Tomasz Nowak",
+  "description": "Polish-born warehouse supervisor in Luton. EU Settled Status, needs eVisa setup and EU licence exchange.",
+  "color": "#7c3aed",
+  "householdId": "nowak-family",
+  "date_of_birth": "1981-04-22",
+  "age": 45,
+  "national_insurance_number": "TN482916C",
+  "address": {
+    "line_1": "19 Ashcroft Road",
+    "line_2": "",
+    "city": "Luton",
+    "postcode": "LU2 9AY",
+    "country": "England"
+  },
+  "jurisdiction": "England",
+  "credentials": [
+    {
+      "type": "national-insurance",
+      "issuer": "HMRC",
+      "number": "TN482916C",
+      "issued": "2006-09-01",
+      "status": "valid"
+    },
+    {
+      "type": "proof-of-address",
+      "issuer": "Royal Mail",
+      "number": "PAF-TN-LU29AY",
+      "issued": "2025-08-15",
+      "expires": "2026-08-15",
+      "status": "valid"
+    }
+  ],
+  "primaryContact": {
+    "firstName": "Tomasz",
+    "lastName": "Nowak",
+    "dateOfBirth": "1981-04-22",
+    "nationalInsuranceNumber": "TN482916C",
+    "email": "tomasz.nowak@email.co.uk",
+    "phone": "07700900456"
+  },
+  "employment": {
+    "status": "Full-time employed",
+    "employer": "Bedfordshire Distribution Ltd",
+    "jobTitle": "Warehouse supervisor",
+    "annualIncome": 31000,
+    "hoursPerWeek": 40,
+    "taxCode": "1257L"
+  },
+  "financials": {
+    "householdIncome": 42200,
+    "incomeSharedWith": "fatima-nowak",
+    "personalAccount": {
+      "bank": "HSBC",
+      "balance": 1800
+    },
+    "rent": 680,
+    "councilTax": {
+      "band": "C",
+      "annualAmount": 1680,
+      "monthlyPayment": 140
+    },
+    "childBenefit": {
+      "weeklyAmount": 68.6,
+      "children": 3,
+      "firstChildRate": 26.05,
+      "additionalChildRate": 17.25
+    }
+  },
+  "children": [
+    {
+      "firstName": "Kasia",
+      "lastName": "Nowak",
+      "dateOfBirth": "2010-10-22",
+      "childBenefitNumber": "CHB4829103A"
+    },
+    {
+      "firstName": "Adam",
+      "lastName": "Nowak",
+      "dateOfBirth": "2014-05-17",
+      "childBenefitNumber": "CHB4829104B"
+    },
+    {
+      "firstName": "Lily",
+      "lastName": "Nowak",
+      "dateOfBirth": "2020-09-30",
+      "childBenefitNumber": "CHB4829105C"
+    }
+  ],
+  "immigration": {
+    "status": "settled",
+    "homeOfficeRef": "EUSS-2021-TN-4829",
+    "brpNumber": "BRP-TN-2021-4829",
+    "brpExpiry": "2026-12-31",
+    "eVisaMigrationDate": null,
+    "rightToWork": true,
+    "rightToRent": true,
+    "languageProficiency": "fluent",
+    "ninoStatus": "received"
+  },
+  "vehicles": [],
+  "healthInfo": {
+    "gpSurgery": "Ashcroft Surgery, Luton",
+    "conditions": [],
+    "medications": []
+  },
+  "benefits": {
+    "currentlyReceiving": [
+      {
+        "type": "Child Benefit",
+        "amount": 68.6,
+        "frequency": "weekly",
+        "startDate": "2010-11-01"
+      }
+    ],
+    "potentiallyEligibleFor": [],
+    "previousClaims": []
+  },
+  "communicationStyle": {
+    "tone": "Practical, direct, wants clear steps. Uncomfortable with bureaucracy but gets things done when told exactly what to do.",
+    "techSavvy": "Moderate — uses phone apps and WhatsApp, prefers straightforward instructions",
+    "primaryConcerns": [
+      "My BRP expires end of this year — what do I need to do about eVisa?",
+      "I still have my Polish driving licence — do I need to exchange it?",
+      "Will any of this affect my settled status?",
+      "What does my employer actually need from me to prove right to work?"
+    ],
+    "typicalPhrases": [
+      "I just need to know what I have to do",
+      "Will this affect my settled status?",
+      "My employer keeps asking for a share code — what is that?",
+      "I've been here nearly 20 years, I pay my taxes, I just want it sorted"
+    ]
+  },
+  "relationships": [
+    {
+      "id": "rel-tn-fn",
+      "fromUserId": "tomasz-nowak",
+      "toUserId": "fatima-nowak",
+      "type": "spouse",
+      "verification": "verified",
+      "verificationSource": "General Register Office",
+      "createdAt": "2007-06-15",
+      "active": true,
+      "permissions": [
+        { "scope": "view_status", "grantedBy": "tomasz-nowak", "grantedAt": "2007-06-15", "revocable": true },
+        { "scope": "receive_alerts", "grantedBy": "tomasz-nowak", "grantedAt": "2007-06-15", "revocable": true }
+      ]
+    },
+    {
+      "id": "rel-tn-kasia",
+      "fromUserId": "tomasz-nowak",
+      "toUserId": "kasia-nowak",
+      "type": "parent_of",
+      "verification": "verified",
+      "verificationSource": "General Register Office",
+      "createdAt": "2011-03-12",
+      "active": true,
+      "permissions": [
+        { "scope": "view_status", "grantedBy": "system", "grantedAt": "2011-03-12", "revocable": true },
+        { "scope": "submit_on_behalf", "grantedBy": "system", "grantedAt": "2011-03-12", "revocable": true },
+        { "scope": "receive_alerts", "grantedBy": "system", "grantedAt": "2011-03-12", "revocable": true }
+      ]
+    },
+    {
+      "id": "rel-tn-adam",
+      "fromUserId": "tomasz-nowak",
+      "toUserId": "adam-nowak",
+      "type": "parent_of",
+      "verification": "verified",
+      "verificationSource": "General Register Office",
+      "createdAt": "2015-01-08",
+      "active": true,
+      "permissions": [
+        { "scope": "full_authority", "grantedBy": "system", "grantedAt": "2015-01-08", "revocable": false }
+      ]
+    },
+    {
+      "id": "rel-tn-lily",
+      "fromUserId": "tomasz-nowak",
+      "toUserId": "lily-nowak",
+      "type": "parent_of",
+      "verification": "verified",
+      "verificationSource": "General Register Office",
+      "createdAt": "2021-05-22",
+      "active": true,
+      "permissions": [
+        { "scope": "full_authority", "grantedBy": "system", "grantedAt": "2021-05-22", "revocable": false }
+      ]
+    }
+  ],
+  "_fieldSources": {
+    "address": { "source": "Local Authority", "tier": "verified", "topic": "housing" },
+    "immigration": { "source": "Home Office", "tier": "verified", "topic": "immigration" },
+    "employment": { "source": "HMRC", "tier": "verified", "topic": "employment" },
+    "primaryContact": { "source": "User", "tier": "submitted", "topic": "identity" },
+    "communicationStyle": { "source": "Agent inference", "tier": "inferred", "topic": "general" }
+  }
+}

@@ -44,6 +44,7 @@ import jamesWhitfield from "../../../data/simulated/users/james-whitfield.json";
 import danielObi from "../../../data/simulated/users/daniel-obi.json";
 import zaraBegum from "../../../data/simulated/users/zara-begum.json";
 import fatimaNowak from "../../../data/simulated/users/fatima-nowak.json";
+import tomaszNowak from "../../../data/simulated/users/tomasz-nowak.json";
 
 // ── Prompt files (bundled as string constants for Cloudflare) ──
 
@@ -643,6 +644,7 @@ const ALL_USERS: Record<string, unknown>[] = [
   danielObi as unknown as Record<string, unknown>,
   zaraBegum as unknown as Record<string, unknown>,
   fatimaNowak as unknown as Record<string, unknown>,
+  tomaszNowak as unknown as Record<string, unknown>,
 ];
 
 const PERSONA_DATA: Record<string, Record<string, unknown>> = {};

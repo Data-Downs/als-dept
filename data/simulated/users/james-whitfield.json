@@ -194,6 +194,35 @@
       { "item": "CAMHS ADHD diagnosis letter", "status": "obtained" }
     ]
   },
+  "relationships": [
+    {
+      "id": "rel-jw-owen",
+      "fromUserId": "james-whitfield",
+      "toUserId": "owen-whitfield",
+      "type": "parent_of",
+      "verification": "verified",
+      "verificationSource": "General Register Office",
+      "createdAt": "2018-04-20",
+      "active": true,
+      "permissions": [
+        { "scope": "full_authority", "grantedBy": "system", "grantedAt": "2018-04-20", "revocable": false }
+      ]
+    },
+    {
+      "id": "rel-jw-claire",
+      "fromUserId": "james-whitfield",
+      "toUserId": "claire-whitfield",
+      "type": "spouse",
+      "verification": "verified",
+      "verificationSource": "General Register Office",
+      "createdAt": "2015-08-12",
+      "active": true,
+      "permissions": [
+        { "scope": "view_status", "grantedBy": "james-whitfield", "grantedAt": "2015-08-12", "revocable": true },
+        { "scope": "receive_alerts", "grantedBy": "james-whitfield", "grantedAt": "2015-08-12", "revocable": true }
+      ]
+    }
+  ],
   "_fieldSources": {
     "address": { "source": "DWP", "tier": "verified", "topic": "identity" },
     "primaryContact": { "source": "DWP", "tier": "verified", "topic": "identity" },

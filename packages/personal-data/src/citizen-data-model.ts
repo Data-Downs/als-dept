@@ -330,6 +330,17 @@ export interface CitizenProfile {
   /** Growing family with multiple children — Fatima & Tomasz Nowak */
   growingFamily?: GrowingFamilyData;
 
+  // ── Relationships & Delegation ──
+
+  /** Relationships with other citizens */
+  relationships?: FamilyRelationship[];
+
+  /** Household membership */
+  householdId?: string;
+
+  /** Delegated actions log — actions taken on behalf of this person */
+  delegatedActions?: DelegatedAction[];
+
   // ── Source Attribution ──
 
   /** Per-field source attribution — which department holds each piece of data */
@@ -563,4 +574,99 @@ export interface WalletCredential {
   expires?: string;
   status: "valid" | "expired" | "revoked" | "suspended";
   claims?: Record<string, unknown>;
+}
+
+// ── Relationship & Delegation Types ──
+
+export type RelationshipType =
+  | "spouse"
+  | "partner"
+  | "parent_of"
+  | "child_of"
+  | "guardian_of"
+  | "executor_of"
+  | "carer_of"
+  | "attorney_of"
+  | "representative_of";
+
+export type PermissionScope =
+  | "view_status"
+  | "view_data"
+  | "submit_on_behalf"
+  | "receive_alerts"
+  | "manage_consent"
+  | "make_payments"
+  | "appeal_decisions"
+  | "correspond"
+  | "full_authority";
+
+/** A relationship between two citizens */
+export interface FamilyRelationship {
+  id: string;
+  /** The person who holds this relationship (e.g., the parent) */
+  fromUserId: string;
+  /** The person this relationship is with (e.g., the child) */
+  toUserId: string;
+  /** Type of relationship */
+  type: RelationshipType;
+  /** Whether this relationship is legally verified or self-declared */
+  verification: "verified" | "declared";
+  /** Source of verification (e.g., "General Register Office", "Court Order") */
+  verificationSource?: string;
+  /** When the relationship was established in the system */
+  createdAt: string;
+  /** Whether the relationship is currently active */
+  active: boolean;
+  /** Permissions granted in this direction */
+  permissions: DelegationPermission[];
+}
+
+/** A specific permission grant within a relationship */
+export interface DelegationPermission {
+  scope: PermissionScope;
+  /** Who granted this permission */
+  grantedBy: string;
+  /** When it was granted */
+  grantedAt: string;
+  /** Optional expiry (e.g., Power of Attorney until a date) */
+  expiresAt?: string;
+  /** Whether the other party can revoke this */
+  revocable: boolean;
+  /** Optional restriction to specific services */
+  serviceFilter?: string[];
+}
+
+/** A household grouping — connects related citizens */
+export interface Household {
+  id: string;
+  name: string;
+  members: HouseholdMemberRef[];
+  createdAt: string;
+}
+
+export interface HouseholdMemberRef {
+  userId: string;
+  role: "primary" | "partner" | "child" | "dependent" | "other";
+  joinedAt: string;
+}
+
+/** An action taken by one person on behalf of another */
+export interface DelegatedAction {
+  id: string;
+  /** Who performed the action */
+  actorUserId: string;
+  /** On whose behalf */
+  subjectUserId: string;
+  /** The relationship that authorised this action */
+  relationshipId: string;
+  /** What was done */
+  action: string;
+  /** Which service */
+  serviceId: string;
+  /** Timestamp */
+  performedAt: string;
+  /** Whether the subject has been notified */
+  subjectNotified: boolean;
+  /** Notification timestamp */
+  notifiedAt?: string;
 }

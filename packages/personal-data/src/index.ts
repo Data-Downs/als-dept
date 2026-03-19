@@ -39,7 +39,17 @@ export type {
   GrowingFamilyData,
   Vehicle,
   WalletCredential,
+  RelationshipType,
+  PermissionScope,
+  FamilyRelationship,
+  DelegationPermission,
+  Household,
+  HouseholdMemberRef,
+  DelegatedAction,
 } from "./citizen-data-model";
+
+// Relationship store
+export { RelationshipStore } from "./relationship-store";
 
 // Field registry
 export {

@@ -186,6 +186,24 @@
       "State Pension (DWP)"
     ]
   },
+  "relationships": [
+    {
+      "id": "rel-so-david",
+      "fromUserId": "sarah-okafor",
+      "toUserId": "david-okafor-deceased",
+      "type": "executor_of",
+      "verification": "verified",
+      "verificationSource": "Will / Probate Registry",
+      "createdAt": "2026-02-28",
+      "active": true,
+      "permissions": [
+        { "scope": "view_data", "grantedBy": "legal-authority", "grantedAt": "2026-02-28", "revocable": false },
+        { "scope": "submit_on_behalf", "grantedBy": "legal-authority", "grantedAt": "2026-02-28", "revocable": false },
+        { "scope": "make_payments", "grantedBy": "legal-authority", "grantedAt": "2026-02-28", "revocable": false },
+        { "scope": "correspond", "grantedBy": "legal-authority", "grantedAt": "2026-02-28", "revocable": false }
+      ]
+    }
+  ],
   "_fieldSources": {
     "address": {
       "source": "HMRC",

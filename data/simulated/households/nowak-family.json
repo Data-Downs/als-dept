@@ -1,0 +1,32 @@
+{
+  "id": "nowak-family",
+  "name": "Nowak Family",
+  "members": [
+    {
+      "userId": "fatima-nowak",
+      "role": "primary",
+      "joinedAt": "2007-06-15"
+    },
+    {
+      "userId": "tomasz-nowak",
+      "role": "partner",
+      "joinedAt": "2007-06-15"
+    },
+    {
+      "userId": "kasia-nowak",
+      "role": "child",
+      "joinedAt": "2011-03-12"
+    },
+    {
+      "userId": "adam-nowak",
+      "role": "child",
+      "joinedAt": "2015-01-08"
+    },
+    {
+      "userId": "lily-nowak",
+      "role": "child",
+      "joinedAt": "2021-05-22"
+    }
+  ],
+  "createdAt": "2007-06-15"
+}

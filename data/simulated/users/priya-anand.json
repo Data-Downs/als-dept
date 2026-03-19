@@ -193,6 +193,47 @@
     "fsmEligibility": true,
     "schoolRegistrationStatus": "not_started"
   },
+  "relationships": [
+    {
+      "id": "rel-pa-arjun",
+      "fromUserId": "priya-anand",
+      "toUserId": "arjun-anand",
+      "type": "parent_of",
+      "verification": "verified",
+      "verificationSource": "General Register Office",
+      "createdAt": "2025-06-15",
+      "active": true,
+      "permissions": [
+        { "scope": "full_authority", "grantedBy": "system", "grantedAt": "2025-06-15", "revocable": false }
+      ]
+    },
+    {
+      "id": "rel-pa-meera",
+      "fromUserId": "priya-anand",
+      "toUserId": "meera-anand",
+      "type": "parent_of",
+      "verification": "verified",
+      "verificationSource": "General Register Office",
+      "createdAt": "2022-01-10",
+      "active": true,
+      "permissions": [
+        { "scope": "full_authority", "grantedBy": "system", "grantedAt": "2022-01-10", "revocable": false }
+      ]
+    },
+    {
+      "id": "rel-pa-dev",
+      "fromUserId": "priya-anand",
+      "toUserId": "dev-anand",
+      "type": "partner",
+      "verification": "declared",
+      "createdAt": "2020-03-01",
+      "active": true,
+      "permissions": [
+        { "scope": "view_status", "grantedBy": "priya-anand", "grantedAt": "2020-03-01", "revocable": true },
+        { "scope": "receive_alerts", "grantedBy": "priya-anand", "grantedAt": "2020-03-01", "revocable": true }
+      ]
+    }
+  ],
   "_fieldSources": {
     "address": {
       "source": "DWP",
