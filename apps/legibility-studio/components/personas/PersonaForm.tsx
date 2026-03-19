@@ -225,7 +225,7 @@ export default function PersonaForm({ data, onChange }: Props) {
               onChange={(e) => update({ personaName: e.target.value })}
             />
           </FormField>
-          <FormField label="ID" hint="File name and lookup key">
+          <FormField label="ID (file name and lookup key)">
             <input
               className={`${inputClass} bg-gray-50 text-gray-500`}
               value={(data.id as string) ?? ""}
