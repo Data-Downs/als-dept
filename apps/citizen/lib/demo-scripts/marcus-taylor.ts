@@ -65,8 +65,22 @@ When you're ready, I can help with your driving licence or anything else.`,
       tasks: [],
       conversationTitle: null,
       outcomes: [
-        "dwp-universal-credit",
-        "dwp-basic-bank-account",
+        {
+          serviceId: "dwp-universal-credit",
+          hints: {
+            application_reference: "Universal Credit claim — Marcus Taylor",
+            decision: "Claim approved — £393.45/month standard allowance",
+            next_steps: "First payment in approximately 5 weeks to your new Lloyds account",
+          },
+        },
+        {
+          serviceId: "dwp-basic-bank-account",
+          hints: {
+            application_reference: "Lloyds Basic Bank Account",
+            decision: "Account opened — no credit check, no fees",
+            next_steps: "UC payments will be paid into this account automatically",
+          },
+        },
       ],
     },
   },
@@ -144,7 +158,17 @@ Here's your confirmation:`,
         "Marcus's driving licence (TAYLO960722MJ9FK) expired on 10 August 2025 while he was serving his sentence. Renewing it to a 10-year validity. Posting to approved premises address. Mentioning the ID benefit because for someone recently released, having valid photo ID is important for employment and housing applications.",
       tasks: [],
       conversationTitle: null,
-      outcomes: ["dvla.renew-driving-licence"],
+      outcomes: [
+        {
+          serviceId: "dvla.renew-driving-licence",
+          hints: {
+            licence_number: "TAYLO960722MJ9FK",
+            valid_from: "2026-03-20",
+            valid_until: "2036-03-20",
+            posted_to: "Room 7, Kirkgate House, 15 Kirkgate, Huddersfield, HD1 1QT",
+          },
+        },
+      ],
     },
   },
 

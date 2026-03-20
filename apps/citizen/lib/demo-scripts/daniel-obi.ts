@@ -68,7 +68,16 @@ Here's your confirmation:`,
         "Daniel's employment data shows taxCode: 'BR' with taxCodeError: true. The refund of £1,800 matches financials.taxRefundOwed. Payment goes to his Lloyds personal account (sort code 30-90-15, account 48291035). No consent needed — this is his own HMRC tax data. Correcting the code to 1257L (standard Personal Allowance).",
       tasks: [],
       conversationTitle: null,
-      outcomes: ["hmrc-tax-refund"],
+      outcomes: [
+        {
+          serviceId: "hmrc-tax-refund",
+          hints: {
+            entitlement_amount: "1800",
+            entitlement_period: "One-off refund — tax code corrected from BR to 1257L",
+            employer_notified: "Tax code updated with HMRC. Refund to Lloyds account (ending 1035) within 10 working days.",
+          },
+        },
+      ],
     },
   },
 
@@ -103,7 +112,17 @@ Here's your confirmation:`,
         "Daniel's selfEmployment.outstandingInvoices[0] shows Mr R. Karim owes £4,200 for a kitchen and bathroom refit, 3 months overdue. Court fee for MCOL claims £3,001–£5,000 is £205. Filing through Money Claims Online (HMCTS digital service). No consent needed — Daniel is filing his own claim.",
       tasks: [],
       conversationTitle: null,
-      outcomes: ["hmcts-money-claim"],
+      outcomes: [
+        {
+          serviceId: "hmcts-money-claim",
+          hints: {
+            case_reference: "Money claim against Mr R. Karim — £4,200",
+            court_or_registry: "Money Claims Online (HMCTS)",
+            document_type: "Civil money claim — unpaid invoice for kitchen and bathroom refit",
+            next_steps: "Court sends claim to defendant. 14 days to respond. If ignored, apply for County Court Judgment (CCJ). Court fee: £205.",
+          },
+        },
+      ],
     },
   },
 
@@ -136,7 +155,16 @@ I'd recommend setting up the software now so you're ready for the first quarter.
         "Daniel's selfEmployment.mtdStatus is 'required_not_enrolled' with deadline 2026-04-06. His SA filing history shows all on time. First quarterly date from quarterlyReportingDates[0] is 2026-07-05. Being practical and reassuring — Daniel doesn't like paperwork and is wary of government portals.",
       tasks: [],
       conversationTitle: null,
-      outcomes: ["hmrc-mtd"],
+      outcomes: [
+        {
+          serviceId: "hmrc-mtd",
+          hints: {
+            amount_paid: "0",
+            payment_method: "Enrolled for Making Tax Digital for Income Tax — no fee",
+            receipt_reference: "First quarterly report due 5 July 2026 (April–June). UTR: 5839201746.",
+          },
+        },
+      ],
     },
   },
 

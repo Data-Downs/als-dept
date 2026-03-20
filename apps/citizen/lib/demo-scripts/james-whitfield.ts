@@ -63,7 +63,24 @@ When you're ready, say the word and I'll chase Owen's EHCP.`,
         "Consent granted. Submitting medical evidence (MS nurse letter, neurologist report, daily living diary) to DWP for the mandatory reconsideration. The outcome: PIP enhanced daily living £108.55/wk + enhanced mobility £75.75/wk. Back-payment calculation: (£108.55 - £72.65) + £75.75 = £111.65/wk increase × 26 weeks = £2,902.90. Motability car depends on enhanced mobility — now secured. Also triggering Blue Badge as James qualifies automatically with enhanced mobility PIP.",
       tasks: [],
       conversationTitle: null,
-      outcomes: ["dwp-pip", "la-blue-badge"],
+      outcomes: [
+        {
+          serviceId: "dwp-pip",
+          hints: {
+            payment_amount: "184.30",
+            payment_frequency: "Weekly — enhanced daily living £108.55 + enhanced mobility £75.75. Back-payment: £2,902.90 (26 weeks)",
+            first_payment_date: "2026-03-27",
+          },
+        },
+        {
+          serviceId: "la-blue-badge",
+          hints: {
+            entitlement_amount: "Blue Badge",
+            entitlement_period: "3 years — valid until March 2029",
+            employer_notified: "Automatic qualification via PIP enhanced mobility",
+          },
+        },
+      ],
     },
   },
 
@@ -139,7 +156,16 @@ You'll see the confirmation below. If you ever need to review or amend the plan,
         "Owen's EHCP application was filed 2025-11-10, statutory deadline 2026-04-06 (20 weeks). We're in week 18. Chasing the LA SEND team to finalise. The EHCP names Owen's school (derived from address city — Rotherham). Additional support includes TA, OT, and sensory space — typical for an 8-year-old with additional needs. The plan is legally binding under the Children and Families Act 2014.",
       tasks: [],
       conversationTitle: null,
-      outcomes: ["la-send-ehc"],
+      outcomes: [
+        {
+          serviceId: "la-send-ehc",
+          hints: {
+            application_reference: "EHCP for Owen Whitfield",
+            decision: "Education, Health and Care Plan issued — additional support confirmed",
+            next_steps: "Plan names Owen's school in Rotherham with TA, occupational therapy, and sensory break space. Legally binding under the Children and Families Act 2014.",
+          },
+        },
+      ],
     },
   },
 

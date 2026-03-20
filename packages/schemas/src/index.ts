@@ -419,6 +419,29 @@ export type {
   TypologyDataSchema,
 } from "./card-registry";
 
+// ── Journey Outcomes ──
+
+export type {
+  OutcomeType,
+  JourneyOutcome,
+  OutcomeDetail,
+  CredentialUpdate,
+} from "./outcome-types";
+
+// ── Outcome Templates ──
+
+export {
+  OUTCOME_TEMPLATE_REGISTRY,
+  buildOutcomeFromTemplate,
+} from "./outcome-templates";
+
+export type {
+  OutcomeTemplate,
+  OutcomeFieldSpec,
+  OutcomeContext,
+  OutcomeDataSources,
+} from "./outcome-templates";
+
 // ── Orchestrator Action (LLM ↔ Orchestrator contract) ──
 
 export interface FieldExtraction {

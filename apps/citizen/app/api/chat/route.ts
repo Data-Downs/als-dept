@@ -1182,7 +1182,11 @@ export async function POST(request: NextRequest) {
     // ── DEMO MODE: Scripted responses (no LLM needed) ──
     // Import dynamically to keep this server-only
     const { findScriptedResponse } = await import("@/lib/demo-data");
-    const { buildOutcomes } = await import("@/lib/outcome-builders");
+    const {
+      OUTCOME_TEMPLATE_REGISTRY,
+      buildOutcomeFromTemplate,
+      inferInteractionType: inferType,
+    } = await import("@als/schemas");
 
     // Lazily load persona-specific scripts only when needed (server-only)
     let personaScripts: Parameters<typeof findScriptedResponse>[2];
@@ -1225,17 +1229,52 @@ export async function POST(request: NextRequest) {
 
     const traceId = `trace_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
 
-    // Resolve journey outcomes if the scripted response triggers any
+    // Resolve journey outcomes via template system
     let outcomes;
     if (scripted.outcomes && scripted.outcomes.length > 0) {
       try {
-        // Load persona data for outcome calculation
         const personaData = await loadPersonaData(persona);
-        outcomes = buildOutcomes(
-          scripted.outcomes,
-          personaData,
-          "2026-03-20",
-        );
+        const built: import("@als/schemas").JourneyOutcome[] = [];
+
+        for (const entry of scripted.outcomes) {
+          const serviceId = entry.serviceId;
+          const hints = entry.hints;
+
+          // Resolve the interaction type for this service
+          const graphNode = getGraphNode(serviceId);
+          const serviceType = graphNode?.serviceType ?? null;
+          const interactionType = inferType(serviceType);
+          const template =
+            OUTCOME_TEMPLATE_REGISTRY[
+              interactionType as keyof typeof OUTCOME_TEMPLATE_REGISTRY
+            ];
+          if (!template) continue;
+
+          const outcome = buildOutcomeFromTemplate(
+            template,
+            {
+              serviceId,
+              serviceName:
+                graphNode?.name ||
+                ((await loadManifest(serviceId))?.name as string) ||
+                serviceId,
+              department:
+                graphNode?.dept ||
+                ((await loadManifest(serviceId))?.department as string) ||
+                "Government",
+              govukUrl: graphNode?.govuk_url,
+              conversationId: traceId,
+              issuedAt: "2026-03-20",
+            },
+            {
+              outcomeHints: hints,
+              personaData: personaData as unknown as Record<string, unknown>,
+            },
+          );
+          if (outcome) built.push(outcome);
+        }
+
+        if (built.length > 0) outcomes = built;
       } catch (err) {
         console.warn("Failed to build outcomes:", err);
       }

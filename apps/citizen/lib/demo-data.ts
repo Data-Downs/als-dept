@@ -119,8 +119,11 @@ export interface ScriptedResponse {
     duration: string;
     required: boolean;
   }>;
-  /** Service IDs whose journey outcomes to trigger */
-  outcomes?: string[];
+  /** Service outcomes to trigger. Each entry has a serviceId and optional hints. */
+  outcomes?: Array<{
+    serviceId: string;
+    hints?: Record<string, string>;
+  }>;
 }
 
 interface ScriptedEntry {

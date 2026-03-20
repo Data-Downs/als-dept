@@ -70,9 +70,30 @@ Would you like me to check your Universal Credit entitlement too?`,
       tasks: [],
       conversationTitle: null,
       outcomes: [
-        "hmrc-tax-free-childcare",
-        "hmrc-free-childcare-30",
-        "la-free-school-meals",
+        {
+          serviceId: "hmrc-tax-free-childcare",
+          hints: {
+            entitlement_amount: "2000",
+            entitlement_period: "Annual — for every £8 paid in, government adds £2",
+            employer_notified: "TFC account linked to Little Stars Nursery, Slough. Savings start immediately on Arjun's £800/month fees.",
+          },
+        },
+        {
+          serviceId: "hmrc-free-childcare-30",
+          hints: {
+            entitlement_amount: "30 hours free childcare per week",
+            entitlement_period: "Valid until end of August 2026",
+            employer_notified: "Code generated for Meera Anand — give to nursery or childminder",
+          },
+        },
+        {
+          serviceId: "la-free-school-meals",
+          hints: {
+            entitlement_amount: "Free school meals",
+            entitlement_period: "From September 2026 — Meera at Langley Academy",
+            employer_notified: "School notified automatically by Slough Borough Council",
+          },
+        },
       ],
     },
   },
@@ -174,7 +195,16 @@ Here's your entitlement summary:`,
         "UC calculation: Standard couple allowance ~£617.56, child elements (first child £333.33 + second child £287.92), childcare element (85% of £800 = £680), housing element for £1,100 rent. Earnings taper applies at 55% on net income above work allowance. Approximate figure of £450/month is reasonable for the demo. This is a significant monthly boost for the family.",
       tasks: [],
       conversationTitle: null,
-      outcomes: ["dwp-universal-credit-topup"],
+      outcomes: [
+        {
+          serviceId: "dwp-universal-credit-topup",
+          hints: {
+            payment_amount: "450",
+            payment_frequency: "Monthly — includes couple allowance, child elements, housing element (£1,100 rent), and childcare element (85% of £800 nursery)",
+            first_payment_date: "Approximately 5 weeks from claim date",
+          },
+        },
+      ],
     },
   },
 
@@ -203,7 +233,16 @@ Here's your confirmation:`,
         "Sure Start Maternity Grant: £500 one-off for families on qualifying benefits (UC, which Priya now has) with a child under 12 months or expecting. Arjun is 9 months old (born June 2025), so within the qualifying window. Payment to Lloyds current account.",
       tasks: [],
       conversationTitle: null,
-      outcomes: ["dwp-sure-start-grant"],
+      outcomes: [
+        {
+          serviceId: "dwp-sure-start-grant",
+          hints: {
+            grant_amount: "500",
+            project_description: "Sure Start Maternity Grant for Arjun Anand (born June 2025)",
+            conditions_accepted: "One-off payment — qualifying child under 12 months, family receiving Universal Credit",
+          },
+        },
+      ],
     },
   },
 

@@ -62,9 +62,31 @@ When you're ready, I can help with the bereavement support payment or probate. J
       tasks: [],
       conversationTitle: null,
       outcomes: [
-        "dwp-tell-us-once",
-        "gro-register-death",
-        "gro-death-certificate",
+        {
+          serviceId: "dwp-tell-us-once",
+          hints: {
+            registration_reference: "Departments notified",
+            registration_district: "Chelmsford",
+            event_date: "Six departments: HMRC, DWP, DVLA, HM Passport Office, Chelmsford Council, Electoral Register",
+          },
+        },
+        {
+          serviceId: "gro-register-death",
+          hints: {
+            registration_reference: "Death of David Oluwole Okafor",
+            registration_district: "Chelmsford, Essex",
+            event_date: "2026-02-26",
+          },
+        },
+        {
+          serviceId: "gro-death-certificate",
+          hints: {
+            licence_number: "Death certificate for David Oluwole Okafor",
+            valid_from: "2026-03-20",
+            valid_until: "Permanent",
+            posted_to: "28 Meadow Close, Chelmsford, CM1 4QR",
+          },
+        },
       ],
     },
   },
@@ -148,7 +170,16 @@ Here's your confirmation:`,
         "Sarah is eligible for BSP: her husband died, she's 58 (under State Pension age), and David had NI contributions from his career at BT. Standard rate applies — £3,500 lump sum + 18 × £350/month. Payment goes to her NatWest current account (sort code 60-14-33).",
       tasks: [],
       conversationTitle: null,
-      outcomes: ["dwp-bereavement-support"],
+      outcomes: [
+        {
+          serviceId: "dwp-bereavement-support",
+          hints: {
+            payment_amount: "3500",
+            payment_frequency: "£3,500 lump sum + £350/month × 18 months",
+            first_payment_date: "2026-04-01",
+          },
+        },
+      ],
     },
   },
 
@@ -178,7 +209,25 @@ Here are your confirmations:`,
         "Sarah is the named executor (verified by Will/Probate Registry). Estate value is £645,000 (from bereavement.estateValue). Combined nil-rate threshold: (£325,000 + £175,000) × 2 = £1,000,000. Estate is well under threshold, so no IHT due. This should be a huge relief for Sarah.",
       tasks: [],
       conversationTitle: null,
-      outcomes: ["hmcts-probate", "hmrc-iht400"],
+      outcomes: [
+        {
+          serviceId: "hmcts-probate",
+          hints: {
+            case_reference: "Grant of Probate — Estate of David Oluwole Okafor",
+            court_or_registry: "HM Courts & Tribunals Service, Chelmsford",
+            document_type: "Grant of Probate",
+            next_steps: "Use the grant to access David's bank accounts and manage the property",
+          },
+        },
+        {
+          serviceId: "hmrc-iht400",
+          hints: {
+            amount_paid: "0",
+            payment_method: "No inheritance tax due — estate £645,000 is below combined threshold of £1,000,000",
+            receipt_reference: "IHT400 filed — nil return",
+          },
+        },
+      ],
     },
   },
 
