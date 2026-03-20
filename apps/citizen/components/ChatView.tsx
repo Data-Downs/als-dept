@@ -462,6 +462,7 @@ export function ChatView() {
               serviceName={serviceName ?? undefined}
               serviceId={currentService ?? undefined}
               interactionType={interactionType ?? undefined}
+              slim={pendingOutcomes.length > 0}
             />
             {/* Related services — only for success terminals */}
             {currentService &&

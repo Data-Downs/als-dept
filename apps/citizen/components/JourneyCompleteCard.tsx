@@ -9,6 +9,8 @@ interface JourneyCompleteCardProps {
   serviceName?: string;
   serviceId?: string;
   interactionType?: string;
+  /** When outcomes are shown above, collapse to just the return button */
+  slim?: boolean;
 }
 
 /** Generate a deterministic reference number from a conversation ID */
@@ -32,6 +34,7 @@ export function JourneyCompleteCard({
   serviceName,
   serviceId,
   interactionType,
+  slim,
 }: JourneyCompleteCardProps) {
   const navigateTo = useAppStore((s) => s.navigateTo);
   const startNewConversation = useAppStore((s) => s.startNewConversation);
@@ -103,25 +106,30 @@ export function JourneyCompleteCard({
           </span>
         </div>
 
-        {/* Reference number */}
-        <div className="mb-3 px-3 py-2 bg-gray-50 rounded-lg border border-gray-100">
-          <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400">
-            Reference
-          </span>
-          <p className="text-sm font-mono font-bold text-govuk-black mt-0.5">
-            {reference}
-          </p>
-        </div>
+        {!slim && (
+          <>
+            {/* Reference number */}
+            <div className="mb-3 px-3 py-2 bg-gray-50 rounded-lg border border-gray-100">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400">
+                Reference
+              </span>
+              <p className="text-sm font-mono font-bold text-govuk-black mt-0.5">
+                {reference}
+              </p>
+            </div>
 
-        {/* Description */}
-        <p className="text-sm text-govuk-dark-grey mb-2">
-          {config.description}
-        </p>
+            {/* Description */}
+            <p className="text-sm text-govuk-dark-grey mb-2">
+              {config.description}
+            </p>
 
-        {/* Next steps */}
-        <p className="text-xs text-govuk-dark-grey mb-5">
-          <span className="font-semibold">Next steps:</span> {config.nextSteps}
-        </p>
+            {/* Next steps */}
+            <p className="text-xs text-govuk-dark-grey mb-5">
+              <span className="font-semibold">Next steps:</span>{" "}
+              {config.nextSteps}
+            </p>
+          </>
+        )}
 
         {/* Return button */}
         <button
