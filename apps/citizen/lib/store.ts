@@ -683,6 +683,28 @@ export const useAppStore = create<AppStore>((set, get) => ({
             ? false
             : state.consentSubmitted,
       });
+
+      // Handle service/need proposals — transition from triage to service
+      if (data.serviceProposal) {
+        set({
+          currentService: data.serviceProposal.serviceId as ServiceType,
+          serviceName: data.serviceProposal.serviceName,
+        });
+        conversation.service = data.serviceProposal.serviceId;
+        saveConversation(state.persona, conversation);
+      } else if (data.needProposal) {
+        // For multi-service needs, store the first service as the primary
+        // but the need context is carried in the conversation
+        const primaryService = data.needProposal.services[0];
+        if (primaryService) {
+          set({
+            currentService: primaryService as ServiceType,
+            serviceName: data.needProposal.need,
+          });
+          conversation.service = primaryService;
+          saveConversation(state.persona, conversation);
+        }
+      }
     } catch (error) {
       console.error("Chat error:", error);
       const errorMessage =

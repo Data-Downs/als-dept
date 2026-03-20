@@ -103,6 +103,16 @@ export interface ChatApiResponse {
   interactionType?: string;
   pipelineTrace?: import("@als/schemas").PipelineTrace;
   outcomes?: import("./outcome-types").JourneyOutcome[];
+  serviceProposal?: {
+    serviceId: string;
+    serviceName: string;
+    reason: string;
+  };
+  needProposal?: {
+    need: string;
+    services: string[];
+    sharedDataNeeded: string[];
+  };
 }
 
 export interface Conversation {

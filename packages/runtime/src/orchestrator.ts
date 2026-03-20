@@ -35,6 +35,8 @@ import {
   TASK_INSTRUCTIONS,
   STRUCTURED_OUTPUT_INSTRUCTIONS,
   FACT_EXTRACTION_INSTRUCTIONS,
+  SERVICE_PROPOSAL_INSTRUCTIONS_DOT,
+  SERVICE_PROPOSAL_INSTRUCTIONS_MAX,
 } from "./prompt-fragments";
 
 // ── LLM Adapter Interface ──
@@ -87,6 +89,8 @@ export interface OrchestratorInput {
   unresolvedContradictions?: string;
   /** Flood data handler (injected by app layer) */
   floodDataHandler?: (city: string) => Promise<string>;
+  /** Force journey mode even without a state model (service was proposed by triage) */
+  forceJourney?: boolean;
 }
 
 export interface OrchestratorOutput {
@@ -144,6 +148,18 @@ export interface OrchestratorOutput {
   };
   /** Pipeline trace for transparency UI */
   pipelineTrace?: PipelineTrace;
+  /** Service proposal from triage → single service journey */
+  serviceProposal?: {
+    serviceId: string;
+    serviceName: string;
+    reason: string;
+  };
+  /** Need proposal from triage → multi-service need */
+  needProposal?: {
+    need: string;
+    services: string[];
+    sharedDataNeeded: string[];
+  };
 }
 
 // ── Structured output parser ──
@@ -191,6 +207,16 @@ interface ParsedStructuredOutput {
   }>;
   extractedFacts?: FieldExtraction[];
   outcomeHints?: Record<string, unknown>;
+  serviceProposal?: {
+    serviceId: string;
+    serviceName: string;
+    reason: string;
+  };
+  needProposal?: {
+    need: string;
+    services: string[];
+    sharedDataNeeded: string[];
+  };
 }
 
 const ISO_DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
@@ -357,6 +383,56 @@ function parseStructuredOutput(responseText: string): {
       }
     }
     if (Object.keys(hints).length > 0) output.outcomeHints = hints;
+  }
+
+  // Service proposal (triage → single service journey)
+  if (
+    typeof raw.serviceProposal === "object" &&
+    raw.serviceProposal !== null &&
+    !Array.isArray(raw.serviceProposal)
+  ) {
+    const sp = raw.serviceProposal as Record<string, unknown>;
+    if (typeof sp.serviceId === "string" && sp.serviceId.trim()) {
+      output.serviceProposal = {
+        serviceId: sp.serviceId.trim(),
+        serviceName:
+          typeof sp.serviceName === "string"
+            ? sp.serviceName.trim()
+            : sp.serviceId.trim(),
+        reason: typeof sp.reason === "string" ? sp.reason.trim() : "",
+      };
+    }
+  }
+
+  // Need proposal (triage → multi-service need)
+  if (
+    typeof raw.needProposal === "object" &&
+    raw.needProposal !== null &&
+    !Array.isArray(raw.needProposal)
+  ) {
+    const np = raw.needProposal as Record<string, unknown>;
+    if (
+      typeof np.need === "string" &&
+      np.need.trim() &&
+      Array.isArray(np.services) &&
+      np.services.length > 0
+    ) {
+      const services = (np.services as unknown[])
+        .filter((s): s is string => typeof s === "string" && s.trim().length > 0)
+        .map((s) => s.trim());
+      const sharedData = Array.isArray(np.sharedDataNeeded)
+        ? (np.sharedDataNeeded as unknown[])
+            .filter((s): s is string => typeof s === "string")
+            .map((s) => s.trim())
+        : [];
+      if (services.length > 0) {
+        output.needProposal = {
+          need: np.need.trim(),
+          services,
+          sharedDataNeeded: sharedData,
+        };
+      }
+    }
   }
 
   return { parsed: output, cleanText };
@@ -739,6 +815,7 @@ export class Orchestrator {
       serviceId,
       stateModelDef,
       currentState,
+      input.forceJourney,
     );
     steps.push({
       id: "agent-select",
@@ -1245,6 +1322,8 @@ export class Orchestrator {
       consentRequests,
       extractedFields: structuredOutput?.extractedFacts,
       outcomeHints: structuredOutput?.outcomeHints,
+      serviceProposal: structuredOutput?.serviceProposal,
+      needProposal: structuredOutput?.needProposal,
       versionMetadata,
       pipelineTrace,
     };
@@ -1256,8 +1335,10 @@ export class Orchestrator {
     serviceId: string,
     stateModelDef?: StateModelDefinition,
     currentState?: string,
+    forceJourney?: boolean,
   ): "triage" | "journey" {
     if (!serviceId || serviceId === "triage") return "triage";
+    if (forceJourney) return "journey";
     if (!stateModelDef && (!currentState || currentState === "not-started"))
       return "triage";
     return "journey";
@@ -1327,6 +1408,13 @@ export class Orchestrator {
     if (generateTitle) {
       parts.push(TITLE_INSTRUCTIONS);
     }
+
+    // Service proposal instructions (how to transition from triage to a service)
+    parts.push(
+      agent.toLowerCase() === "max"
+        ? SERVICE_PROPOSAL_INSTRUCTIONS_MAX
+        : SERVICE_PROPOSAL_INSTRUCTIONS_DOT,
+    );
 
     parts.push(TASK_INSTRUCTIONS);
     parts.push(STRUCTURED_OUTPUT_INSTRUCTIONS);

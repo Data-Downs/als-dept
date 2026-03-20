@@ -2,6 +2,7 @@
 
 import { useRef, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import { useAppStore } from "@/lib/store";
 import HandoffNotice from "./handoff/HandoffNotice";
 import { TaskCard } from "./TaskCard";
@@ -254,7 +255,7 @@ export function ChatView() {
               >
                 <div className="flex justify-start">
                   <div className="max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed text-govuk-black prose prose-sm prose-neutral max-w-none">
-                    <ReactMarkdown>{beforeMarker.trim()}</ReactMarkdown>
+                    <ReactMarkdown remarkPlugins={[remarkGfm]}>{beforeMarker.trim()}</ReactMarkdown>
                   </div>
                 </div>
                 <div>
@@ -275,7 +276,7 @@ export function ChatView() {
               >
                 <div className="flex justify-start">
                   <div className="max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed text-govuk-black prose prose-sm prose-neutral max-w-none">
-                    <ReactMarkdown>{beforeMarker.trim()}</ReactMarkdown>
+                    <ReactMarkdown remarkPlugins={[remarkGfm]}>{beforeMarker.trim()}</ReactMarkdown>
                   </div>
                 </div>
                 <RegisterBirthCard />
@@ -294,7 +295,7 @@ export function ChatView() {
               >
                 <div className="flex justify-start">
                   <div className="max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed text-govuk-black prose prose-sm prose-neutral max-w-none">
-                    <ReactMarkdown>{beforeMarker.trim()}</ReactMarkdown>
+                    <ReactMarkdown remarkPlugins={[remarkGfm]}>{beforeMarker.trim()}</ReactMarkdown>
                   </div>
                 </div>
                 <TaskReceiptCard
@@ -319,7 +320,7 @@ export function ChatView() {
                   {isUser ? (
                     msg.content
                   ) : (
-                    <ReactMarkdown>{msg.content}</ReactMarkdown>
+                    <ReactMarkdown remarkPlugins={[remarkGfm]}>{msg.content}</ReactMarkdown>
                   )}
                 </div>
               </div>

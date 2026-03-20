@@ -806,6 +806,14 @@ async function chatHandler(input: unknown): Promise<ChatOutput> {
   // ── Run Orchestrator ──
   const orchestrator = new Orchestrator({ adapter, strategy });
 
+  // Force journey mode when transitioning from triage (service was proposed
+  // by triage agent on the previous turn, client updated currentService)
+  const forceJourney =
+    serviceId !== "triage" &&
+    serviceId !== scenario &&
+    currentState === "not-started" &&
+    !stateModelDef;
+
   const result = await orchestrator.run({
     persona,
     agent,
@@ -815,6 +823,7 @@ async function chatHandler(input: unknown): Promise<ChatOutput> {
     generateTitle,
     currentState,
     stateHistory: clientStateHistory || [],
+    forceJourney,
     personaData,
     agentPrompt,
     personaPrompt,
@@ -850,6 +859,35 @@ async function chatHandler(input: unknown): Promise<ChatOutput> {
         }
       : undefined,
   });
+
+  // ── Validate service/need proposals ──
+  if (result.serviceProposal) {
+    const proposedNode = getGraphNode(result.serviceProposal.serviceId);
+    if (!proposedNode) {
+      console.warn(
+        `   [Triage] Invalid serviceProposal: ${result.serviceProposal.serviceId} — stripping`,
+      );
+      result.serviceProposal = undefined;
+    } else {
+      console.log(
+        `   [Triage] Proposing service: ${result.serviceProposal.serviceId} (${result.serviceProposal.serviceName})`,
+      );
+    }
+  }
+  if (result.needProposal) {
+    const validServices = result.needProposal.services.filter(
+      (id) => !!getGraphNode(id),
+    );
+    if (validServices.length === 0) {
+      console.warn(`   [Triage] needProposal had no valid service IDs — stripping`);
+      result.needProposal = undefined;
+    } else {
+      result.needProposal.services = validServices;
+      console.log(
+        `   [Triage] Need proposal: "${result.needProposal.need}" with ${validServices.length} services`,
+      );
+    }
+  }
 
   // ── Store extracted facts (Tier 3) ──
   if (result.extractedFields && result.extractedFields.length > 0) {
