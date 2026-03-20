@@ -1389,7 +1389,7 @@ export async function POST(request: NextRequest) {
     } // end demo mode
 
     // ── REAL MODE: LLM-driven orchestrator ──
-    const result = await invoker.invoke("agent.chat", {
+    const result = await chatHandler({
       persona,
       agent,
       scenario,
