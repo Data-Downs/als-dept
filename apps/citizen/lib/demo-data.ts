@@ -119,6 +119,8 @@ export interface ScriptedResponse {
     duration: string;
     required: boolean;
   }>;
+  /** Service IDs whose journey outcomes to trigger */
+  outcomes?: string[];
 }
 
 interface ScriptedEntry {
@@ -371,10 +373,32 @@ export const ANNA_SUPPORT: SupportItem[] = [
   },
 ];
 
+// ── Persona-specific scripted responses ──
+import { SARAH_OKAFOR_CHAT } from "./demo-scripts/sarah-okafor";
+
+const PERSONA_SCRIPTS: Record<string, ScriptedEntry[]> = {
+  "sarah-okafor": SARAH_OKAFOR_CHAT,
+};
+
 /**
- * Find the best scripted response for a given message
+ * Find the best scripted response for a given message.
+ * Routes to persona-specific scripts if available, otherwise falls back
+ * to the default Anna Cotton scripts.
  */
-export function findScriptedResponse(message: string): ScriptedResponse {
+export function findScriptedResponse(
+  message: string,
+  personaId?: string,
+): ScriptedResponse {
+  // Try persona-specific scripts first
+  if (personaId && PERSONA_SCRIPTS[personaId]) {
+    for (const entry of PERSONA_SCRIPTS[personaId]) {
+      if (entry.patterns.some((p) => p.test(message))) {
+        return entry.response;
+      }
+    }
+  }
+
+  // Fall back to default scripts
   for (const entry of SCRIPTED_CHAT) {
     if (entry.patterns.some((p) => p.test(message))) {
       return entry.response;

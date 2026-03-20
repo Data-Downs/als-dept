@@ -102,6 +102,7 @@ export interface ChatApiResponse {
   cardRequests?: import("@als/schemas").CardRequest[];
   interactionType?: string;
   pipelineTrace?: import("@als/schemas").PipelineTrace;
+  outcomes?: import("./outcome-types").JourneyOutcome[];
 }
 
 export interface Conversation {

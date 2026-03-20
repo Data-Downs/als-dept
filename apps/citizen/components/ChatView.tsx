@@ -22,6 +22,7 @@ import { QuickReplies } from "./QuickReplies";
 import { PipelineTraceBar } from "./PipelineTraceBar";
 import { PlanCardsInChat } from "./PlanCardsInChat";
 import { RegisterBirthCard } from "./RegisterBirthCard";
+import OutcomeCard from "./OutcomeCard";
 
 const TERMINAL_STATES = getAllTerminalStateIds();
 
@@ -61,6 +62,7 @@ export function ChatView() {
   const lastPipelineTrace = useAppStore((s) => s.lastPipelineTrace);
   const pendingCards = useAppStore((s) => s.pendingCards);
   const cardsSubmitted = useAppStore((s) => s.cardsSubmitted);
+  const pendingOutcomes = useAppStore((s) => s.pendingOutcomes);
   const lastAssistantRef = useRef<HTMLDivElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const chatScrollRef = useRef<HTMLDivElement>(null);
@@ -440,6 +442,15 @@ export function ChatView() {
               onDismiss={() => useAppStore.setState({ activeHandoff: null })}
               interactionType={interactionType ?? undefined}
             />
+          </div>
+        )}
+
+        {/* Journey outcomes — tangible results (payments, credentials, documents) */}
+        {!isLoading && pendingOutcomes.length > 0 && (
+          <div className="mt-1 px-1">
+            {pendingOutcomes.map((outcome) => (
+              <OutcomeCard key={outcome.id} outcome={outcome} />
+            ))}
           </div>
         )}
 

@@ -20,6 +20,7 @@ import type {
   TaskField,
 } from "./types";
 import type { CardRequest, PipelineTrace } from "@als/schemas";
+import type { JourneyOutcome } from "./outcome-types";
 import { getAllTerminalStateIds } from "@als/schemas";
 import { computePlanRelevance } from "./plan-relevance";
 
@@ -87,6 +88,9 @@ interface AppStore {
   // Dynamic Cards
   pendingCards: CardRequest[];
   cardsSubmitted: boolean;
+
+  // Journey Outcomes
+  pendingOutcomes: JourneyOutcome[];
 
   // Life events (fetched once on persona load)
   lifeEvents: LifeEventInfo[];
@@ -308,6 +312,7 @@ export const useAppStore = create<AppStore>((set, get) => ({
   lastPipelineTrace: null,
   pendingCards: [],
   cardsSubmitted: false,
+  pendingOutcomes: [],
   lifeEvents: [],
   activePlanId: null,
   activePlan: null,
@@ -485,6 +490,7 @@ export const useAppStore = create<AppStore>((set, get) => ({
       lastPipelineTrace: null,
       pendingCards: [],
       cardsSubmitted: false,
+      pendingOutcomes: [],
     });
     if (service !== undefined) {
       set({ currentService: service });
@@ -656,6 +662,7 @@ export const useAppStore = create<AppStore>((set, get) => ({
           data.cardRequests && data.cardRequests.length > 0
             ? false
             : state.cardsSubmitted,
+        pendingOutcomes: data.outcomes ?? [],
         consentDecisions:
           data.ucState?.currentState !== state.ucState
             ? {}

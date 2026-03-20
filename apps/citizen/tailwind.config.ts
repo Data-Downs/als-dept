@@ -64,6 +64,11 @@ const config: Config = {
           from: { transform: "translateY(100%)", opacity: "0" },
           to: { transform: "translateY(0)", opacity: "1" },
         },
+        "outcome-arrive": {
+          "0%": { transform: "translateY(16px) scale(0.98)", opacity: "0" },
+          "60%": { transform: "translateY(-2px) scale(1.005)", opacity: "1" },
+          "100%": { transform: "translateY(0) scale(1)", opacity: "1" },
+        },
       },
       animation: {
         "slide-up": "slide-up 0.35s cubic-bezier(0.33, 0, 0.2, 1)",
@@ -71,6 +76,8 @@ const config: Config = {
         "fade-in": "fade-in 0.2s ease-out",
         "bounce-dot": "bounce-dot 1.4s infinite ease-in-out both",
         "toast-in": "toast-in 0.3s ease-out",
+        "outcome-arrive":
+          "outcome-arrive 0.5s cubic-bezier(0.33, 0, 0.2, 1) forwards",
       },
     },
   },

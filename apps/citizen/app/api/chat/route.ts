@@ -1160,17 +1160,34 @@ export async function POST(request: NextRequest) {
     // ── DEMO MODE: Scripted responses (no LLM needed) ──
     // Import dynamically to keep this server-only
     const { findScriptedResponse } = await import("@/lib/demo-data");
+    const { buildOutcomes } = await import("@/lib/outcome-builders");
     const lastUserMsg = [...messages]
       .reverse()
       .find((m: { role: string; content: string }) => m.role === "user");
     const userText =
       typeof lastUserMsg?.content === "string" ? lastUserMsg.content : "";
-    const scripted = findScriptedResponse(userText);
+    const scripted = findScriptedResponse(userText, persona);
 
     // Add a small delay to make it feel realistic
     await new Promise((resolve) => setTimeout(resolve, 800));
 
     const traceId = `trace_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
+
+    // Resolve journey outcomes if the scripted response triggers any
+    let outcomes;
+    if (scripted.outcomes && scripted.outcomes.length > 0) {
+      try {
+        // Load persona data for outcome calculation
+        const personaData = await loadPersonaData(persona);
+        outcomes = buildOutcomes(
+          scripted.outcomes,
+          personaData,
+          "2026-03-20",
+        );
+      } catch (err) {
+        console.warn("Failed to build outcomes:", err);
+      }
+    }
 
     return NextResponse.json({
       response: scripted.response,
@@ -1180,6 +1197,7 @@ export async function POST(request: NextRequest) {
       tasks: scripted.tasks,
       traceId,
       consentRequests: scripted.consentRequests,
+      outcomes,
     });
   } catch (error) {
     console.error("Error in /api/chat:", error);
