@@ -105,7 +105,7 @@ export default function OutcomeCard({
 
   return (
     <div
-      className="my-4 opacity-0 animate-outcome-arrive"
+      className="my-4 opacity-0 animate-outcome-arrive motion-reduce:opacity-100 motion-reduce:animate-none"
       style={{ animationDelay: "0.15s" }}
     >
       <div

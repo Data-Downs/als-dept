@@ -664,7 +664,15 @@ export const useAppStore = create<AppStore>((set, get) => ({
             : state.cardsSubmitted,
         pendingOutcomes:
           data.outcomes && data.outcomes.length > 0
-            ? [...state.pendingOutcomes, ...data.outcomes]
+            ? (() => {
+                const existingIds = new Set(
+                  state.pendingOutcomes.map((o) => o.id),
+                );
+                const newOutcomes = data.outcomes!.filter(
+                  (o) => !existingIds.has(o.id),
+                );
+                return [...state.pendingOutcomes, ...newOutcomes];
+              })()
             : state.pendingOutcomes,
         consentDecisions:
           data.ucState?.currentState !== state.ucState
