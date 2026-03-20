@@ -1161,12 +1161,25 @@ export async function POST(request: NextRequest) {
     // Import dynamically to keep this server-only
     const { findScriptedResponse } = await import("@/lib/demo-data");
     const { buildOutcomes } = await import("@/lib/outcome-builders");
+    const { SARAH_OKAFOR_CHAT } = await import(
+      "@/lib/demo-scripts/sarah-okafor"
+    );
+
+    // Persona-specific scripted responses (server-only — not bundled into client)
+    const personaScripts: Record<string, unknown[]> = {
+      "sarah-okafor": SARAH_OKAFOR_CHAT,
+    };
+
     const lastUserMsg = [...messages]
       .reverse()
       .find((m: { role: string; content: string }) => m.role === "user");
     const userText =
       typeof lastUserMsg?.content === "string" ? lastUserMsg.content : "";
-    const scripted = findScriptedResponse(userText, persona);
+    const scripted = findScriptedResponse(
+      userText,
+      persona,
+      personaScripts[persona] as Parameters<typeof findScriptedResponse>[2],
+    );
 
     // Add a small delay to make it feel realistic
     await new Promise((resolve) => setTimeout(resolve, 800));

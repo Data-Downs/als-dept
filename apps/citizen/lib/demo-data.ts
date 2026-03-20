@@ -373,25 +373,19 @@ export const ANNA_SUPPORT: SupportItem[] = [
   },
 ];
 
-// ── Persona-specific scripted responses ──
-import { SARAH_OKAFOR_CHAT } from "./demo-scripts/sarah-okafor";
-
-const PERSONA_SCRIPTS: Record<string, ScriptedEntry[]> = {
-  "sarah-okafor": SARAH_OKAFOR_CHAT,
-};
-
 /**
  * Find the best scripted response for a given message.
- * Routes to persona-specific scripts if available, otherwise falls back
+ * Checks persona-specific scripts first (if provided), then falls back
  * to the default Anna Cotton scripts.
  */
 export function findScriptedResponse(
   message: string,
   personaId?: string,
+  personaScripts?: ScriptedEntry[],
 ): ScriptedResponse {
   // Try persona-specific scripts first
-  if (personaId && PERSONA_SCRIPTS[personaId]) {
-    for (const entry of PERSONA_SCRIPTS[personaId]) {
+  if (personaScripts) {
+    for (const entry of personaScripts) {
       if (entry.patterns.some((p) => p.test(message))) {
         return entry.response;
       }
@@ -407,3 +401,6 @@ export function findScriptedResponse(
   // Should never reach here because of catch-all, but just in case
   return SCRIPTED_CHAT[SCRIPTED_CHAT.length - 1].response;
 }
+
+// Re-export the ScriptedEntry type for persona script files
+export type { ScriptedEntry };
