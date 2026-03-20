@@ -40,9 +40,12 @@ const AGENTS: Array<{
 export function AgentSelectionSheet() {
   const currentAgent = useAppStore((s) => s.agent);
   const setAgent = useAppStore((s) => s.setAgent);
+  const serviceMode = useAppStore((s) => s.serviceMode);
+  const setServiceMode = useAppStore((s) => s.setServiceMode);
   const closeBottomSheet = useAppStore((s) => s.closeBottomSheet);
   const showAgentIntro = useAppStore((s) => s.showAgentIntro);
   const [selected, setSelected] = useState<AgentType>(currentAgent);
+  const isDemo = serviceMode === "demo";
 
   const handleApply = () => {
     setAgent(selected);
@@ -237,6 +240,36 @@ export function AgentSelectionSheet() {
           </button>
         );
       })}
+
+      {/* Demo / Live toggle */}
+      <div className="flex items-center justify-between px-3.5 py-3 rounded-card border border-gray-200 bg-gray-50/50">
+        <div className="flex-1 min-w-0">
+          <strong className="text-sm text-govuk-black">
+            {isDemo ? "Demo mode" : "Live mode"}
+          </strong>
+          <p className="text-xs text-govuk-dark-grey leading-tight">
+            {isDemo
+              ? "Scripted responses — no API key needed"
+              : "Real LLM — requires ANTHROPIC_API_KEY"}
+          </p>
+        </div>
+        <button
+          type="button"
+          onClick={() => setServiceMode(isDemo ? "mcp" : "demo")}
+          className={`relative w-11 h-6 rounded-full transition-colors shrink-0 ml-3 ${
+            isDemo ? "bg-gray-300" : "bg-govuk-green"
+          }`}
+          role="switch"
+          aria-checked={!isDemo}
+          aria-label="Toggle live mode"
+        >
+          <span
+            className={`absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform ${
+              isDemo ? "" : "translate-x-5"
+            }`}
+          />
+        </button>
+      </div>
 
       <button
         onClick={handleApply}

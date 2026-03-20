@@ -1274,7 +1274,9 @@ export async function POST(request: NextRequest) {
     }
 
     // ── DEMO MODE: Scripted responses (no LLM needed) ──
-    // Import dynamically to keep this server-only
+    // When serviceMode is "demo" (default), use scripted responses.
+    // When "json" or "mcp", fall through to the real orchestrator.
+    if (serviceMode !== "json" && serviceMode !== "mcp") {
     const { findScriptedResponse } = await import("@/lib/demo-data");
     const {
       OUTCOME_TEMPLATE_REGISTRY,
@@ -1384,6 +1386,20 @@ export async function POST(request: NextRequest) {
       consentRequests: scripted.consentRequests,
       outcomes,
     });
+    } // end demo mode
+
+    // ── REAL MODE: LLM-driven orchestrator ──
+    const result = await invoker.invoke("agent.chat", {
+      persona,
+      agent,
+      scenario,
+      messages,
+      generateTitle,
+      ucState,
+      ucStateHistory,
+      serviceMode,
+    });
+    return NextResponse.json(result);
   } catch (error) {
     console.error("Error in /api/chat:", error);
     return NextResponse.json(

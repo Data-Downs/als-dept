@@ -284,7 +284,7 @@ let toastTimer: ReturnType<typeof setTimeout> | null = null;
 export const useAppStore = create<AppStore>((set, get) => ({
   persona: null,
   agent: "dot",
-  serviceMode: "mcp",
+  serviceMode: "demo",
   personaData: null,
   enrichedData: null,
   currentView: "persona-picker",

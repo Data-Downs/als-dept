@@ -139,7 +139,7 @@ export interface StoredTask {
 }
 
 export type AgentType = "dot" | "max" | "none";
-export type ServiceMode = "json" | "mcp";
+export type ServiceMode = "json" | "mcp" | "demo";
 export type ServiceType = "driving" | "benefits" | "family" | (string & {});
 export type ViewType =
   | "persona-picker"
