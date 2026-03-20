@@ -115,6 +115,7 @@ Rules:
 - "title": set only when instructed (first message of a new conversation), otherwise null
 - "tasks": array of task objects (see ACTIONABLE TASKS above), or empty array []
 - "stateTransition": the trigger name for the current state transition, or null if none
+- "outcomeHints": optional object with specific values discussed at terminal success states (amounts, dates, reference numbers). Only include when instructed by state instructions.
 - The JSON block will be stripped before showing your response to the citizen`;
 
 export const FACT_EXTRACTION_INSTRUCTIONS = `PERSONAL DATA EXTRACTION:
@@ -129,4 +130,14 @@ Rules:
 Example:
 "extractedFacts": [
   { "key": "number_of_daughters", "value": 2, "confidence": "high", "source_snippet": "I have 2 daughters" }
-]`;
+]
+
+When discussing specific amounts, dates, or reference numbers with the citizen, extract these as facts:
+- "payment_amount" — any monetary amount discussed (the main figure, e.g. weekly/monthly payment)
+- "payment_frequency" — how often payments arrive (weekly, fortnightly, monthly)
+- "first_payment_date" — when the first payment will arrive
+- "entitlement_amount" — statutory entitlement amount
+- "entitlement_period" — duration of entitlement
+- "credential_number" — any licence, badge, certificate, or reference number
+- "grant_amount" — approved funding amount
+- "amount_paid" — payment or fee amount`;

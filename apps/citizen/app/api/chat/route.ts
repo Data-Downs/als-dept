@@ -30,8 +30,12 @@ import {
   INSTRUCTION_TEMPLATE_REGISTRY,
   resolveTemplateInstructions,
   templateToStateModel,
+  OUTCOME_TEMPLATE_REGISTRY,
+  buildOutcomeFromTemplate,
+  resolveTerminalConfig,
   type InteractionType,
 } from "@als/schemas";
+import type { JourneyOutcome } from "@als/schemas";
 import type { StateCardMapping } from "@als/schemas";
 import { getTraceEmitter, getReceiptGenerator } from "@/lib/evidence";
 import {
@@ -643,6 +647,7 @@ interface ChatInput {
 type ChatOutput = OrchestratorOutput & {
   cardRequests?: CardRequest[];
   interactionType?: string;
+  outcomes?: JourneyOutcome[];
 };
 
 async function chatHandler(input: unknown): Promise<ChatOutput> {
@@ -1140,14 +1145,103 @@ async function chatHandler(input: unknown): Promise<ChatOutput> {
     }
   }
 
+  // ── Outcome Building for Terminal Success States ──
+  let outcomes: JourneyOutcome[] | undefined;
+  if (result.ucState) {
+    const postState = result.ucState.currentState;
+    const terminalConfig = resolveTerminalConfig(
+      postState,
+      resolvedInteractionType,
+    );
+    if (terminalConfig.isSuccess) {
+      try {
+        const interactionType = resolvedInteractionType;
+        const template =
+          OUTCOME_TEMPLATE_REGISTRY[
+            interactionType as keyof typeof OUTCOME_TEMPLATE_REGISTRY
+          ];
+        if (template) {
+          // Gather inferred facts as a flat Record
+          let inferredFacts: Record<string, unknown> = {};
+          try {
+            const inferredStoreForOutcome = await getInferredStore();
+            const allFacts = await inferredStoreForOutcome.getAll(persona);
+            const activeFacts = allFacts.filter((f) => !f.supersededBy);
+            for (const f of activeFacts) {
+              inferredFacts[f.fieldKey] = f.fieldValue;
+            }
+          } catch {
+            // Graceful — outcome builds with whatever data is available
+          }
+
+          // Gather submitted data as a flat Record
+          let submittedData: Record<string, unknown> = {};
+          try {
+            const submittedStoreForOutcome = await getSubmittedStore();
+            const allSubmitted =
+              await submittedStoreForOutcome.getAll(persona);
+            for (const field of allSubmitted) {
+              submittedData[field.fieldKey] = field.fieldValue;
+            }
+          } catch {
+            // Graceful degradation
+          }
+
+          const graphNodeForOutcome = serviceId
+            ? getGraphNode(serviceId)
+            : null;
+          const manifest = await loadManifest(serviceId);
+
+          const outcome = buildOutcomeFromTemplate(
+            template,
+            {
+              serviceId,
+              serviceName:
+                graphNodeForOutcome?.name ||
+                (manifest?.name as string) ||
+                serviceId,
+              department:
+                graphNodeForOutcome?.dept ||
+                (manifest?.department as string) ||
+                "Government",
+              govukUrl: graphNodeForOutcome?.govuk_url,
+              conversationId: `trace_${Date.now()}`,
+              issuedAt: new Date().toISOString().split("T")[0],
+            },
+            {
+              outcomeHints: (
+                result as OrchestratorOutput & {
+                  outcomeHints?: Record<string, unknown>;
+                }
+              ).outcomeHints,
+              inferredFacts,
+              submittedData,
+              personaData: personaData as unknown as Record<string, unknown>,
+            },
+          );
+
+          if (outcome) {
+            outcomes = [outcome];
+            console.log(
+              `   [Outcome] Built ${outcome.type} outcome for ${serviceId} at terminal state "${postState}"`,
+            );
+          }
+        }
+      } catch (err) {
+        console.warn("Failed to build outcome for terminal state:", err);
+      }
+    }
+  }
+
   console.log(
-    `   Done. Tools: ${result.toolsUsed.length > 0 ? result.toolsUsed.join(", ") : "none"}${result.conversationTitle ? `, Title: "${result.conversationTitle}"` : ""}${result.tasks.length > 0 ? `, Tasks: ${result.tasks.length}` : ""}${cardRequests.length > 0 ? `, Cards: ${cardRequests.map((c) => c.cardType).join(", ")}` : ""}`,
+    `   Done. Tools: ${result.toolsUsed.length > 0 ? result.toolsUsed.join(", ") : "none"}${result.conversationTitle ? `, Title: "${result.conversationTitle}"` : ""}${result.tasks.length > 0 ? `, Tasks: ${result.tasks.length}` : ""}${cardRequests.length > 0 ? `, Cards: ${cardRequests.map((c) => c.cardType).join(", ")}` : ""}${outcomes ? `, Outcomes: ${outcomes.length}` : ""}`,
   );
 
   return {
     ...result,
     cardRequests: cardRequests.length > 0 ? cardRequests : undefined,
     interactionType: resolvedInteractionType,
+    outcomes,
   };
 }
 

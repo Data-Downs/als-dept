@@ -133,6 +133,8 @@ export interface OrchestratorOutput {
     purpose: string;
   }>;
   extractedFields?: FieldExtraction[];
+  /** Outcome hints emitted by the LLM at terminal success states */
+  outcomeHints?: Record<string, unknown>;
   /** Version metadata for trace stamping */
   versionMetadata?: {
     modelVersion?: string;
@@ -188,6 +190,7 @@ interface ParsedStructuredOutput {
     fields?: ParsedTaskField[];
   }>;
   extractedFacts?: FieldExtraction[];
+  outcomeHints?: Record<string, unknown>;
 }
 
 const ISO_DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
@@ -338,6 +341,22 @@ function parseStructuredOutput(responseText: string): {
       });
     }
     if (validFacts.length > 0) output.extractedFacts = validFacts;
+  }
+
+  if (
+    typeof raw.outcomeHints === "object" &&
+    raw.outcomeHints !== null &&
+    !Array.isArray(raw.outcomeHints)
+  ) {
+    const hints: Record<string, unknown> = {};
+    for (const [k, v] of Object.entries(
+      raw.outcomeHints as Record<string, unknown>,
+    )) {
+      if (typeof v === "string" || typeof v === "number") {
+        hints[k] = v;
+      }
+    }
+    if (Object.keys(hints).length > 0) output.outcomeHints = hints;
   }
 
   return { parsed: output, cleanText };
@@ -1225,6 +1244,7 @@ export class Orchestrator {
       ucState: ucStateInfo,
       consentRequests,
       extractedFields: structuredOutput?.extractedFacts,
+      outcomeHints: structuredOutput?.outcomeHints,
       versionMetadata,
       pipelineTrace,
     };

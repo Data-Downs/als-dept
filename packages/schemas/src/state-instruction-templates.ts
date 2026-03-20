@@ -140,7 +140,10 @@ Explain:
 - The citizen should check their email and post for official correspondence
 - They can visit {govukUrl} for more information
 This is the FINAL message — do NOT ask follow-up questions.
-Do NOT include any tasks in the JSON block.`,
+Do NOT include any tasks in the JSON block.
+
+IMPORTANT: Include an "outcomeHints" object in your JSON output with specific values you told the citizen. Only include values you actually discussed — do NOT fabricate. Example:
+"outcomeHints": { "payment_amount": "393.45", "payment_frequency": "monthly", "first_payment_date": "2026-04-24" }`,
     rejected: SHARED.rejected("application"),
     "handed-off": SHARED.handedOff,
   },
@@ -198,7 +201,10 @@ Explain:
 - {department} will send the licence to their registered address
 - They can visit {govukUrl} to check status
 This is the FINAL message — do NOT ask follow-up questions.
-Do NOT include any tasks in the JSON block.`,
+Do NOT include any tasks in the JSON block.
+
+IMPORTANT: Include an "outcomeHints" object in your JSON output with specific values you told the citizen. Only include values you actually discussed — do NOT fabricate. Example:
+"outcomeHints": { "licence_number": "...", "valid_until": "..." }`,
     refused: SHARED.rejected("licence application"),
     "handed-off": SHARED.handedOff,
   },
@@ -243,7 +249,10 @@ Explain:
 - {department} will send confirmation to their registered details
 - They can visit {govukUrl} for more information
 This is the FINAL message — do NOT ask follow-up questions.
-Do NOT include any tasks in the JSON block.`,
+Do NOT include any tasks in the JSON block.
+
+IMPORTANT: Include an "outcomeHints" object in your JSON output with specific values you told the citizen. Only include values you actually discussed — do NOT fabricate. Example:
+"outcomeHints": { "credential_number": "...", "registration_date": "..." }`,
     rejected: SHARED.rejected("registration"),
     "handed-off": SHARED.handedOff,
   },
@@ -301,7 +310,10 @@ Ask if there's anything else they'd like to do, or set "stateTransition" to "com
     completed: `All actions are complete.
 Summarise what was done in this session.
 This is the FINAL message — do NOT ask follow-up questions.
-Do NOT include any tasks in the JSON block.`,
+Do NOT include any tasks in the JSON block.
+
+IMPORTANT: Include an "outcomeHints" object in your JSON output with specific values you told the citizen. Only include values you actually discussed — do NOT fabricate. Example:
+"outcomeHints": { "payment_amount": "393.45", "payment_frequency": "monthly" }`,
     "handed-off": SHARED.handedOff,
   },
   forcedTransitions: {
@@ -342,7 +354,10 @@ Explain:
 - {department} will send official confirmation
 - They can visit {govukUrl} for more information
 This is the FINAL message — do NOT ask follow-up questions.
-Do NOT include any tasks in the JSON block.`,
+Do NOT include any tasks in the JSON block.
+
+IMPORTANT: Include an "outcomeHints" object in your JSON output with specific values you told the citizen. Only include values you actually discussed — do NOT fabricate. Example:
+"outcomeHints": { "amount_paid": "150.00", "payment_reference": "..." }`,
     "handed-off": SHARED.handedOff,
   },
   forcedTransitions: {
@@ -385,7 +400,10 @@ Set "stateTransition" to "attend" when the appointment is attended.
 Do NOT include any tasks in the JSON block.`,
     attended: `The appointment has been attended.
 Confirm that their {serviceName} appointment is complete.
-This is the FINAL message — do NOT ask follow-up questions.`,
+This is the FINAL message — do NOT ask follow-up questions.
+
+IMPORTANT: Include an "outcomeHints" object in your JSON output with specific values you told the citizen. Only include values you actually discussed — do NOT fabricate. Example:
+"outcomeHints": { "appointment_date": "2026-04-10", "location": "..." }`,
     cancelled: `The appointment has been cancelled.
 Confirm the cancellation and explain how to rebook if needed.
 This is the FINAL message — do NOT ask follow-up questions.`,
@@ -449,7 +467,10 @@ Set "stateTransition" to "finish" in the JSON block.`,
     "all-steps-complete": `All steps are complete! Congratulate them warmly.
 Summarise what they've accomplished.
 This is the FINAL message — do NOT ask follow-up questions.
-Do NOT include any tasks in the JSON block.`,
+Do NOT include any tasks in the JSON block.
+
+IMPORTANT: Include an "outcomeHints" object in your JSON output with specific values you told the citizen. Only include values you actually discussed — do NOT fabricate. Example:
+"outcomeHints": { "steps_completed": "3", "completion_date": "2026-03-20" }`,
     "handed-off": SHARED.handedOff,
   },
   forcedTransitions: {
@@ -496,7 +517,10 @@ This is the FINAL message — do NOT ask follow-up questions.`,
     completed: `The information session is complete.
 Summarise the key points discussed.
 Remind them they can visit {govukUrl} for the full official guidance.
-This is the FINAL message — do NOT ask follow-up questions.`,
+This is the FINAL message — do NOT ask follow-up questions.
+
+IMPORTANT: Include an "outcomeHints" object in your JSON output with specific values you told the citizen. Only include values you actually discussed — do NOT fabricate. Example:
+"outcomeHints": { "topics_covered": "...", "referred_service": "..." }`,
   },
   forcedTransitions: {},
   autoTransitions: [],
@@ -1562,7 +1586,10 @@ Explain:
 - They can visit {govukUrl} for more information
 - If they need help, they can contact {department} or speak to a caseworker
 This is the FINAL message — do NOT ask follow-up questions.
-Do NOT include any tasks in the JSON block.`,
+Do NOT include any tasks in the JSON block.
+
+IMPORTANT: Include an "outcomeHints" object in your JSON output with specific values you told the citizen. Only include values you actually discussed — do NOT fabricate. Example:
+"outcomeHints": { "payment_amount": "393.45", "payment_frequency": "monthly", "first_payment_date": "2026-04-24" }`,
     rejected: `The benefit claim was not successful. Explain why clearly and sympathetically.
 IMPORTANT — mention the citizen's rights:
 - They have the right to request a MANDATORY RECONSIDERATION within one month
@@ -1651,7 +1678,10 @@ Do NOT fabricate specific amounts — say "{department} will confirm exact figur
 - They can visit {govukUrl} for more information
 - Their employer will be notified where applicable
 This is the FINAL message — do NOT ask follow-up questions.
-Do NOT include any tasks in the JSON block.`,
+Do NOT include any tasks in the JSON block.
+
+IMPORTANT: Include an "outcomeHints" object in your JSON output with specific values you told the citizen. Only include values you actually discussed — do NOT fabricate. Example:
+"outcomeHints": { "entitlement_amount": "184.03", "entitlement_period": "39 weeks", "payment_frequency": "weekly" }`,
     rejected: `The entitlement claim was not successful. Explain clearly and sympathetically.
 Mention:
 - The citizen may be able to request a review
@@ -1744,7 +1774,10 @@ Explain:
 - The conditions accepted earlier remain in effect
 - They can visit {govukUrl} for more information
 This is the FINAL message — do NOT ask follow-up questions.
-Do NOT include any tasks in the JSON block.`,
+Do NOT include any tasks in the JSON block.
+
+IMPORTANT: Include an "outcomeHints" object in your JSON output with specific values you told the citizen. Only include values you actually discussed — do NOT fabricate. Example:
+"outcomeHints": { "grant_amount": "5000.00", "payment_frequency": "lump sum" }`,
     rejected: SHARED.rejected("grant application"),
     "handed-off": SHARED.handedOff,
   },
@@ -1842,7 +1875,10 @@ Explain:
 - They can visit {govukUrl} for more information
 - If they need further legal guidance, they should consult their solicitor or a legal advice service
 This is the FINAL message — do NOT ask follow-up questions.
-Do NOT include any tasks in the JSON block.`,
+Do NOT include any tasks in the JSON block.
+
+IMPORTANT: Include an "outcomeHints" object in your JSON output with specific values you told the citizen. Only include values you actually discussed — do NOT fabricate. Example:
+"outcomeHints": { "case_reference": "...", "document_type": "..." }`,
     rejected: `The legal process was not successful. Explain clearly and sympathetically.
 IMPORTANT — legal processes have specific appeal mechanisms:
 - The citizen has the right to appeal through the appropriate court or tribunal
