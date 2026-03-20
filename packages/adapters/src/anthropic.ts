@@ -68,7 +68,16 @@ export class AnthropicAdapter implements ServiceAdapter {
     const apiParams: any = {
       model: input.model || this.model,
       max_tokens: input.maxTokens || this.maxTokens,
-      system: input.systemPrompt,
+      // Prompt caching: send system prompt as a content block with cache_control.
+      // Cached blocks are served from memory on subsequent requests within
+      // a 5-minute window, reducing latency and input token cost.
+      system: [
+        {
+          type: "text",
+          text: input.systemPrompt,
+          cache_control: { type: "ephemeral" },
+        },
+      ],
       messages: input.messages,
     };
 
@@ -127,6 +136,12 @@ export class AnthropicAdapter implements ServiceAdapter {
           stopReason: response.stop_reason,
           inputTokens: response.usage?.input_tokens,
           outputTokens: response.usage?.output_tokens,
+          cacheCreationInputTokens:
+            (response.usage as Record<string, unknown>)
+              ?.cache_creation_input_tokens ?? 0,
+          cacheReadInputTokens:
+            (response.usage as Record<string, unknown>)
+              ?.cache_read_input_tokens ?? 0,
         },
       };
     } catch (error) {

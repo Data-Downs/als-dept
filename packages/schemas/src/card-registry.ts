@@ -1426,6 +1426,34 @@ export function getRequiredFieldsForTypology(serviceType: string): string[] {
   return schema.fields.filter((f) => f.required).map((f) => f.key);
 }
 
+// ── Fallback Informational Card ──
+// When card resolution fails (no matching interaction type, no matching state),
+// fall back to a minimal card that links citizens to GOV.UK or a call centre
+// rather than showing nothing.
+
+const FALLBACK_INFORMATIONAL_CARD: CardDefinition = {
+  cardType: "fallback-informational",
+  title: "Continue on GOV.UK",
+  description:
+    "This step may need to be completed on the GOV.UK website or by contacting the service directly.",
+  fields: [
+    {
+      key: "next_action",
+      label: "How would you like to continue?",
+      type: "radio",
+      required: true,
+      category: "informational",
+      options: [
+        { value: "govuk_website", label: "Go to the GOV.UK page for this service" },
+        { value: "call_centre", label: "Call the service helpline" },
+        { value: "continue_chat", label: "Continue in this conversation" },
+      ],
+    },
+  ],
+  submitLabel: "Continue",
+  dataCategory: "informational",
+};
+
 // ── Resolver ──
 
 /** Look up cards from a registry array */
@@ -1468,6 +1496,7 @@ export function resolveCardsWithOverrides(
   stateId: string,
   serviceId?: string,
   serviceOverrides?: StateCardMapping[] | null,
+  options?: { useFallback?: boolean },
 ): CardDefinition[] {
   // 1. Per-service DB overrides
   if (serviceOverrides && serviceOverrides.length > 0) {
@@ -1480,7 +1509,21 @@ export function resolveCardsWithOverrides(
   if (staticCards) return staticCards;
 
   // 3. Template cards fallback (generic interaction-type-appropriate for graph services)
-  return findInRegistry(TEMPLATE_CARD_REGISTRY, interactionType, stateId) ?? [];
+  const templateCards = findInRegistry(
+    TEMPLATE_CARD_REGISTRY,
+    interactionType,
+    stateId,
+  );
+  if (templateCards) return templateCards;
+
+  // 4. Fallback informational card — links to GOV.UK or call centre
+  //    Used when interaction type inference fell through to a default or
+  //    no template matched the state. Better than showing nothing.
+  if (options?.useFallback) {
+    return [FALLBACK_INFORMATIONAL_CARD];
+  }
+
+  return [];
 }
 
 /**

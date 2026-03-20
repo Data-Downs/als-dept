@@ -930,6 +930,20 @@ async function chatHandler(input: unknown): Promise<ChatOutput> {
   if (result.ucState) {
     const postTransitionState = result.ucState.currentState;
     const interactionType = resolvedInteractionType;
+
+    // ── Card resolution trace (Part 2A) ──
+    const isHandcrafted = !graphNodeForCards && !!serviceId;
+    const cardTrace = {
+      serviceId,
+      stateId: postTransitionState,
+      inferredInteractionType: interactionType,
+      graphNodeServiceType: serviceTypeForCards,
+      isHandcrafted,
+      stateAllowlisted: true as boolean, // updated below
+      resolutionLevel: null as string | null,
+      cardsResolved: [] as string[],
+    };
+
     console.log(
       `   [CardResolver] interactionType=${interactionType}, state=${postTransitionState}, history=${result.ucState.stateHistory?.join(" → ")}`,
     );
@@ -946,29 +960,55 @@ async function chatHandler(input: unknown): Promise<ChatOutput> {
     // Hand-crafted services handle most states conversationally via state-instructions.
     // Only resolve registry cards at states where a structured UI card is appropriate.
     const HANDCRAFTED_CARD_STATES: Record<string, Set<string>> = {
-      "dvla.renew-driving-licence": new Set(["payment-made"]),
+      "dvla.renew-driving-licence": new Set([
+        "details-confirmed",
+        "photo-submitted",
+        "payment-made",
+      ]),
       "dwp.apply-universal-credit": new Set([
         "personal-details-collected",
+        "housing-details-collected",
         "income-details-collected",
+        "bank-details-verified",
         "payment-made",
       ]),
     };
     const allowedStates = HANDCRAFTED_CARD_STATES[serviceId];
     const shouldResolveCards =
       !allowedStates || allowedStates.has(postTransitionState);
+    cardTrace.stateAllowlisted = shouldResolveCards;
 
-    // Resolve cards: DB overrides first, then static registry
+    // Resolve cards: DB overrides → static registry → template → fallback.
+    // For graph services (non-hand-crafted), enable the fallback informational
+    // card so citizens always get a next step (GOV.UK link or call centre)
+    // rather than a silent resolution miss.
+    const useCardFallback = !cardTrace.isHandcrafted;
     const cardDefs = shouldResolveCards
       ? resolveCardsWithOverrides(
           interactionType,
           postTransitionState,
           serviceId,
           dbCardOverrides,
+          { useFallback: useCardFallback },
         )
       : [];
+    cardTrace.cardsResolved = cardDefs.map((d) => d.cardType);
+    // Determine which resolution level produced the cards
+    if (cardDefs.length > 0) {
+      if (dbCardOverrides?.some((m) => m.stateId === postTransitionState)) {
+        cardTrace.resolutionLevel = "db-override";
+      } else if (
+        cardDefs.some((d) => d.cardType === "fallback-informational")
+      ) {
+        cardTrace.resolutionLevel = "fallback";
+      } else {
+        cardTrace.resolutionLevel = "static-or-template";
+      }
+    }
     console.log(
-      `   [CardResolver] resolved ${cardDefs.length} cards for (${interactionType}, ${postTransitionState})${!shouldResolveCards ? " [skipped — hand-crafted service]" : ""}`,
+      `   [CardResolver] resolved ${cardDefs.length} cards for (${interactionType}, ${postTransitionState})${!shouldResolveCards ? " [skipped — hand-crafted service, state not allowlisted]" : ""}`,
     );
+    console.log(`   [CardTrace]`, JSON.stringify(cardTrace));
     if (cardDefs.length > 0) {
       cardRequests = cardDefs.map((def) => ({
         cardType: def.cardType,
