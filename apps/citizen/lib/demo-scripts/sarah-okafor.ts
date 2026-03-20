@@ -5,12 +5,7 @@
  * Each completion step triggers tangible outcome cards.
  */
 
-import type { ScriptedResponse } from "../demo-data";
-
-interface ScriptedEntry {
-  patterns: RegExp[];
-  response: ScriptedResponse;
-}
+import type { ScriptedEntry } from "../demo-data";
 
 export const SARAH_OKAFOR_CHAT: ScriptedEntry[] = [
   // ── Turn 1: Opening — grief, confusion, "I don't know what to do" ──
@@ -20,9 +15,8 @@ export const SARAH_OKAFOR_CHAT: ScriptedEntry[] = [
       /don't know what to do/i,
       /just lost/i,
       /passed away/i,
-      /bereavement/i,
-      /death/i,
       /died/i,
+      /someone.*(died|death|passed)/i,
     ],
     response: {
       response: `I'm so sorry for your loss, Sarah. I know this is an incredibly difficult time, and I'm here to help you through the things that need to happen next.
@@ -40,6 +34,38 @@ Would you like me to start with Tell Us Once? It's the most helpful first step �
         "Sarah's husband David died on 26 February 2026. She is the named executor. Starting with Tell Us Once is the right first step — it has the highest administrative impact and prevents her having to make multiple calls. I'm being warm and patient, matching her communication style notes.",
       tasks: [],
       conversationTitle: "Help after David's passing",
+    },
+  },
+
+  // ── Turn 3: After consent — Tell Us Once + death registration + certificate ──
+  // MUST come before Turn 2 (affirmatives) because submitConsent() sends a
+  // message containing "proceed" which would otherwise match Turn 2's patterns.
+  {
+    patterns: [
+      /reviewed all consent/i,
+      /Granted:.*Share/i,
+    ],
+    response: {
+      response: `That's all done, Sarah. I've completed three things for you:
+
+**Tell Us Once** — I've notified six government departments about David's passing. They'll each update their records — you don't need to contact any of them separately.
+
+**Death registration** — David's death has been registered with the General Register Office in Chelmsford.
+
+**Death certificate** — A certified copy has been issued and added to your documents.
+
+You'll see the confirmations below. Take your time looking through them — there's no rush.
+
+When you're ready, I can help with the bereavement support payment or probate. Just let me know.`,
+      reasoning:
+        "Consent was granted. Triggering three outcomes at once: Tell Us Once notification, death registration, and death certificate. This is the first 'wow' moment — three official documents/confirmations materialising in one go. Being gentle and not rushing her to the next step.",
+      tasks: [],
+      conversationTitle: null,
+      outcomes: [
+        "dwp-tell-us-once",
+        "gro-register-death",
+        "gro-death-certificate",
+      ],
     },
   },
 
@@ -88,40 +114,6 @@ I'll also register the death with the General Register Office and arrange for a 
           duration: "one-time",
           required: true,
         },
-      ],
-    },
-  },
-
-  // ── Turn 3: After consent — Tell Us Once + death registration + certificate ──
-  {
-    patterns: [
-      /granted/i,
-      /consent/i,
-      /proceed/i,
-      /reviewed/i,
-      /sharing/i,
-      /application/i,
-    ],
-    response: {
-      response: `That's all done, Sarah. I've completed three things for you:
-
-**Tell Us Once** — I've notified six government departments about David's passing. They'll each update their records — you don't need to contact any of them separately.
-
-**Death registration** — David's death has been registered with the General Register Office in Chelmsford.
-
-**Death certificate** — A certified copy has been issued and added to your documents.
-
-You'll see the confirmations below. Take your time looking through them — there's no rush.
-
-When you're ready, I can help with the bereavement support payment or probate. Just let me know.`,
-      reasoning:
-        "Consent was granted. Triggering three outcomes at once: Tell Us Once notification, death registration, and death certificate. This is the first 'wow' moment — three official documents/confirmations materialising in one go. Being gentle and not rushing her to the next step.",
-      tasks: [],
-      conversationTitle: null,
-      outcomes: [
-        "dwp-tell-us-once",
-        "gro-register-death",
-        "gro-death-certificate",
       ],
     },
   },

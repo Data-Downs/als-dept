@@ -14,12 +14,17 @@ type OutcomeBuilder = (
   issuedAt: string,
 ) => JourneyOutcome | null;
 
-// ── Deterministic reference generator ──
+// ── Helpers ──
 
-function makeRef(prefix: string, personaId: string, serviceId: string): string {
-  // Simple hash from persona + service to get stable, realistic-looking refs
+/** Resolve a stable persona identifier, falling back through available fields */
+function personaKey(persona: PersonaData): string {
+  return persona.id || persona.personaId || "unknown";
+}
+
+/** Deterministic reference generator from persona + service */
+function makeRef(prefix: string, pid: string, serviceId: string): string {
   let hash = 0;
-  const seed = `${personaId}:${serviceId}:2026`;
+  const seed = `${pid}:${serviceId}:2026`;
   for (let i = 0; i < seed.length; i++) {
     hash = ((hash << 5) - hash + seed.charCodeAt(i)) | 0;
   }
@@ -27,12 +32,60 @@ function makeRef(prefix: string, personaId: string, serviceId: string): string {
   return `${prefix}-2026-${num.toString().padStart(5, "0")}`;
 }
 
+/** Safely extract bereavement data from persona (untyped field) */
+function getBereavement(
+  persona: PersonaData,
+): Record<string, unknown> | null {
+  const raw = persona as unknown as Record<string, unknown>;
+  const b = raw.bereavement as Record<string, unknown> | undefined;
+  return b ?? null;
+}
+
+function formatCurrency(amount: number): string {
+  if (!Number.isFinite(amount)) return "£0";
+  const abs = Math.abs(amount);
+  const formatted = abs.toLocaleString("en-GB", {
+    minimumFractionDigits: abs % 1 === 0 ? 0 : 2,
+  });
+  return amount < 0 ? `-£${formatted}` : `£${formatted}`;
+}
+
+function formatDate(isoDate: string | undefined | null): string {
+  if (!isoDate) return "Date not available";
+  try {
+    const d = new Date(isoDate + "T00:00:00");
+    if (isNaN(d.getTime())) return "Date not available";
+    return d.toLocaleDateString("en-GB", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    });
+  } catch {
+    return isoDate;
+  }
+}
+
+/** Safely compute a first-of-month payment date after the issued date */
+function nextPaymentDate(issuedAt: string): string {
+  try {
+    const d = new Date(issuedAt + "T00:00:00");
+    if (isNaN(d.getTime())) return "2026-04-01";
+    d.setDate(d.getDate() + 14);
+    d.setDate(1);
+    const issued = new Date(issuedAt + "T00:00:00");
+    if (d <= issued) {
+      d.setMonth(d.getMonth() + 1);
+    }
+    return d.toISOString().split("T")[0];
+  } catch {
+    return "2026-04-01";
+  }
+}
+
 // ── Sarah Okafor: Bereaved Spouse ──
 
 const buildTellUsOnce: OutcomeBuilder = (persona, issuedAt) => {
-  const bereavement = (persona as Record<string, unknown>).bereavement as
-    | Record<string, unknown>
-    | undefined;
+  const bereavement = getBereavement(persona);
   if (!bereavement) return null;
 
   const deceasedName =
@@ -41,15 +94,16 @@ const buildTellUsOnce: OutcomeBuilder = (persona, issuedAt) => {
   const council = address?.city
     ? `${address.city} Council`
     : "Local Council";
+  const pid = personaKey(persona);
 
   return {
-    id: `outcome-dwp-tell-us-once-${persona.id}`,
+    id: `outcome-dwp-tell-us-once-${pid}`,
     serviceId: "dwp-tell-us-once",
     serviceName: "Tell Us Once",
     department: "Department for Work and Pensions",
     type: "notification",
     title: "Tell Us Once — Departments Notified",
-    reference: makeRef("TUO", persona.id || "", "dwp-tell-us-once"),
+    reference: makeRef("TUO", pid, "dwp-tell-us-once"),
     issuedAt,
     details: [
       { label: "HM Revenue & Customs", value: "Notified", type: "text" },
@@ -76,25 +130,24 @@ const buildTellUsOnce: OutcomeBuilder = (persona, issuedAt) => {
 };
 
 const buildDeathRegistration: OutcomeBuilder = (persona, issuedAt) => {
-  const bereavement = (persona as Record<string, unknown>).bereavement as
-    | Record<string, unknown>
-    | undefined;
+  const bereavement = getBereavement(persona);
   if (!bereavement) return null;
 
   const deceasedName =
     (bereavement.deceasedName as string) || "the deceased";
-  const dateOfDeath = bereavement.dateOfDeath as string;
+  const dateOfDeath = (bereavement.dateOfDeath as string) || undefined;
   const address = persona.address;
   const district = address?.city || "Unknown";
+  const pid = personaKey(persona);
 
   return {
-    id: `outcome-gro-register-death-${persona.id}`,
+    id: `outcome-gro-register-death-${pid}`,
     serviceId: "gro-register-death",
     serviceName: "Register a Death",
     department: "General Register Office",
     type: "registration",
     title: "Death Registered",
-    reference: makeRef("DRG", persona.id || "", "gro-register-death"),
+    reference: makeRef("DRG", pid, "gro-register-death"),
     issuedAt,
     details: [
       { label: "Name", value: deceasedName, type: "text" },
@@ -109,20 +162,20 @@ const buildDeathRegistration: OutcomeBuilder = (persona, issuedAt) => {
 };
 
 const buildDeathCertificate: OutcomeBuilder = (persona, issuedAt) => {
-  const bereavement = (persona as Record<string, unknown>).bereavement as
-    | Record<string, unknown>
-    | undefined;
+  const bereavement = getBereavement(persona);
   if (!bereavement) return null;
 
   const deceasedName =
     (bereavement.deceasedName as string) || "the deceased";
-  const dateOfDeath = bereavement.dateOfDeath as string;
+  const dateOfDeath = (bereavement.dateOfDeath as string) || undefined;
   const address = persona.address;
   const district = address?.city || "Unknown";
-  const certNumber = makeRef("DN", persona.id || "", "gro-death-certificate");
+  const county = address?.county || "";
+  const pid = personaKey(persona);
+  const certNumber = makeRef("DN", pid, "gro-death-certificate");
 
   return {
-    id: `outcome-gro-death-certificate-${persona.id}`,
+    id: `outcome-gro-death-certificate-${pid}`,
     serviceId: "gro-death-certificate",
     serviceName: "Death Certificate",
     department: "General Register Office",
@@ -137,7 +190,11 @@ const buildDeathCertificate: OutcomeBuilder = (persona, issuedAt) => {
         value: formatDate(dateOfDeath),
         type: "date",
       },
-      { label: "District", value: `${district}, ${address?.county || ""}`.replace(/, $/, ""), type: "text" },
+      {
+        label: "District",
+        value: county ? `${district}, ${county}` : district,
+        type: "text",
+      },
       {
         label: "Certificate",
         value: certNumber,
@@ -155,41 +212,32 @@ const buildDeathCertificate: OutcomeBuilder = (persona, issuedAt) => {
 };
 
 const buildBereavementSupport: OutcomeBuilder = (persona, issuedAt) => {
-  const bereavement = (persona as Record<string, unknown>).bereavement as
-    | Record<string, unknown>
-    | undefined;
+  const bereavement = getBereavement(persona);
   if (!bereavement) return null;
 
   // BSP standard rate: £3,500 lump sum + 18 monthly payments of £350
-  // Eligible if: spouse/civil partner died, claimant under State Pension age,
-  // and spouse paid NI contributions.
   const lumpSum = 3500;
   const monthlyAmount = 350;
   const monthlyPayments = 18;
 
-  // Calculate first payment date: ~6 weeks from issuedAt
-  const firstPayment = new Date(issuedAt);
-  firstPayment.setDate(firstPayment.getDate() + 14);
-  // Align to next payment cycle (typically first of month)
-  firstPayment.setDate(1);
-  if (firstPayment <= new Date(issuedAt)) {
-    firstPayment.setMonth(firstPayment.getMonth() + 1);
-  }
+  const firstPaymentIso = nextPaymentDate(issuedAt);
 
   const financials = persona.financials as
     | Record<string, unknown>
     | undefined;
   const bankName =
-    (financials?.currentAccount as Record<string, unknown>)?.bank || "your bank";
+    (financials?.currentAccount as Record<string, unknown>)?.bank ||
+    "your bank";
+  const pid = personaKey(persona);
 
   return {
-    id: `outcome-dwp-bereavement-support-${persona.id}`,
+    id: `outcome-dwp-bereavement-support-${pid}`,
     serviceId: "dwp-bereavement-support",
     serviceName: "Bereavement Support Payment",
     department: "Department for Work and Pensions",
     type: "payment",
     title: "Bereavement Support Payment Confirmed",
-    reference: makeRef("BSP", persona.id || "", "dwp-bereavement-support"),
+    reference: makeRef("BSP", pid, "dwp-bereavement-support"),
     issuedAt,
     details: [
       {
@@ -205,7 +253,7 @@ const buildBereavementSupport: OutcomeBuilder = (persona, issuedAt) => {
       },
       {
         label: "First payment",
-        value: formatDate(firstPayment.toISOString().split("T")[0]),
+        value: formatDate(firstPaymentIso),
         type: "date",
       },
       {
@@ -218,23 +266,22 @@ const buildBereavementSupport: OutcomeBuilder = (persona, issuedAt) => {
 };
 
 const buildProbateGrant: OutcomeBuilder = (persona, issuedAt) => {
-  const bereavement = (persona as Record<string, unknown>).bereavement as
-    | Record<string, unknown>
-    | undefined;
+  const bereavement = getBereavement(persona);
   if (!bereavement) return null;
 
   const deceasedName =
     (bereavement.deceasedName as string) || "the deceased";
   const estateValue = (bereavement.estateValue as number) || 0;
+  const pid = personaKey(persona);
 
   return {
-    id: `outcome-hmcts-probate-${persona.id}`,
+    id: `outcome-hmcts-probate-${pid}`,
     serviceId: "hmcts-probate",
     serviceName: "Probate",
     department: "HM Courts & Tribunals Service",
     type: "document",
     title: "Grant of Probate Issued",
-    reference: makeRef("PR", persona.id || "", "hmcts-probate"),
+    reference: makeRef("PR", pid, "hmcts-probate"),
     issuedAt,
     details: [
       { label: "Deceased", value: deceasedName, type: "text" },
@@ -250,14 +297,14 @@ const buildProbateGrant: OutcomeBuilder = (persona, issuedAt) => {
       },
       {
         label: "Case reference",
-        value: makeRef("PR", persona.id || "", "hmcts-probate"),
+        value: makeRef("PR", pid, "hmcts-probate"),
         type: "credential-number",
       },
     ],
     credential: {
       type: "grant-of-probate",
       issuer: "HM Courts & Tribunals Service",
-      number: makeRef("PR", persona.id || "", "hmcts-probate"),
+      number: makeRef("PR", pid, "hmcts-probate"),
       issued: issuedAt,
       status: "valid",
     },
@@ -265,23 +312,21 @@ const buildProbateGrant: OutcomeBuilder = (persona, issuedAt) => {
 };
 
 const buildIHT400: OutcomeBuilder = (persona, issuedAt) => {
-  const bereavement = (persona as Record<string, unknown>).bereavement as
-    | Record<string, unknown>
-    | undefined;
+  const bereavement = getBereavement(persona);
   if (!bereavement) return null;
 
   const estateValue = (bereavement.estateValue as number) || 0;
   // Nil-rate band: £325,000 + residence nil-rate band: £175,000 = £500,000
-  // Transferable nil-rate from spouse: another £500,000 = £1,000,000 total
+  // Transferable nil-rate from deceased spouse: another £500,000 = £1,000,000
   const nilRateBand = 325000;
   const residenceNilRate = 175000;
   const totalThreshold = nilRateBand + residenceNilRate;
-  // With transferable nil-rate from deceased spouse
   const combinedThreshold = totalThreshold * 2;
   const ihtDue = estateValue > combinedThreshold;
   const taxAmount = ihtDue
     ? Math.round((estateValue - combinedThreshold) * 0.4)
     : 0;
+  const pid = personaKey(persona);
 
   const details: OutcomeDetail[] = [
     {
@@ -313,13 +358,13 @@ const buildIHT400: OutcomeBuilder = (persona, issuedAt) => {
   }
 
   return {
-    id: `outcome-hmrc-iht400-${persona.id}`,
+    id: `outcome-hmrc-iht400-${pid}`,
     serviceId: "hmrc-iht400",
     serviceName: "Inheritance Tax Return",
     department: "HM Revenue & Customs",
     type: "registration",
     title: "Inheritance Tax Return Filed",
-    reference: makeRef("IHT", persona.id || "", "hmrc-iht400"),
+    reference: makeRef("IHT", pid, "hmrc-iht400"),
     issuedAt,
     details,
   };
@@ -362,23 +407,4 @@ export function buildOutcomes(
   return serviceIds
     .map((id) => buildOutcome(id, persona, date))
     .filter((o): o is JourneyOutcome => o !== null);
-}
-
-// ── Formatters ──
-
-function formatCurrency(amount: number): string {
-  return `£${amount.toLocaleString("en-GB", { minimumFractionDigits: amount % 1 === 0 ? 0 : 2 })}`;
-}
-
-function formatDate(isoDate: string): string {
-  try {
-    const d = new Date(isoDate + "T00:00:00");
-    return d.toLocaleDateString("en-GB", {
-      day: "numeric",
-      month: "long",
-      year: "numeric",
-    });
-  } catch {
-    return isoDate;
-  }
 }

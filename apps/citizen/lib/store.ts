@@ -662,7 +662,10 @@ export const useAppStore = create<AppStore>((set, get) => ({
           data.cardRequests && data.cardRequests.length > 0
             ? false
             : state.cardsSubmitted,
-        pendingOutcomes: data.outcomes ?? [],
+        pendingOutcomes:
+          data.outcomes && data.outcomes.length > 0
+            ? [...state.pendingOutcomes, ...data.outcomes]
+            : state.pendingOutcomes,
         consentDecisions:
           data.ucState?.currentState !== state.ucState
             ? {}
