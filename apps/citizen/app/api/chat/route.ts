@@ -1191,6 +1191,26 @@ export async function POST(request: NextRequest) {
         "@/lib/demo-scripts/sarah-okafor"
       );
       personaScripts = SARAH_OKAFOR_CHAT;
+    } else if (persona === "marcus-taylor") {
+      const { MARCUS_TAYLOR_CHAT } = await import(
+        "@/lib/demo-scripts/marcus-taylor"
+      );
+      personaScripts = MARCUS_TAYLOR_CHAT;
+    } else if (persona === "james-whitfield") {
+      const { JAMES_WHITFIELD_CHAT } = await import(
+        "@/lib/demo-scripts/james-whitfield"
+      );
+      personaScripts = JAMES_WHITFIELD_CHAT;
+    } else if (persona === "daniel-obi") {
+      const { DANIEL_OBI_CHAT } = await import(
+        "@/lib/demo-scripts/daniel-obi"
+      );
+      personaScripts = DANIEL_OBI_CHAT;
+    } else if (persona === "priya-anand") {
+      const { PRIYA_ANAND_CHAT } = await import(
+        "@/lib/demo-scripts/priya-anand"
+      );
+      personaScripts = PRIYA_ANAND_CHAT;
     }
 
     const lastUserMsg = [...messages]
