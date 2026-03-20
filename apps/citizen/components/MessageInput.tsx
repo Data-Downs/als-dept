@@ -237,7 +237,7 @@ export function MessageInput() {
           ) : hasText ? (
             <button
               type="submit"
-              disabled={isLoading || isAutoTyping}
+              disabled={isLoading}
               className="w-7 h-7 rounded-full bg-govuk-blue flex items-center justify-center shrink-0 disabled:opacity-40 transition-colors touch-feedback mr-0.5"
               aria-label="Send message"
             >
