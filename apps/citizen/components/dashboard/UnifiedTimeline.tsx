@@ -232,6 +232,10 @@ export function UnifiedTimeline({
   const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set());
   // Subscribe to taskVersion so we re-render when tasks are saved (e.g. delegation)
   useAppStore((s) => s.taskVersion);
+  // In manual mode, treat all items as the user's own
+  // NOTE: this hook must be called before any early returns to avoid
+  // React "fewer hooks" errors when item count changes between renders.
+  const isManualMode = useAppStore((s) => s.agent) === "none";
   const dismissed = persona
     ? new Set([...getDismissedItems(persona), ...localDismissed])
     : localDismissed;
@@ -254,9 +258,6 @@ export function UnifiedTimeline({
       return next;
     });
   };
-
-  // In manual mode, treat all items as the user's own
-  const isManualMode = useAppStore((s) => s.agent) === "none";
 
   // Split into user/data vs agent items
   const yourItems = isManualMode
