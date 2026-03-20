@@ -3,11 +3,7 @@
 import { useState, useRef, useCallback, useEffect, KeyboardEvent } from "react";
 import { useAppStore } from "@/lib/store";
 
-const DEMO_MESSAGE = "I am pregnant and worried about money";
 const VOICE_TRANSCRIPT = "Can you remind me to register the birth?";
-const TYPING_DELAY_MS = 45; // ms per character
-const INITIAL_PAUSE_MS = 1500; // pause before typing starts
-const SUBMIT_PAUSE_MS = 600; // pause after typing before submit
 const RECORDING_DURATION_MS = 2800; // how long the waveform plays
 const TRANSCRIBING_DURATION_MS = 1400; // "Transcribing..." display time
 
@@ -33,9 +29,7 @@ function WaveformAnimation() {
 export function MessageInput() {
   const [text, setText] = useState("");
   const [voiceState, setVoiceState] = useState<VoiceState>("idle");
-  const [isAutoTyping, setIsAutoTyping] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const autoTypeTriggered = useRef(false);
   const sendMessage = useAppStore((s) => s.sendMessage);
   const isLoading = useAppStore((s) => s.isLoading);
   const currentView = useAppStore((s) => s.currentView);
@@ -44,57 +38,6 @@ export function MessageInput() {
   const startNewConversation = useAppStore((s) => s.startNewConversation);
   const agent = useAppStore((s) => s.agent);
   const conversationHistory = useAppStore((s) => s.conversationHistory);
-
-  // Auto-type demo message when chat opens fresh
-  useEffect(() => {
-    if (
-      currentView === "chat" &&
-      conversationHistory.length === 0 &&
-      !autoTypeTriggered.current &&
-      !isLoading
-    ) {
-      autoTypeTriggered.current = true;
-
-      const timeout = setTimeout(() => {
-        setIsAutoTyping(true);
-        let charIndex = 0;
-
-        const typeInterval = setInterval(() => {
-          charIndex++;
-          const partial = DEMO_MESSAGE.slice(0, charIndex);
-          setText(partial);
-
-          if (charIndex >= DEMO_MESSAGE.length) {
-            clearInterval(typeInterval);
-            setTimeout(() => {
-              setIsAutoTyping(false);
-              const msg = DEMO_MESSAGE.trim();
-              setText("");
-              if (textareaRef.current) {
-                textareaRef.current.style.height = "auto";
-              }
-              sendMessage(msg);
-            }, SUBMIT_PAUSE_MS);
-          }
-        }, TYPING_DELAY_MS);
-      }, INITIAL_PAUSE_MS);
-
-      return () => clearTimeout(timeout);
-    }
-  }, [currentView, conversationHistory.length, isLoading, sendMessage]);
-
-  // Reset the trigger when navigating away from chat or when conversation is cleared
-  useEffect(() => {
-    if (currentView !== "chat") {
-      autoTypeTriggered.current = false;
-    }
-  }, [currentView]);
-
-  useEffect(() => {
-    if (conversationHistory.length === 0) {
-      autoTypeTriggered.current = false;
-    }
-  }, [conversationHistory.length]);
 
   // ── Voice recording flow ──
   const handleMicTap = useCallback(() => {
@@ -259,8 +202,7 @@ export function MessageInput() {
               onKeyDown={handleKeyDown}
               placeholder={placeholder}
               rows={1}
-              disabled={isAutoTyping}
-              className="flex-1 resize-none bg-transparent text-sm focus:outline-none disabled:opacity-100 placeholder:text-govuk-mid-grey py-2 pl-4 pr-1"
+              className="flex-1 resize-none bg-transparent text-sm focus:outline-none placeholder:text-govuk-mid-grey py-2 pl-4 pr-1"
               style={{ lineHeight: "1.4" }}
               aria-label="Message input"
             />

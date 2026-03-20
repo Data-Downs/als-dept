@@ -123,7 +123,6 @@ function BottomTabBar() {
             label={agent === "max" ? "Max" : "Dot"}
             active={currentView === "chat"}
             onClick={() => {
-              // Start a fresh conversation so the demo auto-type triggers
               const state = useAppStore.getState();
               if (state.conversationHistory.length > 0) {
                 state.startNewConversation(null, null);
