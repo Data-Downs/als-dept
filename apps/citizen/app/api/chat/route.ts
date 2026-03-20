@@ -982,7 +982,18 @@ async function chatHandler(input: unknown): Promise<ChatOutput> {
     // For graph services (non-hand-crafted), enable the fallback informational
     // card so citizens always get a next step (GOV.UK link or call centre)
     // rather than a silent resolution miss.
-    const useCardFallback = !cardTrace.isHandcrafted;
+    // Process states (identity, eligibility, consent) are conversational —
+    // they're handled by state instructions, never by cards.
+    const PROCESS_STATES = new Set([
+      "not-started",
+      "identity-verified",
+      "eligibility-checked",
+      "consent-given",
+      "account-accessed",
+      "browsing",
+    ]);
+    const isProcessState = PROCESS_STATES.has(postTransitionState);
+    const useCardFallback = !cardTrace.isHandcrafted && !isProcessState;
     const cardDefs = shouldResolveCards
       ? resolveCardsWithOverrides(
           interactionType,

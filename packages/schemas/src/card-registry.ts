@@ -864,6 +864,7 @@ const TEMPLATE_CARD_REGISTRY: InteractionCardSet[] = [
       },
       { stateId: "witness-attested", cards: [WITNESS_ATTESTATION_CARD] },
       { stateId: "document-submitted", cards: [DOCUMENT_UPLOAD_CARD] },
+      { stateId: "details-submitted", cards: [APPLICATION_ELIGIBILITY_CARD] },
     ],
   },
 ];
@@ -891,6 +892,10 @@ const CARD_REGISTRY: InteractionCardSet[] = [
       {
         stateId: "details-confirmed",
         cards: [LICENSE_DETAILS_CARD],
+      },
+      {
+        stateId: "photo-submitted",
+        cards: [DOCUMENT_UPLOAD_CARD],
       },
       {
         stateId: "payment-made",
