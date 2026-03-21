@@ -1153,60 +1153,102 @@ async function chatHandler(input: unknown): Promise<ChatOutput> {
       return !GENERIC_TASK_KEYWORDS.test(t.description.trim());
     });
 
-    // ── Consent-driven pre-fill ──
-    // If cards were resolved and the user has granted consent, pre-fill fields
-    // with data already on file (Tier 1 verified + Tier 2 submitted).
+    // ── Pre-fill cards from persona data ──
+    // Principle: if we already have the citizen's data, pre-fill it.
+    // The citizen shouldn't re-enter information government already holds.
+    // This works regardless of consent — consent is about sharing data
+    // with departments, not about showing the citizen their own data.
     if (cardRequests.length > 0) {
       try {
-        const accessStore = await getServiceAccessStore();
-        const grants = await accessStore.getServiceFields(persona, serviceId);
+        // Build a flat lookup map from all available data sources
+        const prefillMap = new Map<string, unknown>();
 
-        if (grants.length > 0) {
-          const grantedFieldSet = new Set(grants.map((g) => g.fieldKey));
-          const tier1GrantedFields = new Set(
+        // Tier 2: submitted data (card form submissions)
+        const submittedStore = await getSubmittedStore();
+        const allSubmitted = await submittedStore.getAll(persona);
+        for (const field of allSubmitted) {
+          prefillMap.set(field.fieldKey, field.fieldValue);
+        }
+
+        // Tier 1: persona data (identity, credentials, financials)
+        const raw = personaData as unknown as Record<string, unknown>;
+
+        // Flatten common persona fields into the lookup
+        if (personaData.primaryContact) {
+          const pc = personaData.primaryContact as Record<string, unknown>;
+          if (pc.firstName) prefillMap.set("full_name", `${pc.firstName} ${pc.middleName ? pc.middleName + " " : ""}${pc.lastName || ""}`);
+          if (pc.nationalInsuranceNumber) prefillMap.set("national_insurance_number", pc.nationalInsuranceNumber);
+          if (pc.dateOfBirth) prefillMap.set("date_of_birth", pc.dateOfBirth);
+          if (pc.email) prefillMap.set("email", pc.email);
+          if (pc.phone) prefillMap.set("phone", pc.phone);
+        }
+        if (personaData.address) {
+          const addr = personaData.address as Record<string, unknown>;
+          prefillMap.set("address_line1", addr.line1 || addr.line_1 || "");
+          prefillMap.set("postcode", addr.postcode || "");
+        }
+        // Credentials (driving licence, NI, etc.)
+        const credentials = raw.credentials as Array<Record<string, unknown>> | undefined;
+        if (credentials) {
+          const licence = credentials.find((c) => c.type === "driving-licence");
+          if (licence?.number) {
+            prefillMap.set("driving_licence_number", licence.number);
+            prefillMap.set("licence_number", licence.number);
+            prefillMap.set("licence_expiry", licence.expires || "");
+          }
+        }
+        // Financials
+        const financials = raw.financials as Record<string, unknown> | undefined;
+        if (financials) {
+          const account = (financials.currentAccount ?? financials.personalAccount) as Record<string, unknown> | undefined;
+          if (account) {
+            if (account.sortCode) prefillMap.set("sort_code", account.sortCode);
+            if (account.accountNumber) prefillMap.set("account_number", account.accountNumber);
+            if (account.bank) prefillMap.set("bank_name", account.bank);
+          }
+        }
+
+        // Check for consent-driven fields (Tier 1 verified = readonly)
+        let tier1GrantedFields = new Set<string>();
+        try {
+          const accessStore = await getServiceAccessStore();
+          const grants = await accessStore.getServiceFields(persona, serviceId);
+          tier1GrantedFields = new Set(
             grants.filter((g) => g.dataTier === "tier1").map((g) => g.fieldKey),
           );
+        } catch {
+          // No consent grants — still pre-fill, just not readonly
+        }
 
-          const submittedStore = await getSubmittedStore();
-          const allSubmitted = await submittedStore.getAll(persona);
-          const submittedMap = new Map<string, unknown>();
-          for (const field of allSubmitted) {
-            submittedMap.set(field.fieldKey, field.fieldValue);
-          }
+        for (const card of cardRequests) {
+          const prefillData: Record<string, string | number | boolean> = {};
+          const readonlyFields: string[] = [];
 
-          for (const card of cardRequests) {
-            const prefillData: Record<string, string | number | boolean> = {};
-            const readonlyFields: string[] = [];
+          for (const field of card.definition.fields) {
+            const lookupKey = field.prefillFrom || field.key;
+            const value = prefillMap.get(lookupKey);
+            if (value !== undefined && value !== null && value !== "") {
+              if (
+                typeof value === "string" ||
+                typeof value === "number" ||
+                typeof value === "boolean"
+              ) {
+                prefillData[field.key] = value;
+              } else {
+                prefillData[field.key] = String(value);
+              }
 
-            for (const field of card.definition.fields) {
-              const lookupKey = field.prefillFrom || field.key;
-              if (!grantedFieldSet.has(lookupKey)) continue;
-
-              const value = submittedMap.get(lookupKey);
-              if (value !== undefined && value !== null) {
-                // Flatten to primitive for form pre-fill
-                if (
-                  typeof value === "string" ||
-                  typeof value === "number" ||
-                  typeof value === "boolean"
-                ) {
-                  prefillData[field.key] = value;
-                } else {
-                  prefillData[field.key] = String(value);
-                }
-
-                if (tier1GrantedFields.has(lookupKey)) {
-                  readonlyFields.push(field.key);
-                }
+              if (tier1GrantedFields.has(lookupKey)) {
+                readonlyFields.push(field.key);
               }
             }
+          }
 
-            if (Object.keys(prefillData).length > 0) {
-              card.prefillData = prefillData;
-            }
-            if (readonlyFields.length > 0) {
-              card.readonlyFields = readonlyFields;
-            }
+          if (Object.keys(prefillData).length > 0) {
+            card.prefillData = prefillData;
+          }
+          if (readonlyFields.length > 0) {
+            card.readonlyFields = readonlyFields;
           }
         }
       } catch (err) {
