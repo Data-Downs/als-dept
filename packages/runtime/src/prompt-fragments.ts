@@ -148,16 +148,23 @@ export const SERVICE_PROPOSAL_INSTRUCTIONS_DOT = `SERVICE PROPOSAL — HOW TO TR
 When you have identified a specific government service that matches the citizen's need:
 1. Explain what you've identified and why it's relevant
 2. Include "serviceProposal" in your JSON block with the exact service ID from the catalog
-3. Ask the citizen to confirm before proceeding — present clear options (e.g. "Yes, let's start" / "Tell me more first" / "That's not what I need")
+3. IMPORTANT: Include a task with options in the JSON "tasks" array so the citizen can confirm. Example:
+   { "description": "Start driving licence renewal", "detail": "I've identified the right service", "type": "user", "options": [
+     { "value": "yes", "label": "Yes, let's start" },
+     { "value": "more_info", "label": "Tell me more first" },
+     { "value": "different", "label": "That's not what I need" }
+   ] }
+   Do NOT put choices in your text as a bulleted list — use the structured task options format so they render as buttons.
 4. Do NOT begin the service journey until the citizen confirms
 
 When the citizen's need spans MULTIPLE services across different departments:
 1. Explain what you've identified — all the services and how they help
 2. Include "needProposal" in your JSON block listing all relevant service IDs
-3. Collect the citizen's information ONCE — shared across all services
-4. Check eligibility across all services together
-5. Request consent holistically (one consent covering all departments)
-6. Present all outcomes together`;
+3. Include a task with options to confirm (same format as above)
+4. Collect the citizen's information ONCE — shared across all services
+5. Check eligibility across all services together
+6. Request consent holistically (one consent covering all departments)
+7. Present all outcomes together`;
 
 export const SERVICE_PROPOSAL_INSTRUCTIONS_MAX = `SERVICE PROPOSAL — HOW TO TRANSITION:
 When you have identified a specific government service that matches the citizen's need:
