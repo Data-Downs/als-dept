@@ -860,31 +860,64 @@ async function chatHandler(input: unknown): Promise<ChatOutput> {
       : undefined,
   });
 
-  // ── Validate service/need proposals ──
+  // ── Validate and resolve service/need proposals ──
   if (result.serviceProposal) {
-    const proposedNode = getGraphNode(result.serviceProposal.serviceId);
+    let proposedId = result.serviceProposal.serviceId;
+    let proposedNode = getGraphNode(proposedId);
+
+    // Try resolving partial IDs (e.g. "renew-driving-licence" → "dvla.renew-driving-licence")
+    if (!proposedNode) {
+      const resolved = resolveServiceId(proposedId);
+      if (resolved !== proposedId) {
+        proposedNode = getGraphNode(resolved);
+        if (proposedNode) {
+          console.log(
+            `   [Triage] Resolved serviceProposal: ${proposedId} → ${resolved}`,
+          );
+          proposedId = resolved;
+        }
+      }
+    }
+
     if (!proposedNode) {
       console.warn(
         `   [Triage] Invalid serviceProposal: ${result.serviceProposal.serviceId} — stripping`,
       );
       result.serviceProposal = undefined;
     } else {
+      result.serviceProposal.serviceId = proposedId;
+      result.serviceProposal.serviceName =
+        result.serviceProposal.serviceName || proposedNode.name;
       console.log(
-        `   [Triage] Proposing service: ${result.serviceProposal.serviceId} (${result.serviceProposal.serviceName})`,
+        `   [Triage] Proposing service: ${proposedId} (${result.serviceProposal.serviceName})`,
       );
     }
   }
   if (result.needProposal) {
-    const validServices = result.needProposal.services.filter(
-      (id) => !!getGraphNode(id),
-    );
-    if (validServices.length === 0) {
-      console.warn(`   [Triage] needProposal had no valid service IDs — stripping`);
+    // Resolve and validate each service ID
+    const resolvedServices: string[] = [];
+    for (const id of result.needProposal.services) {
+      let node = getGraphNode(id);
+      if (!node) {
+        const resolved = resolveServiceId(id);
+        node = getGraphNode(resolved);
+        if (node) {
+          resolvedServices.push(resolved);
+          continue;
+        }
+      } else {
+        resolvedServices.push(id);
+      }
+    }
+    if (resolvedServices.length === 0) {
+      console.warn(
+        `   [Triage] needProposal had no valid service IDs — stripping`,
+      );
       result.needProposal = undefined;
     } else {
-      result.needProposal.services = validServices;
+      result.needProposal.services = resolvedServices;
       console.log(
-        `   [Triage] Need proposal: "${result.needProposal.need}" with ${validServices.length} services`,
+        `   [Triage] Need proposal: "${result.needProposal.need}" with ${resolvedServices.length} services`,
       );
     }
   }
