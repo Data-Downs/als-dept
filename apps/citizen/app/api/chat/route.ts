@@ -864,6 +864,7 @@ async function chatHandler(input: unknown): Promise<ChatOutput> {
   if (result.serviceProposal) {
     let proposedId = result.serviceProposal.serviceId;
     let proposedNode = getGraphNode(proposedId);
+    let isValidService = !!proposedNode;
 
     // Try resolving partial IDs (e.g. "renew-driving-licence" → "dvla.renew-driving-licence")
     if (!proposedNode) {
@@ -875,11 +876,23 @@ async function chatHandler(input: unknown): Promise<ChatOutput> {
             `   [Triage] Resolved serviceProposal: ${proposedId} → ${resolved}`,
           );
           proposedId = resolved;
+          isValidService = true;
         }
       }
     }
 
-    if (!proposedNode) {
+    // Also check hand-crafted services (not in graph but have manifest/state-model)
+    if (!isValidService) {
+      const handcraftedManifest = await loadManifest(proposedId);
+      if (handcraftedManifest) {
+        isValidService = true;
+        console.log(
+          `   [Triage] Matched hand-crafted service: ${proposedId}`,
+        );
+      }
+    }
+
+    if (!isValidService) {
       console.warn(
         `   [Triage] Invalid serviceProposal: ${result.serviceProposal.serviceId} — stripping`,
       );
@@ -887,14 +900,16 @@ async function chatHandler(input: unknown): Promise<ChatOutput> {
     } else {
       result.serviceProposal.serviceId = proposedId;
       result.serviceProposal.serviceName =
-        result.serviceProposal.serviceName || proposedNode.name;
+        result.serviceProposal.serviceName ||
+        proposedNode?.name ||
+        proposedId;
       console.log(
         `   [Triage] Proposing service: ${proposedId} (${result.serviceProposal.serviceName})`,
       );
     }
   }
   if (result.needProposal) {
-    // Resolve and validate each service ID
+    // Resolve and validate each service ID (graph + hand-crafted)
     const resolvedServices: string[] = [];
     for (const id of result.needProposal.services) {
       let node = getGraphNode(id);
@@ -903,6 +918,12 @@ async function chatHandler(input: unknown): Promise<ChatOutput> {
         node = getGraphNode(resolved);
         if (node) {
           resolvedServices.push(resolved);
+          continue;
+        }
+        // Check hand-crafted services
+        const hcManifest = await loadManifest(id);
+        if (hcManifest) {
+          resolvedServices.push(id);
           continue;
         }
       } else {
