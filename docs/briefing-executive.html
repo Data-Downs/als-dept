@@ -1,0 +1,1740 @@
+<!doctype html>
+<html lang="en-GB">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Executive Briefing — Agentic Legibility Stack</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /* ── Reset & Base ── */
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+      html { scroll-behavior: smooth; }
+      body {
+        font-family: "Inter", Arial, sans-serif;
+        color: #0b0c0c;
+        line-height: 1.6;
+        background: #fff;
+        -webkit-font-smoothing: antialiased;
+      }
+      a { color: #1d70b8; text-decoration: none; }
+      a:hover { text-decoration: underline; color: #003078; }
+      code, pre { font-family: "JetBrains Mono", monospace; }
+
+      /* ── Layout ── */
+      .container { max-width: 960px; margin: 0 auto; padding: 0 1.5rem; }
+      .section { padding: 4rem 0; }
+      .section-alt { background: #f3f2f1; }
+
+      h1, h2, h3 { line-height: 1.2; }
+      h2 { font-size: 1.75rem; font-weight: 700; margin-bottom: 1rem; }
+      h3 { font-size: 1.25rem; font-weight: 600; margin-bottom: 0.5rem; }
+      .section-intro {
+        font-size: 1.1rem;
+        color: #505a5f;
+        max-width: 700px;
+        margin-bottom: 2rem;
+      }
+
+      /* ── Nav ── */
+      .nav {
+        background: #fff;
+        border-bottom: 1px solid #b1b4b6;
+        padding: 0.75rem 0;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+      .nav .container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+      }
+      .nav-brand { font-weight: 700; font-size: 1rem; color: #0b0c0c; white-space: nowrap; }
+      .nav-links { display: flex; gap: 1.25rem; list-style: none; flex-wrap: wrap; align-items: center; }
+      .nav-links a { font-size: 0.85rem; font-weight: 500; color: #505a5f; }
+      .nav-links a:hover { color: #1d70b8; text-decoration: none; }
+      .nav-links a.active { color: #0b0c0c; font-weight: 700; border-bottom: 2px solid #0b0c0c; padding-bottom: 2px; }
+      @media (max-width: 640px) {
+        .nav-links { display: none; }
+      }
+
+      /* ── Hero ── */
+      .hero { padding: 5rem 0 3rem; }
+      .hero-label {
+        display: inline-block;
+        background: #f3f2f1;
+        color: #505a5f;
+        font-size: 0.8rem;
+        font-weight: 600;
+        padding: 0.25rem 0.75rem;
+        border-radius: 2px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 1.25rem;
+      }
+      .hero h1 { font-size: 2.75rem; font-weight: 700; margin-bottom: 0.75rem; }
+      .hero-subtitle {
+        font-size: 1.35rem;
+        color: #505a5f;
+        font-weight: 400;
+        max-width: 700px;
+        margin-bottom: 1.5rem;
+      }
+      .hero-meta {
+        font-size: 0.85rem;
+        color: #505a5f;
+        margin-bottom: 1rem;
+      }
+      .hero-note {
+        font-size: 0.9rem;
+        color: #505a5f;
+        max-width: 700px;
+        padding: 0.75rem 1rem;
+        background: #f3f2f1;
+        border-radius: 4px;
+      }
+      .hero-note a { font-weight: 600; }
+      @media (max-width: 640px) {
+        .hero h1 { font-size: 2rem; }
+        .hero-subtitle { font-size: 1.15rem; }
+      }
+
+      /* ── TOC ── */
+      .toc-list {
+        list-style: none;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        gap: 0.5rem;
+      }
+      .toc-list li {
+        font-size: 0.9rem;
+        font-weight: 500;
+      }
+      .toc-list a { color: #0b0c0c; }
+      .toc-list a:hover { color: #1d70b8; }
+      .toc-number {
+        display: inline-flex;
+        width: 22px;
+        height: 22px;
+        align-items: center;
+        justify-content: center;
+        background: #0b0c0c;
+        color: #fff;
+        border-radius: 50%;
+        font-size: 0.65rem;
+        font-weight: 700;
+        margin-right: 0.5rem;
+        flex-shrink: 0;
+      }
+
+      /* ── Section numbers ── */
+      .section-number {
+        font-size: 0.75rem;
+        font-weight: 800;
+        color: #fff;
+        background: #0b0c0c;
+        width: 28px;
+        height: 28px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        flex-shrink: 0;
+        margin-right: 0.75rem;
+      }
+      .section-heading {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1rem;
+      }
+      .section-heading h2 { margin-bottom: 0; }
+
+      /* ── Callouts ── */
+      .callout {
+        border-left: 4px solid #b1b4b6;
+        padding: 1rem 1.25rem;
+        background: #f3f2f1;
+        font-size: 0.95rem;
+        color: #505a5f;
+        margin-top: 1.5rem;
+        border-radius: 0 4px 4px 0;
+      }
+      .callout strong { color: #0b0c0c; }
+      .callout-blue { border-left-color: #1d70b8; }
+      .callout-green { border-left-color: #00703c; }
+      .callout-red { border-left-color: #d4351c; }
+
+      /* ── Stat row ── */
+      .stat-row {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1.25rem;
+        margin-top: 2rem;
+      }
+      .stat-item {
+        text-align: center;
+        padding: 1.25rem 1rem;
+        background: #fff;
+        border: 1px solid #e0dfde;
+        border-radius: 6px;
+      }
+      .stat-value {
+        font-size: 2rem;
+        font-weight: 800;
+        color: #0b0c0c;
+        line-height: 1.1;
+      }
+      .stat-label {
+        font-size: 0.75rem;
+        color: #505a5f;
+        margin-top: 0.25rem;
+      }
+      @media (max-width: 640px) {
+        .stat-row { grid-template-columns: repeat(2, 1fr); }
+      }
+
+      /* ── Split comparison ── */
+      .split {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+        margin-top: 1.5rem;
+      }
+      .split-col {
+        padding: 1.25rem;
+        border-radius: 6px;
+        border: 1px solid;
+      }
+      .split-col h3 {
+        font-size: 1rem;
+        font-weight: 700;
+        margin-bottom: 0.75rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+      .split-col ul {
+        list-style: none;
+        font-size: 0.9rem;
+      }
+      .split-col li {
+        padding: 0.3rem 0;
+        padding-left: 1.25rem;
+        position: relative;
+      }
+      .split-col li::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0.65rem;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+      }
+      .split-today {
+        border-color: #f6d7d3;
+        background: #fef7f6;
+      }
+      .split-today h3 { color: #d4351c; }
+      .split-today li::before { background: #d4351c; }
+      .split-agent {
+        border-color: #c1e4d1;
+        background: #f0faf4;
+      }
+      .split-agent h3 { color: #00703c; }
+      .split-agent li::before { background: #00703c; }
+      @media (max-width: 640px) {
+        .split { grid-template-columns: 1fr; }
+      }
+
+      /* ── Pillar cards ── */
+      .pillar-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.25rem;
+        margin-top: 1.5rem;
+      }
+      .pillar-card {
+        border: 1px solid #e0dfde;
+        border-radius: 6px;
+        padding: 1.5rem;
+        background: #fff;
+        border-top: 4px solid;
+      }
+      .pillar-card h3 { font-size: 1rem; margin-bottom: 0.5rem; }
+      .pillar-card p { font-size: 0.9rem; color: #505a5f; }
+      @media (max-width: 640px) {
+        .pillar-grid { grid-template-columns: 1fr; }
+      }
+
+      /* ── Pipeline diagram ── */
+      .pipeline {
+        display: flex;
+        align-items: center;
+        gap: 0;
+        margin: 2rem 0;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      .pipeline-box {
+        padding: 0.6rem 1.25rem;
+        border-radius: 4px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        text-align: center;
+        white-space: nowrap;
+      }
+      .pipeline-box-green { background: #e6f3ec; color: #00703c; border: 1.5px solid #00703c; }
+      .pipeline-box-orange { background: #fef3e8; color: #f47738; border: 1.5px solid #f47738; }
+      .pipeline-box-blue { background: #e8f0fe; color: #1d70b8; border: 1.5px solid #1d70b8; }
+      .pipeline-box-purple { background: #f5e6f4; color: #912b88; border: 1.5px solid #912b88; }
+      .pipeline-box-dark { background: #0b0c0c; color: #fff; }
+      .pipeline-arrow {
+        font-size: 1.25rem;
+        color: #b1b4b6;
+        padding: 0 0.35rem;
+      }
+      .pipeline-layer {
+        text-align: center;
+        font-size: 0.75rem;
+        color: #505a5f;
+        padding: 0.5rem 0;
+        margin-top: 0.5rem;
+      }
+      .pipeline-layer-bar {
+        height: 3px;
+        border-radius: 2px;
+        margin-bottom: 0.25rem;
+      }
+
+      /* ── Artefact grid ── */
+      .artefact-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.25rem;
+        margin-top: 1.5rem;
+      }
+      .artefact-card {
+        border: 1px solid #e0dfde;
+        border-radius: 6px;
+        padding: 1.5rem;
+        background: #fff;
+        border-top: 4px solid;
+      }
+      .artefact-card h3 { font-size: 1rem; margin-bottom: 0.5rem; }
+      .artefact-card p { font-size: 0.85rem; color: #505a5f; line-height: 1.5; }
+      .artefact-card .artefact-quote {
+        font-size: 0.8rem;
+        color: #0b0c0c;
+        font-style: italic;
+        margin-top: 0.5rem;
+        padding-top: 0.5rem;
+        border-top: 1px solid #e0dfde;
+      }
+      @media (max-width: 640px) {
+        .artefact-grid { grid-template-columns: 1fr; }
+      }
+
+      /* ── Code example ── */
+      .code-block {
+        margin-top: 1.5rem;
+        max-width: 560px;
+      }
+      .code-block pre {
+        background: #1a1a2e;
+        color: #e0e0e0;
+        padding: 1.25rem 1.5rem;
+        border-radius: 6px;
+        font-size: 0.8rem;
+        line-height: 1.7;
+        overflow-x: auto;
+      }
+      .code-block pre .key { color: #7dd3fc; }
+      .code-block pre .str { color: #86efac; }
+      .code-block pre .num { color: #fbbf24; }
+
+      /* ── Guarantee cards ── */
+      .guarantee-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.25rem;
+        margin-top: 1.5rem;
+      }
+      .guarantee-card {
+        padding: 1.5rem;
+        border: 1px solid #e0dfde;
+        border-radius: 6px;
+        background: #fff;
+      }
+      .guarantee-card h3 {
+        font-size: 0.95rem;
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: flex-start;
+        gap: 0.5rem;
+      }
+      .guarantee-card p { font-size: 0.85rem; color: #505a5f; }
+      .guarantee-number {
+        display: inline-flex;
+        width: 22px;
+        height: 22px;
+        align-items: center;
+        justify-content: center;
+        background: #00703c;
+        color: #fff;
+        border-radius: 50%;
+        font-size: 0.65rem;
+        font-weight: 700;
+        flex-shrink: 0;
+      }
+      @media (max-width: 640px) {
+        .guarantee-grid { grid-template-columns: 1fr; }
+      }
+
+      /* ── Risk pairs ── */
+      .risk-list { margin-top: 1.5rem; }
+      .risk-item {
+        padding: 1.25rem 0;
+        border-bottom: 1px solid #e0dfde;
+      }
+      .risk-item:last-child { border-bottom: none; }
+      .risk-objection {
+        font-size: 1rem;
+        font-weight: 700;
+        color: #0b0c0c;
+        margin-bottom: 0.35rem;
+      }
+      .risk-response {
+        font-size: 0.9rem;
+        color: #505a5f;
+      }
+
+      /* ── Delegation list ── */
+      .delegation-list {
+        list-style: none;
+        margin-top: 1.5rem;
+      }
+      .delegation-list li {
+        padding: 0.75rem 0;
+        border-bottom: 1px solid #e0dfde;
+        font-size: 0.9rem;
+      }
+      .delegation-list li:last-child { border-bottom: none; }
+      .delegation-list strong { color: #0b0c0c; }
+
+      /* ── Ask cards ── */
+      .ask-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.25rem;
+        margin-top: 1.5rem;
+      }
+      .ask-card {
+        padding: 1.5rem;
+        border: 1px solid #e0dfde;
+        border-radius: 6px;
+        background: #fff;
+      }
+      .ask-card h3 { font-size: 1rem; margin-bottom: 0.5rem; }
+      .ask-card p { font-size: 0.85rem; color: #505a5f; }
+      .ask-number {
+        display: inline-flex;
+        width: 32px;
+        height: 32px;
+        align-items: center;
+        justify-content: center;
+        background: #1d70b8;
+        color: #fff;
+        border-radius: 50%;
+        font-size: 0.85rem;
+        font-weight: 700;
+        margin-bottom: 0.75rem;
+      }
+      @media (max-width: 640px) {
+        .ask-grid { grid-template-columns: 1fr; }
+      }
+
+      /* ── Closing block ── */
+      .closing {
+        background: #0b0c0c;
+        color: #fff;
+        padding: 3rem 0;
+        text-align: center;
+      }
+      .closing p {
+        max-width: 700px;
+        margin: 0 auto;
+        font-size: 1.1rem;
+        line-height: 1.6;
+        color: #d4d4d4;
+      }
+
+      /* ── Footer ── */
+      .footer {
+        padding: 2rem 0;
+        text-align: center;
+        font-size: 0.8rem;
+        color: #b1b4b6;
+        border-top: 1px solid #e0dfde;
+      }
+
+      /* ── Step narrative ── */
+      .step-block { margin-bottom: 3rem; }
+      .step-label {
+        display: inline-block;
+        font-size: 0.7rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: #505a5f;
+        margin-bottom: 0.35rem;
+      }
+      .step-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+      }
+      .step-narrative {
+        font-size: 0.95rem;
+        color: #505a5f;
+        max-width: 700px;
+        margin-bottom: 1rem;
+      }
+
+      /* ── Interface snippets ── */
+      .snippet {
+        margin-top: 1.25rem;
+        border: 1px solid #d2d2d2;
+        border-radius: 6px;
+        overflow: hidden;
+        max-width: 520px;
+        background: #fff;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      }
+      .snippet-wide { max-width: 600px; }
+      .snippet-label {
+        font-size: 0.65rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: #505a5f;
+        background: #f8f8f8;
+        padding: 0.4rem 0.75rem;
+        border-bottom: 1px solid #e8e8e8;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+      .snippet-label::before {
+        content: "";
+        display: inline-block;
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: #00703c;
+      }
+      .snippet-body {
+        padding: 0;
+        font-size: 0.85rem;
+      }
+
+      /* Snippet internal styling */
+      .s-panel { padding: 0.75rem 1rem; }
+      .s-header {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 0.5rem;
+      }
+      .s-icon {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.7rem;
+        font-weight: 700;
+        color: #fff;
+        flex-shrink: 0;
+      }
+      .s-title { font-size: 0.8rem; font-weight: 700; }
+      .s-subtitle { font-size: 0.7rem; color: #505a5f; }
+      .s-desc { font-size: 0.75rem; color: #505a5f; margin-bottom: 0.5rem; }
+      .s-tag {
+        display: inline-block;
+        font-size: 0.65rem;
+        padding: 0.15rem 0.5rem;
+        border-radius: 10px;
+        margin-right: 0.25rem;
+        margin-bottom: 0.25rem;
+      }
+      .s-tag-purple { background: #f5e6f4; color: #912b88; }
+      .s-tag-blue { background: #e8f0fe; color: #1d70b8; }
+      .s-tag-green { background: #e6f3ec; color: #00703c; }
+      .s-tag-grey { background: #f3f2f1; color: #505a5f; }
+      .s-tag-red { background: #fde8e8; color: #d4351c; }
+      .s-tag-orange { background: #fef3e8; color: #f47738; }
+      .s-btn {
+        display: inline-block;
+        font-size: 0.7rem;
+        font-weight: 700;
+        padding: 0.4rem 1rem;
+        border-radius: 20px;
+        border: none;
+        cursor: default;
+        margin-right: 0.35rem;
+      }
+      .s-btn-purple { background: #912b88; color: #fff; }
+      .s-btn-outline { background: transparent; border: 1.5px solid #b1b4b6; color: #505a5f; }
+      .s-btn-green { background: #00703c; color: #fff; }
+      .s-btn-blue { background: #1d70b8; color: #fff; }
+      .s-divider { border: none; border-top: 1px solid #e8e8e8; margin: 0.5rem 0; }
+      .s-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.35rem 0;
+        font-size: 0.75rem;
+      }
+      .s-row-label { color: #505a5f; }
+      .s-row-value { font-weight: 600; color: #0b0c0c; }
+      .s-mono { font-family: "JetBrains Mono", monospace; font-size: 0.7rem; }
+      .s-required { font-size: 0.6rem; color: #d4351c; font-weight: 600; }
+      .s-verified {
+        font-size: 0.55rem;
+        font-weight: 700;
+        background: #e8f0fe;
+        color: #1d70b8;
+        padding: 0.1rem 0.35rem;
+        border-radius: 2px;
+        margin-left: 0.35rem;
+      }
+      .s-field { margin-bottom: 0.5rem; }
+      .s-field-label {
+        font-size: 0.7rem;
+        font-weight: 600;
+        color: #0b0c0c;
+        margin-bottom: 0.2rem;
+      }
+      .s-field-input {
+        width: 100%;
+        padding: 0.4rem 0.5rem;
+        border: 1.5px solid #b1b4b6;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        color: #0b0c0c;
+        background: #fff;
+        font-family: inherit;
+      }
+      .s-field-input.readonly {
+        background: #f3f2f1;
+        border-color: #d2d2d2;
+        color: #505a5f;
+      }
+      .s-progress {
+        display: flex;
+        align-items: center;
+        gap: 0.2rem;
+        margin: 0.5rem 0;
+      }
+      .s-step {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.55rem;
+        font-weight: 700;
+        flex-shrink: 0;
+      }
+      .s-step-done { background: #00703c; color: #fff; }
+      .s-step-active { background: #1d70b8; color: #fff; box-shadow: 0 0 0 3px #bfdbfe; }
+      .s-step-future { background: #e0dfde; color: #b1b4b6; }
+      .s-connector { flex: 1; height: 2px; min-width: 8px; }
+      .s-connector-done { background: #00703c; }
+      .s-connector-future { background: #e0dfde; }
+      .s-handoff {
+        border-left: 3px solid;
+        padding: 0.5rem 0.75rem;
+        border-radius: 0 4px 4px 0;
+        margin: 0.5rem 0;
+      }
+      .s-timeline-dot {
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        border: 1.5px solid;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.55rem;
+        flex-shrink: 0;
+      }
+      .s-timeline-line {
+        width: 1px;
+        height: 16px;
+        background: #e0dfde;
+        margin-left: 7.5px;
+      }
+      .s-bar-track { width: 100%; height: 6px; background: #e0dfde; border-radius: 3px; overflow: hidden; }
+      .s-bar-fill { height: 100%; border-radius: 3px; }
+      .s-outcome {
+        border-radius: 8px;
+        overflow: hidden;
+        border: 1px solid #e0dfde;
+      }
+      .s-outcome-dept {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 0.75rem;
+        border-left: 2px solid;
+        margin: 0 0.75rem;
+        font-size: 0.75rem;
+        color: #0b0c0c;
+      }
+      .s-crown { font-size: 0.85rem; }
+      .s-ref-bar {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: #f8f8f8;
+        border-radius: 4px;
+        padding: 0.3rem 0.6rem;
+        margin: 0.5rem 0;
+      }
+      .s-ref-label {
+        font-size: 0.55rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: #b1b4b6;
+      }
+      .s-ref-value { font-family: "JetBrains Mono", monospace; font-size: 0.75rem; font-weight: 700; }
+      .s-status-badge {
+        display: flex;
+        align-items: center;
+        gap: 0.35rem;
+        padding: 0.3rem 0.6rem;
+        border-radius: 4px;
+        font-size: 0.7rem;
+        font-weight: 600;
+      }
+
+      /* ── Chat bubbles ── */
+      .chat-container { padding: 0.75rem; }
+      .chat-bubble {
+        max-width: 80%;
+        padding: 0.6rem 0.85rem;
+        border-radius: 12px;
+        font-size: 0.8rem;
+        line-height: 1.5;
+        margin-bottom: 0.5rem;
+      }
+      .chat-bubble:last-child { margin-bottom: 0; }
+      .chat-user {
+        background: #e8f0fe;
+        color: #0b0c0c;
+        margin-left: auto;
+        border-bottom-right-radius: 4px;
+      }
+      .chat-agent {
+        background: #fff;
+        border: 1px solid #e0dfde;
+        color: #0b0c0c;
+        margin-right: auto;
+        border-bottom-left-radius: 4px;
+      }
+      .chat-agent-label {
+        font-size: 0.6rem;
+        font-weight: 700;
+        color: #505a5f;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        margin-bottom: 0.15rem;
+      }
+
+      /* ── Consent grant row ── */
+      .consent-grant {
+        padding: 0.6rem 0;
+        border-bottom: 1px solid #f0f0f0;
+      }
+      .consent-grant:last-child { border-bottom: none; }
+      .consent-grant-title {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: #0b0c0c;
+        margin-bottom: 0.15rem;
+      }
+      .consent-grant-meta {
+        font-size: 0.65rem;
+        color: #505a5f;
+        margin-bottom: 0.35rem;
+      }
+      .consent-grant-actions {
+        display: flex;
+        gap: 0.35rem;
+      }
+
+      /* ── Task confirmation ── */
+      .task-confirm {
+        background: #fef3e8;
+        border: 1px solid #f5cfa4;
+      }
+      .task-confirm .s-panel { padding: 0.75rem 1rem; }
+      .task-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.35rem 0;
+        font-size: 0.75rem;
+      }
+      .task-item-action { color: #0b0c0c; }
+      .task-change {
+        font-size: 0.7rem;
+        color: #1d70b8;
+        font-weight: 500;
+      }
+
+      /* ── Dark panel (reasoning) ── */
+      .dark-panel {
+        background: #0b0c0c;
+        border-radius: 6px;
+        padding: 1.25rem;
+        color: #d4d4d4;
+        font-size: 0.8rem;
+        line-height: 1.6;
+        max-width: 560px;
+        margin-top: 1.25rem;
+      }
+      .dark-panel h4 {
+        color: #fff;
+        font-size: 0.85rem;
+        margin-bottom: 0.75rem;
+      }
+      .dark-panel p {
+        margin-bottom: 0.65rem;
+      }
+      .dark-panel p:last-child { margin-bottom: 0; }
+
+      /* ── Gap analysis snippet ── */
+      .gap-kpis {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 0.5rem;
+        margin-bottom: 0.75rem;
+      }
+      .gap-kpi {
+        text-align: center;
+        padding: 0.5rem;
+      }
+      .gap-kpi-value {
+        font-size: 1.1rem;
+        font-weight: 800;
+        color: #0b0c0c;
+      }
+      .gap-kpi-label {
+        font-size: 0.55rem;
+        color: #505a5f;
+      }
+      .gap-dept-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.35rem 0;
+        border-top: 1px solid #f0f0f0;
+        font-size: 0.75rem;
+      }
+      .gap-dept-name { font-weight: 600; color: #0b0c0c; }
+      .gap-dept-meta { color: #505a5f; }
+
+      /* ── Print ── */
+      @media print {
+        .nav { position: static; }
+        .snippet { break-inside: avoid; }
+        .step-block { break-inside: avoid; }
+      }
+    </style>
+  </head>
+  <body>
+
+    <!-- ── Navigation ── -->
+    <nav class="nav">
+      <div class="container">
+        <span class="nav-brand">Agentic Legibility Stack</span>
+        <ul class="nav-links">
+          <li><a href="index.html">Overview</a></li>
+          <li><a href="departments.html">Departments</a></li>
+          <li><a href="personas.html">Personas</a></li>
+          <li><a href="glossary.html">Glossary</a></li>
+          <li><a href="briefing-executive.html" class="active">Executive Briefing</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- ── Hero ── -->
+    <header class="hero">
+      <div class="container">
+        <span class="hero-label">Executive Briefing</span>
+        <h1>Agentic Legibility for Government Services</h1>
+        <p class="hero-subtitle">How departments can make their services work through AI agents &mdash; safely, accountably, and under citizen control.</p>
+        <p class="hero-meta">March 2026 &nbsp;|&nbsp; Audience: Permanent Secretaries and Heads of Department</p>
+        <p class="hero-note">This describes the target operating model. Interface examples are drawn from working prototypes. For full concept definitions, see the <a href="glossary.html">Concept Glossary</a>.</p>
+      </div>
+    </header>
+
+    <!-- ── Table of Contents ── -->
+    <div class="section-alt">
+      <div class="section" style="padding: 2.5rem 0;">
+        <div class="container">
+          <ol class="toc-list">
+            <li><span class="toc-number">1</span><a href="#the-problem">The Problem</a></li>
+            <li><span class="toc-number">2</span><a href="#the-model">The Model</a></li>
+            <li><span class="toc-number">3</span><a href="#what-it-looks-like">What It Looks Like</a></li>
+            <li><span class="toc-number">4</span><a href="#four-artefacts">The Four Artefacts</a></li>
+            <li><span class="toc-number">5</span><a href="#deterministic-guarantee">The Deterministic Guarantee</a></li>
+            <li><span class="toc-number">6</span><a href="#delegation">Multi-User and Delegation</a></li>
+            <li><span class="toc-number">7</span><a href="#coverage">Coverage and Gap Analysis</a></li>
+            <li><span class="toc-number">8</span><a href="#risks">Risks Addressed</a></li>
+            <li><span class="toc-number">9</span><a href="#ask">What We Are Asking For</a></li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <!-- Section 1: The Problem                                    -->
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <div class="section" id="the-problem">
+      <div class="container">
+        <div class="section-heading">
+          <span class="section-number">1</span>
+          <h2>The Problem</h2>
+        </div>
+        <p class="section-intro">More than 1,500 government services exist across dozens of departments. Citizens must find, understand, and complete each one themselves &mdash; often during the worst moments of their lives. Billions in benefits go unclaimed every year.</p>
+
+        <p style="font-size: 0.95rem; color: #505a5f; max-width: 700px; margin-bottom: 1.5rem;">Consider bereavement. When someone&rsquo;s partner dies, they may face up to 40 separate interactions across the General Register Office, DWP, HMRC, HMCTS, DVLA, and local authorities. They must discover each service, determine eligibility, collect the right documents, fill in the same details repeatedly, and meet deadlines they may not know exist.</p>
+
+        <div class="split">
+          <div class="split-col split-today">
+            <h3>Today</h3>
+            <ul>
+              <li>Citizen discovers services alone, if at all</li>
+              <li>Fills the same personal data up to 12 times</li>
+              <li>Misses the BSP 3-month deadline &mdash; claim lost</li>
+              <li>No visibility of progress across departments</li>
+              <li>No one joins things up on their behalf</li>
+            </ul>
+          </div>
+          <div class="split-col split-agent">
+            <h3>With an agent</h3>
+            <ul>
+              <li>Identifies 11 services across 6 departments</li>
+              <li>Pre-fills from verified data held once</li>
+              <li>Alerts to BSP deadline: 26 May 2026</li>
+              <li>Single view of progress, receipts, and outcomes</li>
+              <li>Handles sequencing &mdash; probate before IHT return</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="stat-row">
+          <div class="stat-item">
+            <div class="stat-value">1,544</div>
+            <div class="stat-label">Government services</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value">~&pound;23bn</div>
+            <div class="stat-label">Unclaimed benefits / year</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value">40+</div>
+            <div class="stat-label">Departments</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value">16</div>
+            <div class="stat-label">Life events mapped</div>
+          </div>
+        </div>
+
+        <div class="callout callout-blue">
+          When someone&rsquo;s partner dies, they face up to 40 separate interactions with government. Today, they must find, understand, and complete each one themselves.
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <!-- Section 2: The Model                                      -->
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <div class="section section-alt" id="the-model">
+      <div class="container">
+        <div class="section-heading">
+          <span class="section-number">2</span>
+          <h2>The Model</h2>
+        </div>
+        <p class="section-intro">The operating model rests on three pillars. Together they define a system where AI helps citizens navigate government, while departments stay in control of their own rules.</p>
+
+        <div class="pillar-grid">
+          <div class="pillar-card" style="border-top-color: #1d70b8;">
+            <h3><a href="glossary.html#legibility">Legibility</a></h3>
+            <p>Departments publish structured artefacts that tell agents everything needed to act on a service &mdash; what it does, who is eligible, what data is required, and in what order.</p>
+          </div>
+          <div class="pillar-card" style="border-top-color: #912b88;">
+            <h3><a href="glossary.html#consent-model">Consent and Control</a></h3>
+            <p>Citizens see exactly what data is shared, with whom, for what purpose, and can revoke at any time. Nothing is shared without explicit, informed consent.</p>
+          </div>
+          <div class="pillar-card" style="border-top-color: #f47738;">
+            <h3><a href="glossary.html#evidence-plane">Evidence and Accountability</a></h3>
+            <p>Every action is traced, receipted, and replayable. Citizens, departments, and auditors share a single source of truth.</p>
+          </div>
+        </div>
+
+        <!-- Pipeline diagram -->
+        <div style="margin-top: 2.5rem;">
+          <div class="pipeline">
+            <div class="pipeline-box pipeline-box-dark">Citizen</div>
+            <span class="pipeline-arrow">&rarr;</span>
+            <div class="pipeline-box pipeline-box-blue">Chat</div>
+            <span class="pipeline-arrow">&rarr;</span>
+            <div class="pipeline-box pipeline-box-green">Orchestrator</div>
+            <span class="pipeline-arrow">&rarr;</span>
+            <div class="pipeline-box pipeline-box-green">Department Service</div>
+          </div>
+          <div style="max-width: 560px; margin: 0 auto;">
+            <div class="pipeline-layer">
+              <div class="pipeline-layer-bar" style="background: #912b88;"></div>
+              Consent Layer &mdash; spans every data-sharing decision
+            </div>
+            <div class="pipeline-layer">
+              <div class="pipeline-layer-bar" style="background: #f47738;"></div>
+              Evidence Plane &mdash; records every action end-to-end
+            </div>
+          </div>
+        </div>
+
+        <div class="callout callout-blue">
+          The model separates what AI does well &mdash; conversation, synthesis, navigation &mdash; from what it must not do: decide eligibility, bypass consent, invent entitlements. <strong>Language is the AI&rsquo;s job. Rules are code&rsquo;s job.</strong>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <!-- Section 3: What It Looks Like                             -->
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <div class="section" id="what-it-looks-like">
+      <div class="container">
+        <div class="section-heading">
+          <span class="section-number">3</span>
+          <h2>What It Looks Like</h2>
+        </div>
+        <p class="section-intro">A walkthrough of a single citizen journey: Sarah Okafor, age 58, Chelmsford. Her husband David died on 26 February 2026. She is named executor. Estate approximately &pound;645,000. Two adult children. She works part-time as a library assistant.</p>
+
+        <!-- Step 1: Triage -->
+        <div class="step-block">
+          <span class="step-label">Step 1</span>
+          <h3 class="step-title">Chat &mdash; Triage</h3>
+          <p class="step-narrative">Sarah opens the app and types her first message. She does not know which services exist, which departments are involved, or what deadlines apply. The agent does.</p>
+
+          <div class="snippet snippet-wide">
+            <div class="snippet-label">Chat &mdash; Bereavement triage</div>
+            <div class="snippet-body">
+              <div class="chat-container">
+                <div class="chat-bubble chat-user">
+                  My husband died three weeks ago. I don&rsquo;t know what to do. David always handled everything.
+                </div>
+                <div class="chat-bubble chat-agent">
+                  <div class="chat-agent-label">Agent</div>
+                  I&rsquo;m very sorry about David, Sarah. I&rsquo;m here to help you work through the things that need to happen, at your pace. Nothing will be submitted without your say-so.<br><br>
+                  Can I ask: are you named as executor in David&rsquo;s will? And has the death been registered?
+                </div>
+                <div class="chat-bubble chat-user">
+                  I&rsquo;m named executor in the will. The death has been registered but I haven&rsquo;t done anything else yet.
+                </div>
+                <div class="chat-bubble chat-agent">
+                  <div class="chat-agent-label">Agent</div>
+                  Thank you, Sarah. Based on what you&rsquo;ve told me, I&rsquo;ve identified <strong>9 services across 5 departments</strong> that are relevant to your situation. Here&rsquo;s what I&rsquo;d recommend, in order of priority.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 2: Plan -->
+        <div class="step-block">
+          <span class="step-label">Step 2</span>
+          <h3 class="step-title">Plan</h3>
+          <p class="step-narrative">The agent proposes a bereavement plan ordered by dependency. Some services are available immediately; others are locked until prerequisites complete.</p>
+
+          <div class="snippet snippet-wide">
+            <div class="snippet-label">Service plan &mdash; Bereavement</div>
+            <div class="snippet-body">
+              <div class="s-panel">
+                <div style="font-size: 0.7rem; font-weight: 700; color: #505a5f; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.75rem;">Foundations</div>
+
+                <div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.35rem 0; border-bottom: 1px solid #f0f0f0;">
+                  <span style="color: #00703c; font-weight: 700; font-size: 0.8rem;">&#10003;</span>
+                  <span style="font-size: 0.75rem; font-weight: 600;">Register the death</span>
+                  <span class="s-tag s-tag-grey">GRO</span>
+                  <span class="s-tag s-tag-green" style="margin-left: auto;">Complete</span>
+                </div>
+
+                <div style="font-size: 0.7rem; font-weight: 700; color: #505a5f; text-transform: uppercase; letter-spacing: 0.06em; margin: 0.75rem 0 0.5rem;">Immediate</div>
+
+                <div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.35rem 0; border-bottom: 1px solid #f0f0f0;">
+                  <span style="width: 16px; height: 16px; border-radius: 50%; background: #1d70b8; display: inline-flex; align-items: center; justify-content: center; color: #fff; font-size: 0.55rem; font-weight: 700; flex-shrink: 0;">2</span>
+                  <span style="font-size: 0.75rem; font-weight: 600;">Tell Us Once</span>
+                  <span class="s-tag s-tag-blue">DWP</span>
+                  <span class="s-tag s-tag-green" style="margin-left: auto;">Available</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.35rem 0; border-bottom: 1px solid #f0f0f0;">
+                  <span style="width: 16px; height: 16px; border-radius: 50%; background: #1d70b8; display: inline-flex; align-items: center; justify-content: center; color: #fff; font-size: 0.55rem; font-weight: 700; flex-shrink: 0;">3</span>
+                  <span style="font-size: 0.75rem; font-weight: 600;">Bereavement Support Payment</span>
+                  <span class="s-tag s-tag-blue">DWP</span>
+                  <span class="s-tag s-tag-green" style="margin-left: auto;">Available</span>
+                </div>
+
+                <div style="font-size: 0.7rem; font-weight: 700; color: #505a5f; text-transform: uppercase; letter-spacing: 0.06em; margin: 0.75rem 0 0.5rem;">Legal</div>
+
+                <div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.35rem 0; border-bottom: 1px solid #f0f0f0;">
+                  <span style="width: 16px; height: 16px; border-radius: 50%; background: #e0dfde; display: inline-flex; align-items: center; justify-content: center; color: #b1b4b6; font-size: 0.55rem; font-weight: 700; flex-shrink: 0;">4</span>
+                  <span style="font-size: 0.75rem; font-weight: 600; color: #b1b4b6;">Apply for probate</span>
+                  <span class="s-tag s-tag-grey">HMCTS</span>
+                  <span class="s-tag s-tag-grey" style="margin-left: auto;">Locked</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.35rem 0; border-bottom: 1px solid #f0f0f0;">
+                  <span style="width: 16px; height: 16px; border-radius: 50%; background: #e0dfde; display: inline-flex; align-items: center; justify-content: center; color: #b1b4b6; font-size: 0.55rem; font-weight: 700; flex-shrink: 0;">5</span>
+                  <span style="font-size: 0.75rem; font-weight: 600; color: #b1b4b6;">File IHT return</span>
+                  <span class="s-tag s-tag-grey">HMRC</span>
+                  <span class="s-tag s-tag-grey" style="margin-left: auto;">Locked</span>
+                </div>
+
+                <div style="font-size: 0.7rem; font-weight: 700; color: #505a5f; text-transform: uppercase; letter-spacing: 0.06em; margin: 0.75rem 0 0.5rem;">Financial &amp; Administrative</div>
+
+                <div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.35rem 0; border-bottom: 1px solid #f0f0f0;">
+                  <span style="width: 16px; height: 16px; border-radius: 50%; background: #1d70b8; display: inline-flex; align-items: center; justify-content: center; color: #fff; font-size: 0.55rem; font-weight: 700; flex-shrink: 0;">6</span>
+                  <span style="font-size: 0.75rem; font-weight: 600;">Notify BT Pension Scheme</span>
+                  <span class="s-tag s-tag-grey">BT</span>
+                  <span class="s-tag s-tag-green" style="margin-left: auto;">Available</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.35rem 0;">
+                  <span style="width: 16px; height: 16px; border-radius: 50%; background: #1d70b8; display: inline-flex; align-items: center; justify-content: center; color: #fff; font-size: 0.55rem; font-weight: 700; flex-shrink: 0;">7</span>
+                  <span style="font-size: 0.75rem; font-weight: 600;">Cancel David&rsquo;s driving licence</span>
+                  <span class="s-tag s-tag-blue">DVLA</span>
+                  <span class="s-tag s-tag-green" style="margin-left: auto;">Available</span>
+                </div>
+
+                <hr class="s-divider" />
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                  <span style="font-size: 0.7rem; color: #505a5f;">1 of 8 services</span>
+                  <div class="s-bar-track" style="flex: 1;">
+                    <div class="s-bar-fill" style="width: 13%; background: #00703c;"></div>
+                  </div>
+                  <span style="font-size: 0.7rem; font-weight: 700;">13%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 3: Consent -->
+        <div class="step-block">
+          <span class="step-label">Step 3</span>
+          <h3 class="step-title">Consent</h3>
+          <p class="step-narrative">Before acting on any service, the agent asks Sarah to consent to each specific data-sharing event. She sees what data, from what source, going to whom, and for what purpose.</p>
+
+          <div class="snippet snippet-wide">
+            <div class="snippet-label">Consent &mdash; Bereavement Support Payment</div>
+            <div class="snippet-body">
+              <div class="s-panel">
+                <div class="s-header">
+                  <div class="s-icon" style="background: #912b88;">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                  </div>
+                  <div>
+                    <div class="s-title">Data sharing consent</div>
+                    <div class="s-subtitle">DWP &mdash; Bereavement Support Payment</div>
+                  </div>
+                </div>
+                <div class="s-desc">DWP needs access to the following to process your Bereavement Support Payment.</div>
+
+                <div class="consent-grant">
+                  <div class="consent-grant-title">Verify your identity using GOV.UK One Login</div>
+                  <div style="display: flex; gap: 0.35rem; flex-wrap: wrap; margin-bottom: 0.25rem;">
+                    <span class="s-required">Required</span>
+                  </div>
+                  <div class="consent-grant-meta">Data: full name, date of birth, NI number &nbsp;&middot;&nbsp; Source: One Login</div>
+                  <div class="consent-grant-actions">
+                    <span class="s-btn s-btn-green">I agree</span>
+                    <span class="s-btn s-btn-outline">No thanks</span>
+                  </div>
+                </div>
+
+                <div class="consent-grant">
+                  <div class="consent-grant-title">Share death registration details with DWP</div>
+                  <div style="display: flex; gap: 0.35rem; flex-wrap: wrap; margin-bottom: 0.25rem;">
+                    <span class="s-required">Required</span>
+                  </div>
+                  <div class="consent-grant-meta">Data: deceased name, date of death, death certificate ref &nbsp;&middot;&nbsp; Source: General Register Office</div>
+                  <div class="consent-grant-actions">
+                    <span class="s-btn s-btn-green">I agree</span>
+                    <span class="s-btn s-btn-outline">No thanks</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 4: Card -->
+        <div class="step-block">
+          <span class="step-label">Step 4</span>
+          <h3 class="step-title">Card</h3>
+          <p class="step-narrative">The agent collects the remaining details. Verified fields from One Login and GRO are pre-filled and locked. Sarah only provides what is genuinely new.</p>
+
+          <div class="snippet">
+            <div class="snippet-label">Data collection &mdash; BSP claim</div>
+            <div class="snippet-body">
+              <div class="s-panel">
+                <div class="s-field">
+                  <div class="s-field-label">Full name <span class="s-verified">Verified</span></div>
+                  <div class="s-field-input readonly">Sarah Grace Okafor</div>
+                </div>
+                <div class="s-field">
+                  <div class="s-field-label">National Insurance number <span class="s-verified">Verified</span></div>
+                  <div class="s-field-input readonly" style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem;">SO 14 09 67 A</div>
+                </div>
+                <div class="s-field">
+                  <div class="s-field-label">Date of partner&rsquo;s death <span class="s-verified">Verified &middot; GRO</span></div>
+                  <div class="s-field-input readonly">26/02/2026</div>
+                </div>
+                <div class="s-field">
+                  <div class="s-field-label">Relationship to deceased</div>
+                  <div class="s-field-input">Spouse</div>
+                </div>
+                <div class="s-field">
+                  <div class="s-field-label">Bank sort code</div>
+                  <div class="s-field-input" style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem;">60-14-33</div>
+                </div>
+                <div class="s-field">
+                  <div class="s-field-label">Bank account number</div>
+                  <div class="s-field-input" style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem;">45678901</div>
+                </div>
+                <div style="margin-top: 0.75rem;">
+                  <span class="s-btn s-btn-green">Confirm details</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 5: Task confirmation -->
+        <div class="step-block">
+          <span class="step-label">Step 5</span>
+          <h3 class="step-title">Task Confirmation</h3>
+          <p class="step-narrative">Before submission, Sarah sees exactly what the agent will do. Nothing is sent without her explicit approval.</p>
+
+          <div class="snippet snippet-wide task-confirm">
+            <div class="snippet-label">Confirm before submitting</div>
+            <div class="snippet-body">
+              <div class="s-panel">
+                <div class="s-desc" style="font-weight: 600; color: #0b0c0c; margin-bottom: 0.75rem;">The agent will:</div>
+
+                <div class="task-item">
+                  <span class="task-item-action">Submit BSP claim to DWP</span>
+                  <span class="task-change">Change</span>
+                </div>
+                <hr class="s-divider" />
+                <div class="task-item">
+                  <span class="task-item-action">Notify DWP of David&rsquo;s death via Tell Us Once</span>
+                  <span class="task-change">Change</span>
+                </div>
+
+                <hr class="s-divider" />
+                <div class="s-desc" style="font-weight: 600; color: #0b0c0c; margin-top: 0.5rem; margin-bottom: 0.5rem;">Your choices:</div>
+
+                <div class="task-item">
+                  <span class="task-item-action">Payment to NatWest account ending 8901</span>
+                  <span class="task-change">Change</span>
+                </div>
+
+                <div style="margin-top: 0.75rem;">
+                  <span class="s-btn s-btn-green">Confirm and continue</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 6: Outcome -->
+        <div class="step-block">
+          <span class="step-label">Step 6</span>
+          <h3 class="step-title">Outcome</h3>
+          <p class="step-narrative">DWP confirms the BSP claim. Sarah sees the result immediately, branded to the department that owns the service.</p>
+
+          <div class="snippet snippet-wide">
+            <div class="snippet-label">Outcome &mdash; BSP claim accepted</div>
+            <div class="snippet-body">
+              <div class="s-panel">
+                <div class="s-outcome-dept" style="border-left-color: #00703c; margin: 0; padding-left: 0.75rem;">
+                  <svg width="14" height="12" viewBox="0 0 64 60" fill="#0b0c0c"><circle cx="20" cy="17.6" r="3.7"/><circle cx="10.2" cy="23.5" r="3.7"/><circle cx="3.7" cy="33.2" r="3.7"/><circle cx="31.7" cy="30.6" r="3.7"/><circle cx="43.3" cy="17.6" r="3.7"/><circle cx="53.2" cy="23.5" r="3.7"/><circle cx="59.7" cy="33.2" r="3.7"/></svg>
+                  <span style="font-weight: 600;">Department for Work and Pensions</span>
+                </div>
+
+                <div style="margin-top: 0.75rem;">
+                  <div class="s-title" style="font-size: 0.95rem; margin-bottom: 0.5rem;">Bereavement Support Payment &mdash; claim accepted</div>
+                </div>
+
+                <div class="s-ref-bar">
+                  <span class="s-ref-label">Ref</span>
+                  <span class="s-ref-value">GOV-B4E2-91A3</span>
+                </div>
+
+                <div class="s-row">
+                  <span class="s-row-label">Lump sum</span>
+                  <span class="s-row-value" style="color: #00703c; font-size: 1.1rem;">&pound;3,500</span>
+                </div>
+                <div class="s-row">
+                  <span class="s-row-label">Monthly payments</span>
+                  <span class="s-row-value">&pound;350 for 18 months</span>
+                </div>
+                <div class="s-row">
+                  <span class="s-row-label">First payment</span>
+                  <span class="s-row-value">15 April 2026</span>
+                </div>
+
+                <hr class="s-divider" />
+
+                <div class="s-status-badge" style="background: #e6f3ec; color: #00703c;">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#00703c" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+                  Payment scheduled to your bank account
+                </div>
+
+                <div style="margin-top: 0.5rem; font-size: 0.65rem; color: #b1b4b6;">Issued: 22 March 2026</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 7: Receipt -->
+        <div class="step-block">
+          <span class="step-label">Step 7</span>
+          <h3 class="step-title">Receipt</h3>
+          <p class="step-narrative">Sarah has a permanent, auditable record of every action the agent took on her behalf. This receipt is independently verifiable.</p>
+
+          <div class="snippet snippet-wide">
+            <div class="snippet-label">Receipt &mdash; BSP submission</div>
+            <div class="snippet-body">
+              <div class="s-panel">
+                <div class="s-title" style="margin-bottom: 0.75rem;">Your Receipts</div>
+
+                <div class="s-row">
+                  <span class="s-row-label">Action</span>
+                  <span class="s-row-value">Submitted BSP claim to DWP</span>
+                </div>
+                <div class="s-row">
+                  <span class="s-row-label">Capability</span>
+                  <span class="s-row-value s-mono">apply-bereavement-support-payment</span>
+                </div>
+                <div class="s-row">
+                  <span class="s-row-label">Outcome</span>
+                  <span class="s-tag s-tag-green" style="font-weight: 600;">success</span>
+                </div>
+                <div class="s-row">
+                  <span class="s-row-label">Timestamp</span>
+                  <span class="s-row-value s-mono">22/03/2026, 11:42:18</span>
+                </div>
+
+                <hr class="s-divider" />
+
+                <div style="font-size: 0.7rem; color: #505a5f; margin-bottom: 0.35rem;">Data shared</div>
+                <div>
+                  <span class="s-tag s-tag-purple">full name</span>
+                  <span class="s-tag s-tag-purple">NI number</span>
+                  <span class="s-tag s-tag-purple">date of death</span>
+                  <span class="s-tag s-tag-purple">bank details</span>
+                </div>
+
+                <hr class="s-divider" />
+
+                <div class="s-row">
+                  <span class="s-row-label">Receipt ID</span>
+                  <span class="s-row-value s-mono">rcpt-b4e2-91a3-f7c2</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 8: Agent Reasoning -->
+        <div class="step-block">
+          <span class="step-label">Step 8</span>
+          <h3 class="step-title">Agent Reasoning</h3>
+          <p class="step-narrative">Behind the scenes, Sarah and auditors can see why the agent made each decision. This is not a black box &mdash; every recommendation is traceable to published rules.</p>
+
+          <div class="dark-panel">
+            <h4>Agent Reasoning</h4>
+            <p>Sarah&rsquo;s husband David died on 26 February 2026. She is named executor in the will. The death has been registered with GRO.</p>
+            <p><strong style="color: #7dd3fc;">BSP eligibility:</strong> Sarah was married to David and is under State Pension age. The claim must be made within 3 months of the date of death (deadline: 26 May 2026). I will prioritise this.</p>
+            <p><strong style="color: #7dd3fc;">Estate:</strong> Value (~&pound;645,000) exceeds the nil-rate band (&pound;325,000) but the residence nil-rate band (&pound;175,000) applies as the property passes to direct descendants. Combined threshold: &pound;500,000. Potential IHT liability on &pound;145,000 &mdash; Sarah should be referred to HMCTS for probate and HMRC for IHT return.</p>
+            <p><strong style="color: #7dd3fc;">Tell Us Once:</strong> Will notify DVLA, HMRC, DWP Pensions, and local council in a single step.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <!-- Section 4: The Four Artefacts                             -->
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <div class="section section-alt" id="four-artefacts">
+      <div class="container">
+        <div class="section-heading">
+          <span class="section-number">4</span>
+          <h2>The Four Artefacts</h2>
+        </div>
+        <p class="section-intro">For a service to work through an agent, the department must publish four structured descriptions. Together, these form the complete contract between a department and any agent acting on behalf of a citizen.</p>
+
+        <div class="artefact-grid">
+          <div class="artefact-card" style="border-top-color: #1d70b8;">
+            <h3><a href="glossary.html#manifest">Manifest</a></h3>
+            <p>What the service does. Department ownership, SLA, fees, redress routes.</p>
+            <div class="artefact-quote">"Tells the agent: this service exists, it costs &pound;14, takes 10 working days, and complaints go to the Parliamentary Ombudsman."</div>
+          </div>
+          <div class="artefact-card" style="border-top-color: #00703c;">
+            <h3><a href="glossary.html#policy-ruleset">Policy Ruleset</a></h3>
+            <p>Who is eligible. Evaluable conditions published by the department.</p>
+            <div class="artefact-quote">"Tells the agent: check these 3 rules. If rule 2 fails, suggest alternative Y."</div>
+          </div>
+          <div class="artefact-card" style="border-top-color: #f47738;">
+            <h3><a href="glossary.html#state-model">State Model</a></h3>
+            <p>The valid sequence of steps. What must happen before what.</p>
+            <div class="artefact-quote">"Tells the agent: verify identity before checking eligibility, and do not submit before consent."</div>
+          </div>
+          <div class="artefact-card" style="border-top-color: #912b88;">
+            <h3><a href="glossary.html#consent-model">Consent Model</a></h3>
+            <p>What data is shared, from where, with whom, and for what purpose.</p>
+            <div class="artefact-quote">"Tells the agent: ask permission to share these fields, from this source, for this purpose."</div>
+          </div>
+        </div>
+
+        <div class="code-block">
+          <div style="font-size: 0.7rem; color: #505a5f; margin-bottom: 0.5rem; font-weight: 600;">Example: DVLA Driving Licence Renewal &mdash; Manifest</div>
+          <pre>{
+  <span class="key">"name"</span>: <span class="str">"Renew Driving Licence"</span>,
+  <span class="key">"department"</span>: <span class="str">"DVLA"</span>,
+  <span class="key">"constraints"</span>: {
+    <span class="key">"sla"</span>: <span class="str">"10 working days"</span>,
+    <span class="key">"fee"</span>: { <span class="key">"amount"</span>: <span class="num">14</span>, <span class="key">"currency"</span>: <span class="str">"GBP"</span> }
+  },
+  <span class="key">"redress"</span>: {
+    <span class="key">"appeal_process"</span>: <span class="str">"Contact DVLA directly"</span>,
+    <span class="key">"ombudsman"</span>: <span class="str">"Parliamentary and Health Service Ombudsman"</span>
+  }
+}</pre>
+        </div>
+
+        <div class="callout callout-green">
+          These four artefacts are the complete contract between a department and any agent acting for a citizen. They are not technical specifications &mdash; they are the machine-readable expression of policy decisions departments already make.
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <!-- Section 5: The Deterministic Guarantee                    -->
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <div class="section" id="deterministic-guarantee">
+      <div class="container">
+        <div class="section-heading">
+          <span class="section-number">5</span>
+          <h2>The Deterministic Guarantee</h2>
+        </div>
+        <p class="section-intro">The safety architecture ensures that AI handles language while code handles rules. This is not a policy choice &mdash; it is an architectural constraint.</p>
+
+        <!-- Pipeline diagram -->
+        <div class="pipeline" style="flex-wrap: wrap; gap: 0.35rem;">
+          <div class="pipeline-box pipeline-box-orange">LLM</div>
+          <span class="pipeline-arrow">&rarr;</span>
+          <div class="pipeline-box pipeline-box-green">Orchestrator</div>
+          <span class="pipeline-arrow">&rarr;</span>
+          <div style="display: flex; flex-wrap: wrap; gap: 0.35rem; align-items: center; padding: 0.5rem; border: 1.5px solid #00703c; border-radius: 6px; background: #f0faf4;">
+            <span style="font-size: 0.7rem; font-weight: 600; color: #00703c;">Policy Evaluator</span>
+            <span style="color: #b1b4b6;">&middot;</span>
+            <span style="font-size: 0.7rem; font-weight: 600; color: #00703c;">State Machine</span>
+            <span style="color: #b1b4b6;">&middot;</span>
+            <span style="font-size: 0.7rem; font-weight: 600; color: #00703c;">Consent Manager</span>
+            <span style="color: #b1b4b6;">&middot;</span>
+            <span style="font-size: 0.7rem; font-weight: 600; color: #00703c;">Field Collector</span>
+          </div>
+          <span class="pipeline-arrow">&rarr;</span>
+          <div class="pipeline-box pipeline-box-green">Capability Invoker</div>
+          <span class="pipeline-arrow">&rarr;</span>
+          <div class="pipeline-box pipeline-box-green">Evidence Plane</div>
+        </div>
+        <div style="display: flex; gap: 1rem; justify-content: center; margin-top: 0.5rem; font-size: 0.75rem;">
+          <span style="display: flex; align-items: center; gap: 0.35rem;"><span style="width: 10px; height: 10px; background: #f47738; border-radius: 2px; display: inline-block;"></span> AI (generates text)</span>
+          <span style="display: flex; align-items: center; gap: 0.35rem;"><span style="width: 10px; height: 10px; background: #00703c; border-radius: 2px; display: inline-block;"></span> Deterministic (code)</span>
+        </div>
+
+        <div class="guarantee-grid">
+          <div class="guarantee-card">
+            <h3><span class="guarantee-number">1</span> Eligibility is code, not AI</h3>
+            <p>Policy rules published by departments are evaluated deterministically. The LLM cannot override, reinterpret, or relax an eligibility condition.</p>
+          </div>
+          <div class="guarantee-card">
+            <h3><span class="guarantee-number">2</span> Consent cannot be bypassed</h3>
+            <p>The <a href="glossary.html#state-model">state machine</a> requires consent-given before any data sharing. There is no valid transition without it.</p>
+          </div>
+          <div class="guarantee-card">
+            <h3><span class="guarantee-number">3</span> Every action is traced</h3>
+            <p>The <a href="glossary.html#evidence-plane">evidence plane</a> records independently. Receipts are issued to the citizen. Full replay is possible for audit.</p>
+          </div>
+        </div>
+
+        <div class="callout callout-red">
+          <strong>The agent cannot:</strong> hallucinate eligibility, skip consent, invent entitlements, bypass identity verification, or submit without citizen confirmation. These are architectural constraints, not guidelines.
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <!-- Section 6: Multi-User and Delegation                      -->
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <div class="section section-alt" id="delegation">
+      <div class="container">
+        <div class="section-heading">
+          <span class="section-number">6</span>
+          <h2>Multi-User and Delegation</h2>
+        </div>
+        <p class="section-intro">Most government services are not used by a single individual acting alone. Parents act for children. Executors act for the deceased. Carers support vulnerable adults. The model handles these relationships natively.</p>
+
+        <ul class="delegation-list">
+          <li><strong>Parent for child</strong> &mdash; full authority to view, submit, and manage services on behalf of a dependent child</li>
+          <li><strong>Executor for deceased</strong> &mdash; view, submit, pay, and correspond with departments as the legal representative of an estate</li>
+          <li><strong>Attorney (LPA)</strong> &mdash; legal authority defines scope; the agent enforces the boundaries of the Lasting Power of Attorney</li>
+          <li><strong>Carer</strong> &mdash; view status and alerts only; cannot submit or change details without explicit delegation</li>
+          <li><strong>Spouse</strong> &mdash; mutual visibility by agreement, not by default; each partner consents to what is shared</li>
+        </ul>
+
+        <div class="snippet">
+          <div class="snippet-label">Delegation &mdash; family member selection</div>
+          <div class="snippet-body">
+            <div class="s-panel">
+              <div class="s-title" style="margin-bottom: 0.35rem;">Who is this Free School Meals application for?</div>
+              <div class="s-desc">Select the family member this service is being used for.</div>
+
+              <div style="margin-top: 0.5rem;">
+                <label style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem; border: 1.5px solid #1d70b8; border-radius: 6px; background: #f0f6ff; margin-bottom: 0.35rem; cursor: default;">
+                  <span style="width: 16px; height: 16px; border-radius: 50%; border: 2px solid #1d70b8; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                    <span style="width: 8px; height: 8px; border-radius: 50%; background: #1d70b8; display: block;"></span>
+                  </span>
+                  <span style="font-size: 0.8rem; font-weight: 600;">Aarav Anand</span>
+                  <span class="s-tag s-tag-blue" style="margin-left: auto;">Age 7</span>
+                </label>
+                <label style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem; border: 1.5px solid #e0dfde; border-radius: 6px; background: #fff; margin-bottom: 0.35rem; cursor: default;">
+                  <span style="width: 16px; height: 16px; border-radius: 50%; border: 2px solid #b1b4b6; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;"></span>
+                  <span style="font-size: 0.8rem; font-weight: 600;">Meera Anand</span>
+                  <span class="s-tag s-tag-blue" style="margin-left: auto;">Age 5</span>
+                </label>
+                <label style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem; border: 1.5px solid #e0dfde; border-radius: 6px; background: #fff; cursor: default;">
+                  <span style="width: 16px; height: 16px; border-radius: 50%; border: 2px solid #b1b4b6; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;"></span>
+                  <span style="font-size: 0.8rem; color: #505a5f;">Someone else</span>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="callout callout-blue">
+          This is not an edge case. Parents for children, executors for estates, carers for vulnerable adults &mdash; these are the majority of how government services are actually used.
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <!-- Section 7: Coverage and Gap Analysis                      -->
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <div class="section" id="coverage">
+      <div class="container">
+        <div class="section-heading">
+          <span class="section-number">7</span>
+          <h2>Coverage and Gap Analysis</h2>
+        </div>
+        <p class="section-intro">Every government service has been catalogued. The Legibility Studio shows departments which services are covered, which have gaps, and where to start.</p>
+
+        <div class="snippet snippet-wide">
+          <div class="snippet-label">Legibility Studio &mdash; Gap analysis</div>
+          <div class="snippet-body">
+            <div class="s-panel">
+              <div class="gap-kpis">
+                <div class="gap-kpi">
+                  <div class="gap-kpi-value">1,544</div>
+                  <div class="gap-kpi-label">Total services</div>
+                </div>
+                <div class="gap-kpi">
+                  <div class="gap-kpi-value">28</div>
+                  <div class="gap-kpi-label">Full artefacts</div>
+                </div>
+                <div class="gap-kpi">
+                  <div class="gap-kpi-value" style="color: #d4351c;">2%</div>
+                  <div class="gap-kpi-label">Coverage</div>
+                </div>
+                <div class="gap-kpi">
+                  <div class="gap-kpi-value">1,516</div>
+                  <div class="gap-kpi-label">Need artefacts</div>
+                </div>
+              </div>
+
+              <hr class="s-divider" />
+
+              <div class="gap-dept-row">
+                <span class="gap-dept-name">HMRC</span>
+                <span class="gap-dept-meta">201 services &middot; 4% covered</span>
+              </div>
+              <div class="gap-dept-row">
+                <span class="gap-dept-name">DWP</span>
+                <span class="gap-dept-meta">115 services &middot; 5% covered</span>
+              </div>
+              <div class="gap-dept-row">
+                <span class="gap-dept-name">Home Office</span>
+                <span class="gap-dept-meta">178 services &middot; 2% covered</span>
+              </div>
+              <div class="gap-dept-row">
+                <span class="gap-dept-name">MoJ</span>
+                <span class="gap-dept-meta">94 services &middot; 3% covered</span>
+              </div>
+              <div class="gap-dept-row" style="border-top: none;">
+                <span class="gap-dept-name">DVLA</span>
+                <span class="gap-dept-meta">67 services &middot; 6% covered</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="callout callout-blue">
+          Your department&rsquo;s services are already catalogued. We can show you which ones citizens use most, which life events they belong to, and the recommended order for making them legible.
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <!-- Section 8: Risks Addressed                                -->
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <div class="section section-alt" id="risks">
+      <div class="container">
+        <div class="section-heading">
+          <span class="section-number">8</span>
+          <h2>Risks Addressed</h2>
+        </div>
+        <p class="section-intro">The most common objections, and how the architecture addresses each one.</p>
+
+        <div class="risk-list">
+          <div class="risk-item">
+            <div class="risk-objection">"What if the AI hallucinates?"</div>
+            <div class="risk-response">Eligibility and consent are deterministic code. The AI writes sentences; code makes decisions. A hallucinated eligibility result cannot pass through the <a href="glossary.html#policy-evaluator">Policy Evaluator</a>.</div>
+          </div>
+          <div class="risk-item">
+            <div class="risk-objection">"What about accountability?"</div>
+            <div class="risk-response">Full evidence trail. Every action is receipted and replayable. The citizen, the department, and any auditor share the same record through the <a href="glossary.html#evidence-plane">evidence plane</a>.</div>
+          </div>
+          <div class="risk-item">
+            <div class="risk-objection">"What about safeguarding?"</div>
+            <div class="risk-response">Automatic detection of safeguarding concerns with immediate escalation. The agent provides full context to the human handler, including what has been said and what services are in progress.</div>
+          </div>
+          <div class="risk-item">
+            <div class="risk-objection">"What happens when the AI cannot handle a case?"</div>
+            <div class="risk-response">Structured <a href="glossary.html#handoff">handoff</a> with case reference, data already collected, and steps completed. The citizen does not start again from scratch.</div>
+          </div>
+          <div class="risk-item">
+            <div class="risk-objection">"What about data protection?"</div>
+            <div class="risk-response">Granular, informed, revocable consent per data-sharing event. Each consent is scoped to a specific purpose, a specific recipient, and specific data fields. Citizens can review and revoke at any time.</div>
+          </div>
+          <div class="risk-item">
+            <div class="risk-objection">"Cross-departmental data sharing?"</div>
+            <div class="risk-response">Each sharing event is individually consented, scoped to purpose, and traced. The <a href="glossary.html#consent-model">consent model</a> provides the legal basis; the evidence plane provides the audit trail.</div>
+          </div>
+        </div>
+
+        <div class="snippet snippet-wide" style="margin-top: 2rem;">
+          <div class="snippet-label">Handoff &mdash; escalation to HMCTS</div>
+          <div class="snippet-body">
+            <div class="s-panel">
+              <div class="s-handoff" style="border-left-color: #f47738; background: #fef3e8;">
+                <div style="font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: #f47738; margin-bottom: 0.25rem;">Priority handoff</div>
+                <div class="s-title" style="margin-bottom: 0.35rem;">HMCTS Probate Service</div>
+                <div class="s-desc" style="margin-bottom: 0.5rem;"><strong style="color: #0b0c0c;">Reason:</strong> Edge case near IHT threshold with overseas property component. Agent assessment requires human review.</div>
+                <div class="s-row">
+                  <span class="s-row-label">Department</span>
+                  <span class="s-row-value">HM Courts &amp; Tribunals Service</span>
+                </div>
+                <div class="s-row">
+                  <span class="s-row-label">Telephone</span>
+                  <span class="s-row-value">0300 303 0648</span>
+                </div>
+                <div class="s-row">
+                  <span class="s-row-label">Hours</span>
+                  <span class="s-row-value">Mon&ndash;Fri, 8am&ndash;6pm</span>
+                </div>
+                <hr class="s-divider" />
+                <div style="font-size: 0.75rem; color: #505a5f;">Your case reference and the information collected so far will be available to the adviser. You will not need to repeat what you have already provided.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <!-- Section 9: What We Are Asking For                         -->
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <div class="section" id="ask">
+      <div class="container">
+        <div class="section-heading">
+          <span class="section-number">9</span>
+          <h2>What We Are Asking For</h2>
+        </div>
+        <p class="section-intro">Three concrete requests. Each is within an individual department&rsquo;s authority to grant.</p>
+
+        <div class="ask-grid">
+          <div class="ask-card">
+            <div class="ask-number">1</div>
+            <h3>Pilot services</h3>
+            <p>Nominate 3&ndash;5 high-volume citizen-facing services. Start with those that appear in the most life events &mdash; bereavement, having a child, becoming a carer. These are the services citizens need most and struggle with most.</p>
+          </div>
+          <div class="ask-card">
+            <div class="ask-number">2</div>
+            <h3>Data sharing agreements</h3>
+            <p>Identify cross-departmental data flows that would benefit citizens. The consent model enables them technically; legal teams make them real. Start with Tell Us Once and identity verification.</p>
+          </div>
+          <div class="ask-card">
+            <div class="ask-number">3</div>
+            <h3>Departmental champion</h3>
+            <p>A named senior leader owning legibility for the department. Access to the Legibility Studio and a small team to author artefacts. This is weeks of work, not months.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Closing ── -->
+    <div class="closing">
+      <div class="container">
+        <p>This is not a technology proposal. It is an operating model proposal. The technology exists. The question is whether departments will publish the structured descriptions their services need to work through agents &mdash; or leave citizens to navigate 1,544 services alone.</p>
+      </div>
+    </div>
+
+    <!-- ── Footer ── -->
+    <footer class="footer">
+      <div class="container">
+        Agentic Legibility Stack &middot; Executive Briefing &middot; March 2026
+      </div>
+    </footer>
+
+  </body>
+</html>
