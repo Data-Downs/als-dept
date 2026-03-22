@@ -117,7 +117,26 @@ export interface ChatApiResponse {
     need: string;
     services: string[];
     sharedDataNeeded: string[];
+    lifeEventId?: string;
   };
+  lifeEventContext?: {
+    lifeEventId: string;
+    lifeEventName: string;
+    lifeEventIcon: string;
+    services: Array<{
+      id: string;
+      name: string;
+      dept: string;
+      serviceType: string;
+      desc: string;
+    }>;
+    plan?: LifeEventPlan;
+    mergedFieldPrompt: string;
+  };
+  serviceCompletions?: Array<{
+    serviceId: string;
+    status: "data_complete" | "submitted";
+  }>;
 }
 
 export interface Conversation {

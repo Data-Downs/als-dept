@@ -91,6 +91,13 @@ export interface OrchestratorInput {
   floodDataHandler?: (city: string) => Promise<string>;
   /** Force journey mode even without a state model (service was proposed by triage) */
   forceJourney?: boolean;
+  /** Life event context for multi-service conversations */
+  lifeEventContext?: {
+    lifeEventName: string;
+    services: Array<{ id: string; name: string; dept: string }>;
+    mergedFieldPrompt: string;
+    completedServiceIds: string[];
+  };
 }
 
 export interface OrchestratorOutput {
@@ -159,7 +166,13 @@ export interface OrchestratorOutput {
     need: string;
     services: string[];
     sharedDataNeeded: string[];
+    lifeEventId?: string;
   };
+  /** Service completions signalled by LLM during life event journeys */
+  serviceCompletions?: Array<{
+    serviceId: string;
+    status: "data_complete" | "submitted";
+  }>;
 }
 
 // ── Structured output parser ──
@@ -216,7 +229,12 @@ interface ParsedStructuredOutput {
     need: string;
     services: string[];
     sharedDataNeeded: string[];
+    lifeEventId?: string;
   };
+  serviceCompletions?: Array<{
+    serviceId: string;
+    status: "data_complete" | "submitted";
+  }>;
 }
 
 const ISO_DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
@@ -430,8 +448,33 @@ function parseStructuredOutput(responseText: string): {
           need: np.need.trim(),
           services,
           sharedDataNeeded: sharedData,
+          lifeEventId:
+            typeof np.lifeEventId === "string"
+              ? np.lifeEventId.trim()
+              : undefined,
         };
       }
+    }
+  }
+
+  // Service completions (life event journey — LLM signals services are done)
+  if (Array.isArray(raw.serviceCompletions)) {
+    const completions = (raw.serviceCompletions as unknown[])
+      .filter(
+        (c): c is Record<string, unknown> =>
+          typeof c === "object" && c !== null && !Array.isArray(c),
+      )
+      .filter(
+        (c) =>
+          typeof c.serviceId === "string" &&
+          (c.status === "data_complete" || c.status === "submitted"),
+      )
+      .map((c) => ({
+        serviceId: (c.serviceId as string).trim(),
+        status: c.status as "data_complete" | "submitted",
+      }));
+    if (completions.length > 0) {
+      output.serviceCompletions = completions;
     }
   }
 
@@ -708,6 +751,7 @@ export class Orchestrator {
       factsAlreadyKnown,
       unresolvedContradictions,
       floodDataHandler,
+      lifeEventContext,
     } = input;
 
     const currentState = input.currentState || "not-started";
@@ -859,6 +903,7 @@ export class Orchestrator {
           strategyServiceContext,
           factsAlreadyKnown,
           unresolvedContradictions,
+          lifeEventContext,
         });
       } else {
         systemPrompt = this.buildJourneyPrompt({
@@ -1324,6 +1369,7 @@ export class Orchestrator {
       outcomeHints: structuredOutput?.outcomeHints,
       serviceProposal: structuredOutput?.serviceProposal,
       needProposal: structuredOutput?.needProposal,
+      serviceCompletions: structuredOutput?.serviceCompletions,
       versionMetadata,
       pipelineTrace,
     };
@@ -1358,6 +1404,7 @@ export class Orchestrator {
     strategyServiceContext: string;
     factsAlreadyKnown?: string;
     unresolvedContradictions?: string;
+    lifeEventContext?: OrchestratorInput["lifeEventContext"];
   }): string {
     const {
       agent,
@@ -1369,6 +1416,7 @@ export class Orchestrator {
       strategyServiceContext,
       factsAlreadyKnown,
       unresolvedContradictions,
+      lifeEventContext: leCtx,
     } = opts;
 
     const parts: string[] = [];
@@ -1380,6 +1428,39 @@ export class Orchestrator {
     parts.push("---");
     parts.push(scenarioPrompt);
     parts.push("---");
+
+    // Life event context (multi-service awareness)
+    if (leCtx) {
+      const serviceList = leCtx.services
+        .map((s, i) => {
+          const status = leCtx.completedServiceIds.includes(s.id)
+            ? "COMPLETED"
+            : "not started";
+          return `${i + 1}. ${s.name} (${s.dept}) — [${status}]`;
+        })
+        .join("\n");
+
+      parts.push(`LIFE EVENT: ${leCtx.lifeEventName}
+You are guiding this citizen through a life event that involves multiple government services.
+Your role is to collect information ONCE and apply it across all services.
+DO NOT treat these as separate form-filling exercises.
+DO NOT say "now let's move on to the next service" — the citizen should not see departmental boundaries.
+Sequence by what makes emotional sense — acknowledge the situation first, then practical admin, then financial support, then legal matters.
+
+SERVICES INVOLVED:
+${serviceList}
+
+${leCtx.mergedFieldPrompt}
+
+APPROACH:
+- Respond to the citizen's emotional state first — be warm and human
+- Gather shared information naturally through conversation, not as a checklist
+- When you have enough data for a service, emit a "serviceCompletions" entry in your JSON output
+- Pre-fill from the persona data wherever possible — do not ask for data the government already holds
+- Present outcomes as they happen — "I've notified HMRC, DWP, and the Passport Office" not "Service 1 complete"
+- The citizen should feel like they're talking to one knowledgeable person who handles everything`);
+      parts.push("---");
+    }
 
     // Persona data
     parts.push(
@@ -1402,7 +1483,9 @@ export class Orchestrator {
     // Character
     parts.push("---");
     parts.push(
-      `Remember: Stay in character as ${agent.toUpperCase()} agent, communicate according to the persona style, and help the citizen find the right government service.`,
+      leCtx
+        ? `Remember: Stay in character as ${agent.toUpperCase()} agent. You are helping this citizen through "${leCtx.lifeEventName}". Collect data once, apply across all services, and present outcomes as they happen.`
+        : `Remember: Stay in character as ${agent.toUpperCase()} agent, communicate according to the persona style, and help the citizen find the right government service.`,
     );
 
     if (generateTitle) {

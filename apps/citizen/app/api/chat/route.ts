@@ -44,6 +44,7 @@ import {
   getPromptFile,
   getAnyManifest,
   getGraphNode,
+  getGraphEngine,
   getCardDefinitions,
 } from "@/lib/service-data";
 import {
@@ -654,6 +655,24 @@ type ChatOutput = OrchestratorOutput & {
     preferenceId: string;
     reason: string;
   }>;
+  lifeEventContext?: {
+    lifeEventId: string;
+    lifeEventName: string;
+    lifeEventIcon: string;
+    services: Array<{
+      id: string;
+      name: string;
+      dept: string;
+      serviceType: string;
+      desc: string;
+    }>;
+    plan?: {
+      entryServiceIds: string[];
+      groups: Array<{ label: string; depth: number; serviceIds: string[] }>;
+      edges: Array<{ from: string; to: string; type: string }>;
+    };
+    mergedFieldPrompt: string;
+  };
 };
 
 async function chatHandler(input: unknown): Promise<ChatOutput> {
@@ -666,7 +685,12 @@ async function chatHandler(input: unknown): Promise<ChatOutput> {
     ucState: clientUcState,
     ucStateHistory: clientStateHistory,
     serviceMode,
-  } = input as ChatInput;
+    lifeEventId: clientLifeEventId,
+    lifeEventCompletedServices: clientCompletedServices,
+  } = input as ChatInput & {
+    lifeEventId?: string;
+    lifeEventCompletedServices?: string[];
+  };
 
   const isMcpMode = serviceMode === "mcp";
 
@@ -809,6 +833,65 @@ async function chatHandler(input: unknown): Promise<ChatOutput> {
     });
   }
 
+  // ── Build life event context for subsequent turns ──
+  let orchestratorLifeEventCtx:
+    | {
+        lifeEventName: string;
+        services: Array<{ id: string; name: string; dept: string }>;
+        mergedFieldPrompt: string;
+        completedServiceIds: string[];
+      }
+    | undefined;
+
+  if (clientLifeEventId) {
+    try {
+      const engine = getGraphEngine();
+      const { matchLifeEventById } = await import("@/lib/life-event-matcher");
+      const matchedLE = matchLifeEventById(clientLifeEventId, engine);
+
+      if (matchedLE) {
+        const allServices = engine.getLifeEventServices(matchedLE.id);
+        const { checkPersonaEligibility } = await import(
+          "@/lib/eligibility-filter"
+        );
+        const excludedIds = new Set<string>();
+        if (personaData) {
+          for (const node of allServices) {
+            const eligResult = checkPersonaEligibility(
+              node.eligibility as unknown as Parameters<typeof checkPersonaEligibility>[0],
+              personaData,
+            );
+            if (!eligResult.eligible) excludedIds.add(node.id);
+          }
+        }
+
+        const filteredServices = allServices
+          .filter((n) => !excludedIds.has(n.id))
+          .map((n) => ({ id: n.id, name: n.name, dept: n.dept }));
+
+        let mergedFieldPrompt = "";
+        try {
+          const { mergeServiceFields } = await import("@/lib/field-merger");
+          const merged = await mergeServiceFields(
+            filteredServices.map((s: { id: string }) => s.id),
+          );
+          mergedFieldPrompt = merged.promptSummary;
+        } catch {
+          /* non-critical */
+        }
+
+        orchestratorLifeEventCtx = {
+          lifeEventName: matchedLE.name,
+          services: filteredServices,
+          mergedFieldPrompt,
+          completedServiceIds: clientCompletedServices || [],
+        };
+      }
+    } catch (err) {
+      console.warn("Failed to load life event context for subsequent turn:", err);
+    }
+  }
+
   // ── Run Orchestrator ──
   const orchestrator = new Orchestrator({ adapter, strategy });
 
@@ -864,6 +947,7 @@ async function chatHandler(input: unknown): Promise<ChatOutput> {
             manifest as unknown as import("@als/schemas").CapabilityManifest,
         }
       : undefined,
+    lifeEventContext: orchestratorLifeEventCtx,
   });
 
   // ── Validate and resolve service/need proposals ──
@@ -946,6 +1030,108 @@ async function chatHandler(input: unknown): Promise<ChatOutput> {
       console.log(
         `   [Triage] Need proposal: "${result.needProposal.need}" with ${resolvedServices.length} services`,
       );
+    }
+  }
+
+  // ── Match needProposal to life event ──
+  let lifeEventContext: ChatOutput["lifeEventContext"] | undefined;
+  if (result.needProposal && result.needProposal.services.length >= 2) {
+    try {
+      const { matchNeedToLifeEvent, matchLifeEventById } = await import(
+        "@/lib/life-event-matcher"
+      );
+      const engine = getGraphEngine();
+
+      // Try LLM hint first, then overlap matching
+      let matchedLE = result.needProposal.lifeEventId
+        ? matchLifeEventById(result.needProposal.lifeEventId, engine)
+        : null;
+
+      if (!matchedLE) {
+        const match = matchNeedToLifeEvent(
+          result.needProposal.services,
+          engine,
+        );
+        if (match) matchedLE = match.lifeEvent;
+      }
+
+      if (matchedLE) {
+        const allServices = engine.getLifeEventServices(matchedLE.id);
+        const plan = engine.getLifeEventPlan(matchedLE.id);
+
+        // Persona eligibility filtering
+        const { checkPersonaEligibility } = await import(
+          "@/lib/eligibility-filter"
+        );
+        const excludedIds = new Set<string>();
+        if (personaData) {
+          for (const node of allServices) {
+            const eligResult = checkPersonaEligibility(
+              node.eligibility as unknown as Parameters<typeof checkPersonaEligibility>[0],
+              personaData,
+            );
+            if (!eligResult.eligible) excludedIds.add(node.id);
+          }
+        }
+
+        const filteredServices = allServices
+          .filter((n) => !excludedIds.has(n.id))
+          .map((n) => ({
+            id: n.id,
+            name: n.name,
+            dept: n.dept,
+            serviceType: n.serviceType,
+            desc: n.desc,
+          }));
+
+        // Filter plan graph to match remaining services
+        const remainingIds = new Set(filteredServices.map((s) => s.id));
+        const filteredPlan = plan
+          ? {
+              entryServiceIds: plan.entryServiceIds.filter((id) =>
+                remainingIds.has(id),
+              ),
+              groups: plan.groups
+                .map((g) => ({
+                  ...g,
+                  serviceIds: g.serviceIds.filter((id) =>
+                    remainingIds.has(id),
+                  ),
+                }))
+                .filter((g) => g.serviceIds.length > 0),
+              edges: plan.edges.filter(
+                (e) => remainingIds.has(e.from) && remainingIds.has(e.to),
+              ),
+            }
+          : undefined;
+
+        // Build merged field prompt
+        let mergedFieldPrompt = "";
+        try {
+          const { mergeServiceFields } = await import("@/lib/field-merger");
+          const merged = await mergeServiceFields(
+            filteredServices.map((s) => s.id),
+          );
+          mergedFieldPrompt = merged.promptSummary;
+        } catch (err) {
+          console.warn("Field merger failed:", err);
+        }
+
+        lifeEventContext = {
+          lifeEventId: matchedLE.id,
+          lifeEventName: matchedLE.name,
+          lifeEventIcon: matchedLE.icon ?? "",
+          services: filteredServices,
+          plan: filteredPlan,
+          mergedFieldPrompt,
+        };
+
+        console.log(
+          `   [LifeEvent] Matched: "${matchedLE.name}" (${filteredServices.length} services)`,
+        );
+      }
+    } catch (err) {
+      console.warn("Life event matching failed:", err);
     }
   }
 
@@ -1451,6 +1637,48 @@ async function chatHandler(input: unknown): Promise<ChatOutput> {
     }
   }
 
+  // ── Handle service completions from life event journeys ──
+  if (result.serviceCompletions && result.serviceCompletions.length > 0) {
+    for (const completion of result.serviceCompletions) {
+      try {
+        const svcManifest = await loadManifest(completion.serviceId);
+        if (!svcManifest) continue;
+
+        const svcInteractionType = inferInteractionType(
+          (svcManifest as Record<string, unknown>).serviceType as string || "task_list",
+        );
+        const template = OUTCOME_TEMPLATE_REGISTRY[svcInteractionType as InteractionType];
+        if (!template) continue;
+
+        const outcome = buildOutcomeFromTemplate(
+          template,
+          {
+            serviceId: completion.serviceId,
+            serviceName: (svcManifest as Record<string, unknown>).name as string || completion.serviceId,
+            department: (svcManifest as Record<string, unknown>).department as string || "",
+            issuedAt: new Date().toISOString(),
+          },
+          {
+            outcomeHints: result.outcomeHints || {},
+            inferredFacts: {},
+            submittedData: {},
+            personaData: personaData || {},
+          },
+        );
+
+        if (outcome) {
+          if (!outcomes) outcomes = [];
+          outcomes.push(outcome);
+        }
+      } catch (err) {
+        console.warn(`Failed to build outcome for service ${completion.serviceId}:`, err);
+      }
+    }
+    console.log(
+      `   [LifeEvent] ${result.serviceCompletions.length} service(s) completed`,
+    );
+  }
+
   return {
     ...result,
     consentRequests: filteredConsentRequests,
@@ -1458,6 +1686,7 @@ async function chatHandler(input: unknown): Promise<ChatOutput> {
     cardRequests: cardRequests.length > 0 ? cardRequests : undefined,
     interactionType: resolvedInteractionType,
     outcomes,
+    lifeEventContext,
   };
 }
 

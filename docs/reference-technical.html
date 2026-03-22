@@ -1,0 +1,2520 @@
+<!doctype html>
+<html lang="en-GB">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Technical Architecture Reference — Agentic Legibility Stack</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /* ── Reset & Base ── */
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+      html { scroll-behavior: smooth; }
+      body {
+        font-family: "Inter", Arial, sans-serif;
+        color: #0b0c0c;
+        line-height: 1.6;
+        background: #fff;
+        -webkit-font-smoothing: antialiased;
+      }
+      a { color: #1d70b8; text-decoration: none; }
+      a:hover { text-decoration: underline; color: #003078; }
+      code, pre { font-family: "JetBrains Mono", monospace; }
+
+      /* ── Layout ── */
+      .container { max-width: 960px; margin: 0 auto; padding: 0 1.5rem; }
+      .section { padding: 4rem 0; }
+      .section-alt { background: #f3f2f1; }
+
+      h1, h2, h3, h4 { line-height: 1.2; }
+      h2 { font-size: 1.75rem; font-weight: 700; margin-bottom: 1rem; }
+      h3 { font-size: 1.25rem; font-weight: 600; margin-bottom: 0.5rem; }
+      h4 { font-size: 1.05rem; font-weight: 600; margin-bottom: 0.5rem; line-height: 1.3; }
+      .section-intro {
+        font-size: 1.1rem;
+        color: #505a5f;
+        max-width: 700px;
+        margin-bottom: 2rem;
+      }
+      .body-text {
+        font-size: 0.95rem;
+        color: #505a5f;
+        max-width: 720px;
+        margin-bottom: 1rem;
+      }
+      .body-text strong { color: #0b0c0c; font-weight: 600; }
+      .body-text ul { margin-left: 1.25rem; margin-bottom: 0.75rem; }
+      .body-text li { margin-bottom: 0.3rem; }
+
+      /* ── Nav ── */
+      .nav {
+        background: #fff;
+        border-bottom: 1px solid #b1b4b6;
+        padding: 0.75rem 0;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+      .nav .container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+      }
+      .nav-brand { font-weight: 700; font-size: 1rem; color: #0b0c0c; white-space: nowrap; }
+      .nav-links { display: flex; gap: 1.25rem; list-style: none; flex-wrap: wrap; align-items: center; }
+      .nav-links a { font-size: 0.85rem; font-weight: 500; color: #505a5f; }
+      .nav-links a:hover { color: #1d70b8; text-decoration: none; }
+      .nav-links a.active { color: #0b0c0c; font-weight: 700; border-bottom: 2px solid #0b0c0c; padding-bottom: 2px; }
+      @media (max-width: 640px) {
+        .nav-links { display: none; }
+      }
+
+      /* ── Hero ── */
+      .hero { padding: 5rem 0 3rem; }
+      .hero-label {
+        display: inline-block;
+        background: #f3f2f1;
+        color: #505a5f;
+        font-size: 0.8rem;
+        font-weight: 600;
+        padding: 0.25rem 0.75rem;
+        border-radius: 2px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 1.25rem;
+      }
+      .hero h1 { font-size: 2.75rem; font-weight: 700; margin-bottom: 0.75rem; }
+      .hero-subtitle {
+        font-size: 1.35rem;
+        color: #505a5f;
+        font-weight: 400;
+        max-width: 700px;
+        margin-bottom: 1.5rem;
+      }
+      .hero-note {
+        font-size: 0.9rem;
+        color: #505a5f;
+        max-width: 700px;
+        padding: 0.75rem 1rem;
+        background: #f3f2f1;
+        border-radius: 4px;
+      }
+      .hero-note a { font-weight: 600; }
+      @media (max-width: 640px) {
+        .hero h1 { font-size: 2rem; }
+        .hero-subtitle { font-size: 1.15rem; }
+      }
+
+      /* ── TOC ── */
+      .toc-list {
+        list-style: none;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        gap: 0.5rem;
+      }
+      .toc-list li {
+        font-size: 0.9rem;
+        font-weight: 500;
+      }
+      .toc-list a { color: #0b0c0c; }
+      .toc-list a:hover { color: #1d70b8; }
+      .toc-number {
+        display: inline-flex;
+        width: 22px;
+        height: 22px;
+        align-items: center;
+        justify-content: center;
+        background: #0b0c0c;
+        color: #fff;
+        border-radius: 50%;
+        font-size: 0.65rem;
+        font-weight: 700;
+        margin-right: 0.5rem;
+        flex-shrink: 0;
+      }
+
+      /* ── Section numbers ── */
+      .section-number {
+        font-size: 0.75rem;
+        font-weight: 800;
+        color: #fff;
+        background: #0b0c0c;
+        width: 28px;
+        height: 28px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        flex-shrink: 0;
+        margin-right: 0.75rem;
+      }
+      .section-heading {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1rem;
+      }
+      .section-heading h2 { margin-bottom: 0; }
+
+      /* ── Callouts ── */
+      .callout {
+        border-left: 4px solid #b1b4b6;
+        padding: 1rem 1.25rem;
+        background: #f3f2f1;
+        font-size: 0.95rem;
+        color: #505a5f;
+        margin-top: 1.5rem;
+        margin-bottom: 1.5rem;
+        border-radius: 0 4px 4px 0;
+        max-width: 720px;
+      }
+      .callout strong { color: #0b0c0c; }
+      .callout p { margin-bottom: 0.5rem; }
+      .callout p:last-child { margin-bottom: 0; }
+      .callout ol, .callout ul { margin-left: 1.25rem; margin-top: 0.5rem; }
+      .callout li { margin-bottom: 0.25rem; }
+      .callout-blue { border-left-color: #1d70b8; }
+      .callout-green { border-left-color: #00703c; }
+      .callout-red { border-left-color: #d4351c; }
+
+      /* ── Code block (dark bg with filename label) ── */
+      .code-block {
+        margin-top: 1.5rem;
+        margin-bottom: 1.5rem;
+        max-width: 720px;
+        border-radius: 6px;
+        overflow: hidden;
+      }
+      .code-block-label {
+        background: #12121f;
+        color: #b1b4b6;
+        font-size: 0.7rem;
+        font-weight: 600;
+        padding: 0.5rem 1.25rem;
+        font-family: "JetBrains Mono", monospace;
+        border-bottom: 1px solid #2a2a3e;
+        letter-spacing: 0.02em;
+      }
+      .code-block pre {
+        background: #1a1a2e;
+        color: #e0e0e0;
+        padding: 1.25rem 1.5rem;
+        font-size: 0.78rem;
+        line-height: 1.7;
+        overflow-x: auto;
+        margin: 0;
+      }
+      .code-block pre .key { color: #7dd3fc; }
+      .code-block pre .str { color: #86efac; }
+      .code-block pre .num { color: #fbbf24; }
+      .code-block pre .kw { color: #c4b5fd; }
+      .code-block pre .type { color: #67e8f9; }
+      .code-block pre .comment { color: #6b7280; font-style: italic; }
+      .code-block pre .punct { color: #9ca3af; }
+      .code-block pre .param { color: #fdba74; }
+      .code-block pre .bool { color: #fbbf24; }
+
+      /* ── Type signature inline ── */
+      .type-sig {
+        display: inline;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.82rem;
+        background: #e8f0fe;
+        color: #1d70b8;
+        padding: 0.15rem 0.45rem;
+        border-radius: 3px;
+        font-weight: 500;
+      }
+
+      /* ── Artefact example (from glossary) ── */
+      .artefact-example {
+        margin-top: 1.25rem;
+        max-width: 520px;
+      }
+      .artefact-example pre {
+        background: #1a1a2e;
+        color: #e0e0e0;
+        padding: 1rem 1.25rem;
+        border-radius: 6px;
+        font-size: 0.75rem;
+        line-height: 1.7;
+        overflow-x: auto;
+      }
+      .artefact-example pre .key { color: #7dd3fc; }
+      .artefact-example pre .str { color: #86efac; }
+      .artefact-example pre .num { color: #fbbf24; }
+      .artefact-example pre .comment { color: #6b7280; font-style: italic; }
+
+      /* ── Package dependency graph ── */
+      .dep-graph {
+        margin: 2rem 0;
+        max-width: 720px;
+      }
+      .dep-graph-root {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1.25rem;
+      }
+      .dep-pkg {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.5rem 1rem;
+        border-radius: 4px;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.75rem;
+        font-weight: 500;
+        border: 1.5px solid;
+        white-space: nowrap;
+      }
+      .dep-pkg-leaf { background: #f3f2f1; color: #0b0c0c; border-color: #b1b4b6; }
+      .dep-pkg-blue { background: #e8f0fe; color: #1d70b8; border-color: #1d70b8; }
+      .dep-pkg-green { background: #e6f3ec; color: #00703c; border-color: #00703c; }
+      .dep-pkg-purple { background: #f5e6f4; color: #912b88; border-color: #912b88; }
+      .dep-pkg-orange { background: #fef3e8; color: #f47738; border-color: #f47738; }
+      .dep-pkg-dark { background: #0b0c0c; color: #fff; border-color: #0b0c0c; }
+      .dep-pkg-red { background: #fde8e8; color: #d4351c; border-color: #d4351c; }
+      .dep-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        justify-content: center;
+      }
+      .dep-connector {
+        width: 2px;
+        height: 20px;
+        background: #b1b4b6;
+        margin: 0 auto;
+      }
+      .dep-branch {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.35rem;
+      }
+      .dep-ext {
+        font-size: 0.6rem;
+        color: #505a5f;
+        font-family: "JetBrains Mono", monospace;
+      }
+      .dep-arrow-down {
+        width: 0;
+        height: 0;
+        border-left: 5px solid transparent;
+        border-right: 5px solid transparent;
+        border-top: 6px solid #b1b4b6;
+      }
+      .dep-label {
+        font-size: 0.7rem;
+        color: #505a5f;
+        font-weight: 600;
+        text-align: center;
+        margin-top: 0.25rem;
+      }
+
+      /* ── Pipeline (numbered step list with coloured circles) ── */
+      .pipeline-steps { margin: 2rem 0; max-width: 720px; }
+      .pipeline-step {
+        display: flex;
+        align-items: flex-start;
+        gap: 1rem;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid #e0dfde;
+      }
+      .pipeline-step:last-child { border-bottom: none; }
+      .pipeline-step-num {
+        display: flex;
+        width: 28px;
+        height: 28px;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        font-size: 0.7rem;
+        font-weight: 700;
+        flex-shrink: 0;
+        color: #fff;
+      }
+      .pipeline-step-num-green { background: #00703c; }
+      .pipeline-step-num-orange { background: #f47738; }
+      .pipeline-step-num-navy { background: #1d70b8; }
+      .pipeline-step-content { flex: 1; }
+      .pipeline-step-title { font-size: 0.9rem; font-weight: 600; color: #0b0c0c; margin-bottom: 0.15rem; }
+      .pipeline-step-desc { font-size: 0.8rem; color: #505a5f; }
+
+      /* ── Pipeline tags ── */
+      .pipeline-tag {
+        display: inline-block;
+        font-size: 0.6rem;
+        font-weight: 700;
+        padding: 0.1rem 0.5rem;
+        border-radius: 10px;
+        margin-left: 0.5rem;
+        vertical-align: middle;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+      .tag-deterministic { background: #e6f3ec; color: #00703c; }
+      .tag-ai { background: #fef3e8; color: #f47738; }
+      .tag-platform { background: #e8f0fe; color: #1d70b8; }
+
+      /* ── Interface block ── */
+      .interface-block {
+        border: 1.5px solid #d2d2d2;
+        border-radius: 6px;
+        overflow: hidden;
+        margin: 1.5rem 0;
+        max-width: 720px;
+      }
+      .interface-block-header {
+        background: #f8f8f8;
+        padding: 0.5rem 1rem;
+        border-bottom: 1px solid #e8e8e8;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+      .interface-block-header .type-label {
+        font-size: 0.65rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: #505a5f;
+      }
+      .interface-block-header .type-name {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: #1d70b8;
+      }
+      .interface-block pre {
+        background: #1a1a2e;
+        color: #e0e0e0;
+        padding: 1rem 1.25rem;
+        font-size: 0.75rem;
+        line-height: 1.7;
+        overflow-x: auto;
+        margin: 0;
+      }
+      .interface-block pre .key { color: #7dd3fc; }
+      .interface-block pre .str { color: #86efac; }
+      .interface-block pre .num { color: #fbbf24; }
+      .interface-block pre .kw { color: #c4b5fd; }
+      .interface-block pre .type { color: #67e8f9; }
+      .interface-block pre .comment { color: #6b7280; font-style: italic; }
+      .interface-block pre .punct { color: #9ca3af; }
+      .interface-block pre .param { color: #fdba74; }
+      .interface-block pre .bool { color: #fbbf24; }
+
+      /* ── Sequence diagram (vertical timeline) ── */
+      .sequence {
+        margin: 2rem 0;
+        max-width: 720px;
+        position: relative;
+        padding-left: 3rem;
+      }
+      .sequence::before {
+        content: "";
+        position: absolute;
+        left: 13px;
+        top: 0;
+        bottom: 0;
+        width: 2px;
+        background: #b1b4b6;
+      }
+      .sequence-step {
+        position: relative;
+        padding: 0.75rem 0 1.25rem 0;
+      }
+      .sequence-step::before {
+        content: "";
+        position: absolute;
+        left: -3rem;
+        top: 0.95rem;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: #1d70b8;
+        border: 2px solid #fff;
+        box-shadow: 0 0 0 2px #1d70b8;
+        z-index: 1;
+      }
+      .sequence-step.seq-green::before { background: #00703c; box-shadow: 0 0 0 2px #00703c; }
+      .sequence-step.seq-orange::before { background: #f47738; box-shadow: 0 0 0 2px #f47738; }
+      .sequence-step.seq-red::before { background: #d4351c; box-shadow: 0 0 0 2px #d4351c; }
+      .sequence-step.seq-purple::before { background: #912b88; box-shadow: 0 0 0 2px #912b88; }
+      .sequence-step.seq-navy::before { background: #1d70b8; box-shadow: 0 0 0 2px #1d70b8; }
+      .sequence-label {
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: #0b0c0c;
+        margin-bottom: 0.2rem;
+      }
+      .sequence-desc {
+        font-size: 0.8rem;
+        color: #505a5f;
+      }
+
+      /* ── State flow diagram (vertical with branching) ── */
+      .state-flow {
+        margin: 2rem 0;
+        max-width: 500px;
+      }
+      .state-flow-step {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      .state-node {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.45rem 1rem;
+        border-radius: 4px;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.72rem;
+        font-weight: 500;
+        border: 1.5px solid #b1b4b6;
+        background: #fff;
+        white-space: nowrap;
+      }
+      .state-node-active { border-color: #1d70b8; background: #e8f0fe; color: #1d70b8; }
+      .state-node-terminal { border-color: #00703c; background: #e6f3ec; color: #00703c; }
+      .state-node-error { border-color: #d4351c; background: #fde8e8; color: #d4351c; }
+      .state-arrow {
+        width: 2px;
+        height: 18px;
+        background: #b1b4b6;
+        margin: 0;
+      }
+      .state-arrow-head {
+        width: 0;
+        height: 0;
+        border-left: 4px solid transparent;
+        border-right: 4px solid transparent;
+        border-top: 5px solid #b1b4b6;
+      }
+      .state-branch {
+        display: flex;
+        gap: 0.75rem;
+        align-items: flex-start;
+        justify-content: center;
+        position: relative;
+        padding-top: 0.5rem;
+      }
+      .state-branch::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 25%;
+        right: 25%;
+        height: 2px;
+        background: #b1b4b6;
+      }
+      .state-branch-arm {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      /* ── Layer stack (prompt architecture) ── */
+      .layer-stack {
+        margin: 2rem 0;
+        max-width: 600px;
+      }
+      .layer {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 0.6rem 0;
+      }
+      .layer-bar {
+        width: 6px;
+        height: 36px;
+        border-radius: 3px;
+        flex-shrink: 0;
+      }
+      .layer-bar-blue { background: #1d70b8; }
+      .layer-bar-green { background: #00703c; }
+      .layer-bar-orange { background: #f47738; }
+      .layer-bar-purple { background: #912b88; }
+      .layer-bar-teal { background: #0b7285; }
+      .layer-bar-red { background: #d4351c; }
+      .layer-content { flex: 1; }
+      .layer-name {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: #0b0c0c;
+      }
+      .layer-detail {
+        font-size: 0.75rem;
+        color: #505a5f;
+      }
+      .layer-tokens {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.7rem;
+        color: #b1b4b6;
+        flex-shrink: 0;
+        text-align: right;
+        min-width: 80px;
+      }
+
+      /* ── Data table ── */
+      .data-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.85rem;
+        margin: 1.5rem 0;
+        max-width: 720px;
+      }
+      .data-table th {
+        text-align: left;
+        font-weight: 700;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: #505a5f;
+        padding: 0.6rem 0.75rem;
+        border-bottom: 2px solid #0b0c0c;
+        background: #f8f8f8;
+      }
+      .data-table td {
+        padding: 0.55rem 0.75rem;
+        border-bottom: 1px solid #e0dfde;
+        color: #0b0c0c;
+        vertical-align: top;
+      }
+      .data-table td:first-child {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.78rem;
+        white-space: nowrap;
+      }
+      .data-table tr:last-child td { border-bottom: none; }
+      .data-table .td-yes {
+        color: #00703c;
+        font-weight: 600;
+      }
+      .data-table .td-no {
+        color: #b1b4b6;
+      }
+
+      /* ── Snippet (from glossary) ── */
+      .snippet {
+        margin-top: 1.25rem;
+        border: 1px solid #d2d2d2;
+        border-radius: 6px;
+        overflow: hidden;
+        max-width: 480px;
+        background: #fff;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      }
+      .snippet-label {
+        font-size: 0.65rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: #505a5f;
+        background: #f8f8f8;
+        padding: 0.4rem 0.75rem;
+        border-bottom: 1px solid #e8e8e8;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+      .snippet-label::before {
+        content: "";
+        display: inline-block;
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: #00703c;
+      }
+      .snippet-body { padding: 0; font-size: 0.85rem; }
+      .s-panel { padding: 0.75rem 1rem; }
+      .s-header { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; }
+      .s-icon {
+        width: 24px; height: 24px; border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 0.7rem; font-weight: 700; color: #fff; flex-shrink: 0;
+      }
+      .s-title { font-size: 0.8rem; font-weight: 700; }
+      .s-subtitle { font-size: 0.7rem; color: #505a5f; }
+      .s-desc { font-size: 0.75rem; color: #505a5f; margin-bottom: 0.5rem; }
+      .s-tag {
+        display: inline-block; font-size: 0.65rem; padding: 0.15rem 0.5rem;
+        border-radius: 10px; margin-right: 0.25rem; margin-bottom: 0.25rem;
+      }
+      .s-tag-purple { background: #f5e6f4; color: #912b88; }
+      .s-tag-blue { background: #e8f0fe; color: #1d70b8; }
+      .s-tag-green { background: #e6f3ec; color: #00703c; }
+      .s-tag-grey { background: #f3f2f1; color: #505a5f; }
+      .s-tag-red { background: #fde8e8; color: #d4351c; }
+      .s-row { display: flex; justify-content: space-between; align-items: center; padding: 0.35rem 0; font-size: 0.75rem; }
+      .s-row-label { color: #505a5f; }
+      .s-row-value { font-weight: 600; color: #0b0c0c; }
+      .s-divider { border: none; border-top: 1px solid #e8e8e8; margin: 0.5rem 0; }
+      .s-mono { font-family: "JetBrains Mono", monospace; font-size: 0.7rem; }
+
+      /* ── Tier cards ── */
+      .tier-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.25rem;
+        margin: 1.5rem 0;
+      }
+      .tier-card {
+        border: 1px solid #e0dfde;
+        border-radius: 6px;
+        padding: 1.25rem;
+        background: #fff;
+        border-top: 4px solid;
+      }
+      .tier-card h4 { font-size: 0.95rem; margin-bottom: 0.35rem; }
+      .tier-card p { font-size: 0.85rem; color: #505a5f; }
+      @media (max-width: 640px) {
+        .tier-grid { grid-template-columns: 1fr; }
+      }
+
+      /* ── Horizontal pipeline (from exec briefing) ── */
+      .pipeline-horizontal {
+        display: flex;
+        align-items: center;
+        gap: 0;
+        margin: 2rem 0;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      .pipeline-box {
+        padding: 0.6rem 1.25rem;
+        border-radius: 4px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        text-align: center;
+        white-space: nowrap;
+      }
+      .pipeline-box-green { background: #e6f3ec; color: #00703c; border: 1.5px solid #00703c; }
+      .pipeline-box-orange { background: #fef3e8; color: #f47738; border: 1.5px solid #f47738; }
+      .pipeline-box-blue { background: #e8f0fe; color: #1d70b8; border: 1.5px solid #1d70b8; }
+      .pipeline-box-purple { background: #f5e6f4; color: #912b88; border: 1.5px solid #912b88; }
+      .pipeline-box-dark { background: #0b0c0c; color: #fff; }
+      .pipeline-arrow {
+        font-size: 1.25rem;
+        color: #b1b4b6;
+        padding: 0 0.35rem;
+      }
+
+      /* ── App cards ── */
+      .app-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.25rem;
+        margin: 1.5rem 0;
+      }
+      .app-card {
+        border: 1px solid #e0dfde;
+        border-radius: 6px;
+        padding: 1.5rem;
+        background: #fff;
+        border-top: 4px solid;
+      }
+      .app-card h4 { font-size: 1rem; margin-bottom: 0.35rem; }
+      .app-card p { font-size: 0.85rem; color: #505a5f; }
+      .app-card .app-port {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.75rem;
+        color: #b1b4b6;
+        margin-top: 0.5rem;
+      }
+      @media (max-width: 640px) {
+        .app-grid { grid-template-columns: 1fr; }
+      }
+
+      /* ── Closing block ── */
+      .closing {
+        background: #0b0c0c;
+        color: #fff;
+        padding: 3rem 0;
+        text-align: center;
+      }
+      .closing p {
+        max-width: 700px;
+        margin: 0 auto;
+        font-size: 1.1rem;
+        line-height: 1.6;
+        color: #d4d4d4;
+      }
+
+      /* ── Footer ── */
+      .footer {
+        padding: 2rem 0;
+        text-align: center;
+        font-size: 0.8rem;
+        color: #b1b4b6;
+        border-top: 1px solid #e0dfde;
+      }
+
+      /* ── Print ── */
+      @media print {
+        .nav { position: static; }
+        .code-block, .interface-block { break-inside: avoid; }
+        .pipeline-step { break-inside: avoid; }
+        .callout { break-inside: avoid; }
+        .sequence-step { break-inside: avoid; }
+        .dep-graph { break-inside: avoid; }
+        .state-flow { break-inside: avoid; }
+        .closing { background: #0b0c0c !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        body { font-size: 0.9rem; }
+      }
+    </style>
+  </head>
+  <body>
+
+    <!-- ── Navigation ── -->
+    <nav class="nav">
+      <div class="container">
+        <span class="nav-brand">Agentic Legibility Stack</span>
+        <ul class="nav-links">
+          <li><a href="index.html">Overview</a></li>
+          <li><a href="departments.html">Departments</a></li>
+          <li><a href="personas.html">Personas</a></li>
+          <li><a href="glossary.html">Glossary</a></li>
+          <li><a href="reference-technical.html" class="active">Technical Reference</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- ── Hero ── -->
+    <div class="hero">
+      <div class="container">
+        <span class="hero-label">Technical Reference</span>
+        <h1>Architecture &amp; Integration Guide</h1>
+        <p class="hero-subtitle">The runtime pipeline, package architecture, type system, and integration points for the Agentic Legibility Stack.</p>
+        <p class="hero-note">This document describes the target operating model for government service delivery through AI agents. For concept definitions see the <a href="glossary.html">Glossary</a>; for product design patterns see the <a href="guide-product.html">Product &amp; Service Design Guide</a>.</p>
+      </div>
+    </div>
+
+    <!-- ── Table of Contents ── -->
+    <div class="section" style="padding-top: 0;">
+      <div class="container">
+        <ul class="toc-list">
+          <li><a href="#system-architecture"><span class="toc-number">1</span> System Architecture</a></li>
+          <li><a href="#runtime-pipeline"><span class="toc-number">2</span> The Runtime Pipeline</a></li>
+          <li><a href="#legibility-package"><span class="toc-number">3</span> Legibility Package</a></li>
+          <li><a href="#evidence-plane"><span class="toc-number">4</span> Evidence Plane</a></li>
+          <li><a href="#citizen-data"><span class="toc-number">5</span> Citizen Data Architecture</a></li>
+          <li><a href="#prompt-engineering"><span class="toc-number">6</span> Prompt Engineering</a></li>
+          <li><a href="#service-integration"><span class="toc-number">7</span> Service Integration</a></li>
+          <li><a href="#testing-strategy"><span class="toc-number">8</span> Testing Strategy</a></li>
+        </ul>
+      </div>
+    </div>
+
+
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <!-- Section 1: System Architecture                            -->
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <div class="section section-alt" id="system-architecture">
+      <div class="container">
+        <div class="section-heading">
+          <span class="section-number">1</span>
+          <h2>System Architecture</h2>
+        </div>
+        <p class="section-intro">The stack is organised as a set of focused packages with strict dependency boundaries. Every package owns one concern; cross-cutting behaviour is mediated through well-typed interfaces.</p>
+
+        <h3>Package Dependency Graph</h3>
+        <p class="body-text">The dependency tree is rooted at <span class="type-sig">@als/schemas</span>, which has zero internal dependencies. All other packages declare their internal dependencies explicitly. External SDK usage is confined to two packages.</p>
+
+        <div class="dep-graph">
+          <div class="dep-graph-root">
+            <!-- Root -->
+            <div class="dep-row">
+              <div class="dep-branch">
+                <div class="dep-pkg dep-pkg-dark">@als/schemas</div>
+                <div class="dep-label">Leaf &mdash; no @als dependencies</div>
+              </div>
+            </div>
+
+            <div class="dep-connector"></div>
+            <div class="dep-arrow-down"></div>
+
+            <!-- Layer 2: packages that depend on schemas -->
+            <div class="dep-row">
+              <div class="dep-branch">
+                <div class="dep-pkg dep-pkg-blue">@als/adapters</div>
+                <div class="dep-ext">+ @anthropic-ai/sdk</div>
+                <div class="dep-ext">+ @modelcontextprotocol/sdk (client)</div>
+              </div>
+              <div class="dep-branch">
+                <div class="dep-pkg dep-pkg-green">@als/evidence</div>
+              </div>
+              <div class="dep-branch">
+                <div class="dep-pkg dep-pkg-leaf">@als/identity</div>
+              </div>
+              <div class="dep-branch">
+                <div class="dep-pkg dep-pkg-leaf">@als/service-graph</div>
+              </div>
+            </div>
+
+            <div class="dep-connector"></div>
+            <div class="dep-arrow-down"></div>
+
+            <!-- Layer 3: packages with internal dependencies -->
+            <div class="dep-row">
+              <div class="dep-branch">
+                <div class="dep-pkg dep-pkg-purple">@als/legibility</div>
+                <div class="dep-ext">+ @als/service-store, @als/evidence</div>
+              </div>
+              <div class="dep-branch">
+                <div class="dep-pkg dep-pkg-orange">@als/personal-data</div>
+                <div class="dep-ext">+ @als/identity, @als/evidence</div>
+              </div>
+              <div class="dep-branch">
+                <div class="dep-pkg dep-pkg-leaf">@als/service-store</div>
+                <div class="dep-ext">+ @als/service-graph, @als/evidence</div>
+              </div>
+            </div>
+
+            <div class="dep-connector"></div>
+            <div class="dep-arrow-down"></div>
+
+            <!-- Layer 4: top-level packages -->
+            <div class="dep-row">
+              <div class="dep-branch">
+                <div class="dep-pkg dep-pkg-red">@als/runtime</div>
+                <div class="dep-ext">+ @als/legibility</div>
+              </div>
+              <div class="dep-branch">
+                <div class="dep-pkg dep-pkg-purple">@als/mcp-server</div>
+                <div class="dep-ext">+ @als/legibility</div>
+                <div class="dep-ext">+ @modelcontextprotocol/sdk (server)</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <h3>Architectural Rules</h3>
+        <div class="callout callout-red">
+          <p><strong>Three hard rules that every contributor must follow:</strong></p>
+          <ol>
+            <li><strong><span class="type-sig">@anthropic-ai/sdk</span> lives in <span class="type-sig">@als/adapters</span> ONLY.</strong> Zero direct SDK usage elsewhere in the codebase. All LLM calls route through <span class="type-sig">AnthropicAdapter</span>.</li>
+            <li><strong><span class="type-sig">@modelcontextprotocol/sdk</span> client usage in <span class="type-sig">@als/adapters</span>, server usage in <span class="type-sig">@als/mcp-server</span>.</strong> No other package touches the MCP SDK.</li>
+            <li><strong>The Legibility Studio fetches evidence via HTTP.</strong> It does NOT import <span class="type-sig">@als/evidence</span> directly. This prevents native module crashes in the studio build pipeline.</li>
+          </ol>
+        </div>
+
+        <h3>Two Applications</h3>
+        <div class="app-grid">
+          <div class="app-card" style="border-top-color: #1d70b8;">
+            <h4>Citizen App</h4>
+            <p>The citizen-facing experience. Hosts the conversational agent, task cards, consent flows, and receipt history. Exposes an evidence API that the Legibility Studio reads from.</p>
+            <div class="app-port">Port 3106</div>
+          </div>
+          <div class="app-card" style="border-top-color: #912b88;">
+            <h4>Legibility Studio</h4>
+            <p>The department-facing admin tool. Displays service coverage, gap analysis, trace inspection, and artefact authoring. Consumes evidence over HTTP &mdash; never imports the evidence package directly.</p>
+            <div class="app-port">Port 3101</div>
+          </div>
+        </div>
+
+        <h3>Data Layer</h3>
+        <p class="body-text"><strong>Structured artefacts</strong> define each service: a <a href="glossary.html#capability-manifest">capability manifest</a>, policy ruleset, state model, consent model, and state-specific instructions. These artefacts are the canonical description of what a service does, who can use it, and how it progresses.</p>
+        <p class="body-text"><strong>The evidence store</strong> is append-only. Every significant event &mdash; state transitions, consent decisions, policy evaluations, credential presentations &mdash; is captured as an immutable trace event. The store supports full replay: given a trace ID, the system can reconstruct the exact conversation state at any point.</p>
+        <p class="body-text"><strong>Personal data</strong> is stored with field-level source attribution. Every value carries metadata indicating which department sourced it, whether it is verified or citizen-submitted, and which consent grant authorised its use.</p>
+
+        <h3>Artefact Structure</h3>
+        <p class="body-text">Each service in the store is described by up to five artefact files. Together, these form the complete machine-readable description of a government service.</p>
+
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Artefact</th>
+              <th>Purpose</th>
+              <th>Required</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>manifest</td>
+              <td>Service identity, description, department, input schema, output schema, and lifecycle metadata. The canonical reference for what the service does.</td>
+              <td class="td-yes">Yes</td>
+            </tr>
+            <tr>
+              <td>policy</td>
+              <td>Eligibility rules expressed as typed conditions. Each rule declares a field, operator, expected value, and human-readable failure reason.</td>
+              <td class="td-yes">Yes</td>
+            </tr>
+            <tr>
+              <td>state-model</td>
+              <td>The finite-state machine defining the journey. States, transitions, guards, terminal markers, and receipt-emitting flags.</td>
+              <td class="td-yes">Yes</td>
+            </tr>
+            <tr>
+              <td>consent</td>
+              <td>Required and optional consent grants. Each grant declares scope (which data), purpose (why), and whether it is mandatory.</td>
+              <td class="td-no">No</td>
+            </tr>
+            <tr>
+              <td>state-instructions</td>
+              <td>Per-state behavioural rules for the agent. DO/DO NOT lists that constrain the LLM&rsquo;s responses at each point in the journey.</td>
+              <td class="td-no">No</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="callout callout-green">
+          <p><strong>Artefact authoring is the integration point for departments.</strong> A department does not need to build an API or write code. It publishes structured artefacts describing its services, and the platform handles orchestration, consent, evidence, and agent behaviour. The Legibility Studio provides a guided authoring experience for department teams.</p>
+        </div>
+
+        <h3>Package Responsibility Summary</h3>
+        <p class="body-text">Each package in the monorepo owns a single, well-defined concern. This table summarises what each package does and what it must never do.</p>
+
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Package</th>
+              <th>Owns</th>
+              <th>Must Never</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>@als/schemas</td>
+              <td>Shared TypeScript types, Zod schemas, type guards</td>
+              <td>Import any other @als package</td>
+            </tr>
+            <tr>
+              <td>@als/adapters</td>
+              <td>LLM calls, MCP client, tool dispatch</td>
+              <td>Make policy or state decisions</td>
+            </tr>
+            <tr>
+              <td>@als/evidence</td>
+              <td>Trace events, receipts, case ledger, replay</td>
+              <td>Import LLM SDK or make API calls</td>
+            </tr>
+            <tr>
+              <td>@als/identity</td>
+              <td>User profiles, authentication, session management</td>
+              <td>Access evidence store directly</td>
+            </tr>
+            <tr>
+              <td>@als/legibility</td>
+              <td>PolicyEvaluator, StateMachine, ConsentManager, FieldCollector, ArtefactStore</td>
+              <td>Call the LLM or make network requests</td>
+            </tr>
+            <tr>
+              <td>@als/mcp-server</td>
+              <td>MCP server, tool generation, resource exposure</td>
+              <td>Use MCP client SDK (that belongs to adapters)</td>
+            </tr>
+            <tr>
+              <td>@als/personal-data</td>
+              <td>Citizen data model, field sourcing, relationship store</td>
+              <td>Bypass consent checks</td>
+            </tr>
+            <tr>
+              <td>@als/runtime</td>
+              <td>Orchestrator, pipeline, strategy dispatch</td>
+              <td>Import LLM SDK directly (must go through adapters)</td>
+            </tr>
+            <tr>
+              <td>@als/service-graph</td>
+              <td>GOV.UK service graph integration, node resolution</td>
+              <td>Store state or evidence</td>
+            </tr>
+            <tr>
+              <td>@als/service-store</td>
+              <td>Service storage, tiered resolution, gap analysis</td>
+              <td>Make eligibility decisions (that belongs to legibility)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <!-- Section 2: The Runtime Pipeline                           -->
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <div class="section" id="runtime-pipeline">
+      <div class="container">
+        <div class="section-heading">
+          <span class="section-number">2</span>
+          <h2>The Runtime Pipeline</h2>
+        </div>
+        <p class="section-intro">The centrepiece of the architecture. Every citizen interaction passes through this 14-step orchestrator pipeline. Deterministic code runs before and after the language model; the platform always has the final word.</p>
+
+        <div class="pipeline-steps">
+          <div class="pipeline-step">
+            <div class="pipeline-step-num pipeline-step-num-green">1</div>
+            <div class="pipeline-step-content">
+              <div class="pipeline-step-title">Policy evaluation <span class="pipeline-tag tag-deterministic">deterministic</span></div>
+              <div class="pipeline-step-desc">Evaluates <span class="type-sig">PolicyRuleset</span> against persona data via <span class="type-sig">PolicyEvaluator</span>. Returns eligible/ineligible with reasons. Rules are pure data &mdash; no code execution.</div>
+            </div>
+          </div>
+          <div class="pipeline-step">
+            <div class="pipeline-step-num pipeline-step-num-green">2</div>
+            <div class="pipeline-step-content">
+              <div class="pipeline-step-title">State machine setup <span class="pipeline-tag tag-deterministic">deterministic</span></div>
+              <div class="pipeline-step-desc">Creates <span class="type-sig">StateMachine</span> from <span class="type-sig">StateModelDefinition</span>. Restores current state from client session. Computes allowed transitions.</div>
+            </div>
+          </div>
+          <div class="pipeline-step">
+            <div class="pipeline-step-num pipeline-step-num-green">3</div>
+            <div class="pipeline-step-content">
+              <div class="pipeline-step-title">Field collector <span class="pipeline-tag tag-deterministic">deterministic</span></div>
+              <div class="pipeline-step-desc">Seeds <span class="type-sig">FieldCollector</span> from the manifest input schema and persona data. Tracks required versus collected fields, and identifies what is still missing.</div>
+            </div>
+          </div>
+          <div class="pipeline-step">
+            <div class="pipeline-step-num pipeline-step-num-green">4</div>
+            <div class="pipeline-step-content">
+              <div class="pipeline-step-title">Agent selection <span class="pipeline-tag tag-deterministic">deterministic</span></div>
+              <div class="pipeline-step-desc">Selects triage mode (no service context, need identification) or journey mode (service in progress, artefact-driven). The choice determines prompt composition and available tools.</div>
+            </div>
+          </div>
+          <div class="pipeline-step">
+            <div class="pipeline-step-num pipeline-step-num-green">5</div>
+            <div class="pipeline-step-content">
+              <div class="pipeline-step-title">Strategy context and system prompt <span class="pipeline-tag tag-deterministic">deterministic</span></div>
+              <div class="pipeline-step-desc">Calls <span class="type-sig">ServiceStrategy.buildServiceContext()</span>. Assembles the system prompt from layered fragments: personality, persona style, scenario, artefacts, guardrails, and output format.</div>
+            </div>
+          </div>
+          <div class="pipeline-step">
+            <div class="pipeline-step-num pipeline-step-num-green">6</div>
+            <div class="pipeline-step-content">
+              <div class="pipeline-step-title">Build tools <span class="pipeline-tag tag-deterministic">deterministic</span></div>
+              <div class="pipeline-step-desc">Calls <span class="type-sig">ServiceStrategy.buildTools()</span>. The deterministic strategy returns an empty array; the tool-based strategy returns service-specific check and advance tools.</div>
+            </div>
+          </div>
+          <div class="pipeline-step">
+            <div class="pipeline-step-num pipeline-step-num-orange">7</div>
+            <div class="pipeline-step-content">
+              <div class="pipeline-step-title">Agentic loop <span class="pipeline-tag tag-ai">ai</span></div>
+              <div class="pipeline-step-desc">Up to 5 iterations: call the language model, dispatch any tool calls via the adapter, accumulate results. This is the only step where the LLM generates content. The loop terminates when no tool calls remain or the iteration limit is reached.</div>
+            </div>
+          </div>
+          <div class="pipeline-step">
+            <div class="pipeline-step-num pipeline-step-num-green">8</div>
+            <div class="pipeline-step-content">
+              <div class="pipeline-step-title">Parse structured output <span class="pipeline-tag tag-deterministic">deterministic</span></div>
+              <div class="pipeline-step-desc">Extracts the JSON block from the LLM response. Parses conversation title, tasks, proposed state transitions, and extracted facts. Malformed output is caught and logged.</div>
+            </div>
+          </div>
+          <div class="pipeline-step">
+            <div class="pipeline-step-num pipeline-step-num-green">9</div>
+            <div class="pipeline-step-content">
+              <div class="pipeline-step-title">Build tasks <span class="pipeline-tag tag-deterministic">deterministic</span></div>
+              <div class="pipeline-step-desc">Transforms parsed task descriptions into typed <span class="type-sig">TaskEntry</span> objects with structured fields: type, title, description, options, metadata.</div>
+            </div>
+          </div>
+          <div class="pipeline-step">
+            <div class="pipeline-step-num pipeline-step-num-green">10</div>
+            <div class="pipeline-step-content">
+              <div class="pipeline-step-title">State transitions <span class="pipeline-tag tag-deterministic">deterministic</span></div>
+              <div class="pipeline-step-desc">Validates the LLM&rsquo;s proposed transition against the <span class="type-sig">StateMachine</span>. Rejects illegal transitions. Applies forced and auto transitions defined in the state model.</div>
+            </div>
+          </div>
+          <div class="pipeline-step">
+            <div class="pipeline-step-num pipeline-step-num-green">11</div>
+            <div class="pipeline-step-content">
+              <div class="pipeline-step-title">Deterministic task injection <span class="pipeline-tag tag-deterministic">deterministic</span></div>
+              <div class="pipeline-step-desc">Overrides LLM-generated tasks with platform-generated cards at specific states. Consent cards, payment forms, and document upload prompts are always rendered by the platform, never by the LLM.</div>
+            </div>
+          </div>
+          <div class="pipeline-step">
+            <div class="pipeline-step-num pipeline-step-num-green">12</div>
+            <div class="pipeline-step-content">
+              <div class="pipeline-step-title">Consent requests <span class="pipeline-tag tag-deterministic">deterministic</span></div>
+              <div class="pipeline-step-desc">Surfaces consent grant cards at the eligibility-checked state. Required grants must be accepted to proceed; optional grants can be declined without blocking progress.</div>
+            </div>
+          </div>
+          <div class="pipeline-step">
+            <div class="pipeline-step-num pipeline-step-num-green">13</div>
+            <div class="pipeline-step-content">
+              <div class="pipeline-step-title">Handoff detection <span class="pipeline-tag tag-deterministic">deterministic</span></div>
+              <div class="pipeline-step-desc">Evaluates safeguarding triggers, edge-case conditions, and escalation rules. When a handoff is triggered, the conversation is routed to a human adviser with full context preserved.</div>
+            </div>
+          </div>
+          <div class="pipeline-step">
+            <div class="pipeline-step-num pipeline-step-num-navy">14</div>
+            <div class="pipeline-step-content">
+              <div class="pipeline-step-title">Version metadata and trace <span class="pipeline-tag tag-platform">platform</span></div>
+              <div class="pipeline-step-desc">Hashes the system prompt, stamps ruleset and state model versions, builds the full pipeline trace with per-step timing. The trace is written to the evidence store for audit and replay.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="callout callout-blue">
+          <p><strong>The LLM runs at step 7 out of 14.</strong> Everything before it is deterministic setup; everything after it is validation and override. The language model proposes; the platform disposes. This is the central architectural guarantee.</p>
+        </div>
+
+        <h3>OrchestratorOutput</h3>
+        <p class="body-text">Every pipeline run produces a single typed output. This is the contract between the runtime and the citizen application.</p>
+
+        <div class="interface-block">
+          <div class="interface-block-header">
+            <span class="type-label">Interface</span>
+            <span class="type-name">OrchestratorOutput</span>
+          </div>
+          <pre><span class="kw">interface</span> <span class="type">OrchestratorOutput</span> <span class="punct">{</span>
+  <span class="key">response</span><span class="punct">:</span> <span class="type">string</span><span class="punct">;</span>
+  <span class="key">reasoning</span><span class="punct">:</span> <span class="type">string</span><span class="punct">;</span>
+  <span class="key">toolsUsed</span><span class="punct">:</span> <span class="type">string</span><span class="punct">[];</span>
+  <span class="key">conversationTitle</span><span class="punct">:</span> <span class="type">string</span> <span class="punct">|</span> <span class="type">null</span><span class="punct">;</span>
+  <span class="key">tasks</span><span class="punct">:</span> <span class="type">TaskEntry</span><span class="punct">[];</span>
+  <span class="key">policyResult</span><span class="punct">?:</span> <span class="punct">{</span> <span class="key">eligible</span><span class="punct">:</span> <span class="type">boolean</span><span class="punct">;</span> <span class="key">explanation</span><span class="punct">:</span> <span class="type">string</span> <span class="punct">};</span>
+  <span class="key">handoff</span><span class="punct">?:</span> <span class="punct">{</span> <span class="key">triggered</span><span class="punct">:</span> <span class="type">boolean</span><span class="punct">;</span> <span class="key">reason</span><span class="punct">:</span> <span class="type">string</span> <span class="punct">};</span>
+  <span class="key">ucState</span><span class="punct">?:</span> <span class="punct">{</span> <span class="key">currentState</span><span class="punct">:</span> <span class="type">string</span><span class="punct">;</span> <span class="key">stateHistory</span><span class="punct">:</span> <span class="type">string</span><span class="punct">[] };</span>
+  <span class="key">consentRequests</span><span class="punct">?:</span> <span class="type">ConsentRequest</span><span class="punct">[];</span>
+  <span class="key">extractedFields</span><span class="punct">?:</span> <span class="type">FieldExtraction</span><span class="punct">[];</span>
+  <span class="key">outcomeHints</span><span class="punct">?:</span> <span class="type">Record</span><span class="punct">&lt;</span><span class="type">string</span><span class="punct">,</span> <span class="type">unknown</span><span class="punct">&gt;;</span>
+  <span class="key">serviceProposal</span><span class="punct">?:</span> <span class="punct">{</span>
+    <span class="key">serviceId</span><span class="punct">:</span> <span class="type">string</span><span class="punct">;</span>
+    <span class="key">serviceName</span><span class="punct">:</span> <span class="type">string</span><span class="punct">;</span>
+    <span class="key">reason</span><span class="punct">:</span> <span class="type">string</span>
+  <span class="punct">};</span>
+  <span class="key">needProposal</span><span class="punct">?:</span> <span class="punct">{</span> <span class="key">need</span><span class="punct">:</span> <span class="type">string</span><span class="punct">;</span> <span class="key">services</span><span class="punct">:</span> <span class="type">string</span><span class="punct">[] };</span>
+  <span class="key">serviceCompletions</span><span class="punct">?:</span> <span class="type">Array</span><span class="punct">&lt;{</span> <span class="key">serviceId</span><span class="punct">:</span> <span class="type">string</span><span class="punct">;</span> <span class="key">status</span><span class="punct">:</span> <span class="type">string</span> <span class="punct">}&gt;;</span>
+  <span class="key">versionMetadata</span><span class="punct">:</span> <span class="punct">{</span>
+    <span class="key">promptHash</span><span class="punct">:</span> <span class="type">string</span><span class="punct">;</span>
+    <span class="key">rulesetVersion</span><span class="punct">:</span> <span class="type">string</span><span class="punct">;</span>
+    <span class="key">stateModelVersion</span><span class="punct">:</span> <span class="type">string</span>
+  <span class="punct">};</span>
+  <span class="key">pipelineTrace</span><span class="punct">:</span> <span class="punct">{</span>
+    <span class="key">traceId</span><span class="punct">:</span> <span class="type">string</span><span class="punct">;</span>
+    <span class="key">steps</span><span class="punct">:</span> <span class="type">PipelineStep</span><span class="punct">[];</span>
+    <span class="key">totalDurationMs</span><span class="punct">:</span> <span class="type">number</span>
+  <span class="punct">};</span>
+<span class="punct">}</span></pre>
+        </div>
+
+        <h3>Service Strategy Pattern</h3>
+        <p class="body-text">The orchestrator does not know how a service is implemented. It delegates through a pluggable <span class="type-sig">ServiceStrategy</span> interface. Two implementations exist today; new strategies can be added without modifying the pipeline.</p>
+
+        <div class="interface-block">
+          <div class="interface-block-header">
+            <span class="type-label">Interface</span>
+            <span class="type-name">ServiceStrategy</span>
+          </div>
+          <pre><span class="kw">interface</span> <span class="type">ServiceStrategy</span> <span class="punct">{</span>
+  <span class="key">buildTools</span><span class="punct">(</span><span class="param">ctx</span><span class="punct">:</span> <span class="type">ServiceStrategyContext</span><span class="punct">):</span> <span class="type">ToolDefinition</span><span class="punct">[];</span>
+  <span class="key">buildServiceContext</span><span class="punct">(</span><span class="param">ctx</span><span class="punct">:</span> <span class="type">ServiceStrategyContext</span><span class="punct">):</span> <span class="type">string</span> <span class="punct">|</span> <span class="type">Promise</span><span class="punct">&lt;</span><span class="type">string</span><span class="punct">&gt;;</span>
+  <span class="key">dispatchToolCall</span><span class="punct">(</span><span class="param">name</span><span class="punct">:</span> <span class="type">string</span><span class="punct">,</span> <span class="param">input</span><span class="punct">:</span> <span class="type">unknown</span><span class="punct">):</span> <span class="type">Promise</span><span class="punct">&lt;</span><span class="type">string</span><span class="punct">&gt;;</span>
+  <span class="key">extractStateTransitions</span><span class="punct">(</span><span class="param">messages</span><span class="punct">:</span> <span class="type">unknown</span><span class="punct">[]):</span> <span class="type">StateTransitionResult</span><span class="punct">[];</span>
+<span class="punct">}</span></pre>
+        </div>
+
+        <p class="body-text"><strong>JsonServiceStrategy</strong> (deterministic, inline) &mdash; no tools are given to the LLM. Service context is built from artefacts and the field collector. All state transitions are proposed by the LLM in its structured output and validated by the state machine. Used for services with complete artefact sets.</p>
+        <p class="body-text"><strong>McpServiceStrategy</strong> (tool-based) &mdash; the LLM receives <span class="type-sig">check_eligibility</span> and <span class="type-sig">advance_state</span> tools. It calls these during the agentic loop. Tool results are parsed for state transitions. Used for service-graph services that expose department APIs.</p>
+        <p class="body-text">Both strategies produce identical <span class="type-sig">OrchestratorOutput</span>. The citizen application cannot distinguish which strategy was used. This is by design: the contract is stable regardless of implementation.</p>
+
+        <h3>Agentic Loop Detail</h3>
+        <p class="body-text">Step 7 &mdash; the agentic loop &mdash; deserves closer examination. It is the only step where the language model runs, and its behaviour is tightly bounded.</p>
+
+        <div class="sequence">
+          <div class="sequence-step seq-navy">
+            <div class="sequence-label">Iteration 1: Initial LLM call</div>
+            <div class="sequence-desc">System prompt + conversation history + tools sent to the language model. The model responds with text and optionally one or more tool calls.</div>
+          </div>
+          <div class="sequence-step seq-green">
+            <div class="sequence-label">Tool dispatch</div>
+            <div class="sequence-desc">Each tool call is dispatched through <span class="type-sig">ServiceStrategy.dispatchToolCall()</span>. Results are appended to the message history as tool result blocks.</div>
+          </div>
+          <div class="sequence-step seq-navy">
+            <div class="sequence-label">Iteration 2: Follow-up LLM call</div>
+            <div class="sequence-desc">If tool calls were made, the model is called again with the updated history. It may make further tool calls or produce its final response.</div>
+          </div>
+          <div class="sequence-step seq-orange">
+            <div class="sequence-label">Iteration limit</div>
+            <div class="sequence-desc">Maximum 5 iterations. If the model is still making tool calls after 5 rounds, the loop terminates and the last text response is used. This prevents runaway tool call chains.</div>
+          </div>
+          <div class="sequence-step seq-green">
+            <div class="sequence-label">Auto-submit detection</div>
+            <div class="sequence-desc">If the model&rsquo;s response contains a task that can be auto-submitted (pre-filled form with all fields present), the orchestrator may skip the citizen confirmation step to reduce friction.</div>
+          </div>
+        </div>
+
+        <div class="callout callout-blue">
+          <p><strong>The iteration limit is a hard ceiling, not a target.</strong> Most conversations complete in 1&ndash;2 iterations. The limit exists to bound worst-case latency and cost. If a service consistently requires 4+ iterations, it indicates the artefacts need refinement &mdash; more context in the state instructions reduces the LLM&rsquo;s need for exploratory tool calls.</p>
+        </div>
+
+        <h3>Pipeline Trace Structure</h3>
+        <p class="body-text">Every pipeline run produces a trace that records the duration and outcome of each step. This is the primary debugging and performance monitoring tool.</p>
+
+        <div class="interface-block">
+          <div class="interface-block-header">
+            <span class="type-label">Interface</span>
+            <span class="type-name">PipelineStep</span>
+          </div>
+          <pre><span class="kw">interface</span> <span class="type">PipelineStep</span> <span class="punct">{</span>
+  <span class="key">name</span><span class="punct">:</span> <span class="type">string</span><span class="punct">;</span>
+  <span class="key">durationMs</span><span class="punct">:</span> <span class="type">number</span><span class="punct">;</span>
+  <span class="key">outcome</span><span class="punct">:</span> <span class="str">"success"</span> <span class="punct">|</span> <span class="str">"skipped"</span> <span class="punct">|</span> <span class="str">"error"</span><span class="punct">;</span>
+  <span class="key">metadata</span><span class="punct">?:</span> <span class="type">Record</span><span class="punct">&lt;</span><span class="type">string</span><span class="punct">,</span> <span class="type">unknown</span><span class="punct">&gt;;</span>
+<span class="punct">}</span></pre>
+        </div>
+
+        <p class="body-text">Typical pipeline timing: steps 1&ndash;6 complete in under 10ms total (pure computation). Step 7 (LLM call) accounts for 85&ndash;95% of total pipeline duration, typically 1,500&ndash;3,000ms. Steps 8&ndash;14 complete in under 5ms total. The trace makes it immediately visible when a slow pipeline run is caused by LLM latency versus application logic.</p>
+      </div>
+    </div>
+
+
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <!-- Section 3: Legibility Package                             -->
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <div class="section section-alt" id="legibility-package">
+      <div class="container">
+        <div class="section-heading">
+          <span class="section-number">3</span>
+          <h2>Legibility Package</h2>
+        </div>
+        <p class="section-intro">The core of the deterministic layer. Four classes enforce policy, manage state, handle consent, and collect citizen data &mdash; all without any LLM involvement.</p>
+
+        <!-- PolicyEvaluator -->
+        <h3>PolicyEvaluator</h3>
+        <p class="body-text">Evaluates a service&rsquo;s eligibility rules against a citizen&rsquo;s data. The evaluator iterates each rule, evaluates conditions using typed operators, and returns a structured result. No fuzzy logic, no LLM interpretation &mdash; rules either pass or fail.</p>
+
+        <div class="interface-block">
+          <div class="interface-block-header">
+            <span class="type-label">Class</span>
+            <span class="type-name">PolicyEvaluator</span>
+          </div>
+          <pre><span class="kw">class</span> <span class="type">PolicyEvaluator</span> <span class="punct">{</span>
+  <span class="key">evaluate</span><span class="punct">(</span>
+    <span class="param">ruleset</span><span class="punct">:</span> <span class="type">PolicyRuleset</span><span class="punct">,</span>
+    <span class="param">context</span><span class="punct">:</span> <span class="type">Record</span><span class="punct">&lt;</span><span class="type">string</span><span class="punct">,</span> <span class="type">unknown</span><span class="punct">&gt;</span>
+  <span class="punct">):</span> <span class="type">PolicyResult</span>
+<span class="punct">}</span></pre>
+        </div>
+
+        <p class="body-text">The evaluation logic iterates rules, evaluates conditions using operators: <span class="type-sig">&gt;=</span>, <span class="type-sig">&lt;=</span>, <span class="type-sig">==</span>, <span class="type-sig">!=</span>, <span class="type-sig">exists</span>, <span class="type-sig">not-exists</span>, <span class="type-sig">in</span>. Each rule returns a pass/fail result with the original description as an explanation.</p>
+
+        <div class="interface-block">
+          <div class="interface-block-header">
+            <span class="type-label">Interface</span>
+            <span class="type-name">PolicyRuleset</span>
+          </div>
+          <pre><span class="kw">interface</span> <span class="type">PolicyRuleset</span> <span class="punct">{</span>
+  <span class="key">service_id</span><span class="punct">:</span> <span class="type">string</span><span class="punct">;</span>
+  <span class="key">version</span><span class="punct">:</span> <span class="type">string</span><span class="punct">;</span>
+  <span class="key">rules</span><span class="punct">:</span> <span class="type">PolicyRule</span><span class="punct">[];</span>
+<span class="punct">}</span>
+
+<span class="kw">interface</span> <span class="type">PolicyRule</span> <span class="punct">{</span>
+  <span class="key">id</span><span class="punct">:</span> <span class="type">string</span><span class="punct">;</span>
+  <span class="key">description</span><span class="punct">:</span> <span class="type">string</span><span class="punct">;</span>
+  <span class="key">condition</span><span class="punct">:</span> <span class="punct">{</span>
+    <span class="key">field</span><span class="punct">:</span> <span class="type">string</span><span class="punct">;</span>
+    <span class="key">operator</span><span class="punct">:</span> <span class="str">"&gt;="</span> <span class="punct">|</span> <span class="str">"&lt;="</span> <span class="punct">|</span> <span class="str">"=="</span> <span class="punct">|</span> <span class="str">"!="</span> <span class="punct">|</span> <span class="str">"exists"</span> <span class="punct">|</span> <span class="str">"not-exists"</span> <span class="punct">|</span> <span class="str">"in"</span><span class="punct">;</span>
+    <span class="key">value</span><span class="punct">?:</span> <span class="type">unknown</span><span class="punct">;</span>
+  <span class="punct">};</span>
+  <span class="key">reason_if_failed</span><span class="punct">:</span> <span class="type">string</span><span class="punct">;</span>
+  <span class="key">edge_case</span><span class="punct">?:</span> <span class="type">boolean</span><span class="punct">;</span>
+<span class="punct">}</span>
+
+<span class="kw">interface</span> <span class="type">PolicyResult</span> <span class="punct">{</span>
+  <span class="key">eligible</span><span class="punct">:</span> <span class="type">boolean</span><span class="punct">;</span>
+  <span class="key">passed</span><span class="punct">:</span> <span class="type">PolicyRule</span><span class="punct">[];</span>
+  <span class="key">failed</span><span class="punct">:</span> <span class="type">PolicyRule</span><span class="punct">[];</span>
+  <span class="key">edgeCases</span><span class="punct">:</span> <span class="type">PolicyRule</span><span class="punct">[];</span>
+  <span class="key">explanation</span><span class="punct">:</span> <span class="type">string</span><span class="punct">;</span>
+<span class="punct">}</span></pre>
+        </div>
+
+        <!-- StateMachine -->
+        <h3 style="margin-top: 2.5rem;">StateMachine</h3>
+        <p class="body-text">A deterministic finite-state machine constructed from a service&rsquo;s <span class="type-sig">StateModelDefinition</span>. It enforces the legal transitions for a service journey, prevents the LLM from skipping steps, and identifies terminal and receipt-emitting states.</p>
+
+        <div class="interface-block">
+          <div class="interface-block-header">
+            <span class="type-label">Class</span>
+            <span class="type-name">StateMachine</span>
+          </div>
+          <pre><span class="kw">class</span> <span class="type">StateMachine</span> <span class="punct">{</span>
+  <span class="key">constructor</span><span class="punct">(</span><span class="param">definition</span><span class="punct">:</span> <span class="type">StateModelDefinition</span><span class="punct">)</span>
+  <span class="key">getState</span><span class="punct">():</span> <span class="type">string</span>
+  <span class="key">allowedTransitions</span><span class="punct">():</span> <span class="type">Array</span><span class="punct">&lt;{</span> <span class="key">to</span><span class="punct">:</span> <span class="type">string</span><span class="punct">;</span> <span class="key">trigger</span><span class="punct">?:</span> <span class="type">string</span> <span class="punct">}&gt;</span>
+  <span class="key">transition</span><span class="punct">(</span><span class="param">trigger</span><span class="punct">:</span> <span class="type">string</span><span class="punct">):</span> <span class="type">TransitionResult</span>
+  <span class="key">isTerminal</span><span class="punct">():</span> <span class="type">boolean</span>
+  <span class="key">setState</span><span class="punct">(</span><span class="param">stateId</span><span class="punct">:</span> <span class="type">string</span><span class="punct">):</span> <span class="type">void</span>
+<span class="punct">}</span></pre>
+        </div>
+
+        <p class="body-text">Key concepts: <strong>initial state</strong> (where every journey begins), <strong>terminal states</strong> (completed, rejected, handed-off), <strong>transition guards</strong> (condition fields that must be satisfied before a transition is allowed), and <strong>receipt-emitting states</strong> (states that trigger an immutable receipt on entry).</p>
+
+        <h4>State Flow: DVLA Driving Licence Renewal</h4>
+        <p class="body-text">A typical service journey. The state model defines a linear path with a branch point at eligibility, where the journey may diverge to rejection or human handoff.</p>
+
+        <div class="state-flow">
+          <div class="state-flow-step">
+            <div class="state-node">not-started</div>
+            <div class="state-arrow"></div>
+            <div class="state-arrow-head"></div>
+            <div class="state-node state-node-active">identity-verified</div>
+            <div class="state-arrow"></div>
+            <div class="state-arrow-head"></div>
+            <div class="state-node state-node-active">eligibility-checked</div>
+          </div>
+
+          <div class="state-branch">
+            <div class="state-branch-arm">
+              <div class="state-arrow"></div>
+              <div class="state-arrow-head"></div>
+              <div class="state-node state-node-active">consent-given</div>
+              <div class="state-arrow"></div>
+              <div class="state-arrow-head"></div>
+              <div class="state-node state-node-active">details-confirmed</div>
+              <div class="state-arrow"></div>
+              <div class="state-arrow-head"></div>
+              <div class="state-node state-node-active">photo-submitted</div>
+              <div class="state-arrow"></div>
+              <div class="state-arrow-head"></div>
+              <div class="state-node state-node-active">payment-made</div>
+              <div class="state-arrow"></div>
+              <div class="state-arrow-head"></div>
+              <div class="state-node state-node-active">application-submitted</div>
+              <div class="state-arrow"></div>
+              <div class="state-arrow-head"></div>
+              <div class="state-node state-node-terminal">completed</div>
+            </div>
+            <div class="state-branch-arm">
+              <div class="state-arrow"></div>
+              <div class="state-arrow-head"></div>
+              <div class="state-node state-node-error">rejected</div>
+            </div>
+            <div class="state-branch-arm">
+              <div class="state-arrow"></div>
+              <div class="state-arrow-head"></div>
+              <div class="state-node state-node-error">handed-off</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ConsentManager -->
+        <h3 style="margin-top: 2.5rem;">ConsentManager</h3>
+        <p class="body-text">Manages the citizen&rsquo;s consent decisions for a service. Each service defines a <span class="type-sig">ConsentModel</span> with required and optional grants. The manager tracks which grants have been presented, accepted, or declined, and gates progress accordingly.</p>
+
+        <div class="interface-block">
+          <div class="interface-block-header">
+            <span class="type-label">Class</span>
+            <span class="type-name">ConsentManager</span>
+          </div>
+          <pre><span class="kw">class</span> <span class="type">ConsentManager</span> <span class="punct">{</span>
+  <span class="key">getRequiredGrants</span><span class="punct">():</span> <span class="type">ConsentGrant</span><span class="punct">[]</span>
+  <span class="key">getOptionalGrants</span><span class="punct">():</span> <span class="type">ConsentGrant</span><span class="punct">[]</span>
+  <span class="key">recordDecision</span><span class="punct">(</span>
+    <span class="param">grantId</span><span class="punct">:</span> <span class="type">string</span><span class="punct">,</span>
+    <span class="param">granted</span><span class="punct">:</span> <span class="type">boolean</span>
+  <span class="punct">):</span> <span class="type">ConsentDecision</span>
+  <span class="key">allRequiredGranted</span><span class="punct">():</span> <span class="type">boolean</span>
+<span class="punct">}</span></pre>
+        </div>
+
+        <p class="body-text">Consent is never assumed or inferred. The platform renders consent cards (deterministic task injection at pipeline step 11) and records the citizen&rsquo;s explicit decision. If a required grant is declined, the journey cannot proceed past the consent state.</p>
+
+        <!-- FieldCollector -->
+        <h3 style="margin-top: 2.5rem;">FieldCollector</h3>
+        <p class="body-text">Tracks the data fields required by a service, pre-fills from persona data where available, and records new fields extracted from conversation. The collector tells the prompt layer what is still missing, enabling the LLM to ask targeted questions.</p>
+
+        <div class="interface-block">
+          <div class="interface-block-header">
+            <span class="type-label">Class</span>
+            <span class="type-name">FieldCollector</span>
+          </div>
+          <pre><span class="kw">class</span> <span class="type">FieldCollector</span> <span class="punct">{</span>
+  <span class="key">seed</span><span class="punct">(</span><span class="param">personaData</span><span class="punct">:</span> <span class="type">Record</span><span class="punct">&lt;</span><span class="type">string</span><span class="punct">,</span> <span class="type">unknown</span><span class="punct">&gt;):</span> <span class="type">void</span>
+  <span class="key">recordField</span><span class="punct">(</span>
+    <span class="param">key</span><span class="punct">:</span> <span class="type">string</span><span class="punct">,</span>
+    <span class="param">value</span><span class="punct">:</span> <span class="type">unknown</span><span class="punct">,</span>
+    <span class="param">source</span><span class="punct">:</span> <span class="type">string</span>
+  <span class="punct">):</span> <span class="type">void</span>
+  <span class="key">getMissing</span><span class="punct">():</span> <span class="type">string</span><span class="punct">[]</span>
+  <span class="key">isComplete</span><span class="punct">():</span> <span class="type">boolean</span>
+<span class="punct">}</span></pre>
+        </div>
+
+        <!-- ArtefactStore -->
+        <h3 style="margin-top: 2.5rem;">ArtefactStore</h3>
+        <p class="body-text">Loads and caches structured artefacts from the service store. Each service&rsquo;s artefact set is loaded once and held in memory for the duration of the session.</p>
+
+        <div class="interface-block">
+          <div class="interface-block-header">
+            <span class="type-label">Class</span>
+            <span class="type-name">ArtefactStore</span>
+          </div>
+          <pre><span class="kw">class</span> <span class="type">ArtefactStore</span> <span class="punct">{</span>
+  <span class="key">loadFromDirectory</span><span class="punct">(</span><span class="param">dir</span><span class="punct">:</span> <span class="type">string</span><span class="punct">):</span> <span class="type">Promise</span><span class="punct">&lt;</span><span class="type">number</span><span class="punct">&gt;</span>
+  <span class="key">loadFromServiceStoreDb</span><span class="punct">(</span><span class="param">dbPath</span><span class="punct">:</span> <span class="type">string</span><span class="punct">):</span> <span class="type">Promise</span><span class="punct">&lt;</span><span class="type">number</span><span class="punct">&gt;</span>
+  <span class="key">getServiceArtefacts</span><span class="punct">(</span><span class="param">serviceId</span><span class="punct">:</span> <span class="type">string</span><span class="punct">):</span> <span class="type">ServiceArtefacts</span> <span class="punct">|</span> <span class="type">null</span>
+<span class="punct">}</span></pre>
+        </div>
+
+        <div class="interface-block">
+          <div class="interface-block-header">
+            <span class="type-label">Interface</span>
+            <span class="type-name">ServiceArtefacts</span>
+          </div>
+          <pre><span class="kw">interface</span> <span class="type">ServiceArtefacts</span> <span class="punct">{</span>
+  <span class="key">manifest</span><span class="punct">:</span> <span class="type">CapabilityManifest</span><span class="punct">;</span>
+  <span class="key">policy</span><span class="punct">?:</span> <span class="type">PolicyRuleset</span><span class="punct">;</span>
+  <span class="key">consent</span><span class="punct">?:</span> <span class="type">ConsentModel</span><span class="punct">;</span>
+  <span class="key">stateModel</span><span class="punct">?:</span> <span class="type">StateModelDefinition</span><span class="punct">;</span>
+  <span class="key">stateInstructions</span><span class="punct">?:</span> <span class="type">StateInstructions</span><span class="punct">;</span>
+<span class="punct">}</span></pre>
+        </div>
+
+        <p class="body-text">The five artefact types form a complete service description. The <a href="glossary.html#capability-manifest">manifest</a> declares identity and input schema. The <a href="glossary.html#policy-ruleset">policy</a> defines eligibility rules. The <a href="glossary.html#state-model">state model</a> defines the journey. The <a href="glossary.html#consent-model">consent model</a> defines data sharing permissions. The <a href="glossary.html#state-instructions">state instructions</a> provide per-state behavioural guidance for the agent.</p>
+
+        <h3 style="margin-top: 2rem;">Policy Operator Reference</h3>
+        <p class="body-text">The <span class="type-sig">PolicyEvaluator</span> supports seven operators for rule conditions. Each operator has strict type semantics &mdash; the evaluator does not perform type coercion.</p>
+
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Operator</th>
+              <th>Semantics</th>
+              <th>Example</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>&gt;=</td>
+              <td>Field value is greater than or equal to the specified value. Numeric comparison only.</td>
+              <td>age &gt;= 16</td>
+            </tr>
+            <tr>
+              <td>&lt;=</td>
+              <td>Field value is less than or equal to the specified value. Numeric comparison only.</td>
+              <td>age &lt;= 70</td>
+            </tr>
+            <tr>
+              <td>==</td>
+              <td>Field value is strictly equal to the specified value. String or numeric.</td>
+              <td>jurisdiction == &ldquo;England&rdquo;</td>
+            </tr>
+            <tr>
+              <td>!=</td>
+              <td>Field value is not equal to the specified value.</td>
+              <td>status != &ldquo;disqualified&rdquo;</td>
+            </tr>
+            <tr>
+              <td>exists</td>
+              <td>Field is present and non-null. Value parameter is ignored.</td>
+              <td>driving_licence_number exists</td>
+            </tr>
+            <tr>
+              <td>not-exists</td>
+              <td>Field is absent or null. Value parameter is ignored.</td>
+              <td>ban_end_date not-exists</td>
+            </tr>
+            <tr>
+              <td>in</td>
+              <td>Field value is one of the specified array values.</td>
+              <td>licence_type in [&ldquo;full&rdquo;, &ldquo;provisional&rdquo;]</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="callout callout-blue">
+          <p><strong>Edge cases are distinct from failures.</strong> A rule with <span class="type-sig">edge_case: true</span> does not cause outright ineligibility. Instead, it flags the citizen for potential handoff to a human adviser. This handles ambiguous situations &mdash; a citizen who might be eligible but needs human judgement. The agent communicates uncertainty rather than making a binary decision.</p>
+        </div>
+
+        <h3 style="margin-top: 2rem;">State Model Transition Guards</h3>
+        <p class="body-text">Transitions can carry guard conditions that must be satisfied before the transition is allowed. Guards prevent premature advancement &mdash; a citizen cannot reach &ldquo;payment-made&rdquo; without first passing through &ldquo;details-confirmed&rdquo;.</p>
+
+        <div class="code-block">
+          <div class="code-block-label">Example: Transition with guard</div>
+          <pre><span class="punct">{</span>
+  <span class="key">"from"</span><span class="punct">:</span> <span class="str">"eligibility-checked"</span><span class="punct">,</span>
+  <span class="key">"to"</span><span class="punct">:</span> <span class="str">"consent-given"</span><span class="punct">,</span>
+  <span class="key">"trigger"</span><span class="punct">:</span> <span class="str">"grant_consent"</span><span class="punct">,</span>
+  <span class="key">"guard"</span><span class="punct">:</span> <span class="punct">{</span>
+    <span class="key">"condition"</span><span class="punct">:</span> <span class="str">"policy_result.eligible == true"</span><span class="punct">,</span>
+    <span class="key">"message"</span><span class="punct">:</span> <span class="str">"Cannot proceed: citizen is not eligible for this service."</span>
+  <span class="punct">}</span>
+<span class="punct">}</span></pre>
+        </div>
+
+        <p class="body-text">The state machine evaluates guards synchronously. If a guard fails, the transition is rejected and the machine remains at its current state. The guard&rsquo;s message is available to the agent for explaining why the journey cannot proceed.</p>
+      </div>
+    </div>
+
+
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <!-- Section 4: Evidence Plane                                 -->
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <div class="section" id="evidence-plane">
+      <div class="container">
+        <div class="section-heading">
+          <span class="section-number">4</span>
+          <h2>Evidence Plane</h2>
+        </div>
+        <p class="section-intro">Every significant action produces an immutable trace event. The evidence plane enables audit, replay, and accountability across all citizen interactions.</p>
+
+        <!-- TraceEmitter -->
+        <h3>TraceEmitter</h3>
+        <p class="body-text">The primary interface for writing events into the evidence store. Supports span-based tracing: a span groups related events (e.g., all events within a single pipeline run) under a common span ID.</p>
+
+        <div class="interface-block">
+          <div class="interface-block-header">
+            <span class="type-label">Class</span>
+            <span class="type-name">TraceEmitter</span>
+          </div>
+          <pre><span class="kw">class</span> <span class="type">TraceEmitter</span> <span class="punct">{</span>
+  <span class="key">startSpan</span><span class="punct">(</span><span class="param">opts</span><span class="punct">:</span> <span class="type">SpanOptions</span><span class="punct">):</span> <span class="type">SpanContext</span>
+  <span class="key">emit</span><span class="punct">(</span>
+    <span class="param">type</span><span class="punct">:</span> <span class="type">TraceEventType</span><span class="punct">,</span>
+    <span class="param">span</span><span class="punct">:</span> <span class="type">SpanContext</span><span class="punct">,</span>
+    <span class="param">payload</span><span class="punct">:</span> <span class="type">Record</span><span class="punct">&lt;</span><span class="type">string</span><span class="punct">,</span> <span class="type">unknown</span><span class="punct">&gt;</span>
+  <span class="punct">):</span> <span class="type">Promise</span><span class="punct">&lt;</span><span class="type">TraceEvent</span><span class="punct">&gt;</span>
+  <span class="key">endSpan</span><span class="punct">(</span>
+    <span class="param">span</span><span class="punct">:</span> <span class="type">SpanContext</span><span class="punct">,</span>
+    <span class="param">type</span><span class="punct">:</span> <span class="type">TraceEventType</span><span class="punct">,</span>
+    <span class="param">payload</span><span class="punct">:</span> <span class="type">Record</span><span class="punct">&lt;</span><span class="type">string</span><span class="punct">,</span> <span class="type">unknown</span><span class="punct">&gt;</span>
+  <span class="punct">):</span> <span class="type">Promise</span><span class="punct">&lt;</span><span class="type">TraceEvent</span><span class="punct">&gt;</span>
+<span class="punct">}</span></pre>
+        </div>
+
+        <!-- TraceEvent -->
+        <h3 style="margin-top: 2rem;">TraceEvent Structure</h3>
+
+        <div class="interface-block">
+          <div class="interface-block-header">
+            <span class="type-label">Interface</span>
+            <span class="type-name">TraceEvent</span>
+          </div>
+          <pre><span class="kw">interface</span> <span class="type">TraceEvent</span> <span class="punct">{</span>
+  <span class="key">id</span><span class="punct">:</span> <span class="type">string</span><span class="punct">;</span>
+  <span class="key">traceId</span><span class="punct">:</span> <span class="type">string</span><span class="punct">;</span>
+  <span class="key">spanId</span><span class="punct">:</span> <span class="type">string</span><span class="punct">;</span>
+  <span class="key">parentSpanId</span><span class="punct">?:</span> <span class="type">string</span><span class="punct">;</span>
+  <span class="key">timestamp</span><span class="punct">:</span> <span class="type">string</span><span class="punct">;</span>
+  <span class="key">type</span><span class="punct">:</span> <span class="type">TraceEventType</span><span class="punct">;</span>
+  <span class="key">payload</span><span class="punct">:</span> <span class="type">Record</span><span class="punct">&lt;</span><span class="type">string</span><span class="punct">,</span> <span class="type">unknown</span><span class="punct">&gt;;</span>
+  <span class="key">metadata</span><span class="punct">:</span> <span class="punct">{</span>
+    <span class="key">userId</span><span class="punct">?:</span> <span class="type">string</span><span class="punct">;</span>
+    <span class="key">sessionId</span><span class="punct">:</span> <span class="type">string</span><span class="punct">;</span>
+    <span class="key">capabilityId</span><span class="punct">?:</span> <span class="type">string</span><span class="punct">;</span>
+  <span class="punct">};</span>
+<span class="punct">}</span></pre>
+        </div>
+
+        <!-- Event types table -->
+        <h3 style="margin-top: 2rem;">Event Types</h3>
+        <p class="body-text">Every event is classified by type. Events marked as ledger-updating are written to the case ledger in addition to the trace store, making them available for case management and replay.</p>
+
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Type</th>
+              <th>Description</th>
+              <th>Updates Ledger</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>state.transition</td>
+              <td>State machine moved to a new state</td>
+              <td class="td-yes">Yes</td>
+            </tr>
+            <tr>
+              <td>consent.granted</td>
+              <td>Citizen approved data sharing</td>
+              <td class="td-yes">Yes</td>
+            </tr>
+            <tr>
+              <td>consent.denied</td>
+              <td>Citizen declined data sharing</td>
+              <td class="td-yes">Yes</td>
+            </tr>
+            <tr>
+              <td>policy.evaluated</td>
+              <td>Eligibility rules checked</td>
+              <td class="td-yes">Yes</td>
+            </tr>
+            <tr>
+              <td>handoff.initiated</td>
+              <td>Escalation to human adviser triggered</td>
+              <td class="td-yes">Yes</td>
+            </tr>
+            <tr>
+              <td>capability.invoked</td>
+              <td>Department service called</td>
+              <td class="td-yes">Yes</td>
+            </tr>
+            <tr>
+              <td>llm.request</td>
+              <td>Language model call initiated</td>
+              <td class="td-yes">Yes</td>
+            </tr>
+            <tr>
+              <td>llm.response</td>
+              <td>Language model response received</td>
+              <td class="td-yes">Yes</td>
+            </tr>
+            <tr>
+              <td>credential.presented</td>
+              <td>Verifiable proof submitted</td>
+              <td class="td-yes">Yes</td>
+            </tr>
+            <tr>
+              <td>receipt.issued</td>
+              <td>Outcome documented with immutable receipt</td>
+              <td class="td-yes">Yes</td>
+            </tr>
+            <tr>
+              <td>field.extracted</td>
+              <td>Fact parsed from conversation</td>
+              <td class="td-no">No</td>
+            </tr>
+            <tr>
+              <td>error.occurred</td>
+              <td>System error logged</td>
+              <td class="td-no">No</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- ReceiptGenerator -->
+        <h3 style="margin-top: 2rem;">ReceiptGenerator</h3>
+        <p class="body-text">Generates immutable receipts from trace events. Receipts are the citizen-facing evidence that an action was taken. They include a reference to the service, the action performed, the outcome, and which data was shared.</p>
+
+        <div class="interface-block">
+          <div class="interface-block-header">
+            <span class="type-label">Class &amp; Interface</span>
+            <span class="type-name">ReceiptGenerator / Receipt</span>
+          </div>
+          <pre><span class="kw">class</span> <span class="type">ReceiptGenerator</span> <span class="punct">{</span>
+  <span class="key">generate</span><span class="punct">(</span><span class="param">event</span><span class="punct">:</span> <span class="type">TraceEvent</span><span class="punct">):</span> <span class="type">Receipt</span>
+<span class="punct">}</span>
+
+<span class="kw">interface</span> <span class="type">Receipt</span> <span class="punct">{</span>
+  <span class="key">id</span><span class="punct">:</span> <span class="type">string</span><span class="punct">;</span>
+  <span class="key">capabilityId</span><span class="punct">:</span> <span class="type">string</span><span class="punct">;</span>
+  <span class="key">action</span><span class="punct">:</span> <span class="type">string</span><span class="punct">;</span>
+  <span class="key">outcome</span><span class="punct">:</span> <span class="type">string</span><span class="punct">;</span>
+  <span class="key">timestamp</span><span class="punct">:</span> <span class="type">string</span><span class="punct">;</span>
+  <span class="key">dataShared</span><span class="punct">?:</span> <span class="type">string</span><span class="punct">[];</span>
+<span class="punct">}</span></pre>
+        </div>
+
+        <!-- CaseStore -->
+        <h3 style="margin-top: 2rem;">CaseStore</h3>
+        <p class="body-text">The case store maintains a ledger of in-flight and completed cases. It is updated from trace events that carry ledger-updating types. Each case aggregates the full history of a citizen&rsquo;s interaction with a specific service, including state transitions, consent decisions, and receipts.</p>
+
+        <div class="interface-block">
+          <div class="interface-block-header">
+            <span class="type-label">Class</span>
+            <span class="type-name">CaseStore</span>
+          </div>
+          <pre><span class="kw">class</span> <span class="type">CaseStore</span> <span class="punct">{</span>
+  <span class="key">getCase</span><span class="punct">(</span><span class="param">caseId</span><span class="punct">:</span> <span class="type">string</span><span class="punct">):</span> <span class="type">CaseRecord</span> <span class="punct">|</span> <span class="type">null</span>
+  <span class="key">listByUser</span><span class="punct">(</span><span class="param">userId</span><span class="punct">:</span> <span class="type">string</span><span class="punct">):</span> <span class="type">CaseRecord</span><span class="punct">[]</span>
+  <span class="key">listByService</span><span class="punct">(</span><span class="param">serviceId</span><span class="punct">:</span> <span class="type">string</span><span class="punct">):</span> <span class="type">CaseRecord</span><span class="punct">[]</span>
+  <span class="key">updateFromEvent</span><span class="punct">(</span><span class="param">event</span><span class="punct">:</span> <span class="type">TraceEvent</span><span class="punct">):</span> <span class="type">void</span>
+<span class="punct">}</span>
+
+<span class="kw">interface</span> <span class="type">CaseRecord</span> <span class="punct">{</span>
+  <span class="key">id</span><span class="punct">:</span> <span class="type">string</span><span class="punct">;</span>
+  <span class="key">userId</span><span class="punct">:</span> <span class="type">string</span><span class="punct">;</span>
+  <span class="key">serviceId</span><span class="punct">:</span> <span class="type">string</span><span class="punct">;</span>
+  <span class="key">currentState</span><span class="punct">:</span> <span class="type">string</span><span class="punct">;</span>
+  <span class="key">stateHistory</span><span class="punct">:</span> <span class="type">string</span><span class="punct">[];</span>
+  <span class="key">consentDecisions</span><span class="punct">:</span> <span class="type">ConsentDecision</span><span class="punct">[];</span>
+  <span class="key">receipts</span><span class="punct">:</span> <span class="type">Receipt</span><span class="punct">[];</span>
+  <span class="key">createdAt</span><span class="punct">:</span> <span class="type">string</span><span class="punct">;</span>
+  <span class="key">updatedAt</span><span class="punct">:</span> <span class="type">string</span><span class="punct">;</span>
+  <span class="key">status</span><span class="punct">:</span> <span class="str">"active"</span> <span class="punct">|</span> <span class="str">"completed"</span> <span class="punct">|</span> <span class="str">"handed-off"</span> <span class="punct">|</span> <span class="str">"rejected"</span><span class="punct">;</span>
+<span class="punct">}</span></pre>
+        </div>
+
+        <p class="body-text">The case store is a derived view &mdash; it is built entirely from trace events. If the case store is lost, it can be reconstructed by replaying events from the evidence store. This makes the evidence store the single source of truth.</p>
+
+        <h3 style="margin-top: 2rem;">ReplayEngine</h3>
+        <p class="body-text">The replay engine reconstructs full conversation state from trace events. Given a trace ID, it steps through events in chronological order, rebuilding state machine position, consent decisions, collected fields, and the complete message history.</p>
+
+        <div class="interface-block">
+          <div class="interface-block-header">
+            <span class="type-label">Class</span>
+            <span class="type-name">ReplayEngine</span>
+          </div>
+          <pre><span class="kw">class</span> <span class="type">ReplayEngine</span> <span class="punct">{</span>
+  <span class="key">loadTrace</span><span class="punct">(</span><span class="param">traceId</span><span class="punct">:</span> <span class="type">string</span><span class="punct">):</span> <span class="type">Promise</span><span class="punct">&lt;</span><span class="type">ReplaySession</span><span class="punct">&gt;</span>
+  <span class="key">stepForward</span><span class="punct">(</span><span class="param">session</span><span class="punct">:</span> <span class="type">ReplaySession</span><span class="punct">):</span> <span class="type">ReplayFrame</span>
+  <span class="key">stepBackward</span><span class="punct">(</span><span class="param">session</span><span class="punct">:</span> <span class="type">ReplaySession</span><span class="punct">):</span> <span class="type">ReplayFrame</span>
+  <span class="key">jumpToEvent</span><span class="punct">(</span><span class="param">session</span><span class="punct">:</span> <span class="type">ReplaySession</span><span class="punct">,</span> <span class="param">eventId</span><span class="punct">:</span> <span class="type">string</span><span class="punct">):</span> <span class="type">ReplayFrame</span>
+<span class="punct">}</span>
+
+<span class="kw">interface</span> <span class="type">ReplayFrame</span> <span class="punct">{</span>
+  <span class="key">eventIndex</span><span class="punct">:</span> <span class="type">number</span><span class="punct">;</span>
+  <span class="key">totalEvents</span><span class="punct">:</span> <span class="type">number</span><span class="punct">;</span>
+  <span class="key">currentState</span><span class="punct">:</span> <span class="type">string</span><span class="punct">;</span>
+  <span class="key">collectedFields</span><span class="punct">:</span> <span class="type">Record</span><span class="punct">&lt;</span><span class="type">string</span><span class="punct">,</span> <span class="type">unknown</span><span class="punct">&gt;;</span>
+  <span class="key">consentState</span><span class="punct">:</span> <span class="type">Record</span><span class="punct">&lt;</span><span class="type">string</span><span class="punct">,</span> <span class="type">boolean</span><span class="punct">&gt;;</span>
+  <span class="key">event</span><span class="punct">:</span> <span class="type">TraceEvent</span><span class="punct">;</span>
+<span class="punct">}</span></pre>
+        </div>
+
+        <div class="callout callout-green">
+          <p><strong>Replay supports three use cases:</strong> (1) <strong>Audit</strong> &mdash; regulators or complaints teams step through a citizen&rsquo;s journey to verify that rules were followed. (2) <strong>Debugging</strong> &mdash; engineers identify where a journey diverged from expected behaviour. (3) <strong>Dispute resolution</strong> &mdash; when a citizen contests an outcome, the replay provides incontrovertible evidence of what happened and why.</p>
+        </div>
+
+        <!-- Sequence diagram: trace lifecycle -->
+        <h3 style="margin-top: 2rem;">Trace Lifecycle</h3>
+        <p class="body-text">A typical pipeline run produces the following sequence of trace events.</p>
+
+        <div class="sequence">
+          <div class="sequence-step seq-green">
+            <div class="sequence-label">span.start</div>
+            <div class="sequence-desc">Pipeline span opened with trace ID, session ID, and capability ID.</div>
+          </div>
+          <div class="sequence-step seq-green">
+            <div class="sequence-label">policy.evaluated</div>
+            <div class="sequence-desc">Eligibility rules checked. Payload contains passed/failed rules and overall result.</div>
+          </div>
+          <div class="sequence-step seq-navy">
+            <div class="sequence-label">llm.request</div>
+            <div class="sequence-desc">Language model called. Payload contains prompt hash and token counts.</div>
+          </div>
+          <div class="sequence-step seq-navy">
+            <div class="sequence-label">llm.response</div>
+            <div class="sequence-desc">Language model responded. Payload contains model ID, token usage, and tool calls made.</div>
+          </div>
+          <div class="sequence-step seq-green">
+            <div class="sequence-label">state.transition</div>
+            <div class="sequence-desc">State machine moved from eligibility-checked to consent-given. Transition validated.</div>
+          </div>
+          <div class="sequence-step seq-purple">
+            <div class="sequence-label">consent.granted</div>
+            <div class="sequence-desc">Citizen accepted data sharing. Grant ID and scope recorded.</div>
+          </div>
+          <div class="sequence-step seq-green">
+            <div class="sequence-label">field.extracted</div>
+            <div class="sequence-desc">New facts parsed from conversation. Fields and sources recorded.</div>
+          </div>
+          <div class="sequence-step seq-orange">
+            <div class="sequence-label">receipt.issued</div>
+            <div class="sequence-desc">Immutable receipt generated for the completed action.</div>
+          </div>
+          <div class="sequence-step seq-green">
+            <div class="sequence-label">span.end</div>
+            <div class="sequence-desc">Pipeline span closed. Duration and step count recorded.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <!-- Section 5: Citizen Data Architecture                      -->
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <div class="section section-alt" id="citizen-data">
+      <div class="container">
+        <div class="section-heading">
+          <span class="section-number">5</span>
+          <h2>Citizen Data Architecture</h2>
+        </div>
+        <p class="section-intro">A unified data model for citizen information with field-level provenance, tiered trust levels, and delegation-aware access control.</p>
+
+        <h3>Three Data Tiers</h3>
+        <p class="body-text">Every data field carries a trust tier. The tier determines how the field can be used, whether it requires consent to share, and whether the citizen can edit it.</p>
+
+        <div class="tier-grid">
+          <div class="tier-card" style="border-top-color: #00703c;">
+            <h4>Tier 1: Verified</h4>
+            <p>Immutable, government-sourced data. Confirmed by a department system of record. The citizen cannot edit these fields &mdash; only the source department can update them. Examples: National Insurance number, driving licence number, passport details.</p>
+          </div>
+          <div class="tier-card" style="border-top-color: #1d70b8;">
+            <h4>Tier 2: Submitted</h4>
+            <p>Citizen-entered data that has not been verified against a department source. The citizen can edit these fields at any time. Examples: contact preferences, correspondence address, accessibility needs.</p>
+          </div>
+          <div class="tier-card" style="border-top-color: #f47738;">
+            <h4>Tier 3: Inferred</h4>
+            <p>Agent-derived data, flagged as such. Extracted from conversation context or computed from other fields. Always shown with an &ldquo;inferred&rdquo; label so the citizen knows its provenance. Examples: estimated income bracket, likely household composition.</p>
+          </div>
+        </div>
+
+        <h3>Field Metadata</h3>
+        <p class="body-text">Every field in the citizen data model carries source metadata. This enables the platform to show exactly where each piece of data came from and which consent grant authorised its use.</p>
+
+        <div class="interface-block">
+          <div class="interface-block-header">
+            <span class="type-label">Interface</span>
+            <span class="type-name">FieldSource</span>
+          </div>
+          <pre><span class="kw">interface</span> <span class="type">FieldSource</span> <span class="punct">{</span>
+  <span class="key">source</span><span class="punct">:</span> <span class="type">string</span><span class="punct">;</span>     <span class="comment">// "HMRC", "DVLA", "Home Office"</span>
+  <span class="key">tier</span><span class="punct">:</span> <span class="str">"verified"</span> <span class="punct">|</span> <span class="str">"submitted"</span> <span class="punct">|</span> <span class="str">"inferred"</span><span class="punct">;</span>
+  <span class="key">topic</span><span class="punct">:</span> <span class="type">string</span><span class="punct">;</span>     <span class="comment">// "identity", "finance", "employment"</span>
+<span class="punct">}</span></pre>
+        </div>
+
+        <h3 style="margin-top: 2rem;">RelationshipStore</h3>
+        <p class="body-text">Manages delegation relationships: parents acting for children, power of attorney holders acting for vulnerable adults, executors managing a deceased person&rsquo;s affairs. The store enforces scoped permissions and logs every delegated action for audit.</p>
+
+        <div class="interface-block">
+          <div class="interface-block-header">
+            <span class="type-label">Class</span>
+            <span class="type-name">RelationshipStore</span>
+          </div>
+          <pre><span class="kw">class</span> <span class="type">RelationshipStore</span> <span class="punct">{</span>
+  <span class="key">canActOnBehalf</span><span class="punct">(</span>
+    <span class="param">actorId</span><span class="punct">:</span> <span class="type">string</span><span class="punct">,</span>
+    <span class="param">subjectId</span><span class="punct">:</span> <span class="type">string</span><span class="punct">,</span>
+    <span class="param">scope</span><span class="punct">:</span> <span class="type">PermissionScope</span>
+  <span class="punct">):</span> <span class="type">boolean</span>
+  <span class="key">getPermissions</span><span class="punct">(</span>
+    <span class="param">actorId</span><span class="punct">:</span> <span class="type">string</span><span class="punct">,</span>
+    <span class="param">subjectId</span><span class="punct">:</span> <span class="type">string</span>
+  <span class="punct">):</span> <span class="type">PermissionScope</span><span class="punct">[]</span>
+  <span class="key">getSubjects</span><span class="punct">(</span>
+    <span class="param">actorId</span><span class="punct">:</span> <span class="type">string</span>
+  <span class="punct">):</span> <span class="type">Array</span><span class="punct">&lt;{</span> <span class="key">userId</span><span class="punct">:</span> <span class="type">string</span><span class="punct">;</span> <span class="key">type</span><span class="punct">:</span> <span class="type">RelationshipType</span> <span class="punct">}&gt;</span>
+  <span class="key">logDelegatedAction</span><span class="punct">(</span>
+    <span class="param">action</span><span class="punct">:</span> <span class="type">DelegatedAction</span>
+  <span class="punct">):</span> <span class="type">void</span>
+<span class="punct">}</span></pre>
+        </div>
+
+        <h4>Default Permissions by Relationship Type</h4>
+
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Relationship</th>
+              <th>Default Permissions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>parent_of</td>
+              <td>full_authority</td>
+            </tr>
+            <tr>
+              <td>guardian_of</td>
+              <td>full_authority</td>
+            </tr>
+            <tr>
+              <td>executor_of</td>
+              <td>view_data, submit_on_behalf, make_payments, correspond</td>
+            </tr>
+            <tr>
+              <td>attorney_of</td>
+              <td>view_data, submit_on_behalf, manage_consent, make_payments, correspond</td>
+            </tr>
+            <tr>
+              <td>carer_of</td>
+              <td>view_status, receive_alerts</td>
+            </tr>
+            <tr>
+              <td>spouse</td>
+              <td>view_status, receive_alerts</td>
+            </tr>
+            <tr>
+              <td>representative_of</td>
+              <td>view_status, view_data, correspond</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="callout callout-blue">
+          <p><strong>Delegation is always scoped.</strong> A power of attorney holder can submit forms and manage consent, but a carer can only view status and receive alerts. The <span class="type-sig">RelationshipStore</span> enforces these boundaries at the API level &mdash; the agent cannot bypass them through conversational persuasion.</p>
+        </div>
+
+        <h3 style="margin-top: 2rem;">Unified Citizen Data Model</h3>
+        <p class="body-text">The citizen data model aggregates fields from multiple departments into a single profile. Each field carries its source metadata, enabling the platform to track provenance across department boundaries.</p>
+
+        <div class="code-block">
+          <div class="code-block-label">Example: Citizen profile structure</div>
+          <pre><span class="punct">{</span>
+  <span class="key">"identity"</span><span class="punct">:</span> <span class="punct">{</span>
+    <span class="key">"full_name"</span><span class="punct">:</span>        <span class="punct">{</span> <span class="key">"value"</span><span class="punct">:</span> <span class="str">"Margaret Chen"</span><span class="punct">,</span>     <span class="key">"tier"</span><span class="punct">:</span> <span class="str">"verified"</span><span class="punct">,</span>  <span class="key">"source"</span><span class="punct">:</span> <span class="str">"HMRC"</span> <span class="punct">},</span>
+    <span class="key">"date_of_birth"</span><span class="punct">:</span>    <span class="punct">{</span> <span class="key">"value"</span><span class="punct">:</span> <span class="str">"1958-03-14"</span><span class="punct">,</span>      <span class="key">"tier"</span><span class="punct">:</span> <span class="str">"verified"</span><span class="punct">,</span>  <span class="key">"source"</span><span class="punct">:</span> <span class="str">"HMRC"</span> <span class="punct">},</span>
+    <span class="key">"ni_number"</span><span class="punct">:</span>        <span class="punct">{</span> <span class="key">"value"</span><span class="punct">:</span> <span class="str">"QQ123456C"</span><span class="punct">,</span>       <span class="key">"tier"</span><span class="punct">:</span> <span class="str">"verified"</span><span class="punct">,</span>  <span class="key">"source"</span><span class="punct">:</span> <span class="str">"HMRC"</span> <span class="punct">}</span>
+  <span class="punct">},</span>
+  <span class="key">"contact"</span><span class="punct">:</span> <span class="punct">{</span>
+    <span class="key">"address"</span><span class="punct">:</span>          <span class="punct">{</span> <span class="key">"value"</span><span class="punct">:</span> <span class="str">"12 Oak Lane, Bristol"</span><span class="punct">,</span> <span class="key">"tier"</span><span class="punct">:</span> <span class="str">"submitted"</span><span class="punct">,</span> <span class="key">"source"</span><span class="punct">:</span> <span class="str">"citizen"</span> <span class="punct">},</span>
+    <span class="key">"email"</span><span class="punct">:</span>            <span class="punct">{</span> <span class="key">"value"</span><span class="punct">:</span> <span class="str">"m.chen@email.com"</span><span class="punct">,</span>  <span class="key">"tier"</span><span class="punct">:</span> <span class="str">"submitted"</span><span class="punct">,</span> <span class="key">"source"</span><span class="punct">:</span> <span class="str">"citizen"</span> <span class="punct">}</span>
+  <span class="punct">},</span>
+  <span class="key">"finance"</span><span class="punct">:</span> <span class="punct">{</span>
+    <span class="key">"annual_income"</span><span class="punct">:</span>    <span class="punct">{</span> <span class="key">"value"</span><span class="punct">:</span> <span class="num">28400</span><span class="punct">,</span>              <span class="key">"tier"</span><span class="punct">:</span> <span class="str">"verified"</span><span class="punct">,</span>  <span class="key">"source"</span><span class="punct">:</span> <span class="str">"HMRC"</span> <span class="punct">},</span>
+    <span class="key">"estimated_savings"</span><span class="punct">:</span> <span class="punct">{</span> <span class="key">"value"</span><span class="punct">:</span> <span class="str">"low"</span><span class="punct">,</span>              <span class="key">"tier"</span><span class="punct">:</span> <span class="str">"inferred"</span><span class="punct">,</span>  <span class="key">"source"</span><span class="punct">:</span> <span class="str">"agent"</span> <span class="punct">}</span>
+  <span class="punct">}</span>
+<span class="punct">}</span></pre>
+        </div>
+
+        <p class="body-text">The profile is organised by topic: identity, contact, finance, employment, health, transport, housing. Each topic maps to one or more source departments. When a service requests a field, the platform checks the consent model to determine whether the citizen has granted access to that topic from that source.</p>
+
+        <h3 style="margin-top: 2rem;">Cross-Department Data Flow</h3>
+        <p class="body-text">When a citizen consents to share data across departments, the platform mediates the exchange. The flow is always explicit: the citizen sees which fields will be shared, which department will receive them, and for what purpose.</p>
+
+        <div class="sequence">
+          <div class="sequence-step seq-navy">
+            <div class="sequence-label">Citizen starts DVLA renewal</div>
+            <div class="sequence-desc">The service manifest declares it needs National Insurance number, which is sourced from HMRC.</div>
+          </div>
+          <div class="sequence-step seq-purple">
+            <div class="sequence-label">Consent card presented</div>
+            <div class="sequence-desc">&ldquo;DVLA needs your National Insurance number from HMRC to verify your identity. Allow?&rdquo;</div>
+          </div>
+          <div class="sequence-step seq-green">
+            <div class="sequence-label">Citizen grants consent</div>
+            <div class="sequence-desc">Decision recorded in the evidence store with trace ID, grant ID, scope, and timestamp.</div>
+          </div>
+          <div class="sequence-step seq-navy">
+            <div class="sequence-label">Field resolved</div>
+            <div class="sequence-desc">NI number from HMRC (Tier 1, verified) is made available to the DVLA service context. The field collector marks it as collected.</div>
+          </div>
+          <div class="sequence-step seq-orange">
+            <div class="sequence-label">Receipt issued</div>
+            <div class="sequence-desc">An immutable receipt records that the NI number was shared with DVLA, for the purpose of identity verification, with the citizen&rsquo;s explicit consent.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <!-- Section 6: Prompt Engineering                             -->
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <div class="section" id="prompt-engineering">
+      <div class="container">
+        <div class="section-heading">
+          <span class="section-number">6</span>
+          <h2>Prompt Engineering</h2>
+        </div>
+        <p class="section-intro">The system prompt is not a monolith. It is assembled from layered fragments, each serving a specific purpose. Static layers are cached; dynamic layers change every turn.</p>
+
+        <h3>System Prompt Composition</h3>
+        <p class="body-text">In journey mode (service in progress), the system prompt is built from thirteen layers. Each layer adds context that shapes the agent&rsquo;s behaviour for the current turn.</p>
+
+        <div class="code-block">
+          <div class="code-block-label">Journey mode prompt layers</div>
+          <pre><span class="num"> 1.</span> <span class="str">Agent personality</span>       <span class="comment">// DOT cautious / MAX proactive</span>
+<span class="num"> 2.</span> <span class="str">Persona communication</span>   <span class="comment">// Plain English / formal / assisted</span>
+<span class="num"> 3.</span> <span class="str">Scenario context</span>       <span class="comment">// Service domain and background</span>
+<span class="num"> 4.</span> <span class="str">Persona data</span>           <span class="comment">// Verified fields from citizen profile</span>
+<span class="num"> 5.</span> <span class="str">Policy evaluation</span>      <span class="comment">// Eligibility results</span>
+<span class="num"> 6.</span> <span class="str">Fact extraction</span>        <span class="comment">// Instructions for parsing citizen input</span>
+<span class="num"> 7.</span> <span class="str">State model context</span>    <span class="comment">// Current state + allowed transitions</span>
+<span class="num"> 8.</span> <span class="str">State instructions</span>     <span class="comment">// Per-state DO/DO NOT rules</span>
+<span class="num"> 9.</span> <span class="str">Field collector status</span>  <span class="comment">// Required / collected / missing</span>
+<span class="num">10.</span> <span class="str">Consent requirements</span>   <span class="comment">// Grants needed for this state</span>
+<span class="num">11.</span> <span class="str">Accuracy guardrails</span>    <span class="comment">// Factual grounding rules</span>
+<span class="num">12.</span> <span class="str">Task format</span>            <span class="comment">// Card type specifications</span>
+<span class="num">13.</span> <span class="str">Structured output</span>      <span class="comment">// JSON block schema</span></pre>
+        </div>
+
+        <h3 style="margin-top: 2rem;">Layer Stack</h3>
+        <p class="body-text">Each layer occupies a portion of the token budget. The total system prompt is approximately 2,300 tokens in a typical configuration.</p>
+
+        <div class="layer-stack">
+          <div class="layer">
+            <div class="layer-bar layer-bar-blue"></div>
+            <div class="layer-content">
+              <div class="layer-name">Layer 1: Agent personality</div>
+              <div class="layer-detail">Behavioural profile &mdash; cautious/proactive, formality level</div>
+            </div>
+            <div class="layer-tokens">~300 tokens</div>
+          </div>
+          <div class="layer">
+            <div class="layer-bar layer-bar-green"></div>
+            <div class="layer-content">
+              <div class="layer-name">Layer 2: Persona style</div>
+              <div class="layer-detail">Communication preferences from citizen profile</div>
+            </div>
+            <div class="layer-tokens">~100 tokens</div>
+          </div>
+          <div class="layer">
+            <div class="layer-bar layer-bar-orange"></div>
+            <div class="layer-content">
+              <div class="layer-name">Layer 3: Scenario context</div>
+              <div class="layer-detail">Service domain, department, relevant background</div>
+            </div>
+            <div class="layer-tokens">~400 tokens</div>
+          </div>
+          <div class="layer">
+            <div class="layer-bar layer-bar-purple"></div>
+            <div class="layer-content">
+              <div class="layer-name">Layer 4: Service artefacts and state</div>
+              <div class="layer-detail">Policy results, state model, field status, consent</div>
+            </div>
+            <div class="layer-tokens">~500 tokens</div>
+          </div>
+          <div class="layer">
+            <div class="layer-bar layer-bar-teal"></div>
+            <div class="layer-content">
+              <div class="layer-name">Layer 5: Dynamic context</div>
+              <div class="layer-detail">Per-turn state instructions, extracted facts, missing fields</div>
+            </div>
+            <div class="layer-tokens">~200 tokens</div>
+          </div>
+          <div class="layer">
+            <div class="layer-bar layer-bar-red"></div>
+            <div class="layer-content">
+              <div class="layer-name">Layer 6: Guardrails and format</div>
+              <div class="layer-detail">Accuracy rules, task types, structured output schema</div>
+            </div>
+            <div class="layer-tokens">~800 tokens</div>
+          </div>
+        </div>
+
+        <p class="body-text" style="margin-top: 1rem;"><strong>Total: approximately 2,300 tokens</strong> for a typical journey-mode system prompt. Triage mode is lighter, omitting layers 4, 5, 7, 8, 9, and 10.</p>
+
+        <h3 style="margin-top: 2rem;">Prompt Caching Strategy</h3>
+        <p class="body-text">The system prompt is split into a static prefix and a dynamic suffix. The static prefix (agent personality, persona style, scenario context, guardrails) is marked with a cache control directive. The dynamic suffix (state context, field collector, extracted facts) changes every turn.</p>
+
+        <div class="callout callout-green">
+          <p><strong>Cache hit rate:</strong> The static prefix is tagged with <span class="type-sig">cache_control: { type: "ephemeral" }</span>. When the citizen remains within the same service journey, the prefix is reused from cache. This yields approximately 50% token savings on repeated turns within a journey. The savings compound across multi-turn conversations, which typically run 8&ndash;12 turns.</p>
+        </div>
+
+        <h3 style="margin-top: 2rem;">Structured Output Schema</h3>
+        <p class="body-text">The language model must produce a JSON block at the end of every response. The orchestrator parses this block at pipeline step 8. The schema enforces a consistent contract between the LLM&rsquo;s output and the deterministic validation that follows.</p>
+
+        <div class="code-block">
+          <div class="code-block-label">Required JSON block in LLM response</div>
+          <pre><span class="punct">{</span>
+  <span class="key">"title"</span><span class="punct">:</span> <span class="str">"Renew your driving licence"</span><span class="punct">,</span>
+  <span class="key">"tasks"</span><span class="punct">:</span> <span class="punct">[</span>
+    <span class="punct">{</span>
+      <span class="key">"type"</span><span class="punct">:</span> <span class="str">"form"</span><span class="punct">,</span>
+      <span class="key">"title"</span><span class="punct">:</span> <span class="str">"Confirm your details"</span><span class="punct">,</span>
+      <span class="key">"fields"</span><span class="punct">:</span> <span class="punct">[</span><span class="str">"full_name"</span><span class="punct">,</span> <span class="str">"date_of_birth"</span><span class="punct">,</span> <span class="str">"address"</span><span class="punct">]</span>
+    <span class="punct">}</span>
+  <span class="punct">],</span>
+  <span class="key">"transition"</span><span class="punct">:</span> <span class="str">"details-confirmed"</span><span class="punct">,</span>
+  <span class="key">"facts"</span><span class="punct">:</span> <span class="punct">[</span>
+    <span class="punct">{</span> <span class="key">"key"</span><span class="punct">:</span> <span class="str">"preferred_contact"</span><span class="punct">,</span> <span class="key">"value"</span><span class="punct">:</span> <span class="str">"email"</span> <span class="punct">}</span>
+  <span class="punct">]</span>
+<span class="punct">}</span></pre>
+        </div>
+
+        <p class="body-text">The <span class="type-sig">transition</span> field is validated against the state machine (step 10). If the LLM proposes an illegal transition, it is silently dropped and the state machine remains at its current position. The <span class="type-sig">tasks</span> array may be overridden entirely by deterministic task injection (step 11) at certain states.</p>
+
+        <h3 style="margin-top: 2rem;">Triage Mode vs Journey Mode</h3>
+        <p class="body-text">The agent operates in two modes. Mode selection happens at pipeline step 4 and determines which prompt layers are included and which tools are available.</p>
+
+        <div class="app-grid">
+          <div class="app-card" style="border-top-color: #912b88;">
+            <h4>Triage Mode</h4>
+            <p>No service context. The agent identifies the citizen&rsquo;s need and proposes one or more services. Prompt layers 4, 5, 7, 8, 9, and 10 are omitted. No state machine, no field collector, no consent. The agent works from the full service catalogue to find the best match.</p>
+            <p style="margin-top: 0.5rem; font-size: 0.8rem; color: #505a5f;"><strong>Typical token count:</strong> ~1,200 tokens</p>
+          </div>
+          <div class="app-card" style="border-top-color: #1d70b8;">
+            <h4>Journey Mode</h4>
+            <p>Service selected and artefacts loaded. All 13 prompt layers are active. The state machine tracks progress, the field collector tracks data, and the consent manager gates access. The agent operates within the boundaries defined by the service&rsquo;s artefacts.</p>
+            <p style="margin-top: 0.5rem; font-size: 0.8rem; color: #505a5f;"><strong>Typical token count:</strong> ~2,300 tokens</p>
+          </div>
+        </div>
+
+        <h3 style="margin-top: 2rem;">Agent Personalities</h3>
+        <p class="body-text">The agent personality layer (layer 1) defines the agent&rsquo;s behavioural profile. Two personalities are currently defined, each tuned for different citizen needs.</p>
+
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Personality</th>
+              <th>Behaviour</th>
+              <th>Best For</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>DOT</td>
+              <td>Cautious, step-by-step, asks for explicit confirmation before advancing. Never skips questions, even when data is already known. Prioritises citizen understanding over speed.</td>
+              <td>Vulnerable users, complex services, high-stakes decisions (benefits, legal)</td>
+            </tr>
+            <tr>
+              <td>MAX</td>
+              <td>Proactive, efficient, pre-fills forms and auto-submits where possible. Explains what it has done rather than asking permission first. Prioritises speed while maintaining accuracy.</td>
+              <td>Routine renewals, confident users, repeat interactions</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="callout callout-blue">
+          <p><strong>Personality does not affect deterministic behaviour.</strong> Both DOT and MAX follow the same state machine, the same policy rules, and the same consent requirements. The personality only affects how the agent communicates &mdash; whether it asks before acting or acts before explaining. The platform&rsquo;s guarantees hold regardless of personality.</p>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <!-- Section 7: Service Integration                            -->
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <div class="section section-alt" id="service-integration">
+      <div class="container">
+        <div class="section-heading">
+          <span class="section-number">7</span>
+          <h2>Service Integration</h2>
+        </div>
+        <p class="section-intro">Two strategies for connecting services to the runtime, a tool generation pipeline, and a three-tier service store with gap analysis.</p>
+
+        <h3>Two Service Strategies</h3>
+
+        <div class="app-grid">
+          <div class="app-card" style="border-top-color: #00703c;">
+            <h4>JsonServiceStrategy</h4>
+            <p><span class="pipeline-tag tag-deterministic">deterministic</span></p>
+            <p style="margin-top: 0.5rem;">No tools given to the LLM. Service context is built entirely from structured artefacts and the field collector. All state transitions are proposed by the LLM in its structured output and validated by the orchestrator&rsquo;s state machine.</p>
+            <p style="margin-top: 0.5rem; font-size: 0.8rem; color: #505a5f;"><strong>Best for:</strong> Services with complete, hand-crafted artefact sets. Maximum determinism, minimum LLM autonomy.</p>
+          </div>
+          <div class="app-card" style="border-top-color: #f47738;">
+            <h4>McpServiceStrategy</h4>
+            <p><span class="pipeline-tag tag-ai">tool-based</span></p>
+            <p style="margin-top: 0.5rem;">The LLM receives <span class="type-sig">check_eligibility</span> and <span class="type-sig">advance_state</span> tools via the adapter. It calls these during the agentic loop (step 7). Tool results are parsed for state transitions and fed back into the validation pipeline.</p>
+            <p style="margin-top: 0.5rem; font-size: 0.8rem; color: #505a5f;"><strong>Best for:</strong> Service-graph services that expose department APIs. The LLM has more autonomy but is still bounded by the state machine.</p>
+          </div>
+        </div>
+
+        <h3 style="margin-top: 2.5rem;">Tool Generation Pipeline</h3>
+        <p class="body-text">The server generates a standard set of integration points per service from its structured artefacts. This ensures a consistent interface regardless of the underlying department system.</p>
+
+        <div class="sequence">
+          <div class="sequence-step seq-green">
+            <div class="sequence-label">Load artefacts</div>
+            <div class="sequence-desc">Manifest, policy, consent model, and state model read from the service store.</div>
+          </div>
+          <div class="sequence-step seq-navy">
+            <div class="sequence-label">Generate tools (2 per service)</div>
+            <div class="sequence-desc"><span class="type-sig">check_eligibility</span> &mdash; evaluates policy ruleset against citizen data. <span class="type-sig">advance_state</span> &mdash; proposes a state transition with context.</div>
+          </div>
+          <div class="sequence-step seq-purple">
+            <div class="sequence-label">Generate resources (4 per service)</div>
+            <div class="sequence-desc">Manifest, policy, consent, and state model exposed as typed URIs. Consumers read artefacts without knowing the storage format.</div>
+          </div>
+          <div class="sequence-step seq-orange">
+            <div class="sequence-label">Generate prompts (2 per service)</div>
+            <div class="sequence-desc">Journey template (full service conversation) and eligibility check template (quick check only).</div>
+          </div>
+        </div>
+
+        <h3 style="margin-top: 2.5rem;">Service Store Tiers</h3>
+        <p class="body-text">Services come from three sources, with descending levels of artefact completeness. The store applies precedence rules: a fully described service always overrides a graph entry, which overrides a catalogue entry.</p>
+
+        <div class="tier-grid">
+          <div class="tier-card" style="border-top-color: #00703c;">
+            <h4>Tier 1: Full</h4>
+            <p>Hand-crafted services with complete artefact sets: manifest, policy, state model, consent, and state instructions. Highest precedence. These are the services that work end-to-end through the agent.</p>
+          </div>
+          <div class="tier-card" style="border-top-color: #1d70b8;">
+            <h4>Tier 2: Graph</h4>
+            <p>108 service-graph nodes with metadata, department attribution, and partial artefacts. Sufficient for triage and eligibility checking, but not for full journey orchestration.</p>
+          </div>
+          <div class="tier-card" style="border-top-color: #f47738;">
+            <h4>Tier 3: Catalogue</h4>
+            <p>1,544 GOV.UK services with names and department attribution. Used for service discovery during triage. No artefacts &mdash; the agent can identify the service but cannot orchestrate a journey.</p>
+          </div>
+        </div>
+
+        <h3 style="margin-top: 2rem;">Gap Analysis</h3>
+        <p class="body-text">The Legibility Studio computes per-department coverage by comparing full (Tier 1) services against the total catalogue. This surfaces exactly which services need artefact authoring and in what priority order.</p>
+
+        <div class="callout callout-blue">
+          <p><strong>Coverage formula:</strong> For each department, gap analysis computes <span class="type-sig">full_count / total_count</span>. A department with 3 fully described services out of 47 total has 6.4% coverage. The studio ranks departments by total service volume and highlights the highest-impact gaps &mdash; the services that appear in the most citizen life events.</p>
+        </div>
+
+        <p class="body-text">Integration teams should start with high-volume, cross-departmental services: bereavement notifications, child benefit claims, driving licence renewals. These appear in multiple life events and benefit the most citizens when made fully legible to agents.</p>
+
+        <h3 style="margin-top: 2.5rem;">Artefact Authoring Workflow</h3>
+        <p class="body-text">Departments author artefacts through the Legibility Studio or by editing structured artefacts directly. The following sequence represents the recommended authoring order.</p>
+
+        <div class="pipeline-steps">
+          <div class="pipeline-step">
+            <div class="pipeline-step-num pipeline-step-num-green">1</div>
+            <div class="pipeline-step-content">
+              <div class="pipeline-step-title">Capability manifest</div>
+              <div class="pipeline-step-desc">Start here. Define the service name, department, description, input schema (what data the service needs), and output schema (what the service produces). This is the service&rsquo;s identity card.</div>
+            </div>
+          </div>
+          <div class="pipeline-step">
+            <div class="pipeline-step-num pipeline-step-num-green">2</div>
+            <div class="pipeline-step-content">
+              <div class="pipeline-step-title">Policy ruleset</div>
+              <div class="pipeline-step-desc">Define eligibility rules. Each rule maps a citizen data field to a condition using typed operators. Include the human-readable failure message that will be shown if the rule fails. Mark edge cases that should trigger handoff rather than outright rejection.</div>
+            </div>
+          </div>
+          <div class="pipeline-step">
+            <div class="pipeline-step-num pipeline-step-num-green">3</div>
+            <div class="pipeline-step-content">
+              <div class="pipeline-step-title">State model</div>
+              <div class="pipeline-step-desc">Map the citizen journey as a state machine. Define each state, its allowed transitions, transition guards (conditions that must be met), terminal states, and which states emit receipts. Keep the model linear where possible &mdash; branches add complexity.</div>
+            </div>
+          </div>
+          <div class="pipeline-step">
+            <div class="pipeline-step-num pipeline-step-num-navy">4</div>
+            <div class="pipeline-step-content">
+              <div class="pipeline-step-title">Consent model</div>
+              <div class="pipeline-step-desc">Declare what data the service needs to access and why. Separate required grants (must accept to proceed) from optional grants (can decline without blocking). Each grant needs a plain-English description suitable for a consent card.</div>
+            </div>
+          </div>
+          <div class="pipeline-step">
+            <div class="pipeline-step-num pipeline-step-num-navy">5</div>
+            <div class="pipeline-step-content">
+              <div class="pipeline-step-title">State instructions</div>
+              <div class="pipeline-step-desc">Write per-state DO/DO NOT rules for the agent. These constrain the LLM&rsquo;s behaviour at each point in the journey. Be specific: &ldquo;DO ask for the citizen&rsquo;s driving licence number&rdquo; is better than &ldquo;DO collect required information&rdquo;.</div>
+            </div>
+          </div>
+        </div>
+
+        <h3 style="margin-top: 2rem;">Worked Example: Manifest Structure</h3>
+        <p class="body-text">The capability manifest is the entry point for any service. Here is the structure for a typical renewal service.</p>
+
+        <div class="code-block">
+          <div class="code-block-label">Example: CapabilityManifest</div>
+          <pre><span class="punct">{</span>
+  <span class="key">"id"</span><span class="punct">:</span> <span class="str">"dvla-renew-driving-licence"</span><span class="punct">,</span>
+  <span class="key">"name"</span><span class="punct">:</span> <span class="str">"Renew a driving licence"</span><span class="punct">,</span>
+  <span class="key">"department"</span><span class="punct">:</span> <span class="str">"Driver and Vehicle Licensing Agency"</span><span class="punct">,</span>
+  <span class="key">"description"</span><span class="punct">:</span> <span class="str">"Renew a photocard driving licence that is expiring or has expired."</span><span class="punct">,</span>
+  <span class="key">"version"</span><span class="punct">:</span> <span class="str">"1.0.0"</span><span class="punct">,</span>
+  <span class="key">"input_schema"</span><span class="punct">:</span> <span class="punct">{</span>
+    <span class="key">"required"</span><span class="punct">:</span> <span class="punct">[</span>
+      <span class="str">"full_name"</span><span class="punct">,</span> <span class="str">"date_of_birth"</span><span class="punct">,</span>
+      <span class="str">"driving_licence_number"</span><span class="punct">,</span> <span class="str">"national_insurance_number"</span><span class="punct">,</span>
+      <span class="str">"address"</span><span class="punct">,</span> <span class="str">"photo"</span>
+    <span class="punct">],</span>
+    <span class="key">"optional"</span><span class="punct">:</span> <span class="punct">[</span><span class="str">"email"</span><span class="punct">,</span> <span class="str">"phone"</span><span class="punct">]</span>
+  <span class="punct">},</span>
+  <span class="key">"output_schema"</span><span class="punct">:</span> <span class="punct">{</span>
+    <span class="key">"produces"</span><span class="punct">:</span> <span class="punct">[</span><span class="str">"application_reference"</span><span class="punct">,</span> <span class="str">"expected_delivery_date"</span><span class="punct">]</span>
+  <span class="punct">},</span>
+  <span class="key">"estimated_duration"</span><span class="punct">:</span> <span class="str">"10 minutes"</span><span class="punct">,</span>
+  <span class="key">"fee"</span><span class="punct">:</span> <span class="punct">{</span>
+    <span class="key">"amount"</span><span class="punct">:</span> <span class="num">14.00</span><span class="punct">,</span>
+    <span class="key">"currency"</span><span class="punct">:</span> <span class="str">"GBP"</span>
+  <span class="punct">}</span>
+<span class="punct">}</span></pre>
+        </div>
+
+        <div class="callout callout-green">
+          <p><strong>The input schema drives the field collector.</strong> When the orchestrator loads a service, it seeds the <span class="type-sig">FieldCollector</span> from the manifest&rsquo;s <span class="type-sig">input_schema.required</span> array. Fields already present in the citizen&rsquo;s profile are marked as collected; the remainder become the &ldquo;missing fields&rdquo; list that the agent uses to ask targeted questions.</p>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <!-- Section 8: Testing Strategy                               -->
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <div class="section" id="testing-strategy">
+      <div class="container">
+        <div class="section-heading">
+          <span class="section-number">8</span>
+          <h2>Testing Strategy</h2>
+        </div>
+        <p class="section-intro">Four test layers, strict mocking conventions, and a zero-real-API-calls policy. Tests verify deterministic behaviour without depending on external services.</p>
+
+        <h3>Test Layers</h3>
+
+        <div class="pipeline-steps">
+          <div class="pipeline-step">
+            <div class="pipeline-step-num pipeline-step-num-green">1</div>
+            <div class="pipeline-step-content">
+              <div class="pipeline-step-title">Unit tests</div>
+              <div class="pipeline-step-desc">Per-package tests using Vitest. Each package has its own test configuration. External dependencies (LLM SDK, databases) are always mocked. Focus: individual class behaviour, type contracts, edge cases.</div>
+            </div>
+          </div>
+          <div class="pipeline-step">
+            <div class="pipeline-step-num pipeline-step-num-green">2</div>
+            <div class="pipeline-step-content">
+              <div class="pipeline-step-title">Component tests</div>
+              <div class="pipeline-step-desc">React Testing Library with the React Vitest plugin for JSX transform. Store is mocked via <span class="type-sig">vi.mock("@/lib/store")</span> for complete component isolation. Focus: rendering, user interaction, state-driven UI changes.</div>
+            </div>
+          </div>
+          <div class="pipeline-step">
+            <div class="pipeline-step-num pipeline-step-num-navy">3</div>
+            <div class="pipeline-step-content">
+              <div class="pipeline-step-title">API route tests</div>
+              <div class="pipeline-step-desc">Use <span class="type-sig">// @vitest-environment node</span> override to run in Node context. Test request/response contracts, error handling, and evidence API surface. Focus: HTTP semantics, serialisation, authentication.</div>
+            </div>
+          </div>
+          <div class="pipeline-step">
+            <div class="pipeline-step-num pipeline-step-num-orange">4</div>
+            <div class="pipeline-step-content">
+              <div class="pipeline-step-title">End-to-end tests</div>
+              <div class="pipeline-step-desc">Playwright browser automation against a running development server. Test full citizen journeys from conversation start to receipt generation. Focus: integration, flow completeness, visual regression.</div>
+            </div>
+          </div>
+        </div>
+
+        <h3 style="margin-top: 2.5rem;">Mocking Conventions</h3>
+        <p class="body-text">The codebase enforces a strict no-real-API-calls policy in tests. Every external boundary has a documented mock pattern.</p>
+
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Boundary</th>
+              <th>Mock Pattern</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>LLM SDK</td>
+              <td>Mock <span class="type-sig">messages.create()</span> to return fixture content blocks with controlled structured output.</td>
+            </tr>
+            <tr>
+              <td>Evidence store</td>
+              <td>In-memory <span class="type-sig">DatabaseAdapter</span> implementation. Same interface, no persistence.</td>
+            </tr>
+            <tr>
+              <td>State store</td>
+              <td>Mock via <span class="type-sig">vi.mock("@/lib/store")</span> for Zustand-based component state.</td>
+            </tr>
+            <tr>
+              <td>Department APIs</td>
+              <td>Fixture responses with known eligibility outcomes and state transitions.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3 style="margin-top: 2.5rem;">Example: PolicyEvaluator Unit Test</h3>
+        <p class="body-text">A representative test pattern showing how deterministic classes are tested against known inputs and expected outputs.</p>
+
+        <div class="code-block">
+          <div class="code-block-label">PolicyEvaluator.test.ts</div>
+          <pre><span class="kw">describe</span><span class="punct">(</span><span class="str">"PolicyEvaluator"</span><span class="punct">,</span> <span class="punct">() =&gt; {</span>
+  <span class="kw">it</span><span class="punct">(</span><span class="str">"returns eligible when all rules pass"</span><span class="punct">,</span> <span class="punct">() =&gt; {</span>
+    <span class="kw">const</span> <span class="param">evaluator</span> <span class="punct">=</span> <span class="kw">new</span> <span class="type">PolicyEvaluator</span><span class="punct">();</span>
+    <span class="kw">const</span> <span class="param">result</span> <span class="punct">=</span> <span class="param">evaluator</span><span class="punct">.</span><span class="key">evaluate</span><span class="punct">(</span><span class="param">ruleset</span><span class="punct">,</span> <span class="punct">{</span>
+      <span class="key">age</span><span class="punct">:</span> <span class="num">25</span><span class="punct">,</span>
+      <span class="key">driving_licence_number</span><span class="punct">:</span> <span class="str">"SMITH123"</span><span class="punct">,</span>
+      <span class="key">jurisdiction</span><span class="punct">:</span> <span class="str">"England"</span><span class="punct">,</span>
+    <span class="punct">});</span>
+    <span class="key">expect</span><span class="punct">(</span><span class="param">result</span><span class="punct">.</span><span class="key">eligible</span><span class="punct">).</span><span class="key">toBe</span><span class="punct">(</span><span class="bool">true</span><span class="punct">);</span>
+    <span class="key">expect</span><span class="punct">(</span><span class="param">result</span><span class="punct">.</span><span class="key">passed</span><span class="punct">).</span><span class="key">toHaveLength</span><span class="punct">(</span><span class="num">3</span><span class="punct">);</span>
+  <span class="punct">});</span>
+
+  <span class="kw">it</span><span class="punct">(</span><span class="str">"returns ineligible with reason when a rule fails"</span><span class="punct">,</span> <span class="punct">() =&gt; {</span>
+    <span class="kw">const</span> <span class="param">result</span> <span class="punct">=</span> <span class="param">evaluator</span><span class="punct">.</span><span class="key">evaluate</span><span class="punct">(</span><span class="param">ruleset</span><span class="punct">,</span> <span class="punct">{</span>
+      <span class="key">age</span><span class="punct">:</span> <span class="num">14</span><span class="punct">,</span>
+    <span class="punct">});</span>
+    <span class="key">expect</span><span class="punct">(</span><span class="param">result</span><span class="punct">.</span><span class="key">eligible</span><span class="punct">).</span><span class="key">toBe</span><span class="punct">(</span><span class="bool">false</span><span class="punct">);</span>
+    <span class="key">expect</span><span class="punct">(</span><span class="param">result</span><span class="punct">.</span><span class="key">failed</span><span class="punct">[</span><span class="num">0</span><span class="punct">].</span><span class="key">reason_if_failed</span><span class="punct">)</span>
+      <span class="punct">.</span><span class="key">toContain</span><span class="punct">(</span><span class="str">"at least 16"</span><span class="punct">);</span>
+  <span class="punct">});</span>
+<span class="punct">});</span></pre>
+        </div>
+
+        <h3 style="margin-top: 2.5rem;">Running Tests</h3>
+
+        <div class="code-block">
+          <div class="code-block-label">Commands</div>
+          <pre><span class="comment"># All packages via workspace runner</span>
+<span class="str">npm test</span>
+
+<span class="comment"># End-to-end (requires running dev server)</span>
+<span class="str">cd apps/citizen &amp;&amp; npx playwright test</span></pre>
+        </div>
+
+        <div class="callout callout-red">
+          <p><strong>Never make real API calls in tests.</strong> Every test that touches an external boundary must use the documented mock pattern. Tests that make network requests will fail in CI and are rejected in review. The evidence store uses an in-memory adapter; the LLM SDK returns fixture responses; department APIs return controlled outcomes.</p>
+        </div>
+
+        <h3 style="margin-top: 2.5rem;">Test Environment Configuration</h3>
+        <p class="body-text">Each package has its own <span class="type-sig">vitest.config.ts</span> with environment-specific settings. Most tests run in the default jsdom environment. API route tests override to Node.</p>
+
+        <div class="code-block">
+          <div class="code-block-label">API route test environment override</div>
+          <pre><span class="comment">// @vitest-environment node</span>
+<span class="kw">import</span> <span class="punct">{</span> <span class="param">describe</span><span class="punct">,</span> <span class="param">it</span><span class="punct">,</span> <span class="param">expect</span><span class="punct">,</span> <span class="param">vi</span> <span class="punct">}</span> <span class="kw">from</span> <span class="str">"vitest"</span><span class="punct">;</span>
+
+<span class="kw">describe</span><span class="punct">(</span><span class="str">"POST /api/chat"</span><span class="punct">,</span> <span class="punct">() =&gt; {</span>
+  <span class="kw">it</span><span class="punct">(</span><span class="str">"returns 400 when message is empty"</span><span class="punct">,</span> <span class="kw">async</span> <span class="punct">() =&gt; {</span>
+    <span class="kw">const</span> <span class="param">response</span> <span class="punct">=</span> <span class="kw">await</span> <span class="key">POST</span><span class="punct">(</span>
+      <span class="kw">new</span> <span class="type">Request</span><span class="punct">(</span><span class="str">"http://localhost/api/chat"</span><span class="punct">,</span> <span class="punct">{</span>
+        <span class="key">method</span><span class="punct">:</span> <span class="str">"POST"</span><span class="punct">,</span>
+        <span class="key">body</span><span class="punct">:</span> <span class="type">JSON</span><span class="punct">.</span><span class="key">stringify</span><span class="punct">({</span> <span class="key">message</span><span class="punct">:</span> <span class="str">""</span> <span class="punct">}),</span>
+      <span class="punct">})</span>
+    <span class="punct">);</span>
+    <span class="key">expect</span><span class="punct">(</span><span class="param">response</span><span class="punct">.</span><span class="key">status</span><span class="punct">).</span><span class="key">toBe</span><span class="punct">(</span><span class="num">400</span><span class="punct">);</span>
+  <span class="punct">});</span>
+<span class="punct">});</span></pre>
+        </div>
+
+        <h3 style="margin-top: 2rem;">Component Test Pattern</h3>
+        <p class="body-text">Component tests mock the Zustand store to control application state, then render components in isolation and assert on their output.</p>
+
+        <div class="code-block">
+          <div class="code-block-label">Component test with store mock</div>
+          <pre><span class="kw">import</span> <span class="punct">{</span> <span class="param">render</span><span class="punct">,</span> <span class="param">screen</span> <span class="punct">}</span> <span class="kw">from</span> <span class="str">"@testing-library/react"</span><span class="punct">;</span>
+<span class="kw">import</span> <span class="punct">{</span> <span class="param">vi</span> <span class="punct">}</span> <span class="kw">from</span> <span class="str">"vitest"</span><span class="punct">;</span>
+
+<span class="key">vi</span><span class="punct">.</span><span class="key">mock</span><span class="punct">(</span><span class="str">"@/lib/store"</span><span class="punct">,</span> <span class="punct">() =&gt; ({</span>
+  <span class="key">useStore</span><span class="punct">:</span> <span class="punct">() =&gt; ({</span>
+    <span class="key">persona</span><span class="punct">:</span> <span class="punct">{</span> <span class="key">id</span><span class="punct">:</span> <span class="str">"margaret"</span><span class="punct">,</span> <span class="key">name</span><span class="punct">:</span> <span class="str">"Margaret Chen"</span> <span class="punct">},</span>
+    <span class="key">currentService</span><span class="punct">:</span> <span class="type">null</span><span class="punct">,</span>
+    <span class="key">messages</span><span class="punct">:</span> <span class="punct">[],</span>
+  <span class="punct">}),</span>
+<span class="punct">}));</span>
+
+<span class="kw">describe</span><span class="punct">(</span><span class="str">"Dashboard"</span><span class="punct">,</span> <span class="punct">() =&gt; {</span>
+  <span class="kw">it</span><span class="punct">(</span><span class="str">"renders persona name"</span><span class="punct">,</span> <span class="punct">() =&gt; {</span>
+    <span class="key">render</span><span class="punct">(</span><span class="type">&lt;Dashboard /&gt;</span><span class="punct">);</span>
+    <span class="key">expect</span><span class="punct">(</span><span class="param">screen</span><span class="punct">.</span><span class="key">getByText</span><span class="punct">(</span><span class="str">"Margaret Chen"</span><span class="punct">)).</span><span class="key">toBeInTheDocument</span><span class="punct">();</span>
+  <span class="punct">});</span>
+<span class="punct">});</span></pre>
+        </div>
+
+        <h3 style="margin-top: 2rem;">Coverage Priorities</h3>
+        <p class="body-text">Not all code needs equal test coverage. The following priorities guide test investment.</p>
+
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Priority</th>
+              <th>What to Test</th>
+              <th>Why</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Critical</td>
+              <td>PolicyEvaluator, StateMachine, ConsentManager</td>
+              <td>These enforce citizen-facing guarantees. A bug here means wrong eligibility decisions or consent violations.</td>
+            </tr>
+            <tr>
+              <td>High</td>
+              <td>Orchestrator pipeline steps 8&ndash;14</td>
+              <td>The validation and override layer. Bugs here mean the LLM&rsquo;s output reaches citizens without proper checks.</td>
+            </tr>
+            <tr>
+              <td>High</td>
+              <td>TraceEmitter, ReceiptGenerator</td>
+              <td>Audit trail integrity. Missing or malformed events break replay and accountability.</td>
+            </tr>
+            <tr>
+              <td>Medium</td>
+              <td>ServiceStrategy implementations</td>
+              <td>Tool dispatch and context building. Less critical because the orchestrator validates all outputs.</td>
+            </tr>
+            <tr>
+              <td>Medium</td>
+              <td>React components</td>
+              <td>UI rendering and interaction. Important but less safety-critical than backend logic.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+
+    <!-- ── Closing ── -->
+    <div class="closing">
+      <div class="container">
+        <p>The architecture enforces a single principle: the language model generates conversation; deterministic code enforces rules. Every integration point, every package boundary, and every type signature exists to maintain that separation.</p>
+      </div>
+    </div>
+
+    <!-- ── Footer ── -->
+    <footer class="footer">
+      <div class="container">
+        Agentic Legibility Stack &middot; Technical Architecture Reference &middot; March 2026
+      </div>
+    </footer>
+
+  </body>
+</html>

@@ -112,6 +112,10 @@ interface AppStore {
   // Consent preferences
   consentPreferences: ConsentPreference[];
 
+  // Life event mode (chat-driven multi-service journey)
+  lifeEventMode: boolean;
+  lifeEventId: string | null;
+
   // UI overlays
   settingsPaneOpen: boolean;
   personaSelectorOpen: boolean;
@@ -319,6 +323,61 @@ function getDismissedItems(personaId: string): string[] {
   }
 }
 
+/** Create an ActivePlan from a life event without navigating. Reusable by startPlan and chat triage. */
+function createActivePlan(
+  lifeEvent: LifeEventInfo,
+  personaData: PersonaData | null,
+): ActivePlan | null {
+  if (!lifeEvent.plan) return null;
+
+  const entryIds = new Set(lifeEvent.plan.entryServiceIds);
+  const serviceProgress: Record<string, ServicePlanStatus> = {};
+  for (const svc of lifeEvent.services) {
+    serviceProgress[svc.id] = entryIds.has(svc.id) ? "available" : "locked";
+  }
+
+  const irrelevant = computePlanRelevance(lifeEvent.services, personaData);
+  const skipReasons: Record<string, string> = {};
+
+  for (const [svcId, result] of Object.entries(irrelevant)) {
+    serviceProgress[svcId] = "skipped";
+    skipReasons[svcId] = result.reason;
+  }
+
+  // Unlock downstream services whose prerequisites are now all skipped
+  const edges = lifeEvent.plan.edges;
+  for (const skippedId of Object.keys(irrelevant)) {
+    const downstreamIds = edges
+      .filter((e) => e.from === skippedId)
+      .map((e) => e.to);
+    for (const toId of downstreamIds) {
+      if (serviceProgress[toId] !== "locked") continue;
+      if (irrelevant[toId]) continue;
+      const prereqIds = edges.filter((e) => e.to === toId).map((e) => e.from);
+      const allMet = prereqIds.every(
+        (pid) =>
+          serviceProgress[pid] === "completed" ||
+          serviceProgress[pid] === "skipped",
+      );
+      if (allMet) serviceProgress[toId] = "available";
+    }
+  }
+
+  return {
+    id: `plan_${lifeEvent.id}_${Date.now()}`,
+    lifeEventId: lifeEvent.id,
+    lifeEventName: lifeEvent.name,
+    lifeEventIcon: lifeEvent.icon,
+    startedAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    serviceProgress,
+    serviceConversations: {},
+    skipReasons,
+    plan: lifeEvent.plan,
+    services: lifeEvent.services,
+  };
+}
+
 export {
   getConversations,
   deleteConversation,
@@ -326,6 +385,7 @@ export {
   saveTasks,
   getActivePlans,
   getDismissedItems,
+  createActivePlan,
 };
 
 let toastTimer: ReturnType<typeof setTimeout> | null = null;
@@ -369,6 +429,8 @@ export const useAppStore = create<AppStore>((set, get) => ({
   walletCredentials: [],
   earnedCredentials: [],
   consentPreferences: [],
+  lifeEventMode: false,
+  lifeEventId: null,
   settingsPaneOpen: false,
   personaSelectorOpen: false,
   bottomSheet: { type: null },
@@ -618,6 +680,17 @@ export const useAppStore = create<AppStore>((set, get) => ({
           ucState: state.ucState,
           ucStateHistory: state.ucStateHistory,
           serviceMode: state.serviceMode,
+          // Life event mode: pass context for multi-service awareness
+          ...(state.lifeEventMode && state.lifeEventId
+            ? {
+                lifeEventId: state.lifeEventId,
+                lifeEventCompletedServices: state.activePlan
+                  ? Object.entries(state.activePlan.serviceProgress)
+                      .filter(([, s]) => s === "completed")
+                      .map(([id]) => id)
+                  : [],
+              }
+            : {}),
         }),
       });
 
@@ -776,6 +849,32 @@ export const useAppStore = create<AppStore>((set, get) => ({
         }
       }
 
+      // Update active plan with service completions (life event mode)
+      if (data.serviceCompletions && data.serviceCompletions.length > 0 && state.activePlan && state.persona) {
+        const updatedPlan = { ...state.activePlan };
+        const progress = { ...updatedPlan.serviceProgress };
+        for (const completion of data.serviceCompletions) {
+          progress[completion.serviceId] = "completed";
+          // Unlock downstream services
+          const edges = updatedPlan.plan?.edges || [];
+          const downstreamIds = edges
+            .filter((e) => e.from === completion.serviceId)
+            .map((e) => e.to);
+          for (const toId of downstreamIds) {
+            if (progress[toId] !== "locked") continue;
+            const prereqIds = edges.filter((e) => e.to === toId).map((e) => e.from);
+            const allMet = prereqIds.every(
+              (pid) => progress[pid] === "completed" || progress[pid] === "skipped",
+            );
+            if (allMet) progress[toId] = "available";
+          }
+        }
+        updatedPlan.serviceProgress = progress;
+        updatedPlan.updatedAt = new Date().toISOString();
+        saveActivePlan(state.persona, updatedPlan);
+        set({ activePlan: updatedPlan });
+      }
+
       // Handle service/need proposals — transition from triage to service
       if (data.serviceProposal) {
         set({
@@ -785,16 +884,61 @@ export const useAppStore = create<AppStore>((set, get) => ({
         conversation.service = data.serviceProposal.serviceId;
         saveConversation(state.persona, conversation);
       } else if (data.needProposal) {
-        // For multi-service needs, store the first service as the primary
-        // but the need context is carried in the conversation
-        const primaryService = data.needProposal.services[0];
-        if (primaryService) {
-          set({
-            currentService: primaryService as ServiceType,
-            serviceName: data.needProposal.need,
-          });
-          conversation.service = primaryService;
-          saveConversation(state.persona, conversation);
+        if (data.lifeEventContext && state.persona) {
+          // Life-event-aware path: create plan behind the scenes, stay in chat
+          const lifeEventInfo: LifeEventInfo = {
+            id: data.lifeEventContext.lifeEventId,
+            name: data.lifeEventContext.lifeEventName,
+            icon: data.lifeEventContext.lifeEventIcon,
+            desc: "",
+            entryNodeCount: data.lifeEventContext.plan?.entryServiceIds.length ?? 0,
+            totalServiceCount: data.lifeEventContext.services.length,
+            services: data.lifeEventContext.services.map((s) => ({
+              id: s.id,
+              name: s.name,
+              dept: s.dept,
+              serviceType: s.serviceType,
+              desc: s.desc,
+              proactive: false,
+              gated: false,
+              govuk_url: "",
+              eligibility_summary: "",
+            })),
+            plan: data.lifeEventContext.plan,
+          };
+
+          const plan = createActivePlan(lifeEventInfo, state.personaData);
+          if (plan) {
+            saveActivePlan(state.persona, plan);
+            set({
+              activePlanId: plan.id,
+              activePlan: plan,
+              lifeEventMode: true,
+              lifeEventId: data.lifeEventContext.lifeEventId,
+            });
+          }
+
+          // Set first service as current but stay in chat
+          const primaryService = data.needProposal.services[0];
+          if (primaryService) {
+            set({
+              currentService: primaryService as ServiceType,
+              serviceName: data.lifeEventContext.lifeEventName,
+            });
+            conversation.service = primaryService;
+            saveConversation(state.persona, conversation);
+          }
+        } else {
+          // Fallback: no life event match — pick first service
+          const primaryService = data.needProposal.services[0];
+          if (primaryService) {
+            set({
+              currentService: primaryService as ServiceType,
+              serviceName: data.needProposal.need,
+            });
+            conversation.service = primaryService;
+            saveConversation(state.persona, conversation);
+          }
         }
       }
     } catch (error) {
@@ -1083,59 +1227,8 @@ export const useAppStore = create<AppStore>((set, get) => ({
       return;
     }
 
-    const entryIds = new Set(lifeEvent.plan.entryServiceIds);
-    const serviceProgress: Record<string, ServicePlanStatus> = {};
-    for (const svc of lifeEvent.services) {
-      serviceProgress[svc.id] = entryIds.has(svc.id) ? "available" : "locked";
-    }
-
-    // Auto-skip services that aren't relevant to this persona
-    const irrelevant = computePlanRelevance(
-      lifeEvent.services,
-      state.personaData,
-    );
-    const skipReasons: Record<string, string> = {};
-
-    for (const [svcId, result] of Object.entries(irrelevant)) {
-      serviceProgress[svcId] = "skipped";
-      skipReasons[svcId] = result.reason;
-    }
-
-    // Unlock downstream services whose prerequisites are now all skipped
-    const edges = lifeEvent.plan.edges;
-    for (const [skippedId] of Object.entries(irrelevant)) {
-      const downstreamIds = edges
-        .filter((e) => e.from === skippedId)
-        .map((e) => e.to);
-      for (const toId of downstreamIds) {
-        if (serviceProgress[toId] !== "locked") continue;
-        // Skip if this downstream service is also irrelevant
-        if (irrelevant[toId]) continue;
-        const prereqIds = edges.filter((e) => e.to === toId).map((e) => e.from);
-        const allMet = prereqIds.every(
-          (pid) =>
-            serviceProgress[pid] === "completed" ||
-            serviceProgress[pid] === "skipped",
-        );
-        if (allMet) {
-          serviceProgress[toId] = "available";
-        }
-      }
-    }
-
-    const plan: ActivePlan = {
-      id: `plan_${lifeEvent.id}_${Date.now()}`,
-      lifeEventId: lifeEvent.id,
-      lifeEventName: lifeEvent.name,
-      lifeEventIcon: lifeEvent.icon,
-      startedAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      serviceProgress,
-      serviceConversations: {},
-      skipReasons,
-      plan: lifeEvent.plan,
-      services: lifeEvent.services,
-    };
+    const plan = createActivePlan(lifeEvent, state.personaData);
+    if (!plan) return;
 
     saveActivePlan(state.persona, plan);
     set({ activePlanId: plan.id, activePlan: plan });
