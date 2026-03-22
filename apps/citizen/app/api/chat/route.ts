@@ -1821,6 +1821,63 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    // ── Life event detection for demo mode ──
+    // Check if the scripted response mentions bereavement/multi-service needs
+    // and attach life event context so the store creates a plan
+    let demoLifeEventContext: ChatOutput["lifeEventContext"] | undefined;
+    const bereavementPatterns = /bereavement|someone.*died|husband.*died|passed away|tell us once.*bereavement/i;
+    if (bereavementPatterns.test(userText) || bereavementPatterns.test(scripted.response)) {
+      try {
+        const engine = getGraphEngine();
+        const { matchLifeEventById } = await import("@/lib/life-event-matcher");
+        const bereavementLE = matchLifeEventById("bereavement", engine);
+        if (bereavementLE) {
+          const allServices = engine.getLifeEventServices(bereavementLE.id);
+          const personaDataForFilter = await loadPersonaData(persona);
+          const { checkPersonaEligibility } = await import("@/lib/eligibility-filter");
+          const excludedIds = new Set<string>();
+          if (personaDataForFilter) {
+            for (const node of allServices) {
+              const eligResult = checkPersonaEligibility(
+                node.eligibility as unknown as Parameters<typeof checkPersonaEligibility>[0],
+                personaDataForFilter,
+              );
+              if (!eligResult.eligible) excludedIds.add(node.id);
+            }
+          }
+          const filteredServices = allServices
+            .filter((n) => !excludedIds.has(n.id))
+            .map((n) => ({ id: n.id, name: n.name, dept: n.dept, serviceType: n.serviceType, desc: n.desc }));
+
+          const plan = engine.getLifeEventPlan(bereavementLE.id);
+          const remainingIds = new Set(filteredServices.map((s) => s.id));
+
+          demoLifeEventContext = {
+            lifeEventId: bereavementLE.id,
+            lifeEventName: bereavementLE.name,
+            lifeEventIcon: bereavementLE.icon ?? "",
+            services: filteredServices,
+            plan: plan ? {
+              entryServiceIds: plan.entryServiceIds.filter((id: string) => remainingIds.has(id)),
+              groups: plan.groups
+                .map((g: { label: string; depth: number; serviceIds: string[] }) => ({
+                  ...g,
+                  serviceIds: g.serviceIds.filter((id: string) => remainingIds.has(id)),
+                }))
+                .filter((g: { serviceIds: string[] }) => g.serviceIds.length > 0),
+              edges: plan.edges.filter(
+                (e: { from: string; to: string }) => remainingIds.has(e.from) && remainingIds.has(e.to),
+              ),
+            } : undefined,
+            mergedFieldPrompt: "",
+          };
+          console.log(`   [Demo] Attached bereavement life event context (${filteredServices.length} services)`);
+        }
+      } catch (err) {
+        console.warn("Demo life event detection failed:", err);
+      }
+    }
+
     return NextResponse.json({
       response: scripted.response,
       reasoning: scripted.reasoning,
@@ -1830,6 +1887,12 @@ export async function POST(request: NextRequest) {
       traceId,
       consentRequests: scripted.consentRequests,
       outcomes,
+      needProposal: demoLifeEventContext ? {
+        need: "Help after bereavement",
+        services: demoLifeEventContext.services.map((s) => s.id),
+        sharedDataNeeded: ["deceased_name", "date_of_death", "national_insurance_number"],
+      } : undefined,
+      lifeEventContext: demoLifeEventContext,
     });
     } // end demo mode
 
