@@ -320,16 +320,16 @@ export function ChatView() {
             );
           }
 
-          // Check for [SERVICE:id] markers in assistant messages
+          // Check for [SERVICE:id] or [MENTION:id] markers in assistant messages
           const hasServiceMarkers =
             !isUser &&
             typeof msg.content === "string" &&
-            /\[SERVICE:[^\]]+\]/.test(msg.content);
+            /\[(SERVICE|MENTION):[^\]]+\]/.test(msg.content);
 
           if (hasServiceMarkers) {
-            // Split message on [SERVICE:id] markers and interleave text + cards
+            // Split message on markers and interleave text + cards
             const parts = (msg.content as string).split(
-              /(\[SERVICE:[^\]]+\])/g,
+              /(\[(?:SERVICE|MENTION):[^\]]+\])/g,
             );
             return (
               <div
@@ -338,10 +338,11 @@ export function ChatView() {
               >
                 {parts.map((part, partIdx) => {
                   const serviceMatch = part.match(
-                    /\[SERVICE:([^\]]+)\]/,
+                    /\[(SERVICE|MENTION):([^\]]+)\]/,
                   );
                   if (serviceMatch) {
-                    const svcId = serviceMatch[1];
+                    const markerType = serviceMatch[1]; // "SERVICE" or "MENTION"
+                    const svcId = serviceMatch[2];
                     const svcData =
                       SERVICE_STEP_DATA[svcId];
                     if (svcData) {
@@ -353,6 +354,7 @@ export function ChatView() {
                             dept={svcData.dept}
                             description={svcData.description}
                             urgent={svcData.urgent}
+                            variant={markerType === "MENTION" ? "mention" : "step"}
                           />
                         </div>
                       );

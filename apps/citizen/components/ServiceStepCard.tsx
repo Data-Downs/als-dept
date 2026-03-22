@@ -53,6 +53,9 @@ interface ServiceStepCardProps {
   description?: string;
   status?: "upcoming" | "ready" | "done";
   urgent?: boolean;
+  /** "step" = full card with accent bar (for highlighted next action).
+   *  "mention" = quiet list item with left border (for conversational lists). */
+  variant?: "step" | "mention";
 }
 
 export function ServiceStepCard({
@@ -62,9 +65,58 @@ export function ServiceStepCard({
   description,
   status = "upcoming",
   urgent,
+  variant = "step",
 }: ServiceStepCardProps) {
   const accentColour = getDeptColour(dept);
 
+  // ── Mention variant: quiet, assured list item ──
+  if (variant === "mention") {
+    return (
+      <div
+        className="my-1.5 flex items-start gap-3 rounded-lg bg-white/60 pl-3 pr-4 py-2.5 border-l-[3px]"
+        style={{ borderLeftColor: accentColour }}
+      >
+        {/* Status circle */}
+        <div className="mt-0.5 shrink-0">
+          {status === "done" ? (
+            <div className="w-[18px] h-[18px] rounded-full bg-govuk-green flex items-center justify-center">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="20 6 9 17 4 12" />
+              </svg>
+            </div>
+          ) : (
+            <div
+              className="w-[18px] h-[18px] rounded-full border-2"
+              style={{ borderColor: accentColour }}
+            />
+          )}
+        </div>
+        {/* Content */}
+        <div className="min-w-0 flex-1">
+          <p className="text-[13px] font-semibold text-govuk-text leading-snug">
+            {name}
+          </p>
+          {description && (
+            <p className="text-[11px] text-govuk-dark-grey mt-0.5 leading-relaxed">
+              {description}
+            </p>
+          )}
+          {urgent && (
+            <span className="inline-flex items-center gap-1 mt-1 text-[10px] font-medium text-red-700">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="10" />
+                <line x1="12" y1="8" x2="12" y2="12" />
+                <line x1="12" y1="16" x2="12.01" y2="16" />
+              </svg>
+              Should be done within 5 days
+            </span>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  // ── Step variant: full card with accent bar (default) ──
   return (
     <div className="my-2 rounded-xl overflow-hidden shadow-sm bg-white border border-gray-100">
       {/* Accent bar */}
@@ -133,34 +185,34 @@ export const SERVICE_STEP_DATA: Record<
     name: "Register the death",
     dept: "GRO",
     description:
-      "Must be done within 5 days. You'll need to visit the register office in person with the medical certificate.",
+      "Registering and getting official certificates. Should be done within 5 days at the register office.",
     urgent: true,
   },
   "dwp-tell-us-once": {
     name: "Tell Us Once",
     dept: "DWP",
     description:
-      "Notifies HMRC, DWP, DVLA, the Passport Office, and your local council — all at once.",
+      "Tell government departments in one go — so you don't have to repeat yourself to each one.",
   },
   "dwp-bereavement-support": {
     name: "Bereavement Support Payment",
     dept: "DWP",
     description:
-      "Financial support for the surviving spouse — a lump sum and monthly payments.",
+      "Financial support you may be entitled to as a spouse — a lump sum and monthly payments.",
   },
   "gro-death-certificate": {
     name: "Death certificate",
     dept: "GRO",
-    description: "Certified copy issued after death registration. Needed for probate.",
+    description: "Official certified copy, issued after registration. Needed for probate and banks.",
   },
   "hmcts-probate": {
-    name: "Apply for probate",
+    name: "Probate",
     dept: "HMCTS",
     description:
-      "Legal authority to manage the estate — access bank accounts, sell property.",
+      "The legal process for managing the estate — accessing bank accounts, property, and settling affairs.",
   },
   "hmrc-iht400": {
-    name: "Inheritance tax return",
+    name: "Inheritance tax",
     dept: "HMRC",
     description: "Assess whether inheritance tax is due on the estate.",
   },

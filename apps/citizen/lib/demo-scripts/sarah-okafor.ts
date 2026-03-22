@@ -21,15 +21,18 @@ export const SARAH_OKAFOR_CHAT: ScriptedEntry[] = [
     response: {
       response: `Oh, Sarah. I'm so sorry about David.
 
-You don't need to figure any of this out on your own, and nothing needs to happen right this moment. I'm here whenever you're ready.
+You don't need to figure any of this out on your own. There are a few things that will need to happen, but none of them need to happen right now — and I'll be here to help with all of them.
 
-When you do feel able, the most important first step is this:
+Here's what I can take care of with you:
 
-[SERVICE:gro-register-death]
+[MENTION:gro-register-death]
+[MENTION:dwp-tell-us-once]
+[MENTION:dwp-bereavement-support]
+[MENTION:hmcts-probate]
 
-I can help you with everything else after that — notifying government departments, financial support, and David's estate. But none of that needs to happen today.
+You don't need to do everything today. But when you're ready, the first step is registering the death — I can walk you through exactly what's needed.
 
-Would you like me to help with the registration, or would you rather I just make a note and we come back to this when you're ready?`,
+Would you like to start with that, or would you rather come back to this another time?`,
       reasoning:
         "Sarah's husband David died on 26 February 2026. She is the named executor. Leading with compassion and offering just one concrete step (death registration — time-sensitive). Not overwhelming her with a full list. The SERVICE marker will render as a compact card. Offering to pause shows respect for her emotional state.",
       tasks: [],
@@ -50,11 +53,10 @@ Would you like me to help with the registration, or would you rather I just make
 
 When you're ready, there are two more things I can help with:
 
-[SERVICE:dwp-bereavement-support]
+[MENTION:dwp-bereavement-support]
+[MENTION:hmcts-probate]
 
-[SERVICE:hmcts-probate]
-
-There's no rush on either of these. Just let me know when you'd like to continue.`,
+There's no rush on either. Just let me know when you'd like to continue.`,
       reasoning:
         "Consent was granted. Triggering three outcomes at once: Tell Us Once notification, death registration, and death certificate. This is the first 'wow' moment — three official documents/confirmations materialising in one go. Being gentle and not rushing her to the next step.",
       tasks: [],
@@ -235,11 +237,9 @@ Here are your confirmations:`,
     response: {
       response: `I'm here whenever you need me, Sarah. Here's what I can help with:
 
-[SERVICE:dwp-tell-us-once]
-
-[SERVICE:dwp-bereavement-support]
-
-[SERVICE:hmcts-probate]
+[MENTION:dwp-tell-us-once]
+[MENTION:dwp-bereavement-support]
+[MENTION:hmcts-probate]
 
 Just let me know which feels right, or if you'd like me to explain any of these.`,
       reasoning:
