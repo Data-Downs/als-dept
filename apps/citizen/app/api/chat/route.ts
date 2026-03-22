@@ -50,6 +50,7 @@ import {
   getInferredStore,
   getServiceAccessStore,
   getSubmittedStore,
+  getConsentPreferenceStore,
 } from "@/lib/personal-data-store";
 
 // ── AnthropicAdapter — the ONLY Anthropic SDK usage ──
@@ -648,6 +649,11 @@ type ChatOutput = OrchestratorOutput & {
   cardRequests?: CardRequest[];
   interactionType?: string;
   outcomes?: JourneyOutcome[];
+  resolvedConsents?: Array<{
+    grantId: string;
+    preferenceId: string;
+    reason: string;
+  }>;
 };
 
 async function chatHandler(input: unknown): Promise<ChatOutput> {
@@ -1371,8 +1377,84 @@ async function chatHandler(input: unknown): Promise<ChatOutput> {
     `   Done. Tools: ${result.toolsUsed.length > 0 ? result.toolsUsed.join(", ") : "none"}${result.conversationTitle ? `, Title: "${result.conversationTitle}"` : ""}${result.tasks.length > 0 ? `, Tasks: ${result.tasks.length}` : ""}${cardRequests.length > 0 ? `, Cards: ${cardRequests.map((c) => c.cardType).join(", ")}` : ""}${outcomes ? `, Outcomes: ${outcomes.length}` : ""}`,
   );
 
+  // ── Resolve consent requests against standing preferences ──
+  let resolvedConsents: Array<{
+    grantId: string;
+    preferenceId: string;
+    reason: string;
+  }> = [];
+  let filteredConsentRequests = result.consentRequests;
+
+  if (result.consentRequests && result.consentRequests.length > 0 && consentModelRaw) {
+    try {
+      const prefStore = await getConsentPreferenceStore();
+      const manifest = await loadManifest(serviceId);
+      const department = (manifest as Record<string, unknown>)?.department as string || "";
+      const grants = (consentModelRaw.grants || []) as Array<Record<string, unknown>>;
+      const typedGrants = grants.map((g) => ({
+        id: g.id as string,
+        description: g.description as string,
+        data_shared: g.data_shared as string[],
+        source: g.source as string,
+        purpose: g.purpose as string,
+        duration: (g.duration as "session" | "until-revoked") || "session",
+        required: (g.required as boolean) ?? true,
+      }));
+
+      const resolutions = await prefStore.resolve(
+        persona,
+        typedGrants,
+        serviceId,
+        department,
+      );
+
+      // Separate auto-resolved from those needing citizen input
+      const autoResolved = resolutions.filter((r) => r.resolved && r.decision === "granted");
+      const unresolvedIds = new Set(
+        resolutions.filter((r) => !r.resolved || r.decision !== "granted").map((r) => r.grantId),
+      );
+
+      if (autoResolved.length > 0) {
+        resolvedConsents = autoResolved.map((r) => ({
+          grantId: r.grantId,
+          preferenceId: r.matchedPreferenceId || "",
+          reason: r.reason || "Matched standing preference",
+        }));
+
+        // Record auto-resolved grants in service access store
+        const accessStoreInstance = await getServiceAccessStore();
+        for (const resolution of autoResolved) {
+          const grant = typedGrants.find((g) => g.id === resolution.grantId);
+          if (!grant) continue;
+          for (const field of grant.data_shared) {
+            await accessStoreInstance.grant(persona, {
+              serviceId,
+              fieldKey: field,
+              dataTier: "tier2",
+              purpose: grant.purpose,
+              consentRecordId: resolution.matchedPreferenceId,
+            });
+          }
+        }
+
+        console.log(
+          `   Consent: ${autoResolved.length} auto-resolved, ${unresolvedIds.size} need citizen input`,
+        );
+      }
+
+      // Filter consent requests to only those needing citizen input
+      filteredConsentRequests = result.consentRequests.filter((r) =>
+        unresolvedIds.has(r.id),
+      );
+    } catch (err) {
+      console.warn("Consent preference resolution failed, falling back:", err);
+    }
+  }
+
   return {
     ...result,
+    consentRequests: filteredConsentRequests,
+    resolvedConsents: resolvedConsents.length > 0 ? resolvedConsents : undefined,
     cardRequests: cardRequests.length > 0 ? cardRequests : undefined,
     interactionType: resolvedInteractionType,
     outcomes,

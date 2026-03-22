@@ -19,8 +19,9 @@ import type {
   ToastMessage,
   TaskField,
 } from "./types";
-import type { CardRequest, PipelineTrace } from "@als/schemas";
+import type { CardRequest, PipelineTrace, ConsentPreference } from "@als/schemas";
 import type { JourneyOutcome } from "./outcome-types";
+import type { WalletCredential } from "@als/identity/src/credential-types";
 import { getAllTerminalStateIds } from "@als/schemas";
 import { computePlanRelevance } from "./plan-relevance";
 
@@ -66,6 +67,11 @@ interface AppStore {
   pendingConsent: ConsentGrant[];
   consentDecisions: Record<string, "granted" | "denied">;
   consentSubmitted: boolean;
+  resolvedConsents: Array<{
+    grantId: string;
+    preferenceId: string;
+    reason: string;
+  }>;
   lastResponseTasks: Array<{
     id: string;
     description: string;
@@ -98,6 +104,13 @@ interface AppStore {
   // Active plans
   activePlanId: string | null;
   activePlan: ActivePlan | null;
+
+  // Wallet
+  walletCredentials: WalletCredential[];
+  earnedCredentials: WalletCredential[];
+
+  // Consent preferences
+  consentPreferences: ConsentPreference[];
 
   // UI overlays
   settingsPaneOpen: boolean;
@@ -141,6 +154,16 @@ interface AppStore {
   dismissAgentIntro: (accepted: boolean) => void;
 
   dismissTimelineItem: (itemId: string) => void;
+  addToWallet: (credential: WalletCredential) => void;
+  loadConsentPreferences: () => Promise<void>;
+  addConsentPreference: (
+    pref: Omit<ConsentPreference, "id" | "createdAt" | "updatedAt">,
+  ) => Promise<void>;
+  updateConsentPreference: (
+    id: string,
+    updates: { scope?: ConsentPreference["scope"]; decision?: ConsentPreference["decision"] },
+  ) => Promise<void>;
+  revokeConsentPreference: (id: string) => Promise<void>;
 
   // Plan actions
   deletePlan: (planId: string) => void;
@@ -227,6 +250,32 @@ function getTasks(personaId: string): StoredTask[] {
   }
 }
 
+// localStorage-backed wallet store (earned credentials from service completions)
+function getEarnedCredentials(personaId: string): WalletCredential[] {
+  if (typeof window === "undefined") return [];
+  try {
+    const raw = localStorage.getItem(`c02_wallet_${personaId}`);
+    return raw ? JSON.parse(raw) : [];
+  } catch {
+    return [];
+  }
+}
+
+function saveEarnedCredentials(
+  personaId: string,
+  credentials: WalletCredential[],
+) {
+  if (typeof window === "undefined") return;
+  try {
+    localStorage.setItem(
+      `c02_wallet_${personaId}`,
+      JSON.stringify(credentials),
+    );
+  } catch {
+    /* ignore */
+  }
+}
+
 // localStorage-backed plan store
 function getActivePlans(personaId: string): ActivePlan[] {
   if (typeof window === "undefined") return [];
@@ -304,6 +353,7 @@ export const useAppStore = create<AppStore>((set, get) => ({
   pendingConsent: [],
   consentDecisions: {},
   consentSubmitted: false,
+  resolvedConsents: [],
   lastResponseTasks: [],
   taskCompletions: {},
   tasksSubmitted: false,
@@ -316,6 +366,9 @@ export const useAppStore = create<AppStore>((set, get) => ({
   lifeEvents: [],
   activePlanId: null,
   activePlan: null,
+  walletCredentials: [],
+  earnedCredentials: [],
+  consentPreferences: [],
   settingsPaneOpen: false,
   personaSelectorOpen: false,
   bottomSheet: { type: null },
@@ -372,11 +425,17 @@ export const useAppStore = create<AppStore>((set, get) => ({
       sessionStorage.setItem("c02_persona", id);
     }
 
+    // Load earned credentials from localStorage
+    set({ earnedCredentials: getEarnedCredentials(id) });
+
     try {
       const response = await fetch(`/api/personal-data/${id}/full`);
       if (response.ok) {
         const data = await response.json();
-        set({ personaData: data });
+        set({
+          personaData: data,
+          walletCredentials: data.credentials ?? [],
+        });
       }
     } catch (error) {
       console.error("Error loading persona:", error);
@@ -396,6 +455,9 @@ export const useAppStore = create<AppStore>((set, get) => ({
     }
 
     set({ currentView: "dashboard" });
+
+    // Load consent preferences in background
+    get().loadConsentPreferences();
 
     // Fetch enrichment in background
     fetch(`/api/enrich/${id}`)
@@ -650,6 +712,7 @@ export const useAppStore = create<AppStore>((set, get) => ({
         ucStateHistory: data.ucState?.stateHistory ?? state.ucStateHistory,
         lastUcStateInfo: data.ucState ?? state.lastUcStateInfo,
         pendingConsent: data.consentRequests ?? [],
+        resolvedConsents: data.resolvedConsents ?? [],
         lastResponseTasks: data.tasks ?? [],
         taskCompletions:
           data.tasks && data.tasks.length > 0 ? {} : state.taskCompletions,
@@ -683,6 +746,35 @@ export const useAppStore = create<AppStore>((set, get) => ({
             ? false
             : state.consentSubmitted,
       });
+
+      // Add credential outcomes to wallet
+      if (data.outcomes && data.outcomes.length > 0) {
+        const existingIds = new Set(
+          state.earnedCredentials.map(
+            (c) => `${c.type}-${c.number}-${c.issuer}`,
+          ),
+        );
+        for (const outcome of data.outcomes) {
+          if (outcome.credential) {
+            const cred = outcome.credential;
+            const key = `${cred.type}-${cred.number}-${cred.issuer}`;
+            if (!existingIds.has(key)) {
+              get().addToWallet({
+                type: cred.type,
+                issuer: cred.issuer,
+                number: cred.number,
+                issued: cred.issued,
+                expires: cred.expires,
+                status: cred.status,
+                claims: outcome.details.reduce(
+                  (acc, d) => ({ ...acc, [d.label]: d.value }),
+                  {} as Record<string, unknown>,
+                ),
+              });
+            }
+          }
+        }
+      }
 
       // Handle service/need proposals — transition from triage to service
       if (data.serviceProposal) {
@@ -871,6 +963,94 @@ export const useAppStore = create<AppStore>((set, get) => ({
       }
     } catch {
       /* ignore */
+    }
+  },
+
+  addToWallet: (credential: WalletCredential) => {
+    const state = get();
+    if (!state.persona) return;
+    const updated = [...state.earnedCredentials, credential];
+    set({ earnedCredentials: updated });
+    saveEarnedCredentials(state.persona, updated);
+    const typeLabel = credential.type.replace(/-/g, " ");
+    get().showToast(`Your new ${typeLabel} has been added to your wallet`);
+  },
+
+  loadConsentPreferences: async () => {
+    const state = get();
+    if (!state.persona) return;
+    try {
+      const resp = await fetch(`/api/consent-preferences/${state.persona}`);
+      if (resp.ok) {
+        const data = await resp.json();
+        set({ consentPreferences: data.preferences || [] });
+      }
+    } catch {
+      // non-critical
+    }
+  },
+
+  addConsentPreference: async (pref) => {
+    const state = get();
+    if (!state.persona) return;
+    try {
+      const resp = await fetch(`/api/consent-preferences/${state.persona}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(pref),
+      });
+      if (resp.ok) {
+        const data = await resp.json();
+        set({
+          consentPreferences: [...state.consentPreferences, data.preference],
+        });
+        get().showToast("Consent preference saved");
+      }
+    } catch {
+      // non-critical
+    }
+  },
+
+  updateConsentPreference: async (id, updates) => {
+    const state = get();
+    if (!state.persona) return;
+    // Optimistic update
+    set({
+      consentPreferences: state.consentPreferences.map((p) =>
+        p.id === id ? { ...p, ...updates, updatedAt: new Date().toISOString() } : p,
+      ),
+    });
+    try {
+      const existing = state.consentPreferences.find((p) => p.id === id);
+      if (!existing) return;
+      await fetch(`/api/consent-preferences/${state.persona}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...existing, ...updates }),
+      });
+      get().showToast("Preference updated");
+    } catch {
+      // revert
+      set({ consentPreferences: state.consentPreferences });
+    }
+  },
+
+  revokeConsentPreference: async (id) => {
+    const state = get();
+    if (!state.persona) return;
+    set({
+      consentPreferences: state.consentPreferences.filter((p) => p.id !== id),
+    });
+    try {
+      await fetch(`/api/consent-preferences/${state.persona}`, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id }),
+      });
+      get().showToast("Consent preference revoked");
+    } catch {
+      // revert
+      set({ consentPreferences: state.consentPreferences });
     }
   },
 

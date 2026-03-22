@@ -99,6 +99,11 @@ export interface ChatApiResponse {
   };
   ucState?: UCStateInfo;
   consentRequests?: ConsentGrant[];
+  resolvedConsents?: Array<{
+    grantId: string;
+    preferenceId: string;
+    reason: string;
+  }>;
   cardRequests?: import("@als/schemas").CardRequest[];
   interactionType?: string;
   pipelineTrace?: import("@als/schemas").PipelineTrace;
@@ -158,7 +163,8 @@ export type ViewType =
   | "chat"
   | "tasks"
   | "plan"
-  | "services";
+  | "services"
+  | "wallet";
 
 export type ServicePlanStatus =
   | "locked"
@@ -294,6 +300,8 @@ export type BottomSheetType =
   | "topic-questions"
   | "filing-prompt"
   | "payment"
+  | "wallet-credential"
+  | "consent-preference"
   | null;
 
 export interface BottomSheetState {

@@ -200,6 +200,10 @@ describe("useAppStore", () => {
           .mockResolvedValueOnce({
             ok: true,
             json: () => Promise.resolve({}),
+          })
+          .mockResolvedValueOnce({
+            ok: true,
+            json: () => Promise.resolve({ preferences: [] }),
           }),
       );
 

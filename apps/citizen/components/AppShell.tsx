@@ -10,6 +10,7 @@ import { ChatView } from "./ChatView";
 import { PlanView } from "./PlanView";
 import { TasksView } from "./TasksView";
 import { ServicesView } from "./ServicesView";
+import { WalletView } from "./WalletView";
 import { MessageInput } from "./MessageInput";
 import { PersonaSelectorOverlay } from "./PersonaSelectorOverlay";
 import { PersonalDataDashboard } from "./personal-data/PersonalDataDashboard";
@@ -21,6 +22,8 @@ import { TaskDetailSheet } from "./sheets/TaskDetailSheet";
 import { TopicQuestionsSheet } from "./sheets/TopicQuestionsSheet";
 import { FilingPromptSheet } from "./sheets/FilingPromptSheet";
 import { PaymentSheet } from "./sheets/PaymentSheet";
+import { WalletCredentialSheet } from "./sheets/WalletCredentialSheet";
+import { ConsentPreferenceSheet } from "./sheets/ConsentPreferenceSheet";
 import { getAllTerminalStateIds } from "@als/schemas";
 
 const TERMINAL_STATES = getAllTerminalStateIds();
@@ -166,10 +169,9 @@ function BottomTabBar() {
           }
         />
         <TabButton
-          label="About"
-          active={false}
-          onClick={() => {}}
-          disabled
+          label="Wallet"
+          active={currentView === "wallet"}
+          onClick={() => navigateTo("wallet")}
           icon={
             <svg
               width="22"
@@ -181,8 +183,9 @@ function BottomTabBar() {
               strokeLinecap="round"
               strokeLinejoin="round"
             >
-              <circle cx="12" cy="12" r="10" />
-              <path d="M12 16v-4M12 8h.01" />
+              <rect x="2" y="5" width="20" height="14" rx="2" />
+              <path d="M2 10h20" />
+              <circle cx="17" cy="14" r="1.5" fill="currentColor" stroke="none" />
             </svg>
           }
         />
@@ -209,6 +212,10 @@ function BottomSheetLayer() {
         return <FilingPromptSheet />;
       case "payment":
         return <PaymentSheet />;
+      case "wallet-credential":
+        return <WalletCredentialSheet data={bottomSheet.data as Parameters<typeof WalletCredentialSheet>[0]["data"]} />;
+      case "consent-preference":
+        return <ConsentPreferenceSheet data={bottomSheet.data as Parameters<typeof ConsentPreferenceSheet>[0]["data"]} />;
       default:
         return null;
     }
@@ -226,6 +233,10 @@ function BottomSheetLayer() {
         return "Save conversation";
       case "payment":
         return "Apple Pay";
+      case "wallet-credential":
+        return "Credential details";
+      case "consent-preference":
+        return "Data permission";
       default:
         return undefined;
     }
@@ -252,7 +263,7 @@ export function AppShell() {
   const journeyComplete = !!(ucState && TERMINAL_STATES.has(ucState));
   const isManualMode = agent === "none";
 
-  // Auto-load Anna Cotton on mount (demo mode — skip persona picker)
+  // Restore persona and agent from sessionStorage on mount
   useEffect(() => {
     const savedAgent = sessionStorage.getItem("c02_agent") as
       | "dot"
@@ -262,9 +273,14 @@ export function AppShell() {
     if (savedAgent) {
       setAgent(savedAgent);
     }
-    // Always load Anna for the demo
     if (!persona) {
-      setPersona("anna-cotton");
+      const savedPersona = sessionStorage.getItem("c02_persona");
+      if (savedPersona) {
+        setPersona(savedPersona);
+      } else {
+        // No saved persona — show persona picker
+        useAppStore.setState({ currentView: "persona-picker" });
+      }
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -293,6 +309,7 @@ export function AppShell() {
     currentView !== "plan" &&
     currentView !== "tasks" &&
     currentView !== "services" &&
+    currentView !== "wallet" &&
     !journeyComplete;
 
   return (
@@ -324,6 +341,7 @@ export function AppShell() {
           {currentView === "services" && <ServicesView />}
           {currentView === "plan" && <PlanView />}
           {currentView === "tasks" && <TasksView />}
+          {currentView === "wallet" && <WalletView />}
         </div>
 
         {/* Chat input — in document flow, pushed to bottom on short pages */}

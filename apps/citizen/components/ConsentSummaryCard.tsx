@@ -1,7 +1,11 @@
 "use client";
 
+import { useState } from "react";
 import type { ConsentGrant } from "@/lib/types";
 import { resolveConsentFraming } from "@als/schemas";
+import type { ConsentScope } from "@als/schemas";
+import { useAppStore } from "@/lib/store";
+import { categoriseField } from "@als/personal-data/src/field-categories";
 
 interface ConsentSummaryCardProps {
   grants: ConsentGrant[];
@@ -11,7 +15,15 @@ interface ConsentSummaryCardProps {
   hasRequiredDenials: boolean;
   isSubmitting: boolean;
   interactionType?: string;
+  department?: string;
+  serviceId?: string;
 }
+
+const SCOPE_OPTIONS: Array<{ value: ConsentScope; label: string }> = [
+  { value: "once", label: "Just this time" },
+  { value: "department", label: "Always for this department" },
+  { value: "cross-government", label: "All departments" },
+];
 
 export function ConsentSummaryCard({
   grants,
@@ -21,12 +33,43 @@ export function ConsentSummaryCard({
   hasRequiredDenials,
   isSubmitting,
   interactionType,
+  department,
+  serviceId,
 }: ConsentSummaryCardProps) {
   const grantedCount = grants.filter(
     (g) => decisions[g.id] === "granted",
   ).length;
   const deniedCount = grants.filter((g) => decisions[g.id] === "denied").length;
   const framing = resolveConsentFraming(interactionType);
+  const addConsentPreference = useAppStore((s) => s.addConsentPreference);
+
+  const [rememberPreference, setRememberPreference] = useState(false);
+  const [preferenceScope, setPreferenceScope] = useState<ConsentScope>("department");
+
+  const handleSubmitWithPreference = async () => {
+    // Save standing preferences for granted consents
+    if (rememberPreference && preferenceScope !== "once") {
+      const grantedGrants = grants.filter((g) => decisions[g.id] === "granted");
+      const categoriesSeen = new Set<string>();
+
+      for (const grant of grantedGrants) {
+        const categories = [...new Set(grant.data_shared.map(categoriseField))];
+        for (const category of categories) {
+          if (categoriesSeen.has(category)) continue;
+          categoriesSeen.add(category);
+          await addConsentPreference({
+            userId: "", // filled server-side
+            dataCategory: category,
+            scope: preferenceScope,
+            decision: "allow",
+            department: preferenceScope === "department" ? department : undefined,
+            serviceId: preferenceScope === "service" ? serviceId : undefined,
+          });
+        }
+      }
+    }
+    onSubmit();
+  };
 
   return (
     <div className="my-3 rounded-2xl bg-white shadow-sm">
@@ -136,10 +179,51 @@ export function ConsentSummaryCard({
           </div>
         )}
 
+        {/* Remember preference toggle */}
+        {grantedCount > 0 && !hasRequiredDenials && (
+          <div className="mt-4 border border-purple-200 rounded-xl p-4 bg-purple-50/50">
+            <label className="flex items-center gap-3 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={rememberPreference}
+                onChange={(e) => setRememberPreference(e.target.checked)}
+                className="w-4 h-4 rounded border-purple-300 text-[#912b88] focus:ring-[#912b88] accent-[#912b88]"
+              />
+              <span className="text-sm font-medium text-govuk-text">
+                Remember this preference
+              </span>
+            </label>
+            {rememberPreference && (
+              <div className="mt-3 ml-7 space-y-1.5">
+                {SCOPE_OPTIONS.map((opt) => (
+                  <label
+                    key={opt.value}
+                    className="flex items-center gap-2 cursor-pointer"
+                  >
+                    <input
+                      type="radio"
+                      name="consent-scope"
+                      value={opt.value}
+                      checked={preferenceScope === opt.value}
+                      onChange={() => setPreferenceScope(opt.value)}
+                      className="w-3.5 h-3.5 text-[#912b88] focus:ring-[#912b88] accent-[#912b88]"
+                    />
+                    <span className="text-xs text-govuk-dark-grey">
+                      {opt.value === "department" && department
+                        ? `Always for ${department}`
+                        : opt.label}
+                    </span>
+                  </label>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
         {/* Submit button */}
         <div className="mt-4">
           <button
-            onClick={onSubmit}
+            onClick={handleSubmitWithPreference}
             disabled={hasRequiredDenials || isSubmitting}
             className={`w-full py-3 rounded-full font-bold text-sm transition-colors ${
               hasRequiredDenials || isSubmitting

@@ -158,6 +158,40 @@ export interface ConsentGrant {
   required: boolean;
 }
 
+// ── Consent Preferences ──
+
+export type ConsentScope = "once" | "service" | "department" | "cross-government";
+
+export type ConsentDataCategory =
+  | "identity"
+  | "contact"
+  | "financial"
+  | "health"
+  | "housing"
+  | "employment"
+  | "legal";
+
+export interface ConsentPreference {
+  id: string;
+  userId: string;
+  dataCategory: ConsentDataCategory;
+  scope: ConsentScope;
+  decision: "allow" | "deny" | "ask-each-time";
+  department?: string;
+  serviceId?: string;
+  createdAt: string;
+  updatedAt: string;
+  revokedAt?: string;
+}
+
+export interface ConsentResolutionResult {
+  grantId: string;
+  resolved: boolean;
+  decision: "granted" | "denied" | "ask";
+  matchedPreferenceId?: string;
+  reason?: string;
+}
+
 // ── Trace Events ──
 
 export interface TraceEvent {

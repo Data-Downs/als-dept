@@ -427,6 +427,8 @@ export function ChatView() {
                 hasRequiredDenials={hasRequiredDenials}
                 isSubmitting={isLoading}
                 interactionType={interactionType ?? undefined}
+                serviceId={currentService ?? undefined}
+                department={serviceName ?? undefined}
               />
             )}
           </div>

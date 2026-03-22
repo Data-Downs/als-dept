@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from "react";
 import type { JourneyOutcome } from "@/lib/outcome-types";
+import { useAppStore } from "@/lib/store";
 
 /** Department → accent colour mapping (official departmental colours) */
 const DEPT_COLOURS: Record<string, string> = {
@@ -131,11 +132,11 @@ function StatusBadge({ type }: { type: JourneyOutcome["type"] }) {
       icon: "M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z",
     },
     credential: {
-      label: "Added to your documents",
+      label: "Added to your wallet",
       icon: "M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm-1 7V3.5L18.5 9H13z",
     },
     document: {
-      label: "Added to your documents",
+      label: "Added to your wallet",
       icon: "M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm-1 7V3.5L18.5 9H13z",
     },
     registration: {
@@ -165,6 +166,31 @@ function StatusBadge({ type }: { type: JourneyOutcome["type"] }) {
         {c.label}
       </span>
     </div>
+  );
+}
+
+function WalletLink() {
+  const navigateTo = useAppStore((s) => s.navigateTo);
+  return (
+    <button
+      type="button"
+      onClick={() => navigateTo("wallet")}
+      className="flex items-center gap-1 text-xs font-medium text-govuk-blue mt-1.5 hover:underline"
+    >
+      View in wallet
+      <svg
+        width="12"
+        height="12"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <polyline points="9 18 15 12 9 6" />
+      </svg>
+    </button>
   );
 }
 
@@ -305,6 +331,11 @@ export default function OutcomeCard({
 
           {/* Status badge */}
           <StatusBadge type={outcome.type} />
+
+          {/* View in wallet link for credential/document outcomes */}
+          {(outcome.type === "credential" || outcome.type === "document") && (
+            <WalletLink />
+          )}
 
           {/* Timestamp */}
           <p className="text-[11px] text-govuk-mid-grey mt-3">

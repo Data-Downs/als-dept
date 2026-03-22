@@ -5,6 +5,8 @@ export { SubmittedStore } from "./submitted-store";
 export { InferredStore, normalizeKey } from "./inferred-store";
 export type { MergeResult, MergeOutcome } from "./inferred-store";
 export { ServiceAccessStore } from "./service-access-store";
+export { ConsentPreferenceStore } from "./consent-preference-store";
+export { categoriseField, categoriseGrant } from "./field-categories";
 export type {
   PersonalDataProfile,
   VerifiedData,

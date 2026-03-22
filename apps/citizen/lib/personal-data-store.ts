@@ -9,12 +9,14 @@ import {
   SubmittedStore,
   InferredStore,
   ServiceAccessStore,
+  ConsentPreferenceStore,
 } from "@als/personal-data";
 
 let adapter: DatabaseAdapter | null = null;
 let submittedStore: SubmittedStore | null = null;
 let inferredStore: InferredStore | null = null;
 let serviceAccessStore: ServiceAccessStore | null = null;
+let consentPreferenceStore: ConsentPreferenceStore | null = null;
 let initPromise: Promise<void> | null = null;
 
 const INIT_SQL = `
@@ -118,6 +120,8 @@ async function ensureInit(): Promise<void> {
       submittedStore = new SubmittedStore(adapter);
       inferredStore = new InferredStore(adapter);
       serviceAccessStore = new ServiceAccessStore(adapter);
+      consentPreferenceStore = new ConsentPreferenceStore(adapter);
+      await consentPreferenceStore.init();
     } catch (err) {
       initPromise = null;
       adapter = null;
@@ -146,4 +150,9 @@ export async function getInferredStore(): Promise<InferredStore> {
 export async function getServiceAccessStore(): Promise<ServiceAccessStore> {
   await ensureInit();
   return serviceAccessStore!;
+}
+
+export async function getConsentPreferenceStore(): Promise<ConsentPreferenceStore> {
+  await ensureInit();
+  return consentPreferenceStore!;
 }
