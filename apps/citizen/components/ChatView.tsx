@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useCallback } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { useAppStore } from "@/lib/store";
@@ -48,6 +48,7 @@ function TypingIndicator() {
 export function ChatView() {
   const conversationHistory = useAppStore((s) => s.conversationHistory);
   const isLoading = useAppStore((s) => s.isLoading);
+  const agent = useAppStore((s) => s.agent);
   const activeHandoff = useAppStore((s) => s.activeHandoff);
   const ucState = useAppStore((s) => s.ucState);
   const ucStateHistory = useAppStore((s) => s.ucStateHistory);
@@ -82,6 +83,19 @@ export function ChatView() {
   const allConsentsDecided =
     pendingConsent.length > 0 &&
     pendingConsent.every((g) => consentDecisions[g.id] !== undefined);
+
+  // Max agent: auto-submit tasks without showing the confirmation summary
+  const isMaxAgent = agent === "max";
+  const autoSubmitTriggered = useRef(false);
+  useEffect(() => {
+    if (isMaxAgent && allTasksCompleted && !tasksSubmitted && !isLoading && !autoSubmitTriggered.current) {
+      autoSubmitTriggered.current = true;
+      useAppStore.getState().submitTasks();
+    }
+    if (!allTasksCompleted) {
+      autoSubmitTriggered.current = false;
+    }
+  }, [isMaxAgent, allTasksCompleted, tasksSubmitted, isLoading]);
 
   // Whether to show task cards (after the last assistant message)
   const showTasks =
@@ -373,8 +387,8 @@ export function ChatView() {
               />
             ))}
 
-            {/* Summary card appears when all tasks are completed */}
-            {allTasksCompleted && (
+            {/* Summary card appears when all tasks are completed (not for Max — he auto-submits) */}
+            {allTasksCompleted && !isMaxAgent && (
               <TaskSummaryCard
                 tasks={lastResponseTasks}
                 completions={taskCompletions}

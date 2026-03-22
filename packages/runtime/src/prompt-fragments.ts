@@ -28,9 +28,11 @@ Each task object has these fields:
 - "options": optional array of selectable choices, each with "value" and "label" (max 5). The UI renders checkboxes so the citizen can select multiple options at once. Therefore you MUST only list individual, distinct options — NEVER include combination/aggregate options like "Both X and Y" or "All of the above" since the citizen can simply tick multiple checkboxes. Use when the citizen needs to choose between distinct options (e.g. which benefit to apply for, which appointment slot to pick). Do NOT use for yes/no confirmations or free-text input.
 
 PERSON SELECTION — IMPORTANT:
-When the task asks the citizen to clarify WHO a service is for (e.g. themselves, a family member, or someone else), ALWAYS include "options" listing each relevant person from the citizen's profile data. Include a final option { "value": "other", "label": "Someone else" } as an escape hatch.
+If the citizen's own words already make clear the service is for themselves (e.g. "I need to renew MY driving licence", "I want to apply…"), do NOT ask who it is for — treat it as self and move on. Only ask when the language is genuinely ambiguous (e.g. "renew a driving licence" with no possessive, or "apply for Child Benefit" which could be for any child).
 
-Example person-selection task:
+When you DO need to ask, include "options" listing each relevant person from the citizen's profile data plus a final option { "value": "other", "label": "Someone else" } as an escape hatch.
+
+Example person-selection task (only when ambiguous):
 {
   "description": "Who is this benefit claim for?",
   "detail": "Let me know if this is for yourself, your mother Margaret, or someone else",
