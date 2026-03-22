@@ -35,6 +35,7 @@ data/
 
 docs/
   index.html      → Project overview document
+  *.html          → Standalone HTML documentation (executive briefing, technical reference, product guide, glossary)
 ```
 
 ## Commands
@@ -45,6 +46,37 @@ docs/
 - `npm run seed` — seed the traces database
 - `npm run seed:ledger` — seed the ledger
 - `npm run seed:services` — seed the service store
+- `npm run capture` — capture demo screenshots
+
+## Key systems — recent additions
+
+### Wallet + Consent Management
+- **Wallet tab** replaces disabled "About" tab — shows persona credentials (driving licence, NI number, etc.) and earned credentials from service completions
+- **Consent preferences** — standing preferences (scope: once/service/department/cross-government) stored in `ConsentPreferenceStore` (SQLite via `@als/personal-data`)
+- Consent resolution runs in the chat API — auto-satisfies matching preferences before showing consent cards
+- Consent preferences appear as editable cards in the wallet's "Data permissions" section
+- `ConsentSummaryCard` has a "Remember this preference?" toggle with scope selector
+- Key files: `apps/citizen/components/WalletView.tsx`, `apps/citizen/components/wallet/`, `packages/personal-data/src/consent-preference-store.ts`, `apps/citizen/lib/field-merger.ts`
+
+### Life-Event-Aware Chat Triage
+- When a citizen describes a multi-service need in chat (e.g. "my husband just died"), the system matches it to a life event from the service graph
+- **Life event matcher** (`apps/citizen/lib/life-event-matcher.ts`) scores proposed services against 16 life events
+- **Field merger** (`apps/citizen/lib/field-merger.ts`) deduplicates data fields across services using a canonical alias map — agent asks once, fans out to all services
+- **Orchestrator prompt injection** — life event context, merged fields, and service status injected into the LLM prompt so it guides the conversation across all services
+- **Silent plan creation** — `ActivePlan` created behind the scenes (visible on Home tab) but citizen stays in chat
+- **Service completions** — LLM signals `serviceCompletions` in structured output; outcome cards issued and plan updated
+- Demo mode (scripted responses) also attaches `lifeEventContext` for bereavement pattern matches
+- Key files: `apps/citizen/app/api/chat/route.ts` (life event matching + orchestrator wiring), `packages/runtime/src/orchestrator.ts` (prompt injection + serviceCompletions parsing)
+
+### Inline Service Cards in Chat
+- `[SERVICE:id]` marker in assistant messages renders a **ServiceStepCard** (full card with accent bar) — for highlighted next actions
+- `[MENTION:id]` marker renders a **mention variant** (quiet list item with left border and hollow circle) — for conversational service lists
+- Service metadata in `SERVICE_STEP_DATA` registry (`apps/citizen/components/ServiceStepCard.tsx`)
+- ChatView splits messages on markers and interleaves text bubbles with cards
+
+### Route Groups
+- `apps/citizen/app/(app)/` — main app with PhoneFrame wrapper
+- `apps/citizen/app/(capture)/` — screen capture page without phone chrome
 
 ## Architecture rules — IMPORTANT
 
@@ -55,6 +87,9 @@ docs/
 - legibility-studio fetches evidence from citizen app API — it does NOT import `@als/evidence` directly
 - The Orchestrator delegates language-only work to the LLM; all deterministic decisions (policy, state, consent) happen in code
 - Two service strategies: `JsonServiceStrategy` (inline deterministic) and `McpServiceStrategy` (LLM has service tools)
+- Three service modes: `demo` (scripted responses, no LLM), `json` (LLM + deterministic services), `mcp` (LLM + MCP tools)
+- Demo mode uses persona-specific scripts in `apps/citizen/lib/demo-scripts/` — these bypass the orchestrator entirely
+- Life event context flows: triage prompt → needProposal → life event match → orchestrator prompt injection → serviceCompletions → outcome cards
 
 ## Build gotchas — READ BEFORE CHANGING DEPENDENCIES
 
