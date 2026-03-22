@@ -11,7 +11,7 @@ import { TaskReceiptCard } from "./TaskReceiptCard";
 import { ConsentPanel } from "./ConsentCard";
 import { ConsentSummaryCard } from "./ConsentSummaryCard";
 import { StateProgressTracker } from "./StateProgressTracker";
-import { LifeEventProgressTracker } from "./LifeEventProgressTracker";
+import { ServiceStepCard, SERVICE_STEP_DATA } from "./ServiceStepCard";
 import { JourneyCompleteCard } from "./JourneyCompleteCard";
 import { CardHost } from "./cards/CardHost";
 import { RelatedServicesCard } from "./RelatedServicesCard";
@@ -184,9 +184,6 @@ export function ChatView() {
 
   return (
     <div className="flex flex-col h-full">
-      {/* Life Event Progress Tracker — shown when in a multi-service life event journey */}
-      <LifeEventProgressTracker />
-
       {/* State Progress Tracker — shown when in a single-service UC journey */}
       {ucState && !useAppStore.getState().lifeEventMode && (
         <StateProgressTracker
@@ -319,6 +316,61 @@ export function ChatView() {
                 <TaskReceiptCard
                   content="Application submitted — awaiting confirmation&#10;&#10;Your Tax-Free Childcare application has been submitted to HMRC. You'll receive confirmation within 5 working days. The agent is monitoring this for you."
                 />
+              </div>
+            );
+          }
+
+          // Check for [SERVICE:id] markers in assistant messages
+          const hasServiceMarkers =
+            !isUser &&
+            typeof msg.content === "string" &&
+            /\[SERVICE:[^\]]+\]/.test(msg.content);
+
+          if (hasServiceMarkers) {
+            // Split message on [SERVICE:id] markers and interleave text + cards
+            const parts = (msg.content as string).split(
+              /(\[SERVICE:[^\]]+\])/g,
+            );
+            return (
+              <div
+                key={idx}
+                ref={isLastAssistant ? lastAssistantRef : undefined}
+              >
+                {parts.map((part, partIdx) => {
+                  const serviceMatch = part.match(
+                    /\[SERVICE:([^\]]+)\]/,
+                  );
+                  if (serviceMatch) {
+                    const svcId = serviceMatch[1];
+                    const svcData =
+                      SERVICE_STEP_DATA[svcId];
+                    if (svcData) {
+                      return (
+                        <div key={partIdx} className="max-w-[85%]">
+                          <ServiceStepCard
+                            serviceId={svcId}
+                            name={svcData.name}
+                            dept={svcData.dept}
+                            description={svcData.description}
+                            urgent={svcData.urgent}
+                          />
+                        </div>
+                      );
+                    }
+                    return null;
+                  }
+                  const trimmed = part.trim();
+                  if (!trimmed) return null;
+                  return (
+                    <div key={partIdx} className="flex justify-start">
+                      <div className="max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed text-govuk-black prose prose-sm prose-neutral max-w-none">
+                        <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                          {trimmed}
+                        </ReactMarkdown>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             );
           }

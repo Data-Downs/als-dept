@@ -8,7 +8,7 @@
 import type { ScriptedEntry } from "../demo-data";
 
 export const SARAH_OKAFOR_CHAT: ScriptedEntry[] = [
-  // ── Turn 1: Opening — grief, confusion, "I don't know what to do" ──
+  // ── Turn 1: Opening — grief, compassion, one concrete step ──
   {
     patterns: [
       /husband.*died/i,
@@ -19,19 +19,19 @@ export const SARAH_OKAFOR_CHAT: ScriptedEntry[] = [
       /someone.*(died|death|passed)/i,
     ],
     response: {
-      response: `I'm so sorry for your loss, Sarah. I know this is an incredibly difficult time, and I'm here to help you through the things that need to happen next.
+      response: `Oh, Sarah. I'm so sorry about David.
 
-There are a few important things I can help with, and I'll take care of as much as possible so you don't have to worry about the details:
+You don't need to figure any of this out on your own, and nothing needs to happen right this moment. I'm here whenever you're ready.
 
-1. **Tell Us Once** — This notifies all government departments about David's passing in one go, so you don't have to contact each one separately. It will inform HMRC, DWP, DVLA, the Passport Office, and your local council.
+When you do feel able, the most important first step is this:
 
-2. **Bereavement Support Payment** — You may be entitled to a lump sum payment and monthly support.
+[SERVICE:gro-register-death]
 
-3. **Probate** — When you're ready, I can help with the legal process to manage David's estate.
+I can help you with everything else after that — notifying government departments, financial support, and David's estate. But none of that needs to happen today.
 
-Would you like me to start with Tell Us Once? It's the most helpful first step — it takes care of a lot at once.`,
+Would you like me to help with the registration, or would you rather I just make a note and we come back to this when you're ready?`,
       reasoning:
-        "Sarah's husband David died on 26 February 2026. She is the named executor. Starting with Tell Us Once is the right first step — it has the highest administrative impact and prevents her having to make multiple calls. I'm being warm and patient, matching her communication style notes.",
+        "Sarah's husband David died on 26 February 2026. She is the named executor. Leading with compassion and offering just one concrete step (death registration — time-sensitive). Not overwhelming her with a full list. The SERVICE marker will render as a compact card. Offering to pause shows respect for her emotional state.",
       tasks: [],
       conversationTitle: "Help after David's passing",
     },
@@ -46,17 +46,15 @@ Would you like me to start with Tell Us Once? It's the most helpful first step �
       /Granted:.*Share/i,
     ],
     response: {
-      response: `That's all done, Sarah. I've completed three things for you:
+      response: `That's all done, Sarah. I've taken care of three things for you — the confirmations are below.
 
-**Tell Us Once** — I've notified six government departments about David's passing. They'll each update their records — you don't need to contact any of them separately.
+When you're ready, there are two more things I can help with:
 
-**Death registration** — David's death has been registered with the General Register Office in Chelmsford.
+[SERVICE:dwp-bereavement-support]
 
-**Death certificate** — A certified copy has been issued and added to your documents.
+[SERVICE:hmcts-probate]
 
-You'll see the confirmations below. Take your time looking through them — there's no rush.
-
-When you're ready, I can help with the bereavement support payment or probate. Just let me know.`,
+There's no rush on either of these. Just let me know when you'd like to continue.`,
       reasoning:
         "Consent was granted. Triggering three outcomes at once: Tell Us Once notification, death registration, and death certificate. This is the first 'wow' moment — three official documents/confirmations materialising in one go. Being gentle and not rushing her to the next step.",
       tasks: [],
@@ -235,13 +233,15 @@ Here are your confirmations:`,
   {
     patterns: [/.*/],
     response: {
-      response: `I'm here to help, Sarah. Here's what I can assist with:
+      response: `I'm here whenever you need me, Sarah. Here's what I can help with:
 
-- **Tell Us Once** — Notify all departments about David's passing
-- **Bereavement Support Payment** — Check what financial support you're entitled to
-- **Probate and inheritance tax** — Help manage David's estate
+[SERVICE:dwp-tell-us-once]
 
-What would you like to start with?`,
+[SERVICE:dwp-bereavement-support]
+
+[SERVICE:hmcts-probate]
+
+Just let me know which feels right, or if you'd like me to explain any of these.`,
       reasoning:
         "Sarah's message didn't match a specific step. Offering the three main paths available to her. Keeping it simple and not overwhelming.",
       tasks: [],
