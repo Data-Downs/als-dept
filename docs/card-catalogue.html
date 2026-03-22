@@ -407,6 +407,7 @@ const ICONS = {
   lock: '<rect x="3" y="11" width="18" height="11" rx="2" ry="2" /><path d="M7 11V7a5 5 0 0110 0v4" />',
   play: '<polygon points="5 3 19 12 5 21 5 3" />',
   info: '<circle cx="12" cy="12" r="10" /><path d="M12 16v-4M12 8h.01" />',
+  alert: '<circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" />',
   crown: '<path d="M25 97h82v-7H25v7zm-.5-16h83L113 24l-21.5 25-25-49-25 49L20 24l5.5 57zM66 0C60.5 0 56 4.5 56 10s4.5 10 10 10 10-4.5 10-10S71.5 0 66 0zM0 14c0 5.5 4.5 10 10 10s10-4.5 10-10S15.5 4 10 4 0 8.5 0 14zm112 0c0 5.5 4.5 10 10 10s10-4.5 10-10-4.5-10-10-10-10 4.5-10 10z" />',
 };
 
@@ -1215,6 +1216,84 @@ Monthly rent: £850</div>
               <p class="text-sm font-medium text-dark-grey" style="margin-top:2px;line-height:1.375">Book and complete your annual MOT test</p>
               <span class="text-xs" style="display:block;margin-top:0.25rem;color:#d4351c">⚠ Expires in 12 days — renew vehicle MOT</span>
             </div>
+          </div>
+        </div>
+      </div>`,
+  },
+
+  // 22. ServiceStepCard — Step variant [SERVICE:id]
+  {
+    id: 'service-step-card',
+    name: 'ServiceStepCard — Step (Full)',
+    file: 'ServiceStepCard.tsx',
+    desc: 'Full card with accent bar, department badge, and status dot. Rendered inline in chat via [SERVICE:id] marker. Used for highlighted next actions.',
+    html: () => `
+      <div class="card" style="border-radius:0.75rem;max-width:340px">
+        <div style="height:4px;background:#4c6272"></div>
+        <div style="padding:0.75rem 1rem">
+          <div class="flex items-center justify-between mb-1">
+            <span style="font-size:0.625rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#4c6272">GRO</span>
+            <span class="flex items-center gap-1-5">
+              <span style="width:6px;height:6px;border-radius:50%;background:var(--govuk-blue);display:inline-block"></span>
+              <span style="font-size:0.625rem;font-weight:500;color:var(--govuk-dark-grey);text-transform:uppercase;letter-spacing:0.05em">Next step</span>
+            </span>
+          </div>
+          <p class="text-sm font-bold text-black" style="line-height:1.3">Register the death</p>
+          <p class="text-xs text-dark-grey" style="margin-top:0.25rem;line-height:1.5">Registering and getting official certificates. Should be done within 5 days at the register office.</p>
+          <div class="flex items-center gap-1-5 mt-2">
+            ${svg(ICONS.alert, { stroke: '#d4351c', strokeWidth: 2.5, w: 12, h: 12 })}
+            <span style="font-size:0.625rem;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:#b10e1e">Time-sensitive</span>
+          </div>
+        </div>
+      </div>`,
+  },
+
+  // 23. ServiceStepCard — Mention variant [MENTION:id]
+  {
+    id: 'service-mention-card',
+    name: 'ServiceStepCard — Mention (List Item)',
+    file: 'ServiceStepCard.tsx',
+    desc: 'Quiet list item with thin left border and hollow status circle. Rendered inline in chat via [MENTION:id] marker. Used for conversational service lists — more formal than text, lighter than a full card.',
+    html: () => `
+      <div style="max-width:340px">
+        <div style="display:flex;align-items:flex-start;gap:0.75rem;border-radius:0.5rem;background:rgba(255,255,255,0.6);padding:0.625rem 1rem 0.625rem 0.75rem;border-left:3px solid #4c6272;margin-bottom:0.375rem">
+          <div style="margin-top:2px;flex-shrink:0">
+            <div style="width:18px;height:18px;border-radius:50%;border:2px solid #4c6272"></div>
+          </div>
+          <div style="flex:1;min-width:0">
+            <p style="font-size:0.8125rem;font-weight:600;color:var(--govuk-black);line-height:1.3">Register the death</p>
+            <p style="font-size:0.6875rem;color:var(--govuk-dark-grey);margin-top:2px;line-height:1.5">Registering and getting official certificates. Should be done within 5 days at the register office.</p>
+            <span style="display:inline-flex;align-items:center;gap:4px;margin-top:4px;font-size:0.625rem;font-weight:500;color:#b10e1e">
+              ${svg(ICONS.alert, { stroke: '#b10e1e', strokeWidth: 2.5, w: 10, h: 10 })}
+              Should be done within 5 days
+            </span>
+          </div>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:0.75rem;border-radius:0.5rem;background:rgba(255,255,255,0.6);padding:0.625rem 1rem 0.625rem 0.75rem;border-left:3px solid #00857e;margin-bottom:0.375rem">
+          <div style="margin-top:2px;flex-shrink:0">
+            <div style="width:18px;height:18px;border-radius:50%;border:2px solid #00857e"></div>
+          </div>
+          <div style="flex:1;min-width:0">
+            <p style="font-size:0.8125rem;font-weight:600;color:var(--govuk-black);line-height:1.3">Tell Us Once</p>
+            <p style="font-size:0.6875rem;color:var(--govuk-dark-grey);margin-top:2px;line-height:1.5">Tell government departments in one go — so you don't have to repeat yourself to each one.</p>
+          </div>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:0.75rem;border-radius:0.5rem;background:rgba(255,255,255,0.6);padding:0.625rem 1rem 0.625rem 0.75rem;border-left:3px solid #00857e;margin-bottom:0.375rem">
+          <div style="margin-top:2px;flex-shrink:0">
+            <div style="width:18px;height:18px;border-radius:50%;border:2px solid #00857e"></div>
+          </div>
+          <div style="flex:1;min-width:0">
+            <p style="font-size:0.8125rem;font-weight:600;color:var(--govuk-black);line-height:1.3">Bereavement Support Payment</p>
+            <p style="font-size:0.6875rem;color:var(--govuk-dark-grey);margin-top:2px;line-height:1.5">Financial support you may be entitled to as a spouse — a lump sum and monthly payments.</p>
+          </div>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:0.75rem;border-radius:0.5rem;background:rgba(255,255,255,0.6);padding:0.625rem 1rem 0.625rem 0.75rem;border-left:3px solid #902082">
+          <div style="margin-top:2px;flex-shrink:0">
+            <div style="width:18px;height:18px;border-radius:50%;border:2px solid #902082"></div>
+          </div>
+          <div style="flex:1;min-width:0">
+            <p style="font-size:0.8125rem;font-weight:600;color:var(--govuk-black);line-height:1.3">Probate</p>
+            <p style="font-size:0.6875rem;color:var(--govuk-dark-grey);margin-top:2px;line-height:1.5">The legal process for managing the estate — accessing bank accounts, property, and settling affairs.</p>
           </div>
         </div>
       </div>`,
