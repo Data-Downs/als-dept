@@ -10,11 +10,17 @@ export function AppHeader() {
   const setSettingsPaneOpen = useAppStore((s) => s.setSettingsPaneOpen);
   const setPersonaSelectorOpen = useAppStore((s) => s.setPersonaSelectorOpen);
 
+  const conversationHistory = useAppStore((s) => s.conversationHistory);
+  const activeConversationId = useAppStore((s) => s.activeConversationId);
+
   const showBack =
     currentView === "detail" ||
     currentView === "chat" ||
     currentView === "tasks" ||
     currentView === "plan";
+
+  const showCapture =
+    currentView === "chat" && conversationHistory.length > 0;
 
   return (
     <header
@@ -67,8 +73,31 @@ export function AppHeader() {
           </button>
         </div>
 
-        {/* Right: persona avatar — aligned with wordmark */}
-        <div className="w-10 shrink-0 flex justify-end">
+        {/* Right: capture button + persona avatar */}
+        <div className="shrink-0 flex items-center gap-1.5 justify-end">
+          {showCapture && (
+            <a
+              href={`/capture?persona=${persona}${activeConversationId ? `&conversation=${activeConversationId}` : ""}`}
+              target="_blank"
+              className="w-7 h-7 rounded-full bg-white/20 flex items-center justify-center hover:bg-white/30 transition-colors touch-feedback"
+              aria-label="Capture conversation"
+              title="Capture full conversation"
+            >
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="white"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z" />
+                <circle cx="12" cy="13" r="4" />
+              </svg>
+            </a>
+          )}
           {persona && currentView !== "persona-picker" && (
             <button
               onClick={() => setSettingsPaneOpen(true)}

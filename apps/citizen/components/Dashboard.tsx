@@ -408,17 +408,21 @@ export function Dashboard() {
     });
   };
 
-  // Seed demo data once per session so demo starts clean but delegated tasks persist
+  // Seed demo data once per session so demo starts clean but delegated tasks persist.
+  // DEMO_TASKS are persona-specific to Anna Cotton; other personas start with
+  // a clean slate and accrue tasks through conversations.
   useEffect(() => {
-    if (!persona || persona !== "anna-cotton") return;
+    if (!persona) return;
     if (typeof window === "undefined") return;
     const seededKey = `c02_demo_seeded_session_${persona}`;
     if (sessionStorage.getItem(seededKey)) return;
     // Clear stale state
     localStorage.removeItem(`c02_conversations_${persona}`);
     localStorage.removeItem(`c02_dismissed_${persona}`);
-    // Reset tasks to the demo set
-    localStorage.setItem(`c02_tasks_${persona}`, JSON.stringify(DEMO_TASKS));
+    // Seed pre-built tasks for Anna Cotton only
+    if (persona === "anna-cotton") {
+      localStorage.setItem(`c02_tasks_${persona}`, JSON.stringify(DEMO_TASKS));
+    }
     sessionStorage.setItem(seededKey, "true");
   }, [persona]);
 

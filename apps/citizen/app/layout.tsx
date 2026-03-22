@@ -1,5 +1,4 @@
 import type { Metadata, Viewport } from "next";
-import { PhoneFrame } from "@/components/PhoneFrame";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -22,9 +21,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>
-        <PhoneFrame>{children}</PhoneFrame>
-      </body>
+      <body>{children}</body>
     </html>
   );
 }

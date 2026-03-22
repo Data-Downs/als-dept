@@ -46,6 +46,9 @@ Thumbs.db
 *.db-shm
 *.db-journal
 
+# captures
+captures/
+
 # misc
 *.tsbuildinfo
 
