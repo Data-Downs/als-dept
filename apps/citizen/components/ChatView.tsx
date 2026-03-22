@@ -11,6 +11,7 @@ import { TaskReceiptCard } from "./TaskReceiptCard";
 import { ConsentPanel } from "./ConsentCard";
 import { ConsentSummaryCard } from "./ConsentSummaryCard";
 import { StateProgressTracker } from "./StateProgressTracker";
+import { LifeEventProgressTracker } from "./LifeEventProgressTracker";
 import { JourneyCompleteCard } from "./JourneyCompleteCard";
 import { CardHost } from "./cards/CardHost";
 import { RelatedServicesCard } from "./RelatedServicesCard";
@@ -183,8 +184,11 @@ export function ChatView() {
 
   return (
     <div className="flex flex-col h-full">
-      {/* State Progress Tracker — shown when in a UC journey */}
-      {ucState && (
+      {/* Life Event Progress Tracker — shown when in a multi-service life event journey */}
+      <LifeEventProgressTracker />
+
+      {/* State Progress Tracker — shown when in a single-service UC journey */}
+      {ucState && !useAppStore.getState().lifeEventMode && (
         <StateProgressTracker
           currentState={ucState}
           stateHistory={ucStateHistory}
