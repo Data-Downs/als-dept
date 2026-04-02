@@ -643,15 +643,6 @@ export default function ServicesPage() {
         }
       />
 
-      {/* Typology Dashboard — collapsible summary */}
-      <TypologyDashboard
-        services={services}
-        activeType={typologyFilter}
-        onSelectType={(type) =>
-          setTypologyFilter((prev) => (prev === type ? "all" : type))
-        }
-      />
-
       {/* Filters */}
       <div className="flex flex-wrap gap-3 mb-6">
         {/* Source filter */}

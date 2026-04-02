@@ -4,6 +4,7 @@ import {
   invalidateServiceStore,
 } from "@/lib/service-store-init";
 import { handleOptions, jsonWithCors } from "@/lib/cors";
+import { normaliseDepartment } from "@als/service-store";
 
 export async function OPTIONS() {
   return handleOptions();
@@ -58,10 +59,15 @@ export async function POST(request: Request) {
       const statements: Array<{ sql: string; params: unknown[] }> = [];
 
       for (const entry of chunk) {
+        const dept = normaliseDepartment(
+          entry.primary_department,
+          entry.department_key,
+        );
+
         const manifest = {
           id: entry.id,
           name: entry.title,
-          department: entry.primary_department,
+          department: dept.name,
           description: entry.description,
           govuk_url: entry.govuk_url,
           serviceType:
@@ -75,8 +81,8 @@ export async function POST(request: Request) {
           params: [
             entry.id,
             entry.title,
-            entry.primary_department,
-            entry.department_key,
+            dept.name,
+            dept.key,
             entry.description,
             entry.format === "transaction" ? "application" : entry.format,
             entry.govuk_url,

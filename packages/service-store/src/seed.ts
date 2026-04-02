@@ -16,6 +16,7 @@ import {
 import { ServiceArtefactStore } from "./service-store";
 import { ServiceGraphStore } from "./graph-store";
 import { FULL_SERVICES } from "./full-services";
+import { normaliseDepartment } from "./department-map";
 
 // Catalogue data loaded lazily to avoid bloating the Worker bundle
 let _catalogueData: Array<Record<string, unknown>> | null = null;
@@ -86,14 +87,15 @@ export async function seedServiceStore(
     if (replacedGraphIds.has(node.id)) continue; // Will be seeded as full service
 
     const manifest = graphNodeToManifest(node);
+    const dept = normaliseDepartment(node.dept, node.deptKey);
     graphStatements.push({
       sql: `INSERT OR IGNORE INTO services (id, name, department, department_key, description, source, service_type, govuk_url, eligibility_summary, promoted, proactive, gated, manifest_json)
             VALUES (?, ?, ?, ?, ?, 'graph', ?, ?, ?, 0, ?, ?, ?)`,
       params: [
         node.id,
         node.name,
-        node.dept,
-        node.deptKey,
+        dept.name,
+        dept.key,
         node.desc,
         node.serviceType,
         node.govuk_url,
@@ -123,10 +125,18 @@ export async function seedServiceStore(
       await db.run("DELETE FROM services WHERE id = ?", manifestId);
     }
 
+    const rawDeptName = (fullSvc.manifest.department as string) || "";
+    const rawDeptKey = rawDeptName
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "") || "other";
+    const fullDept = normaliseDepartment(rawDeptName, rawDeptKey);
+
     await artefactStore.createService({
       id: serviceId,
       manifest: {
         ...fullSvc.manifest,
+        department: fullDept.name,
         source: "full",
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } as any,
@@ -134,12 +144,7 @@ export async function seedServiceStore(
       stateModel: fullSvc.stateModel,
       consent: fullSvc.consent,
       source: "full",
-      departmentKey: fullSvc.manifest.department
-        ? (fullSvc.manifest.department as string)
-            .toLowerCase()
-            .replace(/[^a-z0-9]+/g, "-")
-            .replace(/^-+|-+$/g, "")
-        : "other",
+      departmentKey: fullDept.key,
     });
     fullCount++;
   }
@@ -196,10 +201,15 @@ export async function seedServiceStore(
   const catStatements: Array<{ sql: string; params: unknown[] }> = [];
 
   for (const entry of catalogue) {
+    const dept = normaliseDepartment(
+      entry.primary_department,
+      entry.department_key,
+    );
+
     const manifest = {
       id: entry.id,
       name: entry.title,
-      department: entry.primary_department,
+      department: dept.name,
       description: entry.description,
       govuk_url: entry.govuk_url,
       serviceType: entry.format === "transaction" ? "application" : "guide",
@@ -211,8 +221,8 @@ export async function seedServiceStore(
       params: [
         entry.id,
         entry.title,
-        entry.primary_department,
-        entry.department_key,
+        dept.name,
+        dept.key,
         entry.description,
         entry.format === "transaction" ? "application" : entry.format,
         entry.govuk_url,
@@ -227,6 +237,34 @@ export async function seedServiceStore(
   // Batch in chunks of 100 to avoid exceeding D1 limits
   for (let i = 0; i < catStatements.length; i += 100) {
     await db.batch(catStatements.slice(i, i + 100));
+  }
+
+  // 6. Fix department names/keys on any surviving services (e.g. LLM-generated
+  //    services that weren't cleared). Query all distinct department values and
+  //    update any that normalise differently.
+  const deptRows = await db.all<{ department: string; department_key: string }>(
+    "SELECT DISTINCT department, department_key FROM services",
+  );
+  const fixStatements: Array<{ sql: string; params: unknown[] }> = [];
+  for (const row of deptRows) {
+    const canonical = normaliseDepartment(row.department, row.department_key);
+    if (
+      canonical.name !== row.department ||
+      canonical.key !== row.department_key
+    ) {
+      fixStatements.push({
+        sql: "UPDATE services SET department = ?, department_key = ? WHERE department = ? AND department_key = ?",
+        params: [
+          canonical.name,
+          canonical.key,
+          row.department,
+          row.department_key,
+        ],
+      });
+    }
+  }
+  if (fixStatements.length > 0) {
+    await db.batch(fixStatements);
   }
 
   return {

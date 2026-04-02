@@ -12,6 +12,7 @@ export { ServiceArtefactStore } from "./service-store";
 export { ServiceGraphStore } from "./graph-store";
 export { seedServiceStore } from "./seed";
 export type { SeedOptions, SeedResult } from "./seed";
+export { normaliseDepartment } from "./department-map";
 
 export type {
   ServiceRow,
