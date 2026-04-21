@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Consent card — GOV.UK citizen app</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #ffffff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 40px 20px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  .card {
+    width: 100%;
+    max-width: 375px;
+    background: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 16px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 4px 12px rgba(0, 0, 0, 0.04);
+    overflow: hidden;
+  }
+
+  .card-header {
+    padding: 24px 24px 20px;
+    border-bottom: 1px solid #f3f2f1;
+  }
+
+  .card-header .icon-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+
+  .card-header .shield-icon {
+    width: 36px;
+    height: 36px;
+    background: #f0f6fc;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .card-header .shield-icon svg {
+    width: 20px;
+    height: 20px;
+    color: #1d70b8;
+  }
+
+  .card-header h2 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #0b0c0c;
+    line-height: 1.3;
+  }
+
+  .card-header .subtitle {
+    font-size: 14px;
+    color: #505a5f;
+    margin-top: 4px;
+  }
+
+  .grants {
+    padding: 0;
+  }
+
+  .grant {
+    border-bottom: 1px solid #f3f2f1;
+  }
+
+  .grant:last-child {
+    border-bottom: none;
+  }
+
+  .grant-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 24px;
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.15s;
+  }
+
+  .grant-header:hover {
+    background: #fafafa;
+  }
+
+  .grant-header-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .grant-checkbox {
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+    background: #1d70b8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .grant-checkbox svg {
+    width: 14px;
+    height: 14px;
+    color: #ffffff;
+  }
+
+  .grant-title {
+    font-size: 14px;
+    font-weight: 500;
+    color: #0b0c0c;
+    line-height: 1.3;
+  }
+
+  .grant-header-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+
+  .badge-required {
+    font-size: 11px;
+    font-weight: 500;
+    color: #00703c;
+    background: #e8f5ee;
+    padding: 2px 8px;
+    border-radius: 100px;
+    letter-spacing: 0.01em;
+  }
+
+  .chevron {
+    width: 20px;
+    height: 20px;
+    color: #505a5f;
+    transition: transform 0.2s ease;
+  }
+
+  .grant.open .chevron {
+    transform: rotate(180deg);
+  }
+
+  .grant-body {
+    padding: 0 24px 16px 58px;
+    display: none;
+  }
+
+  .grant.open .grant-body {
+    display: block;
+  }
+
+  .grant-description {
+    font-size: 13px;
+    color: #505a5f;
+    line-height: 1.5;
+    margin-bottom: 14px;
+  }
+
+  .grant-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .grant-field {
+    display: flex;
+    gap: 8px;
+    font-size: 13px;
+    line-height: 1.4;
+  }
+
+  .grant-field-label {
+    color: #505a5f;
+    white-space: nowrap;
+    min-width: 80px;
+    flex-shrink: 0;
+  }
+
+  .grant-field-value {
+    color: #0b0c0c;
+    font-weight: 450;
+  }
+
+  .card-footer {
+    padding: 20px 24px 24px;
+    border-top: 1px solid #f3f2f1;
+  }
+
+  .btn-primary {
+    display: block;
+    width: 100%;
+    padding: 14px 20px;
+    background: #0b0c0c;
+    color: #ffffff;
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background 0.15s;
+    text-align: center;
+  }
+
+  .btn-primary:hover {
+    background: #1a1a1a;
+  }
+
+  .btn-decline {
+    display: block;
+    width: 100%;
+    padding: 12px 20px;
+    background: transparent;
+    color: #505a5f;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    border: none;
+    cursor: pointer;
+    text-align: center;
+    transition: color 0.15s;
+  }
+
+  .btn-decline:hover {
+    color: #0b0c0c;
+  }
+
+  .footer-note {
+    font-size: 12px;
+    color: #505a5f;
+    text-align: center;
+    margin-top: 12px;
+    line-height: 1.5;
+  }
+</style>
+</head>
+<body>
+
+<div class="card">
+  <div class="card-header">
+    <div class="icon-row">
+      <div class="shield-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        </svg>
+      </div>
+      <div>
+        <h2>Share your details with DVLA</h2>
+        <div class="subtitle">Driving licence renewal</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grants">
+    <!-- Grant 1 -->
+    <div class="grant open" onclick="this.classList.toggle('open')">
+      <div class="grant-header">
+        <div class="grant-header-left">
+          <div class="grant-checkbox">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+          </div>
+          <span class="grant-title">Identity verification</span>
+        </div>
+        <div class="grant-header-right">
+          <span class="badge-required">Required</span>
+          <svg class="chevron" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="6 9 12 15 18 9"/>
+          </svg>
+        </div>
+      </div>
+      <div class="grant-body" onclick="event.stopPropagation()">
+        <div class="grant-description">Verify your identity using GOV.UK One Login</div>
+        <div class="grant-fields">
+          <div class="grant-field">
+            <span class="grant-field-label">Data shared</span>
+            <span class="grant-field-value">Full name, date of birth, National Insurance number</span>
+          </div>
+          <div class="grant-field">
+            <span class="grant-field-label">Source</span>
+            <span class="grant-field-value">GOV.UK One Login</span>
+          </div>
+          <div class="grant-field">
+            <span class="grant-field-label">Purpose</span>
+            <span class="grant-field-value">To confirm you are who you say you are</span>
+          </div>
+          <div class="grant-field">
+            <span class="grant-field-label">Duration</span>
+            <span class="grant-field-value">This session only</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Grant 2 -->
+    <div class="grant" onclick="this.classList.toggle('open')">
+      <div class="grant-header">
+        <div class="grant-header-left">
+          <div class="grant-checkbox">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+          </div>
+          <span class="grant-title">Share passport photo</span>
+        </div>
+        <div class="grant-header-right">
+          <span class="badge-required">Required</span>
+          <svg class="chevron" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="6 9 12 15 18 9"/>
+          </svg>
+        </div>
+      </div>
+      <div class="grant-body" onclick="event.stopPropagation()">
+        <div class="grant-description">Share your passport photo with DVLA</div>
+        <div class="grant-fields">
+          <div class="grant-field">
+            <span class="grant-field-label">Data shared</span>
+            <span class="grant-field-value">Passport photograph</span>
+          </div>
+          <div class="grant-field">
+            <span class="grant-field-label">Source</span>
+            <span class="grant-field-value">HM Passport Office</span>
+          </div>
+          <div class="grant-field">
+            <span class="grant-field-label">Purpose</span>
+            <span class="grant-field-value">DVLA will use your most recent passport photo for the new licence</span>
+          </div>
+          <div class="grant-field">
+            <span class="grant-field-label">Duration</span>
+            <span class="grant-field-value">Until application is complete</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card-footer">
+    <button class="btn-primary">Agree and continue</button>
+    <button class="btn-decline">Decline</button>
+    <div class="footer-note">You can revoke consent at any time through your GOV.UK account.</div>
+  </div>
+</div>
+
+</body>
+</html>

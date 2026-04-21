@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Data trust tiers — GOV.UK citizen app</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #ffffff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 40px 20px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  .card {
+    width: 100%;
+    max-width: 375px;
+    background: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 16px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 4px 12px rgba(0, 0, 0, 0.04);
+    overflow: hidden;
+  }
+
+  /* ── Header ── */
+  .card-header {
+    padding: 20px 24px 16px;
+    border-bottom: 1px solid #f3f2f1;
+  }
+
+  .card-header h2 {
+    font-size: 17px;
+    font-weight: 600;
+    color: #0b0c0c;
+    line-height: 1.3;
+  }
+
+  .card-header .dept-tag {
+    display: inline-block;
+    margin-top: 6px;
+    font-size: 11px;
+    font-weight: 500;
+    color: #505a5f;
+    background: #f3f2f1;
+    padding: 2px 8px;
+    border-radius: 4px;
+    letter-spacing: 0.3px;
+  }
+
+  /* ── Tier section ── */
+  .tier-section {
+    padding: 4px 24px 0;
+  }
+
+  .tier-label {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    padding: 14px 0 6px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .tier-label .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+  }
+
+  .tier-verified .tier-label { color: #00703c; }
+  .tier-verified .tier-label .dot { background: #00703c; }
+
+  .tier-submitted .tier-label { color: #1d70b8; }
+  .tier-submitted .tier-label .dot { background: #1d70b8; }
+
+  .tier-inferred .tier-label { color: #b25900; }
+  .tier-inferred .tier-label .dot { background: #b25900; }
+
+  /* ── Field row ── */
+  .field {
+    display: flex;
+    align-items: flex-start;
+    padding: 10px 0 10px 14px;
+    position: relative;
+  }
+
+  .field::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 6px;
+    bottom: 6px;
+    width: 3px;
+    border-radius: 2px;
+  }
+
+  .tier-verified .field::before { background: #00703c; }
+  .tier-submitted .field::before { background: #1d70b8; }
+  .tier-inferred .field::before { background: #b25900; }
+
+  .field + .field {
+    border-top: 1px solid #f3f2f1;
+  }
+
+  .field-content {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .field-label {
+    font-size: 11px;
+    font-weight: 500;
+    color: #505a5f;
+    margin-bottom: 3px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .field-value {
+    font-size: 14px;
+    font-weight: 500;
+    color: #0b0c0c;
+    line-height: 1.35;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* Lock icon for verified fields */
+  .lock-icon {
+    flex-shrink: 0;
+    width: 14px;
+    height: 14px;
+    color: #00703c;
+    opacity: 0.6;
+  }
+
+  /* Edit icon for submitted fields */
+  .edit-icon {
+    flex-shrink: 0;
+    width: 13px;
+    height: 13px;
+    color: #1d70b8;
+    opacity: 0.5;
+  }
+
+  .field-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 4px;
+    flex-wrap: wrap;
+  }
+
+  /* ── Badges ── */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 7px;
+    border-radius: 4px;
+    letter-spacing: 0.15px;
+    white-space: nowrap;
+  }
+
+  .badge-verified {
+    background: #e6f3ec;
+    color: #00703c;
+  }
+
+  .badge-submitted {
+    background: #e8f1f8;
+    color: #1d70b8;
+  }
+
+  .badge-inferred {
+    background: #fdf0e3;
+    color: #b25900;
+  }
+
+  .badge svg {
+    width: 10px;
+    height: 10px;
+  }
+
+  .source-label {
+    font-size: 10px;
+    color: #505a5f;
+    font-weight: 400;
+  }
+
+  /* ── Inferred confirmation ── */
+  .inferred-hint {
+    font-size: 11px;
+    color: #505a5f;
+    margin-top: 4px;
+    line-height: 1.4;
+    font-style: italic;
+  }
+
+  .confirm-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 8px;
+  }
+
+  .confirm-actions a {
+    font-size: 12px;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  .confirm-actions .btn-confirm {
+    color: #00703c;
+  }
+
+  .confirm-actions .btn-edit {
+    color: #1d70b8;
+  }
+
+  /* ── Footer ── */
+  .card-footer {
+    padding: 16px 24px 20px;
+    border-top: 1px solid #f3f2f1;
+    margin-top: 4px;
+  }
+
+  .prefill-count {
+    font-size: 12px;
+    color: #505a5f;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .prefill-count strong {
+    color: #0b0c0c;
+    font-weight: 600;
+  }
+
+  .continue-btn {
+    width: 100%;
+    background: #0b0c0c;
+    color: #ffffff;
+    border: none;
+    padding: 13px 0;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    letter-spacing: 0.1px;
+  }
+
+  /* ── Editable field indicator ── */
+  .editable-field .field-value {
+    padding: 4px 8px;
+    background: #f8f8f8;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    font-size: 13px;
+  }
+</style>
+</head>
+<body>
+
+<div class="card">
+
+  <!-- Header -->
+  <div class="card-header">
+    <h2>Register a death</h2>
+    <span class="dept-tag">GRO</span>
+  </div>
+
+  <!-- Tier 1 — Verified -->
+  <div class="tier-section tier-verified">
+    <div class="tier-label"><span class="dot"></span> Verified</div>
+
+    <div class="field">
+      <div class="field-content">
+        <div class="field-label">Full name</div>
+        <div class="field-value">
+          Sarah Okafor
+          <svg class="lock-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        </div>
+        <div class="field-meta">
+          <span class="badge badge-verified">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            Verified
+          </span>
+          <span class="source-label">GOV.UK One Login</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="field">
+      <div class="field-content">
+        <div class="field-label">Date of birth</div>
+        <div class="field-value">
+          12 March 1968
+          <svg class="lock-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        </div>
+        <div class="field-meta">
+          <span class="badge badge-verified">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            Verified
+          </span>
+          <span class="source-label">GOV.UK One Login</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="field">
+      <div class="field-content">
+        <div class="field-label">National Insurance number</div>
+        <div class="field-value">
+          QQ 12 34 56 C
+          <svg class="lock-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        </div>
+        <div class="field-meta">
+          <span class="badge badge-verified">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            Verified
+          </span>
+          <span class="source-label">HMRC</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tier 2 — Previously submitted -->
+  <div class="tier-section tier-submitted">
+    <div class="tier-label"><span class="dot"></span> Previously submitted</div>
+
+    <div class="field editable-field">
+      <div class="field-content">
+        <div class="field-label">Phone number</div>
+        <div class="field-value">
+          07700 900123
+          <svg class="edit-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.85 0 0 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>
+        </div>
+        <div class="field-meta">
+          <span class="badge badge-submitted">Previously submitted</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="field editable-field">
+      <div class="field-content">
+        <div class="field-label">Email</div>
+        <div class="field-value">
+          sarah.okafor@email.com
+          <svg class="edit-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.85 0 0 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>
+        </div>
+        <div class="field-meta">
+          <span class="badge badge-submitted">Previously submitted</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tier 3 — Inferred -->
+  <div class="tier-section tier-inferred">
+    <div class="tier-label"><span class="dot"></span> Inferred</div>
+
+    <div class="field">
+      <div class="field-content">
+        <div class="field-label">Relationship to deceased</div>
+        <div class="field-value">Spouse</div>
+        <div class="field-meta">
+          <span class="badge badge-inferred">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            Inferred
+          </span>
+        </div>
+        <div class="inferred-hint">Based on what you've told me. Please confirm.</div>
+        <div class="confirm-actions">
+          <a class="btn-confirm">Confirm</a>
+          <a class="btn-edit">Edit</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="card-footer">
+    <div class="prefill-count"><strong>4 of 6</strong> fields pre-filled</div>
+    <button class="continue-btn">Continue</button>
+  </div>
+
+</div>
+
+</body>
+</html>

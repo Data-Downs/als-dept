@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The deterministic boundary</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: #ffffff;
+    color: #1a1a1a;
+    display: flex;
+    justify-content: center;
+    padding: 48px 24px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .container {
+    max-width: 800px;
+    width: 100%;
+  }
+
+  h1 {
+    font-size: 20px;
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 6px;
+    letter-spacing: -0.02em;
+  }
+
+  .subtitle {
+    font-size: 13px;
+    color: #666;
+    text-align: center;
+    margin-bottom: 40px;
+  }
+
+  /* Chat bubbles */
+  .bubble {
+    max-width: 520px;
+    padding: 14px 18px;
+    border-radius: 16px;
+    font-size: 14px;
+    line-height: 1.55;
+    position: relative;
+  }
+
+  .bubble-input {
+    background: #e8f0fe;
+    color: #1a1a1a;
+    margin-left: 0;
+    border-bottom-left-radius: 4px;
+    margin-bottom: 32px;
+  }
+
+  .bubble-output {
+    background: #f5f5f5;
+    color: #1a1a1a;
+    margin-left: auto;
+    margin-right: 0;
+    border-bottom-right-radius: 4px;
+    margin-top: 32px;
+  }
+
+  .bubble-label {
+    font-size: 11px;
+    font-weight: 500;
+    color: #999;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 6px;
+  }
+
+  .bubble-output .bubble-label {
+    text-align: right;
+  }
+
+  /* Pipeline */
+  .pipeline {
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+    width: 100%;
+  }
+
+  .stage {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  .stage-zone {
+    font-size: 10px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 6px 10px;
+    border-radius: 6px 6px 0 0;
+    text-align: center;
+  }
+
+  .stage-body {
+    flex: 1;
+    padding: 16px 12px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    border-radius: 0 0 6px 6px;
+    position: relative;
+  }
+
+  .stage-title {
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 6px;
+    letter-spacing: -0.01em;
+  }
+
+  .stage-desc {
+    font-size: 11px;
+    color: #555;
+    line-height: 1.45;
+  }
+
+  /* AI zone colours */
+  .zone-ai .stage-zone {
+    background: #efeeec;
+    color: #888;
+  }
+
+  .zone-ai .stage-body {
+    background: #f8f8f7;
+    border: 1px solid #e5e4e2;
+    border-top: none;
+  }
+
+  /* Code zone colours */
+  .zone-code .stage-zone {
+    background: #00703c;
+    color: #fff;
+  }
+
+  .zone-code .stage-body {
+    background: #e8f5ee;
+    border: 1px solid #00703c;
+    border-top: none;
+  }
+
+  .zone-code .stage-title {
+    color: #00552e;
+  }
+
+  .zone-code .stage-desc {
+    color: #2d6a4f;
+  }
+
+  /* Arrows between stages */
+  .arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    min-width: 24px;
+    padding-top: 22px; /* offset for zone label */
+  }
+
+  .arrow svg {
+    width: 16px;
+    height: 16px;
+    color: #ccc;
+    flex-shrink: 0;
+  }
+
+  /* Legend */
+  .legend {
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: #666;
+  }
+
+  .legend-swatch {
+    width: 14px;
+    height: 14px;
+    border-radius: 3px;
+  }
+
+  .swatch-ai {
+    background: #f8f8f7;
+    border: 1px solid #e5e4e2;
+  }
+
+  .swatch-code {
+    background: #e8f5ee;
+    border: 1px solid #00703c;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <h1>The deterministic boundary</h1>
+  <p class="subtitle">AI handles language. Code handles decisions. Nothing crosses the line.</p>
+
+  <!-- Citizen input -->
+  <div>
+    <div class="bubble-label">Citizen speaks</div>
+    <div class="bubble bubble-input">"My husband died last week. I don't know what I need to do."</div>
+  </div>
+
+  <!-- Pipeline -->
+  <div class="pipeline">
+
+    <!-- Stage 1: Interpret intent -->
+    <div class="stage zone-ai">
+      <div class="stage-zone">AI</div>
+      <div class="stage-body">
+        <div class="stage-title">Interpret intent</div>
+        <div class="stage-desc">AI identifies this as a bereavement life event</div>
+      </div>
+    </div>
+
+    <div class="arrow">
+      <svg viewBox="0 0 16 16" fill="none"><path d="M3 8h10m0 0L9.5 4.5M13 8l-3.5 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+
+    <!-- Stage 2: Evaluate eligibility -->
+    <div class="stage zone-code">
+      <div class="stage-zone">Deterministic code</div>
+      <div class="stage-body">
+        <div class="stage-title">Evaluate eligibility</div>
+        <div class="stage-desc">Policy rules checked for each service</div>
+      </div>
+    </div>
+
+    <div class="arrow">
+      <svg viewBox="0 0 16 16" fill="none"><path d="M3 8h10m0 0L9.5 4.5M13 8l-3.5 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+
+    <!-- Stage 3: Check consent -->
+    <div class="stage zone-code">
+      <div class="stage-zone">Deterministic code</div>
+      <div class="stage-body">
+        <div class="stage-title">Check consent</div>
+        <div class="stage-desc">Data-sharing consent gates enforced</div>
+      </div>
+    </div>
+
+    <div class="arrow">
+      <svg viewBox="0 0 16 16" fill="none"><path d="M3 8h10m0 0L9.5 4.5M13 8l-3.5 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+
+    <!-- Stage 4: Advance state -->
+    <div class="stage zone-code">
+      <div class="stage-zone">Deterministic code</div>
+      <div class="stage-body">
+        <div class="stage-title">Advance state</div>
+        <div class="stage-desc">State machine moves to next valid step</div>
+      </div>
+    </div>
+
+    <div class="arrow">
+      <svg viewBox="0 0 16 16" fill="none"><path d="M3 8h10m0 0L9.5 4.5M13 8l-3.5 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+
+    <!-- Stage 5: Frame response -->
+    <div class="stage zone-ai">
+      <div class="stage-zone">AI</div>
+      <div class="stage-body">
+        <div class="stage-title">Frame response</div>
+        <div class="stage-desc">AI composes a natural-language reply</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Citizen output -->
+  <div>
+    <div class="bubble-label bubble-output" style="background:none; padding:0; margin-top:32px; margin-bottom:6px;">Citizen sees</div>
+    <div class="bubble bubble-output">"I've identified 6 services you'll need across 4 departments. Let's start with registering the death &mdash; I can begin that now if you're ready."</div>
+  </div>
+
+  <!-- Legend -->
+  <div class="legend">
+    <div class="legend-item">
+      <div class="legend-swatch swatch-ai"></div>
+      AI handles language
+    </div>
+    <div class="legend-item">
+      <div class="legend-swatch swatch-code"></div>
+      Deterministic code handles decisions
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,1068 @@
+<!doctype html>
+<html lang="en-GB">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Agentic Service Standards — Agentic Legibility Stack</title>
+    <meta name="description" content="A policy briefing on why government needs agentic service standards — the trust framework required for third-party AI agents to interact with government services on behalf of citizens." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /* ── Reset & Base ── */
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+      html { scroll-behavior: smooth; }
+      body {
+        font-family: "Inter", Arial, sans-serif;
+        color: #0b0c0c;
+        line-height: 1.6;
+        background: #fff;
+        -webkit-font-smoothing: antialiased;
+      }
+      a { color: #1d70b8; text-decoration: none; }
+      a:hover { text-decoration: underline; color: #003078; }
+      code, pre { font-family: "JetBrains Mono", monospace; }
+
+      /* ── Layout ── */
+      .container { max-width: 960px; margin: 0 auto; padding: 0 1.5rem; }
+      .section { padding: 4rem 0; }
+      .section-alt { background: #f3f2f1; }
+
+      h1, h2, h3 { line-height: 1.2; }
+      h2 { font-size: 1.75rem; font-weight: 700; margin-bottom: 1rem; }
+      h3 { font-size: 1.25rem; font-weight: 600; margin-bottom: 0.5rem; }
+      .section-intro {
+        font-size: 1.1rem;
+        color: #505a5f;
+        max-width: 700px;
+        margin-bottom: 2rem;
+      }
+
+      /* ── Nav ── */
+      .nav {
+        background: #fff;
+        border-bottom: 1px solid #b1b4b6;
+        padding: 0.75rem 0;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+      .nav .container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+      }
+      .nav-brand { font-weight: 700; font-size: 1rem; color: #0b0c0c; white-space: nowrap; }
+      .nav-links { display: flex; gap: 1.25rem; list-style: none; flex-wrap: wrap; align-items: center; }
+      .nav-links a { font-size: 0.85rem; font-weight: 500; color: #505a5f; }
+      .nav-links a:hover { color: #1d70b8; text-decoration: none; }
+      .nav-links a.active { color: #0b0c0c; font-weight: 700; border-bottom: 2px solid #0b0c0c; padding-bottom: 2px; }
+      @media (max-width: 640px) {
+        .nav-links { display: none; }
+      }
+
+      /* ── Hero ── */
+      .hero { padding: 5rem 0 3rem; }
+      .hero-label {
+        display: inline-block;
+        background: #f3f2f1;
+        color: #505a5f;
+        font-size: 0.8rem;
+        font-weight: 600;
+        padding: 0.25rem 0.75rem;
+        border-radius: 2px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 1.25rem;
+      }
+      .hero h1 { font-size: 2.75rem; font-weight: 700; margin-bottom: 0.75rem; }
+      .hero-subtitle {
+        font-size: 1.35rem;
+        color: #505a5f;
+        font-weight: 400;
+        max-width: 700px;
+        margin-bottom: 1.5rem;
+      }
+      .hero-meta {
+        font-size: 0.85rem;
+        color: #505a5f;
+        margin-bottom: 1rem;
+      }
+      .hero-note {
+        font-size: 0.9rem;
+        color: #505a5f;
+        max-width: 700px;
+        padding: 0.75rem 1rem;
+        background: #f3f2f1;
+        border-radius: 4px;
+      }
+      .hero-note a { font-weight: 600; }
+      @media (max-width: 640px) {
+        .hero h1 { font-size: 2rem; }
+        .hero-subtitle { font-size: 1.15rem; }
+      }
+
+      /* ── TOC ── */
+      .toc-list {
+        list-style: none;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 0.5rem;
+      }
+      .toc-list li {
+        font-size: 0.9rem;
+        font-weight: 500;
+      }
+      .toc-list a { color: #0b0c0c; }
+      .toc-list a:hover { color: #1d70b8; }
+      .toc-number {
+        display: inline-flex;
+        width: 22px;
+        height: 22px;
+        align-items: center;
+        justify-content: center;
+        background: #0b0c0c;
+        color: #fff;
+        border-radius: 50%;
+        font-size: 0.65rem;
+        font-weight: 700;
+        margin-right: 0.5rem;
+        flex-shrink: 0;
+      }
+
+      /* ── Section numbers ── */
+      .section-number {
+        font-size: 0.75rem;
+        font-weight: 800;
+        color: #fff;
+        background: #0b0c0c;
+        width: 28px;
+        height: 28px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        flex-shrink: 0;
+        margin-right: 0.75rem;
+      }
+      .section-heading {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1rem;
+      }
+      .section-heading h2 { margin-bottom: 0; }
+
+      /* ── Callouts ── */
+      .callout {
+        border-left: 4px solid #b1b4b6;
+        padding: 1rem 1.25rem;
+        background: #f3f2f1;
+        font-size: 0.95rem;
+        color: #505a5f;
+        margin-top: 1.5rem;
+        border-radius: 0 4px 4px 0;
+      }
+      .callout strong { color: #0b0c0c; }
+      .callout-blue { border-left-color: #1d70b8; }
+      .callout-green { border-left-color: #00703c; }
+      .callout-red { border-left-color: #d4351c; }
+      .callout-orange { border-left-color: #f47738; }
+
+      /* ── Pillar cards ── */
+      .pillar-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.25rem;
+        margin-top: 1.5rem;
+      }
+      .pillar-card {
+        border: 1px solid #e0dfde;
+        border-radius: 6px;
+        padding: 1.5rem;
+        background: #fff;
+        border-top: 4px solid;
+      }
+      .pillar-card h3 { font-size: 1rem; margin-bottom: 0.5rem; }
+      .pillar-card p { font-size: 0.9rem; color: #505a5f; }
+      @media (max-width: 640px) {
+        .pillar-grid { grid-template-columns: 1fr; }
+      }
+
+      /* ── Split comparison ── */
+      .split {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+        margin-top: 1.5rem;
+      }
+      .split-col {
+        padding: 1.25rem;
+        border-radius: 6px;
+        border: 1px solid;
+      }
+      .split-col h3 {
+        font-size: 1rem;
+        font-weight: 700;
+        margin-bottom: 0.75rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+      .split-col ul {
+        list-style: none;
+        font-size: 0.9rem;
+      }
+      .split-col li {
+        padding: 0.3rem 0;
+        padding-left: 1.25rem;
+        position: relative;
+      }
+      .split-col li::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0.65rem;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+      }
+      .split-today {
+        border-color: #f6d7d3;
+        background: #fef7f6;
+      }
+      .split-today h3 { color: #d4351c; }
+      .split-today li::before { background: #d4351c; }
+      .split-agent {
+        border-color: #c1e4d1;
+        background: #f0faf4;
+      }
+      .split-agent h3 { color: #00703c; }
+      .split-agent li::before { background: #00703c; }
+      @media (max-width: 640px) {
+        .split { grid-template-columns: 1fr; }
+      }
+
+      /* ── Guarantee cards ── */
+      .guarantee-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.25rem;
+        margin-top: 1.5rem;
+      }
+      .guarantee-card {
+        padding: 1.5rem;
+        border: 1px solid #e0dfde;
+        border-radius: 6px;
+        background: #fff;
+      }
+      .guarantee-card h3 {
+        font-size: 0.95rem;
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: flex-start;
+        gap: 0.5rem;
+      }
+      .guarantee-card p { font-size: 0.85rem; color: #505a5f; }
+      .guarantee-number {
+        display: inline-flex;
+        width: 22px;
+        height: 22px;
+        align-items: center;
+        justify-content: center;
+        background: #00703c;
+        color: #fff;
+        border-radius: 50%;
+        font-size: 0.65rem;
+        font-weight: 700;
+        flex-shrink: 0;
+      }
+      @media (max-width: 640px) {
+        .guarantee-grid { grid-template-columns: 1fr; }
+      }
+
+      /* ── Pipeline diagram ── */
+      .pipeline {
+        display: flex;
+        align-items: center;
+        gap: 0;
+        margin: 2rem 0;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      .pipeline-box {
+        padding: 0.6rem 1.25rem;
+        border-radius: 4px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        text-align: center;
+        white-space: nowrap;
+      }
+      .pipeline-box-green { background: #e6f3ec; color: #00703c; border: 1.5px solid #00703c; }
+      .pipeline-box-orange { background: #fef3e8; color: #f47738; border: 1.5px solid #f47738; }
+      .pipeline-box-blue { background: #e8f0fe; color: #1d70b8; border: 1.5px solid #1d70b8; }
+      .pipeline-box-purple { background: #f5e6f4; color: #912b88; border: 1.5px solid #912b88; }
+      .pipeline-box-dark { background: #0b0c0c; color: #fff; }
+      .pipeline-box-red { background: #fde8e8; color: #d4351c; border: 1.5px solid #d4351c; }
+      .pipeline-arrow {
+        font-size: 1.25rem;
+        color: #b1b4b6;
+        padding: 0 0.35rem;
+      }
+
+      /* ── Stat row ── */
+      .stat-row {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1.25rem;
+        margin-top: 2rem;
+      }
+      .stat-item {
+        text-align: center;
+        padding: 1.25rem 1rem;
+        background: #fff;
+        border: 1px solid #e0dfde;
+        border-radius: 6px;
+      }
+      .stat-value {
+        font-size: 2rem;
+        font-weight: 800;
+        color: #0b0c0c;
+        line-height: 1.1;
+      }
+      .stat-label {
+        font-size: 0.75rem;
+        color: #505a5f;
+        margin-top: 0.25rem;
+      }
+      @media (max-width: 640px) {
+        .stat-row { grid-template-columns: repeat(2, 1fr); }
+      }
+
+      /* ── Layer diagram ── */
+      .layer-stack {
+        max-width: 640px;
+        margin: 2rem 0;
+      }
+      .layer-row {
+        display: flex;
+        align-items: stretch;
+        border: 1px solid #e0dfde;
+        border-bottom: none;
+        background: #fff;
+      }
+      .layer-row:first-child { border-radius: 6px 6px 0 0; }
+      .layer-row:last-child { border-bottom: 1px solid #e0dfde; border-radius: 0 0 6px 6px; }
+      .layer-label {
+        width: 180px;
+        padding: 1rem 1.25rem;
+        font-size: 0.85rem;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        flex-shrink: 0;
+        border-right: 1px solid #e0dfde;
+      }
+      .layer-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        flex-shrink: 0;
+      }
+      .layer-desc {
+        padding: 1rem 1.25rem;
+        font-size: 0.85rem;
+        color: #505a5f;
+        flex: 1;
+      }
+      @media (max-width: 640px) {
+        .layer-row { flex-direction: column; }
+        .layer-label { width: 100%; border-right: none; border-bottom: 1px solid #f3f2f1; padding: 0.75rem 1rem; }
+        .layer-desc { padding: 0.75rem 1rem; }
+      }
+
+      /* ── Standard cards (numbered) ── */
+      .standard-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1rem;
+        margin-top: 1.5rem;
+      }
+      .standard-card {
+        display: flex;
+        gap: 1.25rem;
+        padding: 1.5rem;
+        border: 1px solid #e0dfde;
+        border-radius: 6px;
+        background: #fff;
+        align-items: flex-start;
+      }
+      .standard-number {
+        display: inline-flex;
+        width: 32px;
+        height: 32px;
+        align-items: center;
+        justify-content: center;
+        background: #0b0c0c;
+        color: #fff;
+        border-radius: 50%;
+        font-size: 0.85rem;
+        font-weight: 700;
+        flex-shrink: 0;
+      }
+      .standard-content { flex: 1; }
+      .standard-content h3 { font-size: 1rem; margin-bottom: 0.35rem; }
+      .standard-content p { font-size: 0.9rem; color: #505a5f; margin-bottom: 0; }
+      .standard-content .standard-detail {
+        font-size: 0.8rem;
+        color: #505a5f;
+        margin-top: 0.5rem;
+        padding-top: 0.5rem;
+        border-top: 1px solid #f3f2f1;
+        font-style: italic;
+      }
+
+      /* ── Risk pairs ── */
+      .risk-list { margin-top: 1.5rem; }
+      .risk-item {
+        padding: 1.25rem 0;
+        border-bottom: 1px solid #e0dfde;
+      }
+      .risk-item:last-child { border-bottom: none; }
+      .risk-objection {
+        font-size: 1rem;
+        font-weight: 700;
+        color: #0b0c0c;
+        margin-bottom: 0.35rem;
+      }
+      .risk-response {
+        font-size: 0.9rem;
+        color: #505a5f;
+      }
+
+      /* ── Code block ── */
+      .code-block {
+        margin-top: 1.5rem;
+        max-width: 560px;
+      }
+      .code-block pre {
+        background: #1a1a2e;
+        color: #e0e0e0;
+        padding: 1.25rem 1.5rem;
+        border-radius: 6px;
+        font-size: 0.8rem;
+        line-height: 1.7;
+        overflow-x: auto;
+      }
+      .code-block pre .key { color: #7dd3fc; }
+      .code-block pre .str { color: #86efac; }
+      .code-block pre .comment { color: #6b7280; }
+
+      /* ── Closing block ── */
+      .closing {
+        background: #0b0c0c;
+        color: #fff;
+        padding: 3rem 0;
+        text-align: center;
+      }
+      .closing h2 {
+        color: #fff;
+        font-size: 1.75rem;
+        margin-bottom: 1rem;
+      }
+      .closing p {
+        max-width: 700px;
+        margin: 0 auto;
+        font-size: 1.1rem;
+        line-height: 1.6;
+        color: #d4d4d4;
+      }
+
+      /* ── Footer ── */
+      .footer {
+        padding: 2rem 0;
+        text-align: center;
+        font-size: 0.8rem;
+        color: #b1b4b6;
+        border-top: 1px solid #e0dfde;
+      }
+
+      /* ── Print ── */
+      @media print {
+        .nav { position: static; }
+        .section { break-inside: avoid; }
+      }
+    </style>
+    <script async defer src="https://scripts.withcabin.com/hello.js"></script>
+  </head>
+  <body>
+
+    <!-- ── Navigation ── -->
+    <nav class="nav">
+      <div class="container">
+        <span class="nav-brand">Agentic Legibility Stack</span>
+        <ul class="nav-links">
+          <li><a href="index.html">All documents</a></li>
+          <li><a href="overview.html">Overview</a></li>
+          <li><a href="briefing-executive.html">Executive briefing</a></li>
+          <li><a href="agentic-service-standards.html" class="active">Agentic service standards</a></li>
+          <li><a href="reference-technical.html">Technical reference</a></li>
+          <li><a href="glossary.html">Glossary</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- ── Hero ── -->
+    <header class="hero">
+      <div class="container">
+        <span class="hero-label">Policy Briefing</span>
+        <h1>Agentic Service Standards for Government</h1>
+        <p class="hero-subtitle">Why government needs a trust framework for AI agents &mdash; and what prototyping has revealed about where the real boundaries lie.</p>
+        <div class="callout callout-red" style="margin-bottom: 1.5rem; font-size: 1.05rem; font-weight: 500; max-width: 700px;">
+          Third-party AI agents will attempt to access government services on behalf of citizens. The question is not whether this happens, but whether government is ready when it does.
+        </div>
+        <p class="hero-meta">April 2026 &nbsp;|&nbsp; Audience: Director General for GDS, Permanent Secretaries, Heads of Department</p>
+        <p class="hero-note">This briefing draws on working prototypes that implement the full service delivery pipeline &mdash; from citizen conversation through policy evaluation, consent management, and departmental submission. The findings are evidence-based, not theoretical. For the full operating model, see the <a href="briefing-executive.html">Executive Briefing</a>.</p>
+      </div>
+    </header>
+
+    <!-- ── Table of Contents ── -->
+    <div class="section-alt">
+      <div class="section" style="padding: 2.5rem 0;">
+        <div class="container">
+          <ol class="toc-list">
+            <li><span class="toc-number">1</span><a href="#the-question">The Question We Have Not Yet Asked</a></li>
+            <li><span class="toc-number">2</span><a href="#legibility-vs-agency">Legibility vs Agency</a></li>
+            <li><span class="toc-number">3</span><a href="#what-happens-without">What Happens Without Standards</a></li>
+            <li><span class="toc-number">4</span><a href="#three-tiers">Three Tiers of Access</a></li>
+            <li><span class="toc-number">5</span><a href="#the-standards">The Proposed Agentic Service Standards</a></li>
+            <li><span class="toc-number">6</span><a href="#authentication">The Authentication Question</a></li>
+            <li><span class="toc-number">7</span><a href="#what-prototyping-shows">What Prototyping Has Demonstrated</a></li>
+            <li><span class="toc-number">8</span><a href="#objections">Anticipated Objections</a></li>
+            <li><span class="toc-number">9</span><a href="#recommendations">Recommendations</a></li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <!-- Section 1: The Question                                    -->
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <div class="section" id="the-question">
+      <div class="container">
+        <div class="section-heading">
+          <span class="section-number">1</span>
+          <h2>The Question We Have Not Yet Asked</h2>
+        </div>
+        <p class="section-intro">Government has been asking how it should build AI services for citizens. It has not yet asked the harder question: what happens when citizens arrive at government services through AI agents that government did not build?</p>
+
+        <p style="font-size: 0.95rem; color: #505a5f; max-width: 700px; margin-bottom: 1rem;">ChatGPT has over 200 million weekly active users. Claude, Gemini, and open-source alternatives are growing rapidly. These tools are increasingly capable of acting on behalf of users &mdash; booking appointments, filling in forms, navigating complex processes. It is a matter of when, not if, citizens begin asking these agents to help them with government services.</p>
+
+        <p style="font-size: 0.95rem; color: #505a5f; max-width: 700px; margin-bottom: 1.5rem;">The technical infrastructure to make this possible already exists. The Model Context Protocol (MCP) &mdash; an open standard for connecting AI agents to external tools and data &mdash; means that any AI model can, in principle, connect to government service endpoints and act on the data it finds there. The question is no longer technical. It is one of policy, privacy, and trust.</p>
+
+        <div class="stat-row">
+          <div class="stat-item">
+            <div class="stat-value">200m+</div>
+            <div class="stat-label">Weekly ChatGPT users</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value">1,544</div>
+            <div class="stat-label">Government services</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value">0</div>
+            <div class="stat-label">Agentic access standards</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value">~&pound;23bn</div>
+            <div class="stat-label">Unclaimed benefits / year</div>
+          </div>
+        </div>
+
+        <div class="callout callout-blue">
+          <strong>The insight:</strong> The technology to connect third-party AI agents to government services already exists. What does not exist is a framework defining the terms under which that access should be granted &mdash; or denied.
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <!-- Section 2: Legibility vs Agency                            -->
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <div class="section section-alt" id="legibility-vs-agency">
+      <div class="container">
+        <div class="section-heading">
+          <span class="section-number">2</span>
+          <h2>Legibility vs Agency</h2>
+        </div>
+        <p class="section-intro">There is a critical distinction that does not yet appear in government policy: the difference between an AI agent reading what services exist and an AI agent acting on behalf of a citizen within those services.</p>
+
+        <div class="split">
+          <div class="split-col" style="border-color: #bfdbfe; background: #eff6ff;">
+            <h3 style="color: #1d70b8;">Legibility</h3>
+            <ul>
+              <li>Reading what services exist</li>
+              <li>Understanding eligibility criteria</li>
+              <li>Knowing what data is required</li>
+              <li>Learning the valid sequence of steps</li>
+              <li>Seeing consent requirements</li>
+            </ul>
+          </div>
+          <div class="split-col" style="border-color: #e9d5ff; background: #faf5ff;">
+            <h3 style="color: #912b88;">Agency</h3>
+            <ul>
+              <li>Evaluating a citizen&rsquo;s eligibility</li>
+              <li>Collecting and sharing personal data</li>
+              <li>Advancing through service workflows</li>
+              <li>Submitting applications on behalf of a citizen</li>
+              <li>Granting or managing consent</li>
+            </ul>
+          </div>
+        </div>
+
+        <p style="font-size: 0.95rem; color: #505a5f; max-width: 700px; margin-top: 1.5rem;">Legibility is arguably public information. It is the machine-readable equivalent of what GOV.UK already publishes in human-readable form: what a service does, who can use it, what it requires. Any agent should be able to read this. That is just good government.</p>
+
+        <p style="font-size: 0.95rem; color: #505a5f; max-width: 700px;">Agency is different. It involves acting within government systems on behalf of a specific, authenticated citizen. It requires identity, consent, data handling, and audit. This is where standards are essential.</p>
+
+        <div class="callout callout-blue">
+          Legibility tells an agent: &ldquo;this service exists, it requires these things, and these are the rules.&rdquo; Agency means: &ldquo;act on this citizen&rsquo;s behalf within those rules.&rdquo; The first is information. The second is delegation. They require fundamentally different trust models.
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <!-- Section 3: What Happens Without Standards                  -->
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <div class="section" id="what-happens-without">
+      <div class="container">
+        <div class="section-heading">
+          <span class="section-number">3</span>
+          <h2>What Happens Without Standards</h2>
+        </div>
+        <p class="section-intro">Without agentic service standards, third-party AI agents will make probabilistic guesses about government services. The consequences are predictable and serious.</p>
+
+        <p style="font-size: 0.95rem; color: #505a5f; max-width: 700px; margin-bottom: 1rem;">Large language models are pattern-matching systems trained on public text. When a citizen asks ChatGPT &ldquo;am I eligible for Universal Credit?&rdquo;, the model will draw on its training data &mdash; GOV.UK pages, forum posts, news articles &mdash; and produce a confident, plausible answer. That answer will often be wrong in the details that matter.</p>
+
+        <p style="font-size: 0.95rem; color: #505a5f; max-width: 700px; margin-bottom: 1.5rem;">The model does not know the citizen&rsquo;s actual savings balance. It does not apply the capital threshold rules deterministically. It does not check the real-time policy. It approximates. And when the citizen then attempts to claim, the application fails at submission &mdash; at the point of maximum emotional investment and minimum resilience.</p>
+
+        <div class="pillar-grid" style="grid-template-columns: repeat(2, 1fr);">
+          <div class="pillar-card" style="border-top-color: #d4351c;">
+            <h3>Hallucinated eligibility</h3>
+            <p>An LLM tells a bereaved citizen they qualify for Bereavement Support Payment. They don&rsquo;t &mdash; their savings are &pound;200 over the threshold. They discover this after providing extensive personal information.</p>
+          </div>
+          <div class="pillar-card" style="border-top-color: #d4351c;">
+            <h3>Invented services</h3>
+            <p>A model confidently describes a &ldquo;Carer&rsquo;s Emergency Grant&rdquo; that does not exist, drawn from a misinterpretation of multiple training sources. The citizen spends hours searching for how to apply.</p>
+          </div>
+          <div class="pillar-card" style="border-top-color: #d4351c;">
+            <h3>Stale information</h3>
+            <p>Policy changes after the model&rsquo;s training cutoff. The agent gives advice based on rules that no longer apply. The citizen makes financial decisions based on entitlements that have been withdrawn.</p>
+          </div>
+          <div class="pillar-card" style="border-top-color: #d4351c;">
+            <h3>Data leakage</h3>
+            <p>A citizen shares their National Insurance number, bank details, and medical information with a third-party AI provider in order to &ldquo;check eligibility&rdquo;. That data is now held by a commercial entity with no government data-sharing agreement.</p>
+          </div>
+        </div>
+
+        <div class="callout callout-red">
+          <strong>This is not hypothetical.</strong> These scenarios are the natural consequence of capable AI agents encountering government services without structured, machine-readable service descriptions and enforced behavioural standards. The failure mode is not incompetence &mdash; it is confidence without authority.
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <!-- Section 4: Three Tiers of Access                           -->
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <div class="section section-alt" id="three-tiers">
+      <div class="container">
+        <div class="section-heading">
+          <span class="section-number">4</span>
+          <h2>Three Tiers of Access</h2>
+        </div>
+        <p class="section-intro">Not all agent interactions with government need the same level of trust. We propose three distinct tiers, each with its own requirements and governance.</p>
+
+        <div class="layer-stack">
+          <div class="layer-row">
+            <div class="layer-label">
+              <span class="layer-dot" style="background: #00703c;"></span>
+              Tier 1: Read
+            </div>
+            <div class="layer-desc">
+              <strong>Read service metadata.</strong> Any agent can discover what services exist, what they require, who is eligible, and what data is needed. This is public information, published as structured artefacts. No authentication required. No personal data exchanged.
+            </div>
+          </div>
+          <div class="layer-row">
+            <div class="layer-label">
+              <span class="layer-dot" style="background: #1d70b8;"></span>
+              Tier 2: Evaluate
+            </div>
+            <div class="layer-desc">
+              <strong>Run eligibility checks using government&rsquo;s deterministic tools.</strong> An agent submits citizen data to government-hosted evaluation endpoints and receives a definitive eligibility result. Requires: registered agent, citizen authentication via One Login, consent for data processing, audit logging. The agent must use government&rsquo;s policy evaluator &mdash; it must not substitute its own probabilistic judgement.
+            </div>
+          </div>
+          <div class="layer-row">
+            <div class="layer-label">
+              <span class="layer-dot" style="background: #912b88;"></span>
+              Tier 3: Act
+            </div>
+            <div class="layer-desc">
+              <strong>Submit applications and advance service workflows on behalf of a citizen.</strong> Full agency. Requires: all Tier 2 conditions, plus explicit citizen delegation, scoped consent for each data-sharing event, full audit trail with receipts, and adherence to the complete set of agentic service standards. Government retains the right to revoke access.
+            </div>
+          </div>
+        </div>
+
+        <!-- Tier diagram -->
+        <div class="pipeline" style="margin-top: 2rem;">
+          <div class="pipeline-box pipeline-box-green">Tier 1: Read</div>
+          <span class="pipeline-arrow">&rarr;</span>
+          <div class="pipeline-box pipeline-box-blue">Tier 2: Evaluate</div>
+          <span class="pipeline-arrow">&rarr;</span>
+          <div class="pipeline-box pipeline-box-purple">Tier 3: Act</div>
+        </div>
+        <div style="display: flex; gap: 1.5rem; justify-content: center; font-size: 0.75rem; color: #505a5f; flex-wrap: wrap;">
+          <span>Public &middot; No auth</span>
+          <span>|</span>
+          <span>Authenticated &middot; Deterministic only</span>
+          <span>|</span>
+          <span>Full delegation &middot; Audited</span>
+        </div>
+
+        <div class="callout callout-green">
+          <strong>The principle:</strong> increasing trust requirements match increasing power. An agent that can only read service descriptions needs no authentication. An agent that submits applications on behalf of citizens needs the highest level of governance.
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <!-- Section 5: The Proposed Standards                          -->
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <div class="section" id="the-standards">
+      <div class="container">
+        <div class="section-heading">
+          <span class="section-number">5</span>
+          <h2>The Proposed Agentic Service Standards</h2>
+        </div>
+        <p class="section-intro">Any AI agent granted Tier 2 or Tier 3 access to government services must adhere to the following standards. These are not guidelines &mdash; they are enforceable conditions of access.</p>
+
+        <div class="standard-grid">
+          <div class="standard-card">
+            <span class="standard-number">1</span>
+            <div class="standard-content">
+              <h3>Deterministic policy evaluation</h3>
+              <p>Agents must use government-published evaluation tools for eligibility decisions. An agent must not substitute its own probabilistic reasoning for deterministic policy rules.</p>
+              <div class="standard-detail">Why: an LLM that &ldquo;thinks&rdquo; a citizen is eligible is not the same as a policy engine that has evaluated the rules. The distinction is the difference between advice and authority.</div>
+            </div>
+          </div>
+
+          <div class="standard-card">
+            <span class="standard-number">2</span>
+            <div class="standard-content">
+              <h3>Citizen authentication via One Login</h3>
+              <p>Agents must authenticate citizens through GOV.UK One Login. No alternative identity verification is acceptable. The agent must not store, cache, or reuse authentication tokens beyond the session scope defined by government.</p>
+              <div class="standard-detail">Why: identity is a sovereign function. A citizen authenticated by OpenAI&rsquo;s systems is not authenticated by government. One Login is the single trust anchor.</div>
+            </div>
+          </div>
+
+          <div class="standard-card">
+            <span class="standard-number">3</span>
+            <div class="standard-content">
+              <h3>Explicit, informed, granular consent</h3>
+              <p>Before any personal data is shared with a government service, the agent must present the citizen with a clear description of what data, from what source, shared with whom, for what purpose. Consent must be freely given and revocable. Agents must not auto-accept consent on the citizen&rsquo;s behalf.</p>
+              <div class="standard-detail">Why: consent is meaningless if the citizen never sees it. An agent that pre-fills and submits without showing the citizen what data was shared has bypassed the citizen&rsquo;s right to control their own information.</div>
+            </div>
+          </div>
+
+          <div class="standard-card">
+            <span class="standard-number">4</span>
+            <div class="standard-content">
+              <h3>Full audit trail with citizen-readable receipts</h3>
+              <p>Every action taken by the agent on behalf of a citizen must be recorded in an append-only evidence store. Receipts must be issued to the citizen. The full trace must be replayable by government auditors.</p>
+              <div class="standard-detail">Why: if a citizen cannot see what was done on their behalf, and government cannot verify it, there is no accountability. Receipts are the mechanism that makes agentic action transparent.</div>
+            </div>
+          </div>
+
+          <div class="standard-card">
+            <span class="standard-number">5</span>
+            <div class="standard-content">
+              <h3>No personal data retention beyond session</h3>
+              <p>Agents must not store, train on, or retain citizen personal data beyond the scope of the active session. Data must not be used to improve models, sold, or shared with third parties. The citizen&rsquo;s data belongs to the citizen.</p>
+              <div class="standard-detail">Why: a citizen sharing their NI number to check benefit eligibility has not consented to that data entering a training corpus or being retained in a commercial database.</div>
+            </div>
+          </div>
+
+          <div class="standard-card">
+            <span class="standard-number">6</span>
+            <div class="standard-content">
+              <h3>Valid service workflow adherence</h3>
+              <p>Agents must follow the state model published by the department. They must not skip steps, reorder required sequences, or submit without the preconditions defined in the service&rsquo;s state machine being met.</p>
+              <div class="standard-detail">Why: departments define service workflows for legal and operational reasons. An agent that submits a probate application before the death has been registered has not made the process faster &mdash; it has created an invalid submission.</div>
+            </div>
+          </div>
+
+          <div class="standard-card">
+            <span class="standard-number">7</span>
+            <div class="standard-content">
+              <h3>Citizen confirmation before submission</h3>
+              <p>No application, notification, or data submission may be made without explicit citizen confirmation at the point of submission. &ldquo;Delegate all&rdquo; consent covers the scope of action &mdash; not the act of submission itself.</p>
+              <div class="standard-detail">Why: the citizen must always be able to review what is about to happen and say no. An agent that submits silently, even with prior delegation, has overstepped its authority.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="callout callout-green">
+          These seven standards define the boundary between a helpful agent and a harmful one. They are enforceable because they are architectural &mdash; built into the protocol, not left to the discretion of the agent provider.
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <!-- Section 6: The Authentication Question                     -->
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <div class="section section-alt" id="authentication">
+      <div class="container">
+        <div class="section-heading">
+          <span class="section-number">6</span>
+          <h2>The Authentication Question</h2>
+        </div>
+        <p class="section-intro">Identity is where this moves from a technology conversation to a policy conversation. The question is not whether third-party agents can authenticate citizens &mdash; it is whether government will allow them to.</p>
+
+        <p style="font-size: 0.95rem; color: #505a5f; max-width: 700px; margin-bottom: 1rem;">GOV.UK One Login is the government&rsquo;s identity verification system. It is the trust anchor for citizen interactions with government. Today, it serves web-based journeys: a citizen visits a GOV.UK page, is redirected to One Login, verifies their identity, and returns to the service.</p>
+
+        <p style="font-size: 0.95rem; color: #505a5f; max-width: 700px; margin-bottom: 1rem;">In an agentic world, the citizen may never visit a GOV.UK page. They may be talking to ChatGPT, or Claude, or a future model we haven&rsquo;t seen yet. The agent needs to authenticate them. This means One Login must support a delegation flow &mdash; something like:</p>
+
+        <div class="pipeline" style="flex-wrap: wrap; gap: 0.35rem; margin: 1.5rem 0;">
+          <div class="pipeline-box pipeline-box-dark">Citizen</div>
+          <span class="pipeline-arrow">&rarr;</span>
+          <div class="pipeline-box pipeline-box-orange">Third-party agent</div>
+          <span class="pipeline-arrow">&rarr;</span>
+          <div class="pipeline-box pipeline-box-blue">One Login (OAuth)</div>
+          <span class="pipeline-arrow">&rarr;</span>
+          <div class="pipeline-box pipeline-box-green">Scoped token</div>
+          <span class="pipeline-arrow">&rarr;</span>
+          <div class="pipeline-box pipeline-box-green">Government service</div>
+        </div>
+
+        <p style="font-size: 0.95rem; color: #505a5f; max-width: 700px; margin-bottom: 1.5rem;">This is conceptually OAuth &mdash; the citizen authorises a third-party application to act on their behalf within a defined scope. But the policy decisions are profound:</p>
+
+        <div class="pillar-grid" style="grid-template-columns: repeat(2, 1fr);">
+          <div class="pillar-card" style="border-top-color: #1d70b8;">
+            <h3>Scope of delegation</h3>
+            <p>Can a citizen grant ChatGPT a token that allows it to check eligibility? Submit applications? Access personal data held by government? Each scope requires a separate policy decision.</p>
+          </div>
+          <div class="pillar-card" style="border-top-color: #912b88;">
+            <h3>Token custody</h3>
+            <p>If OpenAI holds a scoped token on behalf of a citizen, what are the data protection implications? What happens if that token is compromised? Who is liable?</p>
+          </div>
+          <div class="pillar-card" style="border-top-color: #f47738;">
+            <h3>Agent registration</h3>
+            <p>Should government maintain a register of approved agents? What are the criteria for approval? What is the process for revocation? Who sets the standards and who enforces them?</p>
+          </div>
+          <div class="pillar-card" style="border-top-color: #00703c;">
+            <h3>Liability</h3>
+            <p>If a third-party agent gives incorrect eligibility advice based on stale training data, and the citizen suffers financial harm, who is liable? The agent provider? The department? The citizen?</p>
+          </div>
+        </div>
+
+        <div class="callout callout-orange">
+          <strong>The uncomfortable truth:</strong> government does not currently have answers to these questions. But citizens are already asking AI agents about government services. The gap between citizen behaviour and government readiness is widening daily.
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <!-- Section 7: What Prototyping Has Demonstrated               -->
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <div class="section" id="what-prototyping-shows">
+      <div class="container">
+        <div class="section-heading">
+          <span class="section-number">7</span>
+          <h2>What Prototyping Has Demonstrated</h2>
+        </div>
+        <p class="section-intro">The Agentic Legibility Stack is a working prototype that implements the full pipeline from citizen conversation to departmental submission. Building it has revealed precisely where the technical and policy boundaries lie.</p>
+
+        <div class="guarantee-grid">
+          <div class="guarantee-card">
+            <h3><span class="guarantee-number">1</span> The separation works</h3>
+            <p>The prototype cleanly separates what the LLM does (conversation, navigation, synthesis) from what deterministic code does (policy evaluation, state transitions, consent enforcement). This separation is architecturally enforced, not voluntary.</p>
+          </div>
+          <div class="guarantee-card">
+            <h3><span class="guarantee-number">2</span> MCP makes it real</h3>
+            <p>The prototype already exposes 110+ government services as MCP tools. An external AI client can connect today and read service metadata, check eligibility, and advance state machines. The infrastructure exists.</p>
+          </div>
+          <div class="guarantee-card">
+            <h3><span class="guarantee-number">3</span> Governance is the gap</h3>
+            <p>The MCP server has no authentication, no consent enforcement, and no audit trail. Adding these is straightforward technically. The decisions about when and how to add them are policy decisions, not engineering ones.</p>
+          </div>
+        </div>
+
+        <p style="font-size: 0.95rem; color: #505a5f; max-width: 700px; margin-top: 2rem; margin-bottom: 1rem;">The prototype demonstrates five specific architectural insights that are directly relevant to standards-setting:</p>
+
+        <div class="standard-grid">
+          <div class="standard-card">
+            <span class="standard-number" style="background: #1d70b8;">A</span>
+            <div class="standard-content">
+              <h3>Eligibility evaluation is a deterministic service, not an AI task</h3>
+              <p>Policy rules are expressed as a DSL (domain-specific language) and evaluated by a policy engine. The LLM is never trusted to assess eligibility. This proves that deterministic evaluation endpoints can be published and consumed by any compliant agent.</p>
+            </div>
+          </div>
+          <div class="standard-card">
+            <span class="standard-number" style="background: #1d70b8;">B</span>
+            <div class="standard-content">
+              <h3>Consent can be tracked at field level</h3>
+              <p>The prototype tracks consent per data field, per service, per sharing event. Citizens see exactly what is shared, with whom, for what purpose. This granularity is implementable and can be enforced on any agent.</p>
+            </div>
+          </div>
+          <div class="standard-card">
+            <span class="standard-number" style="background: #1d70b8;">C</span>
+            <div class="standard-content">
+              <h3>Audit trails are append-only and replayable</h3>
+              <p>Every action is traced with version-stamped events. The evidence plane records independently of the agent. This means government can audit any agent&rsquo;s behaviour after the fact, regardless of which AI provider powered it.</p>
+            </div>
+          </div>
+          <div class="standard-card">
+            <span class="standard-number" style="background: #1d70b8;">D</span>
+            <div class="standard-content">
+              <h3>State machines prevent invalid sequences</h3>
+              <p>The service workflow is enforced by a state machine, not by the LLM&rsquo;s understanding of the process. An agent cannot skip identity verification, submit before consent, or advance past a failed eligibility check. These are hard constraints.</p>
+            </div>
+          </div>
+          <div class="standard-card">
+            <span class="standard-number" style="background: #1d70b8;">E</span>
+            <div class="standard-content">
+              <h3>The LLM is replaceable; the governance layer is not</h3>
+              <p>The prototype&rsquo;s adapter pattern means the underlying AI model can be swapped without changing the governance layer. Whether a citizen uses ChatGPT, Claude, Gemini, or a future model, the policy evaluation, consent management, and audit trail remain identical. This is the key architectural insight: governance is infrastructure, not application logic.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="callout callout-green">
+          <strong>The evidence from prototyping is clear:</strong> it is possible to build an agentic service delivery layer where AI handles conversation and navigation while deterministic code handles every consequential decision. This is not aspirational. It is working today across 110+ service definitions.
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <!-- Section 8: Anticipated Objections                          -->
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <div class="section section-alt" id="objections">
+      <div class="container">
+        <div class="section-heading">
+          <span class="section-number">8</span>
+          <h2>Anticipated Objections</h2>
+        </div>
+        <p class="section-intro">These are the arguments we expect to hear, and the responses that prototyping evidence supports.</p>
+
+        <div class="risk-list">
+          <div class="risk-item">
+            <div class="risk-objection">&ldquo;We should just build our own AI service and not allow third-party access.&rdquo;</div>
+            <div class="risk-response">Citizens will use third-party agents regardless. 200 million people already use ChatGPT weekly. A strategy that assumes government can be the only AI interface is a strategy that guarantees unregulated probabilistic access to government services. Publishing legibility artefacts and setting standards is the only way to shape how third-party agents interact with government.</div>
+          </div>
+          <div class="risk-item">
+            <div class="risk-objection">&ldquo;This is premature &mdash; AI agents cannot really do these things yet.&rdquo;</div>
+            <div class="risk-response">They can. The working prototype connects to 110+ government services through a standard protocol. The technical barriers are already solved. The window for setting standards before unregulated access becomes the norm is narrow and closing.</div>
+          </div>
+          <div class="risk-item">
+            <div class="risk-objection">&ldquo;One Login is not designed for machine-to-machine delegation.&rdquo;</div>
+            <div class="risk-response">Correct. Which is precisely why this conversation needs to happen now. Extending One Login to support scoped delegation for registered agents is an engineering task. Deciding whether to extend it is a policy decision that requires cross-departmental alignment.</div>
+          </div>
+          <div class="risk-item">
+            <div class="risk-objection">&ldquo;We cannot control what ChatGPT tells citizens about government services.&rdquo;</div>
+            <div class="risk-response">You cannot control what it <em>guesses</em>. But you can publish the truth in a format that agents can consume, so that compliant agents use government&rsquo;s authoritative data instead of probabilistic approximation. Legibility is the antidote to hallucination.</div>
+          </div>
+          <div class="risk-item">
+            <div class="risk-objection">&ldquo;This creates a two-tier system &mdash; people with AI agents get better access.&rdquo;</div>
+            <div class="risk-response">Unregulated AI access creates a two-tier system. Citizens with access to capable agents get confident-sounding but unreliable advice. Citizens without get nothing. A standards-based approach means that whatever channel a citizen uses &mdash; GOV.UK, a government app, or a third-party agent &mdash; the eligibility answer is the same, the consent model is the same, and the audit trail is the same. Standards create equity. Their absence creates chaos.</div>
+          </div>
+          <div class="risk-item">
+            <div class="risk-objection">&ldquo;The data protection implications are too complex.&rdquo;</div>
+            <div class="risk-response">They are complex. They are also unavoidable. Citizens are already sharing personal data with AI agents to ask about government services. The question is not whether this happens but whether it happens with safeguards. A trust framework with explicit data handling standards is the GDPR-compliant path. Inaction is the non-compliant one.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <!-- Section 9: Recommendations                                 -->
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <div class="section" id="recommendations">
+      <div class="container">
+        <div class="section-heading">
+          <span class="section-number">9</span>
+          <h2>Recommendations</h2>
+        </div>
+        <p class="section-intro">We recommend three immediate actions and two longer-term workstreams.</p>
+
+        <h3 style="margin-top: 2rem; margin-bottom: 1rem; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: #505a5f;">Immediate actions</h3>
+
+        <div class="standard-grid">
+          <div class="standard-card">
+            <span class="standard-number" style="background: #d4351c;">1</span>
+            <div class="standard-content">
+              <h3>Publish a position on agentic access</h3>
+              <p>GDS should publish a clear statement on the government&rsquo;s position regarding third-party AI agents accessing government services. This should distinguish between legibility (encouraged) and unregulated agency (not yet permitted). Silence is being read as permission.</p>
+            </div>
+          </div>
+          <div class="standard-card">
+            <span class="standard-number" style="background: #d4351c;">2</span>
+            <div class="standard-content">
+              <h3>Begin publishing legibility artefacts</h3>
+              <p>Departments should begin publishing machine-readable service descriptions &mdash; manifests, policy rulesets, state models, and consent models &mdash; for their highest-volume services. This is Tier 1 access: public, read-only, no authentication required. It is also the single most effective countermeasure against AI hallucination about government services.</p>
+            </div>
+          </div>
+          <div class="standard-card">
+            <span class="standard-number" style="background: #d4351c;">3</span>
+            <div class="standard-content">
+              <h3>Convene a cross-departmental working group on agentic service standards</h3>
+              <p>This should include GDS, CDDO, ICO, DSIT, the One Login programme, and representation from high-volume service departments (DWP, HMRC, Home Office, MoJ). The scope: define the trust framework for Tier 2 and Tier 3 access, including authentication delegation, agent registration, consent requirements, and liability.</p>
+            </div>
+          </div>
+        </div>
+
+        <h3 style="margin-top: 2.5rem; margin-bottom: 1rem; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: #505a5f;">Longer-term workstreams</h3>
+
+        <div class="standard-grid">
+          <div class="standard-card">
+            <span class="standard-number" style="background: #1d70b8;">4</span>
+            <div class="standard-content">
+              <h3>Extend One Login for agent delegation</h3>
+              <p>Design and pilot an OAuth-based delegation flow that allows registered third-party agents to authenticate citizens via One Login and receive scoped tokens. This is the technical foundation for all Tier 2 and Tier 3 access.</p>
+            </div>
+          </div>
+          <div class="standard-card">
+            <span class="standard-number" style="background: #1d70b8;">5</span>
+            <div class="standard-content">
+              <h3>Pilot deterministic evaluation endpoints</h3>
+              <p>Select 3&ndash;5 high-volume services and publish deterministic eligibility evaluation endpoints that any registered agent can call. Measure: accuracy vs probabilistic LLM answers, citizen satisfaction, completion rates, and data protection compliance. Use the results to refine the standards before wider rollout.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="callout callout-blue" style="margin-top: 2rem;">
+          <strong>The cost of action is manageable.</strong> Publishing legibility artefacts requires departments to describe their services in a structured format &mdash; something most have already partially done for the GDS service register. The cost of inaction is a generation of citizens receiving confident, probabilistic, and frequently wrong guidance about government services from AI agents that government has no relationship with and no influence over.
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Closing ── -->
+    <div class="closing">
+      <h2>The technology is ready. The policy is not.</h2>
+      <p style="margin-bottom: 1.5rem;">
+        Third-party AI agents can already connect to government service endpoints. Citizens are already asking AI for help with benefits, tax, and life events. The architecture to make this safe, accountable, and citizen-controlled has been prototyped and proven.
+      </p>
+      <p>
+        What is missing is a decision: will government shape how AI agents interact with its services, or will it leave that to the market? The window for shaping is open now. It will not stay open indefinitely.
+      </p>
+    </div>
+
+    <!-- ── Footer ── -->
+    <footer class="footer">
+      <div class="container">
+        Agentic Legibility Stack &mdash; Agentic Service Standards Briefing &mdash; April 2026
+      </div>
+    </footer>
+
+  </body>
+</html>

@@ -1,0 +1,1380 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Technical architecture — Agentic Legibility Stack</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    /* ── Tokens ── */
+    :root {
+      --ink: #0b0c0c;
+      --ink-soft: #505a5f;
+      --ink-faint: #6f777b;
+      --surface: #fff;
+      --surface-alt: #f8f8f7;
+      --border: #d5d8da;
+      --border-light: #e8e8e6;
+      --blue: #1d70b8;
+      --blue-dark: #003078;
+      --blue-bg: #e8f0fe;
+      --green: #00703c;
+      --green-bg: #e8f5ee;
+      --red: #d4351c;
+      --red-bg: #fce8e4;
+      --orange: #f47738;
+      --purple: #4c2c92;
+      --purple-bg: #f0ebf5;
+      --max-w: 880px;
+      --section-py: 5rem;
+    }
+
+    /* ── Reset ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+    body { font-family: "Inter", Arial, sans-serif; color: var(--ink); line-height: 1.65; background: var(--surface); font-size: 16px; }
+    a { color: var(--blue); text-decoration: none; }
+    a:hover { text-decoration: underline; color: var(--blue-dark); }
+    code, pre { font-family: "JetBrains Mono", monospace; }
+    ul, ol { padding-left: 1.25em; }
+    li + li { margin-top: 0.35em; }
+
+    /* ── Layout ── */
+    .container { max-width: var(--max-w); margin: 0 auto; padding: 0 1.5rem; }
+    .section { padding: var(--section-py) 0; }
+    .section-alt { background: var(--surface-alt); }
+
+    /* ── Nav ── */
+    .nav { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0.7rem 0; position: sticky; top: 0; z-index: 100; }
+    .nav .container { display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; }
+    .nav-brand { font-weight: 600; font-size: 1.05rem; color: var(--ink); white-space: nowrap; letter-spacing: -0.01em; text-decoration: none; }
+    .nav-brand:hover { color: var(--ink); text-decoration: none; }
+    .nav-links { display: flex; gap: 1.5rem; list-style: none; padding: 0; margin: 0; flex-wrap: wrap; align-items: baseline; }
+    .nav-links li { line-height: 1; }
+    .nav-links a { font-size: 0.8rem; font-weight: 500; color: var(--ink-soft); letter-spacing: 0.01em; line-height: 1; }
+    .nav-links a:hover { color: var(--blue); text-decoration: none; }
+    .nav-links a.active { color: var(--ink); font-weight: 700; }
+    @media (max-width: 700px) { .nav-links { display: none; } }
+
+    /* ── Typography ── */
+    h1 { font-size: 2.75rem; font-weight: 700; line-height: 1.12; letter-spacing: -0.025em; color: var(--ink); }
+    h2 { font-size: 1.85rem; font-weight: 600; line-height: 1.2; letter-spacing: -0.02em; margin-bottom: 0.75rem; }
+    h3 { font-size: 1.1rem; font-weight: 700; line-height: 1.3; margin-bottom: 0.35rem; }
+    h4 { font-size: 0.95rem; font-weight: 700; line-height: 1.3; margin-bottom: 0.25rem; }
+    .section-intro { font-size: 1.08rem; color: var(--ink-soft); max-width: 640px; margin-bottom: 2.5rem; line-height: 1.7; }
+    .body-text { font-size: 0.92rem; color: var(--ink-soft); max-width: 680px; margin-bottom: 1rem; line-height: 1.7; }
+    .body-text strong { color: var(--ink); font-weight: 600; }
+    .body-text ul { margin-left: 1.25rem; margin-bottom: 0.75rem; }
+    .body-text li { margin-bottom: 0.3rem; }
+
+    /* ── Section heading with number ── */
+    .section-heading { display: flex; align-items: baseline; gap: 0.75rem; margin-bottom: 0.75rem; }
+    .section-num { font-size: 1.85rem; font-weight: 400; color: var(--ink-faint); flex-shrink: 0; line-height: 1.2; letter-spacing: -0.02em; }
+
+    /* ── Hero ── */
+    .hero { padding: 5.5rem 0 3.5rem; }
+    .hero-label { display: inline-block; font-size: 0.8rem; font-weight: 600; letter-spacing: 0.02em; color: var(--ink-faint); margin-bottom: 1.5rem; border-bottom: 2px solid var(--ink); padding-bottom: 0.2rem; }
+    .hero h1 { margin-bottom: 1rem; max-width: 600px; }
+    .hero-subtitle { font-size: 1.3rem; font-weight: 400; font-style: italic; color: var(--ink-soft); max-width: 620px; line-height: 1.5; margin-bottom: 1.5rem; }
+    @media (max-width: 640px) { h1 { font-size: 2rem; } .hero-subtitle { font-size: 1.1rem; } }
+
+    /* ── Callout ── */
+    .callout { padding: 1rem 1.25rem; border-left: 3px solid var(--blue); background: var(--blue-bg); font-size: 0.88rem; line-height: 1.6; color: var(--ink); max-width: 680px; margin: 1.5rem 0; }
+    .callout strong { font-weight: 600; }
+    .callout p { margin-bottom: 0.5rem; }
+    .callout p:last-child { margin-bottom: 0; }
+    .callout ul, .callout ol { margin-left: 1.25rem; margin-top: 0.5rem; }
+    .callout li { margin-bottom: 0.25rem; }
+    .callout--green { border-left-color: var(--green); background: var(--green-bg); }
+    .callout--red { border-left-color: var(--red); background: var(--red-bg); }
+    .callout--purple { border-left-color: var(--purple); background: var(--purple-bg); }
+
+    /* ── Code block ── */
+    .code-block { margin: 1.5rem 0; max-width: 720px; border-radius: 6px; overflow: hidden; }
+    .code-block-label { background: #12121f; color: #b1b4b6; font-size: 0.7rem; font-weight: 600; padding: 0.5rem 1.25rem; font-family: "JetBrains Mono", monospace; border-bottom: 1px solid #2a2a3e; letter-spacing: 0.02em; }
+    .code-block pre { background: #1a1a2e; color: #e0e0e0; padding: 1.25rem 1.5rem; font-size: 0.78rem; line-height: 1.7; overflow-x: auto; margin: 0; }
+    .code-block pre .key { color: #7dd3fc; }
+    .code-block pre .str { color: #86efac; }
+    .code-block pre .num { color: #fbbf24; }
+    .code-block pre .kw { color: #c4b5fd; }
+    .code-block pre .type { color: #67e8f9; }
+    .code-block pre .comment { color: #6b7280; font-style: italic; }
+    .code-block pre .punct { color: #9ca3af; }
+    .code-block pre .param { color: #fdba74; }
+    .code-block pre .bool { color: #fbbf24; }
+
+    /* ── Interface block ── */
+    .interface-block { border: 1.5px solid #d2d2d2; border-radius: 6px; overflow: hidden; margin: 1.5rem 0; max-width: 720px; }
+    .interface-block-header { background: #f8f8f8; padding: 0.5rem 1rem; border-bottom: 1px solid #e8e8e8; display: flex; align-items: center; gap: 0.5rem; }
+    .interface-block-header .type-label { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.06em; color: var(--ink-soft); }
+    .interface-block-header .type-name { font-family: "JetBrains Mono", monospace; font-size: 0.8rem; font-weight: 600; color: var(--blue); }
+    .interface-block pre { background: #1a1a2e; color: #e0e0e0; padding: 1rem 1.25rem; font-size: 0.75rem; line-height: 1.7; overflow-x: auto; margin: 0; }
+    .interface-block pre .key { color: #7dd3fc; }
+    .interface-block pre .str { color: #86efac; }
+    .interface-block pre .num { color: #fbbf24; }
+    .interface-block pre .kw { color: #c4b5fd; }
+    .interface-block pre .type { color: #67e8f9; }
+    .interface-block pre .comment { color: #6b7280; font-style: italic; }
+    .interface-block pre .punct { color: #9ca3af; }
+    .interface-block pre .param { color: #fdba74; }
+    .interface-block pre .bool { color: #fbbf24; }
+
+    /* ── Type signature inline ── */
+    .type-sig { display: inline; font-family: "JetBrains Mono", monospace; font-size: 0.82rem; background: var(--blue-bg); color: var(--blue); padding: 0.15rem 0.45rem; border-radius: 3px; font-weight: 500; }
+
+    /* ── Pipeline steps ── */
+    .pipeline-steps { margin: 2rem 0; max-width: 720px; }
+    .pipeline-step { display: flex; align-items: flex-start; gap: 1rem; padding: 0.75rem 0; border-bottom: 1px solid var(--border-light); }
+    .pipeline-step:last-child { border-bottom: none; }
+    .pipeline-step-num { display: flex; width: 28px; height: 28px; align-items: center; justify-content: center; border-radius: 50%; font-size: 0.7rem; font-weight: 700; flex-shrink: 0; color: #fff; }
+    .pipeline-step-num-green { background: var(--green); }
+    .pipeline-step-num-orange { background: var(--orange); }
+    .pipeline-step-num-navy { background: var(--blue); }
+    .pipeline-step-content { flex: 1; }
+    .pipeline-step-title { font-size: 0.9rem; font-weight: 600; color: var(--ink); margin-bottom: 0.15rem; }
+    .pipeline-step-desc { font-size: 0.82rem; color: var(--ink-soft); line-height: 1.6; }
+
+    /* ── Pipeline tags ── */
+    .pipeline-tag { display: inline-block; font-size: 0.6rem; font-weight: 700; padding: 0.1rem 0.5rem; border-radius: 10px; margin-left: 0.5rem; vertical-align: middle; letter-spacing: 0.04em; }
+    .tag-deterministic { background: var(--green-bg); color: var(--green); }
+    .tag-ai { background: #fef3e8; color: var(--orange); }
+    .tag-platform { background: var(--blue-bg); color: var(--blue); }
+
+    /* ── Data table ── */
+    .data-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; margin: 1.5rem 0; max-width: 720px; }
+    .data-table th { text-align: left; font-weight: 700; font-size: 0.75rem; letter-spacing: 0.04em; color: var(--ink-soft); padding: 0.6rem 0.75rem; border-bottom: 2px solid var(--ink); background: #f8f8f8; }
+    .data-table td { padding: 0.55rem 0.75rem; border-bottom: 1px solid var(--border-light); color: var(--ink); vertical-align: top; }
+    .data-table td:first-child { font-family: "JetBrains Mono", monospace; font-size: 0.78rem; white-space: nowrap; }
+    .data-table tr:last-child td { border-bottom: none; }
+    .td-yes { color: var(--green); font-weight: 600; }
+    .td-no { color: #b1b4b6; }
+
+    /* ── Dependency graph ── */
+    .dep-graph { margin: 2rem 0; max-width: 720px; }
+    .dep-graph-root { display: flex; flex-direction: column; align-items: center; gap: 1.25rem; }
+    .dep-pkg { display: inline-flex; align-items: center; padding: 0.5rem 1rem; border-radius: 4px; font-family: "JetBrains Mono", monospace; font-size: 0.75rem; font-weight: 500; border: 1.5px solid; white-space: nowrap; }
+    .dep-pkg-leaf { background: #f3f2f1; color: var(--ink); border-color: #b1b4b6; }
+    .dep-pkg-blue { background: var(--blue-bg); color: var(--blue); border-color: var(--blue); }
+    .dep-pkg-green { background: var(--green-bg); color: var(--green); border-color: var(--green); }
+    .dep-pkg-purple { background: var(--purple-bg); color: var(--purple); border-color: var(--purple); }
+    .dep-pkg-orange { background: #fef3e8; color: var(--orange); border-color: var(--orange); }
+    .dep-pkg-dark { background: var(--ink); color: #fff; border-color: var(--ink); }
+    .dep-pkg-red { background: var(--red-bg); color: var(--red); border-color: var(--red); }
+    .dep-row { display: flex; flex-wrap: wrap; gap: 0.75rem; justify-content: center; }
+    .dep-connector { width: 2px; height: 20px; background: #b1b4b6; margin: 0 auto; }
+    .dep-arrow-down { width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 6px solid #b1b4b6; }
+    .dep-branch { display: flex; flex-direction: column; align-items: center; gap: 0.35rem; }
+    .dep-ext { font-size: 0.6rem; color: var(--ink-soft); font-family: "JetBrains Mono", monospace; }
+    .dep-label { font-size: 0.7rem; color: var(--ink-soft); font-weight: 600; text-align: center; margin-top: 0.25rem; }
+
+    /* ── App cards ── */
+    .app-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin: 1.5rem 0; }
+    .app-card { border: 1px solid var(--border); border-radius: 2px; padding: 1.5rem; background: var(--surface); border-top: 4px solid; }
+    .app-card h4 { font-size: 1rem; margin-bottom: 0.35rem; }
+    .app-card p { font-size: 0.85rem; color: var(--ink-soft); line-height: 1.55; }
+    .app-card .app-port { font-family: "JetBrains Mono", monospace; font-size: 0.75rem; color: #b1b4b6; margin-top: 0.5rem; }
+    @media (max-width: 640px) { .app-grid { grid-template-columns: 1fr; } }
+
+    /* ── Tier cards ── */
+    .tier-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; margin: 1.5rem 0; }
+    .tier-card { border: 1px solid var(--border); border-radius: 2px; padding: 1.25rem; background: var(--surface); border-top: 4px solid; }
+    .tier-card h4 { font-size: 0.95rem; margin-bottom: 0.35rem; }
+    .tier-card p { font-size: 0.85rem; color: var(--ink-soft); line-height: 1.55; }
+    @media (max-width: 640px) { .tier-grid { grid-template-columns: 1fr; } }
+
+    /* ── Sequence diagram ── */
+    .sequence { margin: 2rem 0; max-width: 720px; position: relative; padding-left: 3rem; }
+    .sequence::before { content: ""; position: absolute; left: 13px; top: 0; bottom: 0; width: 2px; background: #b1b4b6; }
+    .sequence-step { position: relative; padding: 0.75rem 0 1.25rem 0; }
+    .sequence-step::before { content: ""; position: absolute; left: -3rem; top: 0.95rem; width: 10px; height: 10px; border-radius: 50%; background: var(--blue); border: 2px solid #fff; box-shadow: 0 0 0 2px var(--blue); z-index: 1; }
+    .sequence-step.seq-green::before { background: var(--green); box-shadow: 0 0 0 2px var(--green); }
+    .sequence-step.seq-orange::before { background: var(--orange); box-shadow: 0 0 0 2px var(--orange); }
+    .sequence-step.seq-red::before { background: var(--red); box-shadow: 0 0 0 2px var(--red); }
+    .sequence-step.seq-purple::before { background: var(--purple); box-shadow: 0 0 0 2px var(--purple); }
+    .sequence-step.seq-navy::before { background: var(--blue); box-shadow: 0 0 0 2px var(--blue); }
+    .sequence-label { font-size: 0.82rem; font-weight: 700; color: var(--ink); margin-bottom: 0.2rem; }
+    .sequence-desc { font-size: 0.82rem; color: var(--ink-soft); line-height: 1.55; }
+
+    /* ── State flow ── */
+    .state-flow { margin: 2rem 0; max-width: 500px; }
+    .state-flow-step { display: flex; flex-direction: column; align-items: center; }
+    .state-node { display: inline-flex; align-items: center; padding: 0.45rem 1rem; border-radius: 4px; font-family: "JetBrains Mono", monospace; font-size: 0.72rem; font-weight: 500; border: 1.5px solid #b1b4b6; background: #fff; white-space: nowrap; }
+    .state-node-active { border-color: var(--blue); background: var(--blue-bg); color: var(--blue); }
+    .state-node-terminal { border-color: var(--green); background: var(--green-bg); color: var(--green); }
+    .state-node-error { border-color: var(--red); background: var(--red-bg); color: var(--red); }
+    .state-arrow { width: 2px; height: 18px; background: #b1b4b6; margin: 0; }
+    .state-arrow-head { width: 0; height: 0; border-left: 4px solid transparent; border-right: 4px solid transparent; border-top: 5px solid #b1b4b6; }
+    .state-branch { display: flex; gap: 0.75rem; align-items: flex-start; justify-content: center; position: relative; padding-top: 0.5rem; }
+    .state-branch::before { content: ""; position: absolute; top: 0; left: 25%; right: 25%; height: 2px; background: #b1b4b6; }
+    .state-branch-arm { display: flex; flex-direction: column; align-items: center; }
+
+    /* ── Dimension cards ── */
+    .dim-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin: 2rem 0; }
+    @media (max-width: 640px) { .dim-grid { grid-template-columns: 1fr; } }
+    .dim-card { border: 1px solid var(--border); padding: 1.5rem; }
+    .dim-card--identity { border-left: 4px solid var(--blue); }
+    .dim-card--eligibility { border-left: 4px solid var(--green); }
+    .dim-card--journey { border-left: 4px solid var(--orange); }
+    .dim-card--data { border-left: 4px solid var(--purple); }
+    .dim-card h3 { font-size: 1.15rem; font-weight: 600; margin-bottom: 0.5rem; }
+    .dim-card p { font-size: 0.88rem; color: var(--ink); line-height: 1.6; }
+    .dim-card .dim-file { font-family: "JetBrains Mono", monospace; font-size: 0.75rem; color: var(--ink-faint); margin-top: 0.5rem; }
+
+    /* ── FLEX comparison ── */
+    .compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin: 2rem 0; }
+    @media (max-width: 640px) { .compare-grid { grid-template-columns: 1fr; } }
+    .compare-card { padding: 1.5rem; border-radius: 2px; border: 1px solid; }
+    .compare-card h4 { font-size: 1rem; font-weight: 700; margin-bottom: 0.35rem; }
+    .compare-card .card-sub { font-size: 0.78rem; color: var(--ink-faint); margin-bottom: 1rem; font-weight: 500; }
+    .compare-card ul { list-style: none; padding: 0; font-size: 0.88rem; color: var(--ink-soft); }
+    .compare-card li { padding: 0.4rem 0 0.4rem 1.2rem; position: relative; line-height: 1.45; }
+    .compare-card li::before { content: ""; width: 6px; height: 6px; border-radius: 50%; position: absolute; left: 0; top: 0.7rem; }
+    .card-flex { border-color: #b8ccff; background: #e8efff; }
+    .card-flex h4 { color: #4a7eff; }
+    .card-flex li::before { background: #4a7eff; }
+    .card-als { border-color: #e8c88a; background: #fef8ee; }
+    .card-als h4 { color: #c47a1a; }
+    .card-als li::before { background: #c47a1a; }
+
+    /* ── TOC ── */
+    .toc-list { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 0.5rem; }
+    .toc-list li { font-size: 0.88rem; font-weight: 500; }
+    .toc-list a { color: var(--ink); }
+    .toc-list a:hover { color: var(--blue); }
+    .toc-number { display: inline-block; width: 24px; color: var(--ink-faint); font-weight: 400; }
+
+    /* ── Footer ── */
+    .footer { border-top: 1px solid var(--border); padding: 3rem 0 2rem; }
+    .footer-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem; }
+    @media (max-width: 640px) { .footer-grid { grid-template-columns: 1fr; } }
+    .footer h4 { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.06em; color: var(--ink-faint); margin-bottom: 0.75rem; }
+    .footer ul { list-style: none; padding: 0; }
+    .footer li { margin-bottom: 0.35rem; }
+    .footer li a { font-size: 0.85rem; color: var(--ink-soft); font-weight: 500; }
+    .footer li a:hover { color: var(--blue); }
+    .footer-note { font-size: 0.75rem; color: var(--ink-faint); border-top: 1px solid var(--border-light); padding-top: 1.5rem; }
+
+    /* ── Print ── */
+    @media print {
+      .nav { position: static; }
+      .code-block, .interface-block { break-inside: avoid; }
+      .pipeline-step { break-inside: avoid; }
+      .callout { break-inside: avoid; }
+      .sequence-step { break-inside: avoid; }
+      .dep-graph { break-inside: avoid; }
+      .state-flow { break-inside: avoid; }
+    }
+  </style>
+  <script async defer src="https://scripts.withcabin.com/hello.js"></script>
+</head>
+<body>
+
+  <!-- ── Nav ── -->
+  <nav class="nav">
+    <div class="container">
+      <a href="index.html" class="nav-brand">Agentic Legibility Stack</a>
+      <ul class="nav-links">
+        <li><a href="citizen-app.html">Citizen app</a></li>
+        <li><a href="legibility-studio.html">Legibility Studio</a></li>
+        <li><a href="technical.html" class="active">Technical</a></li>
+        <li><a href="departments.html">Departments</a></li>
+        <li><a href="glossary.html">Glossary</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ── Hero ── -->
+  <header class="hero">
+    <div class="container">
+      <div class="hero-label">Deep dive</div>
+      <h1>Technical architecture</h1>
+      <p class="hero-subtitle">System architecture, runtime pipeline, service description schemas, and integration with existing government infrastructure.</p>
+    </div>
+  </header>
+
+  <!-- ── Table of contents ── -->
+  <div class="section" style="padding-top: 0; padding-bottom: 2rem;">
+    <div class="container">
+      <ul class="toc-list">
+        <li><a href="#system-architecture"><span class="toc-number">01</span> System architecture</a></li>
+        <li><a href="#runtime-pipeline"><span class="toc-number">02</span> The runtime pipeline</a></li>
+        <li><a href="#service-descriptions"><span class="toc-number">03</span> Service description schemas</a></li>
+        <li><a href="#data-model"><span class="toc-number">04</span> Data model</a></li>
+        <li><a href="#policy-state"><span class="toc-number">05</span> Policy evaluator and state machine</a></li>
+        <li><a href="#consent-fields"><span class="toc-number">06</span> Consent manager and field collector</a></li>
+        <li><a href="#evidence-plane"><span class="toc-number">07</span> Evidence plane</a></li>
+        <li><a href="#flex-udp"><span class="toc-number">08</span> FLEX and UDP integration</a></li>
+      </ul>
+    </div>
+  </div>
+
+
+  <!-- ════════════════════════════════ 01 ════════════════════════════════ -->
+  <div class="section section-alt" id="system-architecture">
+    <div class="container">
+      <div class="section-heading">
+        <span class="section-num">01</span>
+        <h2>System architecture</h2>
+      </div>
+      <p class="section-intro">The stack is organised as a set of focused packages with strict dependency boundaries. Every package owns one concern; cross-cutting behaviour is mediated through well-typed interfaces.</p>
+
+      <h3>Three hard architectural rules</h3>
+      <div class="callout callout--red">
+        <p><strong>These rules are non-negotiable.</strong></p>
+        <ol>
+          <li><strong>LLM integration is confined to the LLM Adapter Layer only.</strong> Zero direct LLM SDK usage elsewhere in the system. All LLM calls route through the adapter interface.</li>
+          <li><strong>Model Context Protocol (MCP) client usage in the LLM Adapter Layer, server usage in the MCP Server.</strong> No other component touches MCP directly.</li>
+          <li><strong>The Legibility Studio fetches evidence via HTTP.</strong> It does not import the Evidence Plane directly. This enforces a clean separation between the department-facing and citizen-facing surfaces.</li>
+        </ol>
+      </div>
+
+      <h3 style="margin-top: 2.5rem;">Package dependency graph</h3>
+      <p class="body-text">The dependency tree is rooted at the shared schema layer, which has zero internal dependencies. All other components declare their dependencies explicitly. External SDK usage is confined to two components.</p>
+
+      <div class="dep-graph">
+        <div class="dep-graph-root">
+          <div class="dep-row">
+            <div class="dep-branch">
+              <div class="dep-pkg dep-pkg-dark">Shared Schema Layer</div>
+              <div class="dep-label">Leaf &mdash; no internal dependencies</div>
+            </div>
+          </div>
+          <div class="dep-connector"></div>
+          <div class="dep-arrow-down"></div>
+          <div class="dep-row">
+            <div class="dep-branch">
+              <div class="dep-pkg dep-pkg-blue">LLM Adapter Layer</div>
+              <div class="dep-ext">+ LLM provider SDK</div>
+              <div class="dep-ext">+ MCP client</div>
+            </div>
+            <div class="dep-branch">
+              <div class="dep-pkg dep-pkg-green">Evidence Plane</div>
+            </div>
+            <div class="dep-branch">
+              <div class="dep-pkg dep-pkg-leaf">Identity Layer</div>
+            </div>
+            <div class="dep-branch">
+              <div class="dep-pkg dep-pkg-leaf">Service Graph</div>
+            </div>
+          </div>
+          <div class="dep-connector"></div>
+          <div class="dep-arrow-down"></div>
+          <div class="dep-row">
+            <div class="dep-branch">
+              <div class="dep-pkg dep-pkg-purple">Legibility Engine</div>
+              <div class="dep-ext">+ Service Store, Evidence Plane</div>
+            </div>
+            <div class="dep-branch">
+              <div class="dep-pkg dep-pkg-orange">Personal Data Layer</div>
+              <div class="dep-ext">+ Identity Layer, Evidence Plane</div>
+            </div>
+            <div class="dep-branch">
+              <div class="dep-pkg dep-pkg-leaf">Service Store</div>
+              <div class="dep-ext">+ Service Graph, Evidence Plane</div>
+            </div>
+          </div>
+          <div class="dep-connector"></div>
+          <div class="dep-arrow-down"></div>
+          <div class="dep-row">
+            <div class="dep-branch">
+              <div class="dep-pkg dep-pkg-red">Orchestration Layer</div>
+              <div class="dep-ext">+ Legibility Engine</div>
+            </div>
+            <div class="dep-branch">
+              <div class="dep-pkg dep-pkg-purple">MCP Server</div>
+              <div class="dep-ext">+ Legibility Engine</div>
+              <div class="dep-ext">+ MCP server SDK</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <h3 style="margin-top: 2.5rem;">Two applications</h3>
+      <div class="app-grid">
+        <div class="app-card" style="border-top-color: var(--blue);">
+          <h4>Citizen app</h4>
+          <p>The citizen-facing experience. Hosts the conversational agent, task cards, consent flows, wallet, and receipt history. Exposes an evidence API that the Legibility Studio reads from.</p>
+          <div class="app-port">localhost:3106</div>
+        </div>
+        <div class="app-card" style="border-top-color: var(--purple);">
+          <h4>Legibility Studio</h4>
+          <p>The department-facing admin tool. Displays service coverage, gap analysis, trace inspection, and service description authoring. Consumes evidence over HTTP &mdash; never imports the Evidence Plane directly.</p>
+          <div class="app-port">localhost:3101</div>
+        </div>
+      </div>
+      <p class="body-text">The two applications share packages but never share code directly. The citizen app owns the evidence store; the studio reads from it over HTTP. This boundary is enforced at the dependency level &mdash; adding <span class="type-sig">@als/evidence</span> to the studio causes native module crashes by design.</p>
+
+      <h3 style="margin-top: 2.5rem;">Component responsibility summary</h3>
+
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Component</th>
+            <th>Owns</th>
+            <th>Must never</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>schemas</td>
+            <td>Shared types, schema validation, type guards</td>
+            <td>Import any other component</td>
+          </tr>
+          <tr>
+            <td>adapters</td>
+            <td>LLM calls, MCP client, tool dispatch</td>
+            <td>Make policy or state decisions</td>
+          </tr>
+          <tr>
+            <td>evidence</td>
+            <td>Trace events, receipts, case ledger, replay</td>
+            <td>Import LLM integration or make API calls</td>
+          </tr>
+          <tr>
+            <td>legibility</td>
+            <td>PolicyEvaluator, StateMachine, ConsentManager, FieldCollector</td>
+            <td>Call the LLM or make network requests</td>
+          </tr>
+          <tr>
+            <td>runtime</td>
+            <td>Orchestrator, pipeline, strategy dispatch, CapabilityInvoker</td>
+            <td>Import LLM integration directly (must go through adapter)</td>
+          </tr>
+          <tr>
+            <td>personal-data</td>
+            <td>Citizen data model, field sourcing, consent preferences</td>
+            <td>Bypass consent checks</td>
+          </tr>
+          <tr>
+            <td>mcp-server</td>
+            <td>MCP server, tool generation, resource exposure</td>
+            <td>Use MCP client (that belongs to the adapter)</td>
+          </tr>
+          <tr>
+            <td>service-store</td>
+            <td>Service storage, tiered resolution, gap analysis</td>
+            <td>Make eligibility decisions (that belongs to legibility)</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+
+  <!-- ════════════════════════════════ 02 ════════════════════════════════ -->
+  <div class="section" id="runtime-pipeline">
+    <div class="container">
+      <div class="section-heading">
+        <span class="section-num">02</span>
+        <h2>The runtime pipeline</h2>
+      </div>
+      <p class="section-intro">Every citizen interaction passes through this 14-step orchestrator pipeline. Deterministic code runs before and after the language model; the platform always has the final word.</p>
+
+      <div class="pipeline-steps">
+        <div class="pipeline-step">
+          <div class="pipeline-step-num pipeline-step-num-green">1</div>
+          <div class="pipeline-step-content">
+            <div class="pipeline-step-title">Policy evaluation <span class="pipeline-tag tag-deterministic">deterministic</span></div>
+            <div class="pipeline-step-desc">Evaluates the service's eligibility rules against citizen data via <span class="type-sig">PolicyEvaluator</span>. Returns eligible/ineligible with reasons. Rules are pure data &mdash; no code execution.</div>
+          </div>
+        </div>
+        <div class="pipeline-step">
+          <div class="pipeline-step-num pipeline-step-num-green">2</div>
+          <div class="pipeline-step-content">
+            <div class="pipeline-step-title">State machine setup <span class="pipeline-tag tag-deterministic">deterministic</span></div>
+            <div class="pipeline-step-desc">Creates <span class="type-sig">StateMachine</span> from the service's journey definition. Restores current state from client session. Computes allowed transitions.</div>
+          </div>
+        </div>
+        <div class="pipeline-step">
+          <div class="pipeline-step-num pipeline-step-num-green">3</div>
+          <div class="pipeline-step-content">
+            <div class="pipeline-step-title">Field collector <span class="pipeline-tag tag-deterministic">deterministic</span></div>
+            <div class="pipeline-step-desc">Seeds <span class="type-sig">FieldCollector</span> from the identity schema and citizen data. Tracks required versus collected fields and identifies what is still missing.</div>
+          </div>
+        </div>
+        <div class="pipeline-step">
+          <div class="pipeline-step-num pipeline-step-num-green">4</div>
+          <div class="pipeline-step-content">
+            <div class="pipeline-step-title">Agent selection <span class="pipeline-tag tag-deterministic">deterministic</span></div>
+            <div class="pipeline-step-desc">Selects triage mode (no service context, need identification) or journey mode (service in progress, service-description-driven). The choice determines prompt composition and available tools.</div>
+          </div>
+        </div>
+        <div class="pipeline-step">
+          <div class="pipeline-step-num pipeline-step-num-green">5</div>
+          <div class="pipeline-step-content">
+            <div class="pipeline-step-title">Strategy context and system prompt <span class="pipeline-tag tag-deterministic">deterministic</span></div>
+            <div class="pipeline-step-desc">Calls <span class="type-sig">ServiceStrategy.buildServiceContext()</span>. Assembles the system prompt from layered fragments: personality, persona style, scenario, service descriptions, guardrails, and output format.</div>
+          </div>
+        </div>
+        <div class="pipeline-step">
+          <div class="pipeline-step-num pipeline-step-num-green">6</div>
+          <div class="pipeline-step-content">
+            <div class="pipeline-step-title">Build tools <span class="pipeline-tag tag-deterministic">deterministic</span></div>
+            <div class="pipeline-step-desc">Calls <span class="type-sig">ServiceStrategy.buildTools()</span>. The deterministic strategy returns an empty array; the tool-based strategy returns service-specific check and advance tools.</div>
+          </div>
+        </div>
+        <div class="pipeline-step">
+          <div class="pipeline-step-num pipeline-step-num-orange">7</div>
+          <div class="pipeline-step-content">
+            <div class="pipeline-step-title">Agentic loop <span class="pipeline-tag tag-ai">ai</span></div>
+            <div class="pipeline-step-desc">Up to 5 iterations: call the language model, dispatch any tool calls via the adapter, accumulate results. This is the only step where the LLM generates content. The loop terminates when no tool calls remain or the iteration limit is reached.</div>
+          </div>
+        </div>
+        <div class="pipeline-step">
+          <div class="pipeline-step-num pipeline-step-num-green">8</div>
+          <div class="pipeline-step-content">
+            <div class="pipeline-step-title">Parse structured output <span class="pipeline-tag tag-deterministic">deterministic</span></div>
+            <div class="pipeline-step-desc">Extracts the JSON block from the LLM response. Parses conversation title, tasks, proposed state transitions, and extracted facts. Malformed output is caught and logged.</div>
+          </div>
+        </div>
+        <div class="pipeline-step">
+          <div class="pipeline-step-num pipeline-step-num-green">9</div>
+          <div class="pipeline-step-content">
+            <div class="pipeline-step-title">Build tasks <span class="pipeline-tag tag-deterministic">deterministic</span></div>
+            <div class="pipeline-step-desc">Transforms parsed task descriptions into typed <span class="type-sig">TaskEntry</span> objects with structured fields: type, title, description, options, metadata.</div>
+          </div>
+        </div>
+        <div class="pipeline-step">
+          <div class="pipeline-step-num pipeline-step-num-green">10</div>
+          <div class="pipeline-step-content">
+            <div class="pipeline-step-title">State transitions <span class="pipeline-tag tag-deterministic">deterministic</span></div>
+            <div class="pipeline-step-desc">Validates the LLM's proposed transition against the <span class="type-sig">StateMachine</span>. Rejects illegal transitions. Applies forced and auto transitions defined in the journey.</div>
+          </div>
+        </div>
+        <div class="pipeline-step">
+          <div class="pipeline-step-num pipeline-step-num-green">11</div>
+          <div class="pipeline-step-content">
+            <div class="pipeline-step-title">Deterministic task injection <span class="pipeline-tag tag-deterministic">deterministic</span></div>
+            <div class="pipeline-step-desc">Overrides LLM-generated tasks with platform-generated cards at specific states. Consent cards, payment forms, and document upload prompts are always rendered by the platform, never by the LLM.</div>
+          </div>
+        </div>
+        <div class="pipeline-step">
+          <div class="pipeline-step-num pipeline-step-num-green">12</div>
+          <div class="pipeline-step-content">
+            <div class="pipeline-step-title">Consent requests <span class="pipeline-tag tag-deterministic">deterministic</span></div>
+            <div class="pipeline-step-desc">Surfaces consent grant cards at the eligibility-checked state. Required grants must be accepted to proceed; optional grants can be declined without blocking progress.</div>
+          </div>
+        </div>
+        <div class="pipeline-step">
+          <div class="pipeline-step-num pipeline-step-num-green">13</div>
+          <div class="pipeline-step-content">
+            <div class="pipeline-step-title">Handoff detection <span class="pipeline-tag tag-deterministic">deterministic</span></div>
+            <div class="pipeline-step-desc">Evaluates safeguarding triggers, edge-case conditions, and escalation rules. When a handoff is triggered, the conversation is routed to a human adviser with full context preserved.</div>
+          </div>
+        </div>
+        <div class="pipeline-step">
+          <div class="pipeline-step-num pipeline-step-num-navy">14</div>
+          <div class="pipeline-step-content">
+            <div class="pipeline-step-title">Version metadata and trace <span class="pipeline-tag tag-platform">platform</span></div>
+            <div class="pipeline-step-desc">Hashes the system prompt, stamps ruleset and journey versions, builds the full pipeline trace with per-step timing. The trace is written to the evidence store for audit and replay.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout">
+        <p><strong>The LLM runs at step 7 out of 14.</strong> Everything before it is deterministic setup; everything after it is validation and override. The language model proposes; the platform disposes. This is the central architectural guarantee.</p>
+      </div>
+
+      <h3 style="margin-top: 2.5rem;">Service strategy pattern</h3>
+      <p class="body-text">The orchestrator does not know how a service is implemented. It delegates through a pluggable <span class="type-sig">ServiceStrategy</span> interface. Three modes exist today.</p>
+
+      <div class="interface-block">
+        <div class="interface-block-header">
+          <span class="type-label">Interface</span>
+          <span class="type-name">ServiceStrategy</span>
+        </div>
+        <pre><span class="kw">interface</span> <span class="type">ServiceStrategy</span> <span class="punct">{</span>
+  <span class="key">buildTools</span><span class="punct">(</span><span class="param">ctx</span><span class="punct">:</span> <span class="type">ServiceStrategyContext</span><span class="punct">):</span> <span class="type">ToolDefinition</span><span class="punct">[];</span>
+  <span class="key">buildServiceContext</span><span class="punct">(</span><span class="param">ctx</span><span class="punct">:</span> <span class="type">ServiceStrategyContext</span><span class="punct">):</span> <span class="type">string</span> <span class="punct">|</span> <span class="type">Promise</span><span class="punct">&lt;</span><span class="type">string</span><span class="punct">&gt;;</span>
+  <span class="key">dispatchToolCall</span><span class="punct">(</span><span class="param">name</span><span class="punct">:</span> <span class="type">string</span><span class="punct">,</span> <span class="param">input</span><span class="punct">:</span> <span class="type">unknown</span><span class="punct">):</span> <span class="type">Promise</span><span class="punct">&lt;</span><span class="type">string</span><span class="punct">&gt;;</span>
+  <span class="key">extractStateTransitions</span><span class="punct">(</span><span class="param">messages</span><span class="punct">:</span> <span class="type">unknown</span><span class="punct">[]):</span> <span class="type">StateTransitionResult</span><span class="punct">[];</span>
+<span class="punct">}</span></pre>
+      </div>
+
+      <p class="body-text"><strong>JsonServiceStrategy</strong> (deterministic, inline) &mdash; no tools are given to the LLM. Service context is built entirely from structured service descriptions and the field collector. All state transitions are proposed by the LLM in its structured output and validated by the state machine.</p>
+      <p class="body-text"><strong>McpServiceStrategy</strong> (tool-based) &mdash; the LLM receives <span class="type-sig">check_eligibility</span> and <span class="type-sig">advance_state</span> tools. It calls these during the agentic loop. Tool results are parsed for state transitions.</p>
+      <p class="body-text"><strong>Demo mode</strong> &mdash; scripted responses bypass the orchestrator entirely. Each persona has a pre-authored script that drives the conversation deterministically, with no LLM calls. Used for conference demonstrations and stakeholder walkthroughs.</p>
+      <p class="body-text">All three modes produce identical output contracts. The citizen application cannot distinguish which strategy was used.</p>
+
+      <h3 style="margin-top: 2.5rem;">OrchestratorOutput</h3>
+      <p class="body-text">Every pipeline run produces a single typed output. This is the contract between the runtime and the citizen application.</p>
+
+      <div class="interface-block">
+        <div class="interface-block-header">
+          <span class="type-label">Interface</span>
+          <span class="type-name">OrchestratorOutput</span>
+        </div>
+        <pre><span class="kw">interface</span> <span class="type">OrchestratorOutput</span> <span class="punct">{</span>
+  <span class="key">response</span><span class="punct">:</span> <span class="type">string</span><span class="punct">;</span>
+  <span class="key">reasoning</span><span class="punct">:</span> <span class="type">string</span><span class="punct">;</span>
+  <span class="key">toolsUsed</span><span class="punct">:</span> <span class="type">string</span><span class="punct">[];</span>
+  <span class="key">conversationTitle</span><span class="punct">:</span> <span class="type">string</span> <span class="punct">|</span> <span class="type">null</span><span class="punct">;</span>
+  <span class="key">tasks</span><span class="punct">:</span> <span class="type">TaskEntry</span><span class="punct">[];</span>
+  <span class="key">policyResult</span><span class="punct">?:</span> <span class="punct">{</span> <span class="key">eligible</span><span class="punct">:</span> <span class="type">boolean</span><span class="punct">;</span> <span class="key">explanation</span><span class="punct">:</span> <span class="type">string</span> <span class="punct">};</span>
+  <span class="key">handoff</span><span class="punct">?:</span> <span class="punct">{</span> <span class="key">triggered</span><span class="punct">:</span> <span class="type">boolean</span><span class="punct">;</span> <span class="key">reason</span><span class="punct">:</span> <span class="type">string</span> <span class="punct">};</span>
+  <span class="key">serviceState</span><span class="punct">?:</span> <span class="punct">{</span> <span class="key">currentState</span><span class="punct">:</span> <span class="type">string</span><span class="punct">;</span> <span class="key">stateHistory</span><span class="punct">:</span> <span class="type">string</span><span class="punct">[] };</span>
+  <span class="key">consentRequests</span><span class="punct">?:</span> <span class="type">ConsentRequest</span><span class="punct">[];</span>
+  <span class="key">extractedFields</span><span class="punct">?:</span> <span class="type">FieldExtraction</span><span class="punct">[];</span>
+  <span class="key">serviceCompletions</span><span class="punct">?:</span> <span class="type">Array</span><span class="punct">&lt;{</span> <span class="key">serviceId</span><span class="punct">:</span> <span class="type">string</span><span class="punct">;</span> <span class="key">status</span><span class="punct">:</span> <span class="type">string</span> <span class="punct">}&gt;;</span>
+  <span class="key">versionMetadata</span><span class="punct">:</span> <span class="punct">{</span>
+    <span class="key">promptHash</span><span class="punct">:</span> <span class="type">string</span><span class="punct">;</span>
+    <span class="key">rulesetVersion</span><span class="punct">:</span> <span class="type">string</span><span class="punct">;</span>
+    <span class="key">stateModelVersion</span><span class="punct">:</span> <span class="type">string</span>
+  <span class="punct">};</span>
+  <span class="key">pipelineTrace</span><span class="punct">:</span> <span class="punct">{</span>
+    <span class="key">traceId</span><span class="punct">:</span> <span class="type">string</span><span class="punct">;</span>
+    <span class="key">steps</span><span class="punct">:</span> <span class="type">PipelineStep</span><span class="punct">[];</span>
+    <span class="key">totalDurationMs</span><span class="punct">:</span> <span class="type">number</span>
+  <span class="punct">};</span>
+<span class="punct">}</span></pre>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ════════════════════════════════ 03 ════════════════════════════════ -->
+  <div class="section section-alt" id="service-descriptions">
+    <div class="container">
+      <div class="section-heading">
+        <span class="section-num">03</span>
+        <h2>Service description schemas</h2>
+      </div>
+      <p class="section-intro">Every government service is described across four dimensions. Together, they form the complete machine-readable contract that an agent uses to deliver the service on a citizen's behalf.</p>
+
+      <div class="dim-grid">
+        <div class="dim-card dim-card--identity">
+          <h3>Identity</h3>
+          <p>The service's identity card. Who runs it, what it does, what data it needs, what it produces, what it costs, how long it takes, and where to complain.</p>
+          <div class="dim-file">manifest.json</div>
+        </div>
+        <div class="dim-card dim-card--eligibility">
+          <h3>Eligibility</h3>
+          <p>Machine-evaluable rules that determine whether a citizen can use the service. Each rule is a condition on a data field with a pass/fail outcome and a human-readable reason.</p>
+          <div class="dim-file">policy.json</div>
+        </div>
+        <div class="dim-card dim-card--journey">
+          <h3>Journey</h3>
+          <p>The finite-state machine defining the valid sequence of states and transitions. Defines the happy path and all branches: rejection, edge cases, handoff to a human adviser.</p>
+          <div class="dim-file">state-model.json</div>
+        </div>
+        <div class="dim-card dim-card--data">
+          <h3>Data sharing</h3>
+          <p>Named data-sharing grants with purpose, source, duration, and required/optional status. The citizen sees exactly what they are agreeing to before any data moves.</p>
+          <div class="dim-file">consent.json</div>
+        </div>
+      </div>
+
+      <div class="callout callout--green">
+        <p><strong>Service descriptions are the integration point for departments.</strong> A department does not need to build an API or write code. It publishes structured service descriptions, and the platform handles orchestration, consent, evidence, and agent behaviour. The Legibility Studio provides a guided authoring experience for department teams.</p>
+      </div>
+
+      <!-- ── Identity (manifest) ── -->
+      <h3 style="margin-top: 3rem;">Identity &mdash; the manifest</h3>
+      <p class="body-text">The manifest is where you start. It declares the service name (as citizens should see it), the responsible department, jurisdictions, costs, SLA commitments, complaint and appeal routes, data controller, and lawful basis.</p>
+
+      <div class="code-block">
+        <div class="code-block-label">Identity &mdash; DVLA driving licence renewal</div>
+        <pre><span class="punct">{</span>
+  <span class="key">"id"</span><span class="punct">:</span> <span class="str">"dvla-renew-driving-licence"</span><span class="punct">,</span>
+  <span class="key">"name"</span><span class="punct">:</span> <span class="str">"Renew a driving licence"</span><span class="punct">,</span>
+  <span class="key">"department"</span><span class="punct">:</span> <span class="str">"Driver and Vehicle Licensing Agency"</span><span class="punct">,</span>
+  <span class="key">"description"</span><span class="punct">:</span> <span class="str">"Renew a photocard driving licence that is expiring or has expired."</span><span class="punct">,</span>
+  <span class="key">"version"</span><span class="punct">:</span> <span class="str">"1.0.0"</span><span class="punct">,</span>
+  <span class="key">"jurisdiction"</span><span class="punct">:</span> <span class="str">"England, Wales, Scotland"</span><span class="punct">,</span>
+  <span class="key">"input_schema"</span><span class="punct">:</span> <span class="punct">{</span>
+    <span class="key">"required"</span><span class="punct">:</span> <span class="punct">[</span>
+      <span class="str">"full_name"</span><span class="punct">,</span> <span class="str">"date_of_birth"</span><span class="punct">,</span>
+      <span class="str">"driving_licence_number"</span><span class="punct">,</span> <span class="str">"national_insurance_number"</span><span class="punct">,</span>
+      <span class="str">"address"</span><span class="punct">,</span> <span class="str">"photo"</span>
+    <span class="punct">],</span>
+    <span class="key">"optional"</span><span class="punct">:</span> <span class="punct">[</span><span class="str">"email"</span><span class="punct">,</span> <span class="str">"phone"</span><span class="punct">]</span>
+  <span class="punct">},</span>
+  <span class="key">"output_schema"</span><span class="punct">:</span> <span class="punct">{</span>
+    <span class="key">"produces"</span><span class="punct">:</span> <span class="punct">[</span><span class="str">"application_reference"</span><span class="punct">,</span> <span class="str">"expected_delivery_date"</span><span class="punct">]</span>
+  <span class="punct">},</span>
+  <span class="key">"constraints"</span><span class="punct">:</span> <span class="punct">{</span>
+    <span class="key">"sla"</span><span class="punct">:</span> <span class="str">"10 working days"</span><span class="punct">,</span>
+    <span class="key">"fee"</span><span class="punct">:</span> <span class="punct">{</span> <span class="key">"amount"</span><span class="punct">:</span> <span class="num">14</span><span class="punct">,</span> <span class="key">"currency"</span><span class="punct">:</span> <span class="str">"GBP"</span> <span class="punct">},</span>
+    <span class="key">"availability"</span><span class="punct">:</span> <span class="str">"24/7 online"</span>
+  <span class="punct">},</span>
+  <span class="key">"redress"</span><span class="punct">:</span> <span class="punct">{</span>
+    <span class="key">"complaint_url"</span><span class="punct">:</span> <span class="str">"https://www.gov.uk/complain-about-dvla"</span><span class="punct">,</span>
+    <span class="key">"appeal_process"</span><span class="punct">:</span> <span class="str">"Contact DVLA directly"</span><span class="punct">,</span>
+    <span class="key">"ombudsman"</span><span class="punct">:</span> <span class="str">"Parliamentary and Health Service Ombudsman"</span>
+  <span class="punct">},</span>
+  <span class="key">"audit_requirements"</span><span class="punct">:</span> <span class="punct">{</span>
+    <span class="key">"retention_period"</span><span class="punct">:</span> <span class="str">"7 years"</span><span class="punct">,</span>
+    <span class="key">"data_controller"</span><span class="punct">:</span> <span class="str">"DVLA"</span><span class="punct">,</span>
+    <span class="key">"lawful_basis"</span><span class="punct">:</span> <span class="str">"Public task"</span>
+  <span class="punct">}</span>
+<span class="punct">}</span></pre>
+      </div>
+
+      <p class="body-text">The <span class="type-sig">input_schema.required</span> array drives the field collector. When the orchestrator loads a service, it seeds the <span class="type-sig">FieldCollector</span> from this array. Fields already present in the citizen's profile are marked as collected; the remainder become the "missing fields" list that the agent uses to ask targeted questions.</p>
+
+      <!-- ── Eligibility (policy) ── -->
+      <h3 style="margin-top: 3rem;">Eligibility &mdash; the policy ruleset</h3>
+      <p class="body-text">Each rule operates on a single data field using a typed operator. If a rule fails, the agent shows the citizen the <span class="type-sig">reason_if_failed</span> message &mdash; in plain English, written by the department team. Two additional fields make policies more than gatekeepers: <span class="type-sig">alternative_service</span> redirects the citizen, and <span class="type-sig">triggers_handoff</span> routes them to a human.</p>
+
+      <div class="code-block">
+        <div class="code-block-label">Eligibility &mdash; DVLA driving licence renewal</div>
+        <pre><span class="punct">{</span>
+  <span class="key">"service_id"</span><span class="punct">:</span> <span class="str">"dvla-renew-driving-licence"</span><span class="punct">,</span>
+  <span class="key">"version"</span><span class="punct">:</span> <span class="str">"1.0.0"</span><span class="punct">,</span>
+  <span class="key">"rules"</span><span class="punct">:</span> <span class="punct">[</span>
+    <span class="punct">{</span>
+      <span class="key">"id"</span><span class="punct">:</span> <span class="str">"age-minimum"</span><span class="punct">,</span>
+      <span class="key">"description"</span><span class="punct">:</span> <span class="str">"Applicant must be at least 16"</span><span class="punct">,</span>
+      <span class="key">"condition"</span><span class="punct">:</span> <span class="punct">{</span> <span class="key">"field"</span><span class="punct">:</span> <span class="str">"age"</span><span class="punct">,</span> <span class="key">"operator"</span><span class="punct">:</span> <span class="str">"&gt;="</span><span class="punct">,</span> <span class="key">"value"</span><span class="punct">:</span> <span class="num">16</span> <span class="punct">},</span>
+      <span class="key">"reason_if_failed"</span><span class="punct">:</span> <span class="str">"You must be at least 16 to hold a driving licence"</span>
+    <span class="punct">},</span>
+    <span class="punct">{</span>
+      <span class="key">"id"</span><span class="punct">:</span> <span class="str">"has-licence"</span><span class="punct">,</span>
+      <span class="key">"condition"</span><span class="punct">:</span> <span class="punct">{</span> <span class="key">"field"</span><span class="punct">:</span> <span class="str">"driving_licence_number"</span><span class="punct">,</span> <span class="key">"operator"</span><span class="punct">:</span> <span class="str">"exists"</span> <span class="punct">},</span>
+      <span class="key">"reason_if_failed"</span><span class="punct">:</span> <span class="str">"You need an existing licence to renew."</span><span class="punct">,</span>
+      <span class="key">"alternative_service"</span><span class="punct">:</span> <span class="str">"dvla.apply-provisional-licence"</span>
+    <span class="punct">},</span>
+    <span class="punct">{</span>
+      <span class="key">"id"</span><span class="punct">:</span> <span class="str">"not-revoked"</span><span class="punct">,</span>
+      <span class="key">"condition"</span><span class="punct">:</span> <span class="punct">{</span> <span class="key">"field"</span><span class="punct">:</span> <span class="str">"licence_status"</span><span class="punct">,</span> <span class="key">"operator"</span><span class="punct">:</span> <span class="str">"!="</span><span class="punct">,</span> <span class="key">"value"</span><span class="punct">:</span> <span class="str">"revoked"</span> <span class="punct">},</span>
+      <span class="key">"reason_if_failed"</span><span class="punct">:</span> <span class="str">"Your licence has been revoked."</span><span class="punct">,</span>
+      <span class="key">"triggers_handoff"</span><span class="punct">:</span> <span class="bool">true</span>
+    <span class="punct">}</span>
+  <span class="punct">],</span>
+  <span class="key">"edge_cases"</span><span class="punct">:</span> <span class="punct">[</span>
+    <span class="punct">{</span>
+      <span class="key">"id"</span><span class="punct">:</span> <span class="str">"medical-condition"</span><span class="punct">,</span>
+      <span class="key">"detection"</span><span class="punct">:</span> <span class="str">"medical_conditions"</span><span class="punct">,</span>
+      <span class="key">"action"</span><span class="punct">:</span> <span class="str">"Route to medical assessment. DVLA form C1 required."</span>
+    <span class="punct">},</span>
+    <span class="punct">{</span>
+      <span class="key">"id"</span><span class="punct">:</span> <span class="str">"over-70"</span><span class="punct">,</span>
+      <span class="key">"detection"</span><span class="punct">:</span> <span class="str">"over_70"</span><span class="punct">,</span>
+      <span class="key">"action"</span><span class="punct">:</span> <span class="str">"Over-70 renewal is free but requires medical self-declaration."</span>
+    <span class="punct">}</span>
+  <span class="punct">]</span>
+<span class="punct">}</span></pre>
+      </div>
+
+      <!-- ── Journey (state model) ── -->
+      <h3 style="margin-top: 3rem;">Journey &mdash; the state model</h3>
+      <p class="body-text">The state model defines a directed graph with a single entry point (<span class="type-sig">not-started</span>) and one or more terminal states (<span class="type-sig">completed</span>, <span class="type-sig">rejected</span>, <span class="type-sig">handed-off</span>). Every transition has a <em>from</em> state, a <em>to</em> state, a <em>trigger</em>, and an optional <em>guard condition</em>.</p>
+
+      <div class="state-flow">
+        <div class="state-flow-step">
+          <div class="state-node">not-started</div>
+          <div class="state-arrow"></div>
+          <div class="state-arrow-head"></div>
+          <div class="state-node state-node-active">identity-verified</div>
+          <div class="state-arrow"></div>
+          <div class="state-arrow-head"></div>
+          <div class="state-node state-node-active">eligibility-checked</div>
+        </div>
+        <div class="state-branch">
+          <div class="state-branch-arm">
+            <div class="state-arrow"></div>
+            <div class="state-arrow-head"></div>
+            <div class="state-node state-node-active">consent-given</div>
+            <div class="state-arrow"></div>
+            <div class="state-arrow-head"></div>
+            <div class="state-node state-node-active">details-confirmed</div>
+            <div class="state-arrow"></div>
+            <div class="state-arrow-head"></div>
+            <div class="state-node state-node-active">photo-submitted</div>
+            <div class="state-arrow"></div>
+            <div class="state-arrow-head"></div>
+            <div class="state-node state-node-active">payment-made</div>
+            <div class="state-arrow"></div>
+            <div class="state-arrow-head"></div>
+            <div class="state-node state-node-active">application-submitted</div>
+            <div class="state-arrow"></div>
+            <div class="state-arrow-head"></div>
+            <div class="state-node state-node-terminal">completed</div>
+          </div>
+          <div class="state-branch-arm">
+            <div class="state-arrow"></div>
+            <div class="state-arrow-head"></div>
+            <div class="state-node state-node-error">rejected</div>
+          </div>
+          <div class="state-branch-arm">
+            <div class="state-arrow"></div>
+            <div class="state-arrow-head"></div>
+            <div class="state-node state-node-error">handed-off</div>
+          </div>
+        </div>
+      </div>
+
+      <p class="body-text">The state model is enforced deterministically. The agent cannot advance to "payment-made" unless "photo-submitted" has been reached. Every transition is logged as a trace event.</p>
+
+      <!-- ── Data sharing (consent) ── -->
+      <h3 style="margin-top: 3rem;">Data sharing &mdash; the consent model</h3>
+      <p class="body-text">Each grant declares an ID, a description shown to the citizen, the specific fields being shared, the source of those fields, the purpose, the duration, and whether the grant is required or optional.</p>
+
+      <div class="code-block">
+        <div class="code-block-label">Data sharing &mdash; DVLA driving licence renewal</div>
+        <pre><span class="punct">{</span>
+  <span class="key">"grants"</span><span class="punct">:</span> <span class="punct">[</span>
+    <span class="punct">{</span>
+      <span class="key">"id"</span><span class="punct">:</span> <span class="str">"identity-verification"</span><span class="punct">,</span>
+      <span class="key">"description"</span><span class="punct">:</span> <span class="str">"Verify your identity using GOV.UK One Login"</span><span class="punct">,</span>
+      <span class="key">"data_shared"</span><span class="punct">:</span> <span class="punct">[</span><span class="str">"full_name"</span><span class="punct">,</span> <span class="str">"date_of_birth"</span><span class="punct">,</span> <span class="str">"national_insurance_number"</span><span class="punct">],</span>
+      <span class="key">"source"</span><span class="punct">:</span> <span class="str">"one-login"</span><span class="punct">,</span>
+      <span class="key">"purpose"</span><span class="punct">:</span> <span class="str">"To confirm you are who you say you are"</span><span class="punct">,</span>
+      <span class="key">"duration"</span><span class="punct">:</span> <span class="str">"session"</span><span class="punct">,</span>
+      <span class="key">"required"</span><span class="punct">:</span> <span class="bool">true</span>
+    <span class="punct">},</span>
+    <span class="punct">{</span>
+      <span class="key">"id"</span><span class="punct">:</span> <span class="str">"photo-sharing"</span><span class="punct">,</span>
+      <span class="key">"description"</span><span class="punct">:</span> <span class="str">"Share your passport photo with DVLA"</span><span class="punct">,</span>
+      <span class="key">"data_shared"</span><span class="punct">:</span> <span class="punct">[</span><span class="str">"passport_photo"</span><span class="punct">],</span>
+      <span class="key">"source"</span><span class="punct">:</span> <span class="str">"hmpo-passport-office"</span><span class="punct">,</span>
+      <span class="key">"purpose"</span><span class="punct">:</span> <span class="str">"DVLA will use your most recent passport photo for the new licence"</span><span class="punct">,</span>
+      <span class="key">"required"</span><span class="punct">:</span> <span class="bool">true</span>
+    <span class="punct">}</span>
+  <span class="punct">],</span>
+  <span class="key">"revocation"</span><span class="punct">:</span> <span class="punct">{</span>
+    <span class="key">"mechanism"</span><span class="punct">:</span> <span class="str">"Contact DVLA or revoke through your GOV.UK account"</span><span class="punct">,</span>
+    <span class="key">"effect"</span><span class="punct">:</span> <span class="str">"Application will be cancelled if consent is revoked before completion"</span>
+  <span class="punct">}</span>
+<span class="punct">}</span></pre>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ════════════════════════════════ 04 ════════════════════════════════ -->
+  <div class="section" id="data-model">
+    <div class="container">
+      <div class="section-heading">
+        <span class="section-num">04</span>
+        <h2>Data model</h2>
+      </div>
+      <p class="section-intro">A unified data model for citizen information with field-level provenance, tiered trust levels, and deduplication across services.</p>
+
+      <h3>Three tiers of trust</h3>
+      <p class="body-text">Every data field carries a trust tier that determines how it can be used, whether it requires consent to share, and whether the citizen can edit it.</p>
+
+      <div class="tier-grid">
+        <div class="tier-card" style="border-top-color: var(--green);">
+          <h4>Tier 1: Verified</h4>
+          <p>Immutable, government-sourced data. Confirmed by a department system of record. The citizen cannot edit these fields &mdash; only the source department can update them. NI number, driving licence number, passport details.</p>
+        </div>
+        <div class="tier-card" style="border-top-color: var(--blue);">
+          <h4>Tier 2: Submitted</h4>
+          <p>Citizen-entered data that has not been verified against a department source. The citizen can edit these fields at any time. Contact preferences, correspondence address, accessibility needs.</p>
+        </div>
+        <div class="tier-card" style="border-top-color: var(--orange);">
+          <h4>Tier 3: Inferred</h4>
+          <p>Agent-derived data, flagged as such. Extracted from conversation context or computed from other fields. Always shown with an "inferred" label so the citizen knows its provenance.</p>
+        </div>
+      </div>
+
+      <h3 style="margin-top: 2.5rem;">Field source attribution</h3>
+      <p class="body-text">Every field in the citizen data model carries source metadata. This enables the platform to show exactly where each piece of data came from and which consent grant authorised its use.</p>
+
+      <div class="interface-block">
+        <div class="interface-block-header">
+          <span class="type-label">Interface</span>
+          <span class="type-name">FieldSource</span>
+        </div>
+        <pre><span class="kw">interface</span> <span class="type">FieldSource</span> <span class="punct">{</span>
+  <span class="key">source</span><span class="punct">:</span> <span class="type">string</span><span class="punct">;</span>     <span class="comment">// "HMRC", "DVLA", "Home Office"</span>
+  <span class="key">tier</span><span class="punct">:</span> <span class="str">"verified"</span> <span class="punct">|</span> <span class="str">"submitted"</span> <span class="punct">|</span> <span class="str">"inferred"</span><span class="punct">;</span>
+  <span class="key">topic</span><span class="punct">:</span> <span class="type">string</span><span class="punct">;</span>     <span class="comment">// "identity", "finance", "employment"</span>
+<span class="punct">}</span></pre>
+      </div>
+
+      <h3 style="margin-top: 2.5rem;">Canonical alias map for deduplication</h3>
+      <p class="body-text">When a life event triggers multiple services, the field merger deduplicates data fields using a canonical alias map. Different services may use different names for the same piece of data &mdash; "ni_number", "national_insurance_number", and "nino" all resolve to the same canonical field. The agent asks once, and the answer fans out to all services that need it.</p>
+
+      <div class="code-block">
+        <div class="code-block-label">Canonical alias map (excerpt)</div>
+        <pre><span class="punct">{</span>
+  <span class="str">"national_insurance_number"</span><span class="punct">:</span> <span class="punct">[</span><span class="str">"ni_number"</span><span class="punct">,</span> <span class="str">"nino"</span><span class="punct">,</span> <span class="str">"niNumber"</span><span class="punct">],</span>
+  <span class="str">"full_name"</span><span class="punct">:</span> <span class="punct">[</span><span class="str">"fullName"</span><span class="punct">,</span> <span class="str">"name"</span><span class="punct">,</span> <span class="str">"legal_name"</span><span class="punct">],</span>
+  <span class="str">"date_of_birth"</span><span class="punct">:</span> <span class="punct">[</span><span class="str">"dateOfBirth"</span><span class="punct">,</span> <span class="str">"dob"</span><span class="punct">,</span> <span class="str">"birth_date"</span><span class="punct">],</span>
+  <span class="str">"address"</span><span class="punct">:</span> <span class="punct">[</span><span class="str">"postal_address"</span><span class="punct">,</span> <span class="str">"home_address"</span><span class="punct">,</span> <span class="str">"correspondence_address"</span><span class="punct">]</span>
+<span class="punct">}</span></pre>
+      </div>
+
+      <h3 style="margin-top: 2.5rem;">Pre-fill logic</h3>
+      <p class="body-text">When a service is loaded, the <span class="type-sig">FieldCollector</span> seeds from the identity's <span class="type-sig">input_schema.required</span> array and checks each field against the citizen's profile using the alias map. Fields already present are marked as collected with their source attribution. The remaining fields become the "missing" list that the prompt layer injects into the system prompt, enabling the LLM to ask targeted questions rather than repeating information the citizen has already provided.</p>
+
+      <h3 style="margin-top: 2.5rem;">Base fields (all citizens)</h3>
+
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Field</th>
+            <th>Tier</th>
+            <th>Source</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>fullName</td><td>Verified</td><td>Multiple sources</td></tr>
+          <tr><td>dateOfBirth</td><td>Verified</td><td>Multiple sources</td></tr>
+          <tr><td>niNumber</td><td>Verified</td><td>DWP / HMRC</td></tr>
+          <tr><td>address</td><td>Verified</td><td>Multiple sources</td></tr>
+          <tr><td>postcode</td><td>Verified</td><td>HMRC / DVLA</td></tr>
+          <tr><td>email</td><td>Verified</td><td>User-provided</td></tr>
+          <tr><td>phone</td><td>Verified</td><td>User-provided</td></tr>
+        </tbody>
+      </table>
+
+      <h3 style="margin-top: 2rem;">Persona-specific fields (examples)</h3>
+
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Field</th>
+            <th>Tier</th>
+            <th>Source</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>bereavement.deceasedName</td><td>Submitted</td><td>General Register Office</td></tr>
+          <tr><td>bereavement.dateOfDeath</td><td>Verified</td><td>General Register Office</td></tr>
+          <tr><td>bereavement.estateValue</td><td>Submitted</td><td>HMRC</td></tr>
+          <tr><td>bereavement.tellUsOnceRef</td><td>Verified</td><td>GDS / Tell Us Once</td></tr>
+          <tr><td>immigration.status</td><td>Verified</td><td>Home Office</td></tr>
+          <tr><td>immigration.brpNumber</td><td>Verified</td><td>Home Office</td></tr>
+          <tr><td>immigration.rightToWork</td><td>Verified</td><td>Home Office</td></tr>
+          <tr><td>justiceHistory.releaseDate</td><td>Verified</td><td>HMPPS</td></tr>
+          <tr><td>justiceHistory.licenceConditions</td><td>Verified</td><td>HMPPS</td></tr>
+          <tr><td>childcare.thirtyHourCode</td><td>Verified</td><td>HMRC</td></tr>
+          <tr><td>childcare.childBenefitRef</td><td>Verified</td><td>HMRC</td></tr>
+          <tr><td>transport.drivingLicenceNumber</td><td>Verified</td><td>DVLA</td></tr>
+          <tr><td>transport.licenceStatus</td><td>Verified</td><td>DVLA</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout callout--green">
+        <p><strong>Cross-department data flow is always explicit.</strong> When a citizen consents to share data across departments, the platform mediates the exchange. The citizen sees which fields will be shared, which department will receive them, and for what purpose. An immutable receipt records every data-sharing event.</p>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ════════════════════════════════ 05 ════════════════════════════════ -->
+  <div class="section section-alt" id="policy-state">
+    <div class="container">
+      <div class="section-heading">
+        <span class="section-num">05</span>
+        <h2>Policy evaluator and state machine</h2>
+      </div>
+      <p class="section-intro">The core of the deterministic layer. These two components enforce eligibility and journey progression without any LLM involvement.</p>
+
+      <h3>PolicyEvaluator</h3>
+      <p class="body-text">Evaluates a service's eligibility rules against a citizen's data. The evaluator iterates each rule, evaluates conditions using typed operators, and returns a structured result. No fuzzy logic, no LLM interpretation &mdash; rules either pass or fail.</p>
+
+      <div class="interface-block">
+        <div class="interface-block-header">
+          <span class="type-label">Class</span>
+          <span class="type-name">PolicyEvaluator</span>
+        </div>
+        <pre><span class="kw">class</span> <span class="type">PolicyEvaluator</span> <span class="punct">{</span>
+  <span class="key">evaluate</span><span class="punct">(</span>
+    <span class="param">ruleset</span><span class="punct">:</span> <span class="type">PolicyRuleset</span><span class="punct">,</span>
+    <span class="param">context</span><span class="punct">:</span> <span class="type">Record</span><span class="punct">&lt;</span><span class="type">string</span><span class="punct">,</span> <span class="type">unknown</span><span class="punct">&gt;</span>
+  <span class="punct">):</span> <span class="type">PolicyResult</span>
+<span class="punct">}</span>
+
+<span class="kw">interface</span> <span class="type">PolicyResult</span> <span class="punct">{</span>
+  <span class="key">eligible</span><span class="punct">:</span> <span class="type">boolean</span><span class="punct">;</span>
+  <span class="key">passed</span><span class="punct">:</span> <span class="type">PolicyRule</span><span class="punct">[];</span>
+  <span class="key">failed</span><span class="punct">:</span> <span class="type">PolicyRule</span><span class="punct">[];</span>
+  <span class="key">edgeCases</span><span class="punct">:</span> <span class="type">PolicyRule</span><span class="punct">[];</span>
+  <span class="key">explanation</span><span class="punct">:</span> <span class="type">string</span><span class="punct">;</span>
+<span class="punct">}</span></pre>
+      </div>
+
+      <h3 style="margin-top: 2.5rem;">Policy operator reference</h3>
+      <p class="body-text">The <span class="type-sig">PolicyEvaluator</span> supports seven operators. Each has strict type semantics &mdash; the evaluator does not perform type coercion.</p>
+
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Operator</th>
+            <th>Semantics</th>
+            <th>Example</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>&gt;=</td><td>Greater than or equal. Numeric comparison only.</td><td>age &gt;= 16</td></tr>
+          <tr><td>&lt;=</td><td>Less than or equal. Numeric comparison only.</td><td>age &lt;= 70</td></tr>
+          <tr><td>==</td><td>Strict equality. String or numeric.</td><td>jurisdiction == "England"</td></tr>
+          <tr><td>!=</td><td>Not equal.</td><td>status != "disqualified"</td></tr>
+          <tr><td>exists</td><td>Field is present and non-null. Value parameter is ignored.</td><td>driving_licence_number exists</td></tr>
+          <tr><td>not-exists</td><td>Field is absent or null. Value parameter is ignored.</td><td>ban_end_date not-exists</td></tr>
+          <tr><td>in</td><td>Field value is one of the specified array values.</td><td>licence_type in ["full", "provisional"]</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout">
+        <p><strong>Edge cases are distinct from failures.</strong> A rule with <span class="type-sig">edge_case: true</span> does not cause outright ineligibility. Instead, it flags the citizen for potential handoff to a human adviser. This handles ambiguous situations where the citizen might be eligible but needs human judgement.</p>
+      </div>
+
+      <h3 style="margin-top: 2.5rem;">StateMachine</h3>
+      <p class="body-text">A deterministic finite-state machine constructed from a service's journey definition. It enforces the legal transitions for a service journey, prevents the LLM from skipping steps, and identifies terminal and receipt-emitting states.</p>
+
+      <div class="interface-block">
+        <div class="interface-block-header">
+          <span class="type-label">Class</span>
+          <span class="type-name">StateMachine</span>
+        </div>
+        <pre><span class="kw">class</span> <span class="type">StateMachine</span> <span class="punct">{</span>
+  <span class="key">constructor</span><span class="punct">(</span><span class="param">definition</span><span class="punct">:</span> <span class="type">StateModelDefinition</span><span class="punct">)</span>
+  <span class="key">getState</span><span class="punct">():</span> <span class="type">string</span>
+  <span class="key">allowedTransitions</span><span class="punct">():</span> <span class="type">Array</span><span class="punct">&lt;{</span> <span class="key">to</span><span class="punct">:</span> <span class="type">string</span><span class="punct">;</span> <span class="key">trigger</span><span class="punct">?:</span> <span class="type">string</span> <span class="punct">}&gt;</span>
+  <span class="key">transition</span><span class="punct">(</span><span class="param">trigger</span><span class="punct">:</span> <span class="type">string</span><span class="punct">):</span> <span class="type">TransitionResult</span>
+  <span class="key">isTerminal</span><span class="punct">():</span> <span class="type">boolean</span>
+  <span class="key">setState</span><span class="punct">(</span><span class="param">stateId</span><span class="punct">:</span> <span class="type">string</span><span class="punct">):</span> <span class="type">void</span>
+<span class="punct">}</span></pre>
+      </div>
+
+      <h3 style="margin-top: 2.5rem;">Transition guards</h3>
+      <p class="body-text">Transitions can carry guard conditions that must be satisfied before the transition is allowed. Guards prevent premature advancement &mdash; a citizen cannot reach "payment-made" without first passing through "details-confirmed".</p>
+
+      <div class="code-block">
+        <div class="code-block-label">Transition with guard</div>
+        <pre><span class="punct">{</span>
+  <span class="key">"from"</span><span class="punct">:</span> <span class="str">"eligibility-checked"</span><span class="punct">,</span>
+  <span class="key">"to"</span><span class="punct">:</span> <span class="str">"consent-given"</span><span class="punct">,</span>
+  <span class="key">"trigger"</span><span class="punct">:</span> <span class="str">"grant_consent"</span><span class="punct">,</span>
+  <span class="key">"guard"</span><span class="punct">:</span> <span class="punct">{</span>
+    <span class="key">"condition"</span><span class="punct">:</span> <span class="str">"policy_result.eligible == true"</span><span class="punct">,</span>
+    <span class="key">"message"</span><span class="punct">:</span> <span class="str">"Cannot proceed: citizen is not eligible for this service."</span>
+  <span class="punct">}</span>
+<span class="punct">}</span></pre>
+      </div>
+
+      <p class="body-text">The state machine evaluates guards synchronously. If a guard fails, the transition is rejected and the machine remains at its current state. The guard's message is available to the agent for explaining why the journey cannot proceed.</p>
+    </div>
+  </div>
+
+
+  <!-- ════════════════════════════════ 06 ════════════════════════════════ -->
+  <div class="section" id="consent-fields">
+    <div class="container">
+      <div class="section-heading">
+        <span class="section-num">06</span>
+        <h2>Consent manager and field collector</h2>
+      </div>
+      <p class="section-intro">How consent is enforced as a hard gate, and how the platform tracks every data field from collection through to sharing.</p>
+
+      <h3>ConsentManager</h3>
+      <p class="body-text">Manages the citizen's consent decisions for a service. Each service defines a data sharing model with required and optional grants. The manager tracks which grants have been presented, accepted, or declined, and gates progress accordingly.</p>
+
+      <div class="interface-block">
+        <div class="interface-block-header">
+          <span class="type-label">Class</span>
+          <span class="type-name">ConsentManager</span>
+        </div>
+        <pre><span class="kw">class</span> <span class="type">ConsentManager</span> <span class="punct">{</span>
+  <span class="key">getRequiredGrants</span><span class="punct">():</span> <span class="type">ConsentGrant</span><span class="punct">[]</span>
+  <span class="key">getOptionalGrants</span><span class="punct">():</span> <span class="type">ConsentGrant</span><span class="punct">[]</span>
+  <span class="key">recordDecision</span><span class="punct">(</span>
+    <span class="param">grantId</span><span class="punct">:</span> <span class="type">string</span><span class="punct">,</span>
+    <span class="param">granted</span><span class="punct">:</span> <span class="type">boolean</span>
+  <span class="punct">):</span> <span class="type">ConsentDecision</span>
+  <span class="key">allRequiredGranted</span><span class="punct">():</span> <span class="type">boolean</span>
+<span class="punct">}</span></pre>
+      </div>
+
+      <p class="body-text">Consent is never assumed or inferred. The platform renders consent cards (deterministic task injection at pipeline step 11) and records the citizen's explicit decision. If a required grant is declined, the journey cannot proceed past the consent state.</p>
+
+      <p class="body-text"><strong>Standing preferences</strong> allow a citizen to set a consent scope: <em>once</em> (this service interaction only), <em>service</em> (all future uses of this service), <em>department</em> (all services from this department), or <em>cross-government</em> (all services). Standing preferences are resolved before the consent card is shown &mdash; if a matching preference exists, the grant is auto-satisfied.</p>
+
+      <p class="body-text"><strong>Revocation</strong> is supported at any time. When consent is withdrawn, the platform ceases to share the affected data fields. The revocation is recorded as an immutable trace event.</p>
+
+      <h3 style="margin-top: 2.5rem;">FieldCollector</h3>
+      <p class="body-text">Tracks the data fields required by a service, pre-fills from citizen data where available, and records new fields extracted from conversation. The collector tells the prompt layer what is still missing, enabling the LLM to ask targeted questions.</p>
+
+      <div class="interface-block">
+        <div class="interface-block-header">
+          <span class="type-label">Class</span>
+          <span class="type-name">FieldCollector</span>
+        </div>
+        <pre><span class="kw">class</span> <span class="type">FieldCollector</span> <span class="punct">{</span>
+  <span class="key">seed</span><span class="punct">(</span><span class="param">personaData</span><span class="punct">:</span> <span class="type">Record</span><span class="punct">&lt;</span><span class="type">string</span><span class="punct">,</span> <span class="type">unknown</span><span class="punct">&gt;):</span> <span class="type">void</span>
+  <span class="key">recordField</span><span class="punct">(</span>
+    <span class="param">key</span><span class="punct">:</span> <span class="type">string</span><span class="punct">,</span>
+    <span class="param">value</span><span class="punct">:</span> <span class="type">unknown</span><span class="punct">,</span>
+    <span class="param">source</span><span class="punct">:</span> <span class="type">string</span>
+  <span class="punct">):</span> <span class="type">void</span>
+  <span class="key">getMissing</span><span class="punct">():</span> <span class="type">string</span><span class="punct">[]</span>
+  <span class="key">isComplete</span><span class="punct">():</span> <span class="type">boolean</span>
+<span class="punct">}</span></pre>
+      </div>
+
+      <p class="body-text">The field collector uses the canonical alias map to recognise that "niNumber" and "national_insurance_number" are the same field. When a citizen provides their NI number for one service, the collector marks it as collected for every service in the active plan that needs it. This is how the system avoids asking the same question twelve times across a bereavement journey.</p>
+    </div>
+  </div>
+
+
+  <!-- ════════════════════════════════ 07 ════════════════════════════════ -->
+  <div class="section section-alt" id="evidence-plane">
+    <div class="container">
+      <div class="section-heading">
+        <span class="section-num">07</span>
+        <h2>Evidence plane</h2>
+      </div>
+      <p class="section-intro">Every significant action produces an immutable trace event. The evidence plane enables audit, replay, and accountability across all citizen interactions.</p>
+
+      <h3>TraceEvent structure</h3>
+
+      <div class="interface-block">
+        <div class="interface-block-header">
+          <span class="type-label">Interface</span>
+          <span class="type-name">TraceEvent</span>
+        </div>
+        <pre><span class="kw">interface</span> <span class="type">TraceEvent</span> <span class="punct">{</span>
+  <span class="key">id</span><span class="punct">:</span> <span class="type">string</span><span class="punct">;</span>
+  <span class="key">traceId</span><span class="punct">:</span> <span class="type">string</span><span class="punct">;</span>
+  <span class="key">spanId</span><span class="punct">:</span> <span class="type">string</span><span class="punct">;</span>
+  <span class="key">parentSpanId</span><span class="punct">?:</span> <span class="type">string</span><span class="punct">;</span>
+  <span class="key">timestamp</span><span class="punct">:</span> <span class="type">string</span><span class="punct">;</span>
+  <span class="key">type</span><span class="punct">:</span> <span class="type">TraceEventType</span><span class="punct">;</span>
+  <span class="key">payload</span><span class="punct">:</span> <span class="type">Record</span><span class="punct">&lt;</span><span class="type">string</span><span class="punct">,</span> <span class="type">unknown</span><span class="punct">&gt;;</span>
+  <span class="key">metadata</span><span class="punct">:</span> <span class="punct">{</span>
+    <span class="key">userId</span><span class="punct">?:</span> <span class="type">string</span><span class="punct">;</span>
+    <span class="key">sessionId</span><span class="punct">:</span> <span class="type">string</span><span class="punct">;</span>
+    <span class="key">capabilityId</span><span class="punct">?:</span> <span class="type">string</span><span class="punct">;</span>
+  <span class="punct">};</span>
+<span class="punct">}</span></pre>
+      </div>
+
+      <h3 style="margin-top: 2rem;">Event types</h3>
+
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Type</th>
+            <th>Description</th>
+            <th>Updates ledger</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>state.transition</td><td>State machine moved to a new state</td><td class="td-yes">Yes</td></tr>
+          <tr><td>consent.granted</td><td>Citizen approved data sharing</td><td class="td-yes">Yes</td></tr>
+          <tr><td>consent.denied</td><td>Citizen declined data sharing</td><td class="td-yes">Yes</td></tr>
+          <tr><td>policy.evaluated</td><td>Eligibility rules checked</td><td class="td-yes">Yes</td></tr>
+          <tr><td>handoff.initiated</td><td>Escalation to human adviser triggered</td><td class="td-yes">Yes</td></tr>
+          <tr><td>capability.invoked</td><td>Department service called</td><td class="td-yes">Yes</td></tr>
+          <tr><td>llm.request</td><td>Language model call initiated</td><td class="td-yes">Yes</td></tr>
+          <tr><td>llm.response</td><td>Language model response received</td><td class="td-yes">Yes</td></tr>
+          <tr><td>credential.presented</td><td>Verifiable proof submitted</td><td class="td-yes">Yes</td></tr>
+          <tr><td>receipt.issued</td><td>Outcome documented with immutable receipt</td><td class="td-yes">Yes</td></tr>
+          <tr><td>field.extracted</td><td>Fact parsed from conversation</td><td class="td-no">No</td></tr>
+          <tr><td>error.occurred</td><td>System error logged</td><td class="td-no">No</td></tr>
+        </tbody>
+      </table>
+
+      <h3 style="margin-top: 2rem;">Receipt generation</h3>
+      <p class="body-text">Receipts are the citizen-facing evidence that an action was taken. They include a reference to the service, the action performed, the outcome, and which data was shared. Receipts are generated from trace events at receipt-emitting states defined in the journey.</p>
+
+      <div class="interface-block">
+        <div class="interface-block-header">
+          <span class="type-label">Interface</span>
+          <span class="type-name">Receipt</span>
+        </div>
+        <pre><span class="kw">interface</span> <span class="type">Receipt</span> <span class="punct">{</span>
+  <span class="key">id</span><span class="punct">:</span> <span class="type">string</span><span class="punct">;</span>
+  <span class="key">capabilityId</span><span class="punct">:</span> <span class="type">string</span><span class="punct">;</span>
+  <span class="key">action</span><span class="punct">:</span> <span class="type">string</span><span class="punct">;</span>
+  <span class="key">outcome</span><span class="punct">:</span> <span class="type">string</span><span class="punct">;</span>
+  <span class="key">timestamp</span><span class="punct">:</span> <span class="type">string</span><span class="punct">;</span>
+  <span class="key">dataShared</span><span class="punct">?:</span> <span class="type">string</span><span class="punct">[];</span>
+<span class="punct">}</span></pre>
+      </div>
+
+      <h3 style="margin-top: 2rem;">Replay engine</h3>
+      <p class="body-text">The replay engine reconstructs full conversation state from trace events. Given a trace ID, it steps through events in chronological order, rebuilding state machine position, consent decisions, collected fields, and the complete message history.</p>
+
+      <div class="callout callout--green">
+        <p><strong>Replay supports three use cases.</strong> (1) <strong>Audit</strong> &mdash; regulators or complaints teams step through a citizen's journey to verify that rules were followed. (2) <strong>Debugging</strong> &mdash; engineers identify where a journey diverged from expected behaviour. (3) <strong>Dispute resolution</strong> &mdash; when a citizen contests an outcome, the replay provides incontrovertible evidence of what happened and why.</p>
+      </div>
+
+      <h3 style="margin-top: 2rem;">Trace lifecycle</h3>
+      <p class="body-text">A typical pipeline run produces the following sequence of trace events.</p>
+
+      <div class="sequence">
+        <div class="sequence-step seq-green">
+          <div class="sequence-label">span.start</div>
+          <div class="sequence-desc">Pipeline span opened with trace ID, session ID, and capability ID.</div>
+        </div>
+        <div class="sequence-step seq-green">
+          <div class="sequence-label">policy.evaluated</div>
+          <div class="sequence-desc">Eligibility rules checked. Payload contains passed/failed rules and overall result.</div>
+        </div>
+        <div class="sequence-step seq-navy">
+          <div class="sequence-label">llm.request</div>
+          <div class="sequence-desc">Language model called. Payload contains prompt hash and token counts.</div>
+        </div>
+        <div class="sequence-step seq-navy">
+          <div class="sequence-label">llm.response</div>
+          <div class="sequence-desc">Language model responded. Payload contains model ID, token usage, and tool calls made.</div>
+        </div>
+        <div class="sequence-step seq-green">
+          <div class="sequence-label">state.transition</div>
+          <div class="sequence-desc">State machine moved from eligibility-checked to consent-given. Transition validated.</div>
+        </div>
+        <div class="sequence-step seq-purple">
+          <div class="sequence-label">consent.granted</div>
+          <div class="sequence-desc">Citizen accepted data sharing. Grant ID and scope recorded.</div>
+        </div>
+        <div class="sequence-step seq-green">
+          <div class="sequence-label">field.extracted</div>
+          <div class="sequence-desc">New facts parsed from conversation. Fields and sources recorded.</div>
+        </div>
+        <div class="sequence-step seq-orange">
+          <div class="sequence-label">receipt.issued</div>
+          <div class="sequence-desc">Immutable receipt generated for the completed action.</div>
+        </div>
+        <div class="sequence-step seq-green">
+          <div class="sequence-label">span.end</div>
+          <div class="sequence-desc">Pipeline span closed. Duration and step count recorded.</div>
+        </div>
+      </div>
+
+      <p class="body-text">The evidence store is append-only. Events cannot be modified or deleted after creation. If the case store is lost, it can be reconstructed by replaying events from the evidence store. This makes the evidence store the single source of truth.</p>
+    </div>
+  </div>
+
+
+  <!-- ════════════════════════════════ 08 ════════════════════════════════ -->
+  <div class="section" id="flex-udp">
+    <div class="container">
+      <div class="section-heading">
+        <span class="section-num">08</span>
+        <h2>FLEX and UDP integration</h2>
+      </div>
+      <p class="section-intro">The Agentic Legibility Stack sits on top of the FLEX platform and Unified Data Platform. FLEX provides the secure pipes; ALS adds the intelligence that turns those pipes into a joined-up citizen experience.</p>
+
+      <h3>Two layers, complementary</h3>
+      <div class="compare-grid">
+        <div class="compare-card card-flex">
+          <h4>FLEX + UDP</h4>
+          <div class="card-sub">Infrastructure layer (being built by GDS)</div>
+          <ul>
+            <li>Three-tier gateway: public front door, private business rules, and a future service connector</li>
+            <li>Departments build "domain modules" that slot into each tier</li>
+            <li>UDP &mdash; centralised store of citizen data linked to One Login identity</li>
+            <li>Authenticates, rate-limits, and routes &mdash; the private gateway never touches the public internet</li>
+          </ul>
+        </div>
+        <div class="compare-card card-als">
+          <h4>Agentic Legibility Stack</h4>
+          <div class="card-sub">Intelligence layer</div>
+          <ul>
+            <li>AI orchestrator for conversation, triage, and life event matching</li>
+            <li>Deterministic policy evaluation and state machine orchestration</li>
+            <li>Granular consent management with standing preferences</li>
+            <li>CapabilityInvoker as the single auditable choke point to FLEX</li>
+            <li>Immutable evidence store with receipts and full replay</li>
+          </ul>
+        </div>
+      </div>
+
+      <h3 style="margin-top: 2.5rem;">CapabilityInvoker as the bridge</h3>
+      <p class="body-text">Every department service call routes through the <span class="type-sig">CapabilityInvoker</span>, which calls the FLEX Public Gateway. The invoker logs the request, checks consent, calls the gateway, logs the response, and emits a trace event. No service call ever bypasses this path.</p>
+
+      <div class="sequence">
+        <div class="sequence-step seq-orange">
+          <div class="sequence-label">ALS: Life event triage</div>
+          <div class="sequence-desc">Matches "my husband died" across 16 life events. Identifies Tell Us Once, DWP bereavement, probate, council tax.</div>
+        </div>
+        <div class="sequence-step seq-orange">
+          <div class="sequence-label">ALS: Consent and field deduplication</div>
+          <div class="sequence-desc">Checks standing consent preferences. Merges data fields across 4 services &mdash; asks once, fans out to all.</div>
+        </div>
+        <div class="sequence-step seq-navy">
+          <div class="sequence-label">CapabilityInvoker calls FLEX</div>
+          <div class="sequence-desc">Each service call routes through the single auditable choke point. Every call emits a trace event: who asked, what data was shared, what came back, duration, receipt ID.</div>
+        </div>
+        <div class="sequence-step" style="">
+          <div class="sequence-label">FLEX: Secure delivery</div>
+          <div class="sequence-desc">Authenticates the request, applies business rules, routes to the correct department. Returns structured data.</div>
+        </div>
+        <div class="sequence-step seq-orange">
+          <div class="sequence-label">ALS: Outcome and next steps</div>
+          <div class="sequence-desc">Issues outcome cards, updates the plan, earns credentials for the wallet. Guides the citizen to the next service.</div>
+        </div>
+      </div>
+
+      <h3 style="margin-top: 2.5rem;">What ALS adds that FLEX does not</h3>
+      <p class="body-text">FLEX is the plumbing &mdash; how data moves securely between departments and the app. ALS is the intelligent front-of-house &mdash; how an AI agent uses those pipes on behalf of a citizen. Six capabilities sit above FLEX:</p>
+
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Capability</th>
+            <th>What it does</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="white-space: normal;">Service discovery</td>
+            <td>"My husband died" &rarr; 4 services identified across 3 departments</td>
+          </tr>
+          <tr>
+            <td style="white-space: normal;">Eligibility checking</td>
+            <td>Deterministic rules evaluated before the citizen invests time</td>
+          </tr>
+          <tr>
+            <td style="white-space: normal;">Consent management</td>
+            <td>Standing preferences, scoped grants, revocation &mdash; all tracked with receipts</td>
+          </tr>
+          <tr>
+            <td style="white-space: normal;">Field collection</td>
+            <td>Canonical alias map deduplicates fields &mdash; ask once, fan out to all services</td>
+          </tr>
+          <tr>
+            <td style="white-space: normal;">State orchestration</td>
+            <td>Finite-state machine enforces the journey. The LLM cannot skip steps.</td>
+          </tr>
+          <tr>
+            <td style="white-space: normal;">Evidence and audit</td>
+            <td>Immutable trace for every action. Full replay. Receipts for every data exchange.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="callout callout--green">
+        <p><strong>FLEX and ALS are complementary, not competing.</strong> FLEX handles real authentication against One Login, enforces rate limits, manages TLS termination, and routes across the private network. ALS handles service discovery, eligibility checking, consent management, field collection, state machine orchestration, and the immutable evidence trail. Today ALS simulates what FLEX will provide for real.</p>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ── Footer ── -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <h4>Deep dives</h4>
+          <ul>
+            <li><a href="citizen-app.html">Citizen app</a></li>
+            <li><a href="legibility-studio.html">Legibility Studio</a></li>
+            <li><a href="technical.html">Technical architecture</a></li>
+            <li><a href="departments.html">Departments</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Reference</h4>
+          <ul>
+            <li><a href="glossary.html">Glossary</a></li>
+            <li><a href="explorations.html">Further explorations</a></li>
+            <li><a href="card-catalogue.html">Card catalogue</a></li>
+            <li><a href="life-events-catalogue.html">Life events</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-note">Agentic Legibility Stack — Department Demo Documentation</div>
+    </div>
+  </footer>
+
+</body>
+</html>

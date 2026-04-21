@@ -1,0 +1,856 @@
+<!doctype html>
+<html lang="en-GB">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Publish Once, Serve Everywhere &mdash; Agentic Legibility Stack</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /* ── Reset & Base ── */
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+      html { scroll-behavior: smooth; }
+      body {
+        font-family: "Inter", Arial, sans-serif;
+        color: #0b0c0c;
+        line-height: 1.6;
+        background: #fff;
+        -webkit-font-smoothing: antialiased;
+      }
+      a { color: #1d70b8; text-decoration: none; }
+      a:hover { text-decoration: underline; color: #003078; }
+      code, pre { font-family: "JetBrains Mono", monospace; }
+
+      /* ── Layout ── */
+      .container { max-width: 960px; margin: 0 auto; padding: 0 1.5rem; }
+      .section { padding: 4rem 0; }
+      .section-alt { background: #f3f2f1; }
+
+      h1, h2, h3 { line-height: 1.2; }
+      h2 { font-size: 1.75rem; font-weight: 700; margin-bottom: 1rem; }
+      h3 { font-size: 1.25rem; font-weight: 600; margin-bottom: 0.5rem; }
+      .section-intro {
+        font-size: 1.1rem;
+        color: #505a5f;
+        max-width: 700px;
+        margin-bottom: 2rem;
+      }
+
+      /* ── Nav ── */
+      .nav {
+        background: #fff;
+        border-bottom: 1px solid #b1b4b6;
+        padding: 0.75rem 0;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+      .nav .container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+      }
+      .nav-brand { font-weight: 700; font-size: 1rem; color: #0b0c0c; white-space: nowrap; }
+      .nav-links { display: flex; gap: 1.25rem; list-style: none; flex-wrap: wrap; align-items: center; }
+      .nav-links a { font-size: 0.85rem; font-weight: 500; color: #505a5f; }
+      .nav-links a:hover { color: #1d70b8; text-decoration: none; }
+      .nav-links a.active { color: #0b0c0c; font-weight: 700; border-bottom: 2px solid #0b0c0c; padding-bottom: 2px; }
+      @media (max-width: 640px) {
+        .nav-links { display: none; }
+      }
+
+      /* ── Hero ── */
+      .hero { padding: 5rem 0 3rem; }
+      .hero-label {
+        display: inline-block;
+        background: #f3f2f1;
+        color: #505a5f;
+        font-size: 0.8rem;
+        font-weight: 600;
+        padding: 0.25rem 0.75rem;
+        border-radius: 2px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 1.25rem;
+      }
+      .hero h1 { font-size: 2.75rem; font-weight: 700; margin-bottom: 0.75rem; }
+      .hero-subtitle {
+        font-size: 1.35rem;
+        color: #505a5f;
+        font-weight: 400;
+        max-width: 700px;
+        margin-bottom: 1.5rem;
+      }
+      .hero-meta {
+        font-size: 0.85rem;
+        color: #505a5f;
+        margin-bottom: 1rem;
+      }
+      .hero-note {
+        font-size: 0.9rem;
+        color: #505a5f;
+        max-width: 700px;
+        padding: 0.75rem 1rem;
+        background: #f3f2f1;
+        border-radius: 4px;
+      }
+      .hero-note a { font-weight: 600; }
+      @media (max-width: 640px) {
+        .hero h1 { font-size: 2rem; }
+        .hero-subtitle { font-size: 1.15rem; }
+      }
+
+      /* ── TOC ── */
+      .toc-list {
+        list-style: none;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        gap: 0.5rem;
+      }
+      .toc-list li {
+        font-size: 0.9rem;
+        font-weight: 500;
+      }
+      .toc-list a { color: #0b0c0c; }
+      .toc-list a:hover { color: #1d70b8; }
+      .toc-number {
+        display: inline-flex;
+        width: 22px;
+        height: 22px;
+        align-items: center;
+        justify-content: center;
+        background: #0b0c0c;
+        color: #fff;
+        border-radius: 50%;
+        font-size: 0.65rem;
+        font-weight: 700;
+        margin-right: 0.5rem;
+        flex-shrink: 0;
+      }
+
+      /* ── Section numbers ── */
+      .section-number {
+        font-size: 0.75rem;
+        font-weight: 800;
+        color: #fff;
+        background: #0b0c0c;
+        width: 28px;
+        height: 28px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        flex-shrink: 0;
+        margin-right: 0.75rem;
+      }
+      .section-heading {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1rem;
+      }
+      .section-heading h2 { margin-bottom: 0; }
+
+      /* ── Callouts ── */
+      .callout {
+        border-left: 4px solid #b1b4b6;
+        padding: 1rem 1.25rem;
+        background: #f3f2f1;
+        font-size: 0.95rem;
+        color: #505a5f;
+        margin-top: 1.5rem;
+        border-radius: 0 4px 4px 0;
+      }
+      .callout strong { color: #0b0c0c; }
+      .callout-blue { border-left-color: #1d70b8; }
+      .callout-green { border-left-color: #00703c; }
+      .callout-red { border-left-color: #d4351c; }
+
+      /* ── Stat row ── */
+      .stat-row {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1.25rem;
+        margin-top: 2rem;
+      }
+      .stat-item {
+        text-align: center;
+        padding: 1.25rem 1rem;
+        background: #fff;
+        border: 1px solid #e0dfde;
+        border-radius: 6px;
+      }
+      .stat-value {
+        font-size: 2rem;
+        font-weight: 800;
+        color: #0b0c0c;
+        line-height: 1.1;
+      }
+      .stat-label {
+        font-size: 0.75rem;
+        color: #505a5f;
+        margin-top: 0.25rem;
+      }
+      @media (max-width: 640px) {
+        .stat-row { grid-template-columns: repeat(2, 1fr); }
+      }
+
+      /* ── Pillar cards ── */
+      .pillar-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.25rem;
+        margin-top: 1.5rem;
+      }
+      .pillar-grid-2 {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .pillar-card {
+        border: 1px solid #e0dfde;
+        border-radius: 6px;
+        padding: 1.5rem;
+        background: #fff;
+        border-top: 4px solid;
+      }
+      .pillar-card h3 { font-size: 1rem; margin-bottom: 0.5rem; }
+      .pillar-card p { font-size: 0.9rem; color: #505a5f; }
+      @media (max-width: 640px) {
+        .pillar-grid { grid-template-columns: 1fr; }
+      }
+
+      /* ── Pipeline diagram ── */
+      .pipeline {
+        display: flex;
+        align-items: center;
+        gap: 0;
+        margin: 2rem 0;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      .pipeline-box {
+        padding: 0.6rem 1.25rem;
+        border-radius: 4px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        text-align: center;
+        white-space: nowrap;
+      }
+      .pipeline-box-green { background: #e6f3ec; color: #00703c; border: 1.5px solid #00703c; }
+      .pipeline-box-orange { background: #fef3e8; color: #f47738; border: 1.5px solid #f47738; }
+      .pipeline-box-blue { background: #e8f0fe; color: #1d70b8; border: 1.5px solid #1d70b8; }
+      .pipeline-box-purple { background: #f5e6f4; color: #912b88; border: 1.5px solid #912b88; }
+      .pipeline-box-dark { background: #0b0c0c; color: #fff; }
+      .pipeline-arrow {
+        font-size: 1.25rem;
+        color: #b1b4b6;
+        padding: 0 0.35rem;
+      }
+
+      /* ── Output grid (channels) ── */
+      .output-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        justify-content: center;
+      }
+
+      /* ── Table ── */
+      .data-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 1.5rem;
+        font-size: 0.85rem;
+      }
+      .data-table th {
+        text-align: left;
+        font-weight: 700;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: #505a5f;
+        padding: 0.75rem 1rem;
+        border-bottom: 2px solid #0b0c0c;
+        background: #f3f2f1;
+      }
+      .data-table td {
+        padding: 0.75rem 1rem;
+        border-bottom: 1px solid #e0dfde;
+        color: #0b0c0c;
+        vertical-align: top;
+      }
+      .data-table tr:last-child td { border-bottom: none; }
+      .data-table .status-built {
+        display: inline-block;
+        font-size: 0.7rem;
+        font-weight: 700;
+        padding: 0.15rem 0.5rem;
+        border-radius: 10px;
+        background: #e6f3ec;
+        color: #00703c;
+      }
+      .data-table .status-feasible {
+        display: inline-block;
+        font-size: 0.7rem;
+        font-weight: 700;
+        padding: 0.15rem 0.5rem;
+        border-radius: 10px;
+        background: #e8f0fe;
+        color: #1d70b8;
+      }
+      .data-table .status-trivial {
+        display: inline-block;
+        font-size: 0.7rem;
+        font-weight: 700;
+        padding: 0.15rem 0.5rem;
+        border-radius: 10px;
+        background: #f3f2f1;
+        color: #505a5f;
+      }
+      .data-table .status-straightforward {
+        display: inline-block;
+        font-size: 0.7rem;
+        font-weight: 700;
+        padding: 0.15rem 0.5rem;
+        border-radius: 10px;
+        background: #e8f0fe;
+        color: #1d70b8;
+      }
+      @media (max-width: 640px) {
+        .data-table { font-size: 0.75rem; }
+        .data-table th, .data-table td { padding: 0.5rem; }
+      }
+
+      /* ── Compact table ── */
+      .compact-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 1.5rem;
+        font-size: 0.85rem;
+      }
+      .compact-table th {
+        text-align: left;
+        font-weight: 700;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: #505a5f;
+        padding: 0.75rem 1rem;
+        border-bottom: 2px solid #0b0c0c;
+        background: #f3f2f1;
+      }
+      .compact-table td {
+        padding: 0.75rem 1rem;
+        border-bottom: 1px solid #e0dfde;
+        color: #0b0c0c;
+        vertical-align: top;
+      }
+      .compact-table tr:last-child td { border-bottom: none; }
+      .compact-table .type-label {
+        font-weight: 700;
+        white-space: nowrap;
+      }
+
+      /* ── Step blocks ── */
+      .step-block { margin-bottom: 3rem; }
+      .step-label {
+        display: inline-block;
+        font-size: 0.7rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: #505a5f;
+        margin-bottom: 0.35rem;
+      }
+      .step-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+      }
+      .step-narrative {
+        font-size: 0.95rem;
+        color: #505a5f;
+        max-width: 700px;
+        margin-bottom: 1rem;
+      }
+
+      /* ── Content lists ── */
+      .content-list {
+        list-style: none;
+        margin-top: 1rem;
+        margin-bottom: 1.5rem;
+      }
+      .content-list li {
+        padding: 0.4rem 0;
+        padding-left: 1.25rem;
+        position: relative;
+        font-size: 0.95rem;
+        color: #505a5f;
+      }
+      .content-list li::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0.75rem;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #b1b4b6;
+      }
+
+      /* ── Footer ── */
+      .footer {
+        padding: 2rem 0;
+        text-align: center;
+        font-size: 0.8rem;
+        color: #b1b4b6;
+        border-top: 1px solid #e0dfde;
+      }
+
+      /* ── Closing block ── */
+      .closing {
+        background: #0b0c0c;
+        color: #fff;
+        padding: 3rem 0;
+        text-align: center;
+      }
+      .closing p {
+        max-width: 700px;
+        margin: 0 auto;
+        font-size: 1.1rem;
+        line-height: 1.6;
+        color: #d4d4d4;
+      }
+
+      /* ── Prose paragraphs ── */
+      .prose p {
+        font-size: 0.95rem;
+        color: #505a5f;
+        max-width: 700px;
+        margin-bottom: 1rem;
+        line-height: 1.7;
+      }
+      .prose p strong { color: #0b0c0c; }
+    </style>
+    <script async defer src="https://scripts.withcabin.com/hello.js"></script>
+  </head>
+
+  <body>
+    <!-- ── Nav ── -->
+    <nav class="nav">
+      <div class="container">
+        <span class="nav-brand">Agentic Legibility Stack</span>
+        <ul class="nav-links">
+          <li><a href="index.html">All documents</a></li>
+          <li><a href="briefing-executive.html">Executive briefing</a></li>
+          <li><a href="guide-product.html">Product guide</a></li>
+          <li><a href="reference-technical.html">Technical reference</a></li>
+          <li><a href="glossary.html">Glossary</a></li>
+          <li><a href="publish-once.html" class="active">Publish once</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- ── Hero ── -->
+    <header class="hero">
+      <div class="container">
+        <div class="hero-label">Strategic Briefing</div>
+        <h1>Publish once, serve everywhere</h1>
+        <p class="hero-subtitle">A single structured description of each government service, published automatically to every channel &mdash; web, API, AI agent, catalogue, and print.</p>
+        <p class="hero-meta">April 2026 &ensp;|&ensp; Audience: Permanent Secretaries and Directors of Digital</p>
+        <div class="hero-note">This describes a target operating model that extends the Agentic Legibility Stack. For the agent-focused briefing, see the <a href="briefing-executive.html">Executive Briefing</a>.</div>
+      </div>
+    </header>
+
+    <!-- ── Table of contents ── -->
+    <div class="section-alt">
+      <div class="section" style="padding: 2.5rem 0;">
+        <div class="container">
+          <ul class="toc-list">
+            <li><a href="#s1"><span class="toc-number">1</span>The maintenance problem</a></li>
+            <li><a href="#s2"><span class="toc-number">2</span>The proposition</a></li>
+            <li><a href="#s3"><span class="toc-number">3</span>What &lsquo;describe once&rsquo; means</a></li>
+            <li><a href="#s4"><span class="toc-number">4</span>Output targets</a></li>
+            <li><a href="#s5"><span class="toc-number">5</span>How this aligns with GDS standards</a></li>
+            <li><a href="#s6"><span class="toc-number">6</span>International context</a></li>
+            <li><a href="#s7"><span class="toc-number">7</span>The interaction typology</a></li>
+            <li><a href="#s8"><span class="toc-number">8</span>What departments need to do</a></li>
+            <li><a href="#s9"><span class="toc-number">9</span>What this makes possible</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Section 1: The maintenance problem ── -->
+    <div class="section" id="s1">
+      <div class="container">
+        <div class="section-heading">
+          <span class="section-number">1</span>
+          <h2>The maintenance problem</h2>
+        </div>
+        <p class="section-intro">The problem isn&rsquo;t building services &mdash; it&rsquo;s maintaining them across channels.</p>
+
+        <div class="prose">
+          <p>Today, a single government service like Apply for Universal Credit exists as multiple parallel descriptions, each maintained by a different team:</p>
+        </div>
+
+        <ul class="content-list">
+          <li>A GOV.UK web page (content team maintains)</li>
+          <li>PDF and paper forms (forms team maintains)</li>
+          <li>Phone script guidance (contact centre maintains)</li>
+          <li>Internal caseworker guidance (operations team maintains)</li>
+          <li>API documentation (technology team maintains, if it exists)</li>
+        </ul>
+
+        <div class="prose">
+          <p>When eligibility rules change, five teams update five artefacts. They drift. Citizens get different answers depending on the channel. Now add AI agents as a sixth channel, and the problem compounds.</p>
+        </div>
+
+        <div class="stat-row">
+          <div class="stat-item">
+            <div class="stat-value">5+</div>
+            <div class="stat-label">parallel descriptions per service</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value">1,544</div>
+            <div class="stat-label">government services</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value">~7,700</div>
+            <div class="stat-label">artefacts to keep in sync</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value">1 &rarr; 5</div>
+            <div class="stat-label">one change = five updates</div>
+          </div>
+        </div>
+
+        <div class="callout callout-blue">
+          The question is not whether departments should support AI agents. It is whether they can afford to maintain yet another parallel description of each service &mdash; or whether this is the moment to describe services once and publish everywhere.
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Section 2: The proposition ── -->
+    <div class="section section-alt" id="s2">
+      <div class="container">
+        <div class="section-heading">
+          <span class="section-number">2</span>
+          <h2>The proposition</h2>
+        </div>
+        <p class="section-intro">Describe your service once, in structured artefacts. From that single description, generate every channel automatically.</p>
+
+        <div class="pipeline">
+          <div class="pipeline-box pipeline-box-dark">Service description</div>
+          <div class="pipeline-arrow">&rarr;</div>
+          <div class="pipeline-box pipeline-box-purple">Generator layer</div>
+          <div class="pipeline-arrow">&rarr;</div>
+          <div class="output-grid">
+            <div class="pipeline-box pipeline-box-blue">MCP agent</div>
+            <div class="pipeline-box pipeline-box-green">Web form</div>
+            <div class="pipeline-box pipeline-box-blue">API</div>
+            <div class="pipeline-box pipeline-box-orange">Catalogue</div>
+            <div class="pipeline-box pipeline-box-green">Notify</div>
+            <div class="pipeline-box pipeline-box-blue">Print</div>
+          </div>
+        </div>
+
+        <div class="prose">
+          <p><strong>The key principle:</strong> departments author structured truth. The platform generates channel-specific outputs. When something changes, departments update one place. Every channel reflects the change immediately.</p>
+        </div>
+
+        <div class="callout callout-green">
+          Departments don&rsquo;t publish to channels. They describe their services. The platform publishes to channels.
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Section 3: What 'describe once' means ── -->
+    <div class="section" id="s3">
+      <div class="container">
+        <div class="section-heading">
+          <span class="section-number">3</span>
+          <h2>What &lsquo;describe once&rsquo; means</h2>
+        </div>
+        <p class="section-intro">Five structured artefact types capture everything needed to deliver a service on any channel.</p>
+
+        <div class="pillar-grid pillar-grid-2" style="margin-bottom: 1.25rem;">
+          <div class="pillar-card" style="border-top-color: #1d70b8;">
+            <h3>Manifest</h3>
+            <p>What the service is: name, department, eligibility summary, data it needs, SLA, complaint routes, escalation contacts. The service&rsquo;s identity card.</p>
+          </div>
+          <div class="pillar-card" style="border-top-color: #00703c;">
+            <h3>Policy ruleset</h3>
+            <p>Who is eligible and why: machine-readable rules with human-readable failure reasons. &ldquo;You must be over 16&rdquo;, &ldquo;You must have a valid driving licence&rdquo;. Edge cases documented.</p>
+          </div>
+        </div>
+
+        <div class="pillar-grid">
+          <div class="pillar-card" style="border-top-color: #912b88;">
+            <h3>State model</h3>
+            <p>What the journey looks like: a step-by-step map from &ldquo;not started&rdquo; to &ldquo;completed&rdquo;. Which steps are required, which are optional, what unlocks what. The service&rsquo;s choreography.</p>
+          </div>
+          <div class="pillar-card" style="border-top-color: #f47738;">
+            <h3>Consent model</h3>
+            <p>What data is shared and why: every piece of data the service needs, who it comes from, what it&rsquo;s used for, how long it&rsquo;s kept, and how to revoke. The service&rsquo;s data contract.</p>
+          </div>
+          <div class="pillar-card" style="border-top-color: #0b0c0c;">
+            <h3>Card definitions</h3>
+            <p>What the citizen sees: the actual form fields, their types, validation rules, conditional visibility, and pre-fill sources. The service&rsquo;s user interface as data.</p>
+          </div>
+        </div>
+
+        <div class="callout callout-blue">
+          These five artefacts are already defined and working. The Legibility Studio generates them today for AI agents. The &lsquo;publish once&rsquo; model extends the same artefacts to every channel.
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Section 4: Output targets ── -->
+    <div class="section section-alt" id="s4">
+      <div class="container">
+        <div class="section-heading">
+          <span class="section-number">4</span>
+          <h2>Output targets</h2>
+        </div>
+        <p class="section-intro">From the same five artefacts, the platform generates channel-specific outputs for every delivery surface.</p>
+
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Channel</th>
+              <th>What it generates</th>
+              <th>From which artefacts</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>AI agent (MCP)</strong></td>
+              <td>Tools, resources, prompts for Claude/GPT</td>
+              <td>All five</td>
+              <td><span class="status-built">Built and operational</span></td>
+            </tr>
+            <tr>
+              <td><strong>Web form (GOV.UK Forms)</strong></td>
+              <td>Pages, questions, routing, confirmation</td>
+              <td>Cards + state model + consent</td>
+              <td><span class="status-feasible">Feasible</span></td>
+            </tr>
+            <tr>
+              <td><strong>API (OpenAPI 3.0)</strong></td>
+              <td>REST endpoints, request/response schemas</td>
+              <td>Manifest + state model + policy</td>
+              <td><span class="status-straightforward">Straightforward</span></td>
+            </tr>
+            <tr>
+              <td><strong>Service catalogue</strong></td>
+              <td>Schema.org/GovernmentService + DCAT entry</td>
+              <td>Manifest</td>
+              <td><span class="status-trivial">Trivial</span></td>
+            </tr>
+            <tr>
+              <td><strong>Notifications (GOV.UK Notify)</strong></td>
+              <td>Email/SMS templates per journey stage</td>
+              <td>State instructions + consent</td>
+              <td><span class="status-feasible">Feasible</span></td>
+            </tr>
+            <tr>
+              <td><strong>Accessible summary (HTML/print)</strong></td>
+              <td>Printable service overview page</td>
+              <td>All five</td>
+              <td><span class="status-feasible">Feasible</span></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="callout callout-blue">
+          The AI agent channel is already operational. The remaining channels require generators &mdash; not new data. The artefacts are the same.
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Section 5: How this aligns with GDS standards ── -->
+    <div class="section" id="s5">
+      <div class="container">
+        <div class="section-heading">
+          <span class="section-number">5</span>
+          <h2>How this aligns with GDS standards</h2>
+        </div>
+        <p class="section-intro">Publish once is not a departure from existing government digital standards. It is a direct implementation of them.</p>
+
+        <div class="pillar-grid pillar-grid-2">
+          <div class="pillar-card" style="border-top-color: #1d70b8;">
+            <h3>Point 3: Joined-up channels</h3>
+            <p>Publish once inherently delivers a consistent experience across every channel. One source of truth means citizens get the same answer whether they use the web form, the AI agent, or the phone script generated from the same description.</p>
+          </div>
+          <div class="pillar-card" style="border-top-color: #00703c;">
+            <h3>Point 13: Open standards</h3>
+            <p>Service artefacts are JSON, output includes OpenAPI 3.0, Schema.org, DCAT. Every format is machine-readable and standards-based.</p>
+          </div>
+          <div class="pillar-card" style="border-top-color: #912b88;">
+            <h3>Technology Code of Practice: share, reuse, collaborate</h3>
+            <p>The generator layer is reusable across all departments. Build once, use 1,544 times.</p>
+          </div>
+          <div class="pillar-card" style="border-top-color: #f47738;">
+            <h3>API Technical Standards</h3>
+            <p>OpenAPI 3.0 is the government-mandated format. The publish-once platform generates compliant specs automatically from service descriptions.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Section 6: International context ── -->
+    <div class="section section-alt" id="s6">
+      <div class="container">
+        <div class="section-heading">
+          <span class="section-number">6</span>
+          <h2>International context</h2>
+        </div>
+        <p class="section-intro">Three countries have demonstrated, at national scale, that government services are data &mdash; not websites.</p>
+
+        <div class="pillar-grid">
+          <div class="pillar-card" style="border-top-color: #1d70b8;">
+            <h3>Estonia &mdash; X-Road</h3>
+            <p>929 institutions. 3,000+ digital services. Two decades of secure, decentralised data exchange. X-Road proved that government services can be described as interoperable, machine-readable specifications and federated across organisations. The UK&rsquo;s publish-once model builds the service description layer that X-Road&rsquo;s infrastructure was designed to carry.</p>
+          </div>
+          <div class="pillar-card" style="border-top-color: #00703c;">
+            <h3>Singapore &mdash; SGTS</h3>
+            <p>The Singapore Government Tech Stack provides composable modules &mdash; identity, payments, notifications &mdash; assembled into services. MyInfo&rsquo;s deployment time dropped from one year to four months. SGTS proves that &ldquo;describe once, compose everywhere&rdquo; works at national scale. The publish-once model applies the same principle to the UK&rsquo;s service artefacts.</p>
+          </div>
+          <div class="pillar-card" style="border-top-color: #f47738;">
+            <h3>Ukraine &mdash; Diia and the Agentic State</h3>
+            <p>23 million users. 130+ services. Diia.AI &mdash; the world&rsquo;s first government AI agent delivering real services via MCP &mdash; launched September 2025. Built under active wartime conditions using a hybrid architecture (on-premise data sovereignty + cloud AI). Ukraine&rsquo;s Ministry of Digital Transformation coined the term &ldquo;Agentic State&rdquo;: citizens express intent, AI executes the required processes. The UK has signed a trilateral cooperation agreement with Ukraine and Estonia on e-governance and AI.</p>
+          </div>
+        </div>
+
+        <div class="callout callout-blue">
+          Three countries, three architectures, one convergent insight: government services are data, not websites. Describe them as structured specifications, and every delivery channel &mdash; including AI agents &mdash; becomes a rendering target.
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Section 7: The interaction typology ── -->
+    <div class="section" id="s7">
+      <div class="container">
+        <div class="section-heading">
+          <span class="section-number">7</span>
+          <h2>The interaction typology</h2>
+        </div>
+        <p class="section-intro">13 standard service shapes have been identified across 1,544 government services. Each shape comes with a pre-built state model template &mdash; the skeleton of the journey. Departments select the closest shape, then customise.</p>
+
+        <table class="compact-table">
+          <thead>
+            <tr>
+              <th>Type</th>
+              <th>What it means</th>
+              <th>Example services</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="type-label">Benefit</td>
+              <td>Citizen seeks financial support; income-assessed</td>
+              <td>Universal Credit, PIP, Housing Benefit</td>
+            </tr>
+            <tr>
+              <td class="type-label">Application</td>
+              <td>Submit information, receive a decision</td>
+              <td>Passport, Child Benefit, Blue Badge</td>
+            </tr>
+            <tr>
+              <td class="type-label">Licence</td>
+              <td>Prove permission to do something</td>
+              <td>Driving licence, fishing licence</td>
+            </tr>
+            <tr>
+              <td class="type-label">Obligation</td>
+              <td>Something the citizen must do</td>
+              <td>Update DVLA address, notify OPG of death</td>
+            </tr>
+            <tr>
+              <td class="type-label">Legal process</td>
+              <td>Navigate complexity with professional support</td>
+              <td>Probate, LPA, divorce</td>
+            </tr>
+            <tr>
+              <td class="type-label">Portal</td>
+              <td>Access multiple services through one account</td>
+              <td>UC journal, student loans</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="prose" style="margin-top: 1.5rem;">
+          <p>&hellip; plus 7 more shapes covering registrations, entitlements, grants, payments, appointments, task lists, and information hubs.</p>
+        </div>
+
+        <div class="callout callout-green">
+          Departments don&rsquo;t design service journeys from scratch. They select a shape, fill in the specifics, and the platform generates the journey for every channel.
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Section 8: What departments need to do ── -->
+    <div class="section section-alt" id="s8">
+      <div class="container">
+        <div class="section-heading">
+          <span class="section-number">8</span>
+          <h2>What departments need to do</h2>
+        </div>
+        <p class="section-intro">Three steps. The first two are already supported by tooling. The third is the publish-once extension.</p>
+
+        <div class="step-block">
+          <div class="step-label">Step 1</div>
+          <div class="step-title">Describe</div>
+          <p class="step-narrative">Use the Legibility Studio to describe each service: select an interaction type, fill in the manifest (name, eligibility, SLA, complaints), define policy rules, map the state model, specify consent requirements, and define the card fields citizens will see.</p>
+        </div>
+
+        <div class="step-block">
+          <div class="step-label">Step 2</div>
+          <div class="step-title">Review</div>
+          <p class="step-narrative">The studio shows gap analysis: which artefacts are complete, which are missing fields, what coverage looks like across the department. AI-assisted generation can draft artefacts from existing GOV.UK content &mdash; departments review and refine.</p>
+        </div>
+
+        <div class="step-block">
+          <div class="step-label">Step 3</div>
+          <div class="step-title">Publish</div>
+          <p class="step-narrative">Select output channels and publish. The platform generates channel-specific outputs, stores immutable versions, and tracks what was published where. When something changes, update the description and re-publish &mdash; all channels update together.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Section 9: What this makes possible ── -->
+    <div class="section" id="s9">
+      <div class="container">
+        <div class="section-heading">
+          <span class="section-number">9</span>
+          <h2>What this makes possible</h2>
+        </div>
+        <p class="section-intro">Describing services as data is not the end state. It is the precondition for three capabilities that are currently impossible.</p>
+
+        <div class="prose">
+          <p><strong>Proactive services</strong> &mdash; if a citizen&rsquo;s circumstances change (recorded through one service), the platform can identify other services they&rsquo;re now eligible for and notify them automatically. Today this requires manual cross-referencing between departments.</p>
+
+          <p><strong>Life event orchestration</strong> &mdash; 16 life events have been mapped across all 1,544 services. When a citizen experiences a birth, bereavement, job loss, or retirement, the platform identifies all relevant services and sequences them. This is not possible when each service exists in isolation.</p>
+
+          <p><strong>Departmental analytics</strong> &mdash; when services are described as data, departments can measure coverage, identify gaps, compare interaction patterns, and understand where citizens get stuck. The evidence plane already captures every agent interaction &mdash; publish-once makes that evidence actionable across channels.</p>
+        </div>
+
+        <div class="callout callout-blue">
+          Publishing once is not a technical convenience. It is the precondition for joined-up government. As long as each service exists as separate, channel-specific descriptions, joining them up requires heroic manual effort. When services are data, joining them up is computation.
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Footer ── -->
+    <footer class="footer">
+      <div class="container">
+        Agentic Legibility Stack &mdash; April 2026
+      </div>
+    </footer>
+  </body>
+</html>

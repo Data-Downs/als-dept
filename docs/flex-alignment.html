@@ -1,0 +1,991 @@
+<!doctype html>
+<html lang="en-GB">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FLEX + ALS — Architecture Alignment</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Literata:opsz,wght@7..72,400;7..72,500;7..72,700&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /* ── Tokens ── */
+      :root {
+        --ink: #1a1a2e;
+        --ink-light: #4a4a5a;
+        --ink-muted: #7a7a8a;
+        --page: #fafaf8;
+        --page-warm: #f5f4f0;
+        --rule: #d4d2cc;
+
+        /* Flex colours — drawn from their slides */
+        --flex-blue: #4a7eff;
+        --flex-blue-light: #e8efff;
+        --flex-blue-border: #b8ccff;
+        --flex-private: #3a5cc0;
+        --flex-service: #8aa4e8;
+
+        /* ALS colours */
+        --als-amber: #c47a1a;
+        --als-amber-light: #fef8ee;
+        --als-amber-border: #e8c88a;
+        --als-amber-glow: #f5e6cc;
+
+        /* UDP */
+        --udp-sage: #2a7a5a;
+        --udp-sage-light: #eef7f2;
+        --udp-sage-border: #a8d4be;
+
+        /* Status */
+        --live: #00703c;
+        --future: #b1b4b6;
+        --building: #f47738;
+
+        --font-display: "Literata", Georgia, serif;
+        --font-body: "DM Sans", system-ui, sans-serif;
+        --font-mono: "JetBrains Mono", monospace;
+      }
+
+      /* ── Reset ── */
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+      html { scroll-behavior: smooth; }
+
+      body {
+        font-family: var(--font-body);
+        color: var(--ink);
+        line-height: 1.65;
+        background: var(--page);
+        -webkit-font-smoothing: antialiased;
+      }
+
+      /* ── Grain overlay ── */
+      body::after {
+        content: "";
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        opacity: 0.025;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+        background-size: 256px;
+        z-index: 9999;
+      }
+
+      /* ── Layout ── */
+      .container { max-width: 880px; margin: 0 auto; padding: 0 2rem; }
+      .narrow { max-width: 680px; }
+
+      /* ── Nav ── */
+      .nav {
+        padding: 1rem 0;
+        border-bottom: 1px solid var(--rule);
+        background: var(--page);
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        backdrop-filter: blur(8px);
+      }
+      .nav .container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .nav-brand {
+        font-family: var(--font-display);
+        font-weight: 700;
+        font-size: 0.95rem;
+        color: var(--ink);
+        letter-spacing: -0.01em;
+      }
+      .nav-meta {
+        font-size: 0.78rem;
+        color: var(--ink-muted);
+        font-variant-numeric: tabular-nums;
+      }
+
+      /* ── Hero ── */
+      .hero {
+        padding: 5rem 0 3rem;
+        position: relative;
+      }
+      .hero::before {
+        content: "";
+        position: absolute;
+        top: 0; left: 0; right: 0;
+        height: 100%;
+        background: linear-gradient(180deg, var(--als-amber-light) 0%, var(--page) 100%);
+        z-index: -1;
+      }
+      .hero-kicker {
+        font-family: var(--font-mono);
+        font-size: 0.72rem;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        color: var(--als-amber);
+        margin-bottom: 1.25rem;
+      }
+      .hero h1 {
+        font-family: var(--font-display);
+        font-size: 2.8rem;
+        font-weight: 700;
+        line-height: 1.15;
+        letter-spacing: -0.02em;
+        color: var(--ink);
+        margin-bottom: 1rem;
+        max-width: 700px;
+      }
+      .hero-subtitle {
+        font-size: 1.15rem;
+        color: var(--ink-light);
+        max-width: 600px;
+        line-height: 1.6;
+      }
+      .hero-subtitle strong {
+        color: var(--ink);
+        font-weight: 600;
+      }
+
+      @media (max-width: 640px) {
+        .hero h1 { font-size: 2rem; }
+        .hero-subtitle { font-size: 1.05rem; }
+      }
+
+      /* ── Sections ── */
+      .section { padding: 4rem 0; }
+      .section + .section { border-top: 1px solid var(--rule); }
+
+      .section-label {
+        font-family: var(--font-mono);
+        font-size: 0.68rem;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.14em;
+        color: var(--ink-muted);
+        margin-bottom: 0.75rem;
+      }
+      .section h2 {
+        font-family: var(--font-display);
+        font-size: 1.85rem;
+        font-weight: 700;
+        line-height: 1.2;
+        letter-spacing: -0.015em;
+        margin-bottom: 0.75rem;
+      }
+      .section-intro {
+        font-size: 1.05rem;
+        color: var(--ink-light);
+        max-width: 620px;
+        margin-bottom: 2.5rem;
+        line-height: 1.65;
+      }
+
+      /* ── Diagram containers ── */
+      .diagram-frame {
+        background: #fff;
+        border: 1px solid var(--rule);
+        border-radius: 8px;
+        padding: 2.5rem 2rem;
+        margin: 2rem 0;
+        overflow-x: auto;
+      }
+      .diagram-frame svg {
+        display: block;
+        margin: 0 auto;
+        max-width: 100%;
+        height: auto;
+      }
+      .diagram-caption {
+        font-size: 0.8rem;
+        color: var(--ink-muted);
+        text-align: center;
+        margin-top: 1rem;
+        font-style: italic;
+      }
+
+      /* ── Key / Legend ── */
+      .legend {
+        display: flex;
+        gap: 1.5rem;
+        flex-wrap: wrap;
+        margin: 1.5rem 0 0;
+        justify-content: center;
+      }
+      .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.78rem;
+        color: var(--ink-light);
+      }
+      .legend-swatch {
+        width: 14px;
+        height: 14px;
+        border-radius: 3px;
+        border: 1px solid rgba(0,0,0,0.1);
+        flex-shrink: 0;
+      }
+      .legend-line {
+        width: 20px;
+        height: 0;
+        border-top: 2px dashed var(--future);
+        flex-shrink: 0;
+      }
+
+      /* ── Prose blocks ── */
+      .prose p {
+        margin-bottom: 1rem;
+        max-width: 640px;
+      }
+      .prose p:last-child { margin-bottom: 0; }
+
+      /* ── Callout ── */
+      .callout {
+        background: var(--als-amber-light);
+        border-left: 3px solid var(--als-amber);
+        padding: 1.25rem 1.5rem;
+        border-radius: 0 6px 6px 0;
+        margin: 2rem 0;
+      }
+      .callout-title {
+        font-weight: 700;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: var(--als-amber);
+        margin-bottom: 0.35rem;
+      }
+      .callout p {
+        font-size: 0.95rem;
+        color: var(--ink-light);
+        max-width: 620px;
+      }
+
+      .callout-blue {
+        background: var(--flex-blue-light);
+        border-left-color: var(--flex-blue);
+      }
+      .callout-blue .callout-title { color: var(--flex-blue); }
+
+      .callout-green {
+        background: var(--udp-sage-light);
+        border-left-color: var(--udp-sage);
+      }
+      .callout-green .callout-title { color: var(--udp-sage); }
+
+      /* ── Comparison table ── */
+      .compare-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+        margin: 2rem 0;
+      }
+      .compare-card {
+        padding: 1.5rem;
+        border-radius: 8px;
+        border: 1px solid;
+      }
+      .compare-card h3 {
+        font-family: var(--font-display);
+        font-size: 1.1rem;
+        font-weight: 700;
+        margin-bottom: 0.25rem;
+      }
+      .compare-card .card-sub {
+        font-size: 0.78rem;
+        color: var(--ink-muted);
+        margin-bottom: 1rem;
+        font-weight: 500;
+      }
+      .compare-card ul {
+        list-style: none;
+        font-size: 0.9rem;
+        color: var(--ink-light);
+      }
+      .compare-card li {
+        padding: 0.4rem 0 0.4rem 1.2rem;
+        position: relative;
+        line-height: 1.45;
+      }
+      .compare-card li::before {
+        content: "";
+        width: 6px; height: 6px;
+        border-radius: 50%;
+        position: absolute;
+        left: 0; top: 0.7rem;
+      }
+
+      .card-flex {
+        border-color: var(--flex-blue-border);
+        background: var(--flex-blue-light);
+      }
+      .card-flex h3 { color: var(--flex-blue); }
+      .card-flex li::before { background: var(--flex-blue); }
+
+      .card-als {
+        border-color: var(--als-amber-border);
+        background: var(--als-amber-light);
+      }
+      .card-als h3 { color: var(--als-amber); }
+      .card-als li::before { background: var(--als-amber); }
+
+      @media (max-width: 640px) {
+        .compare-grid { grid-template-columns: 1fr; }
+      }
+
+      /* ── Alignment rows ── */
+      .alignment-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 2rem 0;
+        font-size: 0.88rem;
+      }
+      .alignment-table th {
+        font-family: var(--font-display);
+        font-weight: 700;
+        text-align: left;
+        padding: 0.75rem 1rem;
+        border-bottom: 2px solid var(--ink);
+        font-size: 0.82rem;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: var(--ink-muted);
+      }
+      .alignment-table td {
+        padding: 0.75rem 1rem;
+        border-bottom: 1px solid var(--rule);
+        vertical-align: top;
+        line-height: 1.5;
+        color: var(--ink-light);
+      }
+      .alignment-table tr:last-child td { border-bottom: none; }
+      .alignment-table td:first-child {
+        font-weight: 600;
+        color: var(--ink);
+        white-space: nowrap;
+        width: 160px;
+      }
+      .col-flex { background: var(--flex-blue-light); }
+      .col-als { background: var(--als-amber-light); }
+
+      /* ── Status pills ── */
+      .pill {
+        display: inline-block;
+        font-size: 0.68rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        padding: 0.15rem 0.55rem;
+        border-radius: 3px;
+        vertical-align: middle;
+      }
+      .pill-live { background: #cce5d6; color: #00552e; }
+      .pill-building { background: #fde5d0; color: #9a4b1a; }
+      .pill-future { background: #e8e8e8; color: #666; }
+      .pill-prototype { background: var(--als-amber-glow); color: #8a5a10; }
+
+      /* ── Footer ── */
+      .footer {
+        padding: 3rem 0;
+        border-top: 1px solid var(--rule);
+        margin-top: 2rem;
+      }
+      .footer p {
+        font-size: 0.8rem;
+        color: var(--ink-muted);
+        max-width: 500px;
+      }
+
+      /* ── Animations ── */
+      @keyframes fadeUp {
+        from { opacity: 0; transform: translateY(16px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      .hero h1, .hero-subtitle, .hero-kicker {
+        animation: fadeUp 0.6s ease-out both;
+      }
+      .hero-kicker { animation-delay: 0s; }
+      .hero h1 { animation-delay: 0.08s; }
+      .hero-subtitle { animation-delay: 0.16s; }
+
+      .diagram-frame {
+        animation: fadeUp 0.5s ease-out both;
+      }
+
+      /* ── Print ── */
+      @media print {
+        .nav { position: static; }
+        body::after { display: none; }
+        .section { break-inside: avoid; }
+      }
+    </style>
+    <script async defer src="https://scripts.withcabin.com/hello.js"></script>
+  </head>
+
+  <body>
+
+    <!-- ── Nav ── -->
+    <nav class="nav">
+      <div class="container" style="display:flex;align-items:center;justify-content:space-between;">
+        <div class="nav-brand">Agentic Legibility Stack</div>
+        <div style="display:flex;gap:1.25rem;align-items:center;font-size:0.85rem;">
+          <a href="index.html" style="color:#505a5f;font-weight:500;">All documents</a>
+          <span style="color:#b1b4b6;">Architecture Alignment &middot; March 2026</span>
+        </div>
+      </div>
+    </nav>
+
+    <!-- ── Hero ── -->
+    <header class="hero">
+      <div class="container">
+        <div class="hero-kicker">FLEX / UDP + ALS</div>
+        <h1>Where the agent layer meets the pipes</h1>
+        <p class="hero-subtitle">
+          GDS is building <strong>FLEX</strong> (the secure gateway) and <strong>UDP</strong> (the citizen data store) to connect the GOV.UK app to department services. The <strong>Agentic Legibility Stack</strong> is the intelligence layer that sits on top &mdash; turning those pipes into a joined-up, consent-driven citizen experience.
+        </p>
+      </div>
+    </header>
+
+    <!-- ══════════════════════════════════════════════ -->
+    <!-- Section 1: What Flex is building              -->
+    <!-- ══════════════════════════════════════════════ -->
+    <section class="section">
+      <div class="container">
+        <div class="section-label">01 &mdash; The infrastructure</div>
+        <h2>What the Flex team is building</h2>
+        <p class="section-intro">
+          FLEX and UDP are two new platforms, being built by GDS and DSIT right now, that give the GOV.UK app a secure, structured way to reach department data on behalf of a citizen.
+        </p>
+
+        <div class="compare-grid">
+          <div class="compare-card card-flex">
+            <h3>FLEX</h3>
+            <div class="card-sub">Public integration layer</div>
+            <ul>
+              <li>Three-tier gateway: public front door, private business rules, and a future service connector</li>
+              <li>Departments build &ldquo;domain modules&rdquo; that slot into each tier (DVLA, DWP, etc.)</li>
+              <li>Authenticates, rate-limits, and routes &mdash; the private gateway never touches the public internet</li>
+              <li>Currently live in dev/staging; Notifications is the first consumer</li>
+            </ul>
+          </div>
+          <div class="compare-card" style="border-color:var(--udp-sage-border);background:var(--udp-sage-light);">
+            <h3 style="color:var(--udp-sage);">UDP</h3>
+            <div class="card-sub">User Data Platform</div>
+            <ul style="">
+              <li style=""><span style="position:absolute;left:0;top:0.7rem;width:6px;height:6px;border-radius:50%;background:var(--udp-sage);"></span>Central, consent-gated store of citizen data linked to One Login identity</li>
+              <li style=""><span style="position:absolute;left:0;top:0.7rem;width:6px;height:6px;border-radius:50%;background:var(--udp-sage);"></span>Not sharing data across government &mdash; bringing it together at the citizen&rsquo;s request</li>
+              <li style=""><span style="position:absolute;left:0;top:0.7rem;width:6px;height:6px;border-radius:50%;background:var(--udp-sage);"></span>Accessed only over private tunnel, never exposed publicly</li>
+              <li style=""><span style="position:absolute;left:0;top:0.7rem;width:6px;height:6px;border-radius:50%;background:var(--udp-sage);"></span>Currently stores notification preferences; DVLA ID linking in progress</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Flex-only diagram -->
+        <div class="diagram-frame">
+          <svg viewBox="0 0 700 520" fill="none" xmlns="http://www.w3.org/2000/svg" style="max-width:700px;">
+            <!-- GOV.UK App -->
+            <rect x="265" y="12" width="170" height="44" rx="6" fill="#fff" stroke="#b1b4b6" stroke-width="1.5"/>
+            <text x="350" y="39" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="13" font-weight="600" fill="#1a1a2e">GOV.UK App</text>
+
+            <!-- Arrow down -->
+            <line x1="350" y1="56" x2="350" y2="84" stroke="#b1b4b6" stroke-width="1.5"/>
+            <polygon points="345,82 355,82 350,90" fill="#b1b4b6"/>
+
+            <!-- FLEX container -->
+            <rect x="60" y="92" width="580" height="310" rx="8" fill="var(--flex-blue-light)" stroke="var(--flex-blue-border)" stroke-width="1.5"/>
+            <text x="350" y="115" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" font-weight="500" fill="var(--flex-blue)" letter-spacing="0.12em">FLEX</text>
+
+            <!-- Public Gateway -->
+            <rect x="110" y="128" width="480" height="68" rx="6" fill="#fff" stroke="var(--flex-blue-border)" stroke-width="1.2"/>
+            <text x="350" y="149" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="12.5" font-weight="700" fill="var(--flex-blue)">Public Gateway</text>
+            <text x="350" y="164" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="10" fill="var(--ink-muted)">front door &mdash; authentication, rate limits</text>
+            <!-- Module boxes -->
+            <rect x="160" y="172" width="72" height="18" rx="3" fill="var(--flex-blue)" opacity="0.15" stroke="var(--flex-blue)" stroke-width="0.8"/>
+            <text x="196" y="184" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" font-weight="600" fill="var(--flex-blue)">UDP</text>
+            <rect x="250" y="172" width="72" height="18" rx="3" fill="var(--flex-blue)" opacity="0.15" stroke="var(--flex-blue)" stroke-width="0.8"/>
+            <text x="286" y="184" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" font-weight="600" fill="var(--flex-blue)">DVLA</text>
+            <rect x="340" y="172" width="72" height="18" rx="3" fill="var(--flex-blue)" opacity="0.15" stroke="var(--flex-blue)" stroke-width="0.8"/>
+            <text x="376" y="184" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" font-weight="600" fill="var(--flex-blue)">DWP</text>
+            <rect x="430" y="172" width="72" height="18" rx="3" fill="var(--flex-blue)" opacity="0.08" stroke="var(--flex-blue)" stroke-width="0.8" stroke-dasharray="3,2"/>
+            <text x="466" y="184" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="var(--ink-muted)">HMRC</text>
+
+            <!-- Arrow -->
+            <line x1="350" y1="196" x2="350" y2="218" stroke="var(--flex-blue-border)" stroke-width="1.2"/>
+            <polygon points="346,216 354,216 350,222" fill="var(--flex-blue-border)"/>
+
+            <!-- Private Gateway -->
+            <rect x="110" y="224" width="480" height="56" rx="6" fill="#fff" stroke="var(--flex-blue-border)" stroke-width="1.2"/>
+            <text x="350" y="248" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="12.5" font-weight="700" fill="var(--flex-private)">Private Gateway</text>
+            <text x="350" y="264" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="10" fill="var(--ink-muted)">business rules &mdash; private network only</text>
+
+            <!-- Arrow -->
+            <line x1="350" y1="280" x2="350" y2="302" stroke="var(--flex-blue-border)" stroke-width="1.2"/>
+            <polygon points="346,300 354,300 350,306" fill="var(--flex-blue-border)"/>
+
+            <!-- Service Gateway -->
+            <rect x="110" y="308" width="480" height="56" rx="6" fill="#fff" stroke="var(--flex-blue-border)" stroke-width="1.2" stroke-dasharray="5,3"/>
+            <text x="350" y="332" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="12.5" font-weight="700" fill="var(--flex-service)">Service Gateway</text>
+            <text x="350" y="348" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="10" fill="var(--ink-muted)">OGD connector &mdash; future</text>
+
+            <!-- Arrows down to departments -->
+            <line x1="200" y1="364" x2="200" y2="404" stroke="var(--flex-blue-border)" stroke-width="1.2" stroke-dasharray="4,3"/>
+            <line x1="350" y1="364" x2="350" y2="404" stroke="var(--flex-blue-border)" stroke-width="1.2" stroke-dasharray="4,3"/>
+            <line x1="500" y1="364" x2="500" y2="404" stroke="var(--flex-blue-border)" stroke-width="1.2" stroke-dasharray="4,3"/>
+
+            <!-- Department boxes -->
+            <rect x="60" y="420" width="580" height="80" rx="8" fill="#fff" stroke="var(--rule)" stroke-width="1.2"/>
+            <text x="350" y="440" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9" font-weight="500" fill="var(--ink-muted)" letter-spacing="0.1em">GOVERNMENT DEPARTMENTS</text>
+
+            <!-- UDP store -->
+            <rect x="120" y="452" width="100" height="38" rx="5" fill="var(--udp-sage-light)" stroke="var(--udp-sage-border)" stroke-width="1.2"/>
+            <text x="170" y="469" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="11" font-weight="700" fill="var(--udp-sage)">UDP</text>
+            <text x="170" y="482" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="8.5" fill="var(--ink-muted)">data store</text>
+
+            <!-- DVLA -->
+            <rect x="300" y="452" width="100" height="38" rx="5" fill="#fff" stroke="var(--rule)" stroke-width="1.2" stroke-dasharray="4,3"/>
+            <text x="350" y="469" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="11" font-weight="600" fill="var(--ink-muted)">DVLA</text>
+            <text x="350" y="482" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="8.5" fill="var(--ink-muted)">driving licence</text>
+
+            <!-- DWP -->
+            <rect x="480" y="452" width="100" height="38" rx="5" fill="#fff" stroke="var(--rule)" stroke-width="1.2" stroke-dasharray="4,3"/>
+            <text x="530" y="469" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="11" font-weight="600" fill="var(--ink-muted)">DWP</text>
+            <text x="530" y="482" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="8.5" fill="var(--ink-muted)">benefits</text>
+          </svg>
+          <p class="diagram-caption">The Flex integration pattern as presented by GDS, 23 March 2026 &mdash; three gateway tiers connecting the app to department backends</p>
+          <div class="legend">
+            <div class="legend-item"><div class="legend-swatch" style="background:var(--flex-blue-light);border-color:var(--flex-blue-border);"></div> FLEX platform</div>
+            <div class="legend-item"><div class="legend-swatch" style="background:var(--udp-sage-light);border-color:var(--udp-sage-border);"></div> UDP data store</div>
+            <div class="legend-item"><div class="legend-line"></div> Future / planned</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════ -->
+    <!-- Section 2: Where ALS sits                     -->
+    <!-- ══════════════════════════════════════════════ -->
+    <section class="section">
+      <div class="container">
+        <div class="section-label">02 &mdash; The full picture</div>
+        <h2>Add the agent layer on top</h2>
+        <p class="section-intro">
+          FLEX provides the secure pipes. ALS adds the intelligence: an AI agent that understands the citizen&rsquo;s situation, manages consent, orchestrates across departments, and leaves an auditable trail.
+        </p>
+
+        <!-- Full stack diagram -->
+        <div class="diagram-frame">
+          <svg viewBox="0 0 700 740" fill="none" xmlns="http://www.w3.org/2000/svg" style="max-width:700px;">
+
+            <!-- ── Citizen ── -->
+            <rect x="265" y="10" width="170" height="44" rx="22" fill="var(--ink)" stroke="none"/>
+            <text x="350" y="37" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="13" font-weight="600" fill="#fff">Citizen</text>
+
+            <!-- Arrow -->
+            <line x1="350" y1="54" x2="350" y2="74" stroke="var(--ink-muted)" stroke-width="1.5"/>
+            <polygon points="346,72 354,72 350,78" fill="var(--ink-muted)"/>
+
+            <!-- ══ ALS LAYER ══ -->
+            <rect x="40" y="82" width="620" height="260" rx="10" fill="var(--als-amber-light)" stroke="var(--als-amber-border)" stroke-width="2"/>
+            <!-- Glow effect -->
+            <rect x="40" y="82" width="620" height="260" rx="10" fill="none" stroke="var(--als-amber)" stroke-width="0.5" opacity="0.3" transform="translate(-1,-1)"/>
+
+            <text x="350" y="106" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="11" font-weight="500" fill="var(--als-amber)" letter-spacing="0.14em">AGENTIC LEGIBILITY STACK</text>
+
+            <!-- ALS sub-boxes row 1 -->
+            <rect x="72" y="120" width="168" height="62" rx="6" fill="#fff" stroke="var(--als-amber-border)" stroke-width="1.2"/>
+            <text x="156" y="143" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="11.5" font-weight="700" fill="var(--als-amber)">AI Orchestrator</text>
+            <text x="156" y="158" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="var(--ink-muted)">conversation &amp; triage</text>
+            <text x="156" y="170" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="var(--ink-muted)">life event matching</text>
+
+            <rect x="266" y="120" width="168" height="62" rx="6" fill="#fff" stroke="var(--als-amber-border)" stroke-width="1.2"/>
+            <text x="350" y="143" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="11.5" font-weight="700" fill="var(--als-amber)">Policy &amp; State</text>
+            <text x="350" y="158" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="var(--ink-muted)">deterministic rules</text>
+            <text x="350" y="170" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="var(--ink-muted)">never delegated to AI</text>
+
+            <rect x="460" y="120" width="168" height="62" rx="6" fill="#fff" stroke="var(--als-amber-border)" stroke-width="1.2"/>
+            <text x="544" y="143" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="11.5" font-weight="700" fill="var(--als-amber)">Consent Manager</text>
+            <text x="544" y="158" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="var(--ink-muted)">standing preferences</text>
+            <text x="544" y="170" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="var(--ink-muted)">scope: once → cross-govt</text>
+
+            <!-- ALS sub-boxes row 2 -->
+            <rect x="72" y="198" width="168" height="62" rx="6" fill="#fff" stroke="var(--als-amber-border)" stroke-width="1.2"/>
+            <text x="156" y="221" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="11.5" font-weight="700" fill="var(--als-amber)">Citizen Wallet</text>
+            <text x="156" y="236" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="var(--ink-muted)">credentials &amp; documents</text>
+            <text x="156" y="248" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="var(--ink-muted)">reads from UDP</text>
+
+            <rect x="266" y="198" width="168" height="62" rx="6" fill="#fff" stroke="var(--als-amber-border)" stroke-width="1.2"/>
+            <text x="350" y="221" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="11.5" font-weight="700" fill="var(--als-amber)">Capability Invoker</text>
+            <text x="350" y="236" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="var(--ink-muted)">single choke point</text>
+            <text x="350" y="248" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="var(--ink-muted)">every call traced</text>
+
+            <rect x="460" y="198" width="168" height="62" rx="6" fill="#fff" stroke="var(--als-amber-border)" stroke-width="1.2"/>
+            <text x="544" y="221" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="11.5" font-weight="700" fill="var(--als-amber)">Evidence Store</text>
+            <text x="544" y="236" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="var(--ink-muted)">immutable audit trail</text>
+            <text x="544" y="248" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="var(--ink-muted)">receipts &amp; traces</text>
+
+            <!-- Arrow label: ALS → FLEX -->
+            <text x="350" y="290" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8.5" fill="var(--ink-muted)" letter-spacing="0.05em">CapabilityInvoker calls FLEX APIs ↓</text>
+
+            <!-- Connector: ALS to FLEX -->
+            <line x1="350" y1="296" x2="350" y2="350" stroke="var(--als-amber)" stroke-width="2" opacity="0.6"/>
+            <line x1="200" y1="342" x2="200" y2="350" stroke="var(--als-amber)" stroke-width="1.5" opacity="0.4"/>
+            <line x1="500" y1="342" x2="500" y2="350" stroke="var(--als-amber)" stroke-width="1.5" opacity="0.4"/>
+            <!-- Wide connector bar -->
+            <rect x="160" y="340" width="380" height="12" rx="6" fill="var(--als-amber)" opacity="0.12"/>
+            <polygon points="346,348 354,348 350,358" fill="var(--als-amber)" opacity="0.5"/>
+
+            <!-- ══ FLEX LAYER ══ -->
+            <rect x="60" y="360" width="580" height="210" rx="8" fill="var(--flex-blue-light)" stroke="var(--flex-blue-border)" stroke-width="1.5"/>
+            <text x="350" y="381" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" font-weight="500" fill="var(--flex-blue)" letter-spacing="0.12em">FLEX — GDS PLATFORM (BEING BUILT NOW)</text>
+
+            <!-- Public Gateway -->
+            <rect x="100" y="392" width="500" height="44" rx="5" fill="#fff" stroke="var(--flex-blue-border)" stroke-width="1"/>
+            <text x="350" y="413" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="11.5" font-weight="700" fill="var(--flex-blue)">Public Gateway</text>
+            <text x="350" y="428" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="var(--ink-muted)">authentication &amp; rate limiting</text>
+
+            <line x1="350" y1="436" x2="350" y2="452" stroke="var(--flex-blue-border)" stroke-width="1"/>
+            <polygon points="347,450 353,450 350,455" fill="var(--flex-blue-border)"/>
+
+            <!-- Private Gateway -->
+            <rect x="100" y="456" width="500" height="44" rx="5" fill="#fff" stroke="var(--flex-blue-border)" stroke-width="1"/>
+            <text x="350" y="477" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="11.5" font-weight="700" fill="var(--flex-private)">Private Gateway</text>
+            <text x="350" y="492" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="var(--ink-muted)">business rules &mdash; private network</text>
+
+            <line x1="350" y1="500" x2="350" y2="516" stroke="var(--flex-blue-border)" stroke-width="1"/>
+            <polygon points="347,514 353,514 350,519" fill="var(--flex-blue-border)"/>
+
+            <!-- Service Gateway -->
+            <rect x="100" y="520" width="500" height="38" rx="5" fill="#fff" stroke="var(--flex-blue-border)" stroke-width="1" stroke-dasharray="4,3"/>
+            <text x="350" y="543" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="11.5" font-weight="600" fill="var(--flex-service)">Service Gateway</text>
+
+            <!-- Arrows to departments -->
+            <line x1="170" y1="570" x2="170" y2="604" stroke="var(--rule)" stroke-width="1.2" stroke-dasharray="4,3"/>
+            <line x1="350" y1="570" x2="350" y2="604" stroke="var(--rule)" stroke-width="1.2" stroke-dasharray="4,3"/>
+            <line x1="530" y1="570" x2="530" y2="604" stroke="var(--rule)" stroke-width="1.2" stroke-dasharray="4,3"/>
+
+            <!-- Department box -->
+            <rect x="60" y="612" width="580" height="80" rx="8" fill="#fff" stroke="var(--rule)" stroke-width="1.2"/>
+            <text x="350" y="632" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9" font-weight="500" fill="var(--ink-muted)" letter-spacing="0.1em">GOVERNMENT DEPARTMENTS</text>
+
+            <rect x="100" y="644" width="100" height="36" rx="5" fill="var(--udp-sage-light)" stroke="var(--udp-sage-border)" stroke-width="1"/>
+            <text x="150" y="660" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="10.5" font-weight="700" fill="var(--udp-sage)">UDP</text>
+            <text x="150" y="673" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="8" fill="var(--ink-muted)">data store</text>
+
+            <rect x="280" y="644" width="100" height="36" rx="5" fill="#fff" stroke="var(--flex-blue-border)" stroke-width="1"/>
+            <text x="330" y="660" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="10.5" font-weight="600" fill="var(--flex-blue)">DVLA</text>
+            <text x="330" y="673" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="8" fill="var(--ink-muted)">driving licence</text>
+
+            <rect x="460" y="644" width="100" height="36" rx="5" fill="#fff" stroke="var(--flex-blue-border)" stroke-width="1"/>
+            <text x="510" y="660" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="10.5" font-weight="600" fill="var(--flex-blue)">DWP</text>
+            <text x="510" y="673" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="8" fill="var(--ink-muted)">benefits</text>
+
+            <!-- Wallet ↔ UDP dashed link -->
+            <line x1="156" y1="260" x2="150" y2="644" stroke="var(--udp-sage)" stroke-width="1.2" stroke-dasharray="6,4" opacity="0.35"/>
+
+            <!-- Side annotation -->
+            <rect x="0" y="160" width="32" height="120" rx="4" fill="var(--als-amber)" opacity="0.08"/>
+            <text x="16" y="230" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="var(--als-amber)" transform="rotate(-90 16 230)" letter-spacing="0.08em">INTELLIGENCE</text>
+
+            <rect x="0" y="430" width="32" height="120" rx="4" fill="var(--flex-blue)" opacity="0.08"/>
+            <text x="16" y="500" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="var(--flex-blue)" transform="rotate(-90 16 500)" letter-spacing="0.08em">INFRASTRUCTURE</text>
+
+            <!-- Right annotation: status -->
+            <text x="676" y="180" text-anchor="end" font-family="DM Sans,sans-serif" font-size="8.5" fill="var(--als-amber)" font-weight="600">ALS</text>
+            <text x="676" y="193" text-anchor="end" font-family="DM Sans,sans-serif" font-size="8" fill="var(--ink-muted)">Prototype</text>
+
+            <text x="676" y="450" text-anchor="end" font-family="DM Sans,sans-serif" font-size="8.5" fill="var(--flex-blue)" font-weight="600">FLEX</text>
+            <text x="676" y="463" text-anchor="end" font-family="DM Sans,sans-serif" font-size="8" fill="var(--ink-muted)">Being built</text>
+
+            <text x="676" y="660" text-anchor="end" font-family="DM Sans,sans-serif" font-size="8.5" fill="var(--ink-muted)" font-weight="600">Depts</text>
+            <text x="676" y="673" text-anchor="end" font-family="DM Sans,sans-serif" font-size="8" fill="var(--ink-muted)">Existing</text>
+          </svg>
+          <p class="diagram-caption">The full picture: ALS provides the agent intelligence layer; FLEX provides the secure infrastructure; departments provide the data</p>
+          <div class="legend">
+            <div class="legend-item"><div class="legend-swatch" style="background:var(--als-amber-light);border-color:var(--als-amber-border);"></div> ALS &mdash; agent layer</div>
+            <div class="legend-item"><div class="legend-swatch" style="background:var(--flex-blue-light);border-color:var(--flex-blue-border);"></div> FLEX &mdash; GDS platform</div>
+            <div class="legend-item"><div class="legend-swatch" style="background:var(--udp-sage-light);border-color:var(--udp-sage-border);"></div> UDP &mdash; data store</div>
+          </div>
+        </div>
+
+        <div class="callout">
+          <div class="callout-title">Key point</div>
+          <p>FLEX and ALS are <strong>complementary, not competing</strong>. FLEX is the plumbing &mdash; how data moves securely between departments and the app. ALS is the intelligent front-of-house &mdash; how an AI agent uses those pipes on behalf of a citizen, with consent, transparency, and multi-service orchestration. Today ALS simulates what FLEX will provide for real.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════ -->
+    <!-- Section 3: Data flow                          -->
+    <!-- ══════════════════════════════════════════════ -->
+    <section class="section">
+      <div class="container">
+        <div class="section-label">03 &mdash; The citizen journey</div>
+        <h2>How a request flows through both layers</h2>
+        <p class="section-intro">
+          When a citizen says &ldquo;I need to renew my driving licence&rdquo;, both layers work together. Here&rsquo;s what happens.
+        </p>
+
+        <div class="diagram-frame">
+          <svg viewBox="0 0 700 480" fill="none" xmlns="http://www.w3.org/2000/svg" style="max-width:700px;">
+            <!-- Step nodes -->
+
+            <!-- Step 1 -->
+            <circle cx="56" cy="40" r="18" fill="var(--ink)" stroke="none"/>
+            <text x="56" y="45" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="12" font-weight="700" fill="#fff">1</text>
+            <text x="88" y="36" font-family="DM Sans,sans-serif" font-size="12" font-weight="700" fill="var(--ink)">Citizen speaks naturally</text>
+            <text x="88" y="52" font-family="DM Sans,sans-serif" font-size="10" fill="var(--ink-muted)">&ldquo;My husband has just died. I don&rsquo;t know what I need to do.&rdquo;</text>
+
+            <!-- Connector -->
+            <line x1="56" y1="60" x2="56" y2="90" stroke="var(--rule)" stroke-width="1.5"/>
+
+            <!-- Step 2 — ALS -->
+            <rect x="36" y="90" width="628" height="56" rx="6" fill="var(--als-amber-light)" stroke="var(--als-amber-border)" stroke-width="1.2"/>
+            <circle cx="56" cy="118" r="14" fill="var(--als-amber)" stroke="none"/>
+            <text x="56" y="123" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="11" font-weight="700" fill="#fff">2</text>
+            <text x="84" y="112" font-family="DM Sans,sans-serif" font-size="11.5" font-weight="700" fill="var(--als-amber)">ALS: Life event triage</text>
+            <text x="84" y="128" font-family="DM Sans,sans-serif" font-size="9.5" fill="var(--ink-light)">Matches &ldquo;bereavement&rdquo; across 16 life events → identifies Tell Us Once, DWP bereavement, probate, council tax</text>
+            <text x="620" y="120" text-anchor="end" font-family="JetBrains Mono,monospace" font-size="8" fill="var(--als-amber)">ALS</text>
+
+            <line x1="56" y1="146" x2="56" y2="166" stroke="var(--rule)" stroke-width="1.5"/>
+
+            <!-- Step 3 — ALS -->
+            <rect x="36" y="166" width="628" height="56" rx="6" fill="var(--als-amber-light)" stroke="var(--als-amber-border)" stroke-width="1.2"/>
+            <circle cx="56" cy="194" r="14" fill="var(--als-amber)" stroke="none"/>
+            <text x="56" y="199" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="11" font-weight="700" fill="#fff">3</text>
+            <text x="84" y="188" font-family="DM Sans,sans-serif" font-size="11.5" font-weight="700" fill="var(--als-amber)">ALS: Consent &amp; field deduplication</text>
+            <text x="84" y="204" font-family="DM Sans,sans-serif" font-size="9.5" fill="var(--ink-light)">Checks standing consent preferences. Merges data fields across 4 services — asks once, fans out to all.</text>
+            <text x="620" y="196" text-anchor="end" font-family="JetBrains Mono,monospace" font-size="8" fill="var(--als-amber)">ALS</text>
+
+            <line x1="56" y1="222" x2="56" y2="242" stroke="var(--rule)" stroke-width="1.5"/>
+
+            <!-- Step 4 — ALS via FLEX -->
+            <rect x="36" y="242" width="628" height="72" rx="6" fill="#fff" stroke="var(--als-amber-border)" stroke-width="1.2"/>
+            <!-- Split indicator -->
+            <rect x="36" y="242" width="4" height="72" rx="2" fill="var(--als-amber)"/>
+            <rect x="660" y="242" width="4" height="72" rx="2" fill="var(--flex-blue)"/>
+
+            <circle cx="56" cy="270" r="14" fill="var(--als-amber)" stroke="none"/>
+            <text x="56" y="275" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="11" font-weight="700" fill="#fff">4</text>
+            <text x="84" y="262" font-family="DM Sans,sans-serif" font-size="11.5" font-weight="700" fill="var(--ink)">CapabilityInvoker calls FLEX</text>
+            <text x="84" y="278" font-family="DM Sans,sans-serif" font-size="9.5" fill="var(--ink-light)">Each service call routes through the single auditable choke point → FLEX Public Gateway → Private Gateway → DVLA / DWP</text>
+            <text x="84" y="296" font-family="DM Sans,sans-serif" font-size="9.5" fill="var(--ink-light)">Every call emits a trace event: who asked, what data was shared, what came back, duration, receipt ID</text>
+            <text x="620" y="270" text-anchor="end" font-family="JetBrains Mono,monospace" font-size="8" fill="var(--ink-muted)">ALS → FLEX</text>
+
+            <line x1="56" y1="314" x2="56" y2="334" stroke="var(--rule)" stroke-width="1.5"/>
+
+            <!-- Step 5 — FLEX -->
+            <rect x="36" y="334" width="628" height="56" rx="6" fill="var(--flex-blue-light)" stroke="var(--flex-blue-border)" stroke-width="1.2"/>
+            <circle cx="56" cy="362" r="14" fill="var(--flex-blue)" stroke="none"/>
+            <text x="56" y="367" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="11" font-weight="700" fill="#fff">5</text>
+            <text x="84" y="356" font-family="DM Sans,sans-serif" font-size="11.5" font-weight="700" fill="var(--flex-blue)">FLEX: Secure delivery</text>
+            <text x="84" y="372" font-family="DM Sans,sans-serif" font-size="9.5" fill="var(--ink-light)">Authenticates the request, applies business rules, routes to the correct department. Returns structured data.</text>
+            <text x="620" y="364" text-anchor="end" font-family="JetBrains Mono,monospace" font-size="8" fill="var(--flex-blue)">FLEX</text>
+
+            <line x1="56" y1="390" x2="56" y2="410" stroke="var(--rule)" stroke-width="1.5"/>
+
+            <!-- Step 6 — ALS -->
+            <rect x="36" y="410" width="628" height="56" rx="6" fill="var(--als-amber-light)" stroke="var(--als-amber-border)" stroke-width="1.2"/>
+            <circle cx="56" cy="438" r="14" fill="var(--als-amber)" stroke="none"/>
+            <text x="56" y="443" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="11" font-weight="700" fill="#fff">6</text>
+            <text x="84" y="432" font-family="DM Sans,sans-serif" font-size="11.5" font-weight="700" fill="var(--als-amber)">ALS: Outcome &amp; next steps</text>
+            <text x="84" y="448" font-family="DM Sans,sans-serif" font-size="9.5" fill="var(--ink-light)">Issues outcome cards, updates the plan, earns credentials for the wallet. Guides the citizen to the next service.</text>
+            <text x="620" y="440" text-anchor="end" font-family="JetBrains Mono,monospace" font-size="8" fill="var(--als-amber)">ALS</text>
+
+          </svg>
+          <p class="diagram-caption">A single citizen request touches both ALS (orange) and FLEX (blue) — each layer does what it is best at</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════ -->
+    <!-- Section 4: Where ALS goes further             -->
+    <!-- ══════════════════════════════════════════════ -->
+    <section class="section">
+      <div class="container">
+        <div class="section-label">04 &mdash; What ALS adds</div>
+        <h2>Capabilities that sit above the pipes</h2>
+        <p class="section-intro">
+          FLEX gives the app a way to reach departments securely. ALS adds the capabilities that turn individual API calls into a joined-up experience.
+        </p>
+
+        <div class="diagram-frame">
+          <svg viewBox="0 0 700 340" fill="none" xmlns="http://www.w3.org/2000/svg" style="max-width:700px;">
+
+            <!-- FLEX baseline -->
+            <rect x="50" y="250" width="600" height="60" rx="6" fill="var(--flex-blue-light)" stroke="var(--flex-blue-border)" stroke-width="1.2"/>
+            <text x="350" y="276" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="13" font-weight="700" fill="var(--flex-blue)">FLEX + UDP</text>
+            <text x="350" y="296" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="10" fill="var(--ink-muted)">Secure gateway &bull; User data store &bull; Department modules &bull; Authentication</text>
+
+            <!-- ALS capabilities floating above -->
+            <!-- Row 1 -->
+            <rect x="50" y="14" width="186" height="66" rx="6" fill="var(--als-amber-light)" stroke="var(--als-amber-border)" stroke-width="1.2"/>
+            <text x="143" y="38" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="11" font-weight="700" fill="var(--als-amber)">Life event triage</text>
+            <text x="143" y="54" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="var(--ink-light)">&ldquo;My husband died&rdquo; →</text>
+            <text x="143" y="66" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="var(--ink-light)">4 services identified</text>
+
+            <rect x="257" y="14" width="186" height="66" rx="6" fill="var(--als-amber-light)" stroke="var(--als-amber-border)" stroke-width="1.2"/>
+            <text x="350" y="38" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="11" font-weight="700" fill="var(--als-amber)">Granular consent</text>
+            <text x="350" y="54" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="var(--ink-light)">Standing preferences</text>
+            <text x="350" y="66" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="var(--ink-light)">once → service → dept → cross-govt</text>
+
+            <rect x="464" y="14" width="186" height="66" rx="6" fill="var(--als-amber-light)" stroke="var(--als-amber-border)" stroke-width="1.2"/>
+            <text x="557" y="38" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="11" font-weight="700" fill="var(--als-amber)">Evidence &amp; audit</text>
+            <text x="557" y="54" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="var(--ink-light)">Immutable trace for every</text>
+            <text x="557" y="66" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="var(--ink-light)">action, receipt, decision</text>
+
+            <!-- Row 2 -->
+            <rect x="50" y="96" width="186" height="66" rx="6" fill="var(--als-amber-light)" stroke="var(--als-amber-border)" stroke-width="1.2"/>
+            <text x="143" y="120" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="11" font-weight="700" fill="var(--als-amber)">Field deduplication</text>
+            <text x="143" y="136" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="var(--ink-light)">Ask once for NI number,</text>
+            <text x="143" y="148" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="var(--ink-light)">fan out to 4 services</text>
+
+            <rect x="257" y="96" width="186" height="66" rx="6" fill="var(--als-amber-light)" stroke="var(--als-amber-border)" stroke-width="1.2"/>
+            <text x="350" y="120" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="11" font-weight="700" fill="var(--als-amber)">Deterministic policy</text>
+            <text x="350" y="136" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="var(--ink-light)">Eligibility &amp; state rules</text>
+            <text x="350" y="148" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="var(--ink-light)">never delegated to AI</text>
+
+            <rect x="464" y="96" width="186" height="66" rx="6" fill="var(--als-amber-light)" stroke="var(--als-amber-border)" stroke-width="1.2"/>
+            <text x="557" y="120" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="11" font-weight="700" fill="var(--als-amber)">Legibility Studio</text>
+            <text x="557" y="136" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="var(--ink-light)">Shows depts what to publish</text>
+            <text x="557" y="148" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="var(--ink-light)">to become agent-readable</text>
+
+            <!-- Connection lines from ALS boxes to FLEX bar -->
+            <line x1="143" y1="162" x2="143" y2="250" stroke="var(--als-amber)" stroke-width="1" opacity="0.2"/>
+            <line x1="350" y1="162" x2="350" y2="250" stroke="var(--als-amber)" stroke-width="1" opacity="0.2"/>
+            <line x1="557" y1="162" x2="557" y2="250" stroke="var(--als-amber)" stroke-width="1" opacity="0.2"/>
+
+            <!-- Bracket label -->
+            <text x="350" y="210" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9" fill="var(--ink-muted)" letter-spacing="0.05em">↑ what FLEX doesn&rsquo;t address (yet) ↑</text>
+
+          </svg>
+        </div>
+
+        <div class="callout callout-blue">
+          <div class="callout-title">What Flex does that ALS doesn&rsquo;t</div>
+          <p>FLEX handles real authentication against One Login, enforces rate limits, manages TLS termination, routes across the private network, and is going through formal IT Health Checks. These are production security concerns that ALS delegates to FLEX rather than reimplementing.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════ -->
+    <!-- Section 5: Alignment table                    -->
+    <!-- ══════════════════════════════════════════════ -->
+    <section class="section">
+      <div class="container">
+        <div class="section-label">05 &mdash; Concept-by-concept alignment</div>
+        <h2>Side by side</h2>
+        <p class="section-intro">
+          Every major FLEX/UDP concept has a direct counterpart in ALS. Neither system duplicates the other &mdash; they layer.
+        </p>
+
+        <table class="alignment-table">
+          <thead>
+            <tr>
+              <th>Concept</th>
+              <th class="col-flex" style="text-align:center;">FLEX / UDP</th>
+              <th class="col-als" style="text-align:center;">ALS</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Gateway</td>
+              <td>Three-tier gateway (public → private → service) with department modules at each level</td>
+              <td>CapabilityInvoker &mdash; single auditable choke point. In production, calls FLEX APIs</td>
+            </tr>
+            <tr>
+              <td>User data</td>
+              <td>UDP &mdash; centralised store linked to One Login identity. Stores profile, preferences, consent</td>
+              <td>Citizen Wallet &mdash; shows credentials, earned documents, consent preferences. Reads from UDP</td>
+            </tr>
+            <tr>
+              <td>Consent</td>
+              <td>&ldquo;At the consent of the user&rdquo; &mdash; binary accept/decline shown in demo</td>
+              <td>Standing preferences with scope hierarchy (once → service → department → cross-government), auto-resolved before citizen is asked</td>
+            </tr>
+            <tr>
+              <td>Dept modules</td>
+              <td>Developer-built code modules that slot into gateway tiers (e.g. DVLA module)</td>
+              <td>Machine-readable service manifests: policy, state model, consent model, input/output schema per service</td>
+            </tr>
+            <tr>
+              <td>Identity</td>
+              <td>One Login (user IDs visible in demo)</td>
+              <td>Persona-based identity mapped to One Login-style credentials</td>
+            </tr>
+            <tr>
+              <td>Business rules</td>
+              <td>Private Gateway applies department-specific business logic</td>
+              <td>PolicyEvaluator + StateMachine &mdash; declarative, auditable, never delegated to the AI</td>
+            </tr>
+            <tr>
+              <td>Multi-service</td>
+              <td>Department-by-department &mdash; each module is independent</td>
+              <td>Life event triage: identifies related services, deduplicates fields, orchestrates a joined-up journey</td>
+            </tr>
+            <tr>
+              <td>Audit</td>
+              <td>Not shown in presentation</td>
+              <td>Immutable append-only evidence store: every call traced with receipt, visible in Legibility Studio</td>
+            </tr>
+            <tr>
+              <td>AI / agents</td>
+              <td>Not addressed</td>
+              <td>Constrained LLM: handles language and conversation; all policy, state, and consent decisions enforced in code</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════ -->
+    <!-- Section 6: Status                             -->
+    <!-- ══════════════════════════════════════════════ -->
+    <section class="section">
+      <div class="container">
+        <div class="section-label">06 &mdash; Where things stand</div>
+        <h2>Current status</h2>
+
+        <div class="compare-grid" style="margin-top:1.5rem;">
+          <div class="compare-card card-flex">
+            <h3>FLEX + UDP</h3>
+            <div class="card-sub">GDS / DSIT — 2 agile teams, 4 months in</div>
+            <ul>
+              <li>Dev + staging environments <span class="pill pill-live">Live</span></li>
+              <li>Notifications as first consumer <span class="pill pill-live">Live</span></li>
+              <li>DVLA ID linking <span class="pill pill-building">Building</span></li>
+              <li>DWP benefits integration <span class="pill pill-future">Future</span></li>
+              <li>Service Gateway (OGD connector) <span class="pill pill-future">Future</span></li>
+              <li>IT Health Check (ITHC) <span class="pill pill-building">In progress</span></li>
+            </ul>
+          </div>
+          <div class="compare-card card-als">
+            <h3>ALS</h3>
+            <div class="card-sub">Prototype — demonstrating the target experience</div>
+            <ul>
+              <li>Citizen chat with AI agent <span class="pill pill-prototype">Prototype</span></li>
+              <li>Life event triage (bereavement) <span class="pill pill-prototype">Prototype</span></li>
+              <li>Consent preference system <span class="pill pill-prototype">Prototype</span></li>
+              <li>Citizen wallet + earned credentials <span class="pill pill-prototype">Prototype</span></li>
+              <li>Legibility Studio for departments <span class="pill pill-prototype">Prototype</span></li>
+              <li>DVLA, DWP, HMRC service simulations <span class="pill pill-prototype">Prototype</span></li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="callout callout-green" style="margin-top:2rem;">
+          <div class="callout-title">The relationship</div>
+          <p>ALS prototypes the citizen experience and the department publishing model. FLEX builds the real, secure infrastructure underneath. When FLEX&rsquo;s DVLA and DWP modules go live, ALS&rsquo;s CapabilityInvoker simply points at real FLEX endpoints instead of simulated responses. The experience layer stays the same &mdash; the pipes become real.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Footer ── -->
+    <footer class="footer">
+      <div class="container">
+        <p>Agentic Legibility Stack &mdash; Architecture Alignment Brief. Prepared March 2026. Based on the GDS &ldquo;GOV.UK Agents: Flex, UDP and Platform Final Presentation&rdquo;, 23 March 2026.</p>
+      </div>
+    </footer>
+
+  </body>
+</html>

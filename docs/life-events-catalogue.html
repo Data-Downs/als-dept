@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Life Events — GOV.UK Service Graph</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
+
+  :root {
+    --govuk-blue: #1d70b8;
+    --govuk-dark-blue: #003078;
+    --govuk-black: #0b0c0c;
+    --govuk-white: #ffffff;
+    --govuk-dark-grey: #505a5f;
+    --govuk-light-grey: #f3f2f1;
+    --govuk-page-bg: #eaf1f7;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--govuk-page-bg);
+    color: var(--govuk-black);
+    padding: 48px 32px;
+  }
+
+  .header {
+    max-width: 1200px;
+    margin: 0 auto 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  .header h1 {
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--govuk-black);
+  }
+
+  .header p {
+    font-size: 15px;
+    color: var(--govuk-dark-grey);
+    margin-top: 4px;
+  }
+
+  .download-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    background: var(--govuk-blue);
+    color: white;
+    border: none;
+    border-radius: 9999px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+
+  .download-btn:hover { background: var(--govuk-dark-blue); }
+  .download-btn:disabled { opacity: 0.6; cursor: wait; }
+
+  .download-btn svg {
+    width: 18px;
+    height: 18px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  #card-grid {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(256px, 1fr));
+    gap: 20px;
+  }
+
+  .card {
+    background: var(--govuk-white);
+    border-radius: 16px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    transition: box-shadow 0.2s, transform 0.2s;
+    overflow: hidden;
+  }
+
+  .card:hover {
+    box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+    transform: translateY(-2px);
+  }
+
+  .card-body {
+    padding: 20px 20px 16px;
+  }
+
+  .card-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: var(--govuk-page-bg);
+    font-size: 20px;
+    margin-bottom: 12px;
+    color: var(--govuk-dark-blue);
+  }
+
+  .card-name {
+    display: block;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--govuk-black);
+    line-height: 1.25;
+  }
+
+  .card-desc {
+    display: block;
+    font-size: 13px;
+    color: var(--govuk-dark-grey);
+    margin-top: 6px;
+    line-height: 1.4;
+  }
+
+  .card-footer {
+    border-top: 1px solid #f0f0f0;
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .card-services {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--govuk-dark-grey);
+  }
+
+  .card-id {
+    font-size: 11px;
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    color: #b1b4b6;
+  }
+
+  .footer-note {
+    max-width: 1200px;
+    margin: 40px auto 0;
+    font-size: 12px;
+    color: var(--govuk-dark-grey);
+    text-align: center;
+  }
+</style>
+<script async defer src="https://scripts.withcabin.com/hello.js"></script>
+</head>
+<body>
+
+<div style="background:#fff;border-bottom:1px solid #d1d5db;padding:0.6rem 1.5rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;">
+  <span style="font-weight:700;font-size:0.95rem;color:#0b0c0c;font-family:'Inter',sans-serif;">Agentic Legibility Stack</span>
+  <a href="index.html" style="font-size:0.85rem;font-weight:500;color:#505a5f;text-decoration:none;font-family:'Inter',sans-serif;">All documents</a>
+</div>
+
+<div class="header">
+  <div>
+    <h1>Life Events</h1>
+    <p>16 entry points into the GOV.UK service graph</p>
+  </div>
+  <button class="download-btn" onclick="downloadPNG()">
+    <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+    Download PNG
+  </button>
+</div>
+
+<div id="card-grid"></div>
+
+<p class="footer-note">Agentic Legibility Stack — Service Graph Catalogue</p>
+
+<script>
+const LIFE_EVENTS = [
+  { id: "baby", icon: "◦", name: "Having a Baby", desc: "Birth registration, parental leave and childcare", services: 7 },
+  { id: "bereavement", icon: "—", name: "Death of Someone Close", desc: "Registration, probate and bereavement payments", services: 5 },
+  { id: "marriage", icon: "∞", name: "Getting Married", desc: "Legal notice, certificates and name changes", services: 2 },
+  { id: "retirement", icon: "◐", name: "Retiring", desc: "State Pension, Pension Credit and age entitlements", services: 5 },
+  { id: "business", icon: "◈", name: "Starting a Business", desc: "Registration, tax obligations and compliance", services: 6 },
+  { id: "buying-home", icon: "⌂", name: "Buying a Home", desc: "Stamp duty, land registration and first-time buyer schemes", services: 3 },
+  { id: "moving", icon: "→", name: "Moving House", desc: "Address updates across all government systems", services: 5 },
+  { id: "job-loss", icon: "⊘", name: "Losing Your Job", desc: "Benefits, tax refunds and NI record protection", services: 3 },
+  { id: "disability", icon: "◎", name: "Disability or Health Condition", desc: "Benefits, adaptations and workplace support", services: 5 },
+  { id: "carer", icon: "⊕", name: "Becoming a Carer", desc: "Allowances, NI credits and legal powers", services: 4 },
+  { id: "divorce", icon: "÷", name: "Separating or Divorcing", desc: "Legal proceedings, children and financial impacts", services: 4 },
+  { id: "school", icon: "◌", name: "Child Starting School", desc: "School places, meals, SEND and funding", services: 3 },
+  { id: "immigration", icon: "✦", name: "Arriving in the UK", desc: "Visas, BRP, NI number and NHS access", services: 1 },
+  { id: "driving", icon: "◉", name: "Learning to Drive", desc: "Provisional licence, theory test and driving test", services: 1 },
+  { id: "university", icon: "◳", name: "Going to University", desc: "Student finance, accommodation registration and healthcare", services: 1 },
+  { id: "new-job", icon: "◆", name: "Starting a New Job", desc: "Tax setup, workplace pension and employer checks", services: 2 },
+];
+
+const grid = document.getElementById("card-grid");
+
+LIFE_EVENTS.forEach(le => {
+  const card = document.createElement("div");
+  card.className = "card";
+  card.innerHTML = `
+    <div class="card-body">
+      <div class="card-icon">${le.icon}</div>
+      <strong class="card-name">${le.name}</strong>
+      <span class="card-desc">${le.desc}</span>
+    </div>
+    <div class="card-footer">
+      <span class="card-services">${le.services} service${le.services !== 1 ? 's' : ''}</span>
+      <span class="card-id">${le.id}</span>
+    </div>
+  `;
+  grid.appendChild(card);
+});
+
+async function downloadPNG() {
+  const btn = document.querySelector(".download-btn");
+  btn.disabled = true;
+  btn.innerHTML = "Rendering…";
+
+  try {
+    const canvas = await html2canvas(document.getElementById("card-grid"), {
+      backgroundColor: "#eaf1f7",
+      scale: 2,
+      useCORS: true,
+      logging: false,
+    });
+
+    const link = document.createElement("a");
+    link.download = "life-events-catalogue.png";
+    link.href = canvas.toDataURL("image/png");
+    link.click();
+  } catch (err) {
+    console.error(err);
+    alert("PNG export failed — see console for details.");
+  }
+
+  btn.disabled = false;
+  btn.innerHTML = `<svg viewBox="0 0 24 24" style="width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Download PNG`;
+}
+</script>
+
+</body>
+</html>

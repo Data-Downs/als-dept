@@ -3,25 +3,17 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Agentic Legibility Stack — Project Overview</title>
+    <title>Documentation — Agentic Legibility Stack</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
       rel="stylesheet"
     />
     <style>
       /* ── Reset & Base ── */
-      *,
-      *::before,
-      *::after {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-      }
-      html {
-        scroll-behavior: smooth;
-      }
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+      html { scroll-behavior: smooth; }
       body {
         font-family: "Inter", Arial, sans-serif;
         color: #0b0c0c;
@@ -29,53 +21,17 @@
         background: #fff;
         -webkit-font-smoothing: antialiased;
       }
-      a {
-        color: #1d70b8;
-        text-decoration: none;
-      }
-      a:hover {
-        text-decoration: underline;
-        color: #003078;
-      }
-      code,
-      pre {
-        font-family: "JetBrains Mono", monospace;
-      }
+      a { color: #1d70b8; text-decoration: none; }
+      a:hover { text-decoration: underline; color: #003078; }
 
       /* ── Layout ── */
-      .container {
-        max-width: 960px;
-        margin: 0 auto;
-        padding: 0 1.5rem;
-      }
-      .section {
-        padding: 4rem 0;
-      }
-      .section-alt {
-        background: #f3f2f1;
-      }
+      .container { max-width: 960px; margin: 0 auto; padding: 0 1.5rem; }
+      .section { padding: 3.5rem 0; }
+      .section-alt { background: #f3f2f1; }
 
-      h1,
-      h2,
-      h3 {
-        line-height: 1.2;
-      }
-      h2 {
-        font-size: 1.75rem;
-        font-weight: 700;
-        margin-bottom: 1rem;
-      }
-      h3 {
-        font-size: 1.25rem;
-        font-weight: 600;
-        margin-bottom: 0.5rem;
-      }
-      .section-intro {
-        font-size: 1.1rem;
-        color: #505a5f;
-        max-width: 700px;
-        margin-bottom: 2rem;
-      }
+      h1, h2, h3 { line-height: 1.2; }
+      h2 { font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem; }
+      h3 { font-size: 1.1rem; font-weight: 600; margin-bottom: 0.25rem; }
 
       /* ── Nav ── */
       .nav {
@@ -92,38 +48,15 @@
         justify-content: space-between;
         gap: 1rem;
       }
-      .nav-brand {
-        font-weight: 700;
-        font-size: 1rem;
-        color: #0b0c0c;
-        white-space: nowrap;
-      }
-      .nav-links {
-        display: flex;
-        gap: 1.25rem;
-        list-style: none;
-        flex-wrap: wrap;
-        align-items: center;
-      }
-      .nav-links a {
-        font-size: 0.85rem;
-        font-weight: 500;
-        color: #505a5f;
-      }
-      .nav-links a:hover {
-        color: #1d70b8;
-        text-decoration: none;
-      }
-      @media (max-width: 640px) {
-        .nav-links {
-          display: none;
-        }
-      }
+      .nav-brand { font-weight: 700; font-size: 1rem; color: #0b0c0c; white-space: nowrap; }
+      .nav-links { display: flex; gap: 1.25rem; list-style: none; flex-wrap: wrap; align-items: center; }
+      .nav-links a { font-size: 0.85rem; font-weight: 500; color: #505a5f; }
+      .nav-links a:hover { color: #1d70b8; text-decoration: none; }
+      .nav-links a.active { color: #0b0c0c; font-weight: 700; border-bottom: 2px solid #0b0c0c; padding-bottom: 2px; }
+      @media (max-width: 640px) { .nav-links { display: none; } }
 
       /* ── Hero ── */
-      .hero {
-        padding: 5rem 0 4rem;
-      }
+      .hero { padding: 5rem 0 3rem; }
       .hero-label {
         display: inline-block;
         background: #f3f2f1;
@@ -136,367 +69,263 @@
         letter-spacing: 0.05em;
         margin-bottom: 1.25rem;
       }
-      .hero h1 {
-        font-size: 2.75rem;
-        font-weight: 700;
-        margin-bottom: 0.75rem;
-      }
+      .hero h1 { font-size: 2.75rem; font-weight: 700; margin-bottom: 0.75rem; }
       .hero-subtitle {
         font-size: 1.35rem;
         color: #505a5f;
         font-weight: 400;
-        max-width: 640px;
-        margin-bottom: 1.5rem;
+        max-width: 700px;
       }
-      .hero-desc {
-        font-size: 1.05rem;
+      @media (max-width: 640px) {
+        .hero h1 { font-size: 2rem; }
+        .hero-subtitle { font-size: 1.15rem; }
+      }
+
+      /* ── Category ── */
+      .category-label {
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
         color: #505a5f;
-        max-width: 640px;
-        margin-bottom: 2rem;
-      }
-      @media (max-width: 640px) {
-        .hero h1 {
-          font-size: 2rem;
-        }
-        .hero-subtitle {
-          font-size: 1.15rem;
-        }
+        margin-bottom: 1rem;
       }
 
-      /* ── Cards ── */
-      .grid-2 {
+      /* ── Doc cards ── */
+      .doc-grid {
         display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 1.5rem;
-      }
-      @media (max-width: 640px) {
-        .grid-2 {
-          grid-template-columns: 1fr;
-        }
-      }
-
-      .card {
-        background: #fff;
-        border: 1px solid #b1b4b6;
-        border-radius: 2px;
-        padding: 1.5rem;
-      }
-      .card-accent {
-        border-left: 4px solid;
-      }
-      .card-blue {
-        border-left-color: #1d70b8;
-      }
-      .card-green {
-        border-left-color: #00703c;
-      }
-      .card-orange {
-        border-left-color: #f47738;
-      }
-      .card-purple {
-        border-left-color: #912b88;
-      }
-      .card h3 {
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
         margin-bottom: 0.5rem;
       }
-      .card p {
-        color: #505a5f;
-        font-size: 0.95rem;
+      @media (max-width: 640px) { .doc-grid { grid-template-columns: 1fr; } }
+
+      .doc-card {
+        background: #fff;
+        border: 1px solid #d5d8da;
+        border-radius: 2px;
+        padding: 1.25rem 1.5rem;
+        transition: border-color 0.15s, box-shadow 0.15s;
+        display: flex;
+        flex-direction: column;
       }
-      .card-tag {
-        display: inline-block;
+      .doc-card:hover {
+        border-color: #1d70b8;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      }
+      .section-alt .doc-card { border-color: #b1b4b6; }
+      .section-alt .doc-card:hover { border-color: #1d70b8; }
+
+      .doc-card h3 a {
+        color: #0b0c0c;
+        font-weight: 600;
+      }
+      .doc-card h3 a:hover {
+        color: #1d70b8;
+        text-decoration: none;
+      }
+      .doc-card p {
+        font-size: 0.9rem;
+        color: #505a5f;
+        margin-top: 0.35rem;
+        flex: 1;
+      }
+      .doc-card .doc-audience {
         font-size: 0.7rem;
         font-weight: 600;
         text-transform: uppercase;
-        letter-spacing: 0.05em;
-        color: #505a5f;
-        margin-bottom: 0.75rem;
-      }
-      .card-alt {
-        background: #f3f2f1;
-        border: 1px solid #e0dfde;
+        letter-spacing: 0.04em;
+        margin-top: 0.75rem;
+        color: #b1b4b6;
       }
 
-      /* ── Callout ── */
-      .callout {
-        background: #f3f2f1;
-        border-left: 4px solid #b1b4b6;
-        padding: 1rem 1.25rem;
-        margin-top: 1.5rem;
-        font-size: 0.95rem;
-        color: #505a5f;
-      }
-      .callout-blue {
-        background: #0b0c0c;
-        border-left-color: #1d70b8;
-        color: rgba(255, 255, 255, 0.9);
-      }
-
-      /* ── Artefact strip ── */
-      .artefact-strip {
-        margin-top: 2rem;
-        padding: 1.5rem;
-        background: #f3f2f1;
-        border-left: 4px solid #1d70b8;
-        border-radius: 2px;
-      }
-      .artefact-strip h3 {
-        margin-bottom: 0.75rem;
-      }
-      .artefact-list {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.5rem;
-        list-style: none;
-      }
-      .artefact-list li {
-        font-size: 0.78rem;
-        font-weight: 500;
-        letter-spacing: 0.03em;
-        padding: 0.35rem 0.85rem;
-        background: #fff;
-        border: 1px solid #b1b4b6;
-        border-radius: 2px;
-        color: #0b0c0c;
-      }
+      /* ── Accent colours per category ── */
+      .cat-strategy .doc-card { border-left: 4px solid #1d70b8; }
+      .cat-product .doc-card { border-left: 4px solid #912b88; }
+      .cat-technical .doc-card { border-left: 4px solid #00703c; }
+      .cat-demos .doc-card { border-left: 4px solid #f47738; }
+      .cat-reference .doc-card { border-left: 4px solid #505a5f; }
 
       /* ── Footer ── */
       .footer {
-        background: #0b0c0c;
-        color: #fff;
-        padding: 2.5rem 0;
-        margin-top: 0;
-      }
-      .footer-inner {
-        display: flex;
-        justify-content: space-between;
-        align-items: baseline;
-      }
-      .footer p {
+        border-top: 1px solid #b1b4b6;
+        padding: 2rem 0;
         font-size: 0.85rem;
-        color: #b1b4b6;
-      }
-      .footer-tag {
-        font-size: 0.7rem;
-        font-weight: 600;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-        color: #b1b4b6;
-        padding: 0.3rem 0.65rem;
-        border: 1px solid #505a5f;
-        border-radius: 2px;
-      }
-      @media (max-width: 640px) {
-        .footer-inner {
-          flex-direction: column;
-          gap: 0.75rem;
-        }
+        color: #505a5f;
       }
     </style>
+    <script async defer src="https://scripts.withcabin.com/hello.js"></script>
   </head>
   <body>
+
+    <!-- ── Navigation ── -->
     <nav class="nav">
       <div class="container">
         <span class="nav-brand">Agentic Legibility Stack</span>
         <ul class="nav-links">
-          <li><a href="#legibility-studio">Legibility Studio</a></li>
-          <li><a href="#citizen-experience">Citizen Experience</a></li>
-          <li><a href="personas.html">Personas</a></li>
-          <li><a href="departments.html">Departments</a></li>
-          <li><a href="briefing.html">Briefing</a></li>
+          <li><a href="index.html" class="active">All documents</a></li>
+          <li><a href="overview.html">Overview</a></li>
+          <li><a href="briefing-executive.html">Executive briefing</a></li>
+          <li><a href="guide-product.html">Product guide</a></li>
+          <li><a href="reference-technical.html">Technical reference</a></li>
+          <li><a href="glossary.html">Glossary</a></li>
+          <li><a href="publish-once.html">Publish once</a></li>
         </ul>
       </div>
     </nav>
 
-    <section class="hero">
+    <!-- ── Hero ── -->
+    <header class="hero">
       <div class="container">
-        <span class="hero-label"
-          >Department Demo &mdash; Reference Architecture</span
-        >
+        <span class="hero-label">Documentation</span>
         <h1>Agentic Legibility Stack</h1>
         <p class="hero-subtitle">
-          A working prototype demonstrating how UK government services could be
-          delivered through AI agents &mdash; with full transparency,
-          auditability, and citizen control.
-        </p>
-        <p class="hero-desc">
-          This project addresses a fundamental question: how should government
-          services work in a world where citizens interact through AI agents
-          rather than web forms?
+          Everything you need to understand the architecture, product design, and department readiness for AI-agent-delivered government services.
         </p>
       </div>
-    </section>
+    </header>
 
-    <section class="section section-alt">
+    <!-- ── Strategy & vision ── -->
+    <div class="section cat-strategy">
       <div class="container">
-        <div class="grid-2">
-          <div class="card card-alt">
-            <p style="font-size: 0.95rem; color: #505a5f; line-height: 1.7">
-              <strong style="color: #0b0c0c">The challenge is twofold.</strong>
-              Citizens need a better way to navigate the complexity of
-              government &mdash; one that works across departments, anticipates
-              their needs, and handles the bureaucratic burden on their behalf.
-              And departments need a clear framework for making their services
-              accessible to AI agents safely and transparently.
-            </p>
+        <p class="category-label">Strategy & vision</p>
+        <div class="doc-grid">
+          <div class="doc-card">
+            <h3><a href="overview.html">Project overview</a></h3>
+            <p>The case for change: what the stack is, why it matters, and how the citizen app and Legibility Studio work together.</p>
+            <span class="doc-audience">All audiences</span>
           </div>
-          <div class="card card-alt">
-            <p style="font-size: 0.95rem; color: #505a5f; line-height: 1.7">
-              <strong style="color: #0b0c0c"
-                >This stack provides both sides.</strong
-              >
-              A citizen-facing prototype shows how the future of GOV.UK could
-              feel. An administrative studio shows departments exactly what they
-              need to publish &mdash; and what happens when they do.
-            </p>
+          <div class="doc-card">
+            <h3><a href="briefing-executive.html">Executive briefing</a></h3>
+            <p>Strategic briefing for leadership covering the business case, target operating model, and value proposition.</p>
+            <span class="doc-audience">Leadership</span>
+          </div>
+          <div class="doc-card">
+            <h3><a href="agentic-service-standards.html">Agentic service standards</a></h3>
+            <p>Why government needs a trust framework for third-party AI agents accessing services on behalf of citizens — and what prototyping reveals about where the real boundaries lie.</p>
+            <span class="doc-audience">DG GDS, Permanent Secretaries</span>
+          </div>
+          <div class="doc-card">
+            <h3><a href="publish-once.html">Publish once, serve everywhere</a></h3>
+            <p>A single structured service description, published automatically to every channel — web, API, AI agent, catalogue, and print.</p>
+            <span class="doc-audience">Leadership & digital directors</span>
           </div>
         </div>
       </div>
-    </section>
+    </div>
 
-    <section class="section" id="legibility-studio">
+    <!-- ── Product & design ── -->
+    <div class="section section-alt cat-product">
       <div class="container">
-        <span class="hero-label">Platform One</span>
-        <h2>Legibility Studio</h2>
-        <p class="section-intro">
-          An administrative platform that helps government departments make
-          their services legible to AI agents. For agents to interact with
-          services safely, those services must publish structured,
-          machine-readable artefacts.
-        </p>
-
-        <div class="grid-2">
-          <div class="card card-accent card-blue">
-            <p class="card-tag">Inventory</p>
-            <h3>Service Inventory</h3>
-            <p>
-              A complete catalogue of government services, classified by
-              typology &mdash; benefits, entitlements, registrations,
-              obligations, applications &mdash; with their current readiness for
-              agentic interaction.
-            </p>
+        <p class="category-label">Product & design</p>
+        <div class="doc-grid">
+          <div class="doc-card">
+            <h3><a href="guide-product.html">Product & service design guide</a></h3>
+            <p>Service design patterns, user journeys, and interaction models for building legible services.</p>
+            <span class="doc-audience">Product & design</span>
           </div>
-          <div class="card card-accent card-green">
-            <p class="card-tag">Completeness</p>
-            <h3>Artefact Completeness</h3>
-            <p>
-              Each service requires four artefacts to be legible: a manifest, a
-              policy ruleset, a state model, and consent rules. The studio
-              tracks which exist, which are missing, and what needs to be
-              authored.
-            </p>
+          <div class="doc-card">
+            <h3><a href="legibility-studio.html">Legibility Studio</a></h3>
+            <p>The admin platform where departments make their services ready for agents to understand and deliver.</p>
+            <span class="doc-audience">Product & design</span>
           </div>
-          <div class="card card-accent card-orange">
-            <p class="card-tag">Analysis</p>
-            <h3>Gap Analysis</h3>
-            <p>
-              A department-level view showing how ready each service is for
-              agentic delivery. Identifies precisely what work remains &mdash;
-              which artefacts are missing, which rules are incomplete, which
-              journeys lack consent models.
-            </p>
+          <div class="doc-card">
+            <h3><a href="interaction-models.html">Interaction model explorations</a></h3>
+            <p>Multiple UI models for the GOV.UK citizen mobile app with phone mockups and design principles.</p>
+            <span class="doc-audience">Interaction design</span>
           </div>
-          <div class="card card-accent card-purple">
-            <p class="card-tag">Audit</p>
-            <h3>Evidence &amp; Audit</h3>
-            <p>
-              Every interaction between an agent and a government service
-              generates an immutable evidence trail. The studio provides full
-              replay capability &mdash; what happened, when, what data was
-              shared, and what decisions were made.
-            </p>
+          <div class="doc-card">
+            <h3><a href="card-catalogue.html">Card & template catalogue</a></h3>
+            <p>Visual catalogue of all citizen-facing card components with sample data and downloadable PNGs.</p>
+            <span class="doc-audience">Design & development</span>
           </div>
-        </div>
-
-        <div class="artefact-strip">
-          <h3>What departments need to publish</h3>
-          <ul class="artefact-list">
-            <li>Service Manifest</li>
-            <li>Policy Ruleset</li>
-            <li>State Model</li>
-            <li>Consent Rules</li>
-            <li>State Instructions</li>
-          </ul>
         </div>
       </div>
-    </section>
+    </div>
 
-    <section class="section section-alt" id="citizen-experience">
+    <!-- ── Technical architecture ── -->
+    <div class="section cat-technical">
       <div class="container">
-        <span class="hero-label">Platform Two</span>
-        <h2>Citizen Experience</h2>
-        <p class="section-intro">
-          A prototype of how the future GOV.UK app could work through agentic
-          technology &mdash; where citizens interact conversationally with an AI
-          agent that navigates government services on their behalf.
-        </p>
-
-        <div class="grid-2">
-          <div class="card">
-            <p class="card-tag">Interaction</p>
-            <h3>Conversational Interaction</h3>
-            <p>
-              Citizens describe their situation in plain language. The agent
-              understands what services are relevant, checks eligibility,
-              collects the necessary information, and submits applications
-              &mdash; explaining every step as it goes.
-            </p>
+        <p class="category-label">Technical architecture</p>
+        <div class="doc-grid">
+          <div class="doc-card">
+            <h3><a href="reference-technical.html">Technical architecture reference</a></h3>
+            <p>System architecture, data structures, API patterns, code examples, and dependency graphs.</p>
+            <span class="doc-audience">Engineering</span>
           </div>
-          <div class="card">
-            <p class="card-tag">Orchestration</p>
-            <h3>Cross-Department Orchestration</h3>
-            <p>
-              Life events rarely respect departmental boundaries. A bereavement,
-              a new child, or a job loss touches multiple departments
-              simultaneously. The agent coordinates across all of them from a
-              single conversation.
-            </p>
+          <div class="doc-card">
+            <h3><a href="flex-alignment.html">FLEX + ALS architecture alignment</a></h3>
+            <p>How the Agentic Legibility Stack maps to and extends the FLEX architecture framework.</p>
+            <span class="doc-audience">Architecture</span>
           </div>
-          <div class="card">
-            <p class="card-tag">Proactive</p>
-            <h3>Proactive Notifications</h3>
-            <p>
-              Rather than requiring citizens to know which services exist, the
-              agent identifies relevant entitlements and obligations based on
-              their circumstances &mdash; surfacing what matters before the
-              citizen has to search for it.
-            </p>
+          <div class="doc-card">
+            <h3><a href="decision-gates.html">Decision gates</a></h3>
+            <p>Structured routing questions at the boundary between probabilistic and deterministic layers — data-defined, LLM-signalled, with deterministic routing effects.</p>
+            <span class="doc-audience">Architecture & design</span>
           </div>
-          <div class="card">
-            <p class="card-tag">Transparency</p>
-            <h3>Full Transparency</h3>
-            <p>
-              Every action the agent takes is visible to the citizen &mdash;
-              what data was shared, with whom, why, and what the outcome was.
-              Citizens maintain control throughout, with the ability to revoke
-              consent at any point.
-            </p>
-          </div>
-        </div>
-
-        <div
-          class="callout callout-blue"
-          style="margin-top: 2rem; padding: 1.5rem 1.75rem; border-radius: 2px"
-        >
-          <p style="font-size: 1.05rem; line-height: 1.6">
-            The vision is a single, personalised interface to all of government
-            &mdash; where an agent handles the complexity of navigating between
-            departments, and the citizen simply describes what they need.
-          </p>
         </div>
       </div>
-    </section>
+    </div>
 
+    <!-- ── Department demos ── -->
+    <div class="section section-alt cat-demos">
+      <div class="container">
+        <p class="category-label">Department demos</p>
+        <div class="doc-grid">
+          <div class="doc-card">
+            <h3><a href="Planning.html">Demo planning & readiness</a></h3>
+            <p>Timeline, department readiness stages, and scenario planning for permanent secretary demonstrations.</p>
+            <span class="doc-audience">Programme management</span>
+          </div>
+          <div class="doc-card">
+            <h3><a href="departments.html">Department profiles</a></h3>
+            <p>Individual department presentations with challenges, personas, and value propositions.</p>
+            <span class="doc-audience">Department stakeholders</span>
+          </div>
+          <div class="doc-card">
+            <h3><a href="personas.html">Demo personas & scripts</a></h3>
+            <p>User personas with backgrounds, needs, pain points, and test scenarios for each department.</p>
+            <span class="doc-audience">Design & testing</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Data & reference ── -->
+    <div class="section cat-reference">
+      <div class="container">
+        <p class="category-label">Data & reference</p>
+        <div class="doc-grid">
+          <div class="doc-card">
+            <h3><a href="data-fields.html">Data fields & sources</a></h3>
+            <p>All data fields required across the demo, their sources, and mapping between wallet, government systems, and cascade data.</p>
+            <span class="doc-audience">Data & technical</span>
+          </div>
+          <div class="doc-card">
+            <h3><a href="bereavement-data-requirements.html">Bereavement data requirements</a></h3>
+            <p>Field deduplication, sources, and service cascades for the bereavement life event journey.</p>
+            <span class="doc-audience">Data & service delivery</span>
+          </div>
+          <div class="doc-card">
+            <h3><a href="life-events-catalogue.html">Life events catalogue</a></h3>
+            <p>16 major life events mapped to government services, showing service counts and relationships.</p>
+            <span class="doc-audience">Product & analysis</span>
+          </div>
+          <div class="doc-card">
+            <h3><a href="glossary.html">Concept glossary</a></h3>
+            <p>Searchable definitions of all key concepts and terminology, filterable by audience.</p>
+            <span class="doc-audience">All audiences</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Footer ── -->
     <footer class="footer">
       <div class="container">
-        <div class="footer-inner">
-          <p>
-            Agentic Legibility Stack &middot; A reference architecture and
-            working prototype.<br />This is not a live government service.
-          </p>
-          <span class="footer-tag">Proof of Concept</span>
-        </div>
+        Agentic Legibility Stack &mdash; Department Demo Documentation
       </div>
     </footer>
+
   </body>
 </html>

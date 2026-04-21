@@ -1,0 +1,478 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>System architecture — Agentic Legibility Stack</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+    body {
+      font-family: "Inter", Arial, sans-serif;
+      color: #0b0c0c;
+      background: #fff;
+      display: flex;
+      justify-content: center;
+      padding: 3rem 1.5rem 4rem;
+    }
+
+    .diagram {
+      max-width: 900px;
+      width: 100%;
+      position: relative;
+    }
+
+    .diagram-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      margin-bottom: 0.25rem;
+    }
+    .diagram-subtitle {
+      font-size: 0.78rem;
+      color: #505a5f;
+      margin-bottom: 2rem;
+    }
+
+    /* ── Layer labels ── */
+    .layer {
+      margin-bottom: 1.75rem;
+    }
+    .layer:last-child {
+      margin-bottom: 0;
+    }
+    .layer-label {
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #6f777b;
+      margin-bottom: 0.6rem;
+    }
+
+    /* ── App boxes ── */
+    .app-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+    .app-box {
+      background: #fff;
+      border: 1px solid #d5d8da;
+      border-radius: 6px;
+      padding: 1rem 1.25rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .app-box::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+    }
+    .app-box--citizen::before { background: #1d70b8; }
+    .app-box--studio::before { background: #4c2c92; }
+    .app-box-name {
+      font-size: 0.88rem;
+      font-weight: 600;
+      margin-bottom: 0.15rem;
+    }
+    .app-box-port {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.68rem;
+      color: #6f777b;
+      margin-bottom: 0.4rem;
+    }
+    .app-box-desc {
+      font-size: 0.75rem;
+      color: #505a5f;
+      line-height: 1.55;
+    }
+    .app-box-tag {
+      display: inline-block;
+      font-size: 0.62rem;
+      font-weight: 600;
+      padding: 0.15rem 0.45rem;
+      border-radius: 3px;
+      margin-top: 0.5rem;
+    }
+    .app-box--citizen .app-box-tag {
+      background: #e8f0fe;
+      color: #1d70b8;
+    }
+    .app-box--studio .app-box-tag {
+      background: #f0ebf5;
+      color: #4c2c92;
+    }
+
+    /* ── Connector zone between apps and packages ── */
+    .connector-zone {
+      position: relative;
+      height: 3rem;
+      margin-bottom: 0;
+    }
+    .connector-zone svg {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* ── Package grid ── */
+    .pkg-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 0.5rem;
+    }
+    .pkg-box {
+      background: #f8f8f7;
+      border: 1px solid #e8e8e6;
+      border-radius: 5px;
+      padding: 0.6rem 0.7rem;
+      min-height: 3.6rem;
+    }
+    .pkg-box--wide {
+      grid-column: span 2;
+    }
+    .pkg-box--highlight {
+      border-color: #d5d8da;
+      background: #f4f4f2;
+    }
+    .pkg-name {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.68rem;
+      font-weight: 500;
+      color: #0b0c0c;
+      margin-bottom: 0.2rem;
+      white-space: nowrap;
+    }
+    .pkg-detail {
+      font-size: 0.64rem;
+      color: #6f777b;
+      line-height: 1.45;
+    }
+
+    /* ── Choke-point callout ── */
+    .choke-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      font-size: 0.6rem;
+      font-weight: 600;
+      color: #d4351c;
+      margin-top: 0.3rem;
+      letter-spacing: 0.01em;
+    }
+    .choke-dot {
+      width: 5px; height: 5px;
+      background: #d4351c;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    /* ── Gateway callout ── */
+    .gateway-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      font-size: 0.6rem;
+      font-weight: 600;
+      color: #1d70b8;
+      margin-top: 0.3rem;
+      letter-spacing: 0.01em;
+    }
+    .gateway-dot {
+      width: 5px; height: 5px;
+      background: #1d70b8;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    /* ── External systems ── */
+    .ext-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.5rem;
+    }
+    .ext-box {
+      background: #2a2a3e;
+      border-radius: 5px;
+      padding: 0.7rem 0.85rem;
+      color: #fff;
+    }
+    .ext-name {
+      font-size: 0.75rem;
+      font-weight: 600;
+      margin-bottom: 0.15rem;
+    }
+    .ext-detail {
+      font-size: 0.64rem;
+      color: #b1b4b6;
+      line-height: 1.45;
+    }
+
+    /* ── Connector between layers ── */
+    .layer-connector {
+      position: relative;
+      height: 2.25rem;
+    }
+    .layer-connector svg {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* ── Legend ── */
+    .legend {
+      display: flex;
+      gap: 1.5rem;
+      margin-top: 2rem;
+      padding-top: 1.25rem;
+      border-top: 1px solid #e8e8e6;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.68rem;
+      color: #505a5f;
+    }
+    .legend-line {
+      width: 28px;
+      height: 2px;
+      flex-shrink: 0;
+    }
+    .legend-line--solid {
+      background: #6f777b;
+    }
+    .legend-line--dashed {
+      background: repeating-linear-gradient(90deg, #6f777b 0, #6f777b 4px, transparent 4px, transparent 8px);
+    }
+
+    /* ── HTTP arrow annotation ── */
+    .http-annotation {
+      position: absolute;
+      font-size: 0.6rem;
+      font-weight: 600;
+      color: #4c2c92;
+      font-family: "JetBrains Mono", monospace;
+      letter-spacing: 0.02em;
+    }
+
+    /* ── Architectural rule box ── */
+    .rules {
+      margin-top: 1.75rem;
+      padding: 0.9rem 1.1rem;
+      background: #fff;
+      border: 1px solid #e8e8e6;
+      border-left: 3px solid #d4351c;
+      border-radius: 4px;
+    }
+    .rules-title {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: #0b0c0c;
+      margin-bottom: 0.4rem;
+    }
+    .rules-list {
+      list-style: none;
+      padding: 0;
+    }
+    .rules-list li {
+      font-size: 0.68rem;
+      color: #505a5f;
+      line-height: 1.55;
+      padding-left: 0.9rem;
+      position: relative;
+      margin-bottom: 0.25rem;
+    }
+    .rules-list li::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0.45em;
+      width: 5px; height: 5px;
+      background: #d4351c;
+      border-radius: 50%;
+    }
+    .rules-list li:last-child { margin-bottom: 0; }
+    .rules-list code {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.64rem;
+      background: #f8f8f7;
+      padding: 0.1em 0.3em;
+      border-radius: 3px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="diagram">
+  <div class="diagram-title">System architecture</div>
+  <div class="diagram-subtitle">Component diagram showing packages, applications, and dependency flow</div>
+
+  <!-- ── APPLICATIONS ── -->
+  <div class="layer">
+    <div class="layer-label">Applications</div>
+    <div class="app-row">
+      <div class="app-box app-box--citizen">
+        <div class="app-box-name">Citizen app</div>
+        <div class="app-box-port">:3106 &middot; Next.js</div>
+        <div class="app-box-desc">Prototype GOV.UK app delivered through agentic technology. Chat, wallet, plans, consent.</div>
+        <div class="app-box-tag">apps/citizen</div>
+      </div>
+      <div class="app-box app-box--studio">
+        <div class="app-box-name">Legibility Studio</div>
+        <div class="app-box-port">:3101 &middot; Next.js</div>
+        <div class="app-box-desc">Admin dashboard for services, traces, and gap analysis. Reads evidence via HTTP from Citizen app.</div>
+        <div class="app-box-tag">apps/legibility-studio</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── CONNECTORS: apps to packages ── -->
+  <div class="connector-zone">
+    <svg viewBox="0 0 900 48" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- Citizen app down-arrows (solid) -->
+      <line x1="120" y1="0" x2="120" y2="48" stroke="#b1b4b6" stroke-width="1"/>
+      <line x1="280" y1="0" x2="280" y2="48" stroke="#b1b4b6" stroke-width="1"/>
+      <!-- Studio down-arrows (solid for schemas, dashed for evidence HTTP) -->
+      <line x1="620" y1="0" x2="620" y2="48" stroke="#b1b4b6" stroke-width="1"/>
+      <line x1="750" y1="0" x2="750" y2="48" stroke="#b1b4b6" stroke-width="1" stroke-dasharray="4 3"/>
+      <!-- Arrowheads -->
+      <polygon points="118,48 122,48 120,44" fill="#b1b4b6"/>
+      <polygon points="278,48 282,48 280,44" fill="#b1b4b6"/>
+      <polygon points="618,48 622,48 620,44" fill="#b1b4b6"/>
+      <polygon points="748,48 752,48 750,44" fill="#b1b4b6"/>
+    </svg>
+    <span class="http-annotation" style="right: 11%; top: 0.85rem;">HTTP &rarr; /api/evidence</span>
+  </div>
+
+  <!-- ── SHARED PACKAGES ── -->
+  <div class="layer">
+    <div class="layer-label">Shared packages</div>
+
+    <!-- Row 1: Runtime + Adapters (the two critical gateway packages) -->
+    <div class="pkg-grid" style="margin-bottom: 0.5rem;">
+      <div class="pkg-box pkg-box--wide pkg-box--highlight">
+        <div class="pkg-name">@als/runtime</div>
+        <div class="pkg-detail">Orchestrator, CapabilityInvoker</div>
+        <div class="choke-label"><span class="choke-dot"></span> Single choke point for all service calls</div>
+      </div>
+      <div class="pkg-box pkg-box--wide pkg-box--highlight">
+        <div class="pkg-name">@als/adapters</div>
+        <div class="pkg-detail">AnthropicAdapter, MCP client</div>
+        <div class="gateway-label"><span class="gateway-dot"></span> Single gateway for all LLM calls</div>
+      </div>
+      <div class="pkg-box">
+        <div class="pkg-name">@als/schemas</div>
+        <div class="pkg-detail">Shared TypeScript types</div>
+      </div>
+    </div>
+
+    <!-- Row 2: Legibility domain packages -->
+    <div class="pkg-grid" style="margin-bottom: 0.5rem;">
+      <div class="pkg-box pkg-box--wide">
+        <div class="pkg-name">@als/legibility</div>
+        <div class="pkg-detail">PolicyEvaluator, StateMachine, ConsentManager, FieldCollector</div>
+      </div>
+      <div class="pkg-box">
+        <div class="pkg-name">@als/evidence</div>
+        <div class="pkg-detail">Trace events, receipts, replay</div>
+      </div>
+      <div class="pkg-box">
+        <div class="pkg-name">@als/personal-data</div>
+        <div class="pkg-detail">Consent preferences, wallet</div>
+      </div>
+      <div class="pkg-box">
+        <div class="pkg-name">@als/identity</div>
+        <div class="pkg-detail">User identity, auth</div>
+      </div>
+    </div>
+
+    <!-- Row 3: Service packages -->
+    <div class="pkg-grid">
+      <div class="pkg-box">
+        <div class="pkg-name">@als/service-store</div>
+        <div class="pkg-detail">Service storage and retrieval</div>
+      </div>
+      <div class="pkg-box">
+        <div class="pkg-name">@als/service-graph</div>
+        <div class="pkg-detail">GOV.UK service graph</div>
+      </div>
+      <div class="pkg-box">
+        <div class="pkg-name">@als/mcp-server</div>
+        <div class="pkg-detail">MCP server for service tools</div>
+      </div>
+      <div class="pkg-box" style="grid-column: span 2; background: #fff; border-style: dashed;">
+        <div class="pkg-name" style="color: #6f777b;">data/services/*</div>
+        <div class="pkg-detail">manifest.json, policy.json, state-model.json, consent.json per service</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── CONNECTORS: packages to external ── -->
+  <div class="layer-connector">
+    <svg viewBox="0 0 900 36" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <line x1="200" y1="0" x2="150" y2="36" stroke="#b1b4b6" stroke-width="1"/>
+      <line x1="550" y1="0" x2="450" y2="36" stroke="#b1b4b6" stroke-width="1"/>
+      <line x1="300" y1="0" x2="750" y2="36" stroke="#b1b4b6" stroke-width="1"/>
+      <!-- Arrowheads -->
+      <polygon points="148,36 152,36 150,32" fill="#b1b4b6"/>
+      <polygon points="448,36 452,36 450,32" fill="#b1b4b6"/>
+      <polygon points="748,36 752,36 750,32" fill="#b1b4b6"/>
+    </svg>
+  </div>
+
+  <!-- ── EXTERNAL SYSTEMS ── -->
+  <div class="layer">
+    <div class="layer-label">External systems</div>
+    <div class="ext-row">
+      <div class="ext-box">
+        <div class="ext-name">Anthropic API</div>
+        <div class="ext-detail">Claude LLM &middot; via @als/adapters only</div>
+      </div>
+      <div class="ext-box">
+        <div class="ext-name">Department APIs</div>
+        <div class="ext-detail">Service endpoints &middot; via CapabilityInvoker only</div>
+      </div>
+      <div class="ext-box">
+        <div class="ext-name">GOV.UK One Login</div>
+        <div class="ext-detail">Identity verification &middot; via @als/identity</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── LEGEND ── -->
+  <div class="legend">
+    <div class="legend-item">
+      <div class="legend-line legend-line--solid"></div>
+      Direct package import
+    </div>
+    <div class="legend-item">
+      <div class="legend-line legend-line--dashed"></div>
+      HTTP / API call
+    </div>
+    <div class="legend-item">
+      <span class="choke-dot" style="flex-shrink:0;"></span>
+      Architectural enforcement point
+    </div>
+  </div>
+
+  <!-- ── RULES ── -->
+  <div class="rules">
+    <div class="rules-title">Architectural rules enforced</div>
+    <ul class="rules-list">
+      <li>All LLM calls route through <code>@als/adapters</code> — zero direct Anthropic SDK usage elsewhere</li>
+      <li>All service calls route through <code>CapabilityInvoker</code> in <code>@als/runtime</code> — single choke point</li>
+      <li>Legibility Studio fetches evidence from Citizen app API via HTTP — it does not import <code>@als/evidence</code> directly</li>
+    </ul>
+  </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,3176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GOV.UK Citizen App — Interaction Model Explorations</title>
+<style>
+  :root {
+    --govuk-blue: #1d70b8;
+    --govuk-dark-blue: #003078;
+    --govuk-red: #d4351c;
+    --govuk-yellow: #ffdd00;
+    --govuk-green: #00703c;
+    --govuk-dark-grey: #505a5f;
+    --govuk-mid-grey: #b1b4b6;
+    --govuk-light-grey: #f3f2f1;
+    --app-bg: #eaf1f7;
+    --text: #0b0c0c;
+    --text-secondary: #505a5f;
+    --card-radius: 16px;
+    --phone-w: 375px;
+    --phone-h: 812px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #f8f8f8;
+    color: var(--text);
+    line-height: 1.5;
+  }
+
+  /* ── Header ── */
+  .page-header {
+    background: var(--govuk-dark-blue);
+    color: white;
+    padding: 80px 40px 60px;
+  }
+  .page-header h1 {
+    font-size: 42px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    max-width: 900px;
+    line-height: 1.15;
+  }
+  .page-header .subtitle {
+    font-size: 20px;
+    opacity: 0.8;
+    margin-top: 16px;
+    max-width: 720px;
+    font-weight: 400;
+  }
+
+  /* ── Current state ── */
+  .current-state {
+    background: white;
+    border-bottom: 1px solid #e0e0e0;
+    padding: 60px 40px;
+  }
+  .current-state h2 {
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+  }
+  .current-state h3 {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 16px;
+  }
+  .current-state p {
+    font-size: 17px;
+    color: var(--text-secondary);
+    max-width: 780px;
+    line-height: 1.7;
+  }
+  .current-tabs {
+    display: flex;
+    gap: 12px;
+    margin-top: 24px;
+    flex-wrap: wrap;
+  }
+  .current-tab {
+    background: var(--govuk-light-grey);
+    border-radius: 8px;
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-secondary);
+  }
+
+  /* ── Model section ── */
+  .model-section {
+    padding: 80px 40px;
+    border-bottom: 1px solid #e0e0e0;
+  }
+  .model-section:nth-child(even) {
+    background: white;
+  }
+
+  .model-header {
+    margin-bottom: 48px;
+  }
+  .model-number {
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--govuk-blue);
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .model-title {
+    font-size: 36px;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+    margin-bottom: 6px;
+  }
+  .model-like {
+    font-size: 16px;
+    color: var(--text-secondary);
+    margin-bottom: 20px;
+    font-style: italic;
+  }
+  .model-description {
+    font-size: 18px;
+    color: var(--text);
+    max-width: 780px;
+    line-height: 1.7;
+  }
+
+  .model-principles {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+    margin: 40px 0;
+  }
+  .principle {
+    background: var(--app-bg);
+    border-radius: 12px;
+    padding: 20px;
+  }
+  .principle-label {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--govuk-blue);
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .principle-value {
+    font-size: 15px;
+    font-weight: 600;
+  }
+
+  /* ── Phone screens ── */
+  .screens-row {
+    display: flex;
+    gap: 40px;
+    overflow-x: auto;
+    padding: 20px 0 40px;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x proximity;
+  }
+  .screen-col {
+    flex: 0 0 auto;
+    scroll-snap-align: start;
+  }
+  .screen-label {
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-secondary);
+    margin-bottom: 12px;
+    text-align: center;
+  }
+  .screen-sublabel {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-top: 12px;
+    text-align: center;
+    max-width: var(--phone-w);
+    line-height: 1.5;
+  }
+
+  /* ── Phone frame ── */
+  .phone {
+    width: var(--phone-w);
+    height: var(--phone-h);
+    background: white;
+    border-radius: 40px;
+    border: 8px solid #1a1a1a;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.15), inset 0 0 0 2px #333;
+  }
+  .phone-notch {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 150px;
+    height: 30px;
+    background: #1a1a1a;
+    border-radius: 0 0 20px 20px;
+    z-index: 10;
+  }
+  .phone-home {
+    position: absolute;
+    bottom: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 134px;
+    height: 5px;
+    background: #1a1a1a;
+    border-radius: 3px;
+    z-index: 10;
+  }
+  .phone-screen {
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+    background: var(--app-bg);
+    position: relative;
+  }
+  .phone-screen::-webkit-scrollbar { display: none; }
+
+  /* ── Common phone UI parts ── */
+  .status-bar {
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 24px;
+    font-size: 14px;
+    font-weight: 600;
+    background: white;
+    position: sticky;
+    top: 0;
+    z-index: 5;
+  }
+  .status-time { font-weight: 700; }
+  .status-icons { font-size: 12px; letter-spacing: 2px; }
+
+  .app-header {
+    background: var(--govuk-dark-blue);
+    color: white;
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 44px;
+    z-index: 5;
+  }
+  .app-header .crown {
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+  }
+  .app-header .avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--govuk-blue);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 700;
+    color: white;
+  }
+
+  .tab-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 80px;
+    background: white;
+    border-top: 1px solid #e0e0e0;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-around;
+    padding-top: 8px;
+    z-index: 5;
+  }
+  .tab-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    font-size: 10px;
+    color: var(--govuk-mid-grey);
+  }
+  .tab-item.active { color: var(--govuk-blue); }
+  .tab-icon {
+    width: 24px;
+    height: 24px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+  }
+  .tab-item.active .tab-icon { background: rgba(29,112,184,0.1); }
+
+  /* ── Content cards ── */
+  .card {
+    background: white;
+    border-radius: var(--card-radius);
+    padding: 16px;
+    margin: 8px 16px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  }
+  .card-sm { padding: 12px 16px; margin: 6px 16px; }
+  .card-title {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .card-subtitle {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.4;
+  }
+  .card-meta {
+    font-size: 12px;
+    color: var(--govuk-mid-grey);
+    margin-top: 8px;
+  }
+
+  .badge {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 10px;
+    margin-left: 6px;
+  }
+  .badge-blue { background: rgba(29,112,184,0.12); color: var(--govuk-blue); }
+  .badge-green { background: rgba(0,112,60,0.12); color: var(--govuk-green); }
+  .badge-amber { background: rgba(255,180,0,0.15); color: #b45309; }
+  .badge-red { background: rgba(212,53,28,0.12); color: var(--govuk-red); }
+
+  .dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: 6px;
+  }
+  .dot-red { background: var(--govuk-red); }
+  .dot-amber { background: #f59e0b; }
+  .dot-green { background: var(--govuk-green); }
+  .dot-blue { background: var(--govuk-blue); }
+
+  .accent-bar {
+    width: 4px;
+    border-radius: 2px;
+    position: absolute;
+    left: 0;
+    top: 12px;
+    bottom: 12px;
+  }
+
+  /* ── Specific patterns ── */
+  .thread-item {
+    display: flex;
+    gap: 14px;
+    padding: 14px 20px;
+    border-bottom: 1px solid #f0f0f0;
+    align-items: flex-start;
+    background: white;
+  }
+  .thread-item:last-child { border-bottom: none; }
+  .thread-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: var(--app-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+  .thread-body { flex: 1; min-width: 0; }
+  .thread-title {
+    font-size: 15px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .thread-preview {
+    font-size: 13px;
+    color: var(--text-secondary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-top: 2px;
+  }
+  .thread-time {
+    font-size: 12px;
+    color: var(--govuk-mid-grey);
+    flex-shrink: 0;
+  }
+  .thread-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+  .thread-badge {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--govuk-blue);
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .chat-bubble {
+    max-width: 80%;
+    padding: 10px 14px;
+    border-radius: 16px;
+    font-size: 14px;
+    line-height: 1.45;
+    margin: 4px 16px;
+  }
+  .chat-user {
+    background: var(--govuk-blue);
+    color: white;
+    margin-left: auto;
+    border-bottom-right-radius: 4px;
+  }
+  .chat-agent {
+    background: white;
+    color: var(--text);
+    border-bottom-left-radius: 4px;
+  }
+
+  .facet-card {
+    background: white;
+    border-radius: var(--card-radius);
+    padding: 16px;
+    margin: 8px 16px;
+    position: relative;
+    overflow: hidden;
+  }
+  .facet-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 10px;
+  }
+  .facet-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+  }
+  .facet-name {
+    font-size: 16px;
+    font-weight: 700;
+  }
+  .facet-status {
+    font-size: 13px;
+    color: var(--text-secondary);
+  }
+  .facet-alert {
+    background: #fef3cd;
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-size: 13px;
+    color: #92400e;
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .facet-alert-urgent {
+    background: #fee2e2;
+    color: #991b1b;
+  }
+
+  .story-strip {
+    display: flex;
+    gap: 16px;
+    padding: 16px 20px;
+    overflow-x: auto;
+  }
+  .story-circle {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+  .story-ring {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    padding: 3px;
+    background: conic-gradient(var(--govuk-blue) 0% var(--ring-pct, 50%), #e0e0e0 var(--ring-pct, 50%) 100%);
+  }
+  .story-inner {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: var(--app-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+  }
+  .story-label {
+    font-size: 11px;
+    font-weight: 600;
+    max-width: 70px;
+    text-align: center;
+    line-height: 1.2;
+    color: var(--text-secondary);
+  }
+
+  .stream-card {
+    background: white;
+    border-radius: var(--card-radius);
+    margin: 8px 16px;
+    overflow: hidden;
+  }
+  .stream-card-inner {
+    padding: 14px 16px;
+  }
+  .stream-card-type {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--govuk-mid-grey);
+    margin-bottom: 6px;
+    font-weight: 600;
+  }
+  .stream-card-title {
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .stream-card-body {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.45;
+  }
+  .stream-card-actions {
+    display: flex;
+    border-top: 1px solid #f0f0f0;
+  }
+  .stream-action {
+    flex: 1;
+    text-align: center;
+    padding: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--govuk-blue);
+    border-right: 1px solid #f0f0f0;
+  }
+  .stream-action:last-child { border-right: none; }
+  .stream-accent {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+  }
+
+  .progress-bar {
+    height: 4px;
+    background: #e0e0e0;
+    border-radius: 2px;
+    overflow: hidden;
+    margin-top: 8px;
+  }
+  .progress-fill {
+    height: 100%;
+    background: var(--govuk-blue);
+    border-radius: 2px;
+  }
+
+  .input-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 16px;
+    background: white;
+    border-top: 1px solid #e0e0e0;
+  }
+  .input-field {
+    flex: 1;
+    background: var(--govuk-light-grey);
+    border-radius: 20px;
+    padding: 10px 16px;
+    font-size: 14px;
+    color: var(--govuk-mid-grey);
+  }
+  .input-send {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--govuk-blue);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 16px;
+  }
+
+  .fab {
+    position: absolute;
+    bottom: 24px;
+    right: 20px;
+    width: 56px;
+    height: 56px;
+    border-radius: 28px;
+    background: var(--govuk-blue);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    box-shadow: 0 4px 16px rgba(29,112,184,0.4);
+    z-index: 4;
+  }
+
+  .section-title {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-secondary);
+    font-weight: 700;
+    padding: 16px 20px 8px;
+  }
+
+  /* ── Overlay sheet ── */
+  .sheet-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    top: 0;
+    background: rgba(0,0,0,0.3);
+    z-index: 6;
+    display: flex;
+    align-items: flex-end;
+  }
+  .sheet {
+    background: white;
+    border-radius: 20px 20px 0 0;
+    width: 100%;
+    max-height: 70%;
+    overflow-y: auto;
+    padding-bottom: 30px;
+  }
+  .sheet-handle {
+    width: 36px;
+    height: 4px;
+    background: #d0d0d0;
+    border-radius: 2px;
+    margin: 10px auto 6px;
+  }
+
+  /* ── inline service ── */
+  .service-inline {
+    background: white;
+    border-radius: 12px;
+    border-left: 4px solid var(--govuk-blue);
+    padding: 12px 14px;
+    margin: 6px 16px;
+    font-size: 13px;
+  }
+  .service-inline-title {
+    font-weight: 700;
+    font-size: 14px;
+    margin-bottom: 2px;
+  }
+  .service-inline-dept {
+    font-size: 12px;
+    color: var(--text-secondary);
+  }
+  .service-inline-status {
+    margin-top: 6px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  /* ── consent card ── */
+  .consent-card {
+    background: white;
+    border: 1.5px solid var(--govuk-blue);
+    border-radius: 12px;
+    padding: 14px;
+    margin: 6px 16px;
+  }
+  .consent-title {
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .consent-body {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-bottom: 10px;
+  }
+  .consent-actions {
+    display: flex;
+    gap: 8px;
+  }
+  .btn {
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    text-align: center;
+  }
+  .btn-primary {
+    background: var(--govuk-blue);
+    color: white;
+  }
+  .btn-secondary {
+    background: var(--govuk-light-grey);
+    color: var(--text);
+  }
+  .btn-green {
+    background: var(--govuk-green);
+    color: white;
+  }
+  .btn-block {
+    display: block;
+    width: 100%;
+    text-align: center;
+  }
+
+  /* ── outcome card ── */
+  .outcome-card {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    margin: 8px 16px;
+  }
+  .outcome-header {
+    background: var(--govuk-dark-blue);
+    color: white;
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .outcome-crown { font-size: 18px; }
+  .outcome-dept { font-size: 14px; font-weight: 700; }
+  .outcome-body { padding: 14px 16px; }
+  .outcome-title { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+  .outcome-detail { font-size: 13px; color: var(--text-secondary); }
+  .outcome-ref {
+    font-size: 12px;
+    color: var(--govuk-mid-grey);
+    margin-top: 8px;
+    font-family: monospace;
+  }
+
+  /* ── profile card ── */
+  .profile-card {
+    background: var(--govuk-dark-blue);
+    color: white;
+    border-radius: var(--card-radius);
+    padding: 20px;
+    margin: 8px 16px;
+  }
+  .profile-name {
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 2px;
+  }
+  .profile-detail {
+    font-size: 13px;
+    opacity: 0.8;
+  }
+  .profile-stats {
+    display: flex;
+    gap: 16px;
+    margin-top: 14px;
+  }
+  .profile-stat {
+    flex: 1;
+    background: rgba(255,255,255,0.12);
+    border-radius: 10px;
+    padding: 10px;
+    text-align: center;
+  }
+  .profile-stat-value {
+    font-size: 20px;
+    font-weight: 700;
+  }
+  .profile-stat-label {
+    font-size: 11px;
+    opacity: 0.7;
+  }
+
+  /* ── Actions needed banner ── */
+  .actions-banner {
+    background: white;
+    border-radius: var(--card-radius);
+    margin: 8px 16px;
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .actions-count {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--govuk-red);
+    color: white;
+    font-size: 18px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .actions-text {
+    font-size: 15px;
+    font-weight: 600;
+  }
+  .actions-sub {
+    font-size: 13px;
+    color: var(--text-secondary);
+  }
+
+  /* ── Priority card ── */
+  .priority-card {
+    background: white;
+    border-radius: var(--card-radius);
+    margin: 6px 16px;
+    padding: 14px 16px;
+    border-left: 4px solid var(--govuk-red);
+  }
+  .priority-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--govuk-red);
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .priority-title {
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 2px;
+  }
+  .priority-body {
+    font-size: 13px;
+    color: var(--text-secondary);
+  }
+  .priority-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+  }
+
+  /* ── Journey inline ── */
+  .journey-strip {
+    background: white;
+    border-radius: var(--card-radius);
+    margin: 8px 16px;
+    padding: 14px 16px;
+  }
+  .journey-title {
+    font-size: 15px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .journey-sub {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-top: 2px;
+  }
+
+  /* ── context panel ── */
+  .context-panel {
+    background: var(--govuk-light-grey);
+    padding: 16px;
+  }
+  .context-section {
+    margin-bottom: 14px;
+  }
+  .context-section-title {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--text-secondary);
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+
+  /* ── Transition arrow ── */
+  .transition-arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px 0;
+    color: var(--govuk-mid-grey);
+    font-size: 24px;
+  }
+  .transition-label {
+    font-size: 12px;
+    color: var(--text-secondary);
+    text-align: center;
+    margin-top: -12px;
+    margin-bottom: 8px;
+  }
+
+  /* ── Mapping table ── */
+  .mapping-section {
+    margin-top: 40px;
+  }
+  .mapping-table {
+    width: 100%;
+    max-width: 800px;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+  .mapping-table th {
+    text-align: left;
+    padding: 10px 16px;
+    border-bottom: 2px solid var(--text);
+    font-weight: 700;
+  }
+  .mapping-table td {
+    padding: 10px 16px;
+    border-bottom: 1px solid #e0e0e0;
+    vertical-align: top;
+  }
+  .mapping-table tr:last-child td { border-bottom: none; }
+  .mapping-from {
+    color: var(--text-secondary);
+    text-decoration: line-through;
+  }
+
+  /* ── Comparison section ── */
+  .comparison {
+    padding: 80px 40px;
+    background: var(--govuk-dark-blue);
+    color: white;
+  }
+  .comparison h2 {
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 40px;
+  }
+  .comparison-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 24px;
+  }
+  .comparison-card {
+    background: rgba(255,255,255,0.08);
+    border-radius: var(--card-radius);
+    padding: 24px;
+  }
+  .comparison-card h3 {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 16px;
+  }
+  .comparison-card p {
+    font-size: 15px;
+    opacity: 0.85;
+    line-height: 1.6;
+  }
+  .comparison-card .comp-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    font-size: 14px;
+  }
+  .comparison-card .comp-row:last-child { border-bottom: none; }
+  .comp-label { opacity: 0.7; }
+
+  /* ── Responsive ── */
+  @media (max-width: 900px) {
+    .page-header { padding: 40px 20px 40px; }
+    .page-header h1 { font-size: 28px; }
+    .page-header .subtitle { font-size: 16px; }
+    .current-state, .model-section { padding: 40px 20px; }
+    .model-title { font-size: 28px; }
+    .screens-row { gap: 24px; }
+    .comparison { padding: 40px 20px; }
+  }
+
+  .pinned-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--govuk-blue);
+    font-weight: 700;
+    padding: 12px 20px 4px;
+  }
+
+  .new-convo-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 20px;
+    margin: 8px 16px;
+    background: white;
+    border-radius: 24px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  }
+  .new-convo-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--govuk-blue);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: 300;
+  }
+  .new-convo-text {
+    font-size: 14px;
+    color: var(--govuk-mid-grey);
+  }
+
+  .plan-progress-header {
+    background: white;
+    margin: 8px 16px;
+    border-radius: 12px;
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .plan-progress-icon {
+    font-size: 28px;
+  }
+  .plan-progress-text {
+    flex: 1;
+  }
+  .plan-progress-title {
+    font-size: 15px;
+    font-weight: 700;
+  }
+  .plan-progress-sub {
+    font-size: 13px;
+    color: var(--text-secondary);
+  }
+  .plan-progress-chevron {
+    color: var(--govuk-mid-grey);
+    font-size: 18px;
+  }
+
+  .credential-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 20px;
+    border-bottom: 1px solid #f0f0f0;
+    background: white;
+  }
+  .credential-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: var(--app-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+  }
+  .credential-name {
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .credential-issuer {
+    font-size: 12px;
+    color: var(--text-secondary);
+  }
+
+  /* ── Recommended model ── */
+  .recommended-section {
+    padding: 80px 40px;
+    border-bottom: 1px solid #e0e0e0;
+    background: white;
+  }
+  .recommended-badge {
+    display: inline-block;
+    background: var(--govuk-green);
+    color: white;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    padding: 4px 14px;
+    border-radius: 4px;
+    margin-bottom: 12px;
+  }
+  .recommended-section .model-title {
+    font-size: 40px;
+  }
+  .rationale {
+    max-width: 780px;
+    margin: 32px 0 0;
+  }
+  .rationale p {
+    font-size: 17px;
+    color: var(--text);
+    line-height: 1.7;
+    margin-bottom: 16px;
+  }
+  .rationale strong {
+    color: var(--text);
+  }
+  .ingredients {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 20px;
+    margin: 32px 0 48px;
+  }
+  .ingredient {
+    border-radius: 12px;
+    padding: 20px;
+    border: 1px solid #e0e0e0;
+  }
+  .ingredient-source {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .ingredient-source-mirror { color: var(--govuk-green); }
+  .ingredient-source-journal { color: var(--govuk-blue); }
+  .ingredient-source-stream { color: #7c3aed; }
+  .ingredient-title {
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .ingredient-desc {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.5;
+  }
+  .why-list {
+    list-style: none;
+    padding: 0;
+    margin: 24px 0;
+    max-width: 780px;
+  }
+  .why-list li {
+    padding: 12px 0;
+    border-bottom: 1px solid #f0f0f0;
+    font-size: 16px;
+    line-height: 1.6;
+  }
+  .why-list li:last-child { border-bottom: none; }
+  .why-label {
+    font-weight: 700;
+    color: var(--govuk-dark-blue);
+  }
+
+  .alt-section-divider {
+    padding: 60px 40px 20px;
+    border-bottom: 1px solid #e0e0e0;
+    background: var(--govuk-light-grey);
+  }
+  .alt-section-divider h2 {
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text-secondary);
+    font-weight: 700;
+  }
+  .alt-section-divider p {
+    font-size: 16px;
+    color: var(--text-secondary);
+    margin-top: 8px;
+    max-width: 700px;
+  }
+</style>
+<script async defer src="https://scripts.withcabin.com/hello.js"></script>
+</head>
+<body>
+
+<div style="background:#fff;border-bottom:1px solid #d1d5db;padding:0.6rem 1.5rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;">
+  <span style="font-weight:700;font-size:0.95rem;color:#0b0c0c;font-family:'Inter',sans-serif;">Agentic Legibility Stack</span>
+  <a href="index.html" style="font-size:0.85rem;font-weight:500;color:#505a5f;text-decoration:none;font-family:'Inter',sans-serif;">All documents</a>
+</div>
+
+<!-- ════════════════════════════════════════════ -->
+<!-- HEADER                                       -->
+<!-- ════════════════════════════════════════════ -->
+<header class="page-header">
+  <h1>Four interaction models for the citizen app</h1>
+  <p class="subtitle">Exploring how identity-first, conversation-first, and feed-first architectures could reshape the way citizens interact with government services — and a recommended hybrid that takes the best of each.</p>
+</header>
+
+<!-- ════════════════════════════════════════════ -->
+<!-- CURRENT STATE                                -->
+<!-- ════════════════════════════════════════════ -->
+<section class="current-state">
+  <h2>Where we are today</h2>
+  <h3>Tab-based, section-by-section, service-oriented</h3>
+  <p>The current app uses a traditional four-tab structure: Home, Chat, To-do, and Wallet. Despite having transformational agentic capabilities — life event detection, cross-service field merging, delegated action, proactive eligibility — the interaction model still organises itself around government's taxonomy. Services live in one tab, conversations in another, tasks in a third. The agentic loop is fractured across views.</p>
+  <div class="current-tabs">
+    <div class="current-tab">🏠 Home</div>
+    <div class="current-tab">💬 Chat</div>
+    <div class="current-tab">✓ To do</div>
+    <div class="current-tab">👛 Wallet</div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════ -->
+<!-- RECOMMENDED: THE MIRROR HYBRID               -->
+<!-- ════════════════════════════════════════════ -->
+<section class="recommended-section">
+  <div class="model-header">
+    <div class="recommended-badge">Recommended</div>
+    <h2 class="model-title">The Mirror</h2>
+    <p class="model-like">The Mirror's identity-first foundation + the Journal's conversation depth + the Stream's story progression</p>
+    <p class="model-description">You open the app and see your life — your family, your money, your health, your vehicles. Government is invisible infrastructure. Conversations open from data points and live inside your life facets, with the depth and persistence of full threads. Life event journeys unfold as swipeable stories. No tabs. No service directory. Just you, your circumstances, and an agent that wraps government around your needs.</p>
+  </div>
+
+  <div class="ingredients">
+    <div class="ingredient">
+      <div class="ingredient-source ingredient-source-mirror">From the Mirror</div>
+      <div class="ingredient-title">Your life is the home screen</div>
+      <div class="ingredient-desc">Life facets — my family, my money, my vehicles — organised around YOUR categories, not government departments. Data-driven alerts surface what needs attention.</div>
+    </div>
+    <div class="ingredient">
+      <div class="ingredient-source ingredient-source-journal">From the Journal</div>
+      <div class="ingredient-title">Conversations with depth</div>
+      <div class="ingredient-desc">Conversations persist, can be resumed, and carry full context — inline service cards, consent panels, task cards, outcome cards. Not disposable sheets.</div>
+    </div>
+    <div class="ingredient">
+      <div class="ingredient-source ingredient-source-stream">From the Stream</div>
+      <div class="ingredient-title">Story progression for journeys</div>
+      <div class="ingredient-desc">Life event plans unfold as swipeable full-screen stories. Each service is a card you swipe through — satisfying, informative, and more engaging than a list.</div>
+    </div>
+  </div>
+
+  <div class="rationale">
+    <p><strong>Why this combination?</strong> People don't open a government app to browse or scroll a feed. They come because something happened — they're pregnant, someone died, a deadline is approaching. They come with purpose, often stressed, often unfamiliar with what's available. The Mirror starts from that truth: here's your life, here's what needs attention, here's what you're entitled to that you're not getting.</p>
+    <p>But a pure Mirror risks shallow interactions. Contextual sheets that disappear after use lose the continuity that complex government journeys demand. That's where the Journal's conversation depth matters — when Priya talks about Universal Credit, that conversation persists inside her "my money" facet. She can find it, resume it, see the history. The context surrounds the conversation.</p>
+    <p>And the Stream's story progression makes life events — the most transformational capability in the app — feel tangible and satisfying. Swiping through "Having a baby" and seeing each service as a full-screen card, with status and outcomes, is fundamentally more engaging than a checklist.</p>
+  </div>
+
+  <ul class="why-list">
+    <li><span class="why-label">Works for everyone.</span> A 19-year-old new mum sees "my family" and "my money" and immediately understands. A 72-year-old widower sees an alert. No text box to stare at, no feed to scroll past.</li>
+    <li><span class="why-label">Solves discoverability.</span> Services surface as "you could get" suggestions anchored to your circumstances inside facets — not as a catalogue to browse or a prompt to guess.</li>
+    <li><span class="why-label">Handles cold start.</span> Even with minimal data, "my family", "my money", "my health" are meaningful categories. The structure exists before the data does.</li>
+    <li><span class="why-label">Matches intent.</span> People come to government with purpose. The alert model — red dot on vehicles, amber suggestion on money — matches episodic, purposeful engagement.</li>
+    <li><span class="why-label">Closest to the current code.</span> The data, APIs, and orchestration layer are untouched. It's a frontend refactor of how the same features are assembled, not a rebuild.</li>
+  </ul>
+
+  <div class="screens-row">
+    <!-- Screen 1: Home — You -->
+    <div class="screen-col">
+      <div class="screen-label">Home — you</div>
+      <div class="phone">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="status-bar">
+            <span class="status-time">9:41</span>
+            <span class="status-icons">📶 🔋</span>
+          </div>
+          <div class="app-header">
+            <span class="crown">GOV.UK</span>
+            <span class="avatar">PA</span>
+          </div>
+
+          <div class="profile-card">
+            <div class="profile-name">Priya Anand</div>
+            <div class="profile-detail">32 · Lives in Hackney · Self-employed</div>
+            <div class="profile-stats">
+              <div class="profile-stat">
+                <div class="profile-stat-value">3</div>
+                <div class="profile-stat-label">Need attention</div>
+              </div>
+              <div class="profile-stat">
+                <div class="profile-stat-value">4</div>
+                <div class="profile-stat-label">In progress</div>
+              </div>
+              <div class="profile-stat">
+                <div class="profile-stat-value">7</div>
+                <div class="profile-stat-label">Documents</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Active journey as story strip -->
+          <div style="padding:4px 16px 0">
+            <div style="display:flex;gap:14px;align-items:center">
+              <div class="story-circle">
+                <div class="story-ring" style="--ring-pct:57%">
+                  <div class="story-inner">👶</div>
+                </div>
+                <div class="story-label">Having a baby</div>
+              </div>
+              <div style="flex:1">
+                <div style="font-size:15px;font-weight:700">Having a baby</div>
+                <div style="font-size:13px;color:var(--text-secondary)">4 of 7 services complete</div>
+                <div class="progress-bar"><div class="progress-fill" style="width:57%"></div></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="facet-card">
+            <div class="facet-header">
+              <div class="facet-icon" style="background:#e0f2fe">👨‍👩‍👦</div>
+              <div>
+                <div class="facet-name">My family</div>
+                <div class="facet-status">Partner: Raj · Milo (18m) · Baby due Aug</div>
+              </div>
+            </div>
+            <div class="facet-alert">
+              ⚡ Baby due in 4 months — 3 services remaining
+            </div>
+          </div>
+
+          <div class="facet-card">
+            <div class="facet-header">
+              <div class="facet-icon" style="background:#dcfce7">💷</div>
+              <div>
+                <div class="facet-name">My money</div>
+                <div class="facet-status">Income: £24,000 · Child Benefit: £25.60/wk</div>
+              </div>
+            </div>
+            <div class="facet-alert">
+              💡 You may be eligible for Universal Credit — worth £393/month
+            </div>
+          </div>
+
+          <div class="facet-card">
+            <div class="facet-header">
+              <div class="facet-icon" style="background:#fef3c7">🚗</div>
+              <div>
+                <div class="facet-name">My vehicles</div>
+                <div class="facet-status">Honda Civic · HJ18 XYZ</div>
+              </div>
+            </div>
+            <div class="facet-alert facet-alert-urgent">
+              🔴 MOT expires 15 May — 14 days
+            </div>
+          </div>
+
+          <div class="facet-card">
+            <div class="facet-header">
+              <div class="facet-icon" style="background:#fce7f3">💊</div>
+              <div>
+                <div class="facet-name">My health</div>
+                <div class="facet-status">GP: Dr Patel · Maternity exemption active</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="facet-card" style="opacity:0.7">
+            <div class="facet-header">
+              <div class="facet-icon" style="background:#f3e8ff">📄</div>
+              <div>
+                <div class="facet-name">My documents</div>
+                <div class="facet-status">3 identity · 4 earned credentials</div>
+              </div>
+            </div>
+          </div>
+
+          <div style="height:20px"></div>
+          <div class="fab">💬</div>
+        </div>
+        <div class="phone-home"></div>
+      </div>
+      <p class="screen-sublabel">Home screen: your life, reflected back. Life facets with data-driven alerts. Active journeys as story circles. Floating conversation button for open-ended questions.</p>
+    </div>
+
+    <!-- Screen 2: Facet with persistent conversations -->
+    <div class="screen-col">
+      <div class="screen-label">Inside a facet</div>
+      <div class="phone">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="status-bar">
+            <span class="status-time">9:41</span>
+            <span class="status-icons">📶 🔋</span>
+          </div>
+          <div class="app-header">
+            <span style="font-size:16px">‹ Home</span>
+            <span class="crown">My money</span>
+            <span class="avatar">PA</span>
+          </div>
+
+          <div class="card" style="margin-top:12px">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start">
+              <div>
+                <div style="font-size:13px;color:var(--text-secondary)">Household income</div>
+                <div style="font-size:28px;font-weight:700">£24,000</div>
+                <div style="font-size:13px;color:var(--text-secondary)">Self-employed · Tax code: 1257L</div>
+              </div>
+              <div style="font-size:32px">💷</div>
+            </div>
+          </div>
+
+          <div class="section-title">Currently receiving</div>
+          <div class="card-sm" style="display:flex;align-items:center;gap:10px">
+            <span style="color:var(--govuk-green)">✓</span>
+            <div><div style="font-size:14px;font-weight:600">Child Benefit</div><div style="font-size:12px;color:var(--text-secondary)">£25.60/week · HMRC</div></div>
+          </div>
+          <div class="card-sm" style="display:flex;align-items:center;gap:10px">
+            <span style="color:var(--govuk-green)">✓</span>
+            <div><div style="font-size:14px;font-weight:600">Tax-Free Childcare</div><div style="font-size:12px;color:var(--text-secondary)">£2,000/year · HMRC</div></div>
+          </div>
+
+          <div class="section-title">You could get</div>
+          <div class="card" style="border-left:4px solid var(--govuk-blue)">
+            <div style="font-size:15px;font-weight:700;margin-bottom:4px">Universal Credit</div>
+            <div style="font-size:13px;color:var(--text-secondary);margin-bottom:10px">Based on your income and family, you could receive up to £393.45 per month.</div>
+            <div style="display:flex;gap:8px">
+              <div class="btn btn-primary">Ask agent to apply</div>
+              <div class="btn btn-secondary">Tell me more</div>
+            </div>
+          </div>
+
+          <div class="section-title">Conversations</div>
+          <div class="card-sm" style="display:flex;align-items:center;gap:10px">
+            <span>💬</span>
+            <div style="flex:1"><div style="font-size:14px;font-weight:600">Sure Start Grant</div><div style="font-size:12px;color:var(--text-secondary)">Completed · £500 issued · 12 Mar</div></div>
+            <span style="color:var(--govuk-mid-grey)">›</span>
+          </div>
+          <div class="card-sm" style="display:flex;align-items:center;gap:10px">
+            <span>💬</span>
+            <div style="flex:1"><div style="font-size:14px;font-weight:600">Free school meals</div><div style="font-size:12px;color:var(--text-secondary)">In progress · Checking eligibility</div></div>
+            <span style="color:var(--govuk-mid-grey)">›</span>
+          </div>
+
+          <div style="height:20px"></div>
+          <div class="fab">💬</div>
+        </div>
+        <div class="phone-home"></div>
+      </div>
+      <p class="screen-sublabel">Inside a facet: your data, what you're receiving, what you could get, and persistent conversations. Conversations live here — not in a separate tab. Tap one to resume it.</p>
+    </div>
+
+    <!-- Screen 3: Deep conversation (Journal depth) -->
+    <div class="screen-col">
+      <div class="screen-label">Conversation depth</div>
+      <div class="phone">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="status-bar">
+            <span class="status-time">9:41</span>
+            <span class="status-icons">📶 🔋</span>
+          </div>
+          <div class="app-header">
+            <span style="font-size:16px">‹ My money</span>
+            <span class="crown">Universal Credit</span>
+            <span class="avatar">PA</span>
+          </div>
+
+          <div class="chat-bubble chat-agent">Based on your household income of £24,000, your family of 3 — soon to be 4 — and your self-employment, you'd likely qualify for around £393.45 per month.</div>
+
+          <div class="chat-bubble chat-user">Would that affect my Tax-Free Childcare?</div>
+
+          <div class="chat-bubble chat-agent">No — you can receive both. They're compatible benefits. Universal Credit and Tax-Free Childcare work alongside each other.</div>
+
+          <div class="chat-bubble chat-agent">To apply, I need to share some of your details with DWP. I already have most of what's needed from your other applications. I'd just need your bank sort code and account number.</div>
+
+          <div class="consent-card">
+            <div class="consent-title">Share data with DWP</div>
+            <div class="consent-body">Name, NI number, income, address, family details. Used to process your Universal Credit claim.</div>
+            <div class="consent-actions">
+              <div class="btn btn-primary">Allow and apply</div>
+              <div class="btn btn-secondary">Not now</div>
+            </div>
+          </div>
+
+          <div style="padding:8px 16px">
+            <div style="font-size:12px;color:var(--govuk-mid-grey);text-align:center">This conversation is part of your <strong style="color:var(--text)">my money</strong> facet</div>
+          </div>
+
+          <div style="height:60px"></div>
+          <div style="position:absolute;bottom:0;left:0;right:0">
+            <div class="input-bar">
+              <div class="input-field">Ask a question…</div>
+              <div class="input-send">↑</div>
+            </div>
+          </div>
+        </div>
+        <div class="phone-home"></div>
+      </div>
+      <p class="screen-sublabel">Full-depth conversations, not disposable sheets. Inline consent, task cards, and outcomes — the same richness as the Journal model. But anchored to a facet, with a breadcrumb back to "my money."</p>
+    </div>
+
+    <!-- Screen 4: Story progression (from Stream) -->
+    <div class="screen-col">
+      <div class="screen-label">Journey stories</div>
+      <div class="phone">
+        <div class="phone-notch"></div>
+        <div class="phone-screen" style="background:var(--govuk-dark-blue)">
+          <div class="status-bar" style="background:transparent;color:white">
+            <span class="status-time" style="color:white">9:41</span>
+            <span class="status-icons">📶 🔋</span>
+          </div>
+
+          <div style="display:flex;gap:4px;padding:8px 16px">
+            <div style="flex:1;height:3px;background:white;border-radius:2px"></div>
+            <div style="flex:1;height:3px;background:white;border-radius:2px"></div>
+            <div style="flex:1;height:3px;background:white;border-radius:2px"></div>
+            <div style="flex:1;height:3px;background:white;border-radius:2px"></div>
+            <div style="flex:1;height:3px;background:rgba(255,255,255,0.3);border-radius:2px"></div>
+            <div style="flex:1;height:3px;background:rgba(255,255,255,0.3);border-radius:2px"></div>
+            <div style="flex:1;height:3px;background:rgba(255,255,255,0.3);border-radius:2px"></div>
+          </div>
+
+          <div style="display:flex;justify-content:space-between;padding:12px 20px;color:white">
+            <span style="font-size:14px;font-weight:600">👶 Having a baby</span>
+            <span style="font-size:14px;opacity:0.7">✕</span>
+          </div>
+
+          <div style="flex:1;display:flex;align-items:center;justify-content:center;padding:0 20px">
+            <div style="background:white;border-radius:20px;padding:28px 24px;width:100%;text-align:center">
+              <div style="font-size:40px;margin-bottom:12px">💰</div>
+              <div style="font-size:12px;color:var(--govuk-green);font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Approved</div>
+              <div style="font-size:22px;font-weight:700;margin-bottom:4px">Tax-Free Childcare</div>
+              <div style="font-size:15px;color:var(--text-secondary);margin-bottom:20px">£2,000 per year towards childcare for Milo</div>
+
+              <div style="background:var(--govuk-light-grey);border-radius:12px;padding:14px;text-align:left;margin-bottom:16px">
+                <div style="font-size:13px;color:var(--text-secondary);margin-bottom:4px">Details</div>
+                <div style="font-size:14px;font-weight:600">HMRC · Account opened</div>
+                <div style="font-size:13px;color:var(--text-secondary)">Top up £8 for every £2 from government</div>
+              </div>
+
+              <div class="btn btn-primary btn-block">View credential</div>
+              <div style="margin-top:10px">
+                <div class="btn btn-secondary btn-block">See conversation</div>
+              </div>
+            </div>
+          </div>
+
+          <div style="text-align:center;padding:20px;color:white;opacity:0.6;font-size:13px">
+            Swipe for next service →
+          </div>
+        </div>
+        <div class="phone-home"></div>
+      </div>
+      <p class="screen-sublabel">Life event journeys as swipeable stories. Tap the story circle on the home screen, swipe through each service — completed, in-progress, available. Tap any card to see the conversation.</p>
+    </div>
+
+    <!-- Screen 5: Proactive conversation from alert -->
+    <div class="screen-col">
+      <div class="screen-label">Alert → conversation</div>
+      <div class="phone">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="status-bar">
+            <span class="status-time">9:41</span>
+            <span class="status-icons">📶 🔋</span>
+          </div>
+          <div class="app-header">
+            <span style="font-size:16px">‹ My vehicles</span>
+            <span class="crown">MOT expiring</span>
+            <span class="avatar">PA</span>
+          </div>
+
+          <div style="padding:10px 16px">
+            <div style="font-size:11px;color:var(--govuk-red);font-weight:600;text-transform:uppercase;letter-spacing:0.8px;text-align:center;margin-bottom:4px">Started from alert · Honda Civic</div>
+          </div>
+
+          <div class="chat-bubble chat-agent">Your Honda Civic's MOT expires on 15 May — that's 14 days away. You can't legally drive without a valid MOT after that date.</div>
+
+          <div class="chat-bubble chat-agent">I can find approved MOT stations near your home in Hackney and book you a slot. Want me to do that?</div>
+
+          <div style="display:flex;gap:8px;margin:8px 16px">
+            <div class="btn btn-primary" style="flex:1">Find me a station</div>
+            <div class="btn btn-secondary" style="flex:1">I'll sort it</div>
+          </div>
+
+          <div class="chat-bubble chat-user">Find me a station please</div>
+
+          <div class="chat-bubble chat-agent">I found 3 MOT stations within 2 miles. Here's the earliest:</div>
+
+          <div class="card" style="margin:8px 16px">
+            <div style="font-size:14px;font-weight:700">Halfords Autocentre — Dalston</div>
+            <div style="font-size:13px;color:var(--text-secondary)">0.8 miles · 8 May, 10:30am · £35</div>
+            <div class="btn btn-primary" style="margin-top:10px;display:inline-block">Book this slot</div>
+          </div>
+
+          <div class="card" style="margin:8px 16px;opacity:0.6">
+            <div style="font-size:14px;font-weight:700">Quick Fit — Hackney</div>
+            <div style="font-size:13px;color:var(--text-secondary)">1.2 miles · 9 May, 2:00pm · £40</div>
+          </div>
+
+          <div style="height:60px"></div>
+          <div style="position:absolute;bottom:0;left:0;right:0">
+            <div class="input-bar">
+              <div class="input-field">Type a message…</div>
+              <div class="input-send">↑</div>
+            </div>
+          </div>
+        </div>
+        <div class="phone-home"></div>
+      </div>
+      <p class="screen-sublabel">Alerts on facets open conversations. Tapping "MOT expires 15 May" on the vehicles facet starts a scoped conversation. It persists — come back to it from "my vehicles" any time.</p>
+    </div>
+
+    <!-- Screen 6: Documents facet -->
+    <div class="screen-col">
+      <div class="screen-label">My documents</div>
+      <div class="phone">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="status-bar">
+            <span class="status-time">9:41</span>
+            <span class="status-icons">📶 🔋</span>
+          </div>
+          <div class="app-header">
+            <span style="font-size:16px">‹ Home</span>
+            <span class="crown">My documents</span>
+            <span class="avatar">PA</span>
+          </div>
+
+          <div style="padding:16px 20px 8px">
+            <div style="font-size:13px;color:var(--text-secondary)">Everything government holds about you or has issued to you.</div>
+          </div>
+
+          <div class="section-title">Identity</div>
+          <div class="credential-row">
+            <div class="credential-icon">🪪</div>
+            <div style="flex:1"><div class="credential-name">Driving licence</div><div class="credential-issuer">DVLA · Full · Expires 2034</div></div>
+            <span style="color:var(--govuk-green);font-size:12px;font-weight:600">Verified</span>
+          </div>
+          <div class="credential-row">
+            <div class="credential-icon">🔢</div>
+            <div style="flex:1"><div class="credential-name">National Insurance</div><div class="credential-issuer">HMRC · QQ 12 34 56 C</div></div>
+            <span style="color:var(--govuk-green);font-size:12px;font-weight:600">Verified</span>
+          </div>
+          <div class="credential-row">
+            <div class="credential-icon">🛂</div>
+            <div style="flex:1"><div class="credential-name">Passport</div><div class="credential-issuer">HMPO · Expires Nov 2027</div></div>
+            <span style="color:var(--govuk-green);font-size:12px;font-weight:600">Verified</span>
+          </div>
+
+          <div class="section-title">Earned from services</div>
+          <div class="credential-row">
+            <div class="credential-icon">💰</div>
+            <div style="flex:1"><div class="credential-name">Tax-Free Childcare</div><div class="credential-issuer">HMRC · £2,000/year · Active</div></div>
+          </div>
+          <div class="credential-row">
+            <div class="credential-icon">💊</div>
+            <div style="flex:1"><div class="credential-name">Maternity exemption</div><div class="credential-issuer">NHS · Until Jul 2027</div></div>
+          </div>
+          <div class="credential-row">
+            <div class="credential-icon">👶</div>
+            <div style="flex:1"><div class="credential-name">Sure Start Grant</div><div class="credential-issuer">DWP · £500 · SSG-90412</div></div>
+          </div>
+
+          <div class="section-title">Who has your data</div>
+          <div class="credential-row">
+            <div class="credential-icon">🏛</div>
+            <div style="flex:1"><div class="credential-name">HMRC</div><div class="credential-issuer">Identity, income, bank details</div></div>
+            <span style="font-size:12px;color:var(--govuk-blue);font-weight:600">Manage</span>
+          </div>
+          <div class="credential-row">
+            <div class="credential-icon">🏛</div>
+            <div style="flex:1"><div class="credential-name">DWP</div><div class="credential-issuer">Identity, address, family</div></div>
+            <span style="font-size:12px;color:var(--govuk-blue);font-weight:600">Manage</span>
+          </div>
+          <div class="credential-row">
+            <div class="credential-icon">🏛</div>
+            <div style="flex:1"><div class="credential-name">DfE</div><div class="credential-issuer">Income, child details</div></div>
+            <span style="font-size:12px;color:var(--govuk-blue);font-weight:600">Manage</span>
+          </div>
+
+          <div style="height:20px"></div>
+        </div>
+        <div class="phone-home"></div>
+      </div>
+      <p class="screen-sublabel">Documents as a life facet, not a separate wallet tab. Identity, earned credentials, and a full audit of who has your data — with revocation controls.</p>
+    </div>
+  </div>
+
+  <div class="mapping-section">
+    <h3 style="font-size:20px;font-weight:700;margin-bottom:16px">How current features map</h3>
+    <table class="mapping-table">
+      <tr><th>Current feature</th><th>In the Mirror hybrid</th></tr>
+      <tr><td class="mapping-from">Dashboard with service categories</td><td>Life facet cards organised around your life, not departments</td></tr>
+      <tr><td class="mapping-from">Chat tab (separate, single conversation)</td><td>Persistent conversations inside facets — full depth, resumable</td></tr>
+      <tr><td class="mapping-from">Plan view (separate tab)</td><td>Swipeable story progression from home screen story circles</td></tr>
+      <tr><td class="mapping-from">Tasks view (separate tab)</td><td>Alerts on relevant facets + action buttons within facet detail</td></tr>
+      <tr><td class="mapping-from">Wallet tab</td><td>"My documents" life facet with credentials and consent audit</td></tr>
+      <tr><td class="mapping-from">Services browse</td><td>Eliminated — services surface as "you could get" inside facets</td></tr>
+      <tr><td class="mapping-from">Bottom tab bar (4 tabs)</td><td>Eliminated — life facets + story strip + conversation FAB</td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════ -->
+<!-- ALTERNATIVES DIVIDER                         -->
+<!-- ════════════════════════════════════════════ -->
+<section class="alt-section-divider">
+  <h2>The three alternatives explored</h2>
+  <p>Each of these models contributed ideas to the recommended hybrid above. They're shown here in full to illustrate the thinking behind each approach and the trade-offs involved.</p>
+</section>
+
+<!-- ════════════════════════════════════════════ -->
+<!-- MODEL 1: THE JOURNAL                         -->
+<!-- ════════════════════════════════════════════ -->
+<section class="model-section">
+  <div class="model-header">
+    <div class="model-number">Model 1</div>
+    <h2 class="model-title">The Journal</h2>
+    <p class="model-like">Like Claude + iMessage + a case worker's notebook</p>
+    <p class="model-description">Conversations are the entire app. Your relationship with government is a series of threads — some brief, some spanning months. Plans, tasks, credentials, and consent all live inside conversations, not in separate tabs. There is no service directory because you never browse; you just talk. The agent initiates threads proactively when something needs attention.</p>
+  </div>
+
+  <div class="model-principles">
+    <div class="principle">
+      <div class="principle-label">Home screen</div>
+      <div class="principle-value">Conversation threads</div>
+    </div>
+    <div class="principle">
+      <div class="principle-label">Navigation</div>
+      <div class="principle-value">Thread list → thread</div>
+    </div>
+    <div class="principle">
+      <div class="principle-label">Service discovery</div>
+      <div class="principle-value">Agent-initiated threads</div>
+    </div>
+    <div class="principle">
+      <div class="principle-label">Tab bar</div>
+      <div class="principle-value">Eliminated</div>
+    </div>
+    <div class="principle">
+      <div class="principle-label">Primary gesture</div>
+      <div class="principle-value">Tap to open, type to act</div>
+    </div>
+  </div>
+
+  <div class="screens-row">
+    <!-- Screen 1: Thread list -->
+    <div class="screen-col">
+      <div class="screen-label">Thread list</div>
+      <div class="phone">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="status-bar">
+            <span class="status-time">9:41</span>
+            <span class="status-icons">📶 🔋</span>
+          </div>
+          <div class="app-header">
+            <span class="crown">GOV.UK</span>
+            <span class="avatar">PA</span>
+          </div>
+
+          <div class="new-convo-bar">
+            <div class="new-convo-icon">+</div>
+            <div class="new-convo-text">New conversation…</div>
+          </div>
+
+          <div class="pinned-label">📌 Active journeys</div>
+
+          <div class="thread-item">
+            <div class="thread-icon">👶</div>
+            <div class="thread-body">
+              <div class="thread-title">Having a baby <span class="badge badge-blue">4/7</span></div>
+              <div class="thread-preview">Tax-Free Childcare approved — £2,000/year</div>
+            </div>
+            <div class="thread-right">
+              <span class="thread-time">2h ago</span>
+              <span class="thread-badge">2</span>
+            </div>
+          </div>
+
+          <div class="section-title">Recent</div>
+
+          <div class="thread-item">
+            <div class="thread-icon" style="background:#fee2e2">⚡</div>
+            <div class="thread-body">
+              <div class="thread-title"><span class="dot dot-red"></span>MOT expiring</div>
+              <div class="thread-preview">Your MOT expires 15 May — want me to find a station?</div>
+            </div>
+            <div class="thread-right">
+              <span class="thread-time">Today</span>
+            </div>
+          </div>
+
+          <div class="thread-item">
+            <div class="thread-icon">💰</div>
+            <div class="thread-body">
+              <div class="thread-title">Money worries</div>
+              <div class="thread-preview">Agent applied for Sure Start Maternity Grant</div>
+            </div>
+            <div class="thread-right">
+              <span class="thread-time">Yesterday</span>
+            </div>
+          </div>
+
+          <div class="thread-item">
+            <div class="thread-icon">🏠</div>
+            <div class="thread-body">
+              <div class="thread-title">Council tax</div>
+              <div class="thread-preview">Your council tax band is correct — Band D</div>
+            </div>
+            <div class="thread-right">
+              <span class="thread-time">3 days</span>
+            </div>
+          </div>
+
+          <div class="thread-item" style="opacity:0.6">
+            <div class="thread-icon">📋</div>
+            <div class="thread-body">
+              <div class="thread-title">Child benefit</div>
+              <div class="thread-preview">Receiving £25.60/week for Milo — all up to date</div>
+            </div>
+            <div class="thread-right">
+              <span class="thread-time">1 week</span>
+            </div>
+          </div>
+
+          <div class="thread-item" style="opacity:0.6">
+            <div class="thread-icon">🚗</div>
+            <div class="thread-body">
+              <div class="thread-title">Honda Civic</div>
+              <div class="thread-preview">Road tax renewed until March 2027</div>
+            </div>
+            <div class="thread-right">
+              <span class="thread-time">2 weeks</span>
+            </div>
+          </div>
+
+          <div class="thread-item" style="opacity:0.5">
+            <div class="thread-icon">💊</div>
+            <div class="thread-body">
+              <div class="thread-title">Maternity exemption</div>
+              <div class="thread-preview">Certificate issued — free prescriptions until July 2027</div>
+            </div>
+            <div class="thread-right">
+              <span class="thread-time">3 weeks</span>
+            </div>
+          </div>
+        </div>
+        <div class="phone-home"></div>
+      </div>
+      <p class="screen-sublabel">Home screen. All conversations, sorted by recency. Pinned journeys at top. Agent-initiated threads appear with urgency indicators.</p>
+    </div>
+
+    <!-- Screen 2: Conversation thread -->
+    <div class="screen-col">
+      <div class="screen-label">Conversation</div>
+      <div class="phone">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="status-bar">
+            <span class="status-time">9:41</span>
+            <span class="status-icons">📶 🔋</span>
+          </div>
+          <div class="app-header">
+            <span style="font-size:16px;cursor:pointer">‹ Back</span>
+            <span class="crown">Having a baby</span>
+            <span class="avatar">PA</span>
+          </div>
+
+          <div class="plan-progress-header">
+            <span class="plan-progress-icon">👶</span>
+            <div class="plan-progress-text">
+              <div class="plan-progress-title">4 of 7 services complete</div>
+              <div class="plan-progress-sub">Tax-Free Childcare • 30h Free Childcare • Sure Start • Child Benefit</div>
+              <div class="progress-bar"><div class="progress-fill" style="width:57%"></div></div>
+            </div>
+            <span class="plan-progress-chevron">›</span>
+          </div>
+
+          <div class="chat-bubble chat-user">I'm pregnant and I'm worried about money. I don't know what help is out there.</div>
+
+          <div class="chat-bubble chat-agent">I can see your situation and there's quite a lot of support available to you. Based on your income and circumstances, I've identified 7 services across 4 departments. Let me walk you through them.</div>
+
+          <div class="service-inline">
+            <div class="service-inline-title">Tax-Free Childcare</div>
+            <div class="service-inline-dept">HMRC</div>
+            <div class="service-inline-status" style="color:var(--govuk-green)">✓ Approved — £2,000/year</div>
+          </div>
+
+          <div class="service-inline">
+            <div class="service-inline-title">Sure Start Maternity Grant</div>
+            <div class="service-inline-dept">DWP</div>
+            <div class="service-inline-status" style="color:var(--govuk-green)">✓ £500 payment issued</div>
+          </div>
+
+          <div class="service-inline">
+            <div class="service-inline-title">Free school meals</div>
+            <div class="service-inline-dept">DfE</div>
+            <div class="service-inline-status" style="color:var(--govuk-blue)">↻ In progress — checking eligibility</div>
+          </div>
+
+          <div class="chat-bubble chat-agent">I need to share some of your details with DfE to check free school meals eligibility. This would include your household income and your child's details.</div>
+
+          <div class="consent-card">
+            <div class="consent-title">Share data with DfE</div>
+            <div class="consent-body">Household income, child's name and date of birth. Used to check free school meals eligibility.</div>
+            <div class="consent-actions">
+              <div class="btn btn-primary">Allow</div>
+              <div class="btn btn-secondary">Not now</div>
+            </div>
+          </div>
+
+          <div style="height:80px"></div>
+
+          <div style="position:absolute;bottom:0;left:0;right:0;">
+            <div class="input-bar">
+              <div class="input-field">Type a message…</div>
+              <div class="input-send">↑</div>
+            </div>
+          </div>
+        </div>
+        <div class="phone-home"></div>
+      </div>
+      <p class="screen-sublabel">A life-event conversation. Progress header shows plan status. Services, consent, and outcomes all appear inline as the conversation progresses.</p>
+    </div>
+
+    <!-- Screen 3: Context panel -->
+    <div class="screen-col">
+      <div class="screen-label">Context panel</div>
+      <div class="phone">
+        <div class="phone-notch"></div>
+        <div class="phone-screen" style="background:var(--govuk-light-grey)">
+          <div class="status-bar" style="background:var(--govuk-light-grey)">
+            <span class="status-time">9:41</span>
+            <span class="status-icons">📶 🔋</span>
+          </div>
+          <div style="padding:16px 20px;display:flex;justify-content:space-between;align-items:center">
+            <span style="font-size:20px;font-weight:700">Journey details</span>
+            <span style="font-size:14px;color:var(--govuk-blue);font-weight:600">Done</span>
+          </div>
+
+          <div class="context-panel">
+            <div class="context-section">
+              <div class="context-section-title">Progress</div>
+              <div class="card-sm">
+                <div style="display:flex;justify-content:space-between;align-items:center">
+                  <span style="font-size:14px;font-weight:600">Having a baby</span>
+                  <span style="font-size:13px;color:var(--govuk-blue);font-weight:600">4 of 7</span>
+                </div>
+                <div class="progress-bar"><div class="progress-fill" style="width:57%"></div></div>
+              </div>
+            </div>
+
+            <div class="context-section">
+              <div class="context-section-title">Services</div>
+              <div class="card-sm" style="display:flex;align-items:center;gap:10px;margin-bottom:4px">
+                <span style="color:var(--govuk-green)">✓</span>
+                <div>
+                  <div style="font-size:14px;font-weight:600">Tax-Free Childcare</div>
+                  <div style="font-size:12px;color:var(--text-secondary)">HMRC · £2,000/year approved</div>
+                </div>
+              </div>
+              <div class="card-sm" style="display:flex;align-items:center;gap:10px;margin-bottom:4px">
+                <span style="color:var(--govuk-green)">✓</span>
+                <div>
+                  <div style="font-size:14px;font-weight:600">Sure Start Maternity Grant</div>
+                  <div style="font-size:12px;color:var(--text-secondary)">DWP · £500 issued</div>
+                </div>
+              </div>
+              <div class="card-sm" style="display:flex;align-items:center;gap:10px;margin-bottom:4px">
+                <span style="color:var(--govuk-green)">✓</span>
+                <div>
+                  <div style="font-size:14px;font-weight:600">30 hours free childcare</div>
+                  <div style="font-size:12px;color:var(--text-secondary)">DfE · Code issued</div>
+                </div>
+              </div>
+              <div class="card-sm" style="display:flex;align-items:center;gap:10px;margin-bottom:4px">
+                <span style="color:var(--govuk-green)">✓</span>
+                <div>
+                  <div style="font-size:14px;font-weight:600">Child Benefit</div>
+                  <div style="font-size:12px;color:var(--text-secondary)">HMRC · £25.60/week</div>
+                </div>
+              </div>
+              <div class="card-sm" style="display:flex;align-items:center;gap:10px;margin-bottom:4px">
+                <span style="color:var(--govuk-blue)">↻</span>
+                <div>
+                  <div style="font-size:14px;font-weight:600">Free school meals</div>
+                  <div style="font-size:12px;color:var(--text-secondary)">DfE · Checking eligibility</div>
+                </div>
+              </div>
+              <div class="card-sm" style="display:flex;align-items:center;gap:10px;margin-bottom:4px;opacity:0.5">
+                <span>○</span>
+                <div>
+                  <div style="font-size:14px;font-weight:600">Universal Credit</div>
+                  <div style="font-size:12px;color:var(--text-secondary)">DWP · Available</div>
+                </div>
+              </div>
+              <div class="card-sm" style="display:flex;align-items:center;gap:10px;opacity:0.5">
+                <span>○</span>
+                <div>
+                  <div style="font-size:14px;font-weight:600">Healthy Start vouchers</div>
+                  <div style="font-size:12px;color:var(--text-secondary)">NHS · Available</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="context-section">
+              <div class="context-section-title">Data shared</div>
+              <div class="card-sm">
+                <div style="font-size:13px;margin-bottom:6px"><strong>HMRC</strong> · Name, NI number, income</div>
+                <div style="font-size:13px;margin-bottom:6px"><strong>DWP</strong> · Name, NI number, address, bank details</div>
+                <div style="font-size:13px"><strong>DfE</strong> · Household income, child details</div>
+              </div>
+            </div>
+
+            <div class="context-section">
+              <div class="context-section-title">Credentials earned</div>
+              <div class="card-sm" style="display:flex;align-items:center;gap:10px">
+                <span>📄</span>
+                <div>
+                  <div style="font-size:14px;font-weight:600">Maternity exemption certificate</div>
+                  <div style="font-size:12px;color:var(--text-secondary)">NHS · Valid until July 2027</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="phone-home"></div>
+      </div>
+      <p class="screen-sublabel">Slide-in panel showing everything about this conversation: plan progress, services, data shared, credentials earned. Replaces PlanView, TasksView, and WalletView.</p>
+    </div>
+
+    <!-- Screen 4: Agent-initiated thread -->
+    <div class="screen-col">
+      <div class="screen-label">Proactive thread</div>
+      <div class="phone">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="status-bar">
+            <span class="status-time">9:41</span>
+            <span class="status-icons">📶 🔋</span>
+          </div>
+          <div class="app-header">
+            <span style="font-size:16px;cursor:pointer">‹ Back</span>
+            <span class="crown">MOT expiring</span>
+            <span class="avatar">PA</span>
+          </div>
+
+          <div style="padding:10px 16px">
+            <div style="font-size:11px;color:var(--govuk-blue);font-weight:600;text-transform:uppercase;letter-spacing:0.8px;text-align:center;margin-bottom:4px">Started by your agent · Today at 08:30</div>
+          </div>
+
+          <div class="chat-bubble chat-agent">Your Honda Civic's MOT expires on 15 May — that's 14 days away. You can't drive without a valid MOT after that date.</div>
+
+          <div class="chat-bubble chat-agent">I can find approved MOT stations near you and book a test, or you can handle it yourself. What would you prefer?</div>
+
+          <div style="display:flex;gap:8px;margin:8px 16px">
+            <div class="btn btn-primary" style="flex:1">Find me a station</div>
+            <div class="btn btn-secondary" style="flex:1">I'll sort it</div>
+          </div>
+
+          <div class="chat-bubble chat-user">Find me a station please</div>
+
+          <div class="chat-bubble chat-agent">I found 3 MOT stations within 2 miles of your home. Here are the earliest available slots:</div>
+
+          <div class="card" style="margin:8px 16px">
+            <div style="font-size:14px;font-weight:700">Halfords Autocentre — Dalston</div>
+            <div style="font-size:13px;color:var(--text-secondary)">0.8 miles · Next available: 8 May, 10:30am</div>
+            <div style="font-size:13px;color:var(--text-secondary)">£35.00</div>
+            <div class="btn btn-primary" style="margin-top:10px;display:inline-block">Book this slot</div>
+          </div>
+
+          <div class="card" style="margin:8px 16px;opacity:0.7">
+            <div style="font-size:14px;font-weight:700">Quick Fit — Hackney</div>
+            <div style="font-size:13px;color:var(--text-secondary)">1.2 miles · Next available: 9 May, 2:00pm</div>
+            <div style="font-size:13px;color:var(--text-secondary)">£40.00</div>
+          </div>
+
+          <div style="height:60px"></div>
+          <div style="position:absolute;bottom:0;left:0;right:0;">
+            <div class="input-bar">
+              <div class="input-field">Type a message…</div>
+              <div class="input-send">↑</div>
+            </div>
+          </div>
+        </div>
+        <div class="phone-home"></div>
+      </div>
+      <p class="screen-sublabel">The agent starts conversations proactively. This thread was initiated because it detected an approaching MOT deadline. No tab to navigate to — it just appears.</p>
+    </div>
+
+    <!-- Screen 5: Document drawer -->
+    <div class="screen-col">
+      <div class="screen-label">Document drawer</div>
+      <div class="phone">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="status-bar">
+            <span class="status-time">9:41</span>
+            <span class="status-icons">📶 🔋</span>
+          </div>
+          <div class="app-header" style="opacity:0.4">
+            <span class="crown">GOV.UK</span>
+            <span class="avatar">PA</span>
+          </div>
+          <div style="height:120px;opacity:0.2"></div>
+
+          <div class="sheet-overlay" style="position:absolute">
+            <div class="sheet">
+              <div class="sheet-handle"></div>
+              <div style="padding:12px 20px 8px;font-size:20px;font-weight:700">Your documents</div>
+
+              <div class="section-title">Identity</div>
+              <div class="credential-row">
+                <div class="credential-icon">🪪</div>
+                <div>
+                  <div class="credential-name">Driving licence</div>
+                  <div class="credential-issuer">DVLA · Expires 2034</div>
+                </div>
+              </div>
+              <div class="credential-row">
+                <div class="credential-icon">🔢</div>
+                <div>
+                  <div class="credential-name">National Insurance</div>
+                  <div class="credential-issuer">HMRC · QQ 12 34 56 C</div>
+                </div>
+              </div>
+
+              <div class="section-title">Earned from services</div>
+              <div class="credential-row">
+                <div class="credential-icon">💰</div>
+                <div>
+                  <div class="credential-name">Tax-Free Childcare</div>
+                  <div class="credential-issuer">HMRC · £2,000/year · Approved</div>
+                </div>
+              </div>
+              <div class="credential-row">
+                <div class="credential-icon">💊</div>
+                <div>
+                  <div class="credential-name">Maternity exemption</div>
+                  <div class="credential-issuer">NHS · Free prescriptions until Jul 2027</div>
+                </div>
+              </div>
+              <div class="credential-row">
+                <div class="credential-icon">👶</div>
+                <div>
+                  <div class="credential-name">Sure Start Grant</div>
+                  <div class="credential-issuer">DWP · £500 · Ref: SSG-90412</div>
+                </div>
+              </div>
+
+              <div class="section-title">Data permissions</div>
+              <div class="credential-row">
+                <div class="credential-icon">🔐</div>
+                <div>
+                  <div class="credential-name">HMRC — identity + income</div>
+                  <div class="credential-issuer">Granted 12 Mar · Until revoked</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="phone-home"></div>
+      </div>
+      <p class="screen-sublabel">Documents and credentials as a drawer overlay, accessible from any screen via the avatar. Not a tab — a sheet you pull up when you need it.</p>
+    </div>
+  </div>
+
+  <div class="mapping-section">
+    <h3 style="font-size:20px;font-weight:700;margin-bottom:16px">How current features map</h3>
+    <table class="mapping-table">
+      <tr><th>Current feature</th><th>In the Journal</th></tr>
+      <tr><td class="mapping-from">Dashboard with service categories</td><td>Thread list with proactive agent threads</td></tr>
+      <tr><td class="mapping-from">Chat tab (single conversation)</td><td>Every thread IS a conversation — the whole app</td></tr>
+      <tr><td class="mapping-from">Plan view (separate tab)</td><td>Progress header inside conversation + context panel</td></tr>
+      <tr><td class="mapping-from">Tasks view (separate tab)</td><td>Inline task cards in relevant threads + badge count</td></tr>
+      <tr><td class="mapping-from">Wallet tab</td><td>Document drawer (overlay from any screen)</td></tr>
+      <tr><td class="mapping-from">Services browse</td><td>Eliminated — agent discovers services through conversation</td></tr>
+      <tr><td class="mapping-from">Bottom tab bar</td><td>Eliminated entirely</td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════ -->
+<!-- MODEL 2: THE MIRROR                          -->
+<!-- ════════════════════════════════════════════ -->
+<section class="model-section">
+  <div class="model-header">
+    <div class="model-number">Model 2</div>
+    <h2 class="model-title">The Mirror</h2>
+    <p class="model-like">Like Apple Health + Monzo + your iPhone wallet</p>
+    <p class="model-description">You open the app and see yourself. Not government services, not a chatbot — your data, your circumstances, your entitlements. The app mirrors your life back to you, organised into facets: your family, your money, your health, your vehicles. Government services are invisible infrastructure. Conversations are contextual overlays that start from data triggers.</p>
+  </div>
+
+  <div class="model-principles">
+    <div class="principle">
+      <div class="principle-label">Home screen</div>
+      <div class="principle-value">Your life data</div>
+    </div>
+    <div class="principle">
+      <div class="principle-label">Navigation</div>
+      <div class="principle-value">Profile → facets → sheets</div>
+    </div>
+    <div class="principle">
+      <div class="principle-label">Service discovery</div>
+      <div class="principle-value">Data-driven alerts</div>
+    </div>
+    <div class="principle">
+      <div class="principle-label">Tab bar</div>
+      <div class="principle-value">Eliminated</div>
+    </div>
+    <div class="principle">
+      <div class="principle-label">Primary gesture</div>
+      <div class="principle-value">Tap alert to act</div>
+    </div>
+  </div>
+
+  <div class="screens-row">
+    <!-- Screen 1: You (Home) -->
+    <div class="screen-col">
+      <div class="screen-label">You</div>
+      <div class="phone">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="status-bar">
+            <span class="status-time">9:41</span>
+            <span class="status-icons">📶 🔋</span>
+          </div>
+          <div class="app-header">
+            <span class="crown">GOV.UK</span>
+            <span style="font-size:14px;font-weight:600;opacity:0.8">⚙</span>
+          </div>
+
+          <div class="profile-card">
+            <div class="profile-name">Priya Anand</div>
+            <div class="profile-detail">32 · Lives in Hackney · Self-employed</div>
+            <div class="profile-stats">
+              <div class="profile-stat">
+                <div class="profile-stat-value">4</div>
+                <div class="profile-stat-label">Active</div>
+              </div>
+              <div class="profile-stat">
+                <div class="profile-stat-value">7</div>
+                <div class="profile-stat-label">Complete</div>
+              </div>
+              <div class="profile-stat">
+                <div class="profile-stat-value">3</div>
+                <div class="profile-stat-label">Documents</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="actions-banner">
+            <div class="actions-count">3</div>
+            <div>
+              <div class="actions-text">Things need your attention</div>
+              <div class="actions-sub">MOT expiring · Free school meals · Pension check</div>
+            </div>
+          </div>
+
+          <div class="journey-strip">
+            <div class="journey-title">👶 Having a baby</div>
+            <div class="journey-sub">4 of 7 services complete</div>
+            <div class="progress-bar"><div class="progress-fill" style="width:57%"></div></div>
+          </div>
+
+          <div class="facet-card">
+            <div class="facet-header">
+              <div class="facet-icon" style="background:#e0f2fe">👨‍👩‍👦</div>
+              <div>
+                <div class="facet-name">My family</div>
+                <div class="facet-status">Partner: Raj · Child: Milo (18m) · Baby due Aug 2026</div>
+              </div>
+            </div>
+            <div class="facet-alert">
+              ⚡ Baby due in 4 months — 3 services remaining
+            </div>
+          </div>
+
+          <div class="facet-card">
+            <div class="facet-header">
+              <div class="facet-icon" style="background:#dcfce7">💷</div>
+              <div>
+                <div class="facet-name">My money</div>
+                <div class="facet-status">Income: £24,000 · Child Benefit: £25.60/wk</div>
+              </div>
+            </div>
+            <div class="facet-alert">
+              💡 You may be eligible for Universal Credit — could be worth £393/month
+            </div>
+          </div>
+
+          <div class="facet-card">
+            <div class="facet-header">
+              <div class="facet-icon" style="background:#fef3c7">🚗</div>
+              <div>
+                <div class="facet-name">My vehicles</div>
+                <div class="facet-status">Honda Civic · HJ18 XYZ</div>
+              </div>
+            </div>
+            <div class="facet-alert facet-alert-urgent">
+              🔴 MOT expires 15 May — 14 days
+            </div>
+          </div>
+
+          <div class="facet-card">
+            <div class="facet-header">
+              <div class="facet-icon" style="background:#fce7f3">💊</div>
+              <div>
+                <div class="facet-name">My health</div>
+                <div class="facet-status">GP: Dr Patel, Hackney · Maternity exemption active</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="facet-card" style="opacity:0.7">
+            <div class="facet-header">
+              <div class="facet-icon" style="background:#f3e8ff">📄</div>
+              <div>
+                <div class="facet-name">My documents</div>
+                <div class="facet-status">3 identity · 4 earned credentials</div>
+              </div>
+            </div>
+          </div>
+
+          <div style="height:20px"></div>
+
+          <div class="fab">💬</div>
+        </div>
+        <div class="phone-home"></div>
+      </div>
+      <p class="screen-sublabel">Home screen: you, reflected back. Life facets show your data with alerts where action is needed. Government's taxonomy is invisible — only your categories matter.</p>
+    </div>
+
+    <!-- Screen 2: Facet detail -->
+    <div class="screen-col">
+      <div class="screen-label">Facet detail</div>
+      <div class="phone">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="status-bar">
+            <span class="status-time">9:41</span>
+            <span class="status-icons">📶 🔋</span>
+          </div>
+          <div class="app-header">
+            <span style="font-size:16px">‹ Back</span>
+            <span class="crown">My money</span>
+            <span class="avatar">PA</span>
+          </div>
+
+          <div class="card" style="margin-top:12px">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start">
+              <div>
+                <div style="font-size:13px;color:var(--text-secondary)">Household income</div>
+                <div style="font-size:28px;font-weight:700">£24,000</div>
+                <div style="font-size:13px;color:var(--text-secondary)">Self-employed · Tax code: 1257L</div>
+              </div>
+              <div style="font-size:32px">💷</div>
+            </div>
+          </div>
+
+          <div class="section-title">Currently receiving</div>
+
+          <div class="card-sm" style="display:flex;align-items:center;gap:12px">
+            <span style="color:var(--govuk-green);font-size:18px">✓</span>
+            <div style="flex:1">
+              <div style="font-size:14px;font-weight:600">Child Benefit</div>
+              <div style="font-size:12px;color:var(--text-secondary)">£25.60/week · HMRC</div>
+            </div>
+          </div>
+          <div class="card-sm" style="display:flex;align-items:center;gap:12px">
+            <span style="color:var(--govuk-green);font-size:18px">✓</span>
+            <div style="flex:1">
+              <div style="font-size:14px;font-weight:600">Tax-Free Childcare</div>
+              <div style="font-size:12px;color:var(--text-secondary)">£2,000/year · HMRC</div>
+            </div>
+          </div>
+
+          <div class="section-title">You could get</div>
+
+          <div class="card" style="border-left:4px solid var(--govuk-blue)">
+            <div style="font-size:15px;font-weight:700;margin-bottom:4px">Universal Credit</div>
+            <div style="font-size:13px;color:var(--text-secondary);margin-bottom:10px">Based on your income and family size, you could receive up to £393.45 per month. This would be reviewed as your self-employment income changes.</div>
+            <div style="display:flex;gap:8px">
+              <div class="btn btn-primary">Ask agent to apply</div>
+              <div class="btn btn-secondary">Tell me more</div>
+            </div>
+          </div>
+
+          <div class="card" style="border-left:4px solid var(--govuk-blue)">
+            <div style="font-size:15px;font-weight:700;margin-bottom:4px">Free school meals</div>
+            <div style="font-size:13px;color:var(--text-secondary);margin-bottom:10px">Your income may qualify Milo for free school meals when he starts school. Worth checking now as it also unlocks Pupil Premium funding.</div>
+            <div style="display:flex;gap:8px">
+              <div class="btn btn-primary">Check eligibility</div>
+              <div class="btn btn-secondary">Not yet</div>
+            </div>
+          </div>
+
+          <div class="section-title">Recent conversations</div>
+
+          <div class="card-sm" style="display:flex;align-items:center;gap:10px;opacity:0.7">
+            <span>💬</span>
+            <div>
+              <div style="font-size:14px;font-weight:600">Sure Start Grant application</div>
+              <div style="font-size:12px;color:var(--text-secondary)">Completed · 12 March</div>
+            </div>
+          </div>
+
+          <div style="height:20px"></div>
+          <div class="fab">💬</div>
+        </div>
+        <div class="phone-home"></div>
+      </div>
+      <p class="screen-sublabel">Tap a life facet to see your data in detail. What you're receiving, what you could get, and past conversations — all organised around your circumstances, not departments.</p>
+    </div>
+
+    <!-- Screen 3: Contextual conversation -->
+    <div class="screen-col">
+      <div class="screen-label">Contextual conversation</div>
+      <div class="phone">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="status-bar">
+            <span class="status-time">9:41</span>
+            <span class="status-icons">📶 🔋</span>
+          </div>
+          <div class="app-header" style="opacity:0.3">
+            <span style="font-size:16px">‹ Back</span>
+            <span class="crown">My money</span>
+            <span class="avatar">PA</span>
+          </div>
+          <div style="height:80px;opacity:0.15;background:white"></div>
+
+          <div class="sheet-overlay" style="position:absolute">
+            <div class="sheet" style="max-height:75%">
+              <div class="sheet-handle"></div>
+              <div style="padding:8px 20px 0">
+                <div style="font-size:11px;color:var(--govuk-blue);font-weight:600;text-transform:uppercase;letter-spacing:0.8px">About Universal Credit</div>
+                <div style="font-size:18px;font-weight:700;margin-top:2px">Could be worth £393/month</div>
+              </div>
+
+              <div style="padding:0 4px">
+                <div class="chat-bubble chat-agent">Based on your self-employment income of £24,000 and your family of 3 (soon to be 4), you'd likely qualify for Universal Credit at around £393.45 per month.</div>
+
+                <div class="chat-bubble chat-agent">The application needs your income details, bank information, and proof of self-employment. I already have most of this from your other applications. I'd just need your bank sort code and account number.</div>
+
+                <div class="consent-card">
+                  <div class="consent-title">Share data with DWP</div>
+                  <div class="consent-body">Name, NI number, income, address, family details. Used to process your Universal Credit claim.</div>
+                  <div class="consent-actions">
+                    <div class="btn btn-primary">Allow and apply</div>
+                    <div class="btn btn-secondary">Not now</div>
+                  </div>
+                </div>
+              </div>
+
+              <div style="padding:0 4px">
+                <div class="input-bar" style="border-top:none;padding-top:4px">
+                  <div class="input-field">Ask a question…</div>
+                  <div class="input-send">↑</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="phone-home"></div>
+      </div>
+      <p class="screen-sublabel">Conversations open as contextual sheets from data points. You tapped "Universal Credit" on the money facet — the conversation is scoped to that context. Close the sheet and your facet updates.</p>
+    </div>
+
+    <!-- Screen 4: Journey cross-facet view -->
+    <div class="screen-col">
+      <div class="screen-label">Journey view</div>
+      <div class="phone">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="status-bar">
+            <span class="status-time">9:41</span>
+            <span class="status-icons">📶 🔋</span>
+          </div>
+          <div class="app-header">
+            <span style="font-size:16px">‹ Back</span>
+            <span class="crown">Having a baby</span>
+            <span class="avatar">PA</span>
+          </div>
+
+          <div style="text-align:center;padding:20px;font-size:40px">👶</div>
+          <div style="text-align:center;margin-bottom:4px">
+            <span style="font-size:24px;font-weight:700">Having a baby</span>
+          </div>
+          <div style="text-align:center;margin-bottom:16px">
+            <span style="font-size:14px;color:var(--text-secondary)">4 of 7 complete · Baby due August 2026</span>
+          </div>
+          <div style="margin:0 40px 24px"><div class="progress-bar" style="height:6px"><div class="progress-fill" style="width:57%"></div></div></div>
+
+          <div class="section-title">Affects your life</div>
+
+          <div class="card-sm" style="display:flex;align-items:center;gap:12px">
+            <div class="facet-icon" style="background:#dcfce7;width:32px;height:32px;font-size:14px">💷</div>
+            <div style="flex:1">
+              <div style="font-size:14px;font-weight:600">My money</div>
+              <div style="font-size:12px;color:var(--text-secondary)">4 services · £2,893 annual benefit secured</div>
+            </div>
+            <span style="color:var(--govuk-mid-grey)">›</span>
+          </div>
+          <div class="card-sm" style="display:flex;align-items:center;gap:12px">
+            <div class="facet-icon" style="background:#fce7f3;width:32px;height:32px;font-size:14px">💊</div>
+            <div style="flex:1">
+              <div style="font-size:14px;font-weight:600">My health</div>
+              <div style="font-size:12px;color:var(--text-secondary)">1 service · Maternity exemption active</div>
+            </div>
+            <span style="color:var(--govuk-mid-grey)">›</span>
+          </div>
+          <div class="card-sm" style="display:flex;align-items:center;gap:12px">
+            <div class="facet-icon" style="background:#e0f2fe;width:32px;height:32px;font-size:14px">👨‍👩‍👦</div>
+            <div style="flex:1">
+              <div style="font-size:14px;font-weight:600">My family</div>
+              <div style="font-size:12px;color:var(--text-secondary)">2 services · Birth registration pending</div>
+            </div>
+            <span style="color:var(--govuk-mid-grey)">›</span>
+          </div>
+
+          <div class="section-title">Remaining</div>
+
+          <div class="card" style="border-left:4px solid var(--govuk-blue)">
+            <div style="font-size:14px;font-weight:700">Free school meals</div>
+            <div style="font-size:13px;color:var(--text-secondary);margin-bottom:8px">Checking eligibility with DfE</div>
+            <div class="btn btn-secondary" style="display:inline-block;font-size:12px">View conversation</div>
+          </div>
+          <div class="card" style="border-left:4px solid var(--govuk-mid-grey)">
+            <div style="font-size:14px;font-weight:700">Universal Credit</div>
+            <div style="font-size:13px;color:var(--text-secondary);margin-bottom:8px">Available · Could be worth £393/month</div>
+            <div class="btn btn-primary" style="display:inline-block;font-size:12px">Start</div>
+          </div>
+          <div class="card" style="border-left:4px solid var(--govuk-mid-grey)">
+            <div style="font-size:14px;font-weight:700">Healthy Start vouchers</div>
+            <div style="font-size:13px;color:var(--text-secondary);margin-bottom:8px">Available · Free milk, fruit, vitamins</div>
+            <div class="btn btn-primary" style="display:inline-block;font-size:12px">Start</div>
+          </div>
+
+          <div style="height:20px"></div>
+        </div>
+        <div class="phone-home"></div>
+      </div>
+      <p class="screen-sublabel">Life event journeys show which facets of your life are affected and how. Progress is mapped to YOUR categories, not government departments. Tap a facet to see the impact.</p>
+    </div>
+
+    <!-- Screen 5: My documents -->
+    <div class="screen-col">
+      <div class="screen-label">My documents</div>
+      <div class="phone">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="status-bar">
+            <span class="status-time">9:41</span>
+            <span class="status-icons">📶 🔋</span>
+          </div>
+          <div class="app-header">
+            <span style="font-size:16px">‹ Back</span>
+            <span class="crown">My documents</span>
+            <span class="avatar">PA</span>
+          </div>
+
+          <div style="padding:16px">
+            <div style="font-size:13px;color:var(--text-secondary);margin-bottom:16px">Everything government holds about you or has issued to you — in one place.</div>
+          </div>
+
+          <div class="section-title">Identity</div>
+          <div class="credential-row">
+            <div class="credential-icon">🪪</div>
+            <div style="flex:1">
+              <div class="credential-name">Driving licence</div>
+              <div class="credential-issuer">DVLA · Full · Expires 2034</div>
+            </div>
+            <span style="color:var(--govuk-green);font-size:12px;font-weight:600">Verified</span>
+          </div>
+          <div class="credential-row">
+            <div class="credential-icon">🔢</div>
+            <div style="flex:1">
+              <div class="credential-name">National Insurance number</div>
+              <div class="credential-issuer">HMRC · QQ 12 34 56 C</div>
+            </div>
+            <span style="color:var(--govuk-green);font-size:12px;font-weight:600">Verified</span>
+          </div>
+          <div class="credential-row">
+            <div class="credential-icon">🛂</div>
+            <div style="flex:1">
+              <div class="credential-name">Passport</div>
+              <div class="credential-issuer">HMPO · Expires Nov 2027</div>
+            </div>
+            <span style="color:var(--govuk-green);font-size:12px;font-weight:600">Verified</span>
+          </div>
+
+          <div class="section-title">Earned from services</div>
+          <div class="credential-row">
+            <div class="credential-icon">💰</div>
+            <div style="flex:1">
+              <div class="credential-name">Tax-Free Childcare account</div>
+              <div class="credential-issuer">HMRC · £2,000/year · Active</div>
+            </div>
+          </div>
+          <div class="credential-row">
+            <div class="credential-icon">👶</div>
+            <div style="flex:1">
+              <div class="credential-name">Sure Start Maternity Grant</div>
+              <div class="credential-issuer">DWP · £500 · Issued 12 Mar</div>
+            </div>
+          </div>
+          <div class="credential-row">
+            <div class="credential-icon">💊</div>
+            <div style="flex:1">
+              <div class="credential-name">Maternity exemption</div>
+              <div class="credential-issuer">NHS · Free prescriptions · Jul 2027</div>
+            </div>
+          </div>
+          <div class="credential-row">
+            <div class="credential-icon">👧</div>
+            <div style="flex:1">
+              <div class="credential-name">30 hours free childcare code</div>
+              <div class="credential-issuer">DfE · Valid Sep 2026</div>
+            </div>
+          </div>
+
+          <div class="section-title">Who has your data</div>
+          <div class="credential-row">
+            <div class="credential-icon">🏛</div>
+            <div style="flex:1">
+              <div class="credential-name">HMRC</div>
+              <div class="credential-issuer">Identity, income, bank details · Since 12 Mar</div>
+            </div>
+            <span style="font-size:12px;color:var(--govuk-blue);font-weight:600">Manage</span>
+          </div>
+          <div class="credential-row">
+            <div class="credential-icon">🏛</div>
+            <div style="flex:1">
+              <div class="credential-name">DWP</div>
+              <div class="credential-issuer">Identity, address, family · Since 12 Mar</div>
+            </div>
+            <span style="font-size:12px;color:var(--govuk-blue);font-weight:600">Manage</span>
+          </div>
+
+          <div style="height:20px"></div>
+        </div>
+        <div class="phone-home"></div>
+      </div>
+      <p class="screen-sublabel">Documents live as a life facet — your identity, earned credentials, and data permissions in one view. Tap "Manage" to revoke consent or see exactly what was shared.</p>
+    </div>
+  </div>
+
+  <div class="mapping-section">
+    <h3 style="font-size:20px;font-weight:700;margin-bottom:16px">How current features map</h3>
+    <table class="mapping-table">
+      <tr><th>Current feature</th><th>In the Mirror</th></tr>
+      <tr><td class="mapping-from">Dashboard with service categories</td><td>Life facet cards with data-driven alerts</td></tr>
+      <tr><td class="mapping-from">Chat tab</td><td>Contextual conversation sheets from any data point</td></tr>
+      <tr><td class="mapping-from">Plan view</td><td>Cross-facet journey overview showing impact on your life</td></tr>
+      <tr><td class="mapping-from">Tasks view</td><td>Alerts and action buttons on relevant facets + "Actions needed" banner</td></tr>
+      <tr><td class="mapping-from">Wallet tab</td><td>"My documents" life facet with full credential and consent history</td></tr>
+      <tr><td class="mapping-from">Services browse</td><td>Eliminated — services surface as "you could get" suggestions within facets</td></tr>
+      <tr><td class="mapping-from">Bottom tab bar</td><td>Eliminated — single scrollable profile + conversation sheets</td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════ -->
+<!-- MODEL 3: THE STREAM                          -->
+<!-- ════════════════════════════════════════════ -->
+<section class="model-section">
+  <div class="model-header">
+    <div class="model-number">Model 3</div>
+    <h2 class="model-title">The Stream</h2>
+    <p class="model-like">Like Google Now + Instagram Stories + Linear</p>
+    <p class="model-description">A living, intelligent feed. No pages to navigate to — just a single stream of cards that represents everything happening in your relationship with government. Active journeys appear as stories at the top. Priority items are pinned. Everything else flows through a timeline. Every card is actionable, and any card can expand into a conversation.</p>
+  </div>
+
+  <div class="model-principles">
+    <div class="principle">
+      <div class="principle-label">Home screen</div>
+      <div class="principle-value">Intelligent card feed</div>
+    </div>
+    <div class="principle">
+      <div class="principle-label">Navigation</div>
+      <div class="principle-value">Scroll + expand in-place</div>
+    </div>
+    <div class="principle">
+      <div class="principle-label">Service discovery</div>
+      <div class="principle-value">Eligibility cards in feed</div>
+    </div>
+    <div class="principle">
+      <div class="principle-label">Tab bar</div>
+      <div class="principle-value">Eliminated</div>
+    </div>
+    <div class="principle">
+      <div class="principle-label">Primary gesture</div>
+      <div class="principle-value">Scroll to scan, tap to act</div>
+    </div>
+  </div>
+
+  <div class="screens-row">
+    <!-- Screen 1: The stream -->
+    <div class="screen-col">
+      <div class="screen-label">The stream</div>
+      <div class="phone">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="status-bar">
+            <span class="status-time">9:41</span>
+            <span class="status-icons">📶 🔋</span>
+          </div>
+          <div class="app-header">
+            <span class="crown">GOV.UK</span>
+            <div style="display:flex;align-items:center;gap:12px">
+              <span style="font-size:14px;opacity:0.8">🔍</span>
+              <span class="avatar">PA</span>
+            </div>
+          </div>
+
+          <!-- Stories strip -->
+          <div class="story-strip" style="background:white;margin-bottom:2px">
+            <div class="story-circle">
+              <div class="story-ring" style="--ring-pct:57%">
+                <div class="story-inner">👶</div>
+              </div>
+              <div class="story-label">Having a baby</div>
+            </div>
+            <div class="story-circle">
+              <div class="story-ring" style="--ring-pct:80%">
+                <div class="story-inner">🚗</div>
+              </div>
+              <div class="story-label">Honda Civic</div>
+            </div>
+            <div class="story-circle">
+              <div class="story-ring" style="--ring-pct:100%;background:conic-gradient(var(--govuk-green) 0% 100%, #e0e0e0 100% 100%)">
+                <div class="story-inner">📋</div>
+              </div>
+              <div class="story-label">Self assess.</div>
+            </div>
+            <div class="story-circle">
+              <div class="story-ring" style="--ring-pct:0%;background:#e0e0e0">
+                <div class="story-inner" style="font-size:28px;color:var(--govuk-blue)">+</div>
+              </div>
+              <div class="story-label" style="color:var(--govuk-blue)">New</div>
+            </div>
+          </div>
+
+          <!-- Priority -->
+          <div class="priority-card">
+            <div class="priority-label">Action needed · 14 days</div>
+            <div class="priority-title">MOT expiring on your Honda Civic</div>
+            <div class="priority-body">You can't drive after 15 May without a valid MOT certificate.</div>
+            <div class="priority-actions">
+              <div class="btn btn-primary" style="flex:1">Find a station</div>
+              <div class="btn btn-secondary" style="flex:1">I'll sort it</div>
+            </div>
+          </div>
+
+          <!-- Stream cards -->
+          <div class="stream-card">
+            <div class="stream-card-inner">
+              <div class="stream-card-type">🤖 Suggestion from your agent</div>
+              <div class="stream-card-title">You may be eligible for Universal Credit</div>
+              <div class="stream-card-body">Based on your income of £24,000 and family size, you could receive up to £393.45 per month.</div>
+            </div>
+            <div class="stream-card-actions">
+              <div class="stream-action">Tell me more</div>
+              <div class="stream-action">Apply now</div>
+              <div class="stream-action" style="color:var(--govuk-mid-grey)">Dismiss</div>
+            </div>
+          </div>
+
+          <div class="stream-card">
+            <div class="stream-card-inner">
+              <div class="stream-card-type">✅ Completed · Today</div>
+              <div class="stream-card-title">Tax-Free Childcare approved</div>
+              <div class="stream-card-body">HMRC has approved your application. You'll receive up to £2,000 per year towards childcare costs for Milo.</div>
+            </div>
+            <div class="stream-card-actions">
+              <div class="stream-action">View credential</div>
+              <div class="stream-action">See conversation</div>
+            </div>
+          </div>
+
+          <div class="stream-card">
+            <div class="stream-card-inner">
+              <div class="stream-card-type">↻ In progress · Yesterday</div>
+              <div class="stream-card-title">Free school meals check</div>
+              <div class="stream-card-body">Agent is checking your eligibility with DfE. Waiting for income verification.</div>
+            </div>
+            <div class="stream-card-actions">
+              <div class="stream-action">View progress</div>
+            </div>
+          </div>
+
+          <div class="stream-card" style="opacity:0.7">
+            <div class="stream-card-inner">
+              <div class="stream-card-type">✅ Completed · 3 days ago</div>
+              <div class="stream-card-title">Sure Start Maternity Grant issued</div>
+              <div class="stream-card-body">£500 payment from DWP. Reference: SSG-90412.</div>
+            </div>
+            <div class="stream-card-actions">
+              <div class="stream-action">View receipt</div>
+            </div>
+          </div>
+
+          <div style="height:20px"></div>
+
+          <div class="fab">💬</div>
+        </div>
+        <div class="phone-home"></div>
+      </div>
+      <p class="screen-sublabel">The entire app is a single stream. Stories at top for active journeys. Priority cards pinned. Everything else flows through a timeline. Every card has inline actions.</p>
+    </div>
+
+    <!-- Screen 2: Story view -->
+    <div class="screen-col">
+      <div class="screen-label">Story view</div>
+      <div class="phone">
+        <div class="phone-notch"></div>
+        <div class="phone-screen" style="background:var(--govuk-dark-blue)">
+          <div class="status-bar" style="background:transparent;color:white">
+            <span class="status-time" style="color:white">9:41</span>
+            <span class="status-icons">📶 🔋</span>
+          </div>
+
+          <!-- Story progress bars -->
+          <div style="display:flex;gap:4px;padding:8px 16px">
+            <div style="flex:1;height:3px;background:white;border-radius:2px"></div>
+            <div style="flex:1;height:3px;background:white;border-radius:2px"></div>
+            <div style="flex:1;height:3px;background:white;border-radius:2px"></div>
+            <div style="flex:1;height:3px;background:rgba(255,255,255,0.3);border-radius:2px"></div>
+            <div style="flex:1;height:3px;background:rgba(255,255,255,0.3);border-radius:2px"></div>
+            <div style="flex:1;height:3px;background:rgba(255,255,255,0.3);border-radius:2px"></div>
+            <div style="flex:1;height:3px;background:rgba(255,255,255,0.3);border-radius:2px"></div>
+          </div>
+
+          <div style="display:flex;justify-content:space-between;padding:12px 20px;color:white">
+            <span style="font-size:14px;font-weight:600">👶 Having a baby</span>
+            <span style="font-size:14px;opacity:0.7">✕</span>
+          </div>
+
+          <div style="flex:1;display:flex;align-items:center;justify-content:center;padding:0 20px">
+            <div style="background:white;border-radius:20px;padding:28px 24px;width:100%;text-align:center">
+              <div style="font-size:40px;margin-bottom:12px">💰</div>
+              <div style="font-size:12px;color:var(--govuk-green);font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Approved</div>
+              <div style="font-size:22px;font-weight:700;margin-bottom:4px">Sure Start Maternity Grant</div>
+              <div style="font-size:15px;color:var(--text-secondary);margin-bottom:20px">£500 one-off payment from DWP</div>
+
+              <div style="background:var(--govuk-light-grey);border-radius:12px;padding:14px;text-align:left;margin-bottom:16px">
+                <div style="font-size:13px;color:var(--text-secondary);margin-bottom:4px">Payment details</div>
+                <div style="font-size:14px;font-weight:600">£500.00 · Paid to Lloyds ****4521</div>
+                <div style="font-size:13px;color:var(--text-secondary)">Reference: SSG-90412</div>
+              </div>
+
+              <div class="btn btn-primary btn-block">View in wallet</div>
+              <div style="margin-top:10px">
+                <div class="btn btn-secondary btn-block">View conversation</div>
+              </div>
+            </div>
+          </div>
+
+          <div style="text-align:center;padding:20px;color:white;opacity:0.6;font-size:13px">
+            Swipe for next service →
+          </div>
+        </div>
+        <div class="phone-home"></div>
+      </div>
+      <p class="screen-sublabel">Tap a story circle to enter a full-screen, swipeable progression. Each service is a card you swipe through — like Instagram stories for your life event journey.</p>
+    </div>
+
+    <!-- Screen 3: Expanded card conversation -->
+    <div class="screen-col">
+      <div class="screen-label">Card → conversation</div>
+      <div class="phone">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="status-bar">
+            <span class="status-time">9:41</span>
+            <span class="status-icons">📶 🔋</span>
+          </div>
+          <div class="app-header" style="opacity:0.3">
+            <span class="crown">GOV.UK</span>
+            <span class="avatar">PA</span>
+          </div>
+          <div style="height:50px;opacity:0.1"></div>
+
+          <div class="sheet-overlay" style="position:absolute">
+            <div class="sheet" style="max-height:80%">
+              <div class="sheet-handle"></div>
+              <div style="padding:8px 20px 0">
+                <div style="font-size:11px;color:var(--govuk-blue);font-weight:600;text-transform:uppercase;letter-spacing:0.8px">Suggestion from your agent</div>
+                <div style="font-size:18px;font-weight:700;margin-top:2px">Universal Credit</div>
+                <div style="font-size:13px;color:var(--text-secondary);margin-top:2px">Could be worth £393.45/month</div>
+              </div>
+
+              <div style="padding:0 4px;margin-top:8px">
+                <div class="chat-bubble chat-agent">I've looked at your situation: self-employed, household income £24,000, partner Raj earning £18,000, one child with another on the way.</div>
+
+                <div class="chat-bubble chat-agent">Under Universal Credit, your household would likely receive around £393.45 per month. This takes into account your earnings and the childcare element.</div>
+
+                <div class="chat-bubble chat-user">Would it affect my Tax-Free Childcare?</div>
+
+                <div class="chat-bubble chat-agent">No — you can receive both Universal Credit and Tax-Free Childcare at the same time. They're compatible benefits.</div>
+
+                <div class="chat-bubble chat-agent">To apply, I'd need to share your details with DWP. I already have most of what's needed from your other applications.</div>
+
+                <div style="display:flex;gap:8px;margin:8px 16px">
+                  <div class="btn btn-green" style="flex:1">Apply now</div>
+                  <div class="btn btn-secondary" style="flex:1">Save for later</div>
+                </div>
+              </div>
+
+              <div style="padding:0 4px">
+                <div class="input-bar" style="border-top:none;padding-top:0">
+                  <div class="input-field">Ask a question…</div>
+                  <div class="input-send">↑</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="phone-home"></div>
+      </div>
+      <p class="screen-sublabel">Any card in the stream can expand into a conversation. You tapped "Tell me more" on the UC suggestion card — a scoped conversation opens as a sheet. Act or dismiss.</p>
+    </div>
+
+    <!-- Screen 4: Filtered view -->
+    <div class="screen-col">
+      <div class="screen-label">Filtered stream</div>
+      <div class="phone">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="status-bar">
+            <span class="status-time">9:41</span>
+            <span class="status-icons">📶 🔋</span>
+          </div>
+          <div class="app-header">
+            <span style="font-size:16px">‹ All</span>
+            <span class="crown">Tasks</span>
+            <span class="avatar">PA</span>
+          </div>
+
+          <div style="display:flex;gap:8px;padding:12px 16px;overflow-x:auto">
+            <div class="btn btn-primary" style="white-space:nowrap;font-size:12px;padding:6px 14px">All tasks</div>
+            <div class="btn btn-secondary" style="white-space:nowrap;font-size:12px;padding:6px 14px">Your actions</div>
+            <div class="btn btn-secondary" style="white-space:nowrap;font-size:12px;padding:6px 14px">Agent handling</div>
+            <div class="btn btn-secondary" style="white-space:nowrap;font-size:12px;padding:6px 14px">Complete</div>
+          </div>
+
+          <div class="stream-card">
+            <div style="border-left:4px solid var(--govuk-red);padding-left:12px" class="stream-card-inner">
+              <div class="stream-card-type" style="color:var(--govuk-red)">You · Due 15 May</div>
+              <div class="stream-card-title">Book MOT for Honda Civic</div>
+              <div class="stream-card-body">Your agent found 3 nearby stations. Pick one to book.</div>
+            </div>
+            <div class="stream-card-actions">
+              <div class="stream-action">View options</div>
+              <div class="stream-action">Let agent book</div>
+            </div>
+          </div>
+
+          <div class="stream-card">
+            <div style="border-left:4px solid var(--govuk-blue);padding-left:12px" class="stream-card-inner">
+              <div class="stream-card-type" style="color:var(--govuk-blue)">Agent handling</div>
+              <div class="stream-card-title">Free school meals eligibility check</div>
+              <div class="stream-card-body">Waiting for DfE to verify household income. Usually takes 2-3 working days.</div>
+            </div>
+            <div class="stream-card-actions">
+              <div class="stream-action">View conversation</div>
+            </div>
+          </div>
+
+          <div class="stream-card">
+            <div style="border-left:4px solid #f59e0b;padding-left:12px" class="stream-card-inner">
+              <div class="stream-card-type" style="color:#92400e">You · No deadline</div>
+              <div class="stream-card-title">Consider Universal Credit</div>
+              <div class="stream-card-body">Your agent thinks you'd qualify for £393/month. Review when ready.</div>
+            </div>
+            <div class="stream-card-actions">
+              <div class="stream-action">Review</div>
+              <div class="stream-action" style="color:var(--govuk-mid-grey)">Dismiss</div>
+            </div>
+          </div>
+
+          <div class="stream-card" style="opacity:0.5">
+            <div style="border-left:4px solid var(--govuk-green);padding-left:12px" class="stream-card-inner">
+              <div class="stream-card-type" style="color:var(--govuk-green)">Complete · 12 Mar</div>
+              <div class="stream-card-title">Tax-Free Childcare application</div>
+              <div class="stream-card-body">Approved. £2,000/year.</div>
+            </div>
+          </div>
+
+          <div class="stream-card" style="opacity:0.5">
+            <div style="border-left:4px solid var(--govuk-green);padding-left:12px" class="stream-card-inner">
+              <div class="stream-card-type" style="color:var(--govuk-green)">Complete · 12 Mar</div>
+              <div class="stream-card-title">Sure Start Maternity Grant</div>
+              <div class="stream-card-body">£500 paid. Ref: SSG-90412.</div>
+            </div>
+          </div>
+
+          <div style="height:20px"></div>
+          <div class="fab">💬</div>
+        </div>
+        <div class="phone-home"></div>
+      </div>
+      <p class="screen-sublabel">Filter the stream by type: tasks, suggestions, credentials, conversations. This replaces the separate Tasks view — everything stays in the stream, just filtered.</p>
+    </div>
+
+    <!-- Screen 5: Wallet overlay -->
+    <div class="screen-col">
+      <div class="screen-label">Wallet overlay</div>
+      <div class="phone">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="status-bar">
+            <span class="status-time">9:41</span>
+            <span class="status-icons">📶 🔋</span>
+          </div>
+          <div class="app-header" style="opacity:0.3">
+            <span class="crown">GOV.UK</span>
+            <span class="avatar">PA</span>
+          </div>
+          <div style="height:80px;opacity:0.1"></div>
+
+          <div class="sheet-overlay" style="position:absolute">
+            <div class="sheet" style="max-height:78%">
+              <div class="sheet-handle"></div>
+              <div style="padding:12px 20px 4px;display:flex;justify-content:space-between;align-items:center">
+                <span style="font-size:20px;font-weight:700">Your wallet</span>
+                <span style="font-size:14px;color:var(--govuk-blue);font-weight:600">Done</span>
+              </div>
+
+              <div class="section-title">Documents</div>
+              <div class="credential-row">
+                <div class="credential-icon">🪪</div>
+                <div style="flex:1">
+                  <div class="credential-name">Driving licence</div>
+                  <div class="credential-issuer">DVLA · Expires 2034</div>
+                </div>
+              </div>
+              <div class="credential-row">
+                <div class="credential-icon">🛂</div>
+                <div style="flex:1">
+                  <div class="credential-name">Passport</div>
+                  <div class="credential-issuer">HMPO · Expires Nov 2027</div>
+                </div>
+              </div>
+
+              <div class="section-title">Earned</div>
+              <div class="credential-row">
+                <div class="credential-icon">💰</div>
+                <div style="flex:1">
+                  <div class="credential-name">Tax-Free Childcare</div>
+                  <div class="credential-issuer">HMRC · £2,000/year</div>
+                </div>
+              </div>
+              <div class="credential-row">
+                <div class="credential-icon">💊</div>
+                <div style="flex:1">
+                  <div class="credential-name">Maternity exemption</div>
+                  <div class="credential-issuer">NHS · Until Jul 2027</div>
+                </div>
+              </div>
+              <div class="credential-row">
+                <div class="credential-icon">👶</div>
+                <div style="flex:1">
+                  <div class="credential-name">Sure Start Grant</div>
+                  <div class="credential-issuer">DWP · £500 · SSG-90412</div>
+                </div>
+              </div>
+
+              <div class="section-title">Privacy</div>
+              <div style="padding:8px 20px">
+                <div style="font-size:13px;color:var(--text-secondary);margin-bottom:8px">3 departments have access to your data</div>
+                <div class="btn btn-secondary btn-block" style="font-size:13px">Manage data permissions</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="phone-home"></div>
+      </div>
+      <p class="screen-sublabel">Wallet accessible from profile icon as an overlay. Documents and credentials that appear as cards in the stream are also collected here.</p>
+    </div>
+  </div>
+
+  <div class="mapping-section">
+    <h3 style="font-size:20px;font-weight:700;margin-bottom:16px">How current features map</h3>
+    <table class="mapping-table">
+      <tr><th>Current feature</th><th>In the Stream</th></tr>
+      <tr><td class="mapping-from">Dashboard with service categories</td><td>Eliminated — eligibility cards appear in the feed</td></tr>
+      <tr><td class="mapping-from">Chat tab</td><td>Expandable conversation sheet from any card</td></tr>
+      <tr><td class="mapping-from">Plan view</td><td>Story circles with swipeable full-screen progression</td></tr>
+      <tr><td class="mapping-from">Tasks view</td><td>Task cards in stream, filterable. Priority items pinned to top</td></tr>
+      <tr><td class="mapping-from">Wallet tab</td><td>Wallet overlay from profile icon + credential cards in stream</td></tr>
+      <tr><td class="mapping-from">Services browse</td><td>Eliminated — services are cards that flow through the feed</td></tr>
+      <tr><td class="mapping-from">Bottom tab bar</td><td>Eliminated — one stream with filter + story strip + overlays</td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════ -->
+<!-- COMPARISON                                   -->
+<!-- ════════════════════════════════════════════ -->
+<section class="comparison">
+  <h2>Comparing all four models</h2>
+  <div class="comparison-grid">
+    <div class="comparison-card" style="border:2px solid var(--govuk-green)">
+      <h3>The Mirror <span style="font-size:12px;background:var(--govuk-green);color:white;padding:2px 8px;border-radius:4px;vertical-align:middle">Recommended</span></h3>
+      <p style="margin-bottom:20px">Your life is the home screen. Conversations live inside facets with full depth. Life events unfold as swipeable stories. Government is invisible.</p>
+      <div class="comp-row"><span class="comp-label">Metaphor</span><span>Your life, reflected</span></div>
+      <div class="comp-row"><span class="comp-label">Discover</span><span>Alerts + "you could get"</span></div>
+      <div class="comp-row"><span class="comp-label">Plans</span><span>Swipeable stories</span></div>
+      <div class="comp-row"><span class="comp-label">Tasks</span><span>Alerts on facets</span></div>
+      <div class="comp-row"><span class="comp-label">Conversations</span><span>Persistent, inside facets</span></div>
+      <div class="comp-row"><span class="comp-label">Strength</span><span>Citizen-centred + deep</span></div>
+      <div class="comp-row"><span class="comp-label">Risk</span><span>Data completeness at start</span></div>
+      <div class="comp-row"><span class="comp-label">Best for</span><span>Everyone</span></div>
+    </div>
+    <div class="comparison-card">
+      <h3>The Journal</h3>
+      <p style="margin-bottom:20px">Best when citizens have complex, ongoing needs. The conversation is the relationship. Context is never lost.</p>
+      <div class="comp-row"><span class="comp-label">Metaphor</span><span>Messaging app</span></div>
+      <div class="comp-row"><span class="comp-label">Discover</span><span>Agent starts threads</span></div>
+      <div class="comp-row"><span class="comp-label">Plans</span><span>Pinned conversations</span></div>
+      <div class="comp-row"><span class="comp-label">Tasks</span><span>Inline in threads</span></div>
+      <div class="comp-row"><span class="comp-label">Strength</span><span>Continuity and context</span></div>
+      <div class="comp-row"><span class="comp-label">Risk</span><span>Thread overload</span></div>
+      <div class="comp-row"><span class="comp-label">Best for</span><span>Power users, complex journeys</span></div>
+    </div>
+    <div class="comparison-card">
+      <h3>The Mirror</h3>
+      <p style="margin-bottom:20px">Best when the goal is to put citizens at the centre. Government wraps around your identity, not the other way around.</p>
+      <div class="comp-row"><span class="comp-label">Metaphor</span><span>Personal dashboard</span></div>
+      <div class="comp-row"><span class="comp-label">Discover</span><span>Alerts on life facets</span></div>
+      <div class="comp-row"><span class="comp-label">Plans</span><span>Cross-facet journeys</span></div>
+      <div class="comp-row"><span class="comp-label">Tasks</span><span>Alerts on facets</span></div>
+      <div class="comp-row"><span class="comp-label">Strength</span><span>Citizen-centred</span></div>
+      <div class="comp-row"><span class="comp-label">Risk</span><span>Data completeness</span></div>
+      <div class="comp-row"><span class="comp-label">Best for</span><span>First-time users, clarity</span></div>
+    </div>
+    <div class="comparison-card">
+      <h3>The Stream</h3>
+      <p style="margin-bottom:20px">Best when immediacy matters. Everything is one scroll away. No navigation decisions, no wrong turn.</p>
+      <div class="comp-row"><span class="comp-label">Metaphor</span><span>Intelligent feed</span></div>
+      <div class="comp-row"><span class="comp-label">Discover</span><span>Eligibility cards in feed</span></div>
+      <div class="comp-row"><span class="comp-label">Plans</span><span>Instagram-style stories</span></div>
+      <div class="comp-row"><span class="comp-label">Tasks</span><span>Actionable cards, pinned</span></div>
+      <div class="comp-row"><span class="comp-label">Strength</span><span>Immediacy, zero navigation</span></div>
+      <div class="comp-row"><span class="comp-label">Risk</span><span>Feed overwhelm</span></div>
+      <div class="comp-row"><span class="comp-label">Best for</span><span>Casual users, quick actions</span></div>
+    </div>
+  </div>
+</section>
+
+<section style="padding:60px 40px;text-align:center;background:white">
+  <p style="font-size:17px;color:var(--text-secondary);max-width:700px;margin:0 auto;line-height:1.7">All four models share one principle: <strong>the tab bar is gone</strong>. Government's taxonomy is invisible. Conversations are contextual, not isolated. And the agentic loop — from life event detection through to credential issuance — flows naturally rather than being fractured across separate views.</p>
+  <p style="font-size:17px;color:var(--text);max-width:700px;margin:20px auto 0;line-height:1.7;font-weight:600">The recommended Mirror hybrid takes the strongest idea from each model: identity-first from the Mirror, conversation depth from the Journal, story progression from the Stream. The organising principle is simple: your life comes first, government wraps around it.</p>
+</section>
+
+</body>
+</html>

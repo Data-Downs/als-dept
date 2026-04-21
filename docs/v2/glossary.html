@@ -1,0 +1,523 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Glossary — Agentic Legibility Stack</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    /* ── Tokens ── */
+    :root {
+      --ink: #0b0c0c;
+      --ink-soft: #505a5f;
+      --ink-faint: #6f777b;
+      --surface: #fff;
+      --surface-alt: #f8f8f7;
+      --border: #d5d8da;
+      --border-light: #e8e8e6;
+      --blue: #1d70b8;
+      --blue-dark: #003078;
+      --blue-bg: #e8f0fe;
+      --green: #00703c;
+      --green-bg: #e8f5ee;
+      --purple: #4c2c92;
+      --purple-bg: #f0ebf5;
+      --orange: #f47738;
+      --max-w: 880px;
+      --section-py: 5rem;
+    }
+
+    /* ── Reset ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+    body { font-family: "Inter", Arial, sans-serif; color: var(--ink); line-height: 1.65; background: var(--surface); font-size: 16px; }
+    a { color: var(--blue); text-decoration: none; }
+    a:hover { text-decoration: underline; color: var(--blue-dark); }
+    ul, ol { padding-left: 1.25em; }
+    li + li { margin-top: 0.35em; }
+
+    /* ── Layout ── */
+    .container { max-width: var(--max-w); margin: 0 auto; padding: 0 1.5rem; }
+    .section { padding: var(--section-py) 0; }
+    .section-alt { background: var(--surface-alt); }
+
+    /* ── Nav ── */
+    .nav { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0.7rem 0; position: sticky; top: 0; z-index: 100; }
+    .nav .container { display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; }
+    .nav-brand { font-weight: 600; font-size: 1.05rem; color: var(--ink); white-space: nowrap; letter-spacing: -0.01em; text-decoration: none; }
+    .nav-brand:hover { color: var(--ink); text-decoration: none; }
+    .nav-links { display: flex; gap: 1.5rem; list-style: none; padding: 0; margin: 0; flex-wrap: wrap; align-items: baseline; }
+    .nav-links li { line-height: 1; }
+    .nav-links a { font-size: 0.8rem; font-weight: 500; color: var(--ink-soft); letter-spacing: 0.01em; line-height: 1; }
+    .nav-links a:hover { color: var(--blue); text-decoration: none; }
+    .nav-links a.active { color: var(--ink); font-weight: 700; }
+    @media (max-width: 700px) { .nav-links { display: none; } }
+
+    /* ── Typography ── */
+    h1 { font-size: 2.75rem; font-weight: 700; line-height: 1.12; letter-spacing: -0.025em; color: var(--ink); }
+    h2 { font-size: 1.85rem; font-weight: 600; line-height: 1.2; letter-spacing: -0.02em; margin-bottom: 0.75rem; }
+    h3 { font-size: 1.1rem; font-weight: 700; line-height: 1.3; margin-bottom: 0.35rem; }
+    @media (max-width: 640px) { h1 { font-size: 2rem; } }
+
+    /* ── Hero ── */
+    .hero { padding: 5.5rem 0 3.5rem; }
+    .hero-label {
+      display: inline-block;
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      color: var(--ink-faint);
+      margin-bottom: 1.5rem;
+      border-bottom: 2px solid var(--ink);
+      padding-bottom: 0.2rem;
+    }
+    .hero h1 { margin-bottom: 1rem; max-width: 600px; }
+    .hero-subtitle { font-size: 1.3rem; font-weight: 400; font-style: italic; color: var(--ink-soft); max-width: 580px; line-height: 1.5; }
+    @media (max-width: 640px) { .hero-subtitle { font-size: 1.1rem; } }
+
+    /* ── Search ── */
+    .search-bar { margin-bottom: 2.5rem; }
+    .search-input {
+      width: 100%;
+      max-width: 400px;
+      padding: 0.6rem 1rem;
+      border: 1.5px solid var(--border);
+      font-family: inherit;
+      font-size: 0.9rem;
+      color: var(--ink);
+      background: var(--surface);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .search-input::placeholder { color: var(--ink-faint); }
+    .search-input:focus { border-color: var(--blue); }
+    .search-count { font-size: 0.8rem; color: var(--ink-faint); margin-top: 0.5rem; }
+
+    /* ── Group sections ── */
+    .group { margin-bottom: 3.5rem; }
+    .group:last-child { margin-bottom: 0; }
+    .group-title {
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      color: var(--ink-faint);
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid var(--ink);
+      margin-bottom: 1.5rem;
+      display: inline-block;
+    }
+
+    /* ── Term entries ── */
+    .term { padding: 1rem 0; border-bottom: 1px solid var(--border-light); }
+    .term:last-child { border-bottom: none; }
+    .term.hidden { display: none; }
+    .term-name { font-size: 0.95rem; font-weight: 700; color: var(--ink); margin-bottom: 0.15rem; }
+    .term-name a { color: var(--ink); }
+    .term-name a:hover { color: var(--blue); }
+    .term-def { font-size: 0.88rem; color: var(--ink-soft); line-height: 1.6; max-width: 720px; }
+    .term-note { font-size: 0.82rem; color: var(--ink-faint); line-height: 1.55; margin-top: 0.35rem; max-width: 720px; }
+
+    /* ── Footer ── */
+    .footer { border-top: 1px solid var(--border); padding: 3rem 0 2rem; }
+    .footer-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem; }
+    @media (max-width: 640px) { .footer-grid { grid-template-columns: 1fr; } }
+    .footer h4 { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.06em; color: var(--ink-faint); margin-bottom: 0.75rem; }
+    .footer ul { list-style: none; padding: 0; }
+    .footer li { margin-bottom: 0.35rem; }
+    .footer li a { font-size: 0.85rem; color: var(--ink-soft); font-weight: 500; }
+    .footer li a:hover { color: var(--blue); }
+    .footer-note { font-size: 0.75rem; color: var(--ink-faint); border-top: 1px solid var(--border-light); padding-top: 1.5rem; }
+  </style>
+  <script async defer src="https://scripts.withcabin.com/hello.js"></script>
+</head>
+<body>
+
+  <!-- ── Nav ── -->
+  <nav class="nav">
+    <div class="container">
+      <div class="nav-brand">Agentic Legibility Stack</div>
+      <ul class="nav-links">
+        <li><a href="citizen-app.html">Citizen app</a></li>
+        <li><a href="legibility-studio.html">Legibility Studio</a></li>
+        <li><a href="technical.html">Technical</a></li>
+        <li><a href="departments.html">Departments</a></li>
+        <li><a href="glossary.html" class="active">Glossary</a></li>
+      </ul>
+    </div>
+  </nav>
+
+
+  <!-- ── Hero ── -->
+  <div class="hero">
+    <div class="container">
+      <div class="hero-label">Reference</div>
+      <h1>Glossary</h1>
+      <p class="hero-subtitle">Key concepts and terminology used across the Agentic Legibility Stack.</p>
+    </div>
+  </div>
+
+
+  <!-- ── Main content ── -->
+  <div class="section" style="padding-top: 0;">
+    <div class="container">
+
+      <!-- Search -->
+      <div class="search-bar">
+        <input type="text" class="search-input" id="glossary-search" placeholder="Filter terms..." autocomplete="off" />
+        <div class="search-count" id="search-count"></div>
+      </div>
+
+
+      <!-- ═══════ 1. Foundations ═══════ -->
+      <div class="group" data-group="foundations">
+        <div class="group-title">Foundations</div>
+
+        <div class="term" data-term="service description">
+          <div class="term-name">Service description</div>
+          <div class="term-def">A structured, machine-readable description of a government service that an AI agent can understand and act on.</div>
+          <div class="term-note">Each service description has four dimensions: <strong>identity</strong> (what the service is), <strong>eligibility</strong> (who qualifies), <strong>journey</strong> (what steps are involved), and <strong>data sharing</strong> (what consent is needed). Previously called "service artefacts".</div>
+        </div>
+
+        <div class="term" data-term="identity">
+          <div class="term-name">Identity (service dimension)</div>
+          <div class="term-def">The dimension of a service description that declares what the service is, which department owns it, and what it does.</div>
+          <div class="term-note">Previously called "manifest". Gives the agent enough context to decide whether a service is relevant to a citizen's situation.</div>
+        </div>
+
+        <div class="term" data-term="eligibility">
+          <div class="term-name">Eligibility (service dimension)</div>
+          <div class="term-def">The dimension of a service description that defines who qualifies, expressed as deterministic rules that code can evaluate.</div>
+          <div class="term-note">Previously called "policy". The AI never decides eligibility — it is always evaluated by code against the published rules.</div>
+        </div>
+
+        <div class="term" data-term="journey">
+          <div class="term-name">Journey (service dimension)</div>
+          <div class="term-def">The dimension of a service description that defines the valid sequence of steps from start to completion.</div>
+          <div class="term-note">Previously called "state model". Prevents the agent from skipping steps or advancing out of order.</div>
+        </div>
+
+        <div class="term" data-term="data sharing">
+          <div class="term-name">Data sharing (service dimension)</div>
+          <div class="term-def">The dimension of a service description that specifies what data fields are needed, from whom, and what consent is required before sharing.</div>
+          <div class="term-note">Previously called "consent model". Consent is enforced by code, not by the AI.</div>
+        </div>
+
+        <div class="term" data-term="legibility">
+          <div class="term-name">Legibility</div>
+          <div class="term-def">Making a government service machine-readable so an AI agent can understand it, assess eligibility, and act on it for a citizen.</div>
+          <div class="term-note">A service is "legible" when all four dimensions of its service description are published and complete.</div>
+        </div>
+
+        <div class="term" data-term="deterministic boundary">
+          <div class="term-name">Deterministic boundary</div>
+          <div class="term-def">The strict separation between what the AI language model decides and what code decides.</div>
+          <div class="term-note">The AI handles language — interpreting situations, explaining outcomes, adjusting tone. Code handles rules — eligibility, state transitions, consent enforcement, data validation. See <a href="technical.html">technical architecture</a>.</div>
+        </div>
+      </div>
+
+
+      <!-- ═══════ 2. Citizen experience ═══════ -->
+      <div class="group" data-group="citizen">
+        <div class="group-title">Citizen experience</div>
+
+        <div class="term" data-term="life event">
+          <div class="term-name"><a href="life-events-catalogue.html">Life event</a></div>
+          <div class="term-def">A significant moment in a citizen's life that triggers interaction with multiple government services across departments.</div>
+          <div class="term-note">Examples: bereavement, having a child, losing a job. The system matches a citizen's situation to a life event and proposes all relevant services at once.</div>
+        </div>
+
+        <div class="term" data-term="service">
+          <div class="term-name">Service</div>
+          <div class="term-def">A single government service that a citizen can access through the agent — such as registering a death, applying for bereavement support, or notifying DVLA.</div>
+        </div>
+
+        <div class="term" data-term="card">
+          <div class="term-name"><a href="card-catalogue.html">Card</a></div>
+          <div class="term-def">A structured data-collection interface embedded within the conversation, replacing traditional government web forms.</div>
+          <div class="term-note">Cards handle consent requests, data collection, identity verification, and outcome confirmations. They are deterministic — the AI cannot alter what a card asks for or skip required fields.</div>
+        </div>
+
+        <div class="term" data-term="task">
+          <div class="term-name">Task</div>
+          <div class="term-def">A discrete unit of work within a journey — something the agent will do or something the citizen must confirm — with a tracked status.</div>
+        </div>
+
+        <div class="term" data-term="notification">
+          <div class="term-name">Notification</div>
+          <div class="term-def">A proactive message from the system alerting a citizen to a service they may be eligible for, a deadline approaching, or an action they need to take.</div>
+        </div>
+
+        <div class="term" data-term="wallet">
+          <div class="term-name">Wallet</div>
+          <div class="term-def">The citizen's portable store of verified credentials — digital equivalents of documents like driving licences, passports, and benefit entitlements.</div>
+          <div class="term-note">Credentials are issued by departments and held by the citizen. The wallet also stores consent preferences and earned credentials from completed services.</div>
+        </div>
+
+        <div class="term" data-term="credential">
+          <div class="term-name">Credential</div>
+          <div class="term-def">A government-issued verifiable credential held in the citizen's wallet — the digital equivalent of a physical document.</div>
+        </div>
+
+        <div class="term" data-term="delegation">
+          <div class="term-name">Delegation</div>
+          <div class="term-def">The ability for one citizen to act on behalf of another — a parent for a child, an executor for a deceased person, a carer for a vulnerable adult.</div>
+          <div class="term-note">Delegation is scoped by relationship type and grants specific, granular permissions — not blanket authority.</div>
+        </div>
+
+        <div class="term" data-term="consent grant">
+          <div class="term-name">Consent grant</div>
+          <div class="term-def">A specific, informed permission from a citizen for the agent to share named data fields with a named department for a stated purpose.</div>
+          <div class="term-note">Consent is always explicit, always revocable, and always recorded in the audit trail. Citizens can set standing preferences that apply automatically to future interactions.</div>
+        </div>
+      </div>
+
+
+      <!-- ═══════ 3. Data ═══════ -->
+      <div class="group" data-group="data">
+        <div class="group-title">Data</div>
+
+        <div class="term" data-term="data field">
+          <div class="term-name">Data field</div>
+          <div class="term-def">A single piece of information a service requires from a citizen — such as date of birth, National Insurance number, or address.</div>
+        </div>
+
+        <div class="term" data-term="source attribution">
+          <div class="term-name">Source attribution</div>
+          <div class="term-def">Metadata on every data field recording which department originally holds or issued it.</div>
+        </div>
+
+        <div class="term" data-term="verified data">
+          <div class="term-name">Verified data</div>
+          <div class="term-def">Data sourced directly from a government department — the authoritative version of a fact about a citizen.</div>
+        </div>
+
+        <div class="term" data-term="submitted data">
+          <div class="term-name">Submitted data</div>
+          <div class="term-def">Data entered by the citizen themselves, not yet confirmed against a government source.</div>
+        </div>
+
+        <div class="term" data-term="inferred data">
+          <div class="term-name">Inferred data</div>
+          <div class="term-def">Data derived by the agent from context — such as inferring marital status from a bereavement report. Always flagged as inferred and confirmed before use.</div>
+        </div>
+
+        <div class="term" data-term="pre-fill">
+          <div class="term-name">Pre-fill</div>
+          <div class="term-def">Automatically populating data fields with information already held — from the wallet, a previous service, or a verified government source — so the citizen is not asked twice.</div>
+        </div>
+
+        <div class="term" data-term="canonical alias">
+          <div class="term-name">Canonical alias</div>
+          <div class="term-def">A mapping that recognises when different services ask for the same data under different names — "NI number", "national insurance number", and "NINO" all resolve to one field.</div>
+        </div>
+
+        <div class="term" data-term="field deduplication">
+          <div class="term-name">Field deduplication</div>
+          <div class="term-def">Merging data requirements across multiple services so the citizen is asked once for each piece of information, even when several services need it.</div>
+        </div>
+      </div>
+
+
+      <!-- ═══════ 4. Accountability ═══════ -->
+      <div class="group" data-group="accountability">
+        <div class="group-title">Accountability</div>
+
+        <div class="term" data-term="trace event">
+          <div class="term-name">Trace event</div>
+          <div class="term-def">A single, timestamped record of something the system did — invoked a capability, evaluated eligibility, transitioned state, granted consent, or called the language model.</div>
+        </div>
+
+        <div class="term" data-term="evidence plane">
+          <div class="term-name">Evidence plane</div>
+          <div class="term-def">A separate, append-only audit layer that records every action the system takes — independent of the control logic that makes decisions.</div>
+          <div class="term-note">The evidence plane cannot be edited or deleted. It exists so that any interaction can be fully reconstructed after the fact. See <a href="technical.html">technical architecture</a>.</div>
+        </div>
+
+        <div class="term" data-term="receipt">
+          <div class="term-name">Receipt</div>
+          <div class="term-def">A citizen-facing record of an action taken by the agent, showing what was done, the outcome, and what data was shared.</div>
+        </div>
+
+        <div class="term" data-term="replay">
+          <div class="term-name">Replay</div>
+          <div class="term-def">Stepping through a past interaction event by event, reconstructing the exact state of the conversation, data, and decisions at each point.</div>
+        </div>
+
+        <div class="term" data-term="audit trail">
+          <div class="term-name">Audit trail</div>
+          <div class="term-def">The complete, immutable record of every decision, data share, and consent grant across a citizen's interaction — available to the citizen, the department, and oversight bodies.</div>
+        </div>
+      </div>
+
+
+      <!-- ═══════ 5. Orchestration ═══════ -->
+      <div class="group" data-group="orchestration">
+        <div class="group-title">Orchestration</div>
+
+        <div class="term" data-term="orchestrator">
+          <div class="term-name">Orchestrator</div>
+          <div class="term-def">The central coordinator that manages the flow of a citizen's interaction — routing between services, injecting context, and delegating language-only work to the AI.</div>
+          <div class="term-note">The orchestrator never makes policy decisions. It delegates language to the LLM and rules to deterministic code. See <a href="technical.html">technical architecture</a>.</div>
+        </div>
+
+        <div class="term" data-term="state machine">
+          <div class="term-name">State machine</div>
+          <div class="term-def">A formal model of the valid states a service interaction can be in and the valid transitions between them — preventing the agent from skipping steps.</div>
+        </div>
+
+        <div class="term" data-term="policy evaluator">
+          <div class="term-name">Policy evaluator</div>
+          <div class="term-def">The component that runs a citizen's data against published eligibility rules, returning a definitive pass or fail with reasons.</div>
+        </div>
+
+        <div class="term" data-term="capability invoker">
+          <div class="term-name">Capability invoker</div>
+          <div class="term-def">The single gateway through which every service action passes — ensuring that every invocation is policy-checked, consent-verified, and trace-recorded.</div>
+        </div>
+
+        <div class="term" data-term="consent manager">
+          <div class="term-name">Consent manager</div>
+          <div class="term-def">The component that checks whether consent exists before any data is shared, enforces standing preferences, and records all consent decisions.</div>
+        </div>
+
+        <div class="term" data-term="field collector">
+          <div class="term-name">Field collector</div>
+          <div class="term-def">The component that tracks which data fields a service requires versus which have already been collected or verified — so the agent only asks for what is genuinely missing.</div>
+        </div>
+      </div>
+
+
+      <!-- ═══════ 6. Safety ═══════ -->
+      <div class="group" data-group="safety">
+        <div class="group-title">Safety</div>
+
+        <div class="term" data-term="edge case">
+          <div class="term-name">Edge case</div>
+          <div class="term-def">When a citizen's situation falls outside the standard path defined by a service's policy — and the system must decide whether to adapt, flag, or escalate.</div>
+        </div>
+
+        <div class="term" data-term="handoff">
+          <div class="term-name">Handoff</div>
+          <div class="term-def">The structured escalation of a citizen's case from the AI agent to a human, with full context about what has already been done.</div>
+          <div class="term-note">Handoffs preserve continuity — the human sees the conversation history, data collected, and current state, so the citizen does not have to start over.</div>
+        </div>
+
+        <div class="term" data-term="escalation">
+          <div class="term-name">Escalation</div>
+          <div class="term-def">Moving a citizen's interaction to a higher level of support — from agent to human, or from front-line to specialist — when the situation requires it.</div>
+        </div>
+
+        <div class="term" data-term="safeguarding">
+          <div class="term-name">Safeguarding</div>
+          <div class="term-def">Automatic detection of distress, self-harm indicators, or vulnerability in a citizen's messages, triggering immediate escalation to human support.</div>
+        </div>
+      </div>
+
+
+      <!-- ═══════ 7. Administration ═══════ -->
+      <div class="group" data-group="admin">
+        <div class="group-title">Administration</div>
+
+        <div class="term" data-term="legibility studio">
+          <div class="term-name">Legibility Studio</div>
+          <div class="term-def">The department-facing platform where service owners author, publish, and monitor the service descriptions that make their services accessible to agents.</div>
+          <div class="term-note">Combines authoring (write service descriptions), auditing (review agent interactions), and measurement (track coverage and gaps). See <a href="legibility-studio.html">Legibility Studio deep dive</a>.</div>
+        </div>
+
+        <div class="term" data-term="coverage">
+          <div class="term-name">Coverage</div>
+          <div class="term-def">A department-level view showing how many services have been made legible versus how many remain to be done.</div>
+        </div>
+
+        <div class="term" data-term="gap analysis">
+          <div class="term-name">Gap analysis</div>
+          <div class="term-def">A per-service assessment of which of the four dimensions (identity, eligibility, journey, data sharing) have been published, and which are missing.</div>
+        </div>
+
+        <div class="term" data-term="service catalogue">
+          <div class="term-name">Service catalogue</div>
+          <div class="term-def">The complete inventory of a department's services, whether or not they have been made legible — the starting point for prioritisation.</div>
+        </div>
+
+        <div class="term" data-term="service typology">
+          <div class="term-name">Service typology</div>
+          <div class="term-def">A classification system for government services based on their interaction pattern — application, registration, notification, lookup, payment — which determines the shape of their service description.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- ── Footer ── -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <h4>Deep dives</h4>
+          <ul>
+            <li><a href="citizen-app.html">Citizen app</a></li>
+            <li><a href="legibility-studio.html">Legibility Studio</a></li>
+            <li><a href="technical.html">Technical architecture</a></li>
+            <li><a href="departments.html">Departments</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Reference</h4>
+          <ul>
+            <li><a href="glossary.html">Glossary</a></li>
+            <li><a href="explorations.html">Further explorations</a></li>
+            <li><a href="card-catalogue.html">Card catalogue</a></li>
+            <li><a href="life-events-catalogue.html">Life events</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-note">Agentic Legibility Stack — Department Demo Documentation</div>
+    </div>
+  </footer>
+
+
+  <!-- ── Search/filter script ── -->
+  <script>
+    (function () {
+      const input = document.getElementById('glossary-search');
+      const countEl = document.getElementById('search-count');
+      const terms = document.querySelectorAll('.term');
+      const groups = document.querySelectorAll('.group');
+      const total = terms.length;
+
+      function update() {
+        const q = input.value.trim().toLowerCase();
+        let visible = 0;
+
+        terms.forEach(function (term) {
+          const text = term.textContent.toLowerCase();
+          const match = !q || text.indexOf(q) !== -1;
+          term.classList.toggle('hidden', !match);
+          if (match) visible++;
+        });
+
+        // Hide group headings when all terms in the group are hidden
+        groups.forEach(function (group) {
+          const groupTerms = group.querySelectorAll('.term');
+          const anyVisible = Array.from(groupTerms).some(function (t) {
+            return !t.classList.contains('hidden');
+          });
+          group.style.display = anyVisible ? '' : 'none';
+        });
+
+        if (q) {
+          countEl.textContent = visible + ' of ' + total + ' terms';
+        } else {
+          countEl.textContent = '';
+        }
+      }
+
+      input.addEventListener('input', update);
+    })();
+  </script>
+
+</body>
+</html>

@@ -767,7 +767,46 @@
         .closing { background: #0b0c0c !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
         body { font-size: 0.9rem; }
       }
+    /* ── Snippet download controls ── */
+    .snippet {
+      position: relative;
+    }
+    .snippet-dl {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      display: flex;
+      gap: 2px;
+      opacity: 0;
+      transition: opacity 0.2s;
+      z-index: 10;
+    }
+    .snippet:hover .snippet-dl,
+    .snippet:focus-within .snippet-dl {
+      opacity: 1;
+    }
+    .snippet-dl-btn {
+      font-family: "Inter", Arial, sans-serif;
+      font-size: 0.6rem;
+      font-weight: 600;
+      padding: 0.2rem 0.5rem;
+      border-radius: 3px;
+      border: 1px solid #b1b4b6;
+      background: #fff;
+      color: #505a5f;
+      cursor: pointer;
+      transition: all 0.15s;
+      line-height: 1;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+    .snippet-dl-btn:hover {
+      background: #f3f2f1;
+      border-color: #505a5f;
+      color: #0b0c0c;
+    }
     </style>
+    <script async defer src="https://scripts.withcabin.com/hello.js"></script>
   </head>
   <body>
 
@@ -776,11 +815,12 @@
       <div class="container">
         <span class="nav-brand">Agentic Legibility Stack</span>
         <ul class="nav-links">
-          <li><a href="index.html">Overview</a></li>
-          <li><a href="departments.html">Departments</a></li>
-          <li><a href="personas.html">Personas</a></li>
+          <li><a href="index.html">All documents</a></li>
+          <li><a href="overview.html">Overview</a></li>
+          <li><a href="briefing-executive.html">Executive briefing</a></li>
+          <li><a href="guide-product.html">Product guide</a></li>
+          <li><a href="reference-technical.html" class="active">Technical reference</a></li>
           <li><a href="glossary.html">Glossary</a></li>
-          <li><a href="reference-technical.html" class="active">Technical Reference</a></li>
         </ul>
       </div>
     </nav>
@@ -806,7 +846,9 @@
           <li><a href="#citizen-data"><span class="toc-number">5</span> Citizen Data Architecture</a></li>
           <li><a href="#prompt-engineering"><span class="toc-number">6</span> Prompt Engineering</a></li>
           <li><a href="#service-integration"><span class="toc-number">7</span> Service Integration</a></li>
-          <li><a href="#testing-strategy"><span class="toc-number">8</span> Testing Strategy</a></li>
+          <li><a href="#assurance-verification"><span class="toc-number">8</span> Assurance and Verification</a></li>
+          <li><a href="#security-governance"><span class="toc-number">9</span> Security and Data Governance</a></li>
+          <li><a href="#resilience-failure"><span class="toc-number">10</span> Resilience and Failure Modes</a></li>
         </ul>
       </div>
     </div>
@@ -824,15 +866,15 @@
         <p class="section-intro">The stack is organised as a set of focused packages with strict dependency boundaries. Every package owns one concern; cross-cutting behaviour is mediated through well-typed interfaces.</p>
 
         <h3>Package Dependency Graph</h3>
-        <p class="body-text">The dependency tree is rooted at <span class="type-sig">@als/schemas</span>, which has zero internal dependencies. All other packages declare their internal dependencies explicitly. External SDK usage is confined to two packages.</p>
+        <p class="body-text">The dependency tree is rooted at the <span class="type-sig">Shared Schema Layer</span>, which has zero internal dependencies. All other components declare their internal dependencies explicitly. External SDK usage is confined to two components.</p>
 
         <div class="dep-graph">
           <div class="dep-graph-root">
             <!-- Root -->
             <div class="dep-row">
               <div class="dep-branch">
-                <div class="dep-pkg dep-pkg-dark">@als/schemas</div>
-                <div class="dep-label">Leaf &mdash; no @als dependencies</div>
+                <div class="dep-pkg dep-pkg-dark">Shared Schema Layer</div>
+                <div class="dep-label">Leaf &mdash; no internal dependencies</div>
               </div>
             </div>
 
@@ -842,18 +884,18 @@
             <!-- Layer 2: packages that depend on schemas -->
             <div class="dep-row">
               <div class="dep-branch">
-                <div class="dep-pkg dep-pkg-blue">@als/adapters</div>
-                <div class="dep-ext">+ @anthropic-ai/sdk</div>
-                <div class="dep-ext">+ @modelcontextprotocol/sdk (client)</div>
+                <div class="dep-pkg dep-pkg-blue">LLM Adapter Layer</div>
+                <div class="dep-ext">+ LLM provider SDK</div>
+                <div class="dep-ext">+ MCP client (Model Context Protocol)</div>
               </div>
               <div class="dep-branch">
-                <div class="dep-pkg dep-pkg-green">@als/evidence</div>
+                <div class="dep-pkg dep-pkg-green">Evidence Plane</div>
               </div>
               <div class="dep-branch">
-                <div class="dep-pkg dep-pkg-leaf">@als/identity</div>
+                <div class="dep-pkg dep-pkg-leaf">Identity Layer</div>
               </div>
               <div class="dep-branch">
-                <div class="dep-pkg dep-pkg-leaf">@als/service-graph</div>
+                <div class="dep-pkg dep-pkg-leaf">Service Graph</div>
               </div>
             </div>
 
@@ -863,16 +905,16 @@
             <!-- Layer 3: packages with internal dependencies -->
             <div class="dep-row">
               <div class="dep-branch">
-                <div class="dep-pkg dep-pkg-purple">@als/legibility</div>
-                <div class="dep-ext">+ @als/service-store, @als/evidence</div>
+                <div class="dep-pkg dep-pkg-purple">Legibility Engine</div>
+                <div class="dep-ext">+ Service Store, Evidence Plane</div>
               </div>
               <div class="dep-branch">
-                <div class="dep-pkg dep-pkg-orange">@als/personal-data</div>
-                <div class="dep-ext">+ @als/identity, @als/evidence</div>
+                <div class="dep-pkg dep-pkg-orange">Personal Data Layer</div>
+                <div class="dep-ext">+ Identity Layer, Evidence Plane</div>
               </div>
               <div class="dep-branch">
-                <div class="dep-pkg dep-pkg-leaf">@als/service-store</div>
-                <div class="dep-ext">+ @als/service-graph, @als/evidence</div>
+                <div class="dep-pkg dep-pkg-leaf">Service Store</div>
+                <div class="dep-ext">+ Service Graph, Evidence Plane</div>
               </div>
             </div>
 
@@ -882,13 +924,13 @@
             <!-- Layer 4: top-level packages -->
             <div class="dep-row">
               <div class="dep-branch">
-                <div class="dep-pkg dep-pkg-red">@als/runtime</div>
-                <div class="dep-ext">+ @als/legibility</div>
+                <div class="dep-pkg dep-pkg-red">Orchestration Layer</div>
+                <div class="dep-ext">+ Legibility Engine</div>
               </div>
               <div class="dep-branch">
-                <div class="dep-pkg dep-pkg-purple">@als/mcp-server</div>
-                <div class="dep-ext">+ @als/legibility</div>
-                <div class="dep-ext">+ @modelcontextprotocol/sdk (server)</div>
+                <div class="dep-pkg dep-pkg-purple">MCP Server</div>
+                <div class="dep-ext">+ Legibility Engine</div>
+                <div class="dep-ext">+ MCP server (Model Context Protocol)</div>
               </div>
             </div>
           </div>
@@ -896,11 +938,11 @@
 
         <h3>Architectural Rules</h3>
         <div class="callout callout-red">
-          <p><strong>Three hard rules that every contributor must follow:</strong></p>
+          <p><strong>Three hard rules that govern the architecture:</strong></p>
           <ol>
-            <li><strong><span class="type-sig">@anthropic-ai/sdk</span> lives in <span class="type-sig">@als/adapters</span> ONLY.</strong> Zero direct SDK usage elsewhere in the codebase. All LLM calls route through <span class="type-sig">AnthropicAdapter</span>.</li>
-            <li><strong><span class="type-sig">@modelcontextprotocol/sdk</span> client usage in <span class="type-sig">@als/adapters</span>, server usage in <span class="type-sig">@als/mcp-server</span>.</strong> No other package touches the MCP SDK.</li>
-            <li><strong>The Legibility Studio fetches evidence via HTTP.</strong> It does NOT import <span class="type-sig">@als/evidence</span> directly. This prevents native module crashes in the studio build pipeline.</li>
+            <li><strong>LLM integration is confined to the LLM Adapter Layer ONLY.</strong> Zero direct LLM SDK usage elsewhere in the system. All LLM calls route through the adapter interface.</li>
+            <li><strong>Model Context Protocol (MCP) client usage in the LLM Adapter Layer, server usage in the MCP Server.</strong> No other component touches MCP directly.</li>
+            <li><strong>The Legibility Studio fetches evidence via HTTP.</strong> It does not import the Evidence Plane directly. This enforces a clean separation between the department-facing and citizen-facing surfaces.</li>
           </ol>
         </div>
 
@@ -909,12 +951,10 @@
           <div class="app-card" style="border-top-color: #1d70b8;">
             <h4>Citizen App</h4>
             <p>The citizen-facing experience. Hosts the conversational agent, task cards, consent flows, and receipt history. Exposes an evidence API that the Legibility Studio reads from.</p>
-            <div class="app-port">Port 3106</div>
           </div>
           <div class="app-card" style="border-top-color: #912b88;">
             <h4>Legibility Studio</h4>
-            <p>The department-facing admin tool. Displays service coverage, gap analysis, trace inspection, and artefact authoring. Consumes evidence over HTTP &mdash; never imports the evidence package directly.</p>
-            <div class="app-port">Port 3101</div>
+            <p>The department-facing admin tool. Displays service coverage, gap analysis, trace inspection, and artefact authoring. Consumes evidence over HTTP &mdash; never imports the Evidence Plane directly.</p>
           </div>
         </div>
 
@@ -968,66 +1008,66 @@
         </div>
 
         <h3>Package Responsibility Summary</h3>
-        <p class="body-text">Each package in the monorepo owns a single, well-defined concern. This table summarises what each package does and what it must never do.</p>
+        <p class="body-text">Each component in the system owns a single, well-defined concern. This table summarises what each component does and what it must never do.</p>
 
         <table class="data-table">
           <thead>
             <tr>
-              <th>Package</th>
+              <th>Component</th>
               <th>Owns</th>
               <th>Must Never</th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td>@als/schemas</td>
-              <td>Shared TypeScript types, Zod schemas, type guards</td>
-              <td>Import any other @als package</td>
+              <td>Shared Schema Layer</td>
+              <td>Shared types, schema validation, type guards</td>
+              <td>Import any other component</td>
             </tr>
             <tr>
-              <td>@als/adapters</td>
+              <td>LLM Adapter Layer</td>
               <td>LLM calls, MCP client, tool dispatch</td>
               <td>Make policy or state decisions</td>
             </tr>
             <tr>
-              <td>@als/evidence</td>
+              <td>Evidence Plane</td>
               <td>Trace events, receipts, case ledger, replay</td>
-              <td>Import LLM SDK or make API calls</td>
+              <td>Import LLM integration or make API calls</td>
             </tr>
             <tr>
-              <td>@als/identity</td>
+              <td>Identity Layer</td>
               <td>User profiles, authentication, session management</td>
               <td>Access evidence store directly</td>
             </tr>
             <tr>
-              <td>@als/legibility</td>
+              <td>Legibility Engine</td>
               <td>PolicyEvaluator, StateMachine, ConsentManager, FieldCollector, ArtefactStore</td>
               <td>Call the LLM or make network requests</td>
             </tr>
             <tr>
-              <td>@als/mcp-server</td>
+              <td>MCP Server</td>
               <td>MCP server, tool generation, resource exposure</td>
-              <td>Use MCP client SDK (that belongs to adapters)</td>
+              <td>Use MCP client (that belongs to the adapter layer)</td>
             </tr>
             <tr>
-              <td>@als/personal-data</td>
+              <td>Personal Data Layer</td>
               <td>Citizen data model, field sourcing, relationship store</td>
               <td>Bypass consent checks</td>
             </tr>
             <tr>
-              <td>@als/runtime</td>
+              <td>Orchestration Layer</td>
               <td>Orchestrator, pipeline, strategy dispatch</td>
-              <td>Import LLM SDK directly (must go through adapters)</td>
+              <td>Import LLM integration directly (must go through adapter layer)</td>
             </tr>
             <tr>
-              <td>@als/service-graph</td>
+              <td>Service Graph</td>
               <td>GOV.UK service graph integration, node resolution</td>
               <td>Store state or evidence</td>
             </tr>
             <tr>
-              <td>@als/service-store</td>
+              <td>Service Store</td>
               <td>Service storage, tiered resolution, gap analysis</td>
-              <td>Make eligibility decisions (that belongs to legibility)</td>
+              <td>Make eligibility decisions (that belongs to the Legibility Engine)</td>
             </tr>
           </tbody>
         </table>
@@ -1167,7 +1207,7 @@
   <span class="key">tasks</span><span class="punct">:</span> <span class="type">TaskEntry</span><span class="punct">[];</span>
   <span class="key">policyResult</span><span class="punct">?:</span> <span class="punct">{</span> <span class="key">eligible</span><span class="punct">:</span> <span class="type">boolean</span><span class="punct">;</span> <span class="key">explanation</span><span class="punct">:</span> <span class="type">string</span> <span class="punct">};</span>
   <span class="key">handoff</span><span class="punct">?:</span> <span class="punct">{</span> <span class="key">triggered</span><span class="punct">:</span> <span class="type">boolean</span><span class="punct">;</span> <span class="key">reason</span><span class="punct">:</span> <span class="type">string</span> <span class="punct">};</span>
-  <span class="key">ucState</span><span class="punct">?:</span> <span class="punct">{</span> <span class="key">currentState</span><span class="punct">:</span> <span class="type">string</span><span class="punct">;</span> <span class="key">stateHistory</span><span class="punct">:</span> <span class="type">string</span><span class="punct">[] };</span>
+  <span class="key">serviceState</span><span class="punct">?:</span> <span class="punct">{</span> <span class="key">currentState</span><span class="punct">:</span> <span class="type">string</span><span class="punct">;</span> <span class="key">stateHistory</span><span class="punct">:</span> <span class="type">string</span><span class="punct">[] };</span>
   <span class="key">consentRequests</span><span class="punct">?:</span> <span class="type">ConsentRequest</span><span class="punct">[];</span>
   <span class="key">extractedFields</span><span class="punct">?:</span> <span class="type">FieldExtraction</span><span class="punct">[];</span>
   <span class="key">outcomeHints</span><span class="punct">?:</span> <span class="type">Record</span><span class="punct">&lt;</span><span class="type">string</span><span class="punct">,</span> <span class="type">unknown</span><span class="punct">&gt;;</span>
@@ -1257,7 +1297,7 @@
 <span class="punct">}</span></pre>
         </div>
 
-        <p class="body-text">Typical pipeline timing: steps 1&ndash;6 complete in under 10ms total (pure computation). Step 7 (LLM call) accounts for 85&ndash;95% of total pipeline duration, typically 1,500&ndash;3,000ms. Steps 8&ndash;14 complete in under 5ms total. The trace makes it immediately visible when a slow pipeline run is caused by LLM latency versus application logic.</p>
+        <p class="body-text">In practice, steps 1&ndash;6 and 8&ndash;14 are pure computation and complete in negligible time. Step 7 (LLM call) accounts for the vast majority of total pipeline duration. The trace makes it immediately visible when a slow pipeline run is caused by LLM latency versus application logic.</p>
       </div>
     </div>
 
@@ -1438,7 +1478,7 @@
 
         <!-- ArtefactStore -->
         <h3 style="margin-top: 2.5rem;">ArtefactStore</h3>
-        <p class="body-text">Loads and caches structured artefacts from the service store. Each service&rsquo;s artefact set is loaded once and held in memory for the duration of the session.</p>
+        <p class="body-text">Loads and caches structured artefacts from the service registry. Each service&rsquo;s artefact set is loaded once and held in memory for the duration of the session.</p>
 
         <div class="interface-block">
           <div class="interface-block-header">
@@ -1446,8 +1486,8 @@
             <span class="type-name">ArtefactStore</span>
           </div>
           <pre><span class="kw">class</span> <span class="type">ArtefactStore</span> <span class="punct">{</span>
-  <span class="key">loadFromDirectory</span><span class="punct">(</span><span class="param">dir</span><span class="punct">:</span> <span class="type">string</span><span class="punct">):</span> <span class="type">Promise</span><span class="punct">&lt;</span><span class="type">number</span><span class="punct">&gt;</span>
-  <span class="key">loadFromServiceStoreDb</span><span class="punct">(</span><span class="param">dbPath</span><span class="punct">:</span> <span class="type">string</span><span class="punct">):</span> <span class="type">Promise</span><span class="punct">&lt;</span><span class="type">number</span><span class="punct">&gt;</span>
+  <span class="key">loadFromRegistry</span><span class="punct">(</span><span class="param">serviceId</span><span class="punct">:</span> <span class="type">string</span><span class="punct">):</span> <span class="type">Promise</span><span class="punct">&lt;</span><span class="type">number</span><span class="punct">&gt;</span>
+  <span class="key">fetchArtefacts</span><span class="punct">(</span><span class="param">serviceId</span><span class="punct">:</span> <span class="type">string</span><span class="punct">):</span> <span class="type">Promise</span><span class="punct">&lt;</span><span class="type">ServiceArtefacts</span><span class="punct">&gt;</span>
   <span class="key">getServiceArtefacts</span><span class="punct">(</span><span class="param">serviceId</span><span class="punct">:</span> <span class="type">string</span><span class="punct">):</span> <span class="type">ServiceArtefacts</span> <span class="punct">|</span> <span class="type">null</span>
 <span class="punct">}</span></pre>
         </div>
@@ -1993,7 +2033,7 @@
 
         <div class="code-block">
           <div class="code-block-label">Journey mode prompt layers</div>
-          <pre><span class="num"> 1.</span> <span class="str">Agent personality</span>       <span class="comment">// DOT cautious / MAX proactive</span>
+          <pre><span class="num"> 1.</span> <span class="str">Agent personality</span>       <span class="comment">// conservative / expansive discovery</span>
 <span class="num"> 2.</span> <span class="str">Persona communication</span>   <span class="comment">// Plain English / formal / assisted</span>
 <span class="num"> 3.</span> <span class="str">Scenario context</span>       <span class="comment">// Service domain and background</span>
 <span class="num"> 4.</span> <span class="str">Persona data</span>           <span class="comment">// Verified fields from citizen profile</span>
@@ -2009,7 +2049,7 @@
         </div>
 
         <h3 style="margin-top: 2rem;">Layer Stack</h3>
-        <p class="body-text">Each layer occupies a portion of the token budget. The total system prompt is approximately 2,300 tokens in a typical configuration.</p>
+        <p class="body-text">Each layer occupies a portion of the token budget. The layers are ordered by stability: static layers first, dynamic layers last.</p>
 
         <div class="layer-stack">
           <div class="layer">
@@ -2018,7 +2058,7 @@
               <div class="layer-name">Layer 1: Agent personality</div>
               <div class="layer-detail">Behavioural profile &mdash; cautious/proactive, formality level</div>
             </div>
-            <div class="layer-tokens">~300 tokens</div>
+            <div class="layer-tokens">static</div>
           </div>
           <div class="layer">
             <div class="layer-bar layer-bar-green"></div>
@@ -2026,7 +2066,7 @@
               <div class="layer-name">Layer 2: Persona style</div>
               <div class="layer-detail">Communication preferences from citizen profile</div>
             </div>
-            <div class="layer-tokens">~100 tokens</div>
+            <div class="layer-tokens">static</div>
           </div>
           <div class="layer">
             <div class="layer-bar layer-bar-orange"></div>
@@ -2034,7 +2074,7 @@
               <div class="layer-name">Layer 3: Scenario context</div>
               <div class="layer-detail">Service domain, department, relevant background</div>
             </div>
-            <div class="layer-tokens">~400 tokens</div>
+            <div class="layer-tokens">static</div>
           </div>
           <div class="layer">
             <div class="layer-bar layer-bar-purple"></div>
@@ -2042,7 +2082,7 @@
               <div class="layer-name">Layer 4: Service artefacts and state</div>
               <div class="layer-detail">Policy results, state model, field status, consent</div>
             </div>
-            <div class="layer-tokens">~500 tokens</div>
+            <div class="layer-tokens">per-service</div>
           </div>
           <div class="layer">
             <div class="layer-bar layer-bar-teal"></div>
@@ -2050,7 +2090,7 @@
               <div class="layer-name">Layer 5: Dynamic context</div>
               <div class="layer-detail">Per-turn state instructions, extracted facts, missing fields</div>
             </div>
-            <div class="layer-tokens">~200 tokens</div>
+            <div class="layer-tokens">per-turn</div>
           </div>
           <div class="layer">
             <div class="layer-bar layer-bar-red"></div>
@@ -2058,17 +2098,17 @@
               <div class="layer-name">Layer 6: Guardrails and format</div>
               <div class="layer-detail">Accuracy rules, task types, structured output schema</div>
             </div>
-            <div class="layer-tokens">~800 tokens</div>
+            <div class="layer-tokens">static</div>
           </div>
         </div>
 
-        <p class="body-text" style="margin-top: 1rem;"><strong>Total: approximately 2,300 tokens</strong> for a typical journey-mode system prompt. Triage mode is lighter, omitting layers 4, 5, 7, 8, 9, and 10.</p>
+        <p class="body-text" style="margin-top: 1rem;">Triage mode is lighter, omitting layers 4, 5, 7, 8, 9, and 10. The total token budget varies by model and configuration.</p>
 
         <h3 style="margin-top: 2rem;">Prompt Caching Strategy</h3>
         <p class="body-text">The system prompt is split into a static prefix and a dynamic suffix. The static prefix (agent personality, persona style, scenario context, guardrails) is marked with a cache control directive. The dynamic suffix (state context, field collector, extracted facts) changes every turn.</p>
 
         <div class="callout callout-green">
-          <p><strong>Cache hit rate:</strong> The static prefix is tagged with <span class="type-sig">cache_control: { type: "ephemeral" }</span>. When the citizen remains within the same service journey, the prefix is reused from cache. This yields approximately 50% token savings on repeated turns within a journey. The savings compound across multi-turn conversations, which typically run 8&ndash;12 turns.</p>
+          <p><strong>Cache hit rate:</strong> The static prefix is tagged with a cache control directive supported by the LLM provider. When the citizen remains within the same service journey, the prefix is reused from cache. This yields significant token savings on repeated turns within a journey. The savings compound across multi-turn conversations, which typically run 8&ndash;12 turns.</p>
         </div>
 
         <h3 style="margin-top: 2rem;">Structured Output Schema</h3>
@@ -2101,12 +2141,10 @@
           <div class="app-card" style="border-top-color: #912b88;">
             <h4>Triage Mode</h4>
             <p>No service context. The agent identifies the citizen&rsquo;s need and proposes one or more services. Prompt layers 4, 5, 7, 8, 9, and 10 are omitted. No state machine, no field collector, no consent. The agent works from the full service catalogue to find the best match.</p>
-            <p style="margin-top: 0.5rem; font-size: 0.8rem; color: #505a5f;"><strong>Typical token count:</strong> ~1,200 tokens</p>
           </div>
           <div class="app-card" style="border-top-color: #1d70b8;">
             <h4>Journey Mode</h4>
             <p>Service selected and artefacts loaded. All 13 prompt layers are active. The state machine tracks progress, the field collector tracks data, and the consent manager gates access. The agent operates within the boundaries defined by the service&rsquo;s artefacts.</p>
-            <p style="margin-top: 0.5rem; font-size: 0.8rem; color: #505a5f;"><strong>Typical token count:</strong> ~2,300 tokens</p>
           </div>
         </div>
 
@@ -2123,12 +2161,12 @@
           </thead>
           <tbody>
             <tr>
-              <td>DOT</td>
+              <td>Conservative discovery</td>
               <td>Cautious, step-by-step, asks for explicit confirmation before advancing. Never skips questions, even when data is already known. Prioritises citizen understanding over speed.</td>
               <td>Vulnerable users, complex services, high-stakes decisions (benefits, legal)</td>
             </tr>
             <tr>
-              <td>MAX</td>
+              <td>Expansive discovery</td>
               <td>Proactive, efficient, pre-fills forms and auto-submits where possible. Explains what it has done rather than asking permission first. Prioritises speed while maintaining accuracy.</td>
               <td>Routine renewals, confident users, repeat interactions</td>
             </tr>
@@ -2136,7 +2174,7 @@
         </table>
 
         <div class="callout callout-blue">
-          <p><strong>Personality does not affect deterministic behaviour.</strong> Both DOT and MAX follow the same state machine, the same policy rules, and the same consent requirements. The personality only affects how the agent communicates &mdash; whether it asks before acting or acts before explaining. The platform&rsquo;s guarantees hold regardless of personality.</p>
+          <p><strong>Personality does not affect deterministic behaviour.</strong> Both conservative and expansive discovery modes follow the same state machine, the same policy rules, and the same consent requirements. The personality only affects how the agent communicates &mdash; whether it asks before acting or acts before explaining. The platform&rsquo;s guarantees hold regardless of personality.</p>
         </div>
       </div>
     </div>
@@ -2202,11 +2240,11 @@
           </div>
           <div class="tier-card" style="border-top-color: #1d70b8;">
             <h4>Tier 2: Graph</h4>
-            <p>108 service-graph nodes with metadata, department attribution, and partial artefacts. Sufficient for triage and eligibility checking, but not for full journey orchestration.</p>
+            <p>Service-graph nodes with metadata, department attribution, and partial artefacts. Sufficient for triage and eligibility checking, but not for full journey orchestration.</p>
           </div>
           <div class="tier-card" style="border-top-color: #f47738;">
             <h4>Tier 3: Catalogue</h4>
-            <p>1,544 GOV.UK services with names and department attribution. Used for service discovery during triage. No artefacts &mdash; the agent can identify the service but cannot orchestrate a journey.</p>
+            <p>The current GOV.UK service register contains approximately 1,500 services with names and department attribution. Used for service discovery during triage. No artefacts &mdash; the agent can identify the service but cannot orchestrate a journey.</p>
           </div>
         </div>
 
@@ -2298,206 +2336,218 @@
 
 
     <!-- ══════════════════════════════════════════════════════════ -->
-    <!-- Section 8: Testing Strategy                               -->
+    <!-- Section 8: Assurance and Verification                     -->
     <!-- ══════════════════════════════════════════════════════════ -->
-    <div class="section" id="testing-strategy">
+    <div class="section" id="assurance-verification">
       <div class="container">
         <div class="section-heading">
           <span class="section-number">8</span>
-          <h2>Testing Strategy</h2>
+          <h2>Assurance and Verification</h2>
         </div>
-        <p class="section-intro">Four test layers, strict mocking conventions, and a zero-real-API-calls policy. Tests verify deterministic behaviour without depending on external services.</p>
+        <p class="section-intro">Four assurance layers ensure that artefacts are correct, the pipeline behaves deterministically, model changes are governed, and compliance requirements are met continuously.</p>
 
-        <h3>Test Layers</h3>
+        <h3>Artefact Verification</h3>
+        <p class="body-text">Before a department&rsquo;s artefacts enter the service registry, they pass through automated validation and simulation.</p>
 
         <div class="pipeline-steps">
           <div class="pipeline-step">
             <div class="pipeline-step-num pipeline-step-num-green">1</div>
             <div class="pipeline-step-content">
-              <div class="pipeline-step-title">Unit tests</div>
-              <div class="pipeline-step-desc">Per-package tests using Vitest. Each package has its own test configuration. External dependencies (LLM SDK, databases) are always mocked. Focus: individual class behaviour, type contracts, edge cases.</div>
+              <div class="pipeline-step-title">Schema validation <span class="pipeline-tag tag-deterministic">deterministic</span></div>
+              <div class="pipeline-step-desc">Every artefact (manifest, policy, state model, consent, state instructions) is validated against its published schema. Type errors, missing required fields, and structural violations are caught before the artefact can be registered.</div>
             </div>
           </div>
           <div class="pipeline-step">
             <div class="pipeline-step-num pipeline-step-num-green">2</div>
             <div class="pipeline-step-content">
-              <div class="pipeline-step-title">Component tests</div>
-              <div class="pipeline-step-desc">React Testing Library with the React Vitest plugin for JSX transform. Store is mocked via <span class="type-sig">vi.mock("@/lib/store")</span> for complete component isolation. Focus: rendering, user interaction, state-driven UI changes.</div>
+              <div class="pipeline-step-title">Referential integrity <span class="pipeline-tag tag-deterministic">deterministic</span></div>
+              <div class="pipeline-step-desc">Cross-artefact references are checked: policy rules reference fields declared in the manifest input schema; state model transitions reference valid states; consent grants reference data scopes that exist in the field catalogue.</div>
             </div>
           </div>
           <div class="pipeline-step">
             <div class="pipeline-step-num pipeline-step-num-navy">3</div>
             <div class="pipeline-step-content">
-              <div class="pipeline-step-title">API route tests</div>
-              <div class="pipeline-step-desc">Use <span class="type-sig">// @vitest-environment node</span> override to run in Node context. Test request/response contracts, error handling, and evidence API surface. Focus: HTTP semantics, serialisation, authentication.</div>
+              <div class="pipeline-step-title">Dry-run simulation <span class="pipeline-tag tag-platform">platform</span></div>
+              <div class="pipeline-step-desc">The platform runs the full pipeline with synthetic citizen data against the service artefacts. This verifies that the state machine can reach all terminal states, policy rules evaluate correctly, and consent flows complete without blocking. No live LLM call is required &mdash; the simulation uses deterministic response fixtures.</div>
+            </div>
+          </div>
+          <div class="pipeline-step">
+            <div class="pipeline-step-num pipeline-step-num-navy">4</div>
+            <div class="pipeline-step-content">
+              <div class="pipeline-step-title">Gap analysis <span class="pipeline-tag tag-platform">platform</span></div>
+              <div class="pipeline-step-desc">The Legibility Studio reports on artefact completeness: which services have full coverage, which are missing policy rulesets, which state models have unreachable states. Departments can prioritise authoring work based on coverage scores.</div>
+            </div>
+          </div>
+        </div>
+
+        <h3 style="margin-top: 2.5rem;">Pipeline Assurance</h3>
+        <p class="body-text">The deterministic pipeline is tested independently of any LLM provider. Because steps 1&ndash;6 and 8&ndash;14 are pure computation, they can be verified exhaustively against known inputs and expected outputs.</p>
+
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Assurance Area</th>
+              <th>Method</th>
+              <th>Coverage</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Policy evaluation</td>
+              <td>Deterministic tests against all seven operators with boundary conditions. Each operator is tested with valid, invalid, missing, and edge-case inputs.</td>
+              <td>All rule types and operators</td>
+            </tr>
+            <tr>
+              <td>State machine transitions</td>
+              <td>Every defined transition, guard, and terminal state is exercised. Illegal transitions are verified to be rejected. Auto-transitions and forced transitions are validated.</td>
+              <td>Complete state graph per service</td>
+            </tr>
+            <tr>
+              <td>Consent enforcement</td>
+              <td>Verification that required grants block progress when declined, optional grants do not, and all decisions are recorded in the evidence store.</td>
+              <td>All consent models</td>
+            </tr>
+            <tr>
+              <td>Evidence integrity</td>
+              <td>Trace events are verified for completeness (every pipeline run produces a span), ordering (events are chronological), and immutability (events cannot be modified after creation).</td>
+              <td>All event types</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3 style="margin-top: 2.5rem;">Model Governance</h3>
+        <p class="body-text">When the underlying language model is changed or updated, the platform runs a structured evaluation process before the new model enters production.</p>
+
+        <div class="pipeline-steps">
+          <div class="pipeline-step">
+            <div class="pipeline-step-num pipeline-step-num-green">1</div>
+            <div class="pipeline-step-content">
+              <div class="pipeline-step-title">Evaluation suite</div>
+              <div class="pipeline-step-desc">A curated set of known service journeys is replayed against the new model. Each journey has expected outputs: correct structured JSON, valid state transition proposals, appropriate task card generation, and accurate field extraction.</div>
+            </div>
+          </div>
+          <div class="pipeline-step">
+            <div class="pipeline-step-num pipeline-step-num-green">2</div>
+            <div class="pipeline-step-content">
+              <div class="pipeline-step-title">Regression testing</div>
+              <div class="pipeline-step-desc">The evaluation results are compared against the baseline from the current production model. Regressions in structured output parsing, transition accuracy, or guardrail compliance are flagged for review before approval.</div>
+            </div>
+          </div>
+          <div class="pipeline-step">
+            <div class="pipeline-step-num pipeline-step-num-navy">3</div>
+            <div class="pipeline-step-content">
+              <div class="pipeline-step-title">Prompt compatibility</div>
+              <div class="pipeline-step-desc">The prompt composition is tested to ensure it produces reliable results with the new model. Token budget, cache behaviour, and structured output adherence are validated across all thirteen prompt layers.</div>
+            </div>
+          </div>
+        </div>
+
+        <h3 style="margin-top: 2.5rem;">Compliance Verification</h3>
+        <p class="body-text">Automated checks run continuously to verify that the platform meets its policy and consent obligations.</p>
+
+        <div class="callout callout-green">
+          <p><strong>Four continuous compliance checks:</strong></p>
+          <ul>
+            <li><strong>Policy rule coverage</strong> &mdash; every service with a published policy ruleset has corresponding evaluation coverage. No rule goes untested against synthetic data.</li>
+            <li><strong>Consent completeness</strong> &mdash; every data field accessed by a service is covered by a consent grant in the service&rsquo;s consent model. No data flows without a declared purpose.</li>
+            <li><strong>Audit trail continuity</strong> &mdash; every citizen interaction produces a complete trace. Gaps in the evidence store (missing spans, orphaned events) trigger alerts.</li>
+            <li><strong>Handoff accuracy</strong> &mdash; edge-case rules consistently trigger human escalation. The platform verifies that safeguarding conditions never result in automated decisions.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <!-- Section 9: Security and Data Governance                   -->
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <div class="section section-alt" id="security-governance">
+      <div class="container">
+        <div class="section-heading">
+          <span class="section-number">9</span>
+          <h2>Security and Data Governance</h2>
+        </div>
+        <p class="section-intro">The platform handles sensitive citizen data across department boundaries. Security, data residency, and governance are architectural concerns, not afterthoughts.</p>
+
+        <h3>Authentication and Identity</h3>
+        <p class="body-text">Citizen identity is established through integration with <strong>GOV.UK One Login</strong>, the cross-government identity platform. The agent does not manage credentials directly &mdash; authentication is delegated to One Login, and the platform receives a verified identity token. Session management uses standard secure token patterns with appropriate expiry and refresh mechanisms.</p>
+
+        <h3 style="margin-top: 2rem;">Data Residency</h3>
+        <p class="body-text">All citizen data is processed and stored within UK jurisdiction. The platform infrastructure is hosted in UK data centres. No citizen personally identifiable information (PII) leaves UK borders during processing, storage, or transit. Department data shared through the platform remains subject to each department&rsquo;s existing data governance framework.</p>
+
+        <h3 style="margin-top: 2rem;">Encryption</h3>
+        <p class="body-text"><strong>In transit:</strong> all communications between the citizen application, the platform services, and department APIs use TLS 1.2 or higher. <strong>At rest:</strong> the evidence store, citizen data profiles, and consent records are encrypted using AES-256. Encryption keys are managed through a dedicated key management service with automatic rotation.</p>
+
+        <h3 style="margin-top: 2rem;">LLM Data Handling</h3>
+        <p class="body-text">Citizen PII sent to the language model is processed in-session only. The platform&rsquo;s contract with LLM providers stipulates that citizen data is <strong>not used for model training</strong>, is not logged beyond the session, and is not accessible to the provider&rsquo;s staff. The LLM Adapter Layer enforces this boundary &mdash; it controls exactly which citizen data fields are included in prompts, and strips sensitive fields (financial details, health records) unless explicitly required by the current service and covered by a consent grant.</p>
+
+        <h3 style="margin-top: 2rem;">Consent as a Technical Control</h3>
+        <p class="body-text">The Consent Manager is a <strong>hard gate, not advisory</strong>. When a service requires data that the citizen has not consented to share, the pipeline halts. The LLM cannot override consent decisions through conversational persuasion or prompt injection. Consent decisions are recorded as immutable trace events and are available for audit at any time. Consent can be withdrawn, at which point the platform ceases to share the affected data fields with the relevant service.</p>
+
+        <h3 style="margin-top: 2rem;">Audit Trail</h3>
+        <p class="body-text">Every significant action is captured in the evidence store as an immutable trace event. The evidence store is append-only &mdash; events cannot be modified or deleted after creation. This provides a complete, tamper-evident record of every policy evaluation, consent decision, state transition, LLM interaction, and receipt issued. The replay engine can reconstruct the exact state of any citizen interaction at any point in time.</p>
+
+        <h3 style="margin-top: 2rem;">Prompt Injection Mitigation</h3>
+        <p class="body-text">The architecture&rsquo;s separation of deterministic and AI layers provides structural protection against prompt injection. Even if a malicious input manipulates the LLM&rsquo;s response, the deterministic pipeline (steps 8&ndash;14) validates all outputs: state transitions must be legal, consent must be granted, policy rules must pass. The LLM proposes; the platform disposes.</p>
+
+        <h3 style="margin-top: 2rem;">Access Control and Delegation</h3>
+        <p class="body-text">The <span class="type-sig">RelationshipStore</span> enforces scoped permissions for delegated access. A power of attorney holder, parent, or carer can act on behalf of another citizen only within their declared permission scope. Every delegated action is logged separately in the evidence store, recording both the actor and the subject. Permission boundaries are enforced at the API level and cannot be circumvented through the conversational interface.</p>
+      </div>
+    </div>
+
+
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <!-- Section 10: Resilience and Failure Modes                  -->
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <div class="section" id="resilience-failure">
+      <div class="container">
+        <div class="section-heading">
+          <span class="section-number">10</span>
+          <h2>Resilience and Failure Modes</h2>
+        </div>
+        <p class="section-intro">The platform is designed to degrade gracefully. Every failure mode has a defined handling strategy that preserves citizen trust and data integrity.</p>
+
+        <div class="pipeline-steps">
+          <div class="pipeline-step">
+            <div class="pipeline-step-num pipeline-step-num-orange">1</div>
+            <div class="pipeline-step-content">
+              <div class="pipeline-step-title">LLM unavailability</div>
+              <div class="pipeline-step-desc">If the language model is unreachable or returns an error, the platform degrades gracefully to static guidance. The citizen is shown pre-authored content for their current service state, including next steps and links to the existing GOV.UK web journey. No data is lost &mdash; the citizen can resume the agentic journey when the model becomes available.</div>
+            </div>
+          </div>
+          <div class="pipeline-step">
+            <div class="pipeline-step-num pipeline-step-num-orange">2</div>
+            <div class="pipeline-step-content">
+              <div class="pipeline-step-title">Department API timeout</div>
+              <div class="pipeline-step-desc">When a department API call times out or fails, the platform retries with exponential backoff. If retries are exhausted, the citizen is notified that the specific action could not be completed and is offered the option to continue with partial information or save their progress and return later. The platform never silently drops a failed action.</div>
+            </div>
+          </div>
+          <div class="pipeline-step">
+            <div class="pipeline-step-num pipeline-step-num-orange">3</div>
+            <div class="pipeline-step-content">
+              <div class="pipeline-step-title">Evidence store failure</div>
+              <div class="pipeline-step-desc">If the evidence store is temporarily unavailable, trace events are queued in a durable buffer and flushed when the store recovers. The pipeline never discards trace data. If the buffer reaches capacity, the pipeline pauses rather than proceeding without audit coverage. Evidence integrity is non-negotiable.</div>
             </div>
           </div>
           <div class="pipeline-step">
             <div class="pipeline-step-num pipeline-step-num-orange">4</div>
             <div class="pipeline-step-content">
-              <div class="pipeline-step-title">End-to-end tests</div>
-              <div class="pipeline-step-desc">Playwright browser automation against a running development server. Test full citizen journeys from conversation start to receipt generation. Focus: integration, flow completeness, visual regression.</div>
+              <div class="pipeline-step-title">Handoff as a safety valve</div>
+              <div class="pipeline-step-desc">At any point in the pipeline, the system can escalate to a human adviser. Handoff triggers include: safeguarding concerns detected in conversation, repeated pipeline errors for the same citizen, edge-case policy rules, and explicit citizen request. The full conversation context, collected fields, and current state are preserved and transferred to the human adviser.</div>
+            </div>
+          </div>
+          <div class="pipeline-step">
+            <div class="pipeline-step-num pipeline-step-num-orange">5</div>
+            <div class="pipeline-step-content">
+              <div class="pipeline-step-title">Malformed LLM output</div>
+              <div class="pipeline-step-desc">If the language model produces output that cannot be parsed at pipeline step 8, the response text is still delivered to the citizen but no state transition is applied and no tasks are generated. The conversation continues from its current state. The malformed output is logged as a trace event for monitoring and model evaluation.</div>
             </div>
           </div>
         </div>
 
-        <h3 style="margin-top: 2.5rem;">Mocking Conventions</h3>
-        <p class="body-text">The codebase enforces a strict no-real-API-calls policy in tests. Every external boundary has a documented mock pattern.</p>
-
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>Boundary</th>
-              <th>Mock Pattern</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>LLM SDK</td>
-              <td>Mock <span class="type-sig">messages.create()</span> to return fixture content blocks with controlled structured output.</td>
-            </tr>
-            <tr>
-              <td>Evidence store</td>
-              <td>In-memory <span class="type-sig">DatabaseAdapter</span> implementation. Same interface, no persistence.</td>
-            </tr>
-            <tr>
-              <td>State store</td>
-              <td>Mock via <span class="type-sig">vi.mock("@/lib/store")</span> for Zustand-based component state.</td>
-            </tr>
-            <tr>
-              <td>Department APIs</td>
-              <td>Fixture responses with known eligibility outcomes and state transitions.</td>
-            </tr>
-          </tbody>
-        </table>
-
-        <h3 style="margin-top: 2.5rem;">Example: PolicyEvaluator Unit Test</h3>
-        <p class="body-text">A representative test pattern showing how deterministic classes are tested against known inputs and expected outputs.</p>
-
-        <div class="code-block">
-          <div class="code-block-label">PolicyEvaluator.test.ts</div>
-          <pre><span class="kw">describe</span><span class="punct">(</span><span class="str">"PolicyEvaluator"</span><span class="punct">,</span> <span class="punct">() =&gt; {</span>
-  <span class="kw">it</span><span class="punct">(</span><span class="str">"returns eligible when all rules pass"</span><span class="punct">,</span> <span class="punct">() =&gt; {</span>
-    <span class="kw">const</span> <span class="param">evaluator</span> <span class="punct">=</span> <span class="kw">new</span> <span class="type">PolicyEvaluator</span><span class="punct">();</span>
-    <span class="kw">const</span> <span class="param">result</span> <span class="punct">=</span> <span class="param">evaluator</span><span class="punct">.</span><span class="key">evaluate</span><span class="punct">(</span><span class="param">ruleset</span><span class="punct">,</span> <span class="punct">{</span>
-      <span class="key">age</span><span class="punct">:</span> <span class="num">25</span><span class="punct">,</span>
-      <span class="key">driving_licence_number</span><span class="punct">:</span> <span class="str">"SMITH123"</span><span class="punct">,</span>
-      <span class="key">jurisdiction</span><span class="punct">:</span> <span class="str">"England"</span><span class="punct">,</span>
-    <span class="punct">});</span>
-    <span class="key">expect</span><span class="punct">(</span><span class="param">result</span><span class="punct">.</span><span class="key">eligible</span><span class="punct">).</span><span class="key">toBe</span><span class="punct">(</span><span class="bool">true</span><span class="punct">);</span>
-    <span class="key">expect</span><span class="punct">(</span><span class="param">result</span><span class="punct">.</span><span class="key">passed</span><span class="punct">).</span><span class="key">toHaveLength</span><span class="punct">(</span><span class="num">3</span><span class="punct">);</span>
-  <span class="punct">});</span>
-
-  <span class="kw">it</span><span class="punct">(</span><span class="str">"returns ineligible with reason when a rule fails"</span><span class="punct">,</span> <span class="punct">() =&gt; {</span>
-    <span class="kw">const</span> <span class="param">result</span> <span class="punct">=</span> <span class="param">evaluator</span><span class="punct">.</span><span class="key">evaluate</span><span class="punct">(</span><span class="param">ruleset</span><span class="punct">,</span> <span class="punct">{</span>
-      <span class="key">age</span><span class="punct">:</span> <span class="num">14</span><span class="punct">,</span>
-    <span class="punct">});</span>
-    <span class="key">expect</span><span class="punct">(</span><span class="param">result</span><span class="punct">.</span><span class="key">eligible</span><span class="punct">).</span><span class="key">toBe</span><span class="punct">(</span><span class="bool">false</span><span class="punct">);</span>
-    <span class="key">expect</span><span class="punct">(</span><span class="param">result</span><span class="punct">.</span><span class="key">failed</span><span class="punct">[</span><span class="num">0</span><span class="punct">].</span><span class="key">reason_if_failed</span><span class="punct">)</span>
-      <span class="punct">.</span><span class="key">toContain</span><span class="punct">(</span><span class="str">"at least 16"</span><span class="punct">);</span>
-  <span class="punct">});</span>
-<span class="punct">});</span></pre>
+        <div class="callout callout-blue">
+          <p><strong>The platform always has a safe fallback.</strong> No failure mode results in a citizen being left without guidance, losing their progress, or having data silently dropped. The worst case is a degraded experience with human support &mdash; never a broken one.</p>
         </div>
-
-        <h3 style="margin-top: 2.5rem;">Running Tests</h3>
-
-        <div class="code-block">
-          <div class="code-block-label">Commands</div>
-          <pre><span class="comment"># All packages via workspace runner</span>
-<span class="str">npm test</span>
-
-<span class="comment"># End-to-end (requires running dev server)</span>
-<span class="str">cd apps/citizen &amp;&amp; npx playwright test</span></pre>
-        </div>
-
-        <div class="callout callout-red">
-          <p><strong>Never make real API calls in tests.</strong> Every test that touches an external boundary must use the documented mock pattern. Tests that make network requests will fail in CI and are rejected in review. The evidence store uses an in-memory adapter; the LLM SDK returns fixture responses; department APIs return controlled outcomes.</p>
-        </div>
-
-        <h3 style="margin-top: 2.5rem;">Test Environment Configuration</h3>
-        <p class="body-text">Each package has its own <span class="type-sig">vitest.config.ts</span> with environment-specific settings. Most tests run in the default jsdom environment. API route tests override to Node.</p>
-
-        <div class="code-block">
-          <div class="code-block-label">API route test environment override</div>
-          <pre><span class="comment">// @vitest-environment node</span>
-<span class="kw">import</span> <span class="punct">{</span> <span class="param">describe</span><span class="punct">,</span> <span class="param">it</span><span class="punct">,</span> <span class="param">expect</span><span class="punct">,</span> <span class="param">vi</span> <span class="punct">}</span> <span class="kw">from</span> <span class="str">"vitest"</span><span class="punct">;</span>
-
-<span class="kw">describe</span><span class="punct">(</span><span class="str">"POST /api/chat"</span><span class="punct">,</span> <span class="punct">() =&gt; {</span>
-  <span class="kw">it</span><span class="punct">(</span><span class="str">"returns 400 when message is empty"</span><span class="punct">,</span> <span class="kw">async</span> <span class="punct">() =&gt; {</span>
-    <span class="kw">const</span> <span class="param">response</span> <span class="punct">=</span> <span class="kw">await</span> <span class="key">POST</span><span class="punct">(</span>
-      <span class="kw">new</span> <span class="type">Request</span><span class="punct">(</span><span class="str">"http://localhost/api/chat"</span><span class="punct">,</span> <span class="punct">{</span>
-        <span class="key">method</span><span class="punct">:</span> <span class="str">"POST"</span><span class="punct">,</span>
-        <span class="key">body</span><span class="punct">:</span> <span class="type">JSON</span><span class="punct">.</span><span class="key">stringify</span><span class="punct">({</span> <span class="key">message</span><span class="punct">:</span> <span class="str">""</span> <span class="punct">}),</span>
-      <span class="punct">})</span>
-    <span class="punct">);</span>
-    <span class="key">expect</span><span class="punct">(</span><span class="param">response</span><span class="punct">.</span><span class="key">status</span><span class="punct">).</span><span class="key">toBe</span><span class="punct">(</span><span class="num">400</span><span class="punct">);</span>
-  <span class="punct">});</span>
-<span class="punct">});</span></pre>
-        </div>
-
-        <h3 style="margin-top: 2rem;">Component Test Pattern</h3>
-        <p class="body-text">Component tests mock the Zustand store to control application state, then render components in isolation and assert on their output.</p>
-
-        <div class="code-block">
-          <div class="code-block-label">Component test with store mock</div>
-          <pre><span class="kw">import</span> <span class="punct">{</span> <span class="param">render</span><span class="punct">,</span> <span class="param">screen</span> <span class="punct">}</span> <span class="kw">from</span> <span class="str">"@testing-library/react"</span><span class="punct">;</span>
-<span class="kw">import</span> <span class="punct">{</span> <span class="param">vi</span> <span class="punct">}</span> <span class="kw">from</span> <span class="str">"vitest"</span><span class="punct">;</span>
-
-<span class="key">vi</span><span class="punct">.</span><span class="key">mock</span><span class="punct">(</span><span class="str">"@/lib/store"</span><span class="punct">,</span> <span class="punct">() =&gt; ({</span>
-  <span class="key">useStore</span><span class="punct">:</span> <span class="punct">() =&gt; ({</span>
-    <span class="key">persona</span><span class="punct">:</span> <span class="punct">{</span> <span class="key">id</span><span class="punct">:</span> <span class="str">"margaret"</span><span class="punct">,</span> <span class="key">name</span><span class="punct">:</span> <span class="str">"Margaret Chen"</span> <span class="punct">},</span>
-    <span class="key">currentService</span><span class="punct">:</span> <span class="type">null</span><span class="punct">,</span>
-    <span class="key">messages</span><span class="punct">:</span> <span class="punct">[],</span>
-  <span class="punct">}),</span>
-<span class="punct">}));</span>
-
-<span class="kw">describe</span><span class="punct">(</span><span class="str">"Dashboard"</span><span class="punct">,</span> <span class="punct">() =&gt; {</span>
-  <span class="kw">it</span><span class="punct">(</span><span class="str">"renders persona name"</span><span class="punct">,</span> <span class="punct">() =&gt; {</span>
-    <span class="key">render</span><span class="punct">(</span><span class="type">&lt;Dashboard /&gt;</span><span class="punct">);</span>
-    <span class="key">expect</span><span class="punct">(</span><span class="param">screen</span><span class="punct">.</span><span class="key">getByText</span><span class="punct">(</span><span class="str">"Margaret Chen"</span><span class="punct">)).</span><span class="key">toBeInTheDocument</span><span class="punct">();</span>
-  <span class="punct">});</span>
-<span class="punct">});</span></pre>
-        </div>
-
-        <h3 style="margin-top: 2rem;">Coverage Priorities</h3>
-        <p class="body-text">Not all code needs equal test coverage. The following priorities guide test investment.</p>
-
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>Priority</th>
-              <th>What to Test</th>
-              <th>Why</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Critical</td>
-              <td>PolicyEvaluator, StateMachine, ConsentManager</td>
-              <td>These enforce citizen-facing guarantees. A bug here means wrong eligibility decisions or consent violations.</td>
-            </tr>
-            <tr>
-              <td>High</td>
-              <td>Orchestrator pipeline steps 8&ndash;14</td>
-              <td>The validation and override layer. Bugs here mean the LLM&rsquo;s output reaches citizens without proper checks.</td>
-            </tr>
-            <tr>
-              <td>High</td>
-              <td>TraceEmitter, ReceiptGenerator</td>
-              <td>Audit trail integrity. Missing or malformed events break replay and accountability.</td>
-            </tr>
-            <tr>
-              <td>Medium</td>
-              <td>ServiceStrategy implementations</td>
-              <td>Tool dispatch and context building. Less critical because the orchestrator validates all outputs.</td>
-            </tr>
-            <tr>
-              <td>Medium</td>
-              <td>React components</td>
-              <td>UI rendering and interaction. Important but less safety-critical than backend logic.</td>
-            </tr>
-          </tbody>
-        </table>
       </div>
     </div>
 
@@ -2515,6 +2565,112 @@
         Agentic Legibility Stack &middot; Technical Architecture Reference &middot; March 2026
       </div>
     </footer>
+
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <script>
+(function () {
+  var snippets = document.querySelectorAll('.snippet');
+  snippets.forEach(function (snippet) {
+    var label = snippet.querySelector('.snippet-label');
+    var body = snippet.querySelector('.snippet-body');
+    if (!body) return;
+
+    var dl = document.createElement('div');
+    dl.className = 'snippet-dl';
+
+    var pngBtn = document.createElement('button');
+    pngBtn.className = 'snippet-dl-btn';
+    pngBtn.textContent = 'PNG';
+    pngBtn.title = 'Download as image';
+
+    var tblBtn = document.createElement('button');
+    tblBtn.className = 'snippet-dl-btn';
+    tblBtn.textContent = 'Table';
+    tblBtn.title = 'Download as HTML table';
+
+    dl.appendChild(pngBtn);
+    dl.appendChild(tblBtn);
+    snippet.appendChild(dl);
+
+    function slugify(text) {
+      return text.replace(/[^a-z0-9]+/gi, '-').replace(/^-|-$/g, '').toLowerCase();
+    }
+    var fileName = label ? slugify(label.textContent) : 'snippet';
+
+    pngBtn.addEventListener('click', function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      dl.style.display = 'none';
+      html2canvas(snippet, {
+        backgroundColor: null,
+        scale: 2,
+        useCORS: true,
+        logging: false
+      }).then(function (canvas) {
+        dl.style.display = '';
+        var link = document.createElement('a');
+        link.download = fileName + '.png';
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+      }).catch(function () {
+        dl.style.display = '';
+      });
+    });
+
+    tblBtn.addEventListener('click', function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      var title = label ? label.textContent.trim() : 'Snippet';
+      var rows = [];
+      var visited = new Set();
+      var items = body.querySelectorAll('[style*="display:flex"], [style*="display: flex"], tr, li');
+      if (items.length > 0) {
+        items.forEach(function (item) {
+          if (visited.has(item)) return;
+          var parent = item.parentElement;
+          while (parent && parent !== body) {
+            if (visited.has(parent)) return;
+            parent = parent.parentElement;
+          }
+          visited.add(item);
+          var texts = [];
+          item.querySelectorAll('div, span, td, th').forEach(function (el) {
+            var t = el.textContent.trim();
+            if (t && !texts.includes(t) && t.length < 200) texts.push(t);
+          });
+          if (texts.length > 0) rows.push(texts);
+        });
+      }
+      if (rows.length === 0) {
+        body.querySelectorAll('div, p, span').forEach(function (el) {
+          var t = el.textContent.trim();
+          if (t && t.length < 200 && el.children.length === 0) rows.push([t]);
+        });
+      }
+      var maxCols = 1;
+      rows.forEach(function (r) { if (r.length > maxCols) maxCols = r.length; });
+      var html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>' + title + '</title>';
+      html += '<style>body{font-family:Arial,sans-serif;padding:2rem;}table{border-collapse:collapse;width:100%;}';
+      html += 'th,td{border:1px solid #b1b4b6;padding:0.5rem 0.75rem;text-align:left;font-size:0.9rem;}';
+      html += 'th{background:#f3f2f1;font-weight:600;}caption{font-size:1.1rem;font-weight:700;margin-bottom:0.75rem;text-align:left;}</style></head>';
+      html += '<body><table><caption>' + title + '</caption><tbody>';
+      rows.forEach(function (r) {
+        html += '<tr>';
+        r.forEach(function (cell) { html += '<td>' + cell + '</td>'; });
+        for (var i = r.length; i < maxCols; i++) html += '<td></td>';
+        html += '</tr>';
+      });
+      html += '</tbody></table></body></html>';
+      var blob = new Blob([html], { type: 'text/html' });
+      var link = document.createElement('a');
+      link.download = fileName + '.html';
+      link.href = URL.createObjectURL(blob);
+      link.click();
+      URL.revokeObjectURL(link.href);
+    });
+  });
+})();
+    </script>
 
   </body>
 </html>

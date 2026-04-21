@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bereavement service cascade — Sarah Okafor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: #ffffff;
+    color: #1a1a1a;
+    display: flex;
+    justify-content: center;
+    padding: 48px 24px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .container {
+    max-width: 800px;
+    width: 100%;
+  }
+
+  h1 {
+    font-size: 20px;
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 4px;
+    letter-spacing: -0.02em;
+  }
+
+  .subtitle {
+    font-size: 13px;
+    color: #666;
+    text-align: center;
+    margin-bottom: 8px;
+  }
+
+  .persona {
+    font-size: 12px;
+    color: #505a5f;
+    text-align: center;
+    margin-bottom: 40px;
+    font-style: italic;
+  }
+
+  /* Department colours */
+  .dept-gro { background: #505a5f; }
+  .dept-dwp { background: #1d70b8; }
+  .dept-moj { background: #4c2c92; }
+  .dept-hmrc { background: #00703c; }
+
+  .dept-tag {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 600;
+    color: #fff;
+    padding: 2px 8px;
+    border-radius: 2px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  /* Flow */
+  .flow {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .step-row {
+    display: grid;
+    grid-template-columns: 40px 1fr;
+    gap: 0;
+    position: relative;
+  }
+
+  /* Vertical spine */
+  .spine {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+  }
+
+  .step-number {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    color: #fff;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 2;
+  }
+
+  .spine-line {
+    width: 2px;
+    flex: 1;
+    position: relative;
+    z-index: 1;
+  }
+
+  .spine-line-gro { background: #505a5f; }
+  .spine-line-dwp { background: #1d70b8; }
+  .spine-line-moj { background: #4c2c92; }
+  .spine-line-hmrc { background: #00703c; }
+
+  /* Service card */
+  .service-card {
+    border: 1px solid #e5e5e5;
+    border-radius: 4px;
+    padding: 16px 20px;
+    margin-bottom: 0;
+    position: relative;
+    background: #fff;
+  }
+
+  .service-card-inner {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .service-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .service-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1a1a1a;
+  }
+
+  .produces-label {
+    font-size: 10px;
+    font-weight: 600;
+    color: #505a5f;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 2px;
+  }
+
+  .produces-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+
+  .produces-item {
+    font-size: 11px;
+    color: #1a1a1a;
+    background: #f5f5f5;
+    padding: 2px 8px;
+    border-radius: 2px;
+    font-weight: 500;
+  }
+
+  /* Data cascade arrow between cards */
+  .cascade-row {
+    display: grid;
+    grid-template-columns: 40px 1fr;
+    gap: 0;
+  }
+
+  .cascade-content {
+    padding: 6px 0 6px 20px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .cascade-arrow {
+    color: #b1b4b6;
+    font-size: 11px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .cascade-arrow svg {
+    flex-shrink: 0;
+  }
+
+  .cascade-data {
+    font-size: 11px;
+    color: #505a5f;
+    font-style: italic;
+  }
+
+  /* Summary footer */
+  .summary {
+    margin-top: 40px;
+    border-top: 1px solid #e5e5e5;
+    padding-top: 32px;
+  }
+
+  .summary-heading {
+    font-size: 13px;
+    font-weight: 600;
+    color: #505a5f;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  .stat-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+    margin-bottom: 16px;
+  }
+
+  .stat-block {
+    text-align: center;
+  }
+
+  .stat-big {
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  .stat-big-muted { color: #b1b4b6; }
+  .stat-big-active { color: #1d70b8; }
+
+  .stat-label {
+    font-size: 11px;
+    color: #505a5f;
+    margin-top: 2px;
+  }
+
+  .stat-arrow {
+    font-size: 20px;
+    color: #b1b4b6;
+  }
+
+  .summary-note {
+    font-size: 13px;
+    color: #505a5f;
+    text-align: center;
+    max-width: 520px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+
+  .summary-note strong {
+    color: #1a1a1a;
+    font-weight: 600;
+  }
+
+  /* Department legend */
+  .legend {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    margin-bottom: 32px;
+    flex-wrap: wrap;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: #505a5f;
+  }
+
+  .legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <h1>Bereavement service cascade</h1>
+  <p class="subtitle">6 services across 4 departments, sequenced by data dependency</p>
+  <p class="persona">Sarah Okafor's journey after the death of her husband David</p>
+
+  <div class="legend">
+    <span class="legend-item"><span class="legend-dot dept-gro"></span>GRO</span>
+    <span class="legend-item"><span class="legend-dot dept-dwp"></span>DWP</span>
+    <span class="legend-item"><span class="legend-dot dept-moj"></span>MoJ</span>
+    <span class="legend-item"><span class="legend-dot dept-hmrc"></span>HMRC</span>
+  </div>
+
+  <div class="flow">
+
+    <!-- Step 1 -->
+    <div class="step-row">
+      <div class="spine">
+        <div class="step-number dept-gro">1</div>
+        <div class="spine-line spine-line-gro"></div>
+      </div>
+      <div class="service-card">
+        <div class="service-card-inner">
+          <div class="service-header">
+            <span class="dept-tag dept-gro">GRO</span>
+            <span class="service-name">Register the death</span>
+          </div>
+          <div>
+            <div class="produces-label">Produces</div>
+            <div class="produces-list">
+              <span class="produces-item">Death certificate number</span>
+              <span class="produces-item">Date of death (official)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cascade 1→2 -->
+    <div class="cascade-row">
+      <div class="spine">
+        <div class="spine-line spine-line-gro"></div>
+      </div>
+      <div class="cascade-content">
+        <span class="cascade-arrow">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 2v8M3 7l3 3 3-3" stroke="#b1b4b6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
+        <span class="cascade-data">Registration reference cascades forward</span>
+      </div>
+    </div>
+
+    <!-- Step 2 -->
+    <div class="step-row">
+      <div class="spine">
+        <div class="step-number dept-gro">2</div>
+        <div class="spine-line spine-line-gro"></div>
+      </div>
+      <div class="service-card">
+        <div class="service-card-inner">
+          <div class="service-header">
+            <span class="dept-tag dept-gro">GRO</span>
+            <span class="service-name">Obtain death certificate</span>
+          </div>
+          <div>
+            <div class="produces-label">Produces</div>
+            <div class="produces-list">
+              <span class="produces-item">Certified death certificate</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cascade 2→3 -->
+    <div class="cascade-row">
+      <div class="spine">
+        <div class="spine-line spine-line-dwp"></div>
+      </div>
+      <div class="cascade-content">
+        <span class="cascade-arrow">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 2v8M3 7l3 3 3-3" stroke="#b1b4b6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
+        <span class="cascade-data">Death certificate cascades to Tell Us Once, probate, and IHT</span>
+      </div>
+    </div>
+
+    <!-- Step 3 -->
+    <div class="step-row">
+      <div class="spine">
+        <div class="step-number dept-dwp">3</div>
+        <div class="spine-line spine-line-dwp"></div>
+      </div>
+      <div class="service-card">
+        <div class="service-card-inner">
+          <div class="service-header">
+            <span class="dept-tag dept-dwp">DWP</span>
+            <span class="service-name">Tell Us Once</span>
+          </div>
+          <div>
+            <div class="produces-label">Produces</div>
+            <div class="produces-list">
+              <span class="produces-item">Notifications to HMRC, DWP, DVLA, council</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cascade 3→4 -->
+    <div class="cascade-row">
+      <div class="spine">
+        <div class="spine-line spine-line-dwp"></div>
+      </div>
+      <div class="cascade-content">
+        <span class="cascade-arrow">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 2v8M3 7l3 3 3-3" stroke="#b1b4b6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
+        <span class="cascade-data">Tell Us Once notification + NI number + marriage proof</span>
+      </div>
+    </div>
+
+    <!-- Step 4 -->
+    <div class="step-row">
+      <div class="spine">
+        <div class="step-number dept-dwp">4</div>
+        <div class="spine-line spine-line-dwp"></div>
+      </div>
+      <div class="service-card">
+        <div class="service-card-inner">
+          <div class="service-header">
+            <span class="dept-tag dept-dwp">DWP</span>
+            <span class="service-name">Bereavement Support Payment</span>
+          </div>
+          <div>
+            <div class="produces-label">Produces</div>
+            <div class="produces-list">
+              <span class="produces-item">BSP reference number</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cascade 4→5 -->
+    <div class="cascade-row">
+      <div class="spine">
+        <div class="spine-line spine-line-moj"></div>
+      </div>
+      <div class="cascade-content">
+        <span class="cascade-arrow">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 2v8M3 7l3 3 3-3" stroke="#b1b4b6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
+        <span class="cascade-data">Death certificate + will details cascade to probate</span>
+      </div>
+    </div>
+
+    <!-- Step 5 -->
+    <div class="step-row">
+      <div class="spine">
+        <div class="step-number dept-moj">5</div>
+        <div class="spine-line spine-line-moj"></div>
+      </div>
+      <div class="service-card">
+        <div class="service-card-inner">
+          <div class="service-header">
+            <span class="dept-tag dept-moj">MoJ</span>
+            <span class="service-name">Apply for probate</span>
+          </div>
+          <div>
+            <div class="produces-label">Produces</div>
+            <div class="produces-list">
+              <span class="produces-item">Grant of probate</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cascade 5→6 -->
+    <div class="cascade-row">
+      <div class="spine">
+        <div class="spine-line spine-line-hmrc"></div>
+      </div>
+      <div class="cascade-content">
+        <span class="cascade-arrow">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 2v8M3 7l3 3 3-3" stroke="#b1b4b6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
+        <span class="cascade-data">Grant of probate + estate valuation cascade to IHT</span>
+      </div>
+    </div>
+
+    <!-- Step 6 -->
+    <div class="step-row">
+      <div class="spine">
+        <div class="step-number dept-hmrc">6</div>
+      </div>
+      <div class="service-card">
+        <div class="service-card-inner">
+          <div class="service-header">
+            <span class="dept-tag dept-hmrc">HMRC</span>
+            <span class="service-name">Inheritance Tax return</span>
+          </div>
+          <div>
+            <div class="produces-label">Produces</div>
+            <div class="produces-list">
+              <span class="produces-item">IHT reference</span>
+              <span class="produces-item">Tax clearance</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Summary -->
+  <div class="summary">
+    <div class="summary-heading">Data minimisation through cascade</div>
+
+    <div class="stat-row">
+      <div class="stat-block">
+        <div class="stat-big stat-big-muted">87</div>
+        <div class="stat-label">raw fields across<br>6 services</div>
+      </div>
+      <div class="stat-arrow">&rarr;</div>
+      <div class="stat-block">
+        <div class="stat-big stat-big-active">20</div>
+        <div class="stat-label">canonical fields<br>after deduplication</div>
+      </div>
+    </div>
+
+    <p class="summary-note">
+      <strong>Sarah provides 7 fields.</strong> The rest come from her wallet, government systems, and data produced by earlier services in the cascade.
+    </p>
+  </div>
+
+</div>
+</body>
+</html>

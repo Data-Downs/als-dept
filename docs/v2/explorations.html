@@ -1,0 +1,660 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Further explorations — Agentic Legibility Stack</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    /* ── Tokens ── */
+    :root {
+      --ink: #0b0c0c;
+      --ink-soft: #505a5f;
+      --ink-faint: #6f777b;
+      --surface: #fff;
+      --surface-alt: #f8f8f7;
+      --border: #d5d8da;
+      --border-light: #e8e8e6;
+      --blue: #1d70b8;
+      --blue-dark: #003078;
+      --blue-bg: #e8f0fe;
+      --green: #00703c;
+      --green-bg: #e8f5ee;
+      --orange: #f47738;
+      --purple: #4c2c92;
+      --purple-bg: #f0ebf5;
+      --max-w: 880px;
+      --section-py: 5rem;
+    }
+
+    /* ── Reset ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+    body { font-family: "Inter", Arial, sans-serif; color: var(--ink); line-height: 1.65; background: var(--surface); font-size: 16px; }
+    a { color: var(--blue); text-decoration: none; }
+    a:hover { text-decoration: underline; color: var(--blue-dark); }
+    ul, ol { padding-left: 1.25em; }
+    li + li { margin-top: 0.35em; }
+
+    /* ── Layout ── */
+    .container { max-width: var(--max-w); margin: 0 auto; padding: 0 1.5rem; }
+    .section { padding: var(--section-py) 0; }
+    .section-alt { background: var(--surface-alt); }
+
+    /* ── Nav ── */
+    .nav { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0.7rem 0; position: sticky; top: 0; z-index: 100; }
+    .nav .container { display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; }
+    .nav-brand { font-weight: 600; font-size: 1.05rem; color: var(--ink); white-space: nowrap; letter-spacing: -0.01em; text-decoration: none; }
+    .nav-brand:hover { color: var(--ink); text-decoration: none; }
+    .nav-links { display: flex; gap: 1.5rem; list-style: none; padding: 0; margin: 0; flex-wrap: wrap; align-items: baseline; }
+    .nav-links li { line-height: 1; }
+    .nav-links a { font-size: 0.8rem; font-weight: 500; color: var(--ink-soft); letter-spacing: 0.01em; line-height: 1; }
+    .nav-links a:hover { color: var(--blue); text-decoration: none; }
+    @media (max-width: 700px) { .nav-links { display: none; } }
+
+    /* ── Typography ── */
+    h1 { font-size: 2.75rem; font-weight: 700; line-height: 1.12; letter-spacing: -0.025em; color: var(--ink); }
+    h2 { font-size: 1.85rem; font-weight: 600; line-height: 1.2; letter-spacing: -0.02em; margin-bottom: 0.75rem; }
+    h3 { font-size: 1.1rem; font-weight: 700; line-height: 1.3; margin-bottom: 0.35rem; }
+    h4 { font-size: 0.95rem; font-weight: 700; line-height: 1.3; margin-bottom: 0.25rem; }
+
+    .section-intro { font-size: 1.08rem; color: var(--ink-soft); max-width: 640px; margin-bottom: 2.5rem; line-height: 1.7; }
+
+    /* ── Section heading with number ── */
+    .section-heading { display: flex; align-items: baseline; gap: 0.75rem; margin-bottom: 0.75rem; }
+    .section-num {
+      font-size: 1.85rem;
+      font-weight: 400;
+      color: var(--ink-faint);
+      flex-shrink: 0;
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+    }
+
+    /* ── Hero ── */
+    .hero { padding: 5.5rem 0 3.5rem; }
+    .hero-label {
+      display: inline-block;
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      color: var(--ink-faint);
+      margin-bottom: 1.5rem;
+      border-bottom: 2px solid var(--ink);
+      padding-bottom: 0.2rem;
+    }
+    .hero h1 { margin-bottom: 1rem; max-width: 600px; }
+    .hero-subtitle { font-size: 1.3rem; font-weight: 400; font-style: italic; color: var(--ink-soft); max-width: 580px; line-height: 1.5; margin-bottom: 1.5rem; }
+    @media (max-width: 640px) { h1 { font-size: 2rem; } .hero-subtitle { font-size: 1.1rem; } }
+
+    /* ── Callout ── */
+    .callout {
+      padding: 1rem 1.25rem;
+      border-left: 3px solid var(--blue);
+      background: var(--blue-bg);
+      font-size: 0.9rem;
+      line-height: 1.6;
+      color: var(--ink);
+      max-width: 600px;
+    }
+    .callout strong { font-weight: 600; }
+    .callout--green { border-left-color: var(--green); background: var(--green-bg); }
+    .callout--purple { border-left-color: var(--purple); background: var(--purple-bg); }
+    .callout--muted { border-left-color: var(--border); background: var(--surface-alt); color: var(--ink-soft); }
+    .callout a { font-weight: 600; }
+
+    /* ── Prose ── */
+    .prose p { font-size: 0.95rem; color: var(--ink-soft); max-width: 640px; margin-bottom: 1rem; line-height: 1.7; }
+    .prose p strong { color: var(--ink); }
+    .prose ul { max-width: 640px; margin-bottom: 1rem; }
+    .prose li { font-size: 0.95rem; color: var(--ink-soft); line-height: 1.7; }
+
+    /* ── Stats ── */
+    .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-top: 2.5rem; }
+    @media (max-width: 640px) { .stats { grid-template-columns: 1fr 1fr; } }
+    .stat { text-align: center; padding: 1.25rem 0.75rem; border: 1px solid var(--border); }
+    .stat-value { font-size: 2rem; font-weight: 700; color: var(--ink); line-height: 1; margin-bottom: 0.3rem; letter-spacing: -0.02em; }
+    .stat-label { font-size: 0.75rem; color: var(--ink-faint); letter-spacing: 0.01em; }
+
+    /* ── Dimension cards ── */
+    .dim-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin: 2rem 0; }
+    @media (max-width: 640px) { .dim-grid { grid-template-columns: 1fr; } }
+    .dim-card { border: 1px solid var(--border); padding: 1.5rem; }
+    .dim-card--identity { border-left: 4px solid var(--blue); }
+    .dim-card--eligibility { border-left: 4px solid var(--green); }
+    .dim-card--journey { border-left: 4px solid var(--orange); }
+    .dim-card--data { border-left: 4px solid var(--purple); }
+    .dim-card h3 { font-size: 1.15rem; font-weight: 600; margin-bottom: 0.5rem; }
+    .dim-card p { font-size: 0.88rem; color: var(--ink); line-height: 1.6; }
+    .dim-card .dim-file { font-size: 0.82rem; color: var(--ink-faint); font-style: italic; margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid var(--border-light); line-height: 1.55; }
+
+    /* ── Pipeline ── */
+    .pipeline {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      margin: 2rem 0;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .pipeline-box {
+      padding: 0.6rem 1.25rem;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-align: center;
+      white-space: nowrap;
+    }
+    .pipeline-box-dark { background: var(--ink); color: #fff; }
+    .pipeline-box-purple { background: var(--purple-bg); color: var(--purple); border: 1.5px solid var(--purple); }
+    .pipeline-box-blue { background: var(--blue-bg); color: var(--blue); border: 1.5px solid var(--blue); }
+    .pipeline-box-green { background: var(--green-bg); color: var(--green); border: 1.5px solid var(--green); }
+    .pipeline-box-orange { background: #fef3e8; color: var(--orange); border: 1.5px solid var(--orange); }
+    .pipeline-arrow { font-size: 1.25rem; color: var(--border); padding: 0 0.35rem; }
+    .output-grid { display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: center; }
+
+    /* ── Cards grid ── */
+    .card-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin: 2rem 0; }
+    .card-grid--3 { grid-template-columns: repeat(3, 1fr); }
+    @media (max-width: 640px) { .card-grid, .card-grid--3 { grid-template-columns: 1fr; } }
+    .card { border: 1px solid var(--border); padding: 1.5rem; }
+    .card h3 { font-size: 1rem; font-weight: 600; margin-bottom: 0.5rem; }
+    .card p { font-size: 0.88rem; color: var(--ink-soft); line-height: 1.6; }
+
+    /* ── GDS alignment cards ── */
+    .gds-card { border: 1px solid var(--border); padding: 1.5rem; border-top: 3px solid var(--blue); }
+    .gds-card h4 { font-size: 0.95rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--ink); }
+    .gds-card p { font-size: 0.88rem; color: var(--ink-soft); line-height: 1.6; }
+
+    /* ── International cards ── */
+    .intl-card { border: 1px solid var(--border); padding: 1.5rem; }
+    .intl-card h3 { font-size: 1rem; font-weight: 600; margin-bottom: 0.35rem; }
+    .intl-card p { font-size: 0.88rem; color: var(--ink-soft); line-height: 1.6; }
+
+    /* ── Table ── */
+    .data-table { width: 100%; border-collapse: collapse; margin-top: 1.5rem; font-size: 0.85rem; }
+    .data-table th {
+      text-align: left;
+      font-weight: 700;
+      font-size: 0.75rem;
+      letter-spacing: 0.04em;
+      color: var(--ink-soft);
+      padding: 0.75rem 1rem;
+      border-bottom: 2px solid var(--ink);
+      background: var(--surface-alt);
+    }
+    .data-table td { padding: 0.75rem 1rem; border-bottom: 1px solid var(--border-light); color: var(--ink); vertical-align: top; }
+    .data-table tr:last-child td { border-bottom: none; }
+    .status-built { display: inline-block; font-size: 0.7rem; font-weight: 700; padding: 0.15rem 0.5rem; border-radius: 10px; background: var(--green-bg); color: var(--green); }
+    .status-feasible { display: inline-block; font-size: 0.7rem; font-weight: 700; padding: 0.15rem 0.5rem; border-radius: 10px; background: var(--blue-bg); color: var(--blue); }
+    .status-straightforward { display: inline-block; font-size: 0.7rem; font-weight: 700; padding: 0.15rem 0.5rem; border-radius: 10px; background: var(--blue-bg); color: var(--blue); }
+    .status-trivial { display: inline-block; font-size: 0.7rem; font-weight: 700; padding: 0.15rem 0.5rem; border-radius: 10px; background: var(--surface-alt); color: var(--ink-soft); }
+    @media (max-width: 640px) { .data-table { font-size: 0.75rem; } .data-table th, .data-table td { padding: 0.5rem; } }
+
+    /* ── Comparison cards ── */
+    .compare-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.25rem; margin: 2rem 0; }
+    @media (max-width: 640px) { .compare-grid { grid-template-columns: 1fr; } }
+    .compare-card { border: 1px solid var(--border); padding: 1.5rem; }
+    .compare-card--recommended { border: 2px solid var(--green); }
+    .compare-card h4 { font-size: 1rem; font-weight: 600; margin-bottom: 0.5rem; }
+    .compare-card p { font-size: 0.88rem; color: var(--ink-soft); line-height: 1.6; margin-bottom: 0.75rem; }
+    .compare-row { display: flex; justify-content: space-between; padding: 0.35rem 0; border-bottom: 1px solid var(--border-light); font-size: 0.82rem; }
+    .compare-row:last-child { border-bottom: none; }
+    .compare-label { color: var(--ink-faint); }
+    .compare-value { font-weight: 500; color: var(--ink); }
+    .recommended-badge { display: inline-block; background: var(--green); color: #fff; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.04em; padding: 0.15rem 0.5rem; border-radius: 3px; margin-left: 0.5rem; vertical-align: middle; }
+
+    /* ── Model detail cards ── */
+    .model-card { border: 1px solid var(--border); padding: 1.5rem; margin-bottom: 1.25rem; }
+    .model-card h4 { font-size: 1.05rem; font-weight: 600; margin-bottom: 0.25rem; }
+    .model-card .model-like { font-size: 0.82rem; color: var(--ink-faint); font-style: italic; margin-bottom: 0.75rem; }
+    .model-card p { font-size: 0.88rem; color: var(--ink-soft); line-height: 1.6; }
+
+    /* ── Principles list ── */
+    .principles-list { list-style: none; padding: 0; margin: 1.5rem 0; max-width: 640px; }
+    .principles-list li { padding: 0.75rem 0; border-bottom: 1px solid var(--border-light); font-size: 0.92rem; line-height: 1.6; }
+    .principles-list li:last-child { border-bottom: none; }
+    .principles-list strong { color: var(--ink); }
+
+    /* ── Speculative note ── */
+    .spec-note {
+      font-size: 0.82rem;
+      color: var(--ink-faint);
+      font-style: italic;
+      padding: 0.5rem 0.75rem;
+      border-left: 2px solid var(--border);
+      margin-top: 1.5rem;
+      max-width: 640px;
+    }
+
+    /* ── Footer ── */
+    .footer { border-top: 1px solid var(--border); padding: 3rem 0 2rem; }
+    .footer-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem; }
+    @media (max-width: 640px) { .footer-grid { grid-template-columns: 1fr; } }
+    .footer h4 { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.06em; color: var(--ink-faint); margin-bottom: 0.75rem; }
+    .footer ul { list-style: none; padding: 0; }
+    .footer li { margin-bottom: 0.35rem; }
+    .footer li a { font-size: 0.85rem; color: var(--ink-soft); font-weight: 500; }
+    .footer li a:hover { color: var(--blue); }
+    .footer-note { font-size: 0.75rem; color: var(--ink-faint); border-top: 1px solid var(--border-light); padding-top: 1.5rem; }
+  </style>
+  <script async defer src="https://scripts.withcabin.com/hello.js"></script>
+</head>
+<body>
+
+  <!-- ── Nav ── -->
+  <nav class="nav">
+    <div class="container">
+      <a href="index.html" class="nav-brand">Agentic Legibility Stack</a>
+      <ul class="nav-links">
+        <li><a href="citizen-app.html">Citizen app</a></li>
+        <li><a href="legibility-studio.html">Legibility Studio</a></li>
+        <li><a href="technical.html">Technical</a></li>
+        <li><a href="departments.html">Departments</a></li>
+        <li><a href="glossary.html">Glossary</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ── Hero ── -->
+  <header class="hero">
+    <div class="container">
+      <div class="hero-label">Further explorations</div>
+      <h1>Future directions</h1>
+      <p class="hero-subtitle">Speculative extensions and design explorations that build on the core platform. These are ideas under consideration, not current features.</p>
+      <div class="callout">
+        The concepts on this page extend the Agentic Legibility Stack into areas that are not yet implemented. They represent directions for future development.
+      </div>
+    </div>
+  </header>
+
+
+  <!-- ════════════════════════════════ 01 ════════════════════════════════ -->
+  <div class="section" id="publish-once">
+    <div class="container">
+      <div class="section-heading">
+        <span class="section-num">01</span>
+        <h2>Publish once, serve everywhere</h2>
+      </div>
+      <p class="section-intro">Departments author a single structured service description, and it is published automatically to every channel &mdash; web, API, phone script, AI agent, PDF, email.</p>
+
+      <div class="prose">
+        <h3>The maintenance problem</h3>
+        <p>Today, a single government service like Apply for Universal Credit exists as multiple parallel descriptions, each maintained by a different team: a GOV.UK web page, PDF and paper forms, phone script guidance, internal caseworker guidance, and API documentation. When eligibility rules change, five teams update five descriptions. They drift. Citizens get different answers depending on the channel.</p>
+        <p>Now add AI agents as a sixth channel, and the problem compounds.</p>
+      </div>
+
+      <div class="stats">
+        <div class="stat">
+          <div class="stat-value">5+</div>
+          <div class="stat-label">parallel descriptions per service</div>
+        </div>
+        <div class="stat">
+          <div class="stat-value">1,544</div>
+          <div class="stat-label">government services</div>
+        </div>
+        <div class="stat">
+          <div class="stat-value">~7,700</div>
+          <div class="stat-label">descriptions to keep in sync</div>
+        </div>
+        <div class="stat">
+          <div class="stat-value">1 &rarr; 5</div>
+          <div class="stat-label">one change = five updates</div>
+        </div>
+      </div>
+
+      <div class="callout" style="margin-top: 2.5rem;">
+        The question is not whether departments should support AI agents. It is whether they can afford to maintain yet another parallel description of each service &mdash; or whether this is the moment to describe services once and publish everywhere.
+      </div>
+
+      <div class="prose" style="margin-top: 2.5rem;">
+        <h3>The proposition</h3>
+        <p>Describe your service once, in a structured service description. From that single description, generate every channel automatically. <strong>Departments author structured truth. The platform generates channel-specific outputs.</strong> When something changes, departments update one place. Every channel reflects the change immediately.</p>
+      </div>
+
+      <div class="pipeline">
+        <div class="pipeline-box pipeline-box-dark">Service description</div>
+        <div class="pipeline-arrow">&rarr;</div>
+        <div class="pipeline-box pipeline-box-purple">Generator layer</div>
+        <div class="pipeline-arrow">&rarr;</div>
+        <div class="output-grid">
+          <div class="pipeline-box pipeline-box-blue">MCP agent</div>
+          <div class="pipeline-box pipeline-box-green">Web form</div>
+          <div class="pipeline-box pipeline-box-blue">API</div>
+          <div class="pipeline-box pipeline-box-orange">Catalogue</div>
+          <div class="pipeline-box pipeline-box-green">Notify</div>
+          <div class="pipeline-box pipeline-box-blue">Print</div>
+        </div>
+      </div>
+
+      <div class="callout--green callout" style="margin-top: 2rem;">
+        Departments don&rsquo;t publish to channels. They describe their services. The platform publishes to channels.
+      </div>
+
+      <div class="prose" style="margin-top: 2.5rem;">
+        <h3>Four dimensions of a service description</h3>
+        <p>Each service is described across four dimensions. These are already defined in the current platform for AI agents &mdash; the publish-once model extends them to every channel.</p>
+      </div>
+
+      <div class="dim-grid">
+        <div class="dim-card dim-card--identity">
+          <h3>Identity (manifest)</h3>
+          <p>What the service is: name, department, eligibility summary, data it needs, SLA, complaint routes, escalation contacts. The service&rsquo;s identity card.</p>
+          <div class="dim-file">manifest.json</div>
+        </div>
+        <div class="dim-card dim-card--eligibility">
+          <h3>Eligibility (policy)</h3>
+          <p>Who is eligible and why: machine-readable rules with human-readable failure reasons. &ldquo;You must be over 16&rdquo;, &ldquo;You must have a valid driving licence&rdquo;. Edge cases documented.</p>
+          <div class="dim-file">policy.json</div>
+        </div>
+        <div class="dim-card dim-card--journey">
+          <h3>Journey (state model)</h3>
+          <p>What the journey looks like: a step-by-step map from &ldquo;not started&rdquo; to &ldquo;completed&rdquo;. Which steps are required, which are optional, what unlocks what. The service&rsquo;s choreography.</p>
+          <div class="dim-file">state-model.json</div>
+        </div>
+        <div class="dim-card dim-card--data">
+          <h3>Data sharing (consent)</h3>
+          <p>What data is shared and why: every piece of data the service needs, who it comes from, what it&rsquo;s used for, how long it&rsquo;s kept, and how to revoke. The service&rsquo;s data contract.</p>
+          <div class="dim-file">consent.json</div>
+        </div>
+      </div>
+
+      <div class="prose" style="margin-top: 2rem;">
+        <h3>Output targets</h3>
+        <p>From the same service descriptions, the platform generates channel-specific outputs for every delivery surface.</p>
+      </div>
+
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Channel</th>
+            <th>What it generates</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>AI agent (MCP)</strong></td>
+            <td>Tools, resources, prompts for Claude/GPT</td>
+            <td><span class="status-built">Built</span></td>
+          </tr>
+          <tr>
+            <td><strong>Web form (GOV.UK Forms)</strong></td>
+            <td>Pages, questions, routing, confirmation</td>
+            <td><span class="status-feasible">Feasible</span></td>
+          </tr>
+          <tr>
+            <td><strong>API (OpenAPI 3.0)</strong></td>
+            <td>REST endpoints, request/response schemas</td>
+            <td><span class="status-straightforward">Straightforward</span></td>
+          </tr>
+          <tr>
+            <td><strong>Service catalogue</strong></td>
+            <td>Schema.org/GovernmentService + DCAT entry</td>
+            <td><span class="status-trivial">Trivial</span></td>
+          </tr>
+          <tr>
+            <td><strong>Notifications (GOV.UK Notify)</strong></td>
+            <td>Email/SMS templates per journey stage</td>
+            <td><span class="status-feasible">Feasible</span></td>
+          </tr>
+          <tr>
+            <td><strong>Accessible summary (HTML/print)</strong></td>
+            <td>Printable service overview page</td>
+            <td><span class="status-feasible">Feasible</span></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="prose" style="margin-top: 2.5rem;">
+        <h3>How this aligns with GDS standards</h3>
+        <p>Publish once is not a departure from existing government digital standards. It is a direct implementation of them.</p>
+      </div>
+
+      <div class="card-grid">
+        <div class="gds-card">
+          <h4>Point 3: Joined-up channels</h4>
+          <p>One source of truth means citizens get the same answer whether they use the web form, the AI agent, or the phone script generated from the same description.</p>
+        </div>
+        <div class="gds-card">
+          <h4>Point 13: Open standards</h4>
+          <p>Service descriptions are JSON, output includes OpenAPI 3.0, Schema.org, DCAT. Every format is machine-readable and standards-based.</p>
+        </div>
+        <div class="gds-card">
+          <h4>Technology Code of Practice</h4>
+          <p>The generator layer is reusable across all departments. Build once, use 1,544 times.</p>
+        </div>
+        <div class="gds-card">
+          <h4>API Technical Standards</h4>
+          <p>OpenAPI 3.0 is the government-mandated format. The platform generates compliant specs automatically from service descriptions.</p>
+        </div>
+      </div>
+
+      <div class="prose" style="margin-top: 2.5rem;">
+        <h3>International context</h3>
+        <p>Three countries have demonstrated, at national scale, that government services are data &mdash; not websites.</p>
+      </div>
+
+      <div class="card-grid--3 card-grid">
+        <div class="intl-card" style="border-top: 3px solid var(--blue);">
+          <h3>Estonia &mdash; X-Road</h3>
+          <p>929 institutions, 3,000+ digital services, two decades of secure decentralised data exchange. X-Road proved that services can be described as interoperable, machine-readable specifications and federated across organisations.</p>
+        </div>
+        <div class="intl-card" style="border-top: 3px solid var(--green);">
+          <h3>Singapore &mdash; SGTS</h3>
+          <p>Composable modules &mdash; identity, payments, notifications &mdash; assembled into services. MyInfo&rsquo;s deployment time dropped from one year to four months. &ldquo;Describe once, compose everywhere&rdquo; at national scale.</p>
+        </div>
+        <div class="intl-card" style="border-top: 3px solid var(--orange);">
+          <h3>Ukraine &mdash; Diia</h3>
+          <p>23 million users, 130+ services. Diia.AI launched September 2025 as the world&rsquo;s first government AI agent delivering real services via MCP. Ukraine coined the term &ldquo;Agentic State&rdquo;: citizens express intent, AI executes.</p>
+        </div>
+      </div>
+
+      <div class="callout" style="margin-top: 2rem;">
+        Three countries, three architectures, one convergent insight: government services are data, not websites. Describe them as structured specifications, and every delivery channel &mdash; including AI agents &mdash; becomes a rendering target.
+      </div>
+
+      <div class="prose" style="margin-top: 2.5rem;">
+        <h3>The interaction typology</h3>
+        <p>13 standard service shapes have been identified across 1,544 government services. Each shape comes with a pre-built state model template &mdash; the skeleton of the journey. Departments select the closest shape, then customise.</p>
+      </div>
+
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Type</th>
+            <th>What it means</th>
+            <th>Example services</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Benefit</strong></td>
+            <td>Citizen seeks financial support; income-assessed</td>
+            <td>Universal Credit, PIP, Housing Benefit</td>
+          </tr>
+          <tr>
+            <td><strong>Application</strong></td>
+            <td>Submit information, receive a decision</td>
+            <td>Passport, Child Benefit, Blue Badge</td>
+          </tr>
+          <tr>
+            <td><strong>Licence</strong></td>
+            <td>Prove permission to do something</td>
+            <td>Driving licence, fishing licence</td>
+          </tr>
+          <tr>
+            <td><strong>Obligation</strong></td>
+            <td>Something the citizen must do</td>
+            <td>Update DVLA address, notify OPG of death</td>
+          </tr>
+          <tr>
+            <td><strong>Legal process</strong></td>
+            <td>Navigate complexity with professional support</td>
+            <td>Probate, LPA, divorce</td>
+          </tr>
+          <tr>
+            <td><strong>Portal</strong></td>
+            <td>Access multiple services through one account</td>
+            <td>UC journal, student loans</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="prose" style="margin-top: 1rem;">
+        <p>Plus 7 more shapes covering registrations, entitlements, grants, payments, appointments, task lists, and information hubs. Departments don&rsquo;t design service journeys from scratch &mdash; they select a shape, fill in the specifics, and the platform generates the journey for every channel.</p>
+      </div>
+
+      <div class="prose" style="margin-top: 2.5rem;">
+        <h3>What this makes possible</h3>
+        <p>Describing services as data is not the end state. It is the precondition for three capabilities that are currently impossible.</p>
+        <p><strong>Proactive services</strong> &mdash; if a citizen&rsquo;s circumstances change (recorded through one service), the platform can identify other services they&rsquo;re now eligible for and notify them automatically.</p>
+        <p><strong>Life event orchestration</strong> &mdash; 16 life events have been mapped across all 1,544 services. When a citizen experiences a birth, bereavement, job loss, or retirement, the platform identifies all relevant services and sequences them.</p>
+        <p><strong>Departmental analytics</strong> &mdash; when services are described as data, departments can measure coverage, identify gaps, compare interaction patterns, and understand where citizens get stuck.</p>
+      </div>
+
+      <div class="callout" style="margin-top: 1.5rem;">
+        Publishing once is not a technical convenience. It is the precondition for joined-up government. When services are data, joining them up is computation.
+      </div>
+
+      <div class="spec-note">
+        This section describes a target operating model. The AI agent channel is built and operational &mdash; the remaining channels require generators, not new data. See the <a href="index.html">platform overview</a> for what is implemented today.
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ════════════════════════════════ 02 ════════════════════════════════ -->
+  <div class="section section-alt" id="interaction-models">
+    <div class="container">
+      <div class="section-heading">
+        <span class="section-num">02</span>
+        <h2>Interaction model explorations</h2>
+      </div>
+      <p class="section-intro">Four distinct UI paradigms were explored for the <a href="citizen-app.html">citizen app</a>. Each addresses a fundamental question: what should your relationship with government look like on a phone?</p>
+
+      <div class="prose">
+        <h3>The current model</h3>
+        <p>The current app uses a traditional four-tab structure: Home, Chat, To-do, and Wallet. Despite having transformational agentic capabilities &mdash; life event detection, cross-service field merging, delegated action, proactive eligibility &mdash; the interaction model still organises itself around government&rsquo;s taxonomy. Services live in one tab, conversations in another, tasks in a third. The agentic loop is fractured across views.</p>
+      </div>
+
+      <div class="prose" style="margin-top: 2rem;">
+        <h3>Four alternative models</h3>
+      </div>
+
+      <div class="model-card" style="border-left: 4px solid var(--green);">
+        <h4>The Mirror <span class="recommended-badge">Recommended</span></h4>
+        <div class="model-like">Like Apple Health + Monzo + your iPhone wallet</div>
+        <p>You open the app and see your life &mdash; your family, your money, your health, your vehicles. Government is invisible infrastructure. The app mirrors your life back to you, organised into facets. Data-driven alerts surface what needs attention. Conversations open from data points and live inside your life facets, with the depth and persistence of full threads. Life event journeys unfold as swipeable stories.</p>
+      </div>
+
+      <div class="model-card" style="border-left: 4px solid var(--blue);">
+        <h4>The Journal</h4>
+        <div class="model-like">Like Claude + iMessage + a case worker&rsquo;s notebook</div>
+        <p>Conversations are the entire app. Your relationship with government is a series of threads &mdash; some brief, some spanning months. Plans, tasks, credentials, and consent all live inside conversations, not in separate tabs. There is no service directory because you never browse; you just talk. The agent initiates threads proactively when something needs attention.</p>
+      </div>
+
+      <div class="model-card" style="border-left: 4px solid var(--purple);">
+        <h4>The Stream</h4>
+        <div class="model-like">Like Google Now + Instagram Stories + Linear</div>
+        <p>A living, intelligent feed. No pages to navigate to &mdash; just a single stream of cards representing everything happening in your relationship with government. Active journeys appear as stories at the top. Priority items are pinned. Everything else flows through a timeline. Every card is actionable, and any card can expand into a conversation.</p>
+      </div>
+
+      <div class="prose" style="margin-top: 2.5rem;">
+        <h3>Comparing the models</h3>
+      </div>
+
+      <div class="compare-grid">
+        <div class="compare-card compare-card--recommended">
+          <h4>The Mirror hybrid <span class="recommended-badge">Recommended</span></h4>
+          <p>Your life is the home screen. Conversations live inside facets with full depth. Life events unfold as swipeable stories.</p>
+          <div class="compare-row"><span class="compare-label">Metaphor</span><span class="compare-value">Your life, reflected</span></div>
+          <div class="compare-row"><span class="compare-label">Discovery</span><span class="compare-value">Alerts + &ldquo;you could get&rdquo;</span></div>
+          <div class="compare-row"><span class="compare-label">Conversations</span><span class="compare-value">Persistent, inside facets</span></div>
+          <div class="compare-row"><span class="compare-label">Strength</span><span class="compare-value">Citizen-centred + deep</span></div>
+          <div class="compare-row"><span class="compare-label">Best for</span><span class="compare-value">Everyone</span></div>
+        </div>
+        <div class="compare-card">
+          <h4>The Journal</h4>
+          <p>Best when citizens have complex, ongoing needs. The conversation is the relationship.</p>
+          <div class="compare-row"><span class="compare-label">Metaphor</span><span class="compare-value">Messaging app</span></div>
+          <div class="compare-row"><span class="compare-label">Discovery</span><span class="compare-value">Agent starts threads</span></div>
+          <div class="compare-row"><span class="compare-label">Conversations</span><span class="compare-value">Full-depth threads</span></div>
+          <div class="compare-row"><span class="compare-label">Strength</span><span class="compare-value">Continuity and context</span></div>
+          <div class="compare-row"><span class="compare-label">Best for</span><span class="compare-value">Power users, complex journeys</span></div>
+        </div>
+        <div class="compare-card">
+          <h4>The Stream</h4>
+          <p>Best when immediacy matters. Everything is one scroll away. No navigation decisions.</p>
+          <div class="compare-row"><span class="compare-label">Metaphor</span><span class="compare-value">Intelligent feed</span></div>
+          <div class="compare-row"><span class="compare-label">Discovery</span><span class="compare-value">Eligibility cards in feed</span></div>
+          <div class="compare-row"><span class="compare-label">Conversations</span><span class="compare-value">Expandable from cards</span></div>
+          <div class="compare-row"><span class="compare-label">Strength</span><span class="compare-value">Immediacy, zero navigation</span></div>
+          <div class="compare-row"><span class="compare-label">Best for</span><span class="compare-value">Casual users, quick actions</span></div>
+        </div>
+        <div class="compare-card">
+          <h4>Current (tab-based)</h4>
+          <p>Traditional four-tab structure. Familiar but fractures the agentic loop across separate views.</p>
+          <div class="compare-row"><span class="compare-label">Metaphor</span><span class="compare-value">Service directory</span></div>
+          <div class="compare-row"><span class="compare-label">Discovery</span><span class="compare-value">Browse categories</span></div>
+          <div class="compare-row"><span class="compare-label">Conversations</span><span class="compare-value">Single, in separate tab</span></div>
+          <div class="compare-row"><span class="compare-label">Strength</span><span class="compare-value">Familiarity</span></div>
+          <div class="compare-row"><span class="compare-label">Best for</span><span class="compare-value">Known service lookups</span></div>
+        </div>
+      </div>
+
+      <div class="prose" style="margin-top: 2rem;">
+        <h3>Why the Mirror was recommended</h3>
+        <p>The recommended model is a hybrid that takes the strongest idea from each: identity-first organisation from the Mirror, conversation depth from the Journal, story progression for life events from the Stream. The organising principle is simple: <strong>your life comes first, government wraps around it.</strong></p>
+      </div>
+
+      <ul class="principles-list">
+        <li><strong>Works for everyone.</strong> A 19-year-old new mum sees &ldquo;my family&rdquo; and &ldquo;my money&rdquo; and immediately understands. A 72-year-old widower sees an alert. No text box to stare at, no feed to scroll past.</li>
+        <li><strong>Solves discoverability.</strong> Services surface as &ldquo;you could get&rdquo; suggestions anchored to your circumstances inside facets &mdash; not as a catalogue to browse or a prompt to guess.</li>
+        <li><strong>Handles cold start.</strong> Even with minimal data, &ldquo;my family&rdquo;, &ldquo;my money&rdquo;, &ldquo;my health&rdquo; are meaningful categories. The structure exists before the data does.</li>
+        <li><strong>Matches intent.</strong> People come to government with purpose. The alert model &mdash; red dot on vehicles, amber suggestion on money &mdash; matches episodic, purposeful engagement.</li>
+        <li><strong>Closest to the current code.</strong> The data, APIs, and orchestration layer are untouched. It is a frontend refactor of how the same features are assembled, not a rebuild.</li>
+      </ul>
+
+      <div class="callout" style="margin-top: 1.5rem;">
+        All four models share one principle: <strong>the tab bar is gone</strong>. Government&rsquo;s taxonomy is invisible. Conversations are contextual, not isolated. The agentic loop &mdash; from life event detection through to credential issuance &mdash; flows naturally rather than being fractured across separate views.
+      </div>
+
+      <div class="spec-note">
+        These interaction models are design explorations, not implementation commitments. The current <a href="citizen-app.html">citizen app</a> uses the tab-based model. A future iteration may adopt elements of the Mirror hybrid.
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ── Footer ── -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <h4>Deep dives</h4>
+          <ul>
+            <li><a href="citizen-app.html">Citizen app</a></li>
+            <li><a href="legibility-studio.html">Legibility Studio</a></li>
+            <li><a href="technical.html">Technical architecture</a></li>
+            <li><a href="departments.html">Departments</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Reference</h4>
+          <ul>
+            <li><a href="glossary.html">Glossary</a></li>
+            <li><a href="explorations.html">Further explorations</a></li>
+            <li><a href="card-catalogue.html">Card catalogue</a></li>
+            <li><a href="life-events-catalogue.html">Life events</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-note">Agentic Legibility Stack — Department Demo Documentation</div>
+    </div>
+  </footer>
+
+</body>
+</html>

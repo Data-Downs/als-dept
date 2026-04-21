@@ -1,0 +1,1459 @@
+<!doctype html>
+<html lang="en-GB">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Agentic Legibility Stack — Overview</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /* ── Reset & Base ── */
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+      html { scroll-behavior: smooth; }
+      body {
+        font-family: "Inter", Arial, sans-serif;
+        color: #0b0c0c;
+        line-height: 1.6;
+        background: #fff;
+        -webkit-font-smoothing: antialiased;
+      }
+      a { color: #1d70b8; text-decoration: none; }
+      a:hover { text-decoration: underline; color: #003078; }
+      code, pre { font-family: "JetBrains Mono", monospace; }
+
+      /* ── Layout ── */
+      .container { max-width: 960px; margin: 0 auto; padding: 0 1.5rem; }
+      .section { padding: 4rem 0; }
+      .section-alt { background: #f3f2f1; }
+
+      h1, h2, h3 { line-height: 1.2; }
+      h2 { font-size: 1.75rem; font-weight: 700; margin-bottom: 1rem; }
+      h3 { font-size: 1.25rem; font-weight: 600; margin-bottom: 0.5rem; }
+      .section-intro {
+        font-size: 1.1rem;
+        color: #505a5f;
+        max-width: 700px;
+        margin-bottom: 2rem;
+      }
+
+      /* ── Nav ── */
+      .nav {
+        background: #fff;
+        border-bottom: 1px solid #b1b4b6;
+        padding: 0.75rem 0;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+      .nav .container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+      }
+      .nav-brand { font-weight: 700; font-size: 1rem; color: #0b0c0c; white-space: nowrap; }
+      .nav-links { display: flex; gap: 1.25rem; list-style: none; flex-wrap: wrap; align-items: center; }
+      .nav-links a { font-size: 0.85rem; font-weight: 500; color: #505a5f; }
+      .nav-links a:hover { color: #1d70b8; text-decoration: none; }
+      @media (max-width: 640px) {
+        .nav-links { display: none; }
+      }
+
+      /* ── Hero ── */
+      .hero { padding: 5rem 0 3rem; }
+      .hero-label {
+        display: inline-block;
+        background: #f3f2f1;
+        color: #505a5f;
+        font-size: 0.8rem;
+        font-weight: 600;
+        padding: 0.25rem 0.75rem;
+        border-radius: 2px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 1.25rem;
+      }
+      .hero h1 { font-size: 2.75rem; font-weight: 700; margin-bottom: 0.75rem; }
+      .hero-subtitle {
+        font-size: 1.35rem;
+        color: #505a5f;
+        font-weight: 400;
+        max-width: 700px;
+        margin-bottom: 1.5rem;
+      }
+      @media (max-width: 640px) {
+        .hero h1 { font-size: 2rem; }
+        .hero-subtitle { font-size: 1.15rem; }
+      }
+
+      /* ── Section Heading ── */
+      .section-heading {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1rem;
+      }
+      .section-number {
+        background: #0b0c0c;
+        color: #fff;
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        font-size: 0.75rem;
+        font-weight: 800;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        margin-right: 0.75rem;
+      }
+
+      /* ── Split comparison ── */
+      .split {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+        margin-top: 1.5rem;
+      }
+      .split-col {
+        padding: 1.25rem;
+        border-radius: 6px;
+        border: 1px solid;
+      }
+      .split-col h3 { font-size: 1rem; margin-bottom: 0.75rem; }
+      .split-col ul { list-style: none; font-size: 0.9rem; }
+      .split-col li {
+        padding: 0.35rem 0;
+        padding-left: 1rem;
+        position: relative;
+      }
+      .split-col li::before {
+        content: "";
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        position: absolute;
+        left: 0;
+        top: 0.65rem;
+      }
+      .split-today { border-color: #f6d7d3; background: #fef7f6; }
+      .split-today h3 { color: #d4351c; }
+      .split-today li::before { background: #d4351c; }
+      .split-agent { border-color: #c1e4d1; background: #f0faf4; }
+      .split-agent h3 { color: #00703c; }
+      .split-agent li::before { background: #00703c; }
+      @media (max-width: 640px) {
+        .split { grid-template-columns: 1fr; }
+      }
+
+      /* ── Stat row ── */
+      .stat-row {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1.25rem;
+        margin-top: 2rem;
+      }
+      .stat-item {
+        text-align: center;
+        padding: 1.25rem 1rem;
+        background: #fff;
+        border: 1px solid #e0dfde;
+        border-radius: 6px;
+      }
+      .stat-value { font-size: 2rem; font-weight: 800; color: #0b0c0c; }
+      .stat-label { font-size: 0.75rem; color: #505a5f; margin-top: 0.25rem; }
+      @media (max-width: 640px) {
+        .stat-row { grid-template-columns: repeat(2, 1fr); }
+      }
+
+      /* ── Two-product layout ── */
+      .product-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+        margin-top: 2rem;
+      }
+      .product-card {
+        border: 1px solid #e0dfde;
+        border-radius: 6px;
+        overflow: hidden;
+        background: #fff;
+      }
+      .product-card-header {
+        padding: 1.5rem;
+        color: #fff;
+      }
+      .product-card-header h3 {
+        font-size: 1.25rem;
+        font-weight: 700;
+        margin-bottom: 0.35rem;
+        color: #fff;
+      }
+      .product-card-header p {
+        font-size: 0.85rem;
+        opacity: 0.9;
+      }
+      .product-card-body {
+        padding: 1.5rem;
+      }
+      .product-card-body ul {
+        list-style: none;
+      }
+      .product-card-body li {
+        padding: 0.5rem 0;
+        border-bottom: 1px solid #f3f2f1;
+        font-size: 0.9rem;
+        display: flex;
+        gap: 0.5rem;
+        align-items: flex-start;
+      }
+      .product-card-body li:last-child { border-bottom: none; }
+      .product-card-body li .li-icon {
+        flex-shrink: 0;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-top: 2px;
+      }
+      @media (max-width: 640px) {
+        .product-grid { grid-template-columns: 1fr; }
+      }
+
+      /* ── Feature cards ── */
+      .feature-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.25rem;
+        margin-top: 1.5rem;
+      }
+      .feature-card {
+        border: 1px solid #e0dfde;
+        border-radius: 6px;
+        padding: 1.5rem;
+        background: #fff;
+        border-top: 4px solid;
+      }
+      .feature-card h3 { font-size: 1rem; margin-bottom: 0.5rem; }
+      .feature-card p { font-size: 0.9rem; color: #505a5f; }
+      @media (max-width: 640px) {
+        .feature-grid { grid-template-columns: 1fr; }
+      }
+
+      /* ── Pillar cards ── */
+      .pillar-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.25rem;
+        margin-top: 1.5rem;
+      }
+      .pillar-card {
+        border: 1px solid #e0dfde;
+        border-radius: 6px;
+        padding: 1.5rem;
+        background: #fff;
+        border-top: 4px solid;
+      }
+      .pillar-card h3 { font-size: 1rem; margin-bottom: 0.5rem; }
+      .pillar-card p { font-size: 0.9rem; color: #505a5f; }
+      @media (max-width: 640px) {
+        .pillar-grid { grid-template-columns: 1fr; }
+      }
+
+      /* ── Pipeline ── */
+      .pipeline {
+        display: flex;
+        align-items: center;
+        gap: 0;
+        margin: 2rem 0;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      .pipeline-box {
+        padding: 0.6rem 1.25rem;
+        border-radius: 4px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        text-align: center;
+        white-space: nowrap;
+      }
+      .pipeline-box-dark { background: #0b0c0c; color: #fff; }
+      .pipeline-box-blue { background: #e8f0fe; color: #1d70b8; border: 1.5px solid #1d70b8; }
+      .pipeline-box-green { background: #e6f3ec; color: #00703c; border: 1.5px solid #00703c; }
+      .pipeline-box-purple { background: #f5e6f4; color: #912b88; border: 1.5px solid #912b88; }
+      .pipeline-box-orange { background: #fef3e8; color: #f47738; border: 1.5px solid #f47738; }
+      .pipeline-arrow { font-size: 1.25rem; color: #b1b4b6; padding: 0 0.35rem; }
+
+      /* ── Callout ── */
+      .callout {
+        border-left: 4px solid #b1b4b6;
+        padding: 1rem 1.25rem;
+        background: #f3f2f1;
+        font-size: 0.95rem;
+        color: #505a5f;
+        margin-top: 1.5rem;
+        border-radius: 0 4px 4px 0;
+      }
+      .callout-blue { border-left-color: #1d70b8; }
+      .callout-green { border-left-color: #00703c; }
+
+      /* ── Snippet ── */
+      .snippet {
+        margin-top: 1.25rem;
+        border: 1px solid #d2d2d2;
+        border-radius: 6px;
+        overflow: hidden;
+        max-width: 375px;
+        background: #fff;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        position: relative;
+      }
+      .snippet-wide { max-width: 600px; }
+      .snippet-label {
+        font-size: 0.65rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: #505a5f;
+        background: #f8f8f8;
+        padding: 0.4rem 0.75rem;
+        border-bottom: 1px solid #e8e8e8;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+      .snippet-label::before {
+        content: "";
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: #00703c;
+        flex-shrink: 0;
+      }
+      .snippet-body { padding: 0; font-size: 0.85rem; }
+      .s-panel { padding: 0.75rem 1rem; }
+      .s-tag {
+        display: inline-block;
+        font-size: 0.65rem;
+        padding: 0.15rem 0.5rem;
+        border-radius: 10px;
+        margin-right: 0.25rem;
+      }
+      .s-tag-blue { background: #e8f0fe; color: #1d70b8; }
+      .s-tag-green { background: #e6f3ec; color: #00703c; }
+      .s-tag-grey { background: #f3f2f1; color: #505a5f; }
+
+      /* ── Chat bubbles (matching citizen app) ── */
+      .chat-container {
+        padding: 0.75rem;
+        background: #eaf1f7;
+        display: flex;
+        flex-direction: column;
+        gap: 0.6rem;
+      }
+      .chat-msg {
+        display: flex;
+        max-width: 85%;
+      }
+      .chat-msg-user {
+        justify-content: flex-end;
+        align-self: flex-end;
+      }
+      .chat-msg-agent {
+        justify-content: flex-start;
+        align-self: flex-start;
+      }
+      .chat-bubble {
+        padding: 0.55rem 0.75rem;
+        font-size: 0.78rem;
+        line-height: 1.5;
+      }
+      .chat-user {
+        background: #1d70b8;
+        color: #fff;
+        border-radius: 1rem;
+        border-bottom-right-radius: 4px;
+      }
+      .chat-agent {
+        background: transparent;
+        color: #0b0c0c;
+        border-radius: 0;
+        padding-left: 0.25rem;
+        padding-right: 0.25rem;
+      }
+
+      /* ── Timeline ── */
+      .timeline {
+        margin-top: 2rem;
+        position: relative;
+        padding-left: 2rem;
+      }
+      .timeline::before {
+        content: "";
+        position: absolute;
+        left: 9px;
+        top: 0;
+        bottom: 0;
+        width: 2px;
+        background: #e0dfde;
+      }
+      .timeline-step {
+        position: relative;
+        margin-bottom: 2.5rem;
+      }
+      .timeline-step:last-child { margin-bottom: 0; }
+      .timeline-dot {
+        position: absolute;
+        left: -2rem;
+        top: 2px;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.6rem;
+        font-weight: 800;
+        color: #fff;
+        z-index: 1;
+      }
+      .timeline-step h3 { font-size: 1rem; font-weight: 700; margin-bottom: 0.25rem; }
+      .timeline-step p { font-size: 0.9rem; color: #505a5f; max-width: 660px; }
+
+      /* ── Future agents ── */
+      .agent-cards {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.25rem;
+        margin-top: 1.5rem;
+      }
+      .agent-card {
+        border: 1px solid #e0dfde;
+        border-radius: 6px;
+        padding: 1.5rem;
+        background: #fff;
+        text-align: center;
+      }
+      .agent-card-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        margin: 0 auto 0.75rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+      }
+
+      /* ── Exportable icon overlay ── */
+      .exportable {
+        position: relative;
+        cursor: pointer;
+      }
+      .exportable .export-hint {
+        position: absolute;
+        top: -4px;
+        right: -4px;
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background: #505a5f;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 8px;
+        font-weight: 700;
+        opacity: 0;
+        transition: opacity 0.2s;
+        pointer-events: none;
+        z-index: 5;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+      }
+      .exportable:hover .export-hint {
+        opacity: 1;
+      }
+      .exportable:hover {
+        outline: 2px dashed #b1b4b6;
+        outline-offset: 3px;
+        border-radius: 8px;
+      }
+
+      /* Pipeline and diagram exports */
+      .pipeline-exportable {
+        position: relative;
+        display: inline-block;
+      }
+      .pipeline-exportable .export-hint {
+        position: absolute;
+        top: -8px;
+        right: -8px;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: #505a5f;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 8px;
+        font-weight: 700;
+        opacity: 0;
+        transition: opacity 0.2s;
+        cursor: pointer;
+        z-index: 5;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+      }
+      .pipeline-exportable:hover .export-hint {
+        opacity: 1;
+      }
+      .agent-card h3 { font-size: 1rem; margin-bottom: 0.35rem; }
+      .agent-card p { font-size: 0.85rem; color: #505a5f; }
+      @media (max-width: 640px) {
+        .agent-cards { grid-template-columns: 1fr; }
+      }
+
+      /* ── Closing ── */
+      .closing {
+        background: #0b0c0c;
+        color: #fff;
+        padding: 3rem 0;
+        text-align: center;
+      }
+      .closing p {
+        max-width: 700px;
+        margin: 0 auto;
+        font-size: 1.1rem;
+        line-height: 1.6;
+        color: #d4d4d4;
+      }
+      .closing p strong { color: #fff; }
+
+      /* ── Footer ── */
+      .footer {
+        padding: 2rem 0;
+        text-align: center;
+        font-size: 0.8rem;
+        color: #b1b4b6;
+        border-top: 1px solid #e0dfde;
+      }
+
+      /* ── TOC ── */
+      .toc-list {
+        list-style: none;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        gap: 0.5rem;
+      }
+      .toc-list li { font-size: 0.9rem; font-weight: 500; }
+      .toc-list a {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: #0b0c0c;
+        padding: 0.35rem 0;
+      }
+      .toc-list a:hover { color: #1d70b8; text-decoration: none; }
+      .toc-number {
+        width: 22px;
+        height: 22px;
+        background: #0b0c0c;
+        color: #fff;
+        border-radius: 50%;
+        font-size: 0.65rem;
+        font-weight: 700;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+
+      /* ── Snippet download controls ── */
+      .snippet-dl {
+        position: absolute;
+        top: 6px;
+        right: 6px;
+        display: flex;
+        gap: 2px;
+        opacity: 0;
+        transition: opacity 0.2s;
+        z-index: 10;
+      }
+      .snippet:hover .snippet-dl,
+      .snippet:focus-within .snippet-dl {
+        opacity: 1;
+      }
+      .snippet-dl-btn {
+        font-family: "Inter", Arial, sans-serif;
+        font-size: 0.6rem;
+        font-weight: 600;
+        padding: 0.2rem 0.5rem;
+        border-radius: 3px;
+        border: 1px solid #b1b4b6;
+        background: #fff;
+        color: #505a5f;
+        cursor: pointer;
+        transition: all 0.15s;
+        line-height: 1;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+      }
+      .snippet-dl-btn:hover {
+        background: #f3f2f1;
+        border-color: #505a5f;
+        color: #0b0c0c;
+      }
+    </style>
+    <script async defer src="https://scripts.withcabin.com/hello.js"></script>
+  </head>
+  <body>
+
+    <!-- ── Navigation ── -->
+    <nav class="nav">
+      <div class="container">
+        <span class="nav-brand">Agentic Legibility Stack</span>
+        <ul class="nav-links">
+          <li><a href="index.html">All documents</a></li>
+          <li><a href="overview.html" class="active">Overview</a></li>
+          <li><a href="briefing-executive.html">Executive briefing</a></li>
+          <li><a href="guide-product.html">Product guide</a></li>
+          <li><a href="reference-technical.html">Technical reference</a></li>
+          <li><a href="glossary.html">Glossary</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- ── Hero ── -->
+    <header class="hero">
+      <div class="container">
+        <span class="hero-label">Overview</span>
+        <h1>Your government services,<br>handled for you</h1>
+        <p class="hero-subtitle">
+          An AI agent that understands government so you don't have to. One conversation, every department, nothing missed.
+        </p>
+        <p style="font-size:0.95rem;color:#505a5f;max-width:700px;margin-bottom:0.5rem;">
+          The Agentic Legibility Stack is two products that work together: a <strong>citizen app</strong> where an AI agent acts on your behalf across every government department, and a <strong>Legibility Studio</strong> where departments make their services ready for agents to understand and deliver.
+        </p>
+        <div style="display:inline-block;margin-top:1.25rem;padding:0.75rem 1.25rem;background:#e8f0fe;border-left:4px solid #1d70b8;border-radius:0 4px 4px 0;max-width:700px;">
+          <p style="font-size:0.9rem;color:#0b0c0c;font-weight:500;margin:0;">
+            This is not a technology proposal. It is an <strong>operating model</strong> for how citizens interact with government in an age of AI agents.
+          </p>
+        </div>
+      </div>
+    </header>
+
+    <!-- ── Table of Contents ── -->
+    <div class="section-alt" style="padding:2rem 0;">
+      <div class="container">
+        <ol class="toc-list">
+          <li><a href="#problem"><span class="toc-number">1</span>The problem today</a></li>
+          <li><a href="#two-products"><span class="toc-number">2</span>Two products, one system</a></li>
+          <li><a href="#citizen"><span class="toc-number">3</span>What citizens get</a></li>
+          <li><a href="#departments"><span class="toc-number">4</span>What departments get</a></li>
+          <li><a href="#how-it-works"><span class="toc-number">5</span>How they connect</a></li>
+          <li><a href="#safety"><span class="toc-number">6</span>Why it is safe</a></li>
+          <li><a href="#future"><span class="toc-number">7</span>The future: your agent, your choice</a></li>
+        </ol>
+      </div>
+    </div>
+
+
+    <!-- ══════════════════════════════════════ -->
+    <!-- Section 1: The Problem -->
+    <!-- ══════════════════════════════════════ -->
+    <div class="section" id="problem">
+      <div class="container">
+        <div class="section-heading">
+          <span class="section-number">1</span>
+          <h2>The problem today</h2>
+        </div>
+        <p class="section-intro">
+          Government has over 1,500 services across dozens of departments. When something significant happens in your life, it is your job to find them, understand them, and deal with each one separately.
+        </p>
+
+        <div class="split">
+          <div class="split-col split-today">
+            <h3>Today</h3>
+            <ul>
+              <li>You search GOV.UK, guess which service you need, and hope you find the right one</li>
+              <li>You fill in the same personal details on every form &mdash; name, address, National Insurance number, again and again</li>
+              <li>Nobody tells you about services you are entitled to but did not know existed</li>
+              <li>If your situation crosses departments, you navigate each one alone</li>
+              <li>There is no record of what you were told, why, or what happened next</li>
+            </ul>
+          </div>
+          <div class="split-col split-agent">
+            <h3>With an agent</h3>
+            <ul>
+              <li>You describe your situation in plain language and the agent identifies every relevant service</li>
+              <li>Your verified data is used once &mdash; the agent fills in forms across departments for you</li>
+              <li>The agent proactively surfaces services you are eligible for but would never have found</li>
+              <li>One conversation spans every department involved in your life event</li>
+              <li>Every action is recorded: what was done, by whom, why, and with your explicit consent</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="stat-row">
+          <div class="stat-item">
+            <div class="stat-value">1,500+</div>
+            <div class="stat-label">Government services</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value">16</div>
+            <div class="stat-label">Major life events mapped</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value">12&times;</div>
+            <div class="stat-label">Same data re-entered per life event</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value">&pound;23bn</div>
+            <div class="stat-label">Estimated unclaimed entitlements</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ══════════════════════════════════════ -->
+    <!-- Section 2: Two Products -->
+    <!-- ══════════════════════════════════════ -->
+    <div class="section section-alt" id="two-products">
+      <div class="container">
+        <div class="section-heading">
+          <span class="section-number">2</span>
+          <h2>Two products, one system</h2>
+        </div>
+        <p class="section-intro">
+          For agents to work on behalf of citizens, two things must be true: the citizen needs a trustworthy agent, and government services need to be understandable by that agent. These are two different products for two different users, designed to work together.
+        </p>
+
+        <div class="product-grid">
+          <!-- Citizen App -->
+          <div class="product-card">
+            <div class="product-card-header" style="background:linear-gradient(135deg, #1d70b8, #003078);">
+              <h3>Citizen App</h3>
+              <p>For citizens and the people who help them</p>
+            </div>
+            <div class="product-card-body">
+              <ul>
+                <li>
+                  <div class="li-icon" style="background:#e8f0fe;">
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#1d70b8" stroke-width="2.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                  </div>
+                  <span>Tell your agent what is happening in your life, in your own words</span>
+                </li>
+                <li>
+                  <div class="li-icon" style="background:#e6f3ec;">
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#00703c" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                  </div>
+                  <span>Review a plan of every service you need, across every department</span>
+                </li>
+                <li>
+                  <div class="li-icon" style="background:#e8f0fe;">
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#1d70b8" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                  </div>
+                  <span>Give consent for each service individually &mdash; nothing happens without your approval</span>
+                </li>
+                <li>
+                  <div class="li-icon" style="background:#e6f3ec;">
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#00703c" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                  </div>
+                  <span>Delegate to the agent or act yourself &mdash; you choose, service by service</span>
+                </li>
+                <li>
+                  <div class="li-icon" style="background:#f5e6f4;">
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#912b88" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                  </div>
+                  <span>Get a receipt for everything &mdash; what was submitted, when, and to whom</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Legibility Studio -->
+          <div class="product-card">
+            <div class="product-card-header" style="background:linear-gradient(135deg, #912b88, #6b1d64);">
+              <h3>Legibility Studio</h3>
+              <p>For departments and service teams</p>
+            </div>
+            <div class="product-card-body">
+              <ul>
+                <li>
+                  <div class="li-icon" style="background:#f5e6f4;">
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#912b88" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                  </div>
+                  <span>Describe your services in structured artefacts that any agent can read</span>
+                </li>
+                <li>
+                  <div class="li-icon" style="background:#f5e6f4;">
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#912b88" stroke-width="2.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                  </div>
+                  <span>See which of your services are agent-ready and which have gaps</span>
+                </li>
+                <li>
+                  <div class="li-icon" style="background:#f5e6f4;">
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#912b88" stroke-width="2.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                  </div>
+                  <span>Audit every agent interaction with your services &mdash; full evidence trail</span>
+                </li>
+                <li>
+                  <div class="li-icon" style="background:#f5e6f4;">
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#912b88" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+                  </div>
+                  <span>Replay any citizen journey step by step for complaints or oversight</span>
+                </li>
+                <li>
+                  <div class="li-icon" style="background:#f5e6f4;">
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#912b88" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                  </div>
+                  <span>Track case volumes and completion rates across your service portfolio</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="callout callout-blue" style="margin-top:2rem;">
+          <strong>The key idea:</strong> the citizen app and the Legibility Studio are two halves of the same system. The citizen side consumes what the department side publishes. Neither works without the other. Together, they create a new channel for government services &mdash; one where AI agents act on behalf of citizens, safely and accountably.
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ══════════════════════════════════════ -->
+    <!-- Section 3: What Citizens Get -->
+    <!-- ══════════════════════════════════════ -->
+    <div class="section" id="citizen">
+      <div class="container">
+        <div class="section-heading">
+          <span class="section-number">3</span>
+          <h2>What citizens get</h2>
+        </div>
+        <p class="section-intro">
+          A single app where an AI agent handles government on your behalf. You stay in control of every decision. The agent does the work.
+        </p>
+
+        <div class="feature-grid">
+          <div class="feature-card" style="border-top-color:#1d70b8;">
+            <h3>One conversation, every department</h3>
+            <p>Describe what is happening in your life &mdash; bereavement, having a baby, losing a job &mdash; and the agent identifies every service you need across every government department. No more searching GOV.UK.</p>
+          </div>
+          <div class="feature-card" style="border-top-color:#00703c;">
+            <h3>A plan, not a list</h3>
+            <p>The agent builds an ordered plan showing which services come first, which depend on others, and which you can skip. You see the full picture before anything happens.</p>
+          </div>
+          <div class="feature-card" style="border-top-color:#912b88;">
+            <h3>Your data, entered once</h3>
+            <p>Verified credentials from your GOV.UK Wallet &mdash; driving licence, National Insurance number, passport &mdash; pre-fill forms across departments. You enter your details once, not twelve times.</p>
+          </div>
+          <div class="feature-card" style="border-top-color:#f47738;">
+            <h3>Consent on your terms</h3>
+            <p>Before the agent shares any information or submits anything on your behalf, you see exactly what will be sent, to whom, and why. Nothing happens without your explicit approval.</p>
+          </div>
+          <div class="feature-card" style="border-top-color:#1d70b8;">
+            <h3>Delegate or do it yourself</h3>
+            <p>For each service, choose: let the agent handle it entirely, or step through it yourself. Parents can act for children. Executors can act for the deceased. Carers can act for those they support.</p>
+          </div>
+          <div class="feature-card" style="border-top-color:#00703c;">
+            <h3>Receipts for everything</h3>
+            <p>After every submission, you get a receipt: what was sent, when, to which department, and the reference number. A complete, auditable record of everything your agent did.</p>
+          </div>
+        </div>
+
+        <!-- Snippet: Chat example -->
+        <div class="snippet" style="margin-top:2.5rem;">
+          <div class="snippet-label">Citizen app &mdash; Bereavement triage in chat</div>
+          <div class="snippet-body">
+            <div class="chat-container">
+              <div class="chat-msg chat-msg-user">
+                <div class="chat-bubble chat-user">My husband passed away last week. I don't know where to start with everything.</div>
+              </div>
+              <div class="chat-msg chat-msg-agent">
+                <div class="chat-bubble chat-agent">I'm very sorry for your loss. I can help you with the services you'll need. Based on what you've told me, I've identified <strong>9 services</strong> across 5 departments that are relevant to your situation. Would you like me to show you a plan?</div>
+              </div>
+              <div class="chat-msg chat-msg-user">
+                <div class="chat-bubble chat-user">Yes please.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Snippet: Plan view -->
+        <div class="snippet" style="margin-top:1.25rem;">
+          <div class="snippet-label">Citizen app &mdash; Service plan for bereavement</div>
+          <div class="snippet-body">
+            <div style="background:#fff;padding:0;overflow:hidden;">
+              <!-- Service 1: Available -->
+              <div style="display:flex;align-items:flex-start;gap:0.65rem;padding:0.7rem 0.75rem;border-bottom:1px solid #f3f2f1;">
+                <div style="width:28px;height:28px;border-radius:50%;background:#1d70b8;color:#fff;display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:700;flex-shrink:0;margin-top:1px;">1</div>
+                <div style="flex:1;min-width:0;">
+                  <div style="font-size:0.78rem;font-weight:700;color:#0b0c0c;line-height:1.3;">Register the death</div>
+                  <div style="font-size:0.7rem;font-weight:500;color:#505a5f;margin-top:1px;">General Register Office</div>
+                  <div style="display:flex;align-items:center;gap:0.3rem;font-size:0.6rem;font-weight:500;color:#505a5f;border-top:1px solid #f3f2f1;padding-top:4px;margin-top:6px;">
+                    <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#1d70b8" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                    <span style="color:#1d70b8;font-weight:600;">Agent will complete</span>
+                    <span style="margin-left:auto;">~15 min</span>
+                  </div>
+                </div>
+                <span style="font-size:0.6rem;font-weight:600;padding:0.2rem 0.5rem;border-radius:2rem;background:#eff6ff;color:#1d70b8;white-space:nowrap;margin-top:2px;">Delegate</span>
+              </div>
+              <!-- Service 2: Available -->
+              <div style="display:flex;align-items:flex-start;gap:0.65rem;padding:0.7rem 0.75rem;border-bottom:1px solid #f3f2f1;">
+                <div style="width:28px;height:28px;border-radius:50%;background:#1d70b8;color:#fff;display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:700;flex-shrink:0;margin-top:1px;">2</div>
+                <div style="flex:1;min-width:0;">
+                  <div style="font-size:0.78rem;font-weight:700;color:#0b0c0c;line-height:1.3;">Tell Us Once</div>
+                  <div style="font-size:0.7rem;font-weight:500;color:#505a5f;margin-top:1px;">DWP</div>
+                  <div style="display:flex;align-items:center;gap:0.3rem;font-size:0.6rem;font-weight:500;color:#505a5f;border-top:1px solid #f3f2f1;padding-top:4px;margin-top:6px;">
+                    <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#1d70b8" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                    <span style="color:#1d70b8;font-weight:600;">Agent will notify 9 departments</span>
+                    <span style="margin-left:auto;">~5 min</span>
+                  </div>
+                </div>
+                <span style="font-size:0.6rem;font-weight:600;padding:0.2rem 0.5rem;border-radius:2rem;background:#eff6ff;color:#1d70b8;white-space:nowrap;margin-top:2px;">Delegate</span>
+              </div>
+              <!-- Service 3: Available -->
+              <div style="display:flex;align-items:flex-start;gap:0.65rem;padding:0.7rem 0.75rem;border-bottom:1px solid #f3f2f1;">
+                <div style="width:28px;height:28px;border-radius:50%;background:#1d70b8;color:#fff;display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:700;flex-shrink:0;margin-top:1px;">3</div>
+                <div style="flex:1;min-width:0;">
+                  <div style="font-size:0.78rem;font-weight:700;color:#0b0c0c;line-height:1.3;">Apply for Bereavement Support Payment</div>
+                  <div style="font-size:0.7rem;font-weight:500;color:#505a5f;margin-top:1px;">DWP</div>
+                  <div style="display:flex;align-items:center;gap:0.3rem;font-size:0.6rem;font-weight:500;color:#505a5f;border-top:1px solid #f3f2f1;padding-top:4px;margin-top:6px;">
+                    <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#1d70b8" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                    <span style="color:#1d70b8;font-weight:600;">Agent will check eligibility and apply</span>
+                    <span style="margin-left:auto;">~10 min</span>
+                  </div>
+                </div>
+                <span style="font-size:0.6rem;font-weight:600;padding:0.2rem 0.5rem;border-radius:2rem;background:#eff6ff;color:#1d70b8;white-space:nowrap;margin-top:2px;">Delegate</span>
+              </div>
+              <!-- Service 4: Locked -->
+              <div style="display:flex;align-items:flex-start;gap:0.65rem;padding:0.7rem 0.75rem;border-bottom:1px solid #f3f2f1;opacity:0.6;">
+                <div style="width:28px;height:28px;border-radius:50%;background:#e5e7eb;color:#9ca3af;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;">
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                </div>
+                <div style="flex:1;min-width:0;">
+                  <div style="font-size:0.78rem;font-weight:700;color:#0b0c0c;line-height:1.3;">Apply for probate</div>
+                  <div style="font-size:0.7rem;font-weight:500;color:#505a5f;margin-top:1px;">HMCTS</div>
+                  <div style="display:flex;align-items:center;gap:0.3rem;font-size:0.6rem;font-weight:500;color:#505a5f;border-top:1px solid #f3f2f1;padding-top:4px;margin-top:6px;">
+                    <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                    <span>Requires: Register the death</span>
+                  </div>
+                </div>
+              </div>
+              <!-- Delegate all button -->
+              <div style="padding:0.6rem 0.75rem;">
+                <div style="background:#00703c;color:#fff;text-align:center;padding:0.55rem 1rem;font-size:0.78rem;font-weight:700;border-radius:2rem;cursor:pointer;">
+                  Delegate all to agent
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <p style="font-size:0.85rem;color:#505a5f;margin-top:1rem;max-width:520px;">
+          The plan shows which services are ready to begin, which are locked behind prerequisites, and how long each will take. The citizen delegates as much or as little as they want.
+        </p>
+      </div>
+    </div>
+
+
+    <!-- ══════════════════════════════════════ -->
+    <!-- Section 4: What Departments Get -->
+    <!-- ══════════════════════════════════════ -->
+    <div class="section section-alt" id="departments">
+      <div class="container">
+        <div class="section-heading">
+          <span class="section-number">4</span>
+          <h2>What departments get</h2>
+        </div>
+        <p class="section-intro">
+          A tool for authoring service artefacts, publishing them for agents, and monitoring how those agents deliver your services to citizens.
+        </p>
+
+        <div class="pillar-grid">
+          <div class="pillar-card" style="border-top-color:#912b88;">
+            <h3>Service legibility</h3>
+            <p>Define each service with four structured artefacts: a <strong>manifest</strong> (what the service is), a <strong>policy ruleset</strong> (who is eligible), a <strong>state model</strong> (the journey steps), and a <strong>consent model</strong> (what data is needed). Any agent can then understand and deliver your service.</p>
+          </div>
+          <div class="pillar-card" style="border-top-color:#1d70b8;">
+            <h3>Gap analysis</h3>
+            <p>See at a glance which of your department's services have complete artefacts, which are partially described, and which are not yet agent-ready. Prioritise the highest-impact services first.</p>
+          </div>
+          <div class="pillar-card" style="border-top-color:#00703c;">
+            <h3>Evidence and accountability</h3>
+            <p>Every agent interaction with your services is recorded: what data was accessed, what consent was given, what was submitted, and what the outcome was. Replay any journey for complaints or oversight.</p>
+          </div>
+        </div>
+
+        <!-- Snippet: Gap analysis -->
+        <div class="snippet snippet-wide" style="margin-top:2.5rem;">
+          <div class="snippet-label">Legibility Studio &mdash; Department gap analysis</div>
+          <div class="snippet-body">
+            <div class="s-panel" style="background:#fff;">
+              <div style="font-size:0.85rem;font-weight:700;color:#0b0c0c;margin-bottom:0.75rem;">Your department's services</div>
+              <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:0.5rem;margin-bottom:0.75rem;">
+                <div style="text-align:center;">
+                  <div style="font-size:1.1rem;font-weight:800;color:#0b0c0c;">47</div>
+                  <div style="font-size:0.55rem;color:#505a5f;">Total services</div>
+                </div>
+                <div style="text-align:center;">
+                  <div style="font-size:1.1rem;font-weight:800;color:#00703c;">8</div>
+                  <div style="font-size:0.55rem;color:#505a5f;">Agent-ready</div>
+                </div>
+                <div style="text-align:center;">
+                  <div style="font-size:1.1rem;font-weight:800;color:#f47738;">12</div>
+                  <div style="font-size:0.55rem;color:#505a5f;">Partially described</div>
+                </div>
+                <div style="text-align:center;">
+                  <div style="font-size:1.1rem;font-weight:800;color:#b1b4b6;">27</div>
+                  <div style="font-size:0.55rem;color:#505a5f;">Not started</div>
+                </div>
+              </div>
+              <div style="display:flex;gap:0.25rem;height:8px;border-radius:4px;overflow:hidden;margin-bottom:0.75rem;">
+                <div style="flex:8;background:#00703c;"></div>
+                <div style="flex:12;background:#f47738;"></div>
+                <div style="flex:27;background:#e0dfde;"></div>
+              </div>
+              <div style="border-top:1px solid #e0dfde;padding-top:0.5rem;">
+                <div style="display:flex;align-items:center;gap:0.5rem;padding:0.35rem 0;border-bottom:1px solid #f3f2f1;">
+                  <div style="width:8px;height:8px;border-radius:50%;background:#00703c;flex-shrink:0;"></div>
+                  <div style="flex:1;font-size:0.75rem;font-weight:600;">Universal Credit</div>
+                  <span class="s-tag s-tag-green" style="font-size:0.55rem;">All 4 artefacts</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:0.5rem;padding:0.35rem 0;border-bottom:1px solid #f3f2f1;">
+                  <div style="width:8px;height:8px;border-radius:50%;background:#f47738;flex-shrink:0;"></div>
+                  <div style="flex:1;font-size:0.75rem;font-weight:600;">State Pension</div>
+                  <span class="s-tag" style="font-size:0.55rem;background:#fef3e8;color:#f47738;">Missing consent model</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:0.5rem;padding:0.35rem 0;">
+                  <div style="width:8px;height:8px;border-radius:50%;background:#e0dfde;flex-shrink:0;"></div>
+                  <div style="flex:1;font-size:0.75rem;font-weight:600;">Jobseeker's Allowance</div>
+                  <span class="s-tag s-tag-grey" style="font-size:0.55rem;">Not started</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="callout callout-green" style="margin-top:2rem;">
+          <strong>Making a service agent-ready takes days, not months.</strong> The four artefacts express policy decisions departments already make &mdash; eligibility criteria, required evidence, consent requirements, and the service journey. The Legibility Studio guides service teams through authoring each one.
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ══════════════════════════════════════ -->
+    <!-- Section 5: How They Connect -->
+    <!-- ══════════════════════════════════════ -->
+    <div class="section" id="how-it-works">
+      <div class="container">
+        <div class="section-heading">
+          <span class="section-number">5</span>
+          <h2>How they connect</h2>
+        </div>
+        <p class="section-intro">
+          When a citizen talks to the agent, here is what happens behind the scenes. The critical insight: the AI generates conversation, but deterministic code makes every decision.
+        </p>
+
+        <div class="pipeline">
+          <div class="pipeline-box pipeline-box-dark">Citizen</div>
+          <span class="pipeline-arrow">&rarr;</span>
+          <div class="pipeline-box pipeline-box-blue">Chat</div>
+          <span class="pipeline-arrow">&rarr;</span>
+          <div class="pipeline-box pipeline-box-green">Eligibility rules</div>
+          <span class="pipeline-arrow">&rarr;</span>
+          <div class="pipeline-box pipeline-box-orange">Consent checks</div>
+          <span class="pipeline-arrow">&rarr;</span>
+          <div class="pipeline-box pipeline-box-purple">Service submission</div>
+          <span class="pipeline-arrow">&rarr;</span>
+          <div class="pipeline-box pipeline-box-dark">Department</div>
+        </div>
+
+        <div class="timeline">
+          <div class="timeline-step">
+            <div class="timeline-dot" style="background:#1d70b8;">1</div>
+            <h3>Citizen describes their situation</h3>
+            <p>The AI agent listens and identifies the relevant life event &mdash; bereavement, starting a business, having a baby. It matches this to services across every department using a graph of over 1,500 government services.</p>
+          </div>
+          <div class="timeline-step">
+            <div class="timeline-dot" style="background:#1d70b8;">2</div>
+            <h3>Agent reads department artefacts</h3>
+            <p>For each relevant service, the agent reads the structured artefacts published by that department: what the service does, who is eligible, what data is needed, and what consent is required. The agent does not guess &mdash; it reads what the department has published.</p>
+          </div>
+          <div class="timeline-step">
+            <div class="timeline-dot" style="background:#00703c;">3</div>
+            <h3>Deterministic code checks eligibility</h3>
+            <p>Eligibility is not decided by the AI. Policy rules published by the department are evaluated by deterministic code. If you meet the criteria, you are eligible. If not, you are not. The AI cannot override this.</p>
+          </div>
+          <div class="timeline-step">
+            <div class="timeline-dot" style="background:#f47738;">4</div>
+            <h3>Citizen gives consent</h3>
+            <p>Before any data is shared or any action is taken, the citizen sees exactly what will happen and gives explicit consent. Consent is enforced by code, not by the AI. The agent physically cannot proceed without it.</p>
+          </div>
+          <div class="timeline-step">
+            <div class="timeline-dot" style="background:#912b88;">5</div>
+            <h3>Data is submitted to the department</h3>
+            <p>The agent submits the citizen's data to the department's service through a secure, audited gateway. Every field is traced: where it came from, whether it was verified or citizen-provided, and when consent was given.</p>
+          </div>
+          <div class="timeline-step">
+            <div class="timeline-dot" style="background:#00703c;">6</div>
+            <h3>Receipt issued</h3>
+            <p>The citizen receives a receipt confirming what was submitted, to which department, when, and a reference number. The department receives an auditable record of the interaction. Both sides have proof.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ══════════════════════════════════════ -->
+    <!-- Section 6: Why It Is Safe -->
+    <!-- ══════════════════════════════════════ -->
+    <div class="section section-alt" id="safety">
+      <div class="container">
+        <div class="section-heading">
+          <span class="section-number">6</span>
+          <h2>Why it is safe</h2>
+        </div>
+        <p class="section-intro">
+          The most common concern about AI in government: what if it gets things wrong? The answer is an architecture where the AI is never the one making decisions.
+        </p>
+
+        <div class="pillar-grid">
+          <div class="pillar-card" style="border-top-color:#00703c;">
+            <h3>The AI handles language, code handles rules</h3>
+            <p>The AI turns "my husband died" into an understanding of a bereavement life event. But whether the citizen is eligible for Bereavement Support Payment, whether their data can be shared with DWP, whether probate requires registration first &mdash; all of this is evaluated by deterministic code, using rules published by departments.</p>
+          </div>
+          <div class="pillar-card" style="border-top-color:#1d70b8;">
+            <h3>Consent cannot be bypassed</h3>
+            <p>Consent is a hard technical gate, not a checkbox the AI can skip. The code that enforces consent sits outside the AI entirely. No prompt, no edge case, no system error can cause data to be shared without the citizen's explicit approval.</p>
+          </div>
+          <div class="pillar-card" style="border-top-color:#912b88;">
+            <h3>Every action is traceable</h3>
+            <p>Every step the agent takes is recorded in an immutable evidence store: what it did, what data it accessed, what consent was given, what was submitted, and what the outcome was. If something goes wrong, you can replay the entire journey step by step.</p>
+          </div>
+        </div>
+
+        <div class="callout" style="margin-top:2rem;">
+          <strong>And when the agent cannot help?</strong> It hands off. If a service is too complex, if the citizen needs emotional support, if there is a safeguarding concern, or if the situation requires human judgement, the agent stops and connects the citizen to a real person &mdash; with a full summary of everything that has happened so far, so they don't have to start over.
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ══════════════════════════════════════ -->
+    <!-- Section 7: The Future -->
+    <!-- ══════════════════════════════════════ -->
+    <div class="section" id="future">
+      <div class="container">
+        <div class="section-heading">
+          <span class="section-number">7</span>
+          <h2>The future: your agent, your choice</h2>
+        </div>
+        <p class="section-intro">
+          The citizen app is one agent. But the architecture is designed for a world where it is not the only one.
+        </p>
+
+        <p style="font-size:0.95rem;color:#505a5f;max-width:700px;margin-bottom:1.5rem;">
+          Today, the citizen app is the trusted government agent that acts on your behalf. But the service artefacts that departments publish &mdash; the manifests, policies, state models, and consent requirements &mdash; are not locked to a single app. They are structured, open descriptions of government services that <em>any</em> authorised agent could read.
+        </p>
+        <p style="font-size:0.95rem;color:#505a5f;max-width:700px;margin-bottom:2rem;">
+          That means the future could look like this:
+        </p>
+
+        <div class="agent-cards">
+          <div class="agent-card">
+            <div class="agent-card-icon" style="background:#e8f0fe;">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1d70b8" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+            </div>
+            <h3>The government agent</h3>
+            <p>The default, built and maintained by government. Designed for trust, accessibility, and universal access. Always available, always free.</p>
+          </div>
+          <div class="agent-card">
+            <div class="agent-card-icon" style="background:#e6f3ec;">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#00703c" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            </div>
+            <h3>Third-party agents</h3>
+            <p>An AI assistant you already use &mdash; ChatGPT, a future personal agent, or an accessibility-focused tool &mdash; could be authorised to interact with government services on your behalf, through the same artefacts.</p>
+          </div>
+          <div class="agent-card">
+            <div class="agent-card-icon" style="background:#f5e6f4;">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#912b88" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            </div>
+            <h3>Specialist agents</h3>
+            <p>A bereavement charity, a legal aid provider, or a carer's organisation could build agents tailored to the people they serve &mdash; agents that know the right questions to ask and the right tone to use.</p>
+          </div>
+        </div>
+
+        <div class="callout callout-blue" style="margin-top:2rem;">
+          <strong>The architecture makes this possible because legibility is the supply side.</strong> Departments publish structured descriptions of their services once. Any authorised agent &mdash; government-built or third-party &mdash; can read those descriptions and act on them. The citizen chooses which agent to trust. The department controls what the agent can do. The evidence plane holds everyone accountable.
+        </div>
+
+        <p style="font-size:0.95rem;color:#505a5f;max-width:700px;margin-top:1.5rem;">
+          This is the same model that made the web work: government publishes information in a standard format, and any browser can render it. Here, government publishes service logic in a standard format, and any agent can deliver it. The citizen's choice of agent becomes as natural as their choice of browser.
+        </p>
+
+        <div class="pipeline" style="margin-top:2rem;">
+          <div class="pipeline-box pipeline-box-dark">Citizen</div>
+          <span class="pipeline-arrow">&rarr;</span>
+          <div class="pipeline-box pipeline-box-blue">Any authorised agent</div>
+          <span class="pipeline-arrow">&rarr;</span>
+          <div class="pipeline-box pipeline-box-green">Standard artefacts</div>
+          <span class="pipeline-arrow">&rarr;</span>
+          <div class="pipeline-box pipeline-box-purple">Department services</div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ── Closing ── -->
+    <div class="closing">
+      <div class="container">
+        <p style="font-size:1.5rem;font-weight:700;color:#fff;margin-bottom:1rem;">
+          Government services that understand you,<br>not the other way around.
+        </p>
+        <p>
+          The Agentic Legibility Stack is an operating model for the next generation of government services. Two products &mdash; one for citizens, one for departments &mdash; that together create a world where AI agents can act on behalf of citizens, safely, accountably, and with the citizen always in control.
+        </p>
+        <p style="margin-top:1.5rem;font-size:0.85rem;opacity:0.6;">
+          Agentic Legibility Stack &middot; March 2026
+        </p>
+      </div>
+    </div>
+
+    <!-- ── Footer ── -->
+    <footer class="footer">
+      <div class="container">
+        <p>
+          <a href="briefing-executive.html">Executive Briefing</a> &middot;
+          <a href="guide-product.html">Product Guide</a> &middot;
+          <a href="reference-technical.html">Technical Reference</a> &middot;
+          <a href="glossary.html">Glossary</a>
+        </p>
+      </div>
+    </footer>
+
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <script>
+    (function () {
+      var snippets = document.querySelectorAll('.snippet');
+      snippets.forEach(function (snippet) {
+        var label = snippet.querySelector('.snippet-label');
+        var body = snippet.querySelector('.snippet-body');
+        if (!body) return;
+
+        var dl = document.createElement('div');
+        dl.className = 'snippet-dl';
+
+        var pngBtn = document.createElement('button');
+        pngBtn.className = 'snippet-dl-btn';
+        pngBtn.textContent = 'PNG';
+        pngBtn.title = 'Download as image';
+
+        var tblBtn = document.createElement('button');
+        tblBtn.className = 'snippet-dl-btn';
+        tblBtn.textContent = 'Table';
+        tblBtn.title = 'Download as HTML table';
+
+        dl.appendChild(pngBtn);
+        dl.appendChild(tblBtn);
+        snippet.appendChild(dl);
+
+        function slugify(text) {
+          return text.replace(/[^a-z0-9]+/gi, '-').replace(/^-|-$/g, '').toLowerCase();
+        }
+        var fileName = label ? slugify(label.textContent) : 'snippet';
+
+        pngBtn.addEventListener('click', function (e) {
+          e.preventDefault();
+          e.stopPropagation();
+          dl.style.display = 'none';
+          html2canvas(snippet, { backgroundColor: null, scale: 2, useCORS: true, logging: false }).then(function (canvas) {
+            dl.style.display = '';
+            var link = document.createElement('a');
+            link.download = fileName + '.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+          }).catch(function () { dl.style.display = ''; });
+        });
+
+        tblBtn.addEventListener('click', function (e) {
+          e.preventDefault();
+          e.stopPropagation();
+          var title = label ? label.textContent.trim() : 'Snippet';
+          var rows = [];
+          var visited = new Set();
+          var items = body.querySelectorAll('[style*="display:flex"], [style*="display: flex"], tr, li');
+          if (items.length > 0) {
+            items.forEach(function (item) {
+              if (visited.has(item)) return;
+              var parent = item.parentElement;
+              while (parent && parent !== body) { if (visited.has(parent)) return; parent = parent.parentElement; }
+              visited.add(item);
+              var texts = [];
+              item.querySelectorAll('div, span, td, th').forEach(function (el) {
+                var t = el.textContent.trim();
+                if (t && !texts.includes(t) && t.length < 200) texts.push(t);
+              });
+              if (texts.length > 0) rows.push(texts);
+            });
+          }
+          if (rows.length === 0) {
+            body.querySelectorAll('div, p, span').forEach(function (el) {
+              var t = el.textContent.trim();
+              if (t && t.length < 200 && el.children.length === 0) rows.push([t]);
+            });
+          }
+          var maxCols = 1;
+          rows.forEach(function (r) { if (r.length > maxCols) maxCols = r.length; });
+          var html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>' + title + '</title>';
+          html += '<style>body{font-family:Arial,sans-serif;padding:2rem;}table{border-collapse:collapse;width:100%;}';
+          html += 'th,td{border:1px solid #b1b4b6;padding:0.5rem 0.75rem;text-align:left;font-size:0.9rem;}';
+          html += 'th{background:#f3f2f1;font-weight:600;}caption{font-size:1.1rem;font-weight:700;margin-bottom:0.75rem;text-align:left;}</style></head>';
+          html += '<body><table><caption>' + title + '</caption><tbody>';
+          rows.forEach(function (r) {
+            html += '<tr>';
+            r.forEach(function (cell) { html += '<td>' + cell + '</td>'; });
+            for (var i = r.length; i < maxCols; i++) html += '<td></td>';
+            html += '</tr>';
+          });
+          html += '</tbody></table></body></html>';
+          var blob = new Blob([html], { type: 'text/html' });
+          var link = document.createElement('a');
+          link.download = fileName + '.html';
+          link.href = URL.createObjectURL(blob);
+          link.click();
+          URL.revokeObjectURL(link.href);
+        });
+      });
+    })();
+
+    // ── Exportable icons, diagrams, and illustrations ──
+    (function () {
+      function makeExportable(el, name) {
+        el.classList.add('exportable');
+        var hint = document.createElement('div');
+        hint.className = 'export-hint';
+        hint.innerHTML = '&#8595;';
+        hint.title = 'Download as PNG';
+        el.appendChild(hint);
+        el.addEventListener('click', function (e) {
+          e.preventDefault();
+          e.stopPropagation();
+          hint.style.display = 'none';
+          el.style.outline = 'none';
+          html2canvas(el, { backgroundColor: null, scale: 3, useCORS: true, logging: false }).then(function (canvas) {
+            hint.style.display = '';
+            el.style.outline = '';
+            var link = document.createElement('a');
+            link.download = name + '.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+          }).catch(function () { hint.style.display = ''; el.style.outline = ''; });
+        });
+      }
+
+      // Agent card icons
+      document.querySelectorAll('.agent-card-icon').forEach(function (el, i) {
+        var card = el.closest('.agent-card');
+        var h3 = card ? card.querySelector('h3') : null;
+        var name = h3 ? h3.textContent.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-') + '-icon' : 'icon-' + i;
+        makeExportable(el, name);
+      });
+
+      // Product card icons (li-icon)
+      document.querySelectorAll('.li-icon').forEach(function (el, i) {
+        var li = el.closest('li');
+        var text = li ? li.textContent.trim().substring(0, 30).toLowerCase().replace(/[^a-z0-9]+/g, '-') : 'icon-' + i;
+        makeExportable(el, text + '-icon');
+      });
+
+      // Pipelines
+      document.querySelectorAll('.pipeline').forEach(function (el, i) {
+        var wrapper = document.createElement('div');
+        wrapper.className = 'pipeline-exportable';
+        el.parentNode.insertBefore(wrapper, el);
+        wrapper.appendChild(el);
+        var hint = document.createElement('div');
+        hint.className = 'export-hint';
+        hint.innerHTML = '&#8595;';
+        hint.title = 'Download as PNG';
+        wrapper.appendChild(hint);
+        wrapper.addEventListener('click', function (e) {
+          if (e.target.closest('a')) return;
+          e.preventDefault();
+          hint.style.display = 'none';
+          html2canvas(el, { backgroundColor: '#ffffff', scale: 3, useCORS: true, logging: false }).then(function (canvas) {
+            hint.style.display = '';
+            var link = document.createElement('a');
+            link.download = 'pipeline-diagram-' + (i + 1) + '.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+          }).catch(function () { hint.style.display = ''; });
+        });
+      });
+
+      // Stat rows
+      document.querySelectorAll('.stat-row').forEach(function (el, i) {
+        var wrapper = document.createElement('div');
+        wrapper.className = 'pipeline-exportable';
+        wrapper.style.display = 'block';
+        el.parentNode.insertBefore(wrapper, el);
+        wrapper.appendChild(el);
+        var hint = document.createElement('div');
+        hint.className = 'export-hint';
+        hint.innerHTML = '&#8595;';
+        hint.title = 'Download as PNG';
+        wrapper.appendChild(hint);
+        wrapper.addEventListener('click', function (e) {
+          hint.style.display = 'none';
+          html2canvas(el, { backgroundColor: '#ffffff', scale: 3, useCORS: true, logging: false }).then(function (canvas) {
+            hint.style.display = '';
+            var link = document.createElement('a');
+            link.download = 'stats-' + (i + 1) + '.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+          }).catch(function () { hint.style.display = ''; });
+        });
+      });
+
+      // Timeline dots
+      document.querySelectorAll('.timeline-dot').forEach(function (el, i) {
+        makeExportable(el, 'timeline-step-' + (i + 1) + '-icon');
+      });
+
+      // Feature/pillar cards - make whole card exportable
+      document.querySelectorAll('.feature-card, .pillar-card, .agent-card').forEach(function (el) {
+        var wrapper = document.createElement('div');
+        wrapper.className = 'pipeline-exportable';
+        wrapper.style.display = 'block';
+        el.parentNode.insertBefore(wrapper, el);
+        wrapper.appendChild(el);
+        var hint = document.createElement('div');
+        hint.className = 'export-hint';
+        hint.innerHTML = '&#8595;';
+        hint.title = 'Download as PNG';
+        wrapper.appendChild(hint);
+        var h3 = el.querySelector('h3');
+        var name = h3 ? h3.textContent.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-') : 'card';
+        wrapper.addEventListener('click', function (e) {
+          if (e.target.closest('a')) return;
+          hint.style.display = 'none';
+          html2canvas(el, { backgroundColor: '#ffffff', scale: 3, useCORS: true, logging: false }).then(function (canvas) {
+            hint.style.display = '';
+            var link = document.createElement('a');
+            link.download = name + '.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+          }).catch(function () { hint.style.display = ''; });
+        });
+      });
+    })();
+    </script>
+  </body>
+</html>

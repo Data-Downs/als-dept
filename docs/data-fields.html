@@ -1,0 +1,1962 @@
+<!doctype html>
+<html lang="en-GB">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Data Fields & Sources — ALS Department Demo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /* ── Reset & Base ── */
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        font-family: "Inter", Arial, sans-serif;
+        color: #0b0c0c;
+        line-height: 1.6;
+        background: #fff;
+        -webkit-font-smoothing: antialiased;
+      }
+      a {
+        color: #1d70b8;
+        text-decoration: none;
+      }
+      a:hover {
+        text-decoration: underline;
+        color: #003078;
+      }
+      code,
+      pre {
+        font-family: "JetBrains Mono", monospace;
+      }
+
+      /* ── Layout ── */
+      .container {
+        max-width: 960px;
+        margin: 0 auto;
+        padding: 0 1.5rem;
+      }
+      .section {
+        padding: 4rem 0;
+      }
+      .section-alt {
+        background: #f3f2f1;
+      }
+
+      h1,
+      h2,
+      h3,
+      h4 {
+        line-height: 1.2;
+      }
+      h2 {
+        font-size: 1.75rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+      }
+      h3 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+      }
+      h4 {
+        font-size: 1.05rem;
+        font-weight: 600;
+        margin-bottom: 0.35rem;
+      }
+      .section-intro {
+        font-size: 1.1rem;
+        color: #505a5f;
+        max-width: 700px;
+        margin-bottom: 2rem;
+      }
+
+      /* ── Nav ── */
+      .nav {
+        background: #fff;
+        border-bottom: 1px solid #b1b4b6;
+        padding: 0.75rem 0;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+      .nav .container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+      }
+      .nav-brand {
+        font-weight: 700;
+        font-size: 1rem;
+        color: #0b0c0c;
+        white-space: nowrap;
+      }
+      .nav-links {
+        display: flex;
+        gap: 1.25rem;
+        list-style: none;
+        flex-wrap: wrap;
+        align-items: center;
+      }
+      .nav-links a {
+        font-size: 0.85rem;
+        font-weight: 500;
+        color: #505a5f;
+      }
+      .nav-links a:hover {
+        color: #1d70b8;
+        text-decoration: none;
+      }
+      .nav-links a.active {
+        color: #1d70b8;
+        font-weight: 600;
+      }
+      @media (max-width: 640px) {
+        .nav-links {
+          display: none;
+        }
+      }
+
+      /* ── Hero ── */
+      .hero {
+        padding: 5rem 0 4rem;
+      }
+      .hero-label {
+        display: inline-block;
+        background: #f3f2f1;
+        color: #505a5f;
+        font-size: 0.8rem;
+        font-weight: 600;
+        padding: 0.25rem 0.75rem;
+        border-radius: 2px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 1.25rem;
+      }
+      .hero h1 {
+        font-size: 2.75rem;
+        font-weight: 700;
+        margin-bottom: 0.75rem;
+      }
+      .hero-subtitle {
+        font-size: 1.35rem;
+        color: #505a5f;
+        font-weight: 400;
+        max-width: 640px;
+        margin-bottom: 1.5rem;
+      }
+      @media (max-width: 640px) {
+        .hero h1 {
+          font-size: 2rem;
+        }
+        .hero-subtitle {
+          font-size: 1.15rem;
+        }
+      }
+
+      /* ── Persona Cards ── */
+      .persona-card {
+        background: #fff;
+        border: 1px solid #b1b4b6;
+        border-radius: 2px;
+        border-left: 5px solid;
+        margin-bottom: 2.5rem;
+        overflow: hidden;
+      }
+      .persona-header {
+        padding: 1.5rem 2rem 1rem;
+        display: flex;
+        align-items: flex-start;
+        gap: 1.25rem;
+      }
+      .persona-avatar {
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 1.25rem;
+        color: #fff;
+        flex-shrink: 0;
+      }
+      .persona-title {
+        flex: 1;
+      }
+      .persona-title h3 {
+        font-size: 1.35rem;
+        margin-bottom: 0.15rem;
+      }
+      .persona-subtitle {
+        font-size: 0.95rem;
+        color: #505a5f;
+        font-style: italic;
+        margin-bottom: 0.5rem;
+      }
+      .dept-tags {
+        display: flex;
+        gap: 0.4rem;
+        flex-wrap: wrap;
+      }
+      .dept-tag {
+        display: inline-block;
+        font-size: 0.7rem;
+        font-weight: 600;
+        padding: 0.15rem 0.5rem;
+        border-radius: 2px;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+      .dept-moj { background: #f3e8ff; color: #6b21a8; }
+      .dept-dwp { background: #dbeafe; color: #1e40af; }
+      .dept-hmrc { background: #dcfce7; color: #166534; }
+      .dept-dfe { background: #fef3c7; color: #92400e; }
+      .dept-ho { background: #fee2e2; color: #991b1b; }
+      .dept-dvla { background: #e0f2fe; color: #0c4a6e; }
+      .dept-hmpps { background: #f5f3ff; color: #5b21b6; }
+      .dept-hmcts { background: #fce7f3; color: #9d174d; }
+      .dept-laa { background: #fef2f2; color: #7f1d1d; }
+      .dept-gro { background: #f0fdf4; color: #15803d; }
+      .dept-local { background: #fef08a; color: #713f12; }
+      .dept-nhs { background: #e0e7ff; color: #3730a3; }
+      .dept-co { background: #f0f9ff; color: #082f49; }
+      .dept-gds { background: #faf5ff; color: #6b21a8; }
+      .dept-other { background: #f3f4f6; color: #374151; }
+
+      .persona-body {
+        padding: 0 2rem 1.5rem;
+      }
+      .persona-section {
+        margin-bottom: 1.25rem;
+      }
+      .persona-section h4 {
+        color: #0b0c0c;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 0.5rem;
+        padding-bottom: 0.35rem;
+        border-bottom: 1px solid #e5e5e5;
+      }
+      .persona-section p,
+      .persona-section li {
+        font-size: 0.95rem;
+        color: #353535;
+      }
+      .persona-section ul {
+        padding-left: 1.25rem;
+        margin: 0;
+      }
+      .persona-section li {
+        margin-bottom: 0.25rem;
+      }
+
+      /* ── Data Tier Tags ── */
+      .tier-verified {
+        display: inline-block;
+        background: #dcfce7;
+        color: #166534;
+        font-size: 0.7rem;
+        font-weight: 600;
+        padding: 0.15rem 0.5rem;
+        border-radius: 2px;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+      .tier-submitted {
+        display: inline-block;
+        background: #fef08a;
+        color: #713f12;
+        font-size: 0.7rem;
+        font-weight: 600;
+        padding: 0.15rem 0.5rem;
+        border-radius: 2px;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+      .tier-inferred {
+        display: inline-block;
+        background: #dbeafe;
+        color: #1e40af;
+        font-size: 0.7rem;
+        font-weight: 600;
+        padding: 0.15rem 0.5rem;
+        border-radius: 2px;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+
+      /* ── Field Card ── */
+      .field-card {
+        background: #fff;
+        border: 1px solid #b1b4b6;
+        border-radius: 2px;
+        padding: 1.25rem 1.5rem;
+        margin-bottom: 1rem;
+      }
+      .field-card h4 {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.95rem;
+        color: #1d70b8;
+        margin-bottom: 0.25rem;
+      }
+      .field-meta {
+        display: flex;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+        margin-bottom: 0.5rem;
+        font-size: 0.85rem;
+      }
+      .field-desc {
+        font-size: 0.9rem;
+        color: #353535;
+      }
+
+      /* ── Table styles ── */
+      .matrix-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.85rem;
+        margin-bottom: 1.5rem;
+      }
+      .matrix-table th,
+      .matrix-table td {
+        padding: 0.6rem 0.75rem;
+        text-align: left;
+        border-bottom: 1px solid #d5d8da;
+      }
+      .matrix-table th {
+        background: #f3f2f1;
+        font-weight: 600;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: #505a5f;
+      }
+      .matrix-table td {
+        vertical-align: top;
+      }
+      .matrix-primary {
+        font-weight: 600;
+        color: #0b0c0c;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.85rem;
+      }
+      .matrix-secondary {
+        color: #505a5f;
+        font-size: 0.8rem;
+      }
+      .matrix-checkmark {
+        text-align: center;
+        font-weight: 700;
+        color: #00703c;
+        font-size: 1.2rem;
+      }
+
+      /* ── View toggles ── */
+      .view-tabs {
+        display: flex;
+        gap: 0.5rem;
+        margin-bottom: 2rem;
+        border-bottom: 1px solid #b1b4b6;
+        flex-wrap: wrap;
+      }
+      .view-tab {
+        padding: 0.75rem 1.5rem;
+        background: transparent;
+        border: none;
+        border-bottom: 3px solid transparent;
+        cursor: pointer;
+        font-size: 0.95rem;
+        font-weight: 500;
+        color: #505a5f;
+        transition: all 0.2s ease;
+      }
+      .view-tab:hover {
+        color: #1d70b8;
+      }
+      .view-tab.active {
+        color: #1d70b8;
+        border-bottom-color: #1d70b8;
+      }
+
+      .view-content {
+        display: none;
+      }
+      .view-content.active {
+        display: block;
+      }
+
+      /* ── Footer ── */
+      .footer {
+        background: #f3f2f1;
+        border-top: 1px solid #b1b4b6;
+        padding: 2rem 0;
+        margin-top: 3rem;
+      }
+      .footer-content {
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr;
+        gap: 2rem;
+        margin-bottom: 1rem;
+      }
+      .footer-col h4 {
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        margin-bottom: 0.75rem;
+        color: #0b0c0c;
+      }
+      .footer-col p,
+      .footer-col a {
+        font-size: 0.85rem;
+        color: #505a5f;
+      }
+      .footer-col a {
+        display: inline-block;
+        margin-bottom: 0.5rem;
+      }
+      .footer-col a:hover {
+        color: #1d70b8;
+      }
+      .footer-divider {
+        border-top: 1px solid #b1b4b6;
+        padding-top: 1rem;
+        text-align: center;
+        font-size: 0.8rem;
+        color: #505a5f;
+      }
+      @media (max-width: 640px) {
+        .footer-content {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      /* ── Department Group ── */
+      .dept-group {
+        margin-bottom: 3rem;
+      }
+      .dept-group-header {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+      }
+      .dept-group-header .dept-tag {
+        display: inline-block;
+      }
+      .dept-group-title {
+        font-size: 1.35rem;
+        font-weight: 700;
+        color: #0b0c0c;
+      }
+
+      /* ── Print ── */
+      @media print {
+        .nav { display: none; }
+        .view-tabs { display: none; }
+        .persona-card { break-inside: avoid; }
+        .field-card { break-inside: avoid; }
+        body { font-size: 11pt; }
+      }
+    </style>
+    <script async defer src="https://scripts.withcabin.com/hello.js"></script>
+  </head>
+  <body>
+    <!-- Navigation -->
+    <nav class="nav">
+      <div class="container">
+        <span class="nav-brand">Agentic Legibility Stack</span>
+        <ul class="nav-links">
+          <li><a href="index.html">All documents</a></li>
+          <li><a href="overview.html">Overview</a></li>
+          <li><a href="briefing-executive.html">Executive briefing</a></li>
+          <li><a href="guide-product.html">Product guide</a></li>
+          <li><a href="reference-technical.html">Technical reference</a></li>
+          <li><a href="glossary.html">Glossary</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero">
+      <div class="container">
+        <div class="hero-label">Data Model</div>
+        <h1>Data Fields & Sources</h1>
+        <p class="hero-subtitle">Every data field mapped to its source department, grouped by persona and by government department.</p>
+      </div>
+    </section>
+
+    <!-- View Tabs -->
+    <section class="section">
+      <div class="container">
+        <div class="view-tabs">
+          <button class="view-tab active" onclick="switchView('by-persona')">By Persona</button>
+          <button class="view-tab" onclick="switchView('by-department')">By Department</button>
+          <button class="view-tab" onclick="switchView('cross-persona')">Cross-Persona Reuse</button>
+        </div>
+
+        <!-- VIEW 1: By Persona -->
+        <div id="by-persona" class="view-content active">
+          <p class="section-intro">Data fields grouped by persona, showing which departments hold the data and how it's verified.</p>
+
+          <!-- Shared Base Fields -->
+          <div class="persona-card" style="border-left-color: #505a5f;">
+            <div class="persona-header">
+              <div class="persona-title">
+                <h3>Base Fields (All Personas)</h3>
+                <p class="persona-subtitle">Shared identity and contact information used across every persona</p>
+              </div>
+            </div>
+            <div class="persona-body">
+              <div class="field-card">
+                <h4>fullName</h4>
+                <div class="field-meta">
+                  <span class="tier-verified">Verified</span>
+                  <span class="dept-tag dept-other">Multiple Sources</span>
+                </div>
+                <p class="field-desc">Full legal name — verified by passport, driving licence, or other identity documents.</p>
+              </div>
+              <div class="field-card">
+                <h4>dateOfBirth</h4>
+                <div class="field-meta">
+                  <span class="tier-verified">Verified</span>
+                  <span class="dept-tag dept-other">Multiple Sources</span>
+                </div>
+                <p class="field-desc">Date of birth from identity documents.</p>
+              </div>
+              <div class="field-card">
+                <h4>niNumber</h4>
+                <div class="field-meta">
+                  <span class="tier-verified">Verified</span>
+                  <span class="dept-tag dept-dwp">DWP</span>
+                  <span class="dept-tag dept-hmrc">HMRC</span>
+                </div>
+                <p class="field-desc">National Insurance Number — held by DWP and HMRC.</p>
+              </div>
+              <div class="field-card">
+                <h4>address</h4>
+                <div class="field-meta">
+                  <span class="tier-verified">Verified</span>
+                  <span class="dept-tag dept-other">Multiple Sources</span>
+                </div>
+                <p class="field-desc">Current residential address — varies by persona source (council tax, passport, DWP, HMRC).</p>
+              </div>
+              <div class="field-card">
+                <h4>postcode</h4>
+                <div class="field-meta">
+                  <span class="tier-verified">Verified</span>
+                  <span class="dept-tag dept-hmrc">HMRC</span>
+                  <span class="dept-tag dept-dvla">DVLA</span>
+                </div>
+                <p class="field-desc">Postcode from tax or driving licence records.</p>
+              </div>
+              <div class="field-card">
+                <h4>email</h4>
+                <div class="field-meta">
+                  <span class="tier-verified">Verified</span>
+                  <span class="dept-tag dept-co">User</span>
+                </div>
+                <p class="field-desc">Email address — user-provided.</p>
+              </div>
+              <div class="field-card">
+                <h4>phone</h4>
+                <div class="field-meta">
+                  <span class="tier-verified">Verified</span>
+                  <span class="dept-tag dept-co">User</span>
+                </div>
+                <p class="field-desc">Phone number — user-provided.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Sarah Okafor - Bereavement -->
+          <div class="persona-card" style="border-left-color: #c084fc;">
+            <div class="persona-header">
+              <div style="width: 56px; height: 56px; border-radius: 50%; background: #c084fc; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700; font-size: 1.25rem; flex-shrink: 0;">SO</div>
+              <div class="persona-title">
+                <h3>Sarah Okafor</h3>
+                <p class="persona-subtitle">Dealing with a death in the family</p>
+                <div class="dept-tags">
+                  <span class="dept-tag dept-gro">GRO</span>
+                  <span class="dept-tag dept-hmrc">HMRC</span>
+                  <span class="dept-tag dept-hmcts">HMCTS</span>
+                </div>
+              </div>
+            </div>
+            <div class="persona-body">
+              <div class="field-card">
+                <h4>bereavement.deceasedName</h4>
+                <div class="field-meta">
+                  <span class="tier-submitted">Submitted</span>
+                  <span class="dept-tag dept-gro">General Register Office</span>
+                </div>
+                <p class="field-desc">Full name of the deceased person.</p>
+              </div>
+              <div class="field-card">
+                <h4>bereavement.dateOfDeath</h4>
+                <div class="field-meta">
+                  <span class="tier-verified">Verified</span>
+                  <span class="dept-tag dept-gro">General Register Office</span>
+                </div>
+                <p class="field-desc">Date of death from death certificate.</p>
+              </div>
+              <div class="field-card">
+                <h4>bereavement.relationship</h4>
+                <div class="field-meta">
+                  <span class="tier-submitted">Submitted</span>
+                  <span class="dept-tag dept-co">User</span>
+                </div>
+                <p class="field-desc">Relationship to the deceased (e.g., spouse, parent, child).</p>
+              </div>
+              <div class="field-card">
+                <h4>bereavement.estateValue</h4>
+                <div class="field-meta">
+                  <span class="tier-submitted">Submitted</span>
+                  <span class="dept-tag dept-hmrc">HMRC</span>
+                </div>
+                <p class="field-desc">Estimated or declared value of the estate.</p>
+              </div>
+              <div class="field-card">
+                <h4>bereavement.willExists</h4>
+                <div class="field-meta">
+                  <span class="tier-submitted">Submitted</span>
+                  <span class="dept-tag dept-hmcts">Probate Service</span>
+                </div>
+                <p class="field-desc">Whether a valid will exists.</p>
+              </div>
+              <div class="field-card">
+                <h4>bereavement.executorStatus</h4>
+                <div class="field-meta">
+                  <span class="tier-verified">Verified</span>
+                  <span class="dept-tag dept-hmcts">HMCTS</span>
+                </div>
+                <p class="field-desc">Status of executor appointment.</p>
+              </div>
+              <div class="field-card">
+                <h4>bereavement.probateStatus</h4>
+                <div class="field-meta">
+                  <span class="tier-verified">Verified</span>
+                  <span class="dept-tag dept-hmcts">HMCTS</span>
+                </div>
+                <p class="field-desc">Current probate application status.</p>
+              </div>
+              <div class="field-card">
+                <h4>bereavement.tellUsOnceRef</h4>
+                <div class="field-meta">
+                  <span class="tier-verified">Verified</span>
+                  <span class="dept-tag dept-gds">GDS / Tell Us Once</span>
+                </div>
+                <p class="field-desc">Reference number for Tell Us Once notification.</p>
+              </div>
+              <div class="field-card">
+                <h4>bereavement.ihtLiability</h4>
+                <div class="field-meta">
+                  <span class="tier-verified">Verified</span>
+                  <span class="dept-tag dept-hmrc">HMRC</span>
+                </div>
+                <p class="field-desc">Inheritance Tax liability status.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Amina Hassan - Immigration -->
+          <div class="persona-card" style="border-left-color: #ef4444;">
+            <div class="persona-header">
+              <div style="width: 56px; height: 56px; border-radius: 50%; background: #ef4444; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700; font-size: 1.25rem; flex-shrink: 0;">AH</div>
+              <div class="persona-title">
+                <h3>Amina Hassan</h3>
+                <p class="persona-subtitle">Navigating immigration and work rights</p>
+                <div class="dept-tags">
+                  <span class="dept-tag dept-ho">Home Office</span>
+                  <span class="dept-tag dept-local">Local Authority</span>
+                </div>
+              </div>
+            </div>
+            <div class="persona-body">
+              <div class="field-card">
+                <h4>immigration.status</h4>
+                <div class="field-meta">
+                  <span class="tier-verified">Verified</span>
+                  <span class="dept-tag dept-ho">Home Office</span>
+                </div>
+                <p class="field-desc">Current immigration status (e.g., settled, pre-settled, visa type).</p>
+              </div>
+              <div class="field-card">
+                <h4>immigration.homeOfficeRef</h4>
+                <div class="field-meta">
+                  <span class="tier-verified">Verified</span>
+                  <span class="dept-tag dept-ho">Home Office</span>
+                </div>
+                <p class="field-desc">Home Office application reference number.</p>
+              </div>
+              <div class="field-card">
+                <h4>immigration.brpNumber</h4>
+                <div class="field-meta">
+                  <span class="tier-verified">Verified</span>
+                  <span class="dept-tag dept-ho">Home Office</span>
+                </div>
+                <p class="field-desc">Biometric Residence Permit number.</p>
+              </div>
+              <div class="field-card">
+                <h4>immigration.brpExpiry</h4>
+                <div class="field-meta">
+                  <span class="tier-verified">Verified</span>
+                  <span class="dept-tag dept-ho">Home Office</span>
+                </div>
+                <p class="field-desc">Expiry date of current BRP or visa.</p>
+              </div>
+              <div class="field-card">
+                <h4>immigration.eVisaMigrationDate</h4>
+                <div class="field-meta">
+                  <span class="tier-verified">Verified</span>
+                  <span class="dept-tag dept-ho">Home Office</span>
+                </div>
+                <p class="field-desc">Date of migration from BRP to eVisa system.</p>
+              </div>
+              <div class="field-card">
+                <h4>immigration.rightToWork</h4>
+                <div class="field-meta">
+                  <span class="tier-verified">Verified</span>
+                  <span class="dept-tag dept-ho">Home Office</span>
+                </div>
+                <p class="field-desc">Verified right to work in the UK.</p>
+              </div>
+              <div class="field-card">
+                <h4>immigration.rightToRent</h4>
+                <div class="field-meta">
+                  <span class="tier-verified">Verified</span>
+                  <span class="dept-tag dept-ho">Home Office</span>
+                </div>
+                <p class="field-desc">Verified right to rent in the UK.</p>
+              </div>
+              <div class="field-card">
+                <h4>immigration.languageProficiency</h4>
+                <div class="field-meta">
+                  <span class="tier-submitted">Submitted</span>
+                  <span class="dept-tag dept-co">User</span>
+                </div>
+                <p class="field-desc">English language proficiency level.</p>
+              </div>
+              <div class="field-card">
+                <h4>immigration.accommodationType</h4>
+                <div class="field-meta">
+                  <span class="tier-submitted">Submitted</span>
+                  <span class="dept-tag dept-ho">Home Office</span>
+                  <span class="dept-tag dept-local">Local Authority</span>
+                </div>
+                <p class="field-desc">Type of accommodation (e.g., temporary, dispersed, private rented).</p>
+              </div>
+              <div class="field-card">
+                <h4>immigration.ninoStatus</h4>
+                <div class="field-meta">
+                  <span class="tier-verified">Verified</span>
+                  <span class="dept-tag dept-dwp">DWP</span>
+                </div>
+                <p class="field-desc">National Insurance Number status or allocation date.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Marcus Taylor - Justice History -->
+          <div class="persona-card" style="border-left-color: #8b5cf6;">
+            <div class="persona-header">
+              <div style="width: 56px; height: 56px; border-radius: 50%; background: #8b5cf6; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700; font-size: 1.25rem; flex-shrink: 0;">MT</div>
+              <div class="persona-title">
+                <h3>Marcus Taylor</h3>
+                <p class="persona-subtitle">Supporting someone with a criminal record</p>
+                <div class="dept-tags">
+                  <span class="dept-tag dept-hmpps">HMPPS</span>
+                  <span class="dept-tag dept-hmcts">HMCTS</span>
+                </div>
+              </div>
+            </div>
+            <div class="persona-body">
+              <div class="field-card">
+                <h4>justiceHistory.releaseDate</h4>
+                <div class="field-meta">
+                  <span class="tier-verified">Verified</span>
+                  <span class="dept-tag dept-hmpps">HMPPS</span>
+                </div>
+                <p class="field-desc">Release date from custody.</p>
+              </div>
+              <div class="field-card">
+                <h4>justiceHistory.sentenceDetails</h4>
+                <div class="field-meta">
+                  <span class="tier-verified">Verified</span>
+                  <span class="dept-tag dept-hmpps">HMPPS</span>
+                </div>
+                <p class="field-desc">Details of sentence (length, offence(s), court).</p>
+              </div>
+              <div class="field-card">
+                <h4>justiceHistory.licenceConditions</h4>
+                <div class="field-meta">
+                  <span class="tier-verified">Verified</span>
+                  <span class="dept-tag dept-hmpps">HMPPS</span>
+                </div>
+                <p class="field-desc">Active licence conditions for released prisoner.</p>
+              </div>
+              <div class="field-card">
+                <h4>justiceHistory.licenceEndDate</h4>
+                <div class="field-meta">
+                  <span class="tier-verified">Verified</span>
+                  <span class="dept-tag dept-hmpps">HMPPS</span>
+                </div>
+                <p class="field-desc">Date when licence expires and supervision ends.</p>
+              </div>
+              <div class="field-card">
+                <h4>justiceHistory.probationOfficer</h4>
+                <div class="field-meta">
+                  <span class="tier-verified">Verified</span>
+                  <span class="dept-tag dept-hmpps">HMPPS</span>
+                </div>
+                <p class="field-desc">Assigned probation officer contact details.</p>
+              </div>
+              <div class="field-card">
+                <h4>justiceHistory.reportingSchedule</h4>
+                <div class="field-meta">
+                  <span class="tier-verified">Verified</span>
+                  <span class="dept-tag dept-hmpps">HMPPS</span>
+                </div>
+                <p class="field-desc">Schedule for reporting to probation.</p>
+              </div>
+              <div class="field-card">
+                <h4>justiceHistory.dbsDisclosureStatus</h4>
+                <div class="field-meta">
+                  <span class="tier-verified">Verified</span>
+                  <span class="dept-tag dept-hmpps">HMPPS</span>
+                </div>
+                <p class="field-desc">Disclosure and Barring Service status.</p>
+              </div>
+              <div class="field-card">
+                <h4>justiceHistory.offenceCategory</h4>
+                <div class="field-meta">
+                  <span class="tier-verified">Verified</span>
+                  <span class="dept-tag dept-hmpps">HMPPS</span>
+                </div>
+                <p class="field-desc">Category of offence(s).</p>
+              </div>
+              <div class="field-card">
+                <h4>justiceHistory.approvedPremisesDeadline</h4>
+                <div class="field-meta">
+                  <span class="tier-verified">Verified</span>
+                  <span class="dept-tag dept-hmpps">HMPPS</span>
+                </div>
+                <p class="field-desc">Deadline for finding approved premises accommodation.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Priya Anand - Childcare -->
+          <div class="persona-card" style="border-left-color: #06b6d4;">
+            <div class="persona-header">
+              <div style="width: 56px; height: 56px; border-radius: 50%; background: #06b6d4; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700; font-size: 1.25rem; flex-shrink: 0;">PA</div>
+              <div class="persona-title">
+                <h3>Priya Anand</h3>
+                <p class="persona-subtitle">Accessing childcare and early education support</p>
+                <div class="dept-tags">
+                  <span class="dept-tag dept-hmrc">HMRC</span>
+                  <span class="dept-tag dept-dfe">DfE</span>
+                  <span class="dept-tag dept-dwp">DWP</span>
+                </div>
+              </div>
+            </div>
+            <div class="persona-body">
+              <div class="field-card">
+                <h4>childcare.nurseryProvider</h4>
+                <div class="field-meta">
+                  <span class="tier-submitted">Submitted</span>
+                  <span class="dept-tag dept-co">User</span>
+                </div>
+                <p class="field-desc">Name and details of nursery or childcare provider.</p>
+              </div>
+              <div class="field-card">
+                <h4>childcare.nurseryCostMonthly</h4>
+                <div class="field-meta">
+                  <span class="tier-submitted">Submitted</span>
+                  <span class="dept-tag dept-co">User</span>
+                </div>
+                <p class="field-desc">Monthly cost of childcare.</p>
+              </div>
+              <div class="field-card">
+                <h4>childcare.thirtyHourCode</h4>
+                <div class="field-meta">
+                  <span class="tier-verified">Verified</span>
+                  <span class="dept-tag dept-hmrc">HMRC</span>
+                </div>
+                <p class="field-desc">Eligibility code for 30-hour childcare entitlement.</p>
+              </div>
+              <div class="field-card">
+                <h4>childcare.taxFreeChildcareAccount</h4>
+                <div class="field-meta">
+                  <span class="tier-verified">Verified</span>
+                  <span class="dept-tag dept-hmrc">HMRC</span>
+                </div>
+                <p class="field-desc">Tax-Free Childcare account status and balance.</p>
+              </div>
+              <div class="field-card">
+                <h4>childcare.fsmEligibility</h4>
+                <div class="field-meta">
+                  <span class="tier-verified">Verified</span>
+                  <span class="dept-tag dept-dfe">DfE</span>
+                  <span class="dept-tag dept-dwp">DWP</span>
+                </div>
+                <p class="field-desc">Free School Meals eligibility status.</p>
+              </div>
+              <div class="field-card">
+                <h4>childcare.schoolRegistrationStatus</h4>
+                <div class="field-meta">
+                  <span class="tier-submitted">Submitted</span>
+                  <span class="dept-tag dept-local">Local Authority</span>
+                </div>
+                <p class="field-desc">School registration and admissions status.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- James Whitfield - Appeals -->
+          <div class="persona-card" style="border-left-color: #f59e0b;">
+            <div class="persona-header">
+              <div style="width: 56px; height: 56px; border-radius: 50%; background: #f59e0b; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700; font-size: 1.25rem; flex-shrink: 0;">JW</div>
+              <div class="persona-title">
+                <h3>James Whitfield</h3>
+                <p class="persona-subtitle">Appealing disability and education decisions</p>
+                <div class="dept-tags">
+                  <span class="dept-tag dept-dwp">DWP</span>
+                  <span class="dept-tag dept-hmcts">HMCTS</span>
+                  <span class="dept-tag dept-local">Local Authority</span>
+                </div>
+              </div>
+            </div>
+            <div class="persona-body">
+              <div class="field-card">
+                <h4>appeals.pipMandatoryRecon</h4>
+                <div class="field-meta">
+                  <span class="tier-verified">Verified</span>
+                  <span class="dept-tag dept-dwp">DWP</span>
+                </div>
+                <p class="field-desc">PIP mandatory reconsideration status.</p>
+              </div>
+              <div class="field-card">
+                <h4>appeals.pipMandatoryReconDate</h4>
+                <div class="field-meta">
+                  <span class="tier-verified">Verified</span>
+                  <span class="dept-tag dept-dwp">DWP</span>
+                </div>
+                <p class="field-desc">Date of PIP mandatory reconsideration request.</p>
+              </div>
+              <div class="field-card">
+                <h4>appeals.tribunalAppealRef</h4>
+                <div class="field-meta">
+                  <span class="tier-verified">Verified</span>
+                  <span class="dept-tag dept-hmcts">HMCTS</span>
+                </div>
+                <p class="field-desc">Tribunal appeal reference number.</p>
+              </div>
+              <div class="field-card">
+                <h4>appeals.tribunalHearingDate</h4>
+                <div class="field-meta">
+                  <span class="tier-verified">Verified</span>
+                  <span class="dept-tag dept-hmcts">HMCTS</span>
+                </div>
+                <p class="field-desc">Scheduled date of tribunal hearing.</p>
+              </div>
+              <div class="field-card">
+                <h4>appeals.ehcpApplicationDate</h4>
+                <div class="field-meta">
+                  <span class="tier-verified">Verified</span>
+                  <span class="dept-tag dept-local">Local Authority</span>
+                </div>
+                <p class="field-desc">Date of Education, Health and Care Plan application.</p>
+              </div>
+              <div class="field-card">
+                <h4>appeals.ehcpStatutoryDeadline</h4>
+                <div class="field-meta">
+                  <span class="tier-verified">Verified</span>
+                  <span class="dept-tag dept-local">Local Authority</span>
+                </div>
+                <p class="field-desc">Statutory deadline for EHC Plan decision.</p>
+              </div>
+              <div class="field-card">
+                <h4>appeals.sendTribunalStatus</h4>
+                <div class="field-meta">
+                  <span class="tier-verified">Verified</span>
+                  <span class="dept-tag dept-hmcts">HMCTS</span>
+                </div>
+                <p class="field-desc">Special Educational Needs Disability Tribunal status.</p>
+              </div>
+              <div class="field-card">
+                <h4>appeals.legalAidEligibility</h4>
+                <div class="field-meta">
+                  <span class="tier-verified">Verified</span>
+                  <span class="dept-tag dept-laa">LAA</span>
+                </div>
+                <p class="field-desc">Legal aid eligibility for appeal representation.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Daniel Obi - Self-Employment -->
+          <div class="persona-card" style="border-left-color: #10b981;">
+            <div class="persona-header">
+              <div style="width: 56px; height: 56px; border-radius: 50%; background: #10b981; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700; font-size: 1.25rem; flex-shrink: 0;">DO</div>
+              <div class="persona-title">
+                <h3>Daniel Obi</h3>
+                <p class="persona-subtitle">Managing self-employed tax obligations</p>
+                <div class="dept-tags">
+                  <span class="dept-tag dept-hmrc">HMRC</span>
+                </div>
+              </div>
+            </div>
+            <div class="persona-body">
+              <div class="field-card">
+                <h4>selfEmployment.tradingName</h4>
+                <div class="field-meta">
+                  <span class="tier-submitted">Submitted</span>
+                  <span class="dept-tag dept-hmrc">HMRC</span>
+                </div>
+                <p class="field-desc">Registered trading name for self-employed business.</p>
+              </div>
+              <div class="field-card">
+                <h4>selfEmployment.utrNumber</h4>
+                <div class="field-meta">
+                  <span class="tier-verified">Verified</span>
+                  <span class="dept-tag dept-hmrc">HMRC</span>
+                </div>
+                <p class="field-desc">Unique Taxpayer Reference number.</p>
+              </div>
+              <div class="field-card">
+                <h4>selfEmployment.turnover</h4>
+                <div class="field-meta">
+                  <span class="tier-submitted">Submitted</span>
+                  <span class="dept-tag dept-hmrc">HMRC</span>
+                </div>
+                <p class="field-desc">Annual business turnover or revenue.</p>
+              </div>
+              <div class="field-card">
+                <h4>selfEmployment.expenses</h4>
+                <div class="field-meta">
+                  <span class="tier-submitted">Submitted</span>
+                  <span class="dept-tag dept-hmrc">HMRC</span>
+                </div>
+                <p class="field-desc">Claimed business expenses.</p>
+              </div>
+              <div class="field-card">
+                <h4>selfEmployment.mtdStatus</h4>
+                <div class="field-meta">
+                  <span class="tier-verified">Verified</span>
+                  <span class="dept-tag dept-hmrc">HMRC</span>
+                </div>
+                <p class="field-desc">Making Tax Digital status and compliance.</p>
+              </div>
+              <div class="field-card">
+                <h4>selfEmployment.mtdDeadline</h4>
+                <div class="field-meta">
+                  <span class="tier-verified">Verified</span>
+                  <span class="dept-tag dept-hmrc">HMRC</span>
+                </div>
+                <p class="field-desc">Next Making Tax Digital filing deadline.</p>
+              </div>
+              <div class="field-card">
+                <h4>selfEmployment.outstandingInvoices</h4>
+                <div class="field-meta">
+                  <span class="tier-submitted">Submitted</span>
+                  <span class="dept-tag dept-co">User</span>
+                </div>
+                <p class="field-desc">List of unpaid invoices owed to business.</p>
+              </div>
+              <div class="field-card">
+                <h4>selfEmployment.quarterlyReportingDates</h4>
+                <div class="field-meta">
+                  <span class="tier-verified">Verified</span>
+                  <span class="dept-tag dept-hmrc">HMRC</span>
+                </div>
+                <p class="field-desc">Quarterly VAT or MTD submission deadlines.</p>
+              </div>
+              <div class="field-card">
+                <h4>selfEmployment.saFilingHistory</h4>
+                <div class="field-meta">
+                  <span class="tier-verified">Verified</span>
+                  <span class="dept-tag dept-hmrc">HMRC</span>
+                </div>
+                <p class="field-desc">Self-Assessment tax return filing history and assessments.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Zara Begum - First-Timer -->
+          <div class="persona-card" style="border-left-color: #ec4899;">
+            <div class="persona-header">
+              <div style="width: 56px; height: 56px; border-radius: 50%; background: #ec4899; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700; font-size: 1.25rem; flex-shrink: 0;">ZB</div>
+              <div class="persona-title">
+                <h3>Zara Begum</h3>
+                <p class="persona-subtitle">Navigating education, work, and adulthood</p>
+                <div class="dept-tags">
+                  <span class="dept-tag dept-dfe">DfE</span>
+                  <span class="dept-tag dept-hmrc">HMRC</span>
+                  <span class="dept-tag dept-dvla">DVLA</span>
+                </div>
+              </div>
+            </div>
+            <div class="persona-body">
+              <div class="field-card">
+                <h4>firstTimer.educationStatus</h4>
+                <div class="field-meta">
+                  <span class="tier-submitted">Submitted</span>
+                  <span class="dept-tag dept-dfe">DfE</span>
+                </div>
+                <p class="field-desc">Current education status (student, graduate, etc.).</p>
+              </div>
+              <div class="field-card">
+                <h4>firstTimer.universityOffer</h4>
+                <div class="field-meta">
+                  <span class="tier-submitted">Submitted</span>
+                  <span class="dept-tag dept-co">UCAS</span>
+                </div>
+                <p class="field-desc">University application status and offers.</p>
+              </div>
+              <div class="field-card">
+                <h4>firstTimer.studentFinanceStatus</h4>
+                <div class="field-meta">
+                  <span class="tier-verified">Verified</span>
+                  <span class="dept-tag dept-dfe">SLC / DfE</span>
+                </div>
+                <p class="field-desc">Student loans and finance status.</p>
+              </div>
+              <div class="field-card">
+                <h4>firstTimer.niNumberStatus</h4>
+                <div class="field-meta">
+                  <span class="tier-verified">Verified</span>
+                  <span class="dept-tag dept-dwp">DWP</span>
+                  <span class="dept-tag dept-hmrc">HMRC</span>
+                </div>
+                <p class="field-desc">National Insurance Number allocation status.</p>
+              </div>
+              <div class="field-card">
+                <h4>firstTimer.provisionalLicence</h4>
+                <div class="field-meta">
+                  <span class="tier-verified">Verified</span>
+                  <span class="dept-tag dept-dvla">DVLA</span>
+                </div>
+                <p class="field-desc">Provisional driving licence status and expiry.</p>
+              </div>
+              <div class="field-card">
+                <h4>firstTimer.drivingTestBooking</h4>
+                <div class="field-meta">
+                  <span class="tier-verified">Verified</span>
+                  <span class="dept-tag dept-dvla">DVSA</span>
+                </div>
+                <p class="field-desc">Driving test booking date and status.</p>
+              </div>
+              <div class="field-card">
+                <h4>firstTimer.payeDetails</h4>
+                <div class="field-meta">
+                  <span class="tier-verified">Verified</span>
+                  <span class="dept-tag dept-hmrc">HMRC</span>
+                </div>
+                <p class="field-desc">PAYE employment records and employer details.</p>
+              </div>
+              <div class="field-card">
+                <h4>firstTimer.passportStatus</h4>
+                <div class="field-meta">
+                  <span class="tier-verified">Verified</span>
+                  <span class="dept-tag dept-co">HM Passport Office</span>
+                </div>
+                <p class="field-desc">Passport status and expiry date.</p>
+              </div>
+              <div class="field-card">
+                <h4>firstTimer.institutionalLiteracy</h4>
+                <div class="field-meta">
+                  <span class="tier-inferred">Inferred</span>
+                  <span class="dept-tag dept-other">Agent inference</span>
+                </div>
+                <p class="field-desc">Agent-inferred understanding of government processes and digital literacy.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Fatima & Tomasz Nowak - Growing Family -->
+          <div class="persona-card" style="border-left-color: #3b82f6;">
+            <div class="persona-header">
+              <div style="width: 56px; height: 56px; border-radius: 50%; background: #3b82f6; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700; font-size: 1.25rem; flex-shrink: 0;">FN</div>
+              <div class="persona-title">
+                <h3>Fatima & Tomasz Nowak</h3>
+                <p class="persona-subtitle">Managing multiple school-age children and family benefits</p>
+                <div class="dept-tags">
+                  <span class="dept-tag dept-hmrc">HMRC</span>
+                  <span class="dept-tag dept-dfe">DfE</span>
+                  <span class="dept-tag dept-local">Local Authority</span>
+                  <span class="dept-tag dept-ho">Home Office</span>
+                </div>
+              </div>
+            </div>
+            <div class="persona-body">
+              <div class="field-card">
+                <h4>growingFamily.children[]</h4>
+                <div class="field-meta">
+                  <span class="tier-submitted">Submitted</span>
+                  <span class="dept-tag dept-co">User</span>
+                  <span class="dept-tag dept-dfe">DfE</span>
+                </div>
+                <p class="field-desc">Array of child records including names, DOBs, school status.</p>
+              </div>
+              <div class="field-card">
+                <h4>growingFamily.ehcpDetails</h4>
+                <div class="field-meta">
+                  <span class="tier-verified">Verified</span>
+                  <span class="dept-tag dept-local">Local Authority</span>
+                </div>
+                <p class="field-desc">Education, Health and Care Plan details for any children with SEND.</p>
+              </div>
+              <div class="field-card">
+                <h4>growingFamily.secondaryTransfer</h4>
+                <div class="field-meta">
+                  <span class="tier-verified">Verified</span>
+                  <span class="dept-tag dept-local">Local Authority</span>
+                </div>
+                <p class="field-desc">Secondary school transfer and admissions status.</p>
+              </div>
+              <div class="field-card">
+                <h4>growingFamily.childBenefitClaims</h4>
+                <div class="field-meta">
+                  <span class="tier-verified">Verified</span>
+                  <span class="dept-tag dept-hmrc">HMRC</span>
+                </div>
+                <p class="field-desc">Child Benefit claims and payment status.</p>
+              </div>
+              <div class="field-card">
+                <h4>growingFamily.hicbcRisk</h4>
+                <div class="field-meta">
+                  <span class="tier-inferred">Inferred</span>
+                  <span class="dept-tag dept-hmrc">HMRC</span>
+                </div>
+                <p class="field-desc">High Income Child Benefit Charge risk status.</p>
+              </div>
+              <div class="field-card">
+                <h4>growingFamily.householdIncomeBreakdown</h4>
+                <div class="field-meta">
+                  <span class="tier-verified">Verified</span>
+                  <span class="dept-tag dept-hmrc">HMRC</span>
+                </div>
+                <p class="field-desc">Household income breakdown from HMRC records.</p>
+              </div>
+              <div class="field-card">
+                <h4>growingFamily.immigrationStatusPerMember</h4>
+                <div class="field-meta">
+                  <span class="tier-verified">Verified</span>
+                  <span class="dept-tag dept-ho">Home Office</span>
+                </div>
+                <p class="field-desc">Immigration status for each family member.</p>
+              </div>
+              <div class="field-card">
+                <h4>growingFamily.carersAllowanceEligibility</h4>
+                <div class="field-meta">
+                  <span class="tier-verified">Verified</span>
+                  <span class="dept-tag dept-dwp">DWP</span>
+                </div>
+                <p class="field-desc">Carers Allowance eligibility for supporting children with disabilities.</p>
+              </div>
+              <div class="field-card">
+                <h4>growingFamily.rightToWorkShareCode</h4>
+                <div class="field-meta">
+                  <span class="tier-verified">Verified</span>
+                  <span class="dept-tag dept-ho">Home Office</span>
+                </div>
+                <p class="field-desc">Right to Work Share Code for visa holders.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- VIEW 2: By Department -->
+        <div id="by-department" class="view-content">
+          <p class="section-intro">Data fields grouped by source department, showing which personas depend on each field and the data tier.</p>
+
+          <!-- HMRC -->
+          <div class="dept-group">
+            <div class="dept-group-header">
+              <h2 class="dept-group-title">HMRC</h2>
+              <span class="dept-tag dept-hmrc">HM Revenue & Customs</span>
+            </div>
+            <p style="color: #505a5f; margin-bottom: 1.5rem;">HMRC holds financial, tax, and benefits data for all working-age personas. Essential for income verification, tax obligations, and benefit entitlements.</p>
+            <table class="matrix-table">
+              <thead>
+                <tr>
+                  <th style="width: 25%;">Field</th>
+                  <th style="width: 45%;">Used by Personas</th>
+                  <th>Data Tier</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="matrix-primary">niNumber</td>
+                  <td class="matrix-secondary">Sarah, Amina, Marcus, Priya, James, Daniel, Zara, Nowaks</td>
+                  <td><span class="tier-verified">Verified</span></td>
+                </tr>
+                <tr>
+                  <td class="matrix-primary">ihtLiability</td>
+                  <td class="matrix-secondary">Sarah (Bereavement)</td>
+                  <td><span class="tier-verified">Verified</span></td>
+                </tr>
+                <tr>
+                  <td class="matrix-primary">thirtyHourCode</td>
+                  <td class="matrix-secondary">Priya (Childcare)</td>
+                  <td><span class="tier-verified">Verified</span></td>
+                </tr>
+                <tr>
+                  <td class="matrix-primary">taxFreeChildcareAccount</td>
+                  <td class="matrix-secondary">Priya (Childcare)</td>
+                  <td><span class="tier-verified">Verified</span></td>
+                </tr>
+                <tr>
+                  <td class="matrix-primary">fsmEligibility</td>
+                  <td class="matrix-secondary">Priya (Childcare), Nowaks</td>
+                  <td><span class="tier-verified">Verified</span></td>
+                </tr>
+                <tr>
+                  <td class="matrix-primary">tradingName</td>
+                  <td class="matrix-secondary">Daniel (Self-Employment)</td>
+                  <td><span class="tier-submitted">Submitted</span></td>
+                </tr>
+                <tr>
+                  <td class="matrix-primary">utrNumber</td>
+                  <td class="matrix-secondary">Daniel (Self-Employment)</td>
+                  <td><span class="tier-verified">Verified</span></td>
+                </tr>
+                <tr>
+                  <td class="matrix-primary">turnover</td>
+                  <td class="matrix-secondary">Daniel (Self-Employment)</td>
+                  <td><span class="tier-submitted">Submitted</span></td>
+                </tr>
+                <tr>
+                  <td class="matrix-primary">expenses</td>
+                  <td class="matrix-secondary">Daniel (Self-Employment)</td>
+                  <td><span class="tier-submitted">Submitted</span></td>
+                </tr>
+                <tr>
+                  <td class="matrix-primary">mtdStatus</td>
+                  <td class="matrix-secondary">Daniel (Self-Employment)</td>
+                  <td><span class="tier-verified">Verified</span></td>
+                </tr>
+                <tr>
+                  <td class="matrix-primary">mtdDeadline</td>
+                  <td class="matrix-secondary">Daniel (Self-Employment)</td>
+                  <td><span class="tier-verified">Verified</span></td>
+                </tr>
+                <tr>
+                  <td class="matrix-primary">quarterlyReportingDates</td>
+                  <td class="matrix-secondary">Daniel (Self-Employment)</td>
+                  <td><span class="tier-verified">Verified</span></td>
+                </tr>
+                <tr>
+                  <td class="matrix-primary">saFilingHistory</td>
+                  <td class="matrix-secondary">Daniel (Self-Employment)</td>
+                  <td><span class="tier-verified">Verified</span></td>
+                </tr>
+                <tr>
+                  <td class="matrix-primary">niNumberStatus</td>
+                  <td class="matrix-secondary">Zara (First-Timer)</td>
+                  <td><span class="tier-verified">Verified</span></td>
+                </tr>
+                <tr>
+                  <td class="matrix-primary">payeDetails</td>
+                  <td class="matrix-secondary">Zara (First-Timer)</td>
+                  <td><span class="tier-verified">Verified</span></td>
+                </tr>
+                <tr>
+                  <td class="matrix-primary">childBenefitClaims</td>
+                  <td class="matrix-secondary">Nowaks (Growing Family)</td>
+                  <td><span class="tier-verified">Verified</span></td>
+                </tr>
+                <tr>
+                  <td class="matrix-primary">householdIncomeBreakdown</td>
+                  <td class="matrix-secondary">Nowaks (Growing Family)</td>
+                  <td><span class="tier-verified">Verified</span></td>
+                </tr>
+                <tr>
+                  <td class="matrix-primary">hicbcRisk</td>
+                  <td class="matrix-secondary">Nowaks (Growing Family)</td>
+                  <td><span class="tier-inferred">Inferred</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- DWP -->
+          <div class="dept-group">
+            <div class="dept-group-header">
+              <h2 class="dept-group-title">DWP</h2>
+              <span class="dept-tag dept-dwp">Department for Work & Pensions</span>
+            </div>
+            <p style="color: #505a5f; margin-bottom: 1.5rem;">DWP holds benefits, disability, and NI data. Critical for benefits assessments, appeals, and carers support.</p>
+            <table class="matrix-table">
+              <thead>
+                <tr>
+                  <th style="width: 25%;">Field</th>
+                  <th style="width: 45%;">Used by Personas</th>
+                  <th>Data Tier</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="matrix-primary">niNumber</td>
+                  <td class="matrix-secondary">All personas</td>
+                  <td><span class="tier-verified">Verified</span></td>
+                </tr>
+                <tr>
+                  <td class="matrix-primary">fsmEligibility</td>
+                  <td class="matrix-secondary">Priya (Childcare), Nowaks</td>
+                  <td><span class="tier-verified">Verified</span></td>
+                </tr>
+                <tr>
+                  <td class="matrix-primary">pipMandatoryRecon</td>
+                  <td class="matrix-secondary">James (Appeals)</td>
+                  <td><span class="tier-verified">Verified</span></td>
+                </tr>
+                <tr>
+                  <td class="matrix-primary">pipMandatoryReconDate</td>
+                  <td class="matrix-secondary">James (Appeals)</td>
+                  <td><span class="tier-verified">Verified</span></td>
+                </tr>
+                <tr>
+                  <td class="matrix-primary">niNumberStatus</td>
+                  <td class="matrix-secondary">Zara (First-Timer)</td>
+                  <td><span class="tier-verified">Verified</span></td>
+                </tr>
+                <tr>
+                  <td class="matrix-primary">carersAllowanceEligibility</td>
+                  <td class="matrix-secondary">Nowaks (Growing Family)</td>
+                  <td><span class="tier-verified">Verified</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Home Office -->
+          <div class="dept-group">
+            <div class="dept-group-header">
+              <h2 class="dept-group-title">Home Office</h2>
+              <span class="dept-tag dept-ho">Home Office</span>
+            </div>
+            <p style="color: #505a5f; margin-bottom: 1.5rem;">Home Office holds immigration, visa, right to work and right to rent data. Essential for immigration persona and cross-family status.</p>
+            <table class="matrix-table">
+              <thead>
+                <tr>
+                  <th style="width: 25%;">Field</th>
+                  <th style="width: 45%;">Used by Personas</th>
+                  <th>Data Tier</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="matrix-primary">status</td>
+                  <td class="matrix-secondary">Amina (Immigration)</td>
+                  <td><span class="tier-verified">Verified</span></td>
+                </tr>
+                <tr>
+                  <td class="matrix-primary">homeOfficeRef</td>
+                  <td class="matrix-secondary">Amina (Immigration)</td>
+                  <td><span class="tier-verified">Verified</span></td>
+                </tr>
+                <tr>
+                  <td class="matrix-primary">brpNumber</td>
+                  <td class="matrix-secondary">Amina (Immigration)</td>
+                  <td><span class="tier-verified">Verified</span></td>
+                </tr>
+                <tr>
+                  <td class="matrix-primary">brpExpiry</td>
+                  <td class="matrix-secondary">Amina (Immigration)</td>
+                  <td><span class="tier-verified">Verified</span></td>
+                </tr>
+                <tr>
+                  <td class="matrix-primary">eVisaMigrationDate</td>
+                  <td class="matrix-secondary">Amina (Immigration)</td>
+                  <td><span class="tier-verified">Verified</span></td>
+                </tr>
+                <tr>
+                  <td class="matrix-primary">rightToWork</td>
+                  <td class="matrix-secondary">Amina (Immigration)</td>
+                  <td><span class="tier-verified">Verified</span></td>
+                </tr>
+                <tr>
+                  <td class="matrix-primary">rightToRent</td>
+                  <td class="matrix-secondary">Amina (Immigration)</td>
+                  <td><span class="tier-verified">Verified</span></td>
+                </tr>
+                <tr>
+                  <td class="matrix-primary">accommodationType</td>
+                  <td class="matrix-secondary">Amina (Immigration)</td>
+                  <td><span class="tier-submitted">Submitted</span></td>
+                </tr>
+                <tr>
+                  <td class="matrix-primary">dbsDisclosureStatus</td>
+                  <td class="matrix-secondary">Marcus (Justice History)</td>
+                  <td><span class="tier-verified">Verified</span></td>
+                </tr>
+                <tr>
+                  <td class="matrix-primary">immigrationStatusPerMember</td>
+                  <td class="matrix-secondary">Nowaks (Growing Family)</td>
+                  <td><span class="tier-verified">Verified</span></td>
+                </tr>
+                <tr>
+                  <td class="matrix-primary">rightToWorkShareCode</td>
+                  <td class="matrix-secondary">Nowaks (Growing Family)</td>
+                  <td><span class="tier-verified">Verified</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- HMPPS -->
+          <div class="dept-group">
+            <div class="dept-group-header">
+              <h2 class="dept-group-title">HMPPS</h2>
+              <span class="dept-tag dept-hmpps">HM Prisons & Probation Service</span>
+            </div>
+            <p style="color: #505a5f; margin-bottom: 1.5rem;">HMPPS holds justice history, prison records, and probation data. Essential for Marcus Taylor persona.</p>
+            <table class="matrix-table">
+              <thead>
+                <tr>
+                  <th style="width: 25%;">Field</th>
+                  <th style="width: 45%;">Used by Personas</th>
+                  <th>Data Tier</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="matrix-primary">releaseDate</td>
+                  <td class="matrix-secondary">Marcus (Justice History)</td>
+                  <td><span class="tier-verified">Verified</span></td>
+                </tr>
+                <tr>
+                  <td class="matrix-primary">sentenceDetails</td>
+                  <td class="matrix-secondary">Marcus (Justice History)</td>
+                  <td><span class="tier-verified">Verified</span></td>
+                </tr>
+                <tr>
+                  <td class="matrix-primary">licenceConditions</td>
+                  <td class="matrix-secondary">Marcus (Justice History)</td>
+                  <td><span class="tier-verified">Verified</span></td>
+                </tr>
+                <tr>
+                  <td class="matrix-primary">licenceEndDate</td>
+                  <td class="matrix-secondary">Marcus (Justice History)</td>
+                  <td><span class="tier-verified">Verified</span></td>
+                </tr>
+                <tr>
+                  <td class="matrix-primary">probationOfficer</td>
+                  <td class="matrix-secondary">Marcus (Justice History)</td>
+                  <td><span class="tier-verified">Verified</span></td>
+                </tr>
+                <tr>
+                  <td class="matrix-primary">reportingSchedule</td>
+                  <td class="matrix-secondary">Marcus (Justice History)</td>
+                  <td><span class="tier-verified">Verified</span></td>
+                </tr>
+                <tr>
+                  <td class="matrix-primary">offenceCategory</td>
+                  <td class="matrix-secondary">Marcus (Justice History)</td>
+                  <td><span class="tier-verified">Verified</span></td>
+                </tr>
+                <tr>
+                  <td class="matrix-primary">approvedPremisesDeadline</td>
+                  <td class="matrix-secondary">Marcus (Justice History)</td>
+                  <td><span class="tier-verified">Verified</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- HMCTS -->
+          <div class="dept-group">
+            <div class="dept-group-header">
+              <h2 class="dept-group-title">HMCTS</h2>
+              <span class="dept-tag dept-hmcts">HM Courts & Tribunals Service</span>
+            </div>
+            <p style="color: #505a5f; margin-bottom: 1.5rem;">HMCTS holds probate, tribunal, and legal records. Used across bereavement, justice, and appeals personas.</p>
+            <table class="matrix-table">
+              <thead>
+                <tr>
+                  <th style="width: 25%;">Field</th>
+                  <th style="width: 45%;">Used by Personas</th>
+                  <th>Data Tier</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="matrix-primary">executorStatus</td>
+                  <td class="matrix-secondary">Sarah (Bereavement)</td>
+                  <td><span class="tier-verified">Verified</span></td>
+                </tr>
+                <tr>
+                  <td class="matrix-primary">probateStatus</td>
+                  <td class="matrix-secondary">Sarah (Bereavement)</td>
+                  <td><span class="tier-verified">Verified</span></td>
+                </tr>
+                <tr>
+                  <td class="matrix-primary">tribunalAppealRef</td>
+                  <td class="matrix-secondary">James (Appeals)</td>
+                  <td><span class="tier-verified">Verified</span></td>
+                </tr>
+                <tr>
+                  <td class="matrix-primary">tribunalHearingDate</td>
+                  <td class="matrix-secondary">James (Appeals)</td>
+                  <td><span class="tier-verified">Verified</span></td>
+                </tr>
+                <tr>
+                  <td class="matrix-primary">sendTribunalStatus</td>
+                  <td class="matrix-secondary">James (Appeals)</td>
+                  <td><span class="tier-verified">Verified</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- DfE -->
+          <div class="dept-group">
+            <div class="dept-group-header">
+              <h2 class="dept-group-title">DfE</h2>
+              <span class="dept-tag dept-dfe">Department for Education</span>
+            </div>
+            <p style="color: #505a5f; margin-bottom: 1.5rem;">DfE holds education, school, and student finance data. Used across childcare and family personas.</p>
+            <table class="matrix-table">
+              <thead>
+                <tr>
+                  <th style="width: 25%;">Field</th>
+                  <th style="width: 45%;">Used by Personas</th>
+                  <th>Data Tier</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="matrix-primary">fsmEligibility</td>
+                  <td class="matrix-secondary">Priya (Childcare), Nowaks</td>
+                  <td><span class="tier-verified">Verified</span></td>
+                </tr>
+                <tr>
+                  <td class="matrix-primary">educationStatus</td>
+                  <td class="matrix-secondary">Zara (First-Timer)</td>
+                  <td><span class="tier-submitted">Submitted</span></td>
+                </tr>
+                <tr>
+                  <td class="matrix-primary">studentFinanceStatus</td>
+                  <td class="matrix-secondary">Zara (First-Timer)</td>
+                  <td><span class="tier-verified">Verified</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- DVLA -->
+          <div class="dept-group">
+            <div class="dept-group-header">
+              <h2 class="dept-group-title">DVLA</h2>
+              <span class="dept-tag dept-dvla">Driver & Vehicle Licensing Agency</span>
+            </div>
+            <p style="color: #505a5f; margin-bottom: 1.5rem;">DVLA holds driving licence and vehicle registration data. Used for first-timer and identity verification.</p>
+            <table class="matrix-table">
+              <thead>
+                <tr>
+                  <th style="width: 25%;">Field</th>
+                  <th style="width: 45%;">Used by Personas</th>
+                  <th>Data Tier</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="matrix-primary">provisionalLicence</td>
+                  <td class="matrix-secondary">Zara (First-Timer)</td>
+                  <td><span class="tier-verified">Verified</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Local Authority -->
+          <div class="dept-group">
+            <div class="dept-group-header">
+              <h2 class="dept-group-title">Local Authority</h2>
+              <span class="dept-tag dept-local">Local Authority</span>
+            </div>
+            <p style="color: #505a5f; margin-bottom: 1.5rem;">Local Authorities hold school admissions, EHCP, housing, and childcare support data.</p>
+            <table class="matrix-table">
+              <thead>
+                <tr>
+                  <th style="width: 25%;">Field</th>
+                  <th style="width: 45%;">Used by Personas</th>
+                  <th>Data Tier</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="matrix-primary">schoolRegistrationStatus</td>
+                  <td class="matrix-secondary">Priya (Childcare)</td>
+                  <td><span class="tier-submitted">Submitted</span></td>
+                </tr>
+                <tr>
+                  <td class="matrix-primary">accommodationType</td>
+                  <td class="matrix-secondary">Amina (Immigration)</td>
+                  <td><span class="tier-submitted">Submitted</span></td>
+                </tr>
+                <tr>
+                  <td class="matrix-primary">ehcpApplicationDate</td>
+                  <td class="matrix-secondary">James (Appeals)</td>
+                  <td><span class="tier-verified">Verified</span></td>
+                </tr>
+                <tr>
+                  <td class="matrix-primary">ehcpStatutoryDeadline</td>
+                  <td class="matrix-secondary">James (Appeals)</td>
+                  <td><span class="tier-verified">Verified</span></td>
+                </tr>
+                <tr>
+                  <td class="matrix-primary">ehcpDetails</td>
+                  <td class="matrix-secondary">Nowaks (Growing Family)</td>
+                  <td><span class="tier-verified">Verified</span></td>
+                </tr>
+                <tr>
+                  <td class="matrix-primary">secondaryTransfer</td>
+                  <td class="matrix-secondary">Nowaks (Growing Family)</td>
+                  <td><span class="tier-verified">Verified</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- General Register Office -->
+          <div class="dept-group">
+            <div class="dept-group-header">
+              <h2 class="dept-group-title">General Register Office</h2>
+              <span class="dept-tag dept-gro">GRO</span>
+            </div>
+            <p style="color: #505a5f; margin-bottom: 1.5rem;">GRO holds vital registration data including birth, death, and marriage records.</p>
+            <table class="matrix-table">
+              <thead>
+                <tr>
+                  <th style="width: 25%;">Field</th>
+                  <th style="width: 45%;">Used by Personas</th>
+                  <th>Data Tier</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="matrix-primary">deceasedName</td>
+                  <td class="matrix-secondary">Sarah (Bereavement)</td>
+                  <td><span class="tier-submitted">Submitted</span></td>
+                </tr>
+                <tr>
+                  <td class="matrix-primary">dateOfDeath</td>
+                  <td class="matrix-secondary">Sarah (Bereavement)</td>
+                  <td><span class="tier-verified">Verified</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+
+        <!-- VIEW 3: Cross-Persona Reuse Matrix -->
+        <div id="cross-persona" class="view-content">
+          <p class="section-intro">Data fields that appear across multiple personas, showing the efficiency of sharing verified data. Green checkmarks indicate personas that need each field.</p>
+
+          <table class="matrix-table">
+            <thead>
+              <tr>
+                <th style="width: 20%;">Data Field</th>
+                <th style="text-align: center; width: 8%;">Sarah</th>
+                <th style="text-align: center; width: 8%;">Amina</th>
+                <th style="text-align: center; width: 8%;">Marcus</th>
+                <th style="text-align: center; width: 8%;">Priya</th>
+                <th style="text-align: center; width: 8%;">James</th>
+                <th style="text-align: center; width: 8%;">Daniel</th>
+                <th style="text-align: center; width: 8%;">Zara</th>
+                <th style="text-align: center; width: 8%;">Nowaks</th>
+                <th style="text-align: center; width: 8%;">Personas</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="matrix-primary">NI Number <span class="tier-verified">Verified</span></td>
+                <td class="matrix-checkmark">✓</td>
+                <td class="matrix-checkmark">✓</td>
+                <td class="matrix-checkmark">✓</td>
+                <td class="matrix-checkmark">✓</td>
+                <td class="matrix-checkmark">✓</td>
+                <td class="matrix-checkmark">✓</td>
+                <td class="matrix-checkmark">✓</td>
+                <td class="matrix-checkmark">✓</td>
+                <td style="text-align: center; font-weight: 700;">8/8</td>
+              </tr>
+              <tr>
+                <td class="matrix-primary">Full Name <span class="tier-verified">Verified</span></td>
+                <td class="matrix-checkmark">✓</td>
+                <td class="matrix-checkmark">✓</td>
+                <td class="matrix-checkmark">✓</td>
+                <td class="matrix-checkmark">✓</td>
+                <td class="matrix-checkmark">✓</td>
+                <td class="matrix-checkmark">✓</td>
+                <td class="matrix-checkmark">✓</td>
+                <td class="matrix-checkmark">✓</td>
+                <td style="text-align: center; font-weight: 700;">8/8</td>
+              </tr>
+              <tr>
+                <td class="matrix-primary">Date of Birth <span class="tier-verified">Verified</span></td>
+                <td class="matrix-checkmark">✓</td>
+                <td class="matrix-checkmark">✓</td>
+                <td class="matrix-checkmark">✓</td>
+                <td class="matrix-checkmark">✓</td>
+                <td class="matrix-checkmark">✓</td>
+                <td class="matrix-checkmark">✓</td>
+                <td class="matrix-checkmark">✓</td>
+                <td class="matrix-checkmark">✓</td>
+                <td style="text-align: center; font-weight: 700;">8/8</td>
+              </tr>
+              <tr>
+                <td class="matrix-primary">Address <span class="tier-verified">Verified</span></td>
+                <td class="matrix-checkmark">✓</td>
+                <td class="matrix-checkmark">✓</td>
+                <td class="matrix-checkmark">✓</td>
+                <td class="matrix-checkmark">✓</td>
+                <td class="matrix-checkmark">✓</td>
+                <td class="matrix-checkmark">✓</td>
+                <td class="matrix-checkmark">✓</td>
+                <td class="matrix-checkmark">✓</td>
+                <td style="text-align: center; font-weight: 700;">8/8</td>
+              </tr>
+              <tr>
+                <td class="matrix-primary">Employment/Income <span class="tier-verified">Verified</span></td>
+                <td class="matrix-checkmark">✓</td>
+                <td></td>
+                <td class="matrix-checkmark">✓</td>
+                <td class="matrix-checkmark">✓</td>
+                <td class="matrix-checkmark">✓</td>
+                <td class="matrix-checkmark">✓</td>
+                <td class="matrix-checkmark">✓</td>
+                <td class="matrix-checkmark">✓</td>
+                <td style="text-align: center; font-weight: 700;">7/8</td>
+              </tr>
+              <tr>
+                <td class="matrix-primary">Benefits Status <span class="tier-verified">Verified</span></td>
+                <td class="matrix-checkmark">✓</td>
+                <td class="matrix-checkmark">✓</td>
+                <td class="matrix-checkmark">✓</td>
+                <td class="matrix-checkmark">✓</td>
+                <td class="matrix-checkmark">✓</td>
+                <td></td>
+                <td></td>
+                <td class="matrix-checkmark">✓</td>
+                <td style="text-align: center; font-weight: 700;">6/8</td>
+              </tr>
+              <tr>
+                <td class="matrix-primary">Children Data <span class="tier-submitted">Submitted</span></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td class="matrix-checkmark">✓</td>
+                <td class="matrix-checkmark">✓</td>
+                <td></td>
+                <td></td>
+                <td class="matrix-checkmark">✓</td>
+                <td style="text-align: center; font-weight: 700;">3/8</td>
+              </tr>
+              <tr>
+                <td class="matrix-primary">EHCP/SEND <span class="tier-verified">Verified</span></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td class="matrix-checkmark">✓</td>
+                <td></td>
+                <td></td>
+                <td class="matrix-checkmark">✓</td>
+                <td style="text-align: center; font-weight: 700;">2/8</td>
+              </tr>
+              <tr>
+                <td class="matrix-primary">Immigration Status <span class="tier-verified">Verified</span></td>
+                <td></td>
+                <td class="matrix-checkmark">✓</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td class="matrix-checkmark">✓</td>
+                <td style="text-align: center; font-weight: 700;">2/8</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div style="background: #f0fdf4; border-left: 3px solid #00703c; padding: 1.5rem; margin-top: 2rem; border-radius: 0 2px 2px 0;">
+            <h3 style="color: #00703c; margin-bottom: 0.75rem;">Key Insights</h3>
+            <ul style="margin-left: 1.5rem; color: #353535;">
+              <li><strong>Universal Fields (8/8 personas):</strong> Full Name, DOB, Address, and NI Number are needed by every persona. Once verified by one source, these can be reused across all services.</li>
+              <li><strong>High Reuse (7/8 personas):</strong> Employment and income data spans nearly all personas except immigration, representing a major opportunity for cross-service data sharing through HMRC.</li>
+              <li><strong>Medium Reuse (6/8 personas):</strong> Benefits status is critical for most personas but notably not for self-employed or first-time workers.</li>
+              <li><strong>Specialized Data (2-3/8 personas):</strong> Children records, EHCP details, and immigration status are persona-specific but represent deep data dependencies when required.</li>
+              <li><strong>Data Efficiency:</strong> Agents can dramatically reduce form-filling burden by prefilling the ~25 universal and commonly-reused fields, asking users only for persona-specific data.</li>
+            </ul>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="container">
+        <div class="footer-content">
+          <div class="footer-col">
+            <h4>About This Demo</h4>
+            <p>The Agentic Legibility Stack is a reference architecture for UK government services accessed through AI agents. This page shows the data model mapping for the Citizen Experience prototype.</p>
+          </div>
+          <div class="footer-col">
+            <h4>Related Pages</h4>
+            <a href="index.html">Home</a>
+            <a href="personas.html">Personas</a>
+            <a href="departments.html">Departments</a>
+          </div>
+          <div class="footer-col">
+            <h4>More Information</h4>
+            <a href="https://github.com/alphagov/als-dept">GitHub Repository</a>
+            <a href="https://www.gov.uk">GOV.UK</a>
+          </div>
+        </div>
+        <div class="footer-divider">
+          <p>&copy; 2026 Agentic Legibility Stack. Design &amp; research by Anthropic.</p>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      function switchView(viewId) {
+        // Hide all views
+        const views = document.querySelectorAll('.view-content');
+        views.forEach(view => view.classList.remove('active'));
+
+        // Remove active class from all tabs
+        const tabs = document.querySelectorAll('.view-tab');
+        tabs.forEach(tab => tab.classList.remove('active'));
+
+        // Show selected view
+        document.getElementById(viewId).classList.add('active');
+
+        // Add active class to clicked tab
+        event.target.classList.add('active');
+      }
+    </script>
+  </body>
+</html>

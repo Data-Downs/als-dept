@@ -1,0 +1,1696 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The citizen experience — Agentic Legibility Stack</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    /* ── Tokens ── */
+    :root {
+      --ink: #0b0c0c;
+      --ink-soft: #505a5f;
+      --ink-faint: #6f777b;
+      --surface: #fff;
+      --surface-alt: #f8f8f7;
+      --border: #d5d8da;
+      --border-light: #e8e8e6;
+      --blue: #1d70b8;
+      --blue-dark: #003078;
+      --blue-bg: #e8f0fe;
+      --green: #00703c;
+      --green-bg: #e8f5ee;
+      --green-border: #00703c;
+      --red: #d4351c;
+      --red-bg: #fce8e4;
+      --orange: #f47738;
+      --purple: #4c2c92;
+      --purple-bg: #f0ebf5;
+      --font-body: "Inter", Arial, sans-serif;
+      --font-display: "Inter", Arial, sans-serif;
+      --max-w: 880px;
+      --section-py: 5rem;
+    }
+
+    /* ── Reset ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+    body { font-family: var(--font-body); color: var(--ink); line-height: 1.65; background: var(--surface-alt); font-size: 16px; }
+    a { color: var(--blue); text-decoration: none; }
+    a:hover { text-decoration: underline; color: var(--blue-dark); }
+    img { max-width: 100%; display: block; }
+    video { display: block; border: none; outline: none; background: white; -webkit-appearance: none; box-shadow: none; margin: -1px; padding: 0; clip-path: inset(1px); }
+    video::-webkit-media-controls { display: none !important; }
+    video::-webkit-media-controls-enclosure { display: none !important; }
+    ul, ol { padding-left: 1.25em; }
+    li + li { margin-top: 0.35em; }
+
+    /* ── Layout ── */
+    .container { max-width: var(--max-w); margin: 0 auto; padding: 0 1.5rem; }
+    .section { padding: var(--section-py) 0; }
+    .section-alt { background: var(--surface-alt); } /* no-op now body is surface-alt */
+
+    /* ── Nav ── */
+    .nav { background: var(--surface-alt); border-bottom: 1px solid var(--border); padding: 0.7rem 0; position: sticky; top: 0; z-index: 100; }
+    .nav .container { display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; }
+    .nav-brand { font-family: var(--font-display); font-weight: 600; font-size: 1.05rem; color: var(--ink); white-space: nowrap; letter-spacing: -0.01em; text-decoration: none; }
+    .nav-brand:hover { color: var(--ink); text-decoration: none; }
+    .nav-links { display: flex; gap: 1.5rem; list-style: none; padding: 0; margin: 0; flex-wrap: wrap; align-items: baseline; }
+    .nav-links li { line-height: 1; }
+    .nav-links a { font-size: 0.8rem; font-weight: 500; color: var(--ink-soft); letter-spacing: 0.01em; line-height: 1; }
+    .nav-links a:hover { color: var(--blue); text-decoration: none; }
+    .nav-links a.active { color: var(--ink); font-weight: 700; }
+    @media (max-width: 700px) { .nav-links { display: none; } }
+
+    /* ── Typography ── */
+    h1 { font-family: var(--font-display); font-size: 2.75rem; font-weight: 700; line-height: 1.12; letter-spacing: -0.025em; color: var(--ink); }
+    h2 { font-family: var(--font-display); font-size: 1.85rem; font-weight: 600; line-height: 1.2; letter-spacing: -0.02em; margin-bottom: 0.75rem; }
+    h3 { font-family: var(--font-body); font-size: 1.1rem; font-weight: 700; line-height: 1.3; margin-bottom: 0.35rem; }
+    h4 { font-family: var(--font-body); font-size: 0.95rem; font-weight: 700; line-height: 1.3; margin-bottom: 0.25rem; }
+
+    .section-intro { font-size: 1.08rem; color: var(--ink-soft); max-width: 640px; margin-bottom: 2.5rem; line-height: 1.7; }
+    .body-text { font-size: 0.92rem; color: var(--ink-soft); max-width: 640px; margin-bottom: 1rem; line-height: 1.7; }
+    .body-text strong { color: var(--ink); font-weight: 600; }
+    .body-text ul { margin-bottom: 0.75rem; }
+    .body-text li { margin-bottom: 0.3rem; }
+
+    /* ── Section heading with number ── */
+    .section-heading { display: flex; align-items: baseline; gap: 0.75rem; margin-bottom: 0.75rem; }
+    .section-num {
+      font-family: var(--font-display);
+      font-size: 1.85rem;
+      font-weight: 400;
+      color: var(--ink-faint);
+      flex-shrink: 0;
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+    }
+
+    /* ── Hero ── */
+    .hero { padding: 5.5rem 0 3.5rem; }
+    .hero-label {
+      display: inline-block;
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      color: var(--ink-faint);
+      margin-bottom: 1.5rem;
+      border-bottom: 2px solid var(--ink);
+      padding-bottom: 0.2rem;
+    }
+    .hero h1 { margin-bottom: 1rem; max-width: 600px; }
+    .hero-subtitle { font-family: var(--font-display); font-size: 1.3rem; font-weight: 400; font-style: italic; color: var(--ink-soft); max-width: 580px; line-height: 1.5; margin-bottom: 1.5rem; }
+    @media (max-width: 640px) { h1 { font-size: 2rem; } .hero-subtitle { font-size: 1.1rem; } }
+
+    /* ── Callout ── */
+    .callout {
+      padding: 1rem 1.25rem;
+      border-left: 3px solid var(--blue);
+      background: var(--blue-bg);
+      font-size: 0.9rem;
+      line-height: 1.6;
+      color: var(--ink);
+      max-width: 640px;
+      margin-bottom: 1.5rem;
+    }
+    .callout strong { font-weight: 600; }
+    .callout--green { border-left-color: var(--green); background: var(--green-bg); }
+    .callout--purple { border-left-color: var(--purple); background: var(--purple-bg); }
+    .callout--orange { border-left-color: var(--orange); background: #fef3e8; }
+    .callout a { font-weight: 600; }
+
+    /* ── Screen images ── */
+    .screen-img {
+      max-width: 260px;
+    }
+    .screen-caption {
+      font-size: 0.78rem;
+      color: var(--ink-faint);
+      margin-top: 0.75rem;
+      line-height: 1.5;
+    }
+    .screen-row {
+      display: flex;
+      gap: 1.5rem;
+      margin: 2rem 0;
+      flex-wrap: wrap;
+    }
+    .screen-row .screen-item {
+      flex: 0 0 auto;
+      text-align: center;
+    }
+    .screen-row .screen-item img { max-width: 220px; }
+    .screen-row--pair {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      margin: 2rem 0;
+      align-items: start;
+    }
+    .screen-row--pair .screen-item { text-align: center; }
+    .screen-row--pair .screen-item img { max-width: 260px; margin: 0 auto; }
+    @media (max-width: 640px) {
+      .screen-row--pair { grid-template-columns: 1fr; }
+    }
+    .screen-pair {
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      gap: 2rem;
+      margin: 2rem 0;
+      align-items: start;
+    }
+    .screen-pair--right {
+      grid-template-columns: 1fr 260px;
+    }
+    @media (max-width: 640px) {
+      .screen-pair, .screen-pair--right { grid-template-columns: 1fr; }
+      .screen-row .screen-item img { max-width: 180px; }
+    }
+
+    /* ── Mode cards ── */
+    .mode-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin: 2rem 0; }
+    @media (max-width: 640px) { .mode-grid { grid-template-columns: 1fr; } }
+    .mode-card { padding: 0; }
+    .mode-card--triage,
+    .mode-card--journey { border: none; }
+    .mode-card h3 { font-family: var(--font-display); font-size: 1.15rem; font-weight: 600; margin-bottom: 0.5rem; }
+    .mode-card p { font-size: 0.88rem; color: var(--ink-soft); line-height: 1.6; }
+
+    /* ── Flow pipeline ── */
+    .flow-pipeline { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; margin: 2rem 0 1.5rem; }
+    .flow-box { font-size: 0.78rem; font-weight: 600; padding: 0.5rem 0.85rem; border-radius: 2px; white-space: nowrap; }
+    .flow-box--blue { background: var(--blue-bg); color: var(--blue-dark); }
+    .flow-box--purple { background: var(--purple-bg); color: var(--purple); }
+    .flow-box--orange { background: #fef3e8; color: #b45309; }
+    .flow-box--green { background: var(--green-bg); color: var(--green); }
+    .flow-box--dark { background: #f3f2f1; color: var(--ink); }
+    .flow-arrow { color: var(--ink-faint); font-size: 1rem; }
+
+    /* ── Card type grid ── */
+    .card-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin: 2rem 0; }
+    @media (max-width: 640px) { .card-grid { grid-template-columns: 1fr; } }
+    .card-type { border: 1px solid var(--border); padding: 1.25rem 1.5rem; }
+    .card-type h4 { font-size: 0.88rem; font-weight: 700; margin-bottom: 0.35rem; }
+    .card-type p { font-size: 0.85rem; color: var(--ink-soft); line-height: 1.55; }
+
+    /* ── Consent anatomy ── */
+    .consent-anatomy { margin: 2rem 0; }
+    .consent-field { display: grid; grid-template-columns: 8rem 1fr; gap: 0.75rem; padding: 0.7rem 0; border-bottom: 1px solid var(--border-light); align-items: baseline; }
+    .consent-field:last-child { border-bottom: none; }
+    .consent-label { font-size: 0.82rem; font-weight: 600; color: var(--ink); }
+    .consent-value { font-size: 0.85rem; color: var(--ink-soft); line-height: 1.55; }
+    @media (max-width: 500px) { .consent-field { grid-template-columns: 1fr; } }
+
+    /* ── Tier cards ── */
+    .tier-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.25rem; margin: 2rem 0; }
+    @media (max-width: 640px) { .tier-grid { grid-template-columns: 1fr; } }
+    .tier-card { border: 1px solid var(--border); border-top: 4px solid; padding: 1.5rem; }
+    .tier-label { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.04em; margin-bottom: 0.5rem; }
+    .tier-card h4 { font-size: 0.95rem; font-weight: 700; margin-bottom: 0.5rem; }
+    .tier-card p { font-size: 0.85rem; color: var(--ink-soft); line-height: 1.55; }
+
+    /* ── Agent trust cards ── */
+    .agent-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.25rem; margin: 2rem 0; }
+    @media (max-width: 640px) { .agent-grid { grid-template-columns: 1fr; } }
+    .agent-card { border: 1px solid var(--border); border-top: 4px solid; padding: 1.5rem; }
+    .agent-card h4 { font-size: 0.95rem; font-weight: 700; margin-bottom: 0.5rem; }
+    .agent-card p { font-size: 0.85rem; color: var(--ink-soft); line-height: 1.55; }
+    .agent-card .agent-tags { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.75rem; }
+    .agent-card .agent-tag { font-size: 0.72rem; font-weight: 600; padding: 0.15rem 0.5rem; border-radius: 2px; background: #f3f2f1; color: var(--ink-faint); }
+
+    /* ── Delegation cards ── */
+    .deleg-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin: 2rem 0; }
+    @media (max-width: 640px) { .deleg-grid { grid-template-columns: 1fr; } }
+    .deleg-card { border: 1px solid var(--border); border-left: 4px solid; padding: 1.25rem 1.5rem; }
+    .deleg-card h4 { font-size: 0.88rem; font-weight: 700; margin-bottom: 0.35rem; }
+    .deleg-card p { font-size: 0.85rem; color: var(--ink-soft); line-height: 1.55; }
+
+    /* ── Permission list ── */
+    .perm-list { list-style: none; padding: 0; margin: 1.5rem 0; max-width: 640px; }
+    .perm-list li { font-size: 0.88rem; line-height: 1.55; padding: 0.5rem 0; border-bottom: 1px solid var(--border-light); color: var(--ink-soft); }
+    .perm-list li:last-child { border-bottom: none; }
+    .perm-list strong { color: var(--ink); }
+
+    /* ── Journey steps ── */
+    .journey-steps { margin: 2rem 0; }
+    .journey-step { display: grid; grid-template-columns: 2.5rem 1fr; gap: 0.75rem; padding: 1.5rem 0; border-bottom: 1px solid var(--border-light); }
+    .journey-step:last-child { border-bottom: none; }
+    .journey-step-num {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--border);
+      line-height: 1;
+      padding-top: 0.1rem;
+    }
+    .journey-step h4 { font-size: 0.95rem; font-weight: 700; margin-bottom: 0.25rem; }
+    .journey-step p { font-size: 0.88rem; color: var(--ink-soft); line-height: 1.65; }
+    .journey-step .dept-tag { display: inline-block; font-size: 0.7rem; font-weight: 600; padding: 0.1rem 0.45rem; border-radius: 2px; background: #f3f2f1; color: var(--ink-faint); margin-top: 0.35rem; }
+
+    /* ── Stats ── */
+    .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin: 2.5rem 0; }
+    @media (max-width: 640px) { .stats { grid-template-columns: 1fr 1fr; } }
+    .stat { text-align: center; padding: 1.25rem 0.75rem; border: 1px solid var(--border); }
+    .stat-value { font-family: var(--font-display); font-size: 2rem; font-weight: 700; color: var(--ink); line-height: 1; margin-bottom: 0.3rem; letter-spacing: -0.02em; }
+    .stat-label { font-size: 0.75rem; color: var(--ink-faint); letter-spacing: 0.01em; }
+
+    /* ── Dedup visual ── */
+    .dedup { display: grid; grid-template-columns: 1fr auto 1fr; gap: 1.25rem; align-items: center; margin: 2rem 0; }
+    .dedup-box { border: 1px solid var(--border); padding: 1.5rem; text-align: center; }
+    .dedup-num { font-family: var(--font-display); font-size: 2.5rem; font-weight: 700; line-height: 1; margin-bottom: 0.25rem; }
+    .dedup-num--before { color: var(--red); }
+    .dedup-num--after { color: var(--green); }
+    .dedup-label { font-size: 0.82rem; color: var(--ink-faint); }
+    .dedup-arrow { font-size: 1.75rem; color: var(--green); font-weight: 700; }
+    @media (max-width: 640px) { .dedup { grid-template-columns: 1fr; } .dedup-arrow { text-align: center; transform: rotate(90deg); } }
+
+    /* ── Section index ── */
+    .section-index {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      border-top: 1px solid var(--border-light);
+    }
+    .section-index a {
+      display: grid;
+      grid-template-columns: 2rem 1fr;
+      gap: 0.5rem;
+      padding: 1rem 0;
+      border-bottom: 1px solid var(--border-light);
+      text-decoration: none;
+      align-items: baseline;
+    }
+    .section-index a:nth-child(odd) { padding-right: 1.5rem; }
+    .section-index a:nth-child(even) { padding-left: 1.5rem; border-left: 1px solid var(--border-light); }
+    .section-index a:hover { background: var(--surface-alt); }
+    .section-index a:hover .idx-title { color: var(--blue); }
+    .section-index .idx-num {
+      font-family: var(--font-display);
+      font-size: 1.05rem;
+      font-weight: 400;
+      color: var(--ink-faint);
+      line-height: 1.2;
+    }
+    .section-index .idx-title {
+      font-family: var(--font-display);
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--ink);
+      line-height: 1.2;
+    }
+    .section-index .idx-summary {
+      grid-column: 2;
+      font-size: 0.78rem;
+      color: var(--ink-faint);
+      line-height: 1.45;
+      margin-top: 0.1rem;
+    }
+    @media (max-width: 640px) {
+      .section-index { grid-template-columns: 1fr; }
+      .section-index a:nth-child(even) { padding-left: 0; border-left: none; }
+      .section-index a:nth-child(odd) { padding-right: 0; }
+    }
+
+    /* ── Home feature list ── */
+    .feature-list { list-style: none; padding: 0; margin: 1.5rem 0; max-width: 640px; }
+    .feature-list li { font-size: 0.88rem; line-height: 1.55; padding: 0.6rem 0; border-bottom: 1px solid var(--border-light); color: var(--ink-soft); }
+    .feature-list li:last-child { border-bottom: none; }
+    .feature-list strong { color: var(--ink); }
+    .feature-list .feature-num { font-family: var(--font-display); font-weight: 700; color: var(--border); margin-right: 0.5rem; }
+
+    /* ── Screen caption bold prefix ── */
+    .screen-caption strong {
+      display: block;
+      font-family: var(--font-display);
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--ink);
+      margin-bottom: 0.35rem;
+    }
+
+    /* ── Brief anatomy ── */
+    .brief-anatomy { margin: 2rem 0; }
+    .brief-field { display: grid; grid-template-columns: 10rem 1fr; gap: 0.75rem; padding: 0.7rem 0; border-bottom: 1px solid var(--border-light); align-items: baseline; }
+    .brief-field:last-child { border-bottom: none; }
+    .brief-label { font-size: 0.82rem; font-weight: 600; color: var(--ink); }
+    .brief-value { font-size: 0.85rem; color: var(--ink-soft); line-height: 1.55; }
+    @media (max-width: 500px) { .brief-field { grid-template-columns: 1fr; } }
+
+    /* ── Footer ── */
+    .footer { border-top: 1px solid var(--border); padding: 3rem 0 2rem; }
+    .footer-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem; }
+    @media (max-width: 640px) { .footer-grid { grid-template-columns: 1fr; } }
+    .footer h4 { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.06em; color: var(--ink-faint); margin-bottom: 0.75rem; }
+    .footer ul { list-style: none; padding: 0; }
+    .footer li { margin-bottom: 0.35rem; }
+    .footer li a { font-size: 0.85rem; color: var(--ink-soft); font-weight: 500; }
+    .footer li a:hover { color: var(--blue); }
+    .footer-note { font-size: 0.75rem; color: var(--ink-faint); border-top: 1px solid var(--border-light); padding-top: 1.5rem; }
+
+    /* ── Print ── */
+    @media print {
+      .nav { display: none; }
+      .section { padding: 2rem 0; }
+      body { font-size: 11pt; }
+    }
+  </style>
+  <script async defer src="https://scripts.withcabin.com/hello.js"></script>
+</head>
+<body>
+
+  <!-- ── Nav ── -->
+  <nav class="nav">
+    <div class="container">
+      <a href="index.html" class="nav-brand">Agentic Legibility Stack</a>
+      <ul class="nav-links">
+        <li><a href="citizen-app.html" class="active">Citizen app</a></li>
+        <li><a href="legibility-studio.html">Legibility Studio</a></li>
+        <li><a href="technical.html">Technical</a></li>
+        <li><a href="departments.html">Departments</a></li>
+        <li><a href="glossary.html">Glossary</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ── Hero ── -->
+  <header class="hero">
+    <div class="container">
+      <div class="hero-label">Deep dive</div>
+      <h1>The citizen experience</h1>
+      <p class="hero-subtitle">A single app that spans every department. The citizen describes their situation; the agent handles the rest.</p>
+
+      <div class="section-index" style="margin-top: 2.5rem;">
+        <a href="#home-screen">
+          <span class="idx-num">01</span>
+          <span class="idx-title">The home screen</span>
+          <span class="idx-summary">To-dos, topics, services, and personalised navigation</span>
+        </a>
+        <a href="#topics">
+          <span class="idx-num">02</span>
+          <span class="idx-title">Topics</span>
+          <span class="idx-summary">Personalised portals combining data, eligibility, and services</span>
+        </a>
+        <a href="#two-ways-in">
+          <span class="idx-num">03</span>
+          <span class="idx-title">Two ways in</span>
+          <span class="idx-summary">Conversational triage or plan-based browsing</span>
+        </a>
+        <a href="#conversation">
+          <span class="idx-num">04</span>
+          <span class="idx-title">The conversation</span>
+          <span class="idx-summary">Natural language in, structured service cards out</span>
+        </a>
+        <a href="#plans">
+          <span class="idx-num">05</span>
+          <span class="idx-title">Plans</span>
+          <span class="idx-summary">Life event plans with dependency ordering and task split</span>
+        </a>
+        <a href="#delegation">
+          <span class="idx-num">06</span>
+          <span class="idx-title">Delegation and the agent brief</span>
+          <span class="idx-summary">Structured briefs, confirmation, and receipts</span>
+        </a>
+        <a href="#consent">
+          <span class="idx-num">07</span>
+          <span class="idx-title">Consent</span>
+          <span class="idx-summary">Three-step flow: consent, preferences, terms</span>
+        </a>
+        <a href="#cards">
+          <span class="idx-num">08</span>
+          <span class="idx-title">Cards</span>
+          <span class="idx-summary">Form, consent, payment, and outcome cards</span>
+        </a>
+        <a href="#wallet">
+          <span class="idx-num">09</span>
+          <span class="idx-title">The wallet</span>
+          <span class="idx-summary">Credentials, data tiers, and earned credentials</span>
+        </a>
+        <a href="#agent">
+          <span class="idx-num">10</span>
+          <span class="idx-title">Choosing your agent</span>
+          <span class="idx-summary">Dot, Max, or no agent &mdash; trust calibration</span>
+        </a>
+        <a href="#todos">
+          <span class="idx-num">11</span>
+          <span class="idx-title">The to-do system</span>
+          <span class="idx-summary">Two-track model: citizen tasks and agent tasks</span>
+        </a>
+        <a href="#sarah">
+          <span class="idx-num">12</span>
+          <span class="idx-title">Worked example: Sarah's bereavement</span>
+          <span class="idx-summary">Full 13-stage journey across four departments</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+
+  <!-- ════════════════════════════════ 01 ════════════════════════════════ -->
+  <div class="section section-alt" id="home-screen">
+    <div class="container">
+      <div class="section-heading">
+        <span class="section-num">01</span>
+        <h2>The home screen</h2>
+      </div>
+      <p class="section-intro">What you see when you open the app. Government organised around your life, not around departments.</p>
+
+      <div class="screen-pair">
+        <div>
+          <img src="screens/app-home.png" alt="Home screen showing to-dos, agent tasks, topics, and services" class="screen-img" />
+          <p class="screen-caption">The home screen for Anna, showing her to-dos, agent tasks, and personalised topics</p>
+        </div>
+        <div>
+          <p class="body-text">
+            The home screen opens with <strong>"Hello, [Name]"</strong> and a personalised view of everything that matters to the citizen right now. No department names, no service codes &mdash; just the things they need to deal with, organised by urgency and relevance.
+          </p>
+          <p class="body-text">The home screen is divided into five sections:</p>
+          <ul class="feature-list">
+            <li><strong>Your to-dos</strong> &mdash; citizen tasks grouped by subject, with due dates and sub-task counts. "Mini Cooper: 2 tasks, 2 in 4 months."</li>
+            <li><strong>Agent to-dos</strong> &mdash; tasks the agent is handling in the background. "Check Tax-Free Childcare eligibility", "Verify council tax band is correct."</li>
+            <li><strong>Topics</strong> &mdash; a personalised subset of categories, rendered based on relevance to the citizen's data. Benefits, Driving &amp; Transport, Employment, Health &amp; Disability.</li>
+            <li><strong>Services</strong> &mdash; a horizontal carousel of 16 life events with service counts. Having a Baby, Death of Someone Close, Getting Married, Retiring.</li>
+            <li><strong>Near you</strong> &mdash; location-based local government content by postcode. Bin collection, local council services.</li>
+          </ul>
+        </div>
+      </div>
+
+      <h3 style="margin-top: 2rem;">Persistent navigation</h3>
+      <p class="body-text">
+        A bottom navigation bar is always visible, regardless of where the citizen is in the app. A text input at the bottom of the home screen lets the citizen type, speak, or upload a document.
+      </p>
+
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1.25rem;margin:1.5rem 0;max-width:640px;">
+        <div style="text-align:center;">
+          <div style="margin:0 auto 0.5rem;width:2.25rem;height:2.25rem;display:flex;align-items:center;justify-content:center;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          </div>
+          <div style="font-size:0.82rem;font-weight:600;color:var(--ink);margin-bottom:0.35rem;">Home</div>
+          <div style="font-size:0.78rem;color:var(--ink-faint);line-height:1.45;">Returns to the home screen</div>
+        </div>
+        <div style="text-align:center;">
+          <div style="margin:0 auto 0.5rem;width:2.25rem;height:2.25rem;display:flex;align-items:center;justify-content:center;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--ink-soft)" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          </div>
+          <div style="font-size:0.82rem;font-weight:600;color:var(--ink);margin-bottom:0.35rem;">Dot</div>
+          <div style="font-size:0.78rem;color:var(--ink-faint);line-height:1.45;">Opens a conversation from any position</div>
+        </div>
+        <div style="text-align:center;">
+          <div style="margin:0 auto 0.5rem;width:2.25rem;height:2.25rem;display:flex;align-items:center;justify-content:center;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--ink-soft)" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+          </div>
+          <div style="font-size:0.82rem;font-weight:600;color:var(--ink);margin-bottom:0.35rem;">To do</div>
+          <div style="font-size:0.78rem;color:var(--ink-faint);line-height:1.45;">All tasks across all topics</div>
+        </div>
+        <div style="text-align:center;">
+          <div style="margin:0 auto 0.5rem;width:2.25rem;height:2.25rem;display:flex;align-items:center;justify-content:center;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--ink-soft)" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+          </div>
+          <div style="font-size:0.82rem;font-weight:600;color:var(--ink);margin-bottom:0.35rem;">Wallet</div>
+          <div style="font-size:0.78rem;color:var(--ink-faint);line-height:1.45;">Verified credentials and data permissions</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ════════════════════════════════ 02 ════════════════════════════════ -->
+  <div class="section" id="topics">
+    <div class="container">
+      <div class="section-heading">
+        <span class="section-num">02</span>
+        <h2>Topics</h2>
+      </div>
+      <p class="section-intro">Government organised around your life. Each topic page is a personalised portal combining your data, your entitlements, and the services that apply to you.</p>
+
+      <p class="body-text">
+        The citizen sees a personalised subset of 11 topic categories. These are not static pages &mdash; they pull verified data from government systems and combine it with to-dos, eligibility checks, sub-topics, and conversation history relevant to the citizen's situation.
+      </p>
+
+      <ul>
+        <li>Benefits</li>
+        <li>Business</li>
+        <li>Care</li>
+        <li>Driving &amp; Transport</li>
+        <li>Employment</li>
+        <li>Health &amp; Disability</li>
+        <li>Money &amp; Tax</li>
+        <li>Parenting &amp; Guardianship</li>
+        <li>Retirement</li>
+        <li>Studying &amp; Training</li>
+        <li>Travel</li>
+      </ul>
+
+      <h3 style="margin-top: 2rem;">What a topic page contains</h3>
+      <p class="body-text">
+        Each topic page opens with a carousel of data cards relevant to the citizen, followed by an <strong>"Ask about [Topic]"</strong> button that opens a scoped conversation, <strong>sub-topics</strong> with suggested questions, and related <strong>to-dos</strong> and <strong>conversation history</strong>.
+      </p>
+
+      <div class="screen-row screen-row--pair">
+        <div class="screen-item">
+          <img src="screens/app-topics-drive.png" alt="Driving & Transport topic page with vehicle data cards" class="screen-img" />
+          <p class="screen-caption"><strong>Driving &amp; Transport</strong> vehicle cards with MOT status, tax dates, sub-topics</p>
+        </div>
+        <div class="screen-item">
+          <img src="screens/app-topics-benefits.png" alt="Benefits topic page with eligibility cards" class="screen-img" />
+          <p class="screen-caption"><strong>Benefits</strong> current benefits, proactive eligibility alerts with amounts</p>
+        </div>
+      </div>
+
+      <h3 style="margin-top: 2rem;">Proactive eligibility</h3>
+      <p class="body-text">
+        Topic pages do not just show what the citizen has &mdash; they show what they could have. The Benefits page includes proactive eligibility cards: "You may be eligible for Tax-Free Childcare &mdash; up to &pound;2,000/year", "30 hours free childcare &mdash; eligible", "Marriage Allowance &mdash; check &mdash; up to &pound;252/year." The citizen discovers entitlements they did not know existed, because the system has already checked their data against eligibility rules published in service descriptions.
+      </p>
+    </div>
+  </div>
+
+
+  <!-- ════════════════════════════════ 03 ════════════════════════════════ -->
+  <div class="section section-alt" id="two-ways-in">
+    <div class="container">
+      <div class="section-heading">
+        <span class="section-num">03</span>
+        <h2>Two ways in</h2>
+      </div>
+      <p class="section-intro">There are two routes into any government service. Both converge on the same consent, fulfilment, and wallet flow.</p>
+
+      <div class="mode-grid">
+        <div class="mode-card mode-card--triage">
+          <h3>Conversational triage</h3>
+          <p>The citizen opens a conversation with Dot and describes their situation in their own words. The agent identifies the life event and relevant services, presents them as structured cards, and the citizen delegates or acts. No department names needed &mdash; just a description of what is happening in their life.</p>
+          <img src="screens/sarah-triage.png" alt="Conversational triage: Sarah describes her bereavement and the agent identifies services" class="screen-img" style="margin-top:1.25rem;max-width:220px;" />
+        </div>
+        <div class="mode-card mode-card--journey">
+          <h3>Plan-based browsing</h3>
+          <p>The citizen scrolls to the Services carousel on the home screen, selects a life event &mdash; "Death of Someone Close" &mdash; and sees a structured plan with all relevant services listed in priority order. They select "Start this plan" and the sequence begins. No conversation required.</p>
+          <img src="screens/app-home-services.png" alt="Plan-based browsing: services carousel showing Having a Baby and Death of Someone Close" class="screen-img" style="margin-top:1.25rem;max-width:220px;" />
+        </div>
+      </div>
+
+      <h3 style="margin-top: 2rem;">The end-to-end flow</h3>
+      <p class="body-text">Both routes converge on the same sequence:</p>
+
+      <div class="flow-pipeline">
+        <div class="flow-box flow-box--blue">Citizen speaks or browses</div>
+        <span class="flow-arrow">&rarr;</span>
+        <div class="flow-box flow-box--purple">Identify needs</div>
+        <span class="flow-arrow">&rarr;</span>
+        <div class="flow-box flow-box--orange">Plan &amp; delegate</div>
+        <span class="flow-arrow">&rarr;</span>
+        <div class="flow-box flow-box--green">Consent &amp; fulfil</div>
+        <span class="flow-arrow">&rarr;</span>
+        <div class="flow-box flow-box--dark">Outcome &amp; wallet</div>
+      </div>
+
+      <p class="body-text">
+        The conversational route starts with triage and builds a plan from the citizen's description. The browsing route starts with a pre-built plan. After that, the same consent, fulfilment, and credential flow applies. The citizen can switch between routes at any time &mdash; start browsing, then ask Dot a question mid-way.
+      </p>
+    </div>
+  </div>
+
+
+  <!-- ════════════════════════════════ 04 ════════════════════════════════ -->
+  <div class="section" id="conversation">
+    <div class="container">
+      <div class="section-heading">
+        <span class="section-num">04</span>
+        <h2>The conversation</h2>
+      </div>
+      <p class="section-intro">The citizen speaks naturally. The agent responds with empathy and structure. Conversation is the input; cards are the output.</p>
+
+      <p class="body-text">
+        When a citizen opens a conversation and describes their situation, the agent does not respond with more conversation. It responds with <strong>structured action</strong>. The agent identifies the life event, looks up all associated services in the service graph, and presents them as prioritised cards with clear next steps.
+      </p>
+
+      <div class="screen-pair">
+        <div>
+          <img src="screens/sarah-triage.png" alt="Sarah describes her bereavement and the agent responds with empathy and service cards" class="screen-img" />
+          <p class="screen-caption">Sarah types "My husband died three weeks ago. I don't know what to do." The agent responds with empathy and surfaces the most important services first.</p>
+        </div>
+        <div>
+          <p class="body-text">
+            <strong>Progressive disclosure.</strong> The agent does not dump all services at once. It opens with reassurance &mdash; "I'm so sorry about David" &mdash; then explains: "There are a few things that will need to happen, but none of them need to happen right now." Complexity is revealed gradually, with the most urgent tasks presented first.
+          </p>
+          <p class="body-text">
+            Each service appears as a card with a due date, a brief explanation, and a <strong>"Do this"</strong> button. The first card might read: "Register David's death &mdash; needs to happen within 5 days and is the first step before everything else." The second: "Tell Us Once &mdash; notify HMRC, DWP, DVLA, Passport Office, local council, and electoral register in one go."
+          </p>
+          <p class="body-text">
+            The agent's conversational ability comes from a language model, but it is constrained by published service descriptions. It can rephrase, explain, and empathise, but it cannot make policy decisions or alter data requirements. The conversation is the <em>how</em>; service descriptions are the <em>what</em>.
+          </p>
+        </div>
+      </div>
+
+      <h3 style="margin-top: 2rem;">Life event triage</h3>
+      <p class="body-text">
+        The service graph maps <a href="life-events-catalogue.html">16 life events</a> to the government services relevant to each. When the agent identifies a life event during triage, it looks up all associated services and builds a plan ordered by dependency and urgency. Bereavement connects to death registration (GRO), probate (HMCTS), bereavement support payment (DWP), estate notification (HMRC), pension cessation (DWP), council tax adjustment (local authority), and more. A single conversation can identify and sequence all of these.
+      </p>
+
+      <h3 style="margin-top: 2rem;">Follow-on and scrutiny</h3>
+      <p class="body-text">
+        The conversation is never closed. The citizen can return at any time to ask questions, request clarification, or start new services. In Sarah's case, she returns later to ask about the bereavement payment &mdash; the agent already knows her context and can pick up immediately.
+      </p>
+
+      <div class="screen-row">
+        <div class="screen-item">
+          <img src="screens/sarah-followon.png" alt="Sarah asks a follow-on question about bereavement payment" class="screen-img" />
+          <p class="screen-caption"><strong>Follow-on</strong> Sarah asks about the bereavement payment</p>
+        </div>
+        <div class="screen-item">
+          <img src="screens/sarah-payment.png" alt="Payment confirmation for bereavement support payment" class="screen-img" />
+          <p class="screen-caption">Payment confirmed with reference number</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ════════════════════════════════ 05 ════════════════════════════════ -->
+  <div class="section section-alt" id="plans">
+    <div class="container">
+      <div class="section-heading">
+        <span class="section-num">05</span>
+        <h2>Plans</h2>
+      </div>
+      <p class="section-intro">The structured alternative: a life event plan with services in priority order, dependencies, and a clear task split between citizen and agent.</p>
+
+      <p class="body-text">
+        When the citizen selects a life event from the Services carousel on the home screen, they see a structured plan. The plan lists every relevant service in order of importance, grouped by dependency. Some services must be completed before others can begin. The plan makes this explicit.
+      </p>
+
+      <div class="screen-row screen-row--pair">
+        <div class="screen-item">
+          <img src="screens/plan-home.png" alt="Sarah's home screen scrolled to show services carousel" class="screen-img" />
+          <p class="screen-caption">Sarah scrolls to the services carousel and selects "Death of Someone Close"</p>
+        </div>
+        <div class="screen-item">
+          <img src="screens/plan-service-detail.png" alt="Register the death service expanded with eligibility info and start button" class="screen-img" />
+          <p class="screen-caption"><strong>Service detail</strong> eligibility, requirements, and "Start this service"</p>
+        </div>
+      </div>
+
+      <h3 style="margin-top: 2rem;">Plan structure</h3>
+      <p class="body-text">
+        The Death of Someone Close plan contains eight services across multiple departments, organised into dependency groups:
+      </p>
+
+      <p class="body-text"><strong>Start here</strong> &mdash; these must be completed first:</p>
+      <div class="body-text">
+        <ul>
+          <li><strong>Register the death</strong> &mdash; at the local register office. Required before probate, Tell Us Once, and bereavement payments.</li>
+          <li><strong>Funeral Expenses Payment</strong> &mdash; one-off payment toward funeral costs if on a qualifying benefit. Must claim within 6 months.</li>
+          <li><strong>Bereavement Support Payment</strong> &mdash; lump sum plus monthly payments if spouse/partner died and the citizen is under State Pension age.</li>
+        </ul>
+      </div>
+
+      <p class="body-text"><strong>After register the death</strong> &mdash; unlocked by death registration:</p>
+      <div class="body-text">
+        <ul>
+          <li>Guardian's Allowance, Statutory Parental Bereavement Pay &amp; Leave, Council Tax single person discount</li>
+        </ul>
+      </div>
+
+      <p class="body-text"><strong>After Tell Us Once or obtaining certificates:</strong></p>
+      <div class="body-text">
+        <ul>
+          <li>Notify OPG of death, Inheritance Tax return, cancel driving licence</li>
+        </ul>
+      </div>
+
+      <h3 style="margin-top: 2rem;">Task split</h3>
+      <p class="body-text">
+        Selecting "Start this plan" expands each service card to show exactly what the agent will do and what the citizen needs to provide. The plan is structured for eligibility &mdash; some services only become available once other documents or certificates have been issued. The citizen can start individual services within the plan in any order, as long as dependencies are met.
+      </p>
+    </div>
+  </div>
+
+
+  <!-- ════════════════════════════════ 06 ════════════════════════════════ -->
+  <div class="section" id="delegation">
+    <div class="container">
+      <div class="section-heading">
+        <span class="section-num">06</span>
+        <h2>Delegation and the agent brief</h2>
+      </div>
+      <p class="section-intro">Every delegated task starts with a structured brief. The citizen sees exactly what the agent will do, what data it will access, and whether it will check back before acting.</p>
+
+      <p class="body-text">
+        Delegation is not an edge case &mdash; it is the primary interaction model. Every task card has three options: <strong>delegate to Dot</strong>, <strong>accept it yourself</strong>, or <strong>dismiss</strong>. When the citizen delegates, they see a structured brief before anything happens.
+      </p>
+
+      <div class="screen-row">
+        <div class="screen-item">
+          <img src="screens/sarah-delegation.png" alt="Delegation screen showing tasks the agent will handle" class="screen-img" />
+          <p class="screen-caption">Sarah delegates tasks, each with a "Do this" action</p>
+        </div>
+        <div class="screen-item">
+          <img src="screens/agent-brief.png" alt="Agent brief showing objective, steps, and data access" class="screen-img" />
+          <p class="screen-caption"><strong>The agent brief</strong> objective, steps, data accessed</p>
+        </div>
+        <div class="screen-item">
+          <img src="screens/agent-brief-confirm.png" alt="Agent brief with confirm delegation button" class="screen-img" />
+          <p class="screen-caption">Information needed and confirm delegation</p>
+        </div>
+      </div>
+
+      <h3 style="margin-top: 2rem;">The agent brief</h3>
+      <p class="body-text">
+        When a citizen delegates a task, they see a structured brief that acts as a contract between them and the agent:
+      </p>
+      <div class="brief-anatomy">
+        <div class="brief-field">
+          <span class="brief-label">Objective</span>
+          <span class="brief-value">What the task is about. "Your Mini Cooper MOT expires on 22 March 2026. Book a test before then to stay legal."</span>
+        </div>
+        <div class="brief-field">
+          <span class="brief-label">What Dot will do</span>
+          <span class="brief-value">Numbered steps: 1. Check current MOT/tax status via DVLA records. 2. Find available dates and nearby testing centres. 3. Present options for you to confirm.</span>
+        </div>
+        <div class="brief-field">
+          <span class="brief-label">Data accessed</span>
+          <span class="brief-value">Named fields: vehicle registration number, current MOT expiry date, registered keeper details.</span>
+        </div>
+        <div class="brief-field">
+          <span class="brief-label">Needed from you</span>
+          <span class="brief-value">Anything the agent cannot get automatically: preferred location or postcode, preferred date range.</span>
+        </div>
+        <div class="brief-field">
+          <span class="brief-label">Will Dot check?</span>
+          <span class="brief-value">"Yes &mdash; before any action." The agent confirms before booking, paying, or submitting on the citizen's behalf.</span>
+        </div>
+      </div>
+
+      <h3 style="margin-top: 2rem;">Confirmation and receipt</h3>
+      <p class="body-text">
+        Once the citizen has chosen which tasks to delegate, they see a confirmation summary listing everything the agent will do on their behalf. This is the last chance to alter the approach before the agent acts.
+      </p>
+
+      <div class="screen-row">
+        <div class="screen-item">
+          <img src="screens/sarah-confirmation.png" alt="Confirmation card summarising all delegated tasks" class="screen-img" />
+          <p class="screen-caption"><strong>Confirmation</strong> summary of everything the agent will do</p>
+        </div>
+        <div class="screen-item">
+          <img src="screens/sarah-receipt.png" alt="Receipt card with timestamps and data sharing link" class="screen-img" />
+          <p class="screen-caption"><strong>Receipt</strong> timestamped acknowledgement with data sharing details</p>
+        </div>
+      </div>
+
+      <p class="body-text">
+        The receipt card acknowledges the citizen's choices, timestamps the request, and provides a link to interrogate what personal data has been shared and on what terms. Every action the agent takes is receipted with a permanent, auditable record.
+      </p>
+    </div>
+  </div>
+
+
+  <!-- ════════════════════════════════ 07 ════════════════════════════════ -->
+  <div class="section section-alt" id="consent">
+    <div class="container">
+      <div class="section-heading">
+        <span class="section-num">07</span>
+        <h2>Consent</h2>
+      </div>
+      <p class="section-intro">A three-step flow: consent per department, then preferences, then terms. Every data-sharing grant is a discrete, inspectable agreement.</p>
+
+      <p class="body-text">
+        Before any data is passed from the app to government services, the citizen gives explicit consent. This is not a blanket terms-and-conditions page. Each consent grant is a discrete, named agreement &mdash; the citizen sees exactly what data, from what source, going to whom, and for what purpose.
+      </p>
+
+      <div class="screen-row">
+        <div class="screen-item">
+          <img src="screens/sarah-consent.png" alt="Consent card showing departments and data to be shared" class="screen-img" />
+          <p class="screen-caption"><strong>Step 1</strong> Consent &mdash; agree or decline per department</p>
+        </div>
+        <div class="screen-item">
+          <img src="screens/sarah-preferences.png" alt="Preferences card for data sharing preferences" class="screen-img" />
+          <p class="screen-caption"><strong>Step 2</strong> Preferences &mdash; set data sharing preferences</p>
+        </div>
+        <div class="screen-item">
+          <img src="screens/sarah-terms.png" alt="Terms selector for consent scope" class="screen-img" />
+          <p class="screen-caption"><strong>Step 3</strong> Terms &mdash; just this once, always for this service, or always with all departments</p>
+        </div>
+      </div>
+
+      <h3 style="margin-top: 2rem;">What each consent grant shows</h3>
+
+      <div class="consent-anatomy">
+        <div class="consent-field">
+          <span class="consent-label">Description</span>
+          <span class="consent-value">What is being asked, in plain English. "Share your details and David's details with government departments via Tell Us Once."</span>
+        </div>
+        <div class="consent-field">
+          <span class="consent-label">Data shared</span>
+          <span class="consent-value">The specific fields: full name, address, national insurance number, spouse name, spouse date of birth, spouse national insurance number. Not "your personal data" &mdash; the actual fields.</span>
+        </div>
+        <div class="consent-field">
+          <span class="consent-label">Departments</span>
+          <span class="consent-value">Which departments will receive the data: HMRC, DWP, DVLA, Passport Office, local council, and electoral register.</span>
+        </div>
+        <div class="consent-field">
+          <span class="consent-label">Source</span>
+          <span class="consent-value">Where the data comes from: "Your verified records."</span>
+        </div>
+        <div class="consent-field">
+          <span class="consent-label">Duration</span>
+          <span class="consent-value">How long the data will be retained: one time, duration of application, or ongoing.</span>
+        </div>
+        <div class="consent-field">
+          <span class="consent-label">Required</span>
+          <span class="consent-value">Whether the grant is required (journey cannot proceed without it) or optional (can be declined without blocking progress).</span>
+        </div>
+      </div>
+
+      <h3 style="margin-top: 2rem;">Standing preferences</h3>
+      <p class="body-text">
+        After granting consent, the citizen can choose to remember that preference. Three scope levels:
+      </p>
+      <div class="body-text">
+        <ul>
+          <li><strong>Just this once</strong> &mdash; consent applies to this interaction only</li>
+          <li><strong>Always in this case</strong> &mdash; remembered for this life event or service</li>
+          <li><strong>Always with all departments</strong> &mdash; cross-government standing preference</li>
+        </ul>
+      </div>
+      <p class="body-text">
+        Standing preferences are stored separately and auto-satisfied in future journeys &mdash; reducing friction without reducing control. The citizen can review and revoke standing preferences at any time through the wallet.
+      </p>
+
+      <div class="callout--green callout" style="margin-top: 1.5rem;">
+        <strong>Consent is enforced by code, not by the AI.</strong> If the language model tries to submit data without consent, the consent manager blocks it. If a required grant has not been agreed, the state machine cannot advance. The language model is a communicator; the runtime is the enforcer.
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ════════════════════════════════ 08 ════════════════════════════════ -->
+  <div class="section" id="cards">
+    <div class="container">
+      <div class="section-heading">
+        <span class="section-num">08</span>
+        <h2>Cards</h2>
+      </div>
+      <p class="section-intro">Four card types. Everything the citizen sees is built from these. The full visual catalogue is available in the <a href="card-catalogue.html">card catalogue</a>.</p>
+
+      <p class="body-text">
+        Cards are structured data surfaces that appear inline in the conversation. They replace traditional form pages. Cards are how the system collects information, displays verification status, presents consent requests, confirms payments, and delivers outcomes. The citizen never leaves the conversation to fill in a form on a separate screen.
+      </p>
+
+      <style>
+        /* ── Card catalogue utility classes (scoped to .card-examples) ── */
+        .card-examples .card {
+          border-radius: 1rem;
+          background: white;
+          box-shadow: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);
+          overflow: hidden;
+          font-size: 14px;
+          line-height: 1.45;
+          max-width: 400px;
+        }
+        .card-examples .card-body { padding: 1.25rem; }
+        .card-examples .flex { display: flex; }
+        .card-examples .flex-col { flex-direction: column; }
+        .card-examples .items-center { align-items: center; }
+        .card-examples .items-start { align-items: flex-start; }
+        .card-examples .items-baseline { align-items: baseline; }
+        .card-examples .justify-between { justify-content: space-between; }
+        .card-examples .justify-center { justify-content: center; }
+        .card-examples .gap-1 { gap: 0.25rem; }
+        .card-examples .gap-1-5 { gap: 0.375rem; }
+        .card-examples .gap-2 { gap: 0.5rem; }
+        .card-examples .gap-2-5 { gap: 0.625rem; }
+        .card-examples .gap-3 { gap: 0.75rem; }
+        .card-examples .flex-1 { flex: 1; min-width: 0; }
+        .card-examples .flex-wrap { flex-wrap: wrap; }
+        .card-examples .shrink-0 { flex-shrink: 0; }
+        .card-examples .mb-1 { margin-bottom: 0.25rem; }
+        .card-examples .mb-1-5 { margin-bottom: 0.375rem; }
+        .card-examples .mb-2 { margin-bottom: 0.5rem; }
+        .card-examples .mb-3 { margin-bottom: 0.75rem; }
+        .card-examples .mb-4 { margin-bottom: 1rem; }
+        .card-examples .mt-1 { margin-top: 0.25rem; }
+        .card-examples .mt-2 { margin-top: 0.5rem; }
+        .card-examples .mt-3 { margin-top: 0.75rem; }
+        .card-examples .mt-4 { margin-top: 1rem; }
+        .card-examples .ml-auto { margin-left: auto; }
+        .card-examples .py-1-5 { padding-top: 0.375rem; padding-bottom: 0.375rem; }
+        .card-examples .py-2 { padding-top: 0.5rem; padding-bottom: 0.5rem; }
+        .card-examples .py-2-5 { padding-top: 0.625rem; padding-bottom: 0.625rem; }
+        .card-examples .py-3 { padding-top: 0.75rem; padding-bottom: 0.75rem; }
+        .card-examples .px-2-5 { padding-left: 0.625rem; padding-right: 0.625rem; }
+        .card-examples .px-3 { padding-left: 0.75rem; padding-right: 0.75rem; }
+        .card-examples .px-4 { padding-left: 1rem; padding-right: 1rem; }
+        .card-examples .space-y-0-5 > * + * { margin-top: 0.125rem; }
+        .card-examples .space-y-1 > * + * { margin-top: 0.25rem; }
+        .card-examples .space-y-1-5 > * + * { margin-top: 0.375rem; }
+        .card-examples .space-y-2 > * + * { margin-top: 0.5rem; }
+        .card-examples .space-y-3 > * + * { margin-top: 0.75rem; }
+        .card-examples .text-xs { font-size: 0.75rem; }
+        .card-examples .text-11 { font-size: 0.6875rem; }
+        .card-examples .text-10 { font-size: 0.625rem; }
+        .card-examples .text-sm { font-size: 0.875rem; }
+        .card-examples .text-base { font-size: 1rem; }
+        .card-examples .text-2xl { font-size: 1.5rem; }
+        .card-examples .font-bold { font-weight: 700; }
+        .card-examples .font-semibold { font-weight: 600; }
+        .card-examples .font-medium { font-weight: 500; }
+        .card-examples .font-mono { font-family: 'SF Mono', Monaco, 'Courier New', monospace; }
+        .card-examples .tracking-wider { letter-spacing: 0.05em; }
+        .card-examples .tracking-widest { letter-spacing: 0.1em; }
+        .card-examples .leading-snug { line-height: 1.375; }
+        .card-examples .leading-tight { line-height: 1.25; }
+        .card-examples .text-right { text-align: right; }
+        .card-examples .text-center { text-align: center; }
+        .card-examples .truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .card-examples .text-black { color: #0b0c0c; }
+        .card-examples .text-dark-grey { color: #505a5f; }
+        .card-examples .text-mid-grey { color: #b1b4b6; }
+        .card-examples .text-blue { color: #1d70b8; }
+        .card-examples .text-green { color: #00703c; }
+        .card-examples .text-green-800 { color: #166534; }
+        .card-examples .text-red { color: #d4351c; }
+        .card-examples .text-red-600 { color: #dc2626; }
+        .card-examples .text-red-700 { color: #b91c1c; }
+        .card-examples .text-white { color: white; }
+        .card-examples .text-purple-700 { color: #7e22ce; }
+        .card-examples .text-emerald-700 { color: #047857; }
+        .card-examples .text-emerald-800 { color: #065f46; }
+        .card-examples .text-gray-400 { color: #9ca3af; }
+        .card-examples .text-gray-500 { color: #6b7280; }
+        .card-examples .bg-white { background: white; }
+        .card-examples .bg-gray-50 { background: #f9fafb; }
+        .card-examples .bg-gray-100 { background: #f3f4f6; }
+        .card-examples .bg-emerald-50 { background: #ecfdf5; }
+        .card-examples .bg-purple-50 { background: #faf5ff; }
+        .card-examples .rounded-full { border-radius: 9999px; }
+        .card-examples .rounded-lg { border-radius: 0.5rem; }
+        .card-examples .rounded-md { border-radius: 0.375rem; }
+        .card-examples .rounded-xl { border-radius: 0.75rem; }
+        .card-examples .icon-circle {
+          width: 1.75rem;
+          height: 1.75rem;
+          border-radius: 9999px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-shrink: 0;
+        }
+        .card-examples .tag {
+          display: inline-block;
+          font-size: 0.75rem;
+          padding: 0.125rem 0.5rem;
+          border-radius: 0.5rem;
+        }
+        .card-examples .btn {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          border: none;
+          cursor: pointer;
+          font-weight: 700;
+          font-size: 0.875rem;
+          transition: all 0.15s;
+        }
+        .card-examples .btn-purple {
+          background: #912b88;
+          color: white;
+          border-radius: 9999px;
+          padding: 0.625rem 1rem;
+          font-size: 0.875rem;
+        }
+        .card-examples .btn-outline {
+          background: white;
+          color: #505a5f;
+          border: 1px solid #b1b4b6;
+          border-radius: 9999px;
+          padding: 0.625rem 1rem;
+          font-size: 0.875rem;
+          font-weight: 500;
+        }
+        .card-examples .input-field {
+          width: 100%;
+          font-size: 0.875rem;
+          border: 1px solid #e5e7eb;
+          border-radius: 0.75rem;
+          padding: 0.75rem 1rem;
+          color: #0b0c0c;
+          background: white;
+        }
+        .card-examples .input-field::placeholder { color: #b1b4b6; }
+      </style>
+
+      <div class="card-examples">
+
+      <!-- ── Card type: Form ── -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;align-items:start;margin:2rem 0;border-bottom:1px solid var(--border-light);padding-bottom:2rem;">
+        <div>
+          <h4>Form card</h4>
+          <p style="font-size:0.88rem;color:var(--ink-soft);line-height:1.6;margin-top:0.35rem;">Labelled fields with validation rules. Supports text, select, date, and number inputs. Fields can be pre-filled from persona data and marked as verified (read-only) or editable.</p>
+        </div>
+        <div class="card" style="border:1px solid #e5e7eb;background:#f9fafb;border-radius:0.75rem;box-shadow:none">
+          <div style="padding:1rem" class="space-y-3">
+            <p class="text-xs text-dark-grey">Confirm your contact and housing details for your Universal Credit claim.</p>
+            <div>
+              <label class="text-sm font-semibold text-black mb-1-5" style="display:block">Full name <span style="display:inline-flex;align-items:center;padding:0.125rem 0.375rem;border-radius:0.25rem;font-size:0.625rem;font-weight:700;background:#dbeafe;color:#1d4ed8;margin-left:0.5rem">Verified</span></label>
+              <input class="input-field" value="Priya Sharma" disabled style="opacity:0.7;background:#f3f4f6" />
+            </div>
+            <div>
+              <label class="text-sm font-semibold text-black mb-1-5" style="display:block">Email address <span class="text-red-600" style="margin-left:2px">*</span></label>
+              <input class="input-field" placeholder="e.g. priya.sharma@email.com" value="priya.sharma@email.com" />
+            </div>
+            <div>
+              <label class="text-sm font-semibold text-black mb-1-5" style="display:block">Phone number <span class="text-red-600" style="margin-left:2px">*</span></label>
+              <input class="input-field" placeholder="e.g. 07700 900000" value="07700 900123" />
+            </div>
+            <div>
+              <label class="text-sm font-semibold text-black mb-1-5" style="display:block">Housing tenure <span class="text-red-600" style="margin-left:2px">*</span></label>
+              <select class="input-field" style="appearance:auto"><option>Renting privately</option><option>Council tenant</option><option>Homeowner</option></select>
+            </div>
+            <div>
+              <label class="text-sm font-semibold text-black mb-1-5" style="display:block">Monthly rent (&pound;) <span class="text-red-600" style="margin-left:2px">*</span></label>
+              <input class="input-field" value="850" />
+            </div>
+            <button class="btn" style="width:100%;padding:0.75rem;border-radius:0.75rem;font-weight:700;font-size:0.875rem;color:white;background:#00703c;border:none;cursor:pointer">Confirm details</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Card type: Consent ── -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;align-items:start;margin:2rem 0;border-bottom:1px solid var(--border-light);padding-bottom:2rem;">
+        <div>
+          <h4>Consent card</h4>
+          <p style="font-size:0.88rem;color:var(--ink-soft);line-height:1.6;margin-top:0.35rem;">Each data-sharing grant shown with purpose, source, duration. Required vs optional clearly marked. The citizen agrees or declines grant by grant.</p>
+        </div>
+        <div class="card">
+          <div style="padding:1rem 1.25rem;border-bottom:1px solid #e5e7eb">
+            <div class="flex items-center gap-2-5">
+              <span class="icon-circle" style="background:#f3e8ff"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#912b88" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg></span>
+              <span class="text-sm font-bold text-purple-700">Data sharing permissions</span>
+            </div>
+            <p class="text-sm text-dark-grey mt-2" style="margin-left:2.375rem">Review and approve data sharing before we proceed.</p>
+          </div>
+          <div style="padding:1rem 1.25rem">
+            <div class="flex items-start justify-between gap-2">
+              <p class="text-base font-medium text-black">Share identity details with HMRC</p>
+              <span class="text-xs text-red-600 font-medium" style="white-space:nowrap;flex-shrink:0;margin-top:2px">Required</span>
+            </div>
+            <p class="text-sm text-dark-grey mt-1">To verify your identity for tax credit eligibility</p>
+            <div class="mt-3">
+              <p class="text-xs font-bold text-dark-grey mb-1-5">Data to be shared:</p>
+              <div class="flex flex-wrap gap-1-5">
+                <span class="tag" style="background:#faf5ff;color:#7e22ce">full name</span>
+                <span class="tag" style="background:#faf5ff;color:#7e22ce">date of birth</span>
+                <span class="tag" style="background:#faf5ff;color:#7e22ce">NI number</span>
+                <span class="tag" style="background:#faf5ff;color:#7e22ce">address</span>
+              </div>
+            </div>
+            <p class="text-xs text-dark-grey mt-2">Source: <span class="font-medium">personal data store</span> · Duration: <span class="font-medium">one time</span></p>
+            <div class="flex items-center gap-2-5 mt-3">
+              <button class="btn-purple" style="display:inline-flex;align-items:center;gap:0.25rem;border:none;cursor:pointer">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12" /></svg> I agree
+              </button>
+              <button class="btn-outline" style="cursor:pointer">No thanks</button>
+            </div>
+          </div>
+          <div style="border-top:1px solid #e5e7eb;margin:0 1.25rem"></div>
+          <div style="padding:1rem 1.25rem;opacity:0.6">
+            <p class="text-base font-medium text-dark-grey">Share employment history with DWP</p>
+            <p class="text-sm text-dark-grey mt-1">To assess Universal Credit entitlement</p>
+            <div class="mt-3">
+              <p class="text-xs font-bold text-dark-grey mb-1-5">Data to be shared:</p>
+              <div class="flex flex-wrap gap-1-5">
+                <span class="tag" style="background:#f3f4f6;color:#6b7280">employer name</span>
+                <span class="tag" style="background:#f3f4f6;color:#6b7280">employment dates</span>
+                <span class="tag" style="background:#f3f4f6;color:#6b7280">salary</span>
+              </div>
+            </div>
+            <div class="flex items-center gap-2-5 mt-3">
+              <button class="btn-outline" style="cursor:pointer">I agree</button>
+              <button style="padding:0.625rem 1rem;border-radius:9999px;background:#e5e7eb;color:#505a5f;border:none;font-size:0.875rem;font-weight:500;cursor:pointer">No thanks</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Card type: Payment ── -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;align-items:start;margin:2rem 0;border-bottom:1px solid var(--border-light);padding-bottom:2rem;">
+        <div>
+          <h4>Payment card</h4>
+          <p style="font-size:0.88rem;color:var(--ink-soft);line-height:1.6;margin-top:0.35rem;">Sort code, account number, amount, and payee. Used for both fees (citizen pays) and benefits (citizen receives).</p>
+        </div>
+        <div class="card" style="border:1px solid #e5e7eb;background:#f9fafb;border-radius:0.75rem;box-shadow:none">
+          <div style="padding:1rem" class="space-y-3">
+            <p class="text-xs text-dark-grey">Pay the required fee for your driving licence renewal.</p>
+            <div class="text-center py-3" style="background:white;border-radius:0.75rem;border:1px solid #e5e7eb">
+              <span class="text-xs text-dark-grey" style="display:block">Amount due</span>
+              <span class="text-2xl font-bold text-black">&pound;14.00</span>
+            </div>
+            <label class="text-sm font-semibold text-black" style="display:block">Payment method</label>
+            <button style="width:100%;text-align:left;font-size:0.875rem;border-radius:0.75rem;border:1px solid #e5e7eb;padding:0.75rem 1rem;background:white;font-weight:400;cursor:pointer;display:flex;align-items:center;gap:0.5rem;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.48-3.24 0-1.44.62-2.2.44-3.06-.4C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.32 2.32-2.12 4.53-3.74 4.25z"/></svg>
+               Apple Pay
+            </button>
+            <button style="width:100%;text-align:left;font-size:0.875rem;border-radius:0.75rem;border:2px solid #16a34a;padding:0.75rem 1rem;background:#f0fdf4;font-weight:500;cursor:pointer;display:flex;align-items:center;gap:0.5rem;box-shadow:0 0 0 2px #bbf7d0">
+              Debit card
+            </button>
+            <div class="space-y-2">
+              <input class="input-field" placeholder="Card number" value="4242 4242 4242 4242" />
+              <div class="flex gap-2">
+                <input class="input-field" placeholder="MM/YY" value="03/28" />
+                <input class="input-field" placeholder="CVV" value="123" />
+              </div>
+              <button class="btn" style="width:100%;padding:0.75rem;border-radius:0.75rem;font-weight:700;font-size:0.875rem;color:white;background:#00703c;border:none;cursor:pointer">Pay &pound;14.00</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Card type: Outcome ── -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;align-items:start;margin:2rem 0;">
+        <div>
+          <h4>Outcome card</h4>
+          <p style="font-size:0.88rem;color:var(--ink-soft);line-height:1.6;margin-top:0.35rem;">Confirmation of what was submitted, to whom, when, and the result. Reference numbers, next steps, and a permanent receipt.</p>
+        </div>
+        <div class="card">
+          <div style="padding: 1.5rem 1.25rem 1.25rem">
+            <div class="flex items-center gap-2-5" style="border-left:2px solid #00857e;padding-left:0.75rem">
+              <svg width="18" height="16" viewBox="0 0 64 60" fill="#0b0c0c" style="flex-shrink:0" aria-hidden="true"><circle cx="20" cy="17.6" r="3.7"/><circle cx="10.2" cy="23.5" r="3.7"/><circle cx="3.7" cy="33.2" r="3.7"/><circle cx="31.7" cy="30.6" r="3.7"/><circle cx="43.3" cy="17.6" r="3.7"/><circle cx="53.2" cy="23.5" r="3.7"/><circle cx="59.7" cy="33.2" r="3.7"/><path d="M33.1,9.8c.2-.1.3-.3.5-.5l4.6,2.4v-6.8l-4.6,1.5c-.1-.2-.3-.3-.5-.5l1.9-5.9h-6.7l1.9,5.9c-.2.1-.3.3-.5.5l-4.6-1.5v6.8l4.6-2.4c.1.2.3.3.5.5l-2.6,8c-.9,2.8,1.2,5.7,4.1,5.7h0c3,0,5.1-2.9,4.1-5.7l-2.6-8ZM37,37.9s-3.4,3.8-4.1,6.1c2.2,0,4.2-.5,6.4-2.8l-.7,8.5c-2-2.8-4.4-4.1-5.7-3.8.1,3.1.5,6.7,5.8,7.2,3.7.3,6.7-1.5,7-3.8.4-2.6-2-4.3-3.7-1.6-1.4-4.5,2.4-6.1,4.9-3.2-1.9-4.5-1.8-7.7,2.4-10.9,3,4,2.6,7.3-1.2,11.1,2.4-1.3,6.2,0,4,4.6-1.2-2.8-3.7-2.2-4.2.2-.3,1.7.7,3.7,3,4.2,1.9.3,4.7-.9,7-5.9-1.3,0-2.4.7-3.9,1.7l2.4-8c.6,2.3,1.4,3.7,2.2,4.5.6-1.6.5-2.8,0-5.3l5,1.8c-2.6,3.6-5.2,8.7-7.3,17.5-7.4-1.1-15.7-1.7-24.5-1.7h0c-8.8,0-17.1.6-24.5,1.7-2.1-8.9-4.7-13.9-7.3-17.5l5-1.8c-.5,2.5-.6,3.7,0,5.3.8-.8,1.6-2.3,2.2-4.5l2.4,8c-1.5-1-2.6-1.7-3.9-1.7,2.3,5,5.2,6.2,7,5.9,2.3-.4,3.3-2.4,3-4.2-.5-2.4-3-3.1-4.2-.2-2.2-4.6,1.6-6,4-4.6-3.7-3.7-4.2-7.1-1.2-11.1,4.2,3.2,4.3,6.4,2.4,10.9,2.5-2.8,6.3-1.3,4.9,3.2-1.8-2.7-4.1-1-3.7,1.6.3,2.3,3.3,4.1,7,3.8,5.4-.5,5.7-4.2,5.8-7.2-1.3-.2-3.7,1-5.7,3.8l-.7-8.5c2.2,2.3,4.2,2.7,6.4,2.8-.7-2.3-4.1-6.1-4.1-6.1h10.6,0Z"/></svg>
+              <span style="font-size:1rem;font-weight:400;color:#0b0c0c;line-height:1.25">Department for Work and Pensions</span>
+            </div>
+          </div>
+          <div style="padding: 0 1.25rem 1.25rem">
+            <h3 class="text-base font-bold text-black leading-snug mb-3">Universal Credit &mdash; first payment confirmed</h3>
+            <div class="flex items-center gap-2 rounded-lg bg-gray-50 mb-4" style="padding:0.5rem 0.75rem;border:1px solid #f3f4f6">
+              <span class="text-11 font-bold tracking-wider text-gray-400">Ref</span>
+              <span class="text-sm font-mono font-bold text-black">UC-7A3F-2E91</span>
+              <span class="ml-auto shrink-0" style="padding:0.25rem;cursor:pointer"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span>
+            </div>
+            <div class="space-y-0-5 mb-4">
+              <div class="py-2">
+                <p class="text-xs text-dark-grey" style="margin-bottom:2px">Monthly amount</p>
+                <p class="text-2xl font-bold text-emerald-700" style="letter-spacing:-0.02em">&pound;1,248.60</p>
+              </div>
+              <div class="flex items-baseline justify-between py-1-5" style="border-bottom:1px solid #f9fafb">
+                <span class="text-xs text-dark-grey">Payment date</span>
+                <span class="text-sm font-semibold text-black text-right">28th of each month</span>
+              </div>
+              <div class="flex items-baseline justify-between py-1-5" style="border-bottom:1px solid #f9fafb">
+                <span class="text-xs text-dark-grey">Account</span>
+                <span class="text-sm font-semibold text-black text-right">Barclays ····4521</span>
+              </div>
+              <div class="flex items-baseline justify-between py-1-5">
+                <span class="text-xs text-dark-grey">Assessment period</span>
+                <span class="text-sm font-semibold text-black text-right">20 Feb – 19 Mar 2026</span>
+              </div>
+            </div>
+            <div class="flex items-center gap-2 px-3 py-2 rounded-lg bg-emerald-50" style="border:1px solid #d1fae5">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="#00703c"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+              <span class="text-xs font-semibold text-emerald-800">Payment scheduled to your bank account</span>
+            </div>
+            <p class="text-11 text-mid-grey mt-3">Issued 20 March 2026</p>
+          </div>
+        </div>
+      </div>
+
+      </div><!-- /.card-examples -->
+
+      <p style="font-size:0.85rem;color:var(--ink-faint);margin-bottom:2rem;"><a href="card-catalogue.html" style="font-weight:600;">See the full card catalogue &rarr;</a></p>
+
+      <p class="body-text">
+        <strong>Verified fields.</strong> When a field value comes from a Tier 1 source, it is displayed as read-only with a "Verified" badge. The citizen can see the value but cannot change it. This prevents accidental errors and provides assurance to the department receiving the data.
+      </p>
+      <p class="body-text">
+        <strong>Conditional fields.</strong> Cards support conditional visibility rules. A field like "Expected due date" only appears if the citizen has indicated they are pregnant. This keeps forms short and relevant, just as a good caseworker would only ask questions that apply to the situation.
+      </p>
+    </div>
+  </div>
+
+
+  <!-- ════════════════════════════════ 09 ════════════════════════════════ -->
+  <div class="section section-alt" id="wallet">
+    <div class="container">
+      <div class="section-heading">
+        <span class="section-num">09</span>
+        <h2>The wallet</h2>
+      </div>
+      <p class="section-intro">Verified credentials, data permissions, and earned credentials from service completions. Three tiers of data trust.</p>
+
+      <div class="screen-pair">
+        <div>
+          <img src="screens/sarah-wallet.png" alt="Sarah's wallet showing death certificate and data permissions" class="screen-img" />
+          <p class="screen-caption">Sarah's wallet showing the death certificate credential and data permissions</p>
+        </div>
+        <div>
+          <p class="body-text">
+            The wallet is the citizen's data vault. It holds government-issued digital credentials &mdash; driving licence, passport, veteran status card, disability badge &mdash; alongside credentials earned from service completions, like a death certificate or a probate grant. Every credential carries data permissions showing what has been shared, with whom, and on what terms.
+          </p>
+          <p class="body-text">
+            Standing consent preferences also appear in the wallet as editable cards, so the citizen can review and revoke data sharing at any time.
+          </p>
+        </div>
+      </div>
+
+      <h3 style="margin-top: 2rem;">Three tiers of data trust</h3>
+      <div class="tier-grid">
+        <div class="tier-card" style="border-top-color: var(--green);">
+          <div class="tier-label" style="color: var(--green);">Tier 1: Verified</div>
+          <h4>Government-issued credentials</h4>
+          <p>Data from authoritative sources: GOV.UK One Login, HMPO, DVLA, HMRC. Read-only in forms. Displayed with a "Verified" badge. The department receiving the data can trust it completely.</p>
+        </div>
+        <div class="tier-card" style="border-top-color: var(--blue);">
+          <div class="tier-label" style="color: var(--blue);">Tier 2: Submitted</div>
+          <h4>Citizen-entered data</h4>
+          <p>Data the citizen has entered in previous interactions. Pre-filled as suggestions in new forms. Editable &mdash; the citizen can update it. Examples: phone number, email, employer details, bank account.</p>
+        </div>
+        <div class="tier-card" style="border-top-color: var(--orange);">
+          <div class="tier-label" style="color: var(--orange);">Tier 3: Inferred</div>
+          <h4>Agent-derived conclusions</h4>
+          <p>Information the agent has derived from conversation context. Flagged clearly: "Based on what you have told me, I believe you are self-employed." Never submitted without explicit citizen confirmation.</p>
+        </div>
+      </div>
+
+      <h3 style="margin-top: 2rem;">Pre-fill logic</h3>
+      <p class="body-text">
+        When a card is shown, the system follows a strict precedence order: check Tier 1 credentials first (pre-fill and lock), then Tier 2 submitted data (pre-fill as editable), then Tier 3 inferences (pre-fill with an "Inferred" label requiring confirmation), and finally leave remaining fields empty. For a bereavement scenario with six services across four departments, this pre-fill logic can reduce total data entry by 80% or more.
+      </p>
+
+      <h3 style="margin-top: 2rem;">Earned credentials</h3>
+
+      <div class="screen-pair--right screen-pair">
+        <div>
+          <p class="body-text">
+            Service outputs become wallet items. When Sarah's death registration completes, the death certificate appears in her wallet as a verifiable credential with its own data permissions. When the bereavement support payment is confirmed, the payment receipt and reference number appear. Each credential carries metadata: which department issued it, when, and what data it contains.
+          </p>
+          <p class="body-text">
+            These earned credentials then become inputs for later services. The death certificate is required for probate. The IHT reference number is required for the probate application. Data cascades from earlier service outputs to later service inputs &mdash; the citizen does not re-enter data.
+          </p>
+        </div>
+        <div>
+          <img src="screens/sarah-credentials.png" alt="Death certificate credential issued to Sarah's wallet" class="screen-img" />
+          <p class="screen-caption">Death certificate issued as a verifiable credential in Sarah's wallet</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ════════════════════════════════ 10 ════════════════════════════════ -->
+  <div class="section" id="agent">
+    <div class="container">
+      <div class="section-heading">
+        <span class="section-num">10</span>
+        <h2>Choosing your agent</h2>
+      </div>
+      <p class="section-intro">Three modes of interaction. Trust calibration, not a binary on/off. The entire app works without an agent at all.</p>
+
+      <p class="body-text">
+        Tapping the chevron next to the citizen's name on the home screen opens the agent selector. Three modes are available, each with a clear confirmation screen explaining exactly what to expect.
+      </p>
+
+      <div style="margin:2rem 0;">
+        <img src="screens/agent-selector.png" alt="Agent selector showing Dot, Max, and No Agent options" class="screen-img" />
+        <p class="screen-caption">The agent selector with three trust levels</p>
+      </div>
+
+      <div class="agent-grid" style="margin-top:2rem;">
+        <div style="text-align:center;">
+          <img src="screens/agent-dot.png" alt="Dot confirmation: cautious and transparent" class="screen-img" style="margin:0 auto;" />
+        </div>
+        <div style="text-align:center;">
+          <img src="screens/agent-max.png" alt="Max confirmation: proactive and fast" class="screen-img" style="margin:0 auto;" />
+        </div>
+        <div style="text-align:center;">
+          <img src="screens/agent-none.png" alt="No agent: manual mode" class="screen-img" style="margin:0 auto;" />
+        </div>
+      </div>
+
+      <div class="agent-grid" style="margin-top:0;">
+        <div class="agent-card" style="border-top-color: var(--blue);">
+          <h4>Dot &mdash; cautious and careful</h4>
+          <p>Checks with you before every step. Explains why information is needed. You approve every action. Nothing happens without your say-so.</p>
+          <div class="agent-tags">
+            <span class="agent-tag">Step-by-step</span>
+            <span class="agent-tag">Transparent</span>
+            <span class="agent-tag">You decide</span>
+          </div>
+        </div>
+        <div class="agent-card" style="border-top-color: var(--orange);">
+          <h4>Max &mdash; proactive and fast</h4>
+          <p>Acts on your behalf automatically. Auto-fills forms from your records. Gets things done quickly. Always double-check what Max has done.</p>
+          <div class="agent-tags">
+            <span class="agent-tag">Proactive</span>
+            <span class="agent-tag">Autonomous</span>
+            <span class="agent-tag">Fast</span>
+          </div>
+        </div>
+        <div class="agent-card" style="border-top-color: var(--ink-faint);">
+          <h4>No agent &mdash; manual mode</h4>
+          <p>Browse services and visit GOV.UK directly. No AI, no chat, no automation. Direct links to GOV.UK. You can switch to an agent at any time.</p>
+          <div class="agent-tags">
+            <span class="agent-tag">Manual</span>
+            <span class="agent-tag">Direct links</span>
+            <span class="agent-tag">You do everything</span>
+          </div>
+        </div>
+      </div>
+
+      <h3 style="margin-top: 2rem;">Graceful degradation</h3>
+      <p class="body-text">
+        When no agent is selected, the entire app still works. The "Dot" tab in the bottom navigation becomes "Services" &mdash; a browsable list of services organised by life event, linking directly to GOV.UK content and forms. All to-dos become citizen to-dos (no agent to-dos section). Topics, to-dos, and wallet remain the same. This is digital inclusion by design &mdash; the app is useful even for citizens who do not trust or want AI.
+      </p>
+    </div>
+  </div>
+
+
+  <!-- ════════════════════════════════ 11 ════════════════════════════════ -->
+  <div class="section section-alt" id="todos">
+    <div class="container">
+      <div class="section-heading">
+        <span class="section-num">11</span>
+        <h2>The to-do system</h2>
+      </div>
+      <p class="section-intro">Two tracks of work: what the citizen needs to do and what the agent is handling. Division of labour, visible at a glance.</p>
+
+      <div class="screen-pair">
+        <div>
+          <img src="screens/app-task-detail.png" alt="Task detail card showing title, due date, agent steps, and action buttons" class="screen-img" />
+          <p class="screen-caption">Task detail with due date, agent steps, and delegation options</p>
+        </div>
+        <div>
+          <p class="body-text"><strong>Citizen to-dos</strong> are things only the citizen can do: provide a document, make a decision, confirm information. <strong>Agent to-dos</strong> are things the agent is handling in the background: checking eligibility, verifying a council tax band, submitting a form.</p>
+
+          <p class="body-text">To-dos can be generated automatically by the platform based on date or need, generated by the citizen, expanded to reveal sub-tasks, or swiped right-to-left to delete.</p>
+
+          <h3 style="margin-top:1.5rem;">Task detail card</h3>
+          <p class="body-text">Each task card contains:</p>
+          <div class="body-text">
+            <ul>
+              <li><strong>Title</strong> and related tags</li>
+              <li><strong>Due date</strong> with urgency indicators</li>
+              <li><strong>What the agent will do</strong> &mdash; numbered steps</li>
+              <li>Four actions: <strong>Add to calendar</strong>, <strong>Delegate to Dot</strong>, <strong>Accept task</strong>, <strong>Dismiss</strong></li>
+            </ul>
+          </div>
+
+          <h3 style="margin-top:1.5rem;">To-do page</h3>
+          <p class="body-text">
+            The dedicated to-do page organises tasks by topic type (driving, benefits, family) and splits citizen and agent tasks. A completed history section shows what has been resolved.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ════════════════════════════════ 12 ════════════════════════════════ -->
+  <div class="section" id="sarah">
+    <div class="container">
+      <div class="section-heading">
+        <span class="section-num">12</span>
+        <h2>Worked example: Sarah's bereavement</h2>
+      </div>
+      <p class="section-intro">Sarah Okafor, age 58, Chelmsford. Her husband David died on 26 February 2026. She is named executor. Estate approximately &pound;645,000. Two adult children. She works part-time as a library assistant.</p>
+
+      <p class="body-text">
+        Sarah opens the app and types: <em>"My husband died three weeks ago. I don't know what to do. David always handled everything."</em>
+      </p>
+      <p class="body-text">
+        She does not know which services exist, which departments are involved, or what deadlines apply. She does not know about Bereavement Support Payment, or that there is a time limit to claim it. She does not know that probate requires an inheritance tax reference number, or that Tell Us Once can notify nine departments at once.
+      </p>
+      <p class="body-text">
+        From a brief conversation &mdash; the agent asks whether the death has been registered and whether she is named executor &mdash; the system identifies bereavement as the life event and matches it to six services across four departments.
+      </p>
+
+      <div class="stats">
+        <div class="stat">
+          <div class="stat-value">6</div>
+          <div class="stat-label">Services triggered</div>
+        </div>
+        <div class="stat">
+          <div class="stat-value">4</div>
+          <div class="stat-label">Departments involved</div>
+        </div>
+        <div class="stat">
+          <div class="stat-value">20</div>
+          <div class="stat-label">Canonical fields needed</div>
+        </div>
+        <div class="stat">
+          <div class="stat-value">7</div>
+          <div class="stat-label">Fields Sarah must provide</div>
+        </div>
+      </div>
+
+      <h3 style="margin-top: 2.5rem;">The 13 stages</h3>
+      <p class="body-text">
+        Sarah's journey through the conversational route passes through 13 distinct stages, from first message to final payment.
+      </p>
+
+      <div class="journey-steps">
+        <div class="journey-step">
+          <div class="journey-step-num">1</div>
+          <div>
+            <h4>Home</h4>
+            <p>Sarah clicks Dot in the bottom nav to start a conversation about her husband's death.</p>
+          </div>
+        </div>
+        <div class="journey-step">
+          <div class="journey-step-num">2</div>
+          <div>
+            <h4>Triage</h4>
+            <p>The agent makes sense of Sarah's request, understanding which departments and services are relevant. It presents the most important tasks in order of urgency. The first two: register David's death, and notify all departments through Tell Us Once.</p>
+            <span class="dept-tag">GRO</span> <span class="dept-tag">DWP</span> <span class="dept-tag">HMRC</span> <span class="dept-tag">HMCTS</span>
+          </div>
+        </div>
+        <div class="journey-step">
+          <div class="journey-step-num">3</div>
+          <div>
+            <h4>Delegation</h4>
+            <p>By clicking "Do this" on each service card, Sarah delegates tasks to the agent. The steps and processes are submitted on her behalf.</p>
+          </div>
+        </div>
+        <div class="journey-step">
+          <div class="journey-step-num">4</div>
+          <div>
+            <h4>Confirmation</h4>
+            <p>A confirmation card outlines what the agent will do on Sarah's behalf and gives her an opportunity to alter any tasks or approaches.</p>
+          </div>
+        </div>
+        <div class="journey-step">
+          <div class="journey-step-num">5</div>
+          <div>
+            <h4>Receipt</h4>
+            <p>A receipt card acknowledges Sarah's choices, timestamps the request, and provides a link to interrogate what personal data has been shared and on what terms.</p>
+          </div>
+        </div>
+        <div class="journey-step">
+          <div class="journey-step-num">6</div>
+          <div>
+            <h4>Consent</h4>
+            <p>Before any data is passed to services, Sarah gives consent for her and David's details to be shared with government departments. Each department is listed, along with the data to be shared, and she can agree or decline.</p>
+          </div>
+        </div>
+        <div class="journey-step">
+          <div class="journey-step-num">7</div>
+          <div>
+            <h4>Preferences</h4>
+            <p>After agreeing, Sarah can set her data sharing preferences for future interactions.</p>
+          </div>
+        </div>
+        <div class="journey-step">
+          <div class="journey-step-num">8</div>
+          <div>
+            <h4>Terms</h4>
+            <p>Sarah chooses the scope: share data just this once, always for bereavement services, or always with all departments.</p>
+          </div>
+        </div>
+        <div class="journey-step">
+          <div class="journey-step-num">9</div>
+          <div>
+            <h4>Fulfilment</h4>
+            <p>Results cards appear with relevant content. The Tell Us Once service has been initiated with a reference number that can be copied.</p>
+            <span class="dept-tag">DWP</span>
+          </div>
+        </div>
+        <div class="journey-step">
+          <div class="journey-step-num">10</div>
+          <div>
+            <h4>Credentials</h4>
+            <p>The death certificate has been issued and is now visible in Sarah's wallet as a verifiable credential.</p>
+            <span class="dept-tag">General Register Office</span>
+          </div>
+        </div>
+        <div class="journey-step">
+          <div class="journey-step-num">11</div>
+          <div>
+            <h4>Wallet</h4>
+            <p>The death certificate appears in the wallet with data permissions shown (Legal Data &mdash; Allowed).</p>
+          </div>
+        </div>
+        <div class="journey-step">
+          <div class="journey-step-num">12</div>
+          <div>
+            <h4>Follow-on</h4>
+            <p>Sarah returns to ask about the bereavement payment. The agent already knows her context and picks up immediately.</p>
+          </div>
+        </div>
+        <div class="journey-step">
+          <div class="journey-step-num">13</div>
+          <div>
+            <h4>Payment</h4>
+            <p>Having already identified Sarah's bank account, the bereavement support payment is confirmed with a reference number.</p>
+            <span class="dept-tag">DWP</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="screen-row" style="margin-top:2rem;overflow-x:auto;flex-wrap:nowrap;gap:1rem;padding-bottom:1rem;">
+        <div class="screen-item" style="flex-shrink:0;">
+          <img src="screens/sarah-home.png" alt="Stage 1: Home" class="screen-img" style="max-width:160px;" />
+          <p class="screen-caption">Home</p>
+        </div>
+        <div class="screen-item" style="flex-shrink:0;">
+          <img src="screens/sarah-triage.png" alt="Stage 2: Triage" class="screen-img" style="max-width:160px;" />
+          <p class="screen-caption">Triage</p>
+        </div>
+        <div class="screen-item" style="flex-shrink:0;">
+          <img src="screens/sarah-delegation.png" alt="Stage 3: Delegation" class="screen-img" style="max-width:160px;" />
+          <p class="screen-caption">Delegation</p>
+        </div>
+        <div class="screen-item" style="flex-shrink:0;">
+          <img src="screens/sarah-confirmation.png" alt="Stage 4: Confirmation" class="screen-img" style="max-width:160px;" />
+          <p class="screen-caption">Confirmation</p>
+        </div>
+        <div class="screen-item" style="flex-shrink:0;">
+          <img src="screens/sarah-consent.png" alt="Stage 6: Consent" class="screen-img" style="max-width:160px;" />
+          <p class="screen-caption">Consent</p>
+        </div>
+        <div class="screen-item" style="flex-shrink:0;">
+          <img src="screens/sarah-fulfilment.png" alt="Stage 9: Fulfilment" class="screen-img" style="max-width:160px;" />
+          <p class="screen-caption">Fulfilment</p>
+        </div>
+        <div class="screen-item" style="flex-shrink:0;">
+          <img src="screens/sarah-wallet.png" alt="Stage 11: Wallet" class="screen-img" style="max-width:160px;" />
+          <p class="screen-caption">Wallet</p>
+        </div>
+        <div class="screen-item" style="flex-shrink:0;">
+          <img src="screens/sarah-payment.png" alt="Stage 13: Payment" class="screen-img" style="max-width:160px;" />
+          <p class="screen-caption">Payment</p>
+        </div>
+      </div>
+
+      <h3 style="margin-top: 2.5rem;">The service sequence</h3>
+      <p class="body-text">
+        The agent proposes a plan ordered by dependency and urgency. Each service cascades data to the next &mdash; Sarah provides information once, and the agent fans it out to every service that needs it.
+      </p>
+
+      <div class="journey-steps">
+        <div class="journey-step">
+          <div class="journey-step-num">1</div>
+          <div>
+            <h4>Register the death</h4>
+            <p>Legal registration within 5 days. This unlocks everything else. The death registration reference number cascades to every subsequent service.</p>
+            <span class="dept-tag">General Register Office</span>
+          </div>
+        </div>
+        <div class="journey-step">
+          <div class="journey-step-num">2</div>
+          <div>
+            <h4>Death certificate</h4>
+            <p>Official certificate posted to Sarah's address. Required as evidence for probate and estate administration.</p>
+            <span class="dept-tag">General Register Office</span>
+          </div>
+        </div>
+        <div class="journey-step">
+          <div class="journey-step-num">3</div>
+          <div>
+            <h4>Tell Us Once</h4>
+            <p>Notify HMRC, DWP, DVLA, Passport Office, council, and electoral register in one go. The Tell Us Once principle &mdash; notify government once, not repeatedly &mdash; extended across every relevant department.</p>
+            <span class="dept-tag">DWP</span>
+          </div>
+        </div>
+        <div class="journey-step">
+          <div class="journey-step-num">4</div>
+          <div>
+            <h4>Bereavement Support Payment</h4>
+            <p>&pound;3,500 lump sum plus 18 monthly payments of &pound;350. Time-limited &mdash; the agent prioritises this because of the 3-month deadline. Sarah's bank details are collected once and shared with consent.</p>
+            <span class="dept-tag">DWP</span>
+          </div>
+        </div>
+        <div class="journey-step">
+          <div class="journey-step-num">5</div>
+          <div>
+            <h4>Inheritance tax return</h4>
+            <p>IHT400 filed. Estate &pound;645,000 is below the threshold &mdash; no tax due. The IHT reference number cascades to the probate application.</p>
+            <span class="dept-tag">HMRC</span>
+          </div>
+        </div>
+        <div class="journey-step">
+          <div class="journey-step-num">6</div>
+          <div>
+            <h4>Apply for probate</h4>
+            <p>Grant of probate as named executor of David's will. Requires the inheritance tax reference number from HMRC.</p>
+            <span class="dept-tag">HM Courts &amp; Tribunals Service</span>
+          </div>
+        </div>
+      </div>
+
+      <h3 style="margin-top: 2.5rem;">Field deduplication</h3>
+      <p class="body-text">
+        Each service defines its own field names for the same data. HMRC calls it "applicant_full_name", DWP calls it "claimant_name", GRO calls it "informant_name" &mdash; but they all mean Sarah's name. The field merger maps all variants to canonical fields.
+      </p>
+
+      <div class="dedup">
+        <div class="dedup-box">
+          <div class="dedup-num dedup-num--before">87</div>
+          <div class="dedup-label">Raw service fields across 6 services</div>
+        </div>
+        <div class="dedup-arrow">&rarr;</div>
+        <div class="dedup-box">
+          <div class="dedup-num dedup-num--after">20</div>
+          <div class="dedup-label">Canonical fields after deduplication</div>
+        </div>
+      </div>
+
+      <p class="body-text">
+        Of those 20 canonical fields, 8 are already in Sarah's wallet (name, date of birth, NI number, address, contact details). A further 5 are held by other departments (deceased's NI number from HMRC, pension details from DWP). Two fields cascade from earlier services (death registration reference, IHT reference number). That leaves <strong>7 pieces of information only Sarah can provide</strong>: her relationship to David, their marriage certificate, the place of death, David's occupation, her bank details, the estate assets, and David's will.
+      </p>
+
+      <div class="callout--green callout" style="margin-top: 1.5rem;">
+        Without deduplication, Sarah would answer 87 separate questions across 6 government services &mdash; many asking for the same information in slightly different ways. With the field merger, she confirms 20 pieces of information, and of those, 13 are already known. She provides 7 new pieces of data. The rest is handled.
+      </div>
+
+      <p class="body-text" style="margin-top: 2rem;">
+        <a href="index.html" style="font-weight: 600;">&larr; Back to platform overview</a>
+      </p>
+    </div>
+  </div>
+
+
+  <!-- ── Footer ── -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <h4>Deep dives</h4>
+          <ul>
+            <li><a href="citizen-app.html">Citizen app</a></li>
+            <li><a href="legibility-studio.html">Legibility Studio</a></li>
+            <li><a href="technical.html">Technical architecture</a></li>
+            <li><a href="departments.html">Departments</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Reference</h4>
+          <ul>
+            <li><a href="glossary.html">Glossary</a></li>
+            <li><a href="explorations.html">Further explorations</a></li>
+            <li><a href="card-catalogue.html">Card catalogue</a></li>
+            <li><a href="life-events-catalogue.html">Life events</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-note">Agentic Legibility Stack &mdash; Department Demo Documentation</div>
+    </div>
+  </footer>
+
+</body>
+</html>

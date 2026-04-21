@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The runtime pipeline</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: #ffffff;
+    color: #1a1a1a;
+    display: flex;
+    justify-content: center;
+    padding: 48px 24px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .container {
+    max-width: 700px;
+    width: 100%;
+  }
+
+  h1 {
+    font-size: 20px;
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 6px;
+    letter-spacing: -0.02em;
+  }
+
+  .subtitle {
+    font-size: 13px;
+    color: #666;
+    text-align: center;
+    margin-bottom: 32px;
+    line-height: 1.5;
+  }
+
+  /* Legend */
+  .legend {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    margin-bottom: 36px;
+    flex-wrap: wrap;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    font-weight: 500;
+    color: #505050;
+  }
+
+  .legend-swatch {
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+  }
+
+  .legend-swatch-deterministic {
+    background: #e8f5ee;
+    border: 1.5px solid #00703c;
+  }
+
+  .legend-swatch-ai {
+    background: #f8f8f7;
+    border: 1.5px solid #b1b4b6;
+  }
+
+  .legend-swatch-platform {
+    background: #e8f0fe;
+    border: 1.5px solid #1d70b8;
+  }
+
+  /* Pipeline */
+  .pipeline {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  /* Connector line */
+  .connector {
+    width: 2px;
+    height: 8px;
+    background: #d4d4d4;
+    margin-left: 27px;
+    flex-shrink: 0;
+  }
+
+  /* Step row */
+  .step {
+    display: flex;
+    align-items: stretch;
+    border-radius: 8px;
+    overflow: hidden;
+    transition: transform 0.15s ease;
+  }
+
+  .step-border {
+    width: 4px;
+    flex-shrink: 0;
+  }
+
+  .step-body {
+    flex: 1;
+    padding: 14px 18px 14px 16px;
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+  }
+
+  .step-num {
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 600;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .step-text {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .step-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 4px;
+  }
+
+  .step-title {
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: #1a1a1a;
+  }
+
+  .step-tag {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 2px 8px;
+    border-radius: 4px;
+    flex-shrink: 0;
+  }
+
+  .step-desc {
+    font-size: 13px;
+    line-height: 1.5;
+    color: #505050;
+  }
+
+  /* Deterministic */
+  .step-deterministic {
+    background: #f7fcf9;
+  }
+  .step-deterministic .step-border { background: #00703c; }
+  .step-deterministic .step-num {
+    background: #e8f5ee;
+    color: #00703c;
+  }
+  .tag-deterministic {
+    background: #e8f5ee;
+    color: #00703c;
+  }
+
+  /* AI */
+  .step-ai {
+    background: #fafaf9;
+  }
+  .step-ai .step-border { background: #b1b4b6; }
+  .step-ai .step-num {
+    background: #f8f8f7;
+    color: #6f777b;
+  }
+  .tag-ai {
+    background: #f8f8f7;
+    color: #6f777b;
+  }
+
+  /* Platform */
+  .step-platform {
+    background: #f5f8fe;
+  }
+  .step-platform .step-border { background: #1d70b8; }
+  .step-platform .step-num {
+    background: #e8f0fe;
+    color: #1d70b8;
+  }
+  .tag-platform {
+    background: #e8f0fe;
+    color: #1d70b8;
+  }
+
+  /* Step 7 highlight */
+  .step-highlight {
+    box-shadow: 0 0 0 2px #b1b4b6;
+    position: relative;
+    z-index: 1;
+  }
+  .step-highlight .step-num {
+    width: 36px;
+    height: 36px;
+    font-size: 14px;
+    border-radius: 8px;
+    background: #6f777b;
+    color: #ffffff;
+  }
+  .step-highlight .step-title {
+    font-size: 15px;
+  }
+  .step-highlight .step-body {
+    padding: 18px 20px 18px 18px;
+  }
+
+  /* Divider label */
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 4px 0 4px 0;
+  }
+
+  .divider-line {
+    flex: 1;
+    height: 1px;
+    background: #e0e0e0;
+  }
+
+  .divider-label {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #999;
+    white-space: nowrap;
+    padding: 0 4px;
+  }
+
+  /* Footer callout */
+  .callout {
+    margin-top: 28px;
+    padding: 16px 20px;
+    background: #f8f8f7;
+    border-radius: 8px;
+    border-left: 3px solid #b1b4b6;
+    font-size: 13px;
+    line-height: 1.55;
+    color: #505050;
+  }
+
+  .callout strong {
+    color: #1a1a1a;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>The runtime pipeline</h1>
+  <p class="subtitle">Every citizen interaction passes through this 14-step orchestrator pipeline.<br>The language model runs at step 7. Everything else is deterministic code or platform infrastructure.</p>
+
+  <div class="legend">
+    <div class="legend-item">
+      <div class="legend-swatch legend-swatch-deterministic"></div>
+      Deterministic code
+    </div>
+    <div class="legend-item">
+      <div class="legend-swatch legend-swatch-ai"></div>
+      AI (language model)
+    </div>
+    <div class="legend-item">
+      <div class="legend-swatch legend-swatch-platform"></div>
+      Platform infrastructure
+    </div>
+  </div>
+
+  <div class="pipeline">
+
+    <!-- Divider: Pre-LLM -->
+    <div class="divider">
+      <div class="divider-line"></div>
+      <div class="divider-label">Deterministic setup</div>
+      <div class="divider-line"></div>
+    </div>
+
+    <!-- Step 1 -->
+    <div class="step step-deterministic">
+      <div class="step-border"></div>
+      <div class="step-body">
+        <div class="step-num">01</div>
+        <div class="step-text">
+          <div class="step-header">
+            <span class="step-title">Policy evaluation</span>
+            <span class="step-tag tag-deterministic">deterministic</span>
+          </div>
+          <div class="step-desc">Evaluates the service's eligibility rules against citizen data via PolicyEvaluator. Returns eligible/ineligible with reasons.</div>
+        </div>
+      </div>
+    </div>
+    <div class="connector"></div>
+
+    <!-- Step 2 -->
+    <div class="step step-deterministic">
+      <div class="step-border"></div>
+      <div class="step-body">
+        <div class="step-num">02</div>
+        <div class="step-text">
+          <div class="step-header">
+            <span class="step-title">State machine setup</span>
+            <span class="step-tag tag-deterministic">deterministic</span>
+          </div>
+          <div class="step-desc">Creates StateMachine from the service's journey definition. Restores current state from client session. Computes allowed transitions.</div>
+        </div>
+      </div>
+    </div>
+    <div class="connector"></div>
+
+    <!-- Step 3 -->
+    <div class="step step-deterministic">
+      <div class="step-border"></div>
+      <div class="step-body">
+        <div class="step-num">03</div>
+        <div class="step-text">
+          <div class="step-header">
+            <span class="step-title">Field collector</span>
+            <span class="step-tag tag-deterministic">deterministic</span>
+          </div>
+          <div class="step-desc">Seeds FieldCollector from the identity schema and citizen data. Tracks required versus collected fields and identifies what is still missing.</div>
+        </div>
+      </div>
+    </div>
+    <div class="connector"></div>
+
+    <!-- Step 4 -->
+    <div class="step step-deterministic">
+      <div class="step-border"></div>
+      <div class="step-body">
+        <div class="step-num">04</div>
+        <div class="step-text">
+          <div class="step-header">
+            <span class="step-title">Agent selection</span>
+            <span class="step-tag tag-deterministic">deterministic</span>
+          </div>
+          <div class="step-desc">Selects triage mode or journey mode. The choice determines prompt composition and available tools.</div>
+        </div>
+      </div>
+    </div>
+    <div class="connector"></div>
+
+    <!-- Step 5 -->
+    <div class="step step-deterministic">
+      <div class="step-border"></div>
+      <div class="step-body">
+        <div class="step-num">05</div>
+        <div class="step-text">
+          <div class="step-header">
+            <span class="step-title">Strategy context and system prompt</span>
+            <span class="step-tag tag-deterministic">deterministic</span>
+          </div>
+          <div class="step-desc">Assembles the system prompt from layered fragments: personality, persona style, scenario, service descriptions, guardrails, and output format.</div>
+        </div>
+      </div>
+    </div>
+    <div class="connector"></div>
+
+    <!-- Step 6 -->
+    <div class="step step-deterministic">
+      <div class="step-border"></div>
+      <div class="step-body">
+        <div class="step-num">06</div>
+        <div class="step-text">
+          <div class="step-header">
+            <span class="step-title">Build tools</span>
+            <span class="step-tag tag-deterministic">deterministic</span>
+          </div>
+          <div class="step-desc">Calls ServiceStrategy.buildTools(). The deterministic strategy returns an empty array; the tool-based strategy returns service-specific check and advance tools.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Divider: LLM -->
+    <div class="connector"></div>
+    <div class="divider">
+      <div class="divider-line"></div>
+      <div class="divider-label">Language model</div>
+      <div class="divider-line"></div>
+    </div>
+
+    <!-- Step 7 (highlighted) -->
+    <div class="step step-ai step-highlight">
+      <div class="step-border"></div>
+      <div class="step-body">
+        <div class="step-num">07</div>
+        <div class="step-text">
+          <div class="step-header">
+            <span class="step-title">Agentic loop</span>
+            <span class="step-tag tag-ai">ai</span>
+          </div>
+          <div class="step-desc">Up to 5 iterations: call the language model, dispatch any tool calls via the adapter, accumulate results. This is the only step where the LLM generates content.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Divider: Post-LLM -->
+    <div class="connector"></div>
+    <div class="divider">
+      <div class="divider-line"></div>
+      <div class="divider-label">Validation and override</div>
+      <div class="divider-line"></div>
+    </div>
+
+    <!-- Step 8 -->
+    <div class="step step-deterministic">
+      <div class="step-border"></div>
+      <div class="step-body">
+        <div class="step-num">08</div>
+        <div class="step-text">
+          <div class="step-header">
+            <span class="step-title">Parse structured output</span>
+            <span class="step-tag tag-deterministic">deterministic</span>
+          </div>
+          <div class="step-desc">Extracts the JSON block from the LLM response. Parses conversation title, tasks, proposed state transitions, and extracted facts.</div>
+        </div>
+      </div>
+    </div>
+    <div class="connector"></div>
+
+    <!-- Step 9 -->
+    <div class="step step-deterministic">
+      <div class="step-border"></div>
+      <div class="step-body">
+        <div class="step-num">09</div>
+        <div class="step-text">
+          <div class="step-header">
+            <span class="step-title">Build tasks</span>
+            <span class="step-tag tag-deterministic">deterministic</span>
+          </div>
+          <div class="step-desc">Transforms parsed task descriptions into typed TaskEntry objects with structured fields: type, title, description, options, metadata.</div>
+        </div>
+      </div>
+    </div>
+    <div class="connector"></div>
+
+    <!-- Step 10 -->
+    <div class="step step-deterministic">
+      <div class="step-border"></div>
+      <div class="step-body">
+        <div class="step-num">10</div>
+        <div class="step-text">
+          <div class="step-header">
+            <span class="step-title">State transitions</span>
+            <span class="step-tag tag-deterministic">deterministic</span>
+          </div>
+          <div class="step-desc">Validates the LLM's proposed transition against the StateMachine. Rejects illegal transitions. Applies forced and auto transitions.</div>
+        </div>
+      </div>
+    </div>
+    <div class="connector"></div>
+
+    <!-- Step 11 -->
+    <div class="step step-deterministic">
+      <div class="step-border"></div>
+      <div class="step-body">
+        <div class="step-num">11</div>
+        <div class="step-text">
+          <div class="step-header">
+            <span class="step-title">Deterministic task injection</span>
+            <span class="step-tag tag-deterministic">deterministic</span>
+          </div>
+          <div class="step-desc">Overrides LLM-generated tasks with platform-generated cards at specific states. Consent cards, payment forms, and document uploads are always rendered by the platform.</div>
+        </div>
+      </div>
+    </div>
+    <div class="connector"></div>
+
+    <!-- Step 12 -->
+    <div class="step step-deterministic">
+      <div class="step-border"></div>
+      <div class="step-body">
+        <div class="step-num">12</div>
+        <div class="step-text">
+          <div class="step-header">
+            <span class="step-title">Consent requests</span>
+            <span class="step-tag tag-deterministic">deterministic</span>
+          </div>
+          <div class="step-desc">Surfaces consent grant cards at the eligibility-checked state. Required grants must be accepted to proceed; optional grants can be declined.</div>
+        </div>
+      </div>
+    </div>
+    <div class="connector"></div>
+
+    <!-- Step 13 -->
+    <div class="step step-deterministic">
+      <div class="step-border"></div>
+      <div class="step-body">
+        <div class="step-num">13</div>
+        <div class="step-text">
+          <div class="step-header">
+            <span class="step-title">Handoff detection</span>
+            <span class="step-tag tag-deterministic">deterministic</span>
+          </div>
+          <div class="step-desc">Evaluates safeguarding triggers, edge-case conditions, and escalation rules. When triggered, the conversation routes to a human adviser with full context.</div>
+        </div>
+      </div>
+    </div>
+    <div class="connector"></div>
+
+    <!-- Step 14 -->
+    <div class="step step-platform">
+      <div class="step-border"></div>
+      <div class="step-body">
+        <div class="step-num">14</div>
+        <div class="step-text">
+          <div class="step-header">
+            <span class="step-title">Version metadata and trace</span>
+            <span class="step-tag tag-platform">platform</span>
+          </div>
+          <div class="step-desc">Hashes the system prompt, stamps ruleset and journey versions, builds the full pipeline trace with per-step timing. Written to the evidence store for audit and replay.</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="callout">
+    <strong>The LLM runs at step 7 out of 14.</strong> Everything before it is deterministic setup; everything after it is validation and override. The language model proposes; the platform disposes.
+  </div>
+
+</div>
+</body>
+</html>

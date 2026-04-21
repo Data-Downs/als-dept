@@ -513,7 +513,7 @@
         border: 1px solid #d2d2d2;
         border-radius: 6px;
         overflow: hidden;
-        max-width: 520px;
+        max-width: 375px;
         background: #fff;
         box-shadow: 0 2px 8px rgba(0,0,0,0.06);
       }
@@ -553,8 +553,8 @@
         margin-bottom: 0.5rem;
       }
       .s-icon {
-        width: 24px;
-        height: 24px;
+        width: 28px;
+        height: 28px;
         border-radius: 50%;
         display: flex;
         align-items: center;
@@ -729,29 +729,43 @@
         font-weight: 600;
       }
 
-      /* ── Chat bubbles ── */
-      .chat-container { padding: 0.75rem; }
-      .chat-bubble {
-        max-width: 80%;
-        padding: 0.6rem 0.85rem;
-        border-radius: 12px;
-        font-size: 0.8rem;
-        line-height: 1.5;
-        margin-bottom: 0.5rem;
+      /* ── Chat bubbles (matching citizen app) ── */
+      .chat-container {
+        padding: 0.75rem;
+        background: #eaf1f7;
+        display: flex;
+        flex-direction: column;
+        gap: 0.6rem;
       }
-      .chat-bubble:last-child { margin-bottom: 0; }
+      .chat-msg {
+        display: flex;
+        max-width: 85%;
+      }
+      .chat-msg-user {
+        justify-content: flex-end;
+        align-self: flex-end;
+      }
+      .chat-msg-agent {
+        justify-content: flex-start;
+        align-self: flex-start;
+      }
+      .chat-bubble {
+        padding: 0.55rem 0.75rem;
+        font-size: 0.78rem;
+        line-height: 1.5;
+      }
       .chat-user {
-        background: #e8f0fe;
-        color: #0b0c0c;
-        margin-left: auto;
+        background: #1d70b8;
+        color: #fff;
+        border-radius: 1rem;
         border-bottom-right-radius: 4px;
       }
       .chat-agent {
-        background: #fff;
-        border: 1px solid #e0dfde;
+        background: transparent;
         color: #0b0c0c;
-        margin-right: auto;
-        border-bottom-left-radius: 4px;
+        border-radius: 0;
+        padding-left: 0.25rem;
+        padding-right: 0.25rem;
       }
       .chat-agent-label {
         font-size: 0.6rem;
@@ -862,7 +876,108 @@
         .snippet { break-inside: avoid; }
         .step-block { break-inside: avoid; }
       }
+
+      /* ── Snippet download controls ── */
+      .snippet {
+        position: relative;
+      }
+      .snippet-dl {
+        position: absolute;
+        top: 6px;
+        right: 6px;
+        display: flex;
+        gap: 2px;
+        opacity: 0;
+        transition: opacity 0.2s;
+        z-index: 10;
+      }
+      .snippet:hover .snippet-dl,
+      .snippet:focus-within .snippet-dl {
+        opacity: 1;
+      }
+      .snippet-dl-btn {
+        font-family: "Inter", Arial, sans-serif;
+        font-size: 0.6rem;
+        font-weight: 600;
+        padding: 0.2rem 0.5rem;
+        border-radius: 3px;
+        border: 1px solid #b1b4b6;
+        background: #fff;
+        color: #505a5f;
+        cursor: pointer;
+        transition: all 0.15s;
+        line-height: 1;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+      }
+      .snippet-dl-btn:hover {
+        background: #f3f2f1;
+        border-color: #505a5f;
+        color: #0b0c0c;
+      }
+
+      /* ── Exportable icon overlay ── */
+      .exportable {
+        position: relative;
+        cursor: pointer;
+      }
+      .exportable .export-hint {
+        position: absolute;
+        top: -4px;
+        right: -4px;
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background: #505a5f;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 8px;
+        font-weight: 700;
+        opacity: 0;
+        transition: opacity 0.2s;
+        pointer-events: none;
+        z-index: 5;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+      }
+      .exportable:hover .export-hint {
+        opacity: 1;
+      }
+      .exportable:hover {
+        outline: 2px dashed #b1b4b6;
+        outline-offset: 3px;
+        border-radius: 8px;
+      }
+      .pipeline-exportable {
+        position: relative;
+        display: inline-block;
+      }
+      .pipeline-exportable .export-hint {
+        position: absolute;
+        top: -8px;
+        right: -8px;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: #505a5f;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 8px;
+        font-weight: 700;
+        opacity: 0;
+        transition: opacity 0.2s;
+        cursor: pointer;
+        z-index: 5;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+      }
+      .pipeline-exportable:hover .export-hint {
+        opacity: 1;
+      }
     </style>
+    <script async defer src="https://scripts.withcabin.com/hello.js"></script>
   </head>
   <body>
 
@@ -871,11 +986,13 @@
       <div class="container">
         <span class="nav-brand">Agentic Legibility Stack</span>
         <ul class="nav-links">
-          <li><a href="index.html">Overview</a></li>
-          <li><a href="departments.html">Departments</a></li>
-          <li><a href="personas.html">Personas</a></li>
+          <li><a href="index.html">All documents</a></li>
+          <li><a href="overview.html">Overview</a></li>
+          <li><a href="briefing-executive.html" class="active">Executive briefing</a></li>
+          <li><a href="guide-product.html">Product guide</a></li>
+          <li><a href="reference-technical.html">Technical reference</a></li>
           <li><a href="glossary.html">Glossary</a></li>
-          <li><a href="briefing-executive.html" class="active">Executive Briefing</a></li>
+          <li><a href="publish-once.html">Publish once</a></li>
         </ul>
       </div>
     </nav>
@@ -886,6 +1003,9 @@
         <span class="hero-label">Executive Briefing</span>
         <h1>Agentic Legibility for Government Services</h1>
         <p class="hero-subtitle">How departments can make their services work through AI agents &mdash; safely, accountably, and under citizen control.</p>
+        <div class="callout callout-blue" style="margin-bottom: 1.5rem; font-size: 1.05rem; font-weight: 500; max-width: 700px;">
+          This is not a technology proposal. It is an operating model proposal.
+        </div>
         <p class="hero-meta">March 2026 &nbsp;|&nbsp; Audience: Permanent Secretaries and Heads of Department</p>
         <p class="hero-note">This describes the target operating model. Interface examples are drawn from working prototypes. For full concept definitions, see the <a href="glossary.html">Concept Glossary</a>.</p>
       </div>
@@ -897,14 +1017,15 @@
         <div class="container">
           <ol class="toc-list">
             <li><span class="toc-number">1</span><a href="#the-problem">The Problem</a></li>
-            <li><span class="toc-number">2</span><a href="#the-model">The Model</a></li>
-            <li><span class="toc-number">3</span><a href="#what-it-looks-like">What It Looks Like</a></li>
-            <li><span class="toc-number">4</span><a href="#four-artefacts">The Four Artefacts</a></li>
-            <li><span class="toc-number">5</span><a href="#deterministic-guarantee">The Deterministic Guarantee</a></li>
-            <li><span class="toc-number">6</span><a href="#delegation">Multi-User and Delegation</a></li>
-            <li><span class="toc-number">7</span><a href="#coverage">Coverage and Gap Analysis</a></li>
-            <li><span class="toc-number">8</span><a href="#risks">Risks Addressed</a></li>
-            <li><span class="toc-number">9</span><a href="#ask">What We Are Asking For</a></li>
+            <li><span class="toc-number">2</span><a href="#builds-on-existing">How This Builds on What Exists</a></li>
+            <li><span class="toc-number">3</span><a href="#the-model">The Model</a></li>
+            <li><span class="toc-number">4</span><a href="#what-it-looks-like">What It Looks Like</a></li>
+            <li><span class="toc-number">5</span><a href="#four-artefacts">The Four Artefacts</a></li>
+            <li><span class="toc-number">6</span><a href="#deterministic-guarantee">The Deterministic Guarantee</a></li>
+            <li><span class="toc-number">7</span><a href="#delegation">Multi-User and Delegation</a></li>
+            <li><span class="toc-number">8</span><a href="#coverage">Coverage and Gap Analysis</a></li>
+            <li><span class="toc-number">9</span><a href="#risks">Risks and Inclusion</a></li>
+            <li><span class="toc-number">10</span><a href="#ask">What We Are Asking For</a></li>
           </ol>
         </div>
       </div>
@@ -972,12 +1093,48 @@
     </div>
 
     <!-- ══════════════════════════════════════════════════════════ -->
-    <!-- Section 2: The Model                                      -->
+    <!-- Section 2: How This Builds on What Exists                 -->
     <!-- ══════════════════════════════════════════════════════════ -->
-    <div class="section section-alt" id="the-model">
+    <div class="section section-alt" id="builds-on-existing">
       <div class="container">
         <div class="section-heading">
           <span class="section-number">2</span>
+          <h2>How This Builds on What Exists</h2>
+        </div>
+        <p class="section-intro">This is evolution, not revolution. The operating model builds on foundations government has already laid and extends principles departments already endorse.</p>
+
+        <div class="pillar-grid" style="grid-template-columns: repeat(2, 1fr);">
+          <div class="pillar-card" style="border-top-color: #1d70b8;">
+            <h3>GOV.UK One Login</h3>
+            <p>Identity verification is not rebuilt &mdash; it is reused. The agent authenticates citizens through One Login, the same infrastructure departments already trust.</p>
+          </div>
+          <div class="pillar-card" style="border-top-color: #00703c;">
+            <h3>Tell Us Once, extended</h3>
+            <p>The Tell Us Once principle &mdash; notify government once, not repeatedly &mdash; currently applies to death notifications. This model extends that principle to every life event: having a child, becoming a carer, retiring, moving home.</p>
+          </div>
+          <div class="pillar-card" style="border-top-color: #912b88;">
+            <h3>GDS service standards</h3>
+            <p>The four artefacts complement GDS&rsquo;s existing service register and design standards. They add machine-readable descriptions alongside the human-readable guidance departments already publish.</p>
+          </div>
+          <div class="pillar-card" style="border-top-color: #f47738;">
+            <h3>Departmental systems unchanged</h3>
+            <p>This does not replace departmental back-end systems. It makes them accessible through a new channel &mdash; one where citizens are guided rather than left to navigate alone.</p>
+          </div>
+        </div>
+
+        <div class="callout callout-green">
+          The model asks departments to describe their services in a structured way. It does not ask them to rebuild, migrate, or replace what already works.
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <!-- Section 3: The Model                                      -->
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <div class="section" id="the-model">
+      <div class="container">
+        <div class="section-heading">
+          <span class="section-number">3</span>
           <h2>The Model</h2>
         </div>
         <p class="section-intro">The operating model rests on three pillars. Together they define a system where AI helps citizens navigate government, while departments stay in control of their own rules.</p>
@@ -1027,309 +1184,148 @@
     </div>
 
     <!-- ══════════════════════════════════════════════════════════ -->
-    <!-- Section 3: What It Looks Like                             -->
+    <!-- Section 4: What It Looks Like                             -->
     <!-- ══════════════════════════════════════════════════════════ -->
-    <div class="section" id="what-it-looks-like">
+    <div class="section section-alt" id="what-it-looks-like">
       <div class="container">
         <div class="section-heading">
-          <span class="section-number">3</span>
+          <span class="section-number">4</span>
           <h2>What It Looks Like</h2>
         </div>
         <p class="section-intro">A walkthrough of a single citizen journey: Sarah Okafor, age 58, Chelmsford. Her husband David died on 26 February 2026. She is named executor. Estate approximately &pound;645,000. Two adult children. She works part-time as a library assistant.</p>
 
-        <!-- Step 1: Triage -->
+        <!-- Step 1: Sarah tells the agent -->
         <div class="step-block">
           <span class="step-label">Step 1</span>
-          <h3 class="step-title">Chat &mdash; Triage</h3>
-          <p class="step-narrative">Sarah opens the app and types her first message. She does not know which services exist, which departments are involved, or what deadlines apply. The agent does.</p>
+          <h3 class="step-title">Sarah tells the agent her husband has died</h3>
+          <p class="step-narrative">Sarah opens the app and types her first message. She does not know which services exist, which departments are involved, or what deadlines apply. From a brief conversation, the agent identifies 9 relevant services across 5 departments.</p>
 
-          <div class="snippet snippet-wide">
+          <div class="snippet">
             <div class="snippet-label">Chat &mdash; Bereavement triage</div>
             <div class="snippet-body">
               <div class="chat-container">
-                <div class="chat-bubble chat-user">
+                <div class="chat-msg chat-msg-user"><div class="chat-bubble chat-user">
                   My husband died three weeks ago. I don&rsquo;t know what to do. David always handled everything.
-                </div>
-                <div class="chat-bubble chat-agent">
-                  <div class="chat-agent-label">Agent</div>
+                </div></div>
+                <div class="chat-msg chat-msg-agent"><div class="chat-bubble chat-agent">
                   I&rsquo;m very sorry about David, Sarah. I&rsquo;m here to help you work through the things that need to happen, at your pace. Nothing will be submitted without your say-so.<br><br>
                   Can I ask: are you named as executor in David&rsquo;s will? And has the death been registered?
-                </div>
-                <div class="chat-bubble chat-user">
+                </div></div>
+                <div class="chat-msg chat-msg-user"><div class="chat-bubble chat-user">
                   I&rsquo;m named executor in the will. The death has been registered but I haven&rsquo;t done anything else yet.
-                </div>
-                <div class="chat-bubble chat-agent">
-                  <div class="chat-agent-label">Agent</div>
+                </div></div>
+                <div class="chat-msg chat-msg-agent"><div class="chat-bubble chat-agent">
                   Thank you, Sarah. Based on what you&rsquo;ve told me, I&rsquo;ve identified <strong>9 services across 5 departments</strong> that are relevant to your situation. Here&rsquo;s what I&rsquo;d recommend, in order of priority.
-                </div>
+                </div></div>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- Step 2: Plan -->
+        <!-- Step 2: Plan and consent -->
         <div class="step-block">
           <span class="step-label">Step 2</span>
-          <h3 class="step-title">Plan</h3>
-          <p class="step-narrative">The agent proposes a bereavement plan ordered by dependency. Some services are available immediately; others are locked until prerequisites complete.</p>
-
-          <div class="snippet snippet-wide">
-            <div class="snippet-label">Service plan &mdash; Bereavement</div>
-            <div class="snippet-body">
-              <div class="s-panel">
-                <div style="font-size: 0.7rem; font-weight: 700; color: #505a5f; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.75rem;">Foundations</div>
-
-                <div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.35rem 0; border-bottom: 1px solid #f0f0f0;">
-                  <span style="color: #00703c; font-weight: 700; font-size: 0.8rem;">&#10003;</span>
-                  <span style="font-size: 0.75rem; font-weight: 600;">Register the death</span>
-                  <span class="s-tag s-tag-grey">GRO</span>
-                  <span class="s-tag s-tag-green" style="margin-left: auto;">Complete</span>
-                </div>
-
-                <div style="font-size: 0.7rem; font-weight: 700; color: #505a5f; text-transform: uppercase; letter-spacing: 0.06em; margin: 0.75rem 0 0.5rem;">Immediate</div>
-
-                <div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.35rem 0; border-bottom: 1px solid #f0f0f0;">
-                  <span style="width: 16px; height: 16px; border-radius: 50%; background: #1d70b8; display: inline-flex; align-items: center; justify-content: center; color: #fff; font-size: 0.55rem; font-weight: 700; flex-shrink: 0;">2</span>
-                  <span style="font-size: 0.75rem; font-weight: 600;">Tell Us Once</span>
-                  <span class="s-tag s-tag-blue">DWP</span>
-                  <span class="s-tag s-tag-green" style="margin-left: auto;">Available</span>
-                </div>
-                <div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.35rem 0; border-bottom: 1px solid #f0f0f0;">
-                  <span style="width: 16px; height: 16px; border-radius: 50%; background: #1d70b8; display: inline-flex; align-items: center; justify-content: center; color: #fff; font-size: 0.55rem; font-weight: 700; flex-shrink: 0;">3</span>
-                  <span style="font-size: 0.75rem; font-weight: 600;">Bereavement Support Payment</span>
-                  <span class="s-tag s-tag-blue">DWP</span>
-                  <span class="s-tag s-tag-green" style="margin-left: auto;">Available</span>
-                </div>
-
-                <div style="font-size: 0.7rem; font-weight: 700; color: #505a5f; text-transform: uppercase; letter-spacing: 0.06em; margin: 0.75rem 0 0.5rem;">Legal</div>
-
-                <div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.35rem 0; border-bottom: 1px solid #f0f0f0;">
-                  <span style="width: 16px; height: 16px; border-radius: 50%; background: #e0dfde; display: inline-flex; align-items: center; justify-content: center; color: #b1b4b6; font-size: 0.55rem; font-weight: 700; flex-shrink: 0;">4</span>
-                  <span style="font-size: 0.75rem; font-weight: 600; color: #b1b4b6;">Apply for probate</span>
-                  <span class="s-tag s-tag-grey">HMCTS</span>
-                  <span class="s-tag s-tag-grey" style="margin-left: auto;">Locked</span>
-                </div>
-                <div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.35rem 0; border-bottom: 1px solid #f0f0f0;">
-                  <span style="width: 16px; height: 16px; border-radius: 50%; background: #e0dfde; display: inline-flex; align-items: center; justify-content: center; color: #b1b4b6; font-size: 0.55rem; font-weight: 700; flex-shrink: 0;">5</span>
-                  <span style="font-size: 0.75rem; font-weight: 600; color: #b1b4b6;">File IHT return</span>
-                  <span class="s-tag s-tag-grey">HMRC</span>
-                  <span class="s-tag s-tag-grey" style="margin-left: auto;">Locked</span>
-                </div>
-
-                <div style="font-size: 0.7rem; font-weight: 700; color: #505a5f; text-transform: uppercase; letter-spacing: 0.06em; margin: 0.75rem 0 0.5rem;">Financial &amp; Administrative</div>
-
-                <div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.35rem 0; border-bottom: 1px solid #f0f0f0;">
-                  <span style="width: 16px; height: 16px; border-radius: 50%; background: #1d70b8; display: inline-flex; align-items: center; justify-content: center; color: #fff; font-size: 0.55rem; font-weight: 700; flex-shrink: 0;">6</span>
-                  <span style="font-size: 0.75rem; font-weight: 600;">Notify BT Pension Scheme</span>
-                  <span class="s-tag s-tag-grey">BT</span>
-                  <span class="s-tag s-tag-green" style="margin-left: auto;">Available</span>
-                </div>
-                <div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.35rem 0;">
-                  <span style="width: 16px; height: 16px; border-radius: 50%; background: #1d70b8; display: inline-flex; align-items: center; justify-content: center; color: #fff; font-size: 0.55rem; font-weight: 700; flex-shrink: 0;">7</span>
-                  <span style="font-size: 0.75rem; font-weight: 600;">Cancel David&rsquo;s driving licence</span>
-                  <span class="s-tag s-tag-blue">DVLA</span>
-                  <span class="s-tag s-tag-green" style="margin-left: auto;">Available</span>
-                </div>
-
-                <hr class="s-divider" />
-                <div style="display: flex; align-items: center; gap: 0.5rem;">
-                  <span style="font-size: 0.7rem; color: #505a5f;">1 of 8 services</span>
-                  <div class="s-bar-track" style="flex: 1;">
-                    <div class="s-bar-fill" style="width: 13%; background: #00703c;"></div>
-                  </div>
-                  <span style="font-size: 0.7rem; font-weight: 700;">13%</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Step 3: Consent -->
-        <div class="step-block">
-          <span class="step-label">Step 3</span>
-          <h3 class="step-title">Consent</h3>
-          <p class="step-narrative">Before acting on any service, the agent asks Sarah to consent to each specific data-sharing event. She sees what data, from what source, going to whom, and for what purpose.</p>
-
-          <div class="snippet snippet-wide">
-            <div class="snippet-label">Consent &mdash; Bereavement Support Payment</div>
-            <div class="snippet-body">
-              <div class="s-panel">
-                <div class="s-header">
-                  <div class="s-icon" style="background: #912b88;">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                  </div>
-                  <div>
-                    <div class="s-title">Data sharing consent</div>
-                    <div class="s-subtitle">DWP &mdash; Bereavement Support Payment</div>
-                  </div>
-                </div>
-                <div class="s-desc">DWP needs access to the following to process your Bereavement Support Payment.</div>
-
-                <div class="consent-grant">
-                  <div class="consent-grant-title">Verify your identity using GOV.UK One Login</div>
-                  <div style="display: flex; gap: 0.35rem; flex-wrap: wrap; margin-bottom: 0.25rem;">
-                    <span class="s-required">Required</span>
-                  </div>
-                  <div class="consent-grant-meta">Data: full name, date of birth, NI number &nbsp;&middot;&nbsp; Source: One Login</div>
-                  <div class="consent-grant-actions">
-                    <span class="s-btn s-btn-green">I agree</span>
-                    <span class="s-btn s-btn-outline">No thanks</span>
-                  </div>
-                </div>
-
-                <div class="consent-grant">
-                  <div class="consent-grant-title">Share death registration details with DWP</div>
-                  <div style="display: flex; gap: 0.35rem; flex-wrap: wrap; margin-bottom: 0.25rem;">
-                    <span class="s-required">Required</span>
-                  </div>
-                  <div class="consent-grant-meta">Data: deceased name, date of death, death certificate ref &nbsp;&middot;&nbsp; Source: General Register Office</div>
-                  <div class="consent-grant-actions">
-                    <span class="s-btn s-btn-green">I agree</span>
-                    <span class="s-btn s-btn-outline">No thanks</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Step 4: Card -->
-        <div class="step-block">
-          <span class="step-label">Step 4</span>
-          <h3 class="step-title">Card</h3>
-          <p class="step-narrative">The agent collects the remaining details. Verified fields from One Login and GRO are pre-filled and locked. Sarah only provides what is genuinely new.</p>
+          <h3 class="step-title">The agent presents a plan &mdash; Sarah reviews and consents</h3>
+          <p class="step-narrative">The agent proposes a bereavement plan ordered by dependency and urgency. Sarah reviews the plan and consents to each data-sharing event before anything is submitted. She sees exactly what data, from what source, going to whom, and for what purpose.</p>
 
           <div class="snippet">
-            <div class="snippet-label">Data collection &mdash; BSP claim</div>
+            <div class="snippet-label">Service plan &mdash; Bereavement</div>
             <div class="snippet-body">
-              <div class="s-panel">
-                <div class="s-field">
-                  <div class="s-field-label">Full name <span class="s-verified">Verified</span></div>
-                  <div class="s-field-input readonly">Sarah Grace Okafor</div>
-                </div>
-                <div class="s-field">
-                  <div class="s-field-label">National Insurance number <span class="s-verified">Verified</span></div>
-                  <div class="s-field-input readonly" style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem;">SO 14 09 67 A</div>
-                </div>
-                <div class="s-field">
-                  <div class="s-field-label">Date of partner&rsquo;s death <span class="s-verified">Verified &middot; GRO</span></div>
-                  <div class="s-field-input readonly">26/02/2026</div>
-                </div>
-                <div class="s-field">
-                  <div class="s-field-label">Relationship to deceased</div>
-                  <div class="s-field-input">Spouse</div>
-                </div>
-                <div class="s-field">
-                  <div class="s-field-label">Bank sort code</div>
-                  <div class="s-field-input" style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem;">60-14-33</div>
-                </div>
-                <div class="s-field">
-                  <div class="s-field-label">Bank account number</div>
-                  <div class="s-field-input" style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem;">45678901</div>
-                </div>
-                <div style="margin-top: 0.75rem;">
-                  <span class="s-btn s-btn-green">Confirm details</span>
-                </div>
-              </div>
-            </div>
+  <div style="background:#fff;padding:0;overflow:hidden;">
+    <!-- Completed service -->
+    <div style="display:flex;align-items:flex-start;gap:0.65rem;padding:0.7rem 0.75rem;border-bottom:1px solid #f3f2f1;">
+      <div style="width:28px;height:28px;border-radius:50%;background:#00703c;color:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      <div style="flex:1;min-width:0;">
+        <div style="font-size:0.78rem;font-weight:700;color:#0b0c0c;line-height:1.3;">Register the death</div>
+        <div style="font-size:0.7rem;font-weight:500;color:#505a5f;margin-top:1px;">General Register Office</div>
+      </div>
+      <span style="font-size:0.6rem;font-weight:600;padding:0.15rem 0.45rem;border-radius:2rem;background:#e6f3ec;color:#00703c;white-space:nowrap;margin-top:2px;">Done</span>
+    </div>
+    <!-- Available service -->
+    <div style="display:flex;align-items:flex-start;gap:0.65rem;padding:0.7rem 0.75rem;border-bottom:1px solid #f3f2f1;">
+      <div style="width:28px;height:28px;border-radius:50%;background:#1d70b8;color:#fff;display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:700;flex-shrink:0;margin-top:1px;">2</div>
+      <div style="flex:1;min-width:0;">
+        <div style="font-size:0.78rem;font-weight:700;color:#0b0c0c;line-height:1.3;">Tell Us Once</div>
+        <div style="font-size:0.7rem;font-weight:500;color:#505a5f;margin-top:1px;">DWP</div>
+        <div style="display:flex;align-items:center;gap:0.3rem;font-size:0.6rem;font-weight:500;color:#505a5f;border-top:1px solid #f3f2f1;padding-top:4px;margin-top:6px;">
+          <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#1d70b8" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+          <span style="color:#1d70b8;font-weight:600;">Agent will notify 9 departments</span>
+          <span style="margin-left:auto;">~5 min</span>
+        </div>
+      </div>
+      <span style="font-size:0.6rem;font-weight:600;padding:0.2rem 0.5rem;border-radius:2rem;background:#eff6ff;color:#1d70b8;white-space:nowrap;margin-top:2px;">Delegate</span>
+    </div>
+    <!-- Available service -->
+    <div style="display:flex;align-items:flex-start;gap:0.65rem;padding:0.7rem 0.75rem;border-bottom:1px solid #f3f2f1;">
+      <div style="width:28px;height:28px;border-radius:50%;background:#1d70b8;color:#fff;display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:700;flex-shrink:0;margin-top:1px;">3</div>
+      <div style="flex:1;min-width:0;">
+        <div style="font-size:0.78rem;font-weight:700;color:#0b0c0c;line-height:1.3;">Bereavement Support Payment</div>
+        <div style="font-size:0.7rem;font-weight:500;color:#505a5f;margin-top:1px;">DWP</div>
+        <div style="display:flex;align-items:center;gap:0.3rem;font-size:0.6rem;font-weight:500;color:#505a5f;border-top:1px solid #f3f2f1;padding-top:4px;margin-top:6px;">
+          <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#1d70b8" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+          <span style="color:#1d70b8;font-weight:600;">Agent will check eligibility and apply</span>
+          <span style="margin-left:auto;">~10 min</span>
+        </div>
+      </div>
+      <span style="font-size:0.6rem;font-weight:600;padding:0.2rem 0.5rem;border-radius:2rem;background:#eff6ff;color:#1d70b8;white-space:nowrap;margin-top:2px;">Delegate</span>
+    </div>
+    <!-- Locked service -->
+    <div style="display:flex;align-items:flex-start;gap:0.65rem;padding:0.7rem 0.75rem;border-bottom:1px solid #f3f2f1;opacity:0.6;">
+      <div style="width:28px;height:28px;border-radius:50%;background:#e5e7eb;color:#9ca3af;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      </div>
+      <div style="flex:1;min-width:0;">
+        <div style="font-size:0.78rem;font-weight:700;color:#0b0c0c;line-height:1.3;">Apply for probate</div>
+        <div style="font-size:0.7rem;font-weight:500;color:#505a5f;margin-top:1px;">HMCTS</div>
+        <div style="display:flex;align-items:center;gap:0.3rem;font-size:0.6rem;font-weight:500;color:#505a5f;border-top:1px solid #f3f2f1;padding-top:4px;margin-top:6px;">
+          <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          <span>Requires: Register the death</span>
+        </div>
+      </div>
+    </div>
+    <!-- Locked service -->
+    <div style="display:flex;align-items:flex-start;gap:0.65rem;padding:0.7rem 0.75rem;border-bottom:1px solid #f3f2f1;opacity:0.6;">
+      <div style="width:28px;height:28px;border-radius:50%;background:#e5e7eb;color:#9ca3af;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      </div>
+      <div style="flex:1;min-width:0;">
+        <div style="font-size:0.78rem;font-weight:700;color:#0b0c0c;line-height:1.3;">File IHT return</div>
+        <div style="font-size:0.7rem;font-weight:500;color:#505a5f;margin-top:1px;">HMRC</div>
+        <div style="display:flex;align-items:center;gap:0.3rem;font-size:0.6rem;font-weight:500;color:#505a5f;border-top:1px solid #f3f2f1;padding-top:4px;margin-top:6px;">
+          <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          <span>Requires: Apply for probate</span>
+        </div>
+      </div>
+    </div>
+    <!-- Delegate all button -->
+    <div style="padding:0.6rem 0.75rem;">
+      <div style="background:#00703c;color:#fff;text-align:center;padding:0.55rem 1rem;font-size:0.78rem;font-weight:700;border-radius:2rem;cursor:pointer;">
+        Delegate all to agent
+      </div>
+    </div>
+  </div>
+</div>
           </div>
         </div>
 
-        <!-- Step 5: Task confirmation -->
+        <!-- Step 3: Data collection and submission -->
         <div class="step-block">
-          <span class="step-label">Step 5</span>
-          <h3 class="step-title">Task Confirmation</h3>
-          <p class="step-narrative">Before submission, Sarah sees exactly what the agent will do. Nothing is sent without her explicit approval.</p>
+          <span class="step-label">Step 3</span>
+          <h3 class="step-title">The agent collects data and submits on her behalf</h3>
+          <p class="step-narrative">Verified fields from One Login and GRO are pre-filled and locked &mdash; Sarah only provides what is genuinely new, such as bank details for payment. Before submission, she sees exactly what the agent will do and confirms. Nothing is sent without her explicit approval.</p>
 
-          <div class="snippet snippet-wide task-confirm">
-            <div class="snippet-label">Confirm before submitting</div>
-            <div class="snippet-body">
-              <div class="s-panel">
-                <div class="s-desc" style="font-weight: 600; color: #0b0c0c; margin-bottom: 0.75rem;">The agent will:</div>
-
-                <div class="task-item">
-                  <span class="task-item-action">Submit BSP claim to DWP</span>
-                  <span class="task-change">Change</span>
-                </div>
-                <hr class="s-divider" />
-                <div class="task-item">
-                  <span class="task-item-action">Notify DWP of David&rsquo;s death via Tell Us Once</span>
-                  <span class="task-change">Change</span>
-                </div>
-
-                <hr class="s-divider" />
-                <div class="s-desc" style="font-weight: 600; color: #0b0c0c; margin-top: 0.5rem; margin-bottom: 0.5rem;">Your choices:</div>
-
-                <div class="task-item">
-                  <span class="task-item-action">Payment to NatWest account ending 8901</span>
-                  <span class="task-change">Change</span>
-                </div>
-
-                <div style="margin-top: 0.75rem;">
-                  <span class="s-btn s-btn-green">Confirm and continue</span>
-                </div>
-              </div>
-            </div>
-          </div>
+          <p class="step-narrative">Behind the scenes, every recommendation is traceable to published rules. Sarah and auditors can see why the agent made each decision &mdash; for example, that it prioritised the BSP claim because of a 3-month deadline, or that it referred her to HMCTS for probate because the estate value requires it.</p>
         </div>
 
-        <!-- Step 6: Outcome -->
+        <!-- Step 4: Receipts and transparency -->
         <div class="step-block">
-          <span class="step-label">Step 6</span>
-          <h3 class="step-title">Outcome</h3>
-          <p class="step-narrative">DWP confirms the BSP claim. Sarah sees the result immediately, branded to the department that owns the service.</p>
+          <span class="step-label">Step 4</span>
+          <h3 class="step-title">Sarah receives receipts and can see exactly what was done</h3>
+          <p class="step-narrative">Every action the agent takes is receipted with a permanent, auditable record: what was submitted, to whom, when, what data was shared, and the outcome. These receipts are independently verifiable by Sarah, departments, and auditors.</p>
 
-          <div class="snippet snippet-wide">
-            <div class="snippet-label">Outcome &mdash; BSP claim accepted</div>
-            <div class="snippet-body">
-              <div class="s-panel">
-                <div class="s-outcome-dept" style="border-left-color: #00703c; margin: 0; padding-left: 0.75rem;">
-                  <svg width="14" height="12" viewBox="0 0 64 60" fill="#0b0c0c"><circle cx="20" cy="17.6" r="3.7"/><circle cx="10.2" cy="23.5" r="3.7"/><circle cx="3.7" cy="33.2" r="3.7"/><circle cx="31.7" cy="30.6" r="3.7"/><circle cx="43.3" cy="17.6" r="3.7"/><circle cx="53.2" cy="23.5" r="3.7"/><circle cx="59.7" cy="33.2" r="3.7"/></svg>
-                  <span style="font-weight: 600;">Department for Work and Pensions</span>
-                </div>
-
-                <div style="margin-top: 0.75rem;">
-                  <div class="s-title" style="font-size: 0.95rem; margin-bottom: 0.5rem;">Bereavement Support Payment &mdash; claim accepted</div>
-                </div>
-
-                <div class="s-ref-bar">
-                  <span class="s-ref-label">Ref</span>
-                  <span class="s-ref-value">GOV-B4E2-91A3</span>
-                </div>
-
-                <div class="s-row">
-                  <span class="s-row-label">Lump sum</span>
-                  <span class="s-row-value" style="color: #00703c; font-size: 1.1rem;">&pound;3,500</span>
-                </div>
-                <div class="s-row">
-                  <span class="s-row-label">Monthly payments</span>
-                  <span class="s-row-value">&pound;350 for 18 months</span>
-                </div>
-                <div class="s-row">
-                  <span class="s-row-label">First payment</span>
-                  <span class="s-row-value">15 April 2026</span>
-                </div>
-
-                <hr class="s-divider" />
-
-                <div class="s-status-badge" style="background: #e6f3ec; color: #00703c;">
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#00703c" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
-                  Payment scheduled to your bank account
-                </div>
-
-                <div style="margin-top: 0.5rem; font-size: 0.65rem; color: #b1b4b6;">Issued: 22 March 2026</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Step 7: Receipt -->
-        <div class="step-block">
-          <span class="step-label">Step 7</span>
-          <h3 class="step-title">Receipt</h3>
-          <p class="step-narrative">Sarah has a permanent, auditable record of every action the agent took on her behalf. This receipt is independently verifiable.</p>
-
-          <div class="snippet snippet-wide">
+          <div class="snippet">
             <div class="snippet-label">Receipt &mdash; BSP submission</div>
             <div class="snippet-body">
               <div class="s-panel">
@@ -1340,12 +1336,16 @@
                   <span class="s-row-value">Submitted BSP claim to DWP</span>
                 </div>
                 <div class="s-row">
-                  <span class="s-row-label">Capability</span>
-                  <span class="s-row-value s-mono">apply-bereavement-support-payment</span>
-                </div>
-                <div class="s-row">
                   <span class="s-row-label">Outcome</span>
                   <span class="s-tag s-tag-green" style="font-weight: 600;">success</span>
+                </div>
+                <div class="s-row">
+                  <span class="s-row-label">Lump sum</span>
+                  <span class="s-row-value" style="color: #00703c;">&pound;3,500</span>
+                </div>
+                <div class="s-row">
+                  <span class="s-row-label">Monthly payments</span>
+                  <span class="s-row-value">&pound;350 for 18 months</span>
                 </div>
                 <div class="s-row">
                   <span class="s-row-label">Timestamp</span>
@@ -1362,29 +1362,8 @@
                   <span class="s-tag s-tag-purple">bank details</span>
                 </div>
 
-                <hr class="s-divider" />
-
-                <div class="s-row">
-                  <span class="s-row-label">Receipt ID</span>
-                  <span class="s-row-value s-mono">rcpt-b4e2-91a3-f7c2</span>
-                </div>
               </div>
             </div>
-          </div>
-        </div>
-
-        <!-- Step 8: Agent Reasoning -->
-        <div class="step-block">
-          <span class="step-label">Step 8</span>
-          <h3 class="step-title">Agent Reasoning</h3>
-          <p class="step-narrative">Behind the scenes, Sarah and auditors can see why the agent made each decision. This is not a black box &mdash; every recommendation is traceable to published rules.</p>
-
-          <div class="dark-panel">
-            <h4>Agent Reasoning</h4>
-            <p>Sarah&rsquo;s husband David died on 26 February 2026. She is named executor in the will. The death has been registered with GRO.</p>
-            <p><strong style="color: #7dd3fc;">BSP eligibility:</strong> Sarah was married to David and is under State Pension age. The claim must be made within 3 months of the date of death (deadline: 26 May 2026). I will prioritise this.</p>
-            <p><strong style="color: #7dd3fc;">Estate:</strong> Value (~&pound;645,000) exceeds the nil-rate band (&pound;325,000) but the residence nil-rate band (&pound;175,000) applies as the property passes to direct descendants. Combined threshold: &pound;500,000. Potential IHT liability on &pound;145,000 &mdash; Sarah should be referred to HMCTS for probate and HMRC for IHT return.</p>
-            <p><strong style="color: #7dd3fc;">Tell Us Once:</strong> Will notify DVLA, HMRC, DWP Pensions, and local council in a single step.</p>
           </div>
         </div>
 
@@ -1392,12 +1371,12 @@
     </div>
 
     <!-- ══════════════════════════════════════════════════════════ -->
-    <!-- Section 4: The Four Artefacts                             -->
+    <!-- Section 5: The Four Artefacts                             -->
     <!-- ══════════════════════════════════════════════════════════ -->
-    <div class="section section-alt" id="four-artefacts">
+    <div class="section" id="four-artefacts">
       <div class="container">
         <div class="section-heading">
-          <span class="section-number">4</span>
+          <span class="section-number">5</span>
           <h2>The Four Artefacts</h2>
         </div>
         <p class="section-intro">For a service to work through an agent, the department must publish four structured descriptions. Together, these form the complete contract between a department and any agent acting on behalf of a citizen.</p>
@@ -1425,20 +1404,36 @@
           </div>
         </div>
 
-        <div class="code-block">
-          <div style="font-size: 0.7rem; color: #505a5f; margin-bottom: 0.5rem; font-weight: 600;">Example: DVLA Driving Licence Renewal &mdash; Manifest</div>
-          <pre>{
-  <span class="key">"name"</span>: <span class="str">"Renew Driving Licence"</span>,
-  <span class="key">"department"</span>: <span class="str">"DVLA"</span>,
-  <span class="key">"constraints"</span>: {
-    <span class="key">"sla"</span>: <span class="str">"10 working days"</span>,
-    <span class="key">"fee"</span>: { <span class="key">"amount"</span>: <span class="num">14</span>, <span class="key">"currency"</span>: <span class="str">"GBP"</span> }
-  },
-  <span class="key">"redress"</span>: {
-    <span class="key">"appeal_process"</span>: <span class="str">"Contact DVLA directly"</span>,
-    <span class="key">"ombudsman"</span>: <span class="str">"Parliamentary and Health Service Ombudsman"</span>
-  }
-}</pre>
+        <div style="margin-top: 1.5rem; max-width: 600px;">
+          <div style="font-size: 0.7rem; color: #505a5f; margin-bottom: 0.5rem; font-weight: 600;">Example: DVLA Driving Licence Renewal &mdash; what a manifest contains</div>
+          <table style="width: 100%; border-collapse: collapse; font-size: 0.85rem;">
+            <tbody>
+              <tr style="border-bottom: 1px solid #e0dfde;">
+                <td style="padding: 0.5rem 0.75rem; font-weight: 600; color: #0b0c0c; white-space: nowrap;">Service name</td>
+                <td style="padding: 0.5rem 0.75rem; color: #505a5f;">Renew Driving Licence</td>
+              </tr>
+              <tr style="border-bottom: 1px solid #e0dfde; background: #f8f8f8;">
+                <td style="padding: 0.5rem 0.75rem; font-weight: 600; color: #0b0c0c; white-space: nowrap;">Department</td>
+                <td style="padding: 0.5rem 0.75rem; color: #505a5f;">DVLA</td>
+              </tr>
+              <tr style="border-bottom: 1px solid #e0dfde;">
+                <td style="padding: 0.5rem 0.75rem; font-weight: 600; color: #0b0c0c; white-space: nowrap;">Eligibility criteria</td>
+                <td style="padding: 0.5rem 0.75rem; color: #505a5f;">Existing licence holder, meets medical requirements</td>
+              </tr>
+              <tr style="border-bottom: 1px solid #e0dfde; background: #f8f8f8;">
+                <td style="padding: 0.5rem 0.75rem; font-weight: 600; color: #0b0c0c; white-space: nowrap;">Required data fields</td>
+                <td style="padding: 0.5rem 0.75rem; color: #505a5f;">Full name, date of birth, driving licence number, address, photograph</td>
+              </tr>
+              <tr style="border-bottom: 1px solid #e0dfde;">
+                <td style="padding: 0.5rem 0.75rem; font-weight: 600; color: #0b0c0c; white-space: nowrap;">SLA</td>
+                <td style="padding: 0.5rem 0.75rem; color: #505a5f;">10 working days &nbsp;&middot;&nbsp; Fee: &pound;14</td>
+              </tr>
+              <tr>
+                <td style="padding: 0.5rem 0.75rem; font-weight: 600; color: #0b0c0c; white-space: nowrap;">Redress route</td>
+                <td style="padding: 0.5rem 0.75rem; color: #505a5f;">Contact DVLA directly, or Parliamentary and Health Service Ombudsman</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
 
         <div class="callout callout-green">
@@ -1448,35 +1443,35 @@
     </div>
 
     <!-- ══════════════════════════════════════════════════════════ -->
-    <!-- Section 5: The Deterministic Guarantee                    -->
+    <!-- Section 6: The Deterministic Guarantee                    -->
     <!-- ══════════════════════════════════════════════════════════ -->
-    <div class="section" id="deterministic-guarantee">
+    <div class="section section-alt" id="deterministic-guarantee">
       <div class="container">
         <div class="section-heading">
-          <span class="section-number">5</span>
+          <span class="section-number">6</span>
           <h2>The Deterministic Guarantee</h2>
         </div>
         <p class="section-intro">The safety architecture ensures that AI handles language while code handles rules. This is not a policy choice &mdash; it is an architectural constraint.</p>
 
         <!-- Pipeline diagram -->
         <div class="pipeline" style="flex-wrap: wrap; gap: 0.35rem;">
-          <div class="pipeline-box pipeline-box-orange">LLM</div>
+          <div class="pipeline-box pipeline-box-orange">AI (conversation)</div>
           <span class="pipeline-arrow">&rarr;</span>
           <div class="pipeline-box pipeline-box-green">Orchestrator</div>
           <span class="pipeline-arrow">&rarr;</span>
           <div style="display: flex; flex-wrap: wrap; gap: 0.35rem; align-items: center; padding: 0.5rem; border: 1.5px solid #00703c; border-radius: 6px; background: #f0faf4;">
-            <span style="font-size: 0.7rem; font-weight: 600; color: #00703c;">Policy Evaluator</span>
+            <span style="font-size: 0.7rem; font-weight: 600; color: #00703c;">Eligibility rules</span>
             <span style="color: #b1b4b6;">&middot;</span>
-            <span style="font-size: 0.7rem; font-weight: 600; color: #00703c;">State Machine</span>
+            <span style="font-size: 0.7rem; font-weight: 600; color: #00703c;">Service workflow</span>
             <span style="color: #b1b4b6;">&middot;</span>
-            <span style="font-size: 0.7rem; font-weight: 600; color: #00703c;">Consent Manager</span>
+            <span style="font-size: 0.7rem; font-weight: 600; color: #00703c;">Consent checks</span>
             <span style="color: #b1b4b6;">&middot;</span>
-            <span style="font-size: 0.7rem; font-weight: 600; color: #00703c;">Field Collector</span>
+            <span style="font-size: 0.7rem; font-weight: 600; color: #00703c;">Data collection</span>
           </div>
           <span class="pipeline-arrow">&rarr;</span>
-          <div class="pipeline-box pipeline-box-green">Capability Invoker</div>
+          <div class="pipeline-box pipeline-box-green">Secure submission</div>
           <span class="pipeline-arrow">&rarr;</span>
-          <div class="pipeline-box pipeline-box-green">Evidence Plane</div>
+          <div class="pipeline-box pipeline-box-green">Audit trail</div>
         </div>
         <div style="display: flex; gap: 1rem; justify-content: center; margin-top: 0.5rem; font-size: 0.75rem;">
           <span style="display: flex; align-items: center; gap: 0.35rem;"><span style="width: 10px; height: 10px; background: #f47738; border-radius: 2px; display: inline-block;"></span> AI (generates text)</span>
@@ -1490,7 +1485,7 @@
           </div>
           <div class="guarantee-card">
             <h3><span class="guarantee-number">2</span> Consent cannot be bypassed</h3>
-            <p>The <a href="glossary.html#state-model">state machine</a> requires consent-given before any data sharing. There is no valid transition without it.</p>
+            <p>The service workflow requires consent before any data sharing. There is no valid path forward without it.</p>
           </div>
           <div class="guarantee-card">
             <h3><span class="guarantee-number">3</span> Every action is traced</h3>
@@ -1505,12 +1500,12 @@
     </div>
 
     <!-- ══════════════════════════════════════════════════════════ -->
-    <!-- Section 6: Multi-User and Delegation                      -->
+    <!-- Section 7: Multi-User and Delegation                      -->
     <!-- ══════════════════════════════════════════════════════════ -->
-    <div class="section section-alt" id="delegation">
+    <div class="section" id="delegation">
       <div class="container">
         <div class="section-heading">
-          <span class="section-number">6</span>
+          <span class="section-number">7</span>
           <h2>Multi-User and Delegation</h2>
         </div>
         <p class="section-intro">Most government services are not used by a single individual acting alone. Parents act for children. Executors act for the deceased. Carers support vulnerable adults. The model handles these relationships natively.</p>
@@ -1559,12 +1554,12 @@
     </div>
 
     <!-- ══════════════════════════════════════════════════════════ -->
-    <!-- Section 7: Coverage and Gap Analysis                      -->
+    <!-- Section 8: Coverage and Gap Analysis                      -->
     <!-- ══════════════════════════════════════════════════════════ -->
-    <div class="section" id="coverage">
+    <div class="section section-alt" id="coverage">
       <div class="container">
         <div class="section-heading">
-          <span class="section-number">7</span>
+          <span class="section-number">8</span>
           <h2>Coverage and Gap Analysis</h2>
         </div>
         <p class="section-intro">Every government service has been catalogued. The Legibility Studio shows departments which services are covered, which have gaps, and where to start.</p>
@@ -1618,6 +1613,8 @@
           </div>
         </div>
 
+        <p style="font-size: 0.95rem; color: #505a5f; max-width: 700px; margin-top: 1.5rem;">Coverage today stands at 2% &mdash; early and deliberate. The 28 services with full artefacts were chosen because they cover the highest-impact life events: bereavement, having a child, becoming a carer. Authoring artefacts for a service takes days, not months &mdash; the work is describing rules departments already know, not building new systems. Once the model is proven with these initial services, coverage is designed to scale rapidly across departments.</p>
+
         <div class="callout callout-blue">
           Your department&rsquo;s services are already catalogued. We can show you which ones citizens use most, which life events they belong to, and the recommended order for making them legible.
         </div>
@@ -1625,20 +1622,20 @@
     </div>
 
     <!-- ══════════════════════════════════════════════════════════ -->
-    <!-- Section 8: Risks Addressed                                -->
+    <!-- Section 9: Risks and Inclusion                            -->
     <!-- ══════════════════════════════════════════════════════════ -->
-    <div class="section section-alt" id="risks">
+    <div class="section" id="risks">
       <div class="container">
         <div class="section-heading">
-          <span class="section-number">8</span>
-          <h2>Risks Addressed</h2>
+          <span class="section-number">9</span>
+          <h2>Risks and Inclusion</h2>
         </div>
         <p class="section-intro">The most common objections, and how the architecture addresses each one.</p>
 
         <div class="risk-list">
           <div class="risk-item">
             <div class="risk-objection">"What if the AI hallucinates?"</div>
-            <div class="risk-response">Eligibility and consent are deterministic code. The AI writes sentences; code makes decisions. A hallucinated eligibility result cannot pass through the <a href="glossary.html#policy-evaluator">Policy Evaluator</a>.</div>
+            <div class="risk-response">Eligibility and consent are deterministic code. The AI writes sentences; code makes decisions. A hallucinated eligibility result cannot pass through the eligibility rules layer.</div>
           </div>
           <div class="risk-item">
             <div class="risk-objection">"What about accountability?"</div>
@@ -1662,7 +1659,7 @@
           </div>
         </div>
 
-        <div class="snippet snippet-wide" style="margin-top: 2rem;">
+        <div class="snippet" style="margin-top: 2rem;">
           <div class="snippet-label">Handoff &mdash; escalation to HMCTS</div>
           <div class="snippet-body">
             <div class="s-panel">
@@ -1688,16 +1685,25 @@
             </div>
           </div>
         </div>
+
+        <!-- Digital inclusion -->
+        <h3 style="margin-top: 2.5rem; margin-bottom: 0.75rem;">Digital inclusion and accessibility</h3>
+        <ul style="list-style: none; margin: 0; padding: 0;">
+          <li style="padding: 0.5rem 0; border-bottom: 1px solid #e0dfde; font-size: 0.9rem; padding-left: 1.25rem; position: relative;"><span style="position: absolute; left: 0; top: 0.75rem; width: 8px; height: 8px; border-radius: 50%; background: #1d70b8;"></span>The agent model does not replace existing channels &mdash; GOV.UK, phone lines, and face-to-face services remain available as they are today</li>
+          <li style="padding: 0.5rem 0; border-bottom: 1px solid #e0dfde; font-size: 0.9rem; padding-left: 1.25rem; position: relative;"><span style="position: absolute; left: 0; top: 0.75rem; width: 8px; height: 8px; border-radius: 50%; background: #1d70b8;"></span>Assisted digital support: a caseworker or trusted person can use the agent on behalf of a citizen, with full audit trail</li>
+          <li style="padding: 0.5rem 0; border-bottom: 1px solid #e0dfde; font-size: 0.9rem; padding-left: 1.25rem; position: relative;"><span style="position: absolute; left: 0; top: 0.75rem; width: 8px; height: 8px; border-radius: 50%; background: #1d70b8;"></span>The system is designed to meet WCAG 2.2 AA accessibility standards</li>
+          <li style="padding: 0.5rem 0; font-size: 0.9rem; padding-left: 1.25rem; position: relative;"><span style="position: absolute; left: 0; top: 0.75rem; width: 8px; height: 8px; border-radius: 50%; background: #1d70b8;"></span>This is an additional channel, not a replacement &mdash; it widens access rather than narrowing it</li>
+        </ul>
       </div>
     </div>
 
     <!-- ══════════════════════════════════════════════════════════ -->
-    <!-- Section 9: What We Are Asking For                         -->
+    <!-- Section 10: What We Are Asking For                        -->
     <!-- ══════════════════════════════════════════════════════════ -->
-    <div class="section" id="ask">
+    <div class="section section-alt" id="ask">
       <div class="container">
         <div class="section-heading">
-          <span class="section-number">9</span>
+          <span class="section-number">10</span>
           <h2>What We Are Asking For</h2>
         </div>
         <p class="section-intro">Three concrete requests. Each is within an individual department&rsquo;s authority to grant.</p>
@@ -1719,6 +1725,26 @@
             <p>A named senior leader owning legibility for the department. Access to the Legibility Studio and a small team to author artefacts. This is weeks of work, not months.</p>
           </div>
         </div>
+
+        <!-- Timeline -->
+        <h3 style="margin-top: 2.5rem; margin-bottom: 1rem;">Indicative timeline</h3>
+        <div style="display: flex; gap: 0; margin-bottom: 1.5rem; max-width: 700px;">
+          <div style="flex: 1; padding: 1rem; background: #e6f3ec; border-left: 4px solid #00703c; border-radius: 0;">
+            <div style="font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: #00703c; margin-bottom: 0.25rem;">Phase 1</div>
+            <div style="font-size: 0.85rem; font-weight: 600; color: #0b0c0c; margin-bottom: 0.15rem;">Pilot</div>
+            <div style="font-size: 0.8rem; color: #505a5f;">3&ndash;5 services per department. Artefact authoring, integration, and live testing. Months, not years.</div>
+          </div>
+          <div style="flex: 1; padding: 1rem; background: #e8f0fe; border-left: 4px solid #1d70b8; border-radius: 0;">
+            <div style="font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: #1d70b8; margin-bottom: 0.25rem;">Phase 2</div>
+            <div style="font-size: 0.85rem; font-weight: 600; color: #0b0c0c; margin-bottom: 0.15rem;">Life-event coverage</div>
+            <div style="font-size: 0.8rem; color: #505a5f;">Expand to full life-event coverage based on pilot learning. Priority by citizen impact.</div>
+          </div>
+          <div style="flex: 1; padding: 1rem; background: #f5e6f4; border-left: 4px solid #912b88; border-radius: 0;">
+            <div style="font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: #912b88; margin-bottom: 0.25rem;">Phase 3</div>
+            <div style="font-size: 0.85rem; font-weight: 600; color: #0b0c0c; margin-bottom: 0.15rem;">Cross-departmental scale</div>
+            <div style="font-size: 0.8rem; color: #505a5f;">Full cross-departmental integration. Agents navigate services across all departments seamlessly.</div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -1736,5 +1762,219 @@
       </div>
     </footer>
 
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <script>
+(function () {
+  var snippets = document.querySelectorAll('.snippet');
+  snippets.forEach(function (snippet) {
+    var label = snippet.querySelector('.snippet-label');
+    var body = snippet.querySelector('.snippet-body');
+    if (!body) return;
+
+    var dl = document.createElement('div');
+    dl.className = 'snippet-dl';
+
+    var pngBtn = document.createElement('button');
+    pngBtn.className = 'snippet-dl-btn';
+    pngBtn.textContent = 'PNG';
+    pngBtn.title = 'Download as image';
+
+    var tblBtn = document.createElement('button');
+    tblBtn.className = 'snippet-dl-btn';
+    tblBtn.textContent = 'Table';
+    tblBtn.title = 'Download as HTML table';
+
+    dl.appendChild(pngBtn);
+    dl.appendChild(tblBtn);
+    snippet.appendChild(dl);
+
+    function slugify(text) {
+      return text.replace(/[^a-z0-9]+/gi, '-').replace(/^-|-$/g, '').toLowerCase();
+    }
+    var fileName = label ? slugify(label.textContent) : 'snippet';
+
+    pngBtn.addEventListener('click', function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      dl.style.display = 'none';
+      html2canvas(snippet, {
+        backgroundColor: null,
+        scale: 2,
+        useCORS: true,
+        logging: false
+      }).then(function (canvas) {
+        dl.style.display = '';
+        var link = document.createElement('a');
+        link.download = fileName + '.png';
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+      }).catch(function () {
+        dl.style.display = '';
+      });
+    });
+
+    tblBtn.addEventListener('click', function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      var title = label ? label.textContent.trim() : 'Snippet';
+      var rows = [];
+      var visited = new Set();
+      var items = body.querySelectorAll('[style*="display:flex"], [style*="display: flex"], tr, li');
+      if (items.length > 0) {
+        items.forEach(function (item) {
+          if (visited.has(item)) return;
+          var parent = item.parentElement;
+          while (parent && parent !== body) {
+            if (visited.has(parent)) return;
+            parent = parent.parentElement;
+          }
+          visited.add(item);
+          var texts = [];
+          item.querySelectorAll('div, span, td, th').forEach(function (el) {
+            var t = el.textContent.trim();
+            if (t && !texts.includes(t) && t.length < 200) texts.push(t);
+          });
+          if (texts.length > 0) rows.push(texts);
+        });
+      }
+      if (rows.length === 0) {
+        body.querySelectorAll('div, p, span').forEach(function (el) {
+          var t = el.textContent.trim();
+          if (t && t.length < 200 && el.children.length === 0) rows.push([t]);
+        });
+      }
+      var maxCols = 1;
+      rows.forEach(function (r) { if (r.length > maxCols) maxCols = r.length; });
+      var html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>' + title + '</title>';
+      html += '<style>body{font-family:Arial,sans-serif;padding:2rem;}table{border-collapse:collapse;width:100%;}';
+      html += 'th,td{border:1px solid #b1b4b6;padding:0.5rem 0.75rem;text-align:left;font-size:0.9rem;}';
+      html += 'th{background:#f3f2f1;font-weight:600;}caption{font-size:1.1rem;font-weight:700;margin-bottom:0.75rem;text-align:left;}</style></head>';
+      html += '<body><table><caption>' + title + '</caption><tbody>';
+      rows.forEach(function (r) {
+        html += '<tr>';
+        r.forEach(function (cell) { html += '<td>' + cell + '</td>'; });
+        for (var i = r.length; i < maxCols; i++) html += '<td></td>';
+        html += '</tr>';
+      });
+      html += '</tbody></table></body></html>';
+      var blob = new Blob([html], { type: 'text/html' });
+      var link = document.createElement('a');
+      link.download = fileName + '.html';
+      link.href = URL.createObjectURL(blob);
+      link.click();
+      URL.revokeObjectURL(link.href);
+    });
+  });
+})();
+    </script>
+
+    <script>
+    // ── Exportable icons, diagrams, and illustrations ──
+    (function () {
+      function makeExportable(el, name) {
+        el.classList.add('exportable');
+        var hint = document.createElement('div');
+        hint.className = 'export-hint';
+        hint.innerHTML = '&#8595;';
+        hint.title = 'Download as PNG';
+        el.appendChild(hint);
+        el.addEventListener('click', function (e) {
+          e.preventDefault();
+          e.stopPropagation();
+          hint.style.display = 'none';
+          el.style.outline = 'none';
+          html2canvas(el, { backgroundColor: null, scale: 3, useCORS: true, logging: false }).then(function (canvas) {
+            hint.style.display = '';
+            el.style.outline = '';
+            var link = document.createElement('a');
+            link.download = name + '.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+          }).catch(function () { hint.style.display = ''; el.style.outline = ''; });
+        });
+      }
+
+      // Icons with s-icon class
+      document.querySelectorAll('.s-icon').forEach(function (el, i) {
+        makeExportable(el, 'icon-' + (i + 1));
+      });
+
+      // Pipeline diagrams
+      document.querySelectorAll('.pipeline').forEach(function (el, i) {
+        var wrapper = document.createElement('div');
+        wrapper.className = 'pipeline-exportable';
+        el.parentNode.insertBefore(wrapper, el);
+        wrapper.appendChild(el);
+        var hint = document.createElement('div');
+        hint.className = 'export-hint';
+        hint.innerHTML = '&#8595;';
+        hint.title = 'Download as PNG';
+        wrapper.appendChild(hint);
+        wrapper.addEventListener('click', function (e) {
+          if (e.target.closest('a')) return;
+          e.preventDefault();
+          hint.style.display = 'none';
+          html2canvas(el, { backgroundColor: '#ffffff', scale: 3, useCORS: true, logging: false }).then(function (canvas) {
+            hint.style.display = '';
+            var link = document.createElement('a');
+            link.download = 'pipeline-diagram-' + (i + 1) + '.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+          }).catch(function () { hint.style.display = ''; });
+        });
+      });
+
+      // Stat rows
+      document.querySelectorAll('.stat-row, .gap-kpis').forEach(function (el, i) {
+        var wrapper = document.createElement('div');
+        wrapper.className = 'pipeline-exportable';
+        wrapper.style.display = 'block';
+        el.parentNode.insertBefore(wrapper, el);
+        wrapper.appendChild(el);
+        var hint = document.createElement('div');
+        hint.className = 'export-hint';
+        hint.innerHTML = '&#8595;';
+        hint.title = 'Download as PNG';
+        wrapper.appendChild(hint);
+        wrapper.addEventListener('click', function (e) {
+          hint.style.display = 'none';
+          html2canvas(el, { backgroundColor: '#ffffff', scale: 3, useCORS: true, logging: false }).then(function (canvas) {
+            hint.style.display = '';
+            var link = document.createElement('a');
+            link.download = 'stats-' + (i + 1) + '.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+          }).catch(function () { hint.style.display = ''; });
+        });
+      });
+
+      // Feature, pillar, guarantee, artefact, and ask cards
+      document.querySelectorAll('.feature-card, .pillar-card, .guarantee-card, .artefact-card, .ask-card').forEach(function (el) {
+        var wrapper = document.createElement('div');
+        wrapper.className = 'pipeline-exportable';
+        wrapper.style.display = 'block';
+        el.parentNode.insertBefore(wrapper, el);
+        wrapper.appendChild(el);
+        var hint = document.createElement('div');
+        hint.className = 'export-hint';
+        hint.innerHTML = '&#8595;';
+        hint.title = 'Download as PNG';
+        wrapper.appendChild(hint);
+        var h3 = el.querySelector('h3');
+        var name = h3 ? h3.textContent.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-') : 'card';
+        wrapper.addEventListener('click', function (e) {
+          if (e.target.closest('a')) return;
+          hint.style.display = 'none';
+          html2canvas(el, { backgroundColor: '#ffffff', scale: 3, useCORS: true, logging: false }).then(function (canvas) {
+            hint.style.display = '';
+            var link = document.createElement('a');
+            link.download = name + '.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+          }).catch(function () { hint.style.display = ''; });
+        });
+      });
+    })();
+    </script>
   </body>
 </html>

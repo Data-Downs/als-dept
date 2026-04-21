@@ -117,6 +117,85 @@
       .pill-all { border-color: #505a5f; color: #505a5f; background: #f3f2f1; }
       .pill-all.active, .pill-all:hover { background: #505a5f; color: #fff; }
 
+      /* ── Filter bar ── */
+      .filter-bar {
+        background: #fff;
+        border-bottom: 1px solid #d2d2d2;
+        padding: 0.75rem 0;
+        position: sticky;
+        top: 41px; /* below nav */
+        z-index: 99;
+        transition: box-shadow 0.2s;
+      }
+      .filter-bar.scrolled { box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+      .filter-bar .container {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+      }
+      .filter-label {
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: #505a5f;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        white-space: nowrap;
+      }
+      .filter-btn {
+        font-size: 0.8rem;
+        font-weight: 600;
+        padding: 0.4rem 1rem;
+        border-radius: 2rem;
+        border: 2px solid;
+        cursor: pointer;
+        transition: all 0.2s;
+        background: transparent;
+        font-family: inherit;
+      }
+      .filter-btn:hover { transform: translateY(-1px); }
+      .filter-btn[data-filter="all"] { border-color: #505a5f; color: #505a5f; }
+      .filter-btn[data-filter="all"].active { background: #505a5f; color: #fff; }
+      .filter-btn[data-filter="exec"] { border-color: #1d70b8; color: #1d70b8; }
+      .filter-btn[data-filter="exec"].active { background: #1d70b8; color: #fff; }
+      .filter-btn[data-filter="product"] { border-color: #912b88; color: #912b88; }
+      .filter-btn[data-filter="product"].active { background: #912b88; color: #fff; }
+      .filter-btn[data-filter="tech"] { border-color: #00703c; color: #00703c; }
+      .filter-btn[data-filter="tech"].active { background: #00703c; color: #fff; }
+      .filter-count {
+        font-size: 0.8rem;
+        color: #505a5f;
+        margin-left: auto;
+        white-space: nowrap;
+      }
+
+      /* ── Entry transitions for filtering ── */
+      .entry {
+        transition: opacity 0.25s, max-height 0.3s ease, padding 0.3s ease, margin 0.3s ease;
+        overflow: hidden;
+      }
+      .entry.hidden-by-filter {
+        opacity: 0;
+        max-height: 0;
+        padding-top: 0;
+        padding-bottom: 0;
+        border-top-color: transparent;
+        margin: 0;
+        pointer-events: none;
+      }
+      .toc-group li {
+        transition: opacity 0.2s;
+      }
+      .toc-group li.hidden-by-filter {
+        opacity: 0.3;
+      }
+      .group-section {
+        transition: opacity 0.3s;
+      }
+      .group-section.all-hidden .group-header {
+        opacity: 0.3;
+      }
+
       /* ── TOC ── */
       .toc {
         display: grid;
@@ -199,7 +278,7 @@
         border: 1px solid #d2d2d2;
         border-radius: 6px;
         overflow: hidden;
-        max-width: 480px;
+        max-width: 375px;
         background: #fff;
         box-shadow: 0 2px 8px rgba(0,0,0,0.06);
       }
@@ -485,7 +564,108 @@
           to { opacity: 1; transform: translateY(0); }
         }
       }
+
+      /* ── Snippet download controls ── */
+      .snippet {
+        position: relative;
+      }
+      .snippet-dl {
+        position: absolute;
+        top: 6px;
+        right: 6px;
+        display: flex;
+        gap: 2px;
+        opacity: 0;
+        transition: opacity 0.2s;
+        z-index: 10;
+      }
+      .snippet:hover .snippet-dl,
+      .snippet:focus-within .snippet-dl {
+        opacity: 1;
+      }
+      .snippet-dl-btn {
+        font-family: "Inter", Arial, sans-serif;
+        font-size: 0.6rem;
+        font-weight: 600;
+        padding: 0.2rem 0.5rem;
+        border-radius: 3px;
+        border: 1px solid #b1b4b6;
+        background: #fff;
+        color: #505a5f;
+        cursor: pointer;
+        transition: all 0.15s;
+        line-height: 1;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+      }
+      .snippet-dl-btn:hover {
+        background: #f3f2f1;
+        border-color: #505a5f;
+        color: #0b0c0c;
+      }
+
+      /* ── Exportable icon overlay ── */
+      .exportable {
+        position: relative;
+        cursor: pointer;
+      }
+      .exportable .export-hint {
+        position: absolute;
+        top: -4px;
+        right: -4px;
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background: #505a5f;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 8px;
+        font-weight: 700;
+        opacity: 0;
+        transition: opacity 0.2s;
+        pointer-events: none;
+        z-index: 5;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+      }
+      .exportable:hover .export-hint {
+        opacity: 1;
+      }
+      .exportable:hover {
+        outline: 2px dashed #b1b4b6;
+        outline-offset: 3px;
+        border-radius: 8px;
+      }
+      .pipeline-exportable {
+        position: relative;
+        display: inline-block;
+      }
+      .pipeline-exportable .export-hint {
+        position: absolute;
+        top: -8px;
+        right: -8px;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: #505a5f;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 8px;
+        font-weight: 700;
+        opacity: 0;
+        transition: opacity 0.2s;
+        cursor: pointer;
+        z-index: 5;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+      }
+      .pipeline-exportable:hover .export-hint {
+        opacity: 1;
+      }
     </style>
+    <script async defer src="https://scripts.withcabin.com/hello.js"></script>
   </head>
   <body>
 
@@ -494,11 +674,12 @@
       <div class="container">
         <span class="nav-brand">Agentic Legibility Stack</span>
         <ul class="nav-links">
-          <li><a href="index.html">Overview</a></li>
-          <li><a href="departments.html">Departments</a></li>
-          <li><a href="personas.html">Personas</a></li>
-          <li><a href="briefing.html">Briefing</a></li>
-          <li><a href="glossary.html" style="color:#1d70b8;font-weight:700;">Glossary</a></li>
+          <li><a href="index.html">All documents</a></li>
+          <li><a href="overview.html">Overview</a></li>
+          <li><a href="briefing-executive.html">Executive briefing</a></li>
+          <li><a href="guide-product.html">Product guide</a></li>
+          <li><a href="reference-technical.html">Technical reference</a></li>
+          <li><a href="glossary.html" class="active">Glossary</a></li>
         </ul>
       </div>
     </nav>
@@ -527,6 +708,18 @@
       </div>
     </header>
 
+    <!-- ── Filter Bar ── -->
+    <div class="filter-bar" id="filterBar">
+      <div class="container">
+        <span class="filter-label">Show:</span>
+        <button class="filter-btn active" data-filter="all">All concepts</button>
+        <button class="filter-btn" data-filter="exec">Permanent Secretaries</button>
+        <button class="filter-btn" data-filter="product">Product &amp; Service Teams</button>
+        <button class="filter-btn" data-filter="tech">Technical Architects</button>
+        <span class="filter-count" id="filterCount"></span>
+      </div>
+    </div>
+
     <!-- ── Table of Contents ── -->
     <div class="section-alt" style="padding:2rem 0;">
       <div class="container">
@@ -538,6 +731,7 @@
               <li><a href="#service-artefact">Service Artefact</a></li>
               <li><a href="#service-graph">Service Graph</a></li>
               <li><a href="#life-event">Life Event</a></li>
+              <li><a href="#identity-authentication">Identity and Authentication</a></li>
             </ul>
           </div>
           <div class="toc-group">
@@ -551,7 +745,6 @@
               <li><a href="#service-proposal">Service Proposal</a></li>
               <li><a href="#proactivity">Proactivity</a></li>
               <li><a href="#plan">Plan</a></li>
-              <li><a href="#persona">Persona</a></li>
               <li><a href="#household">Household</a></li>
               <li><a href="#delegation">Delegation</a></li>
               <li><a href="#relationship-permissions">Relationship Permissions</a></li>
@@ -564,13 +757,13 @@
               <li><a href="#data-tiers">Data Tiers</a></li>
               <li><a href="#field-source">Field Source Attribution</a></li>
               <li><a href="#wallet-credentials">Wallet Credentials</a></li>
+              <li><a href="#govuk-wallet">GOV.UK Wallet</a></li>
             </ul>
           </div>
           <div class="toc-group">
             <h4 style="border-bottom-color:#912b88;">4. Consent &amp; Control</h4>
             <ul>
               <li><a href="#consent-grant">Consent Grant</a></li>
-              <li><a href="#consent-revocation">Consent Revocation</a></li>
               <li><a href="#consent-audit">Consent Audit</a></li>
             </ul>
           </div>
@@ -582,6 +775,7 @@
               <li><a href="#receipt">Receipt</a></li>
               <li><a href="#case-store">Case Store</a></li>
               <li><a href="#replay">Replay</a></li>
+              <li><a href="#agent-reasoning">Agent Reasoning</a></li>
             </ul>
           </div>
           <div class="toc-group">
@@ -592,6 +786,7 @@
               <li><a href="#policy-evaluation">Policy Evaluation</a></li>
               <li><a href="#field-collection">Field Collection</a></li>
               <li><a href="#capability-invocation">Capability Invocation</a></li>
+              <li><a href="#mcp">Model Context Protocol (MCP)</a></li>
             </ul>
           </div>
           <div class="toc-group">
@@ -600,7 +795,6 @@
               <li><a href="#handoff">Handoff</a></li>
               <li><a href="#safeguarding">Safeguarding</a></li>
               <li><a href="#edge-case">Edge Case Detection</a></li>
-              <li><a href="#agent-reasoning">Agent Reasoning</a></li>
             </ul>
           </div>
           <div class="toc-group">
@@ -609,6 +803,7 @@
               <li><a href="#gap-analysis">Gap Analysis</a></li>
               <li><a href="#service-coverage">Service Coverage</a></li>
               <li><a href="#legibility-studio">Legibility Studio</a></li>
+              <li><a href="#persona">Persona</a></li>
             </ul>
           </div>
         </div>
@@ -623,7 +818,7 @@
       <div class="container">
         <div class="group-header" style="padding-top:0;">
           <h2><span class="group-number">1</span> Foundations</h2>
-          <p class="group-desc">The core ideas that underpin the entire model. If you read nothing else, read these four definitions.</p>
+          <p class="group-desc">The core ideas that underpin the entire model. If you read nothing else, read these five definitions.</p>
         </div>
 
         <!-- LEGIBILITY -->
@@ -682,25 +877,64 @@
             </ul>
           </div>
 
-          <!-- Artefact code example -->
-          <div class="artefact-example">
+          <!-- Artefact contents table -->
+          <div class="snippet" style="max-width:520px;">
             <div class="snippet-label">
-              Example: DVLA Driving Licence Renewal &mdash; Manifest (excerpt)
+              What a service artefact contains (manifest example)
             </div>
-            <pre><code>{
-  <span class="key">"name"</span>: <span class="str">"Renew Driving Licence"</span>,
-  <span class="key">"department"</span>: <span class="str">"DVLA"</span>,
-  <span class="key">"jurisdiction"</span>: <span class="str">"England, Wales, Scotland"</span>,
-  <span class="key">"constraints"</span>: {
-    <span class="key">"sla"</span>: <span class="str">"10 working days"</span>,
-    <span class="key">"fee"</span>: { <span class="key">"amount"</span>: <span class="num">14</span>, <span class="key">"currency"</span>: <span class="str">"GBP"</span> },
-    <span class="key">"availability"</span>: <span class="str">"24/7 online"</span>
-  },
-  <span class="key">"redress"</span>: {
-    <span class="key">"appeal_process"</span>: <span class="str">"Contact DVLA directly"</span>,
-    <span class="key">"ombudsman"</span>: <span class="str">"Parliamentary and Health Service Ombudsman"</span>
-  }
-}</code></pre>
+            <div class="snippet-body">
+              <div class="s-panel" style="padding:0;">
+                <table style="width:100%;border-collapse:collapse;font-size:0.75rem;">
+                  <thead>
+                    <tr style="background:#f8f8f8;text-align:left;">
+                      <th style="padding:0.5rem 0.75rem;font-weight:700;border-bottom:1px solid #e0dfde;">Field</th>
+                      <th style="padding:0.5rem 0.75rem;font-weight:700;border-bottom:1px solid #e0dfde;">Purpose</th>
+                      <th style="padding:0.5rem 0.75rem;font-weight:700;border-bottom:1px solid #e0dfde;">Example</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td style="padding:0.4rem 0.75rem;border-bottom:1px solid #f0f0f0;font-weight:600;">Service name</td>
+                      <td style="padding:0.4rem 0.75rem;border-bottom:1px solid #f0f0f0;color:#505a5f;">Human-readable title the agent presents to citizens</td>
+                      <td style="padding:0.4rem 0.75rem;border-bottom:1px solid #f0f0f0;">Renew Driving Licence</td>
+                    </tr>
+                    <tr>
+                      <td style="padding:0.4rem 0.75rem;border-bottom:1px solid #f0f0f0;font-weight:600;">Department</td>
+                      <td style="padding:0.4rem 0.75rem;border-bottom:1px solid #f0f0f0;color:#505a5f;">Which department owns and operates the service</td>
+                      <td style="padding:0.4rem 0.75rem;border-bottom:1px solid #f0f0f0;">DVLA</td>
+                    </tr>
+                    <tr>
+                      <td style="padding:0.4rem 0.75rem;border-bottom:1px solid #f0f0f0;font-weight:600;">Description</td>
+                      <td style="padding:0.4rem 0.75rem;border-bottom:1px solid #f0f0f0;color:#505a5f;">What the service does, for agent understanding</td>
+                      <td style="padding:0.4rem 0.75rem;border-bottom:1px solid #f0f0f0;">Renew a photocard driving licence online</td>
+                    </tr>
+                    <tr>
+                      <td style="padding:0.4rem 0.75rem;border-bottom:1px solid #f0f0f0;font-weight:600;">Eligibility summary</td>
+                      <td style="padding:0.4rem 0.75rem;border-bottom:1px solid #f0f0f0;color:#505a5f;">High-level conditions the citizen must meet</td>
+                      <td style="padding:0.4rem 0.75rem;border-bottom:1px solid #f0f0f0;">UK resident, aged 16+, valid licence to renew</td>
+                    </tr>
+                    <tr>
+                      <td style="padding:0.4rem 0.75rem;border-bottom:1px solid #f0f0f0;font-weight:600;">Required data fields</td>
+                      <td style="padding:0.4rem 0.75rem;border-bottom:1px solid #f0f0f0;color:#505a5f;">What the agent needs to collect or verify</td>
+                      <td style="padding:0.4rem 0.75rem;border-bottom:1px solid #f0f0f0;">Full name, date of birth, NI number, address, photo</td>
+                    </tr>
+                    <tr>
+                      <td style="padding:0.4rem 0.75rem;border-bottom:1px solid #f0f0f0;font-weight:600;">Processing time</td>
+                      <td style="padding:0.4rem 0.75rem;border-bottom:1px solid #f0f0f0;color:#505a5f;">Expected service level for completion</td>
+                      <td style="padding:0.4rem 0.75rem;border-bottom:1px solid #f0f0f0;">10 working days</td>
+                    </tr>
+                    <tr>
+                      <td style="padding:0.4rem 0.75rem;font-weight:600;">Redress route</td>
+                      <td style="padding:0.4rem 0.75rem;color:#505a5f;">How to challenge the outcome if needed</td>
+                      <td style="padding:0.4rem 0.75rem;">Contact DVLA; escalate to PHSO</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div class="entry-body" style="margin-top:1rem;">
+            <p style="font-size:0.85rem;color:#505a5f;font-style:italic;">In the target model, departments publish this information through APIs conforming to a standard schema.</p>
           </div>
         </div>
 
@@ -728,6 +962,7 @@
               <li><strong>ENABLES</strong> &mdash; Completing Service A opens up eligibility for Service B (opportunity)</li>
             </ul>
             <p>Each service is classified by interaction type: benefit, obligation, registration, application, legal process, document, or grant.</p>
+            <p>The graph data model used in this architecture builds on the work of <strong>Maxwell Riess</strong>, whose <a href="https://maxwellriess.github.io/UK-Gov-Service-Graph-poc/" target="_blank" rel="noopener">UK Government Service Graph proof of concept</a> mapped the relationships between government services and demonstrated that a connected, navigable graph of public services is both feasible and powerful. His research provided the foundational graph structure for this prototype.</p>
           </div>
         </div>
 
@@ -750,6 +985,29 @@
           </p>
           <div class="entry-body">
             <p>The model maps 16 life events &mdash; including bereavement, having a baby, moving house, starting a business, leaving prison, retiring, and arriving in the UK &mdash; to the services each triggers. An agent uses a citizen's situation to identify the relevant life event and proactively surface all connected services.</p>
+          </div>
+        </div>
+
+        <!-- IDENTITY AND AUTHENTICATION -->
+        <div class="entry" id="identity-authentication">
+          <div class="entry-header">
+            <div>
+              <div class="entry-term">Identity and Authentication</div>
+              <div class="entry-badges">
+                <span class="badge badge-exec">Executive</span>
+                <span class="badge badge-product">Product</span>
+                <span class="badge badge-tech">Technical</span>
+              </div>
+            </div>
+          </div>
+          <p class="entry-oneliner">
+            How citizens prove who they are before an AI agent can access government services on their behalf &mdash; built on GOV.UK One Login.
+          </p>
+          <p class="entry-why">
+            <strong>Why it matters:</strong> Trust is the foundation of agentic government services. Without verified identity, the agent cannot access any service, share any data, or take any action. Identity and authentication ensure that only the right person (or their authorised delegate) can instruct the agent, and that departments can trust the identity claims the agent presents. This protects citizens from fraud and misuse, and gives departments the assurance they need to accept agent-mediated interactions.
+          </p>
+          <div class="entry-body">
+            <p>Citizens authenticate through GOV.UK One Login, which provides a verified identity at the level required by each service. The agent cannot bypass or substitute this step. Once authenticated, the citizen's verified identity flows through to every service interaction, consent grant, and evidence record &mdash; creating an unbroken chain of accountability from person to action.</p>
           </div>
         </div>
 
@@ -792,37 +1050,54 @@
           <div class="snippet">
             <div class="snippet-label">Citizen app &mdash; Service plan proposed in chat</div>
             <div class="snippet-body">
-              <div class="s-panel" style="background:#fff;">
-                <!-- Service 1 -->
-                <div style="display:flex;align-items:center;gap:0.6rem;padding:0.5rem 0;border-bottom:1px solid #f0f0f0;">
-                  <div style="width:22px;height:22px;border-radius:50%;background:#1d70b8;color:#fff;display:flex;align-items:center;justify-content:center;font-size:0.6rem;font-weight:700;flex-shrink:0;">1</div>
+              <div class="s-panel" style="background:#fff;padding:0;overflow:hidden;">
+                <!-- Service 1: Available -->
+                <div style="display:flex;align-items:flex-start;gap:0.75rem;padding:0.75rem 0.75rem;border-bottom:1px solid #f3f2f1;">
+                  <div style="width:28px;height:28px;border-radius:50%;background:#1d70b8;color:#fff;display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:700;flex-shrink:0;margin-top:1px;">1</div>
                   <div style="flex:1;min-width:0;">
-                    <div style="font-size:0.75rem;font-weight:600;">Register the death</div>
-                    <div style="font-size:0.65rem;color:#505a5f;">General Register Office</div>
+                    <div style="font-size:0.8rem;font-weight:700;color:#0b0c0c;margin-bottom:1px;">Register the death</div>
+                    <div style="font-size:0.7rem;font-weight:500;color:#505a5f;margin-bottom:4px;">General Register Office</div>
+                    <div style="display:flex;align-items:center;gap:0.3rem;font-size:0.6rem;color:#505a5f;border-top:1px solid #f3f2f1;padding-top:4px;">
+                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#1d70b8" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                      <span style="color:#1d70b8;font-weight:600;">Agent will complete</span>
+                      <span style="margin-left:auto;color:#505a5f;">~15 min</span>
+                    </div>
                   </div>
-                  <span class="s-btn s-btn-blue" style="font-size:0.6rem;padding:0.25rem 0.6rem;">Delegate</span>
+                  <span style="font-size:0.6rem;font-weight:700;padding:0.2rem 0.6rem;border-radius:2rem;background:#eff6ff;color:#1d70b8;font-weight:600;white-space:nowrap;margin-top:2px;">Delegate</span>
                 </div>
-                <!-- Service 2 -->
-                <div style="display:flex;align-items:center;gap:0.6rem;padding:0.5rem 0;border-bottom:1px solid #f0f0f0;">
-                  <div style="width:22px;height:22px;border-radius:50%;background:#1d70b8;color:#fff;display:flex;align-items:center;justify-content:center;font-size:0.6rem;font-weight:700;flex-shrink:0;">2</div>
+                <!-- Service 2: Available -->
+                <div style="display:flex;align-items:flex-start;gap:0.75rem;padding:0.75rem 0.75rem;border-bottom:1px solid #f3f2f1;">
+                  <div style="width:28px;height:28px;border-radius:50%;background:#1d70b8;color:#fff;display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:700;flex-shrink:0;margin-top:1px;">2</div>
                   <div style="flex:1;min-width:0;">
-                    <div style="font-size:0.75rem;font-weight:600;">Tell Us Once</div>
-                    <div style="font-size:0.65rem;color:#505a5f;">DWP</div>
+                    <div style="font-size:0.8rem;font-weight:700;color:#0b0c0c;margin-bottom:1px;">Tell Us Once</div>
+                    <div style="font-size:0.7rem;font-weight:500;color:#505a5f;margin-bottom:4px;">DWP</div>
+                    <div style="display:flex;align-items:center;gap:0.3rem;font-size:0.6rem;color:#505a5f;border-top:1px solid #f3f2f1;padding-top:4px;">
+                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#1d70b8" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                      <span style="color:#1d70b8;font-weight:600;">Agent will notify 9 departments</span>
+                      <span style="margin-left:auto;color:#505a5f;">~5 min</span>
+                    </div>
                   </div>
-                  <span class="s-btn s-btn-blue" style="font-size:0.6rem;padding:0.25rem 0.6rem;">Delegate</span>
+                  <span style="font-size:0.6rem;font-weight:700;padding:0.2rem 0.6rem;border-radius:2rem;background:#eff6ff;color:#1d70b8;font-weight:600;white-space:nowrap;margin-top:2px;">Delegate</span>
                 </div>
-                <!-- Service 3 -->
-                <div style="display:flex;align-items:center;gap:0.6rem;padding:0.5rem 0;">
-                  <div style="width:22px;height:22px;border-radius:50%;background:#1d70b8;color:#fff;display:flex;align-items:center;justify-content:center;font-size:0.6rem;font-weight:700;flex-shrink:0;">3</div>
-                  <div style="flex:1;min-width:0;">
-                    <div style="font-size:0.75rem;font-weight:600;">Apply for probate</div>
-                    <div style="font-size:0.65rem;color:#505a5f;">HMCTS</div>
+                <!-- Service 3: Locked -->
+                <div style="display:flex;align-items:flex-start;gap:0.75rem;padding:0.75rem 0.75rem;border-bottom:1px solid #f3f2f1;opacity:0.7;">
+                  <div style="width:28px;height:28px;border-radius:50%;background:#e5e7eb;color:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;">
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
                   </div>
-                  <span class="s-btn s-btn-blue" style="font-size:0.6rem;padding:0.25rem 0.6rem;">Delegate</span>
+                  <div style="flex:1;min-width:0;">
+                    <div style="font-size:0.8rem;font-weight:700;color:#0b0c0c;margin-bottom:1px;">Apply for probate</div>
+                    <div style="font-size:0.7rem;font-weight:500;color:#505a5f;margin-bottom:4px;">HMCTS</div>
+                    <div style="display:flex;align-items:center;gap:0.3rem;font-size:0.6rem;color:#505a5f;border-top:1px solid #f3f2f1;padding-top:4px;">
+                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#505a5f" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                      <span>Requires: Register the death</span>
+                    </div>
+                  </div>
                 </div>
                 <!-- Delegate all -->
-                <div style="background:#1d70b8;color:#fff;text-align:center;padding:0.6rem;font-size:0.75rem;font-weight:700;margin-top:0.5rem;border-radius:0 0 4px 4px;">
-                  Delegate all to Dot
+                <div style="padding:0.6rem 0.75rem;">
+                  <div style="background:#00703c;color:#fff;text-align:center;padding:0.55rem 1rem;font-size:0.78rem;font-weight:700;border-radius:2rem;cursor:pointer;">
+                    Delegate all to agent
+                  </div>
                 </div>
               </div>
             </div>
@@ -1088,10 +1363,10 @@
             <strong>Why it matters:</strong> Proactive service discovery is one of the most powerful capabilities of the agentic model. Rather than citizens searching for services, the agent proposes them &mdash; including services from other departments the citizen may never have heard of.
           </p>
           <div class="entry-body">
-            <p>Two proposal strategies exist to balance caution with comprehensiveness:</p>
+            <p>Two discovery strategies exist to balance caution with comprehensiveness:</p>
             <ul>
-              <li><strong>Conservative (DOT)</strong> &mdash; Only proposes services where eligibility is clear from the data available. Avoids false positives.</li>
-              <li><strong>Expansive (MAX)</strong> &mdash; Proposes all potentially relevant services, including those where eligibility is uncertain. Maximises awareness.</li>
+              <li><strong>Conservative discovery</strong> &mdash; Surfaces only high-confidence matches where eligibility is clear from the data available. Avoids false positives.</li>
+              <li><strong>Expansive discovery</strong> &mdash; Surfaces all potentially relevant services, including edge cases where eligibility is uncertain. Maximises awareness.</li>
             </ul>
             <p>The citizen always decides which proposals to pursue. Services are sorted by prerequisite order &mdash; foundational services (like getting a National Insurance number) appear first.</p>
           </div>
@@ -1123,7 +1398,7 @@
               <li><strong>Framing</strong> &mdash; how the service is presented to the citizen (e.g. "You may be entitled to..." vs "You are required to..." vs "You should be aware that...")</li>
               <li><strong>Timing</strong> &mdash; when the service becomes relevant relative to the life event (immediately, within days, within weeks)</li>
             </ul>
-            <p>Proactivity also drives <strong>auto-skip</strong> in plans: when persona data shows a service is clearly irrelevant (e.g. provisional driving licence for someone who already drives), the system removes it with a human-readable reason and a "start anyway" override.</p>
+            <p>Proactivity also drives <strong>auto-skip</strong> in plans: when the citizen's verified information shows a service is clearly irrelevant (e.g. provisional driving licence for someone who already drives), the system removes it with a human-readable reason and a "start anyway" override.</p>
           </div>
         </div>
 
@@ -1149,8 +1424,8 @@
             <p>Plans are organised by dependency depth &mdash; foundational services at the top, dependent services below. Each service in the plan shows:</p>
             <ul>
               <li>Its current status: <strong>available</strong>, <strong>in progress</strong>, <strong>completed</strong>, <strong>skipped</strong>, or <strong>locked</strong> (waiting on a prerequisite)</li>
-              <li>Whether it was <strong>auto-skipped</strong> based on persona data, with a human-readable reason and the option to override</li>
-              <li>Persona-specific hints (e.g. "You left TechCo on 15 January &mdash; your employer must issue a P45 within 14 days")</li>
+              <li>Whether it was <strong>auto-skipped</strong> based on citizen data, with a human-readable reason and the option to override</li>
+              <li>Personalised hints (e.g. "You left TechCo on 15 January &mdash; your employer must issue a P45 within 14 days")</li>
               <li>Whether the citizen or the agent will handle it</li>
             </ul>
             <p>Citizens can start plans from the Services section of their dashboard, which shows life events as browsable cards. Expanding one reveals the plan's services. Once started, the plan tracks progress with a percentage bar and "X of Y services" count.</p>
@@ -1230,39 +1505,6 @@
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-
-        <!-- PERSONA -->
-        <div class="entry" id="persona">
-          <div class="entry-header">
-            <div>
-              <div class="entry-term">Persona</div>
-              <div class="entry-badges">
-                <span class="badge badge-exec">Executive</span>
-                <span class="badge badge-product">Product</span>
-              </div>
-            </div>
-          </div>
-          <p class="entry-oneliner">
-            A richly modelled citizen profile representing a real-world life situation &mdash; with verified credentials, family relationships, employment history, health conditions, and a specific life event triggering their interaction with government.
-          </p>
-          <p class="entry-why">
-            <strong>Why it matters:</strong> Personas are how the system is tested and demonstrated. Each persona exercises a different cross-section of government services, relationships, and edge cases. They prove that the architecture works not just for simple transactions but for the complex, messy reality of citizens' lives &mdash; bereavement with overseas property, immigration with language barriers, prison release with housing deadlines.
-          </p>
-          <div class="entry-body">
-            <p>Eight personas represent the breadth of government interaction:</p>
-            <ul>
-              <li><strong>Sarah Okafor</strong> &mdash; Bereavement. Executor dealing with death registration, probate, IHT, and notifying multiple departments.</li>
-              <li><strong>Amina Hassan</strong> &mdash; Refugee arriving in the UK. Needs NI number, right to work, Universal Credit, GP registration.</li>
-              <li><strong>Marcus Taylor</strong> &mdash; Prison leaver. Universal Credit, approved premises deadline, DBS disclosure, driving licence.</li>
-              <li><strong>Priya Anand</strong> &mdash; Growing family. Childcare, Free School Meals, Child Benefit, maternity entitlements.</li>
-              <li><strong>James Whitfield</strong> &mdash; Child with special needs. EHCP appeals, PIP, tribunal, legal aid.</li>
-              <li><strong>Daniel Obi</strong> &mdash; Self-employed. Making Tax Digital, Self Assessment, VAT registration, tax refunds.</li>
-              <li><strong>Zara Begum</strong> &mdash; First-time government user. Student finance, first passport, NINO, provisional licence. Low institutional literacy.</li>
-              <li><strong>Fatima &amp; Tomasz Nowak</strong> &mdash; Household with multiple children. EU licence exchange, secondary school transfer, HICBC risk, household UC.</li>
-            </ul>
-            <p>Each persona carries full data across all tiers (verified credentials, submitted data, inferred facts), family relationships, and field source attribution &mdash; making them realistic enough to exercise the entire system end-to-end.</p>
           </div>
         </div>
 
@@ -1526,6 +1768,29 @@
           </p>
         </div>
 
+        <!-- GOV.UK WALLET -->
+        <div class="entry" id="govuk-wallet">
+          <div class="entry-header">
+            <div>
+              <div class="entry-term">GOV.UK Wallet</div>
+              <div class="entry-badges">
+                <span class="badge badge-exec">Executive</span>
+                <span class="badge badge-product">Product</span>
+                <span class="badge badge-tech">Technical</span>
+              </div>
+            </div>
+          </div>
+          <p class="entry-oneliner">
+            The citizen's portable store of verified credentials &mdash; digital equivalents of documents like driving licences, passports, and benefit entitlements &mdash; issued by departments and held by the citizen.
+          </p>
+          <p class="entry-why">
+            <strong>Why it matters:</strong> The GOV.UK Wallet puts citizens in control of their own verified information. Departments issue credentials into the wallet; the citizen decides when and with whom to share them. The agent draws on wallet data to pre-fill forms and prove eligibility, eliminating redundant data entry and the need to post physical documents. Because credentials are department-issued and cryptographically verifiable, they carry the highest level of trust in the system.
+          </p>
+          <div class="entry-body">
+            <p>The wallet holds credentials such as driving licences, passports, National Insurance numbers, benefit entitlement letters, veteran status, and professional qualifications. Each credential is issued by its owning department, carries an expiry date and verification status, and can be selectively shared with other services. The citizen can view, manage, and revoke access to their wallet contents at any time.</p>
+          </div>
+        </div>
+
       </div>
     </div>
 
@@ -1560,6 +1825,7 @@
           </p>
           <div class="entry-body">
             <p>Each grant specifies: a description (what the citizen is agreeing to), the data fields being shared, the source of that data, the purpose, the duration, and whether it's required or optional for the service to proceed.</p>
+            <p>Consent is always revocable. A citizen can withdraw any previously granted consent at any time. When they do, the system clearly explains the consequences &mdash; for example, "revoking this consent will cancel your application" &mdash; so the decision is informed. Consent that cannot be withdrawn is not real consent. The full lifecycle of every grant (given, declined, revoked) is recorded in the <a href="#consent-audit">Consent Audit</a>.</p>
           </div>
 
           <!-- Snippet: Consent panel -->
@@ -1618,25 +1884,6 @@
               </div>
             </div>
           </div>
-        </div>
-
-        <!-- CONSENT REVOCATION -->
-        <div class="entry" id="consent-revocation">
-          <div class="entry-header">
-            <div>
-              <div class="entry-term">Consent Revocation</div>
-              <div class="entry-badges">
-                <span class="badge badge-exec">Executive</span>
-                <span class="badge badge-product">Product</span>
-              </div>
-            </div>
-          </div>
-          <p class="entry-oneliner">
-            The citizen's ability to withdraw a previously granted consent at any time, with clear information about what effect that has on the service.
-          </p>
-          <p class="entry-why">
-            <strong>Why it matters:</strong> Consent that cannot be withdrawn is not real consent. Citizens must be able to change their mind, and the system must honestly explain the consequences &mdash; for example, "revoking this consent will cancel your application."
-          </p>
         </div>
 
         <!-- CONSENT AUDIT -->
@@ -1770,7 +2017,7 @@
             <strong>Why it matters:</strong> Trace events are the atoms of accountability. Each one says what happened, when, in which session, and with which context. Together, they reconstruct the complete story of any interaction &mdash; essential for auditing, debugging, and responding to complaints or appeals.
           </p>
           <div class="entry-body">
-            <p>Event types include: capability invoked/result, state transition, consent granted/denied/revoked, policy evaluated, LLM request/response, credential presented, receipt issued, error raised, handoff initiated, and field extracted. Each carries trace, span, and session identifiers for correlation.</p>
+            <p>The standard event taxonomy includes: capability invoked/result, state transition, consent granted/denied/revoked, policy evaluated, LLM request/response, credential presented, receipt issued, error raised, handoff initiated, and field extracted. Each event carries trace, span, and session identifiers for correlation across the full interaction.</p>
           </div>
         </div>
 
@@ -1802,7 +2049,7 @@
                   <div style="display:flex;justify-content:space-between;align-items:flex-start;">
                     <div>
                       <div style="font-size:0.8rem;font-weight:600;">Submitted UC claim to DWP</div>
-                      <div class="s-mono" style="font-size:0.6rem;color:#505a5f;margin-top:0.15rem;">apply-universal-credit</div>
+                      <div style="font-size:0.6rem;color:#505a5f;margin-top:0.15rem;">Universal Credit application</div>
                     </div>
                     <span class="s-tag s-tag-green" style="font-weight:600;">success</span>
                   </div>
@@ -1814,7 +2061,7 @@
                     <span class="s-tag s-tag-blue">address</span>
                     <span class="s-tag s-tag-blue">bank details</span>
                   </div>
-                  <div class="s-mono" style="font-size:0.55rem;color:#b1b4b6;margin-top:0.35rem;">Receipt: rcpt-a3f2-81d4-e9b1</div>
+                  <div style="font-size:0.55rem;color:#b1b4b6;margin-top:0.35rem;">Receipt reference: GOV-UC-2026-04821</div>
                 </div>
               </div>
             </div>
@@ -1856,6 +2103,42 @@
           <p class="entry-why">
             <strong>Why it matters:</strong> When a citizen complains, an ombudsman investigates, or a department audits decisions, replay shows precisely what happened and why. It transforms accountability from "trust us" to "see for yourself."
           </p>
+        </div>
+
+        <!-- AGENT REASONING -->
+        <div class="entry" id="agent-reasoning">
+          <div class="entry-header">
+            <div>
+              <div class="entry-term">Agent Reasoning</div>
+              <div class="entry-badges">
+                <span class="badge badge-exec">Executive</span>
+                <span class="badge badge-product">Product</span>
+              </div>
+            </div>
+          </div>
+          <p class="entry-oneliner">
+            A transparent view of the agent's internal thinking process &mdash; why it chose a particular service, how it evaluated eligibility, and what it plans to do next.
+          </p>
+          <p class="entry-why">
+            <strong>Why it matters:</strong> Citizens and auditors should be able to understand not just what the agent did, but why. The reasoning panel exposes the agent's thought process in plain language, building trust and enabling scrutiny. If the agent is wrong, the reasoning makes it clear where the error lies.
+          </p>
+
+          <!-- Snippet: Reasoning panel -->
+          <div class="snippet">
+            <div class="snippet-label">Citizen app &mdash; Agent reasoning panel</div>
+            <div class="snippet-body">
+              <div style="background:#0b0c0c;color:rgba(255,255,255,0.9);padding:0.6rem 0.75rem;">
+                <div style="font-size:0.8rem;font-weight:700;margin-bottom:0.5rem;">Agent Reasoning</div>
+                <div style="font-size:0.7rem;line-height:1.6;opacity:0.85;font-family:'Inter',sans-serif;">
+                  Sarah mentioned her mother passed away on 2 January. She is named executor in the will.
+                  <br><br>
+                  I will propose the bereavement life event services. The death must be registered within 5 days, so that is the first priority. Tell Us Once can run in parallel. Probate requires the death certificate, so it comes after.
+                  <br><br>
+                  Sarah's mother's estate value (~&pound;380,000) is below the IHT threshold (&pound;325,000 + &pound;175,000 residence nil-rate band = &pound;500,000), so no IHT liability. I will confirm this with the policy evaluation before telling Sarah.
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
       </div>
@@ -1971,8 +2254,29 @@
             A single gateway through which every service action passes &mdash; ensuring that every invocation is policy-checked, consent-verified, and trace-recorded.
           </p>
           <p class="entry-why">
-            <strong>Why it matters:</strong> Without a single choke point, individual components might skip consent checks, bypass policy evaluation, or fail to record actions. The capability invoker guarantees that nothing reaches a government service without passing through the full accountability pipeline.
+            <strong>Why it matters:</strong> Without a single integration point, individual components might skip consent checks, bypass policy evaluation, or fail to record actions. The capability invoker acts as a unified service gateway, guaranteeing that nothing reaches a government service without passing through the full accountability pipeline.
           </p>
+        </div>
+
+        <!-- MODEL CONTEXT PROTOCOL (MCP) -->
+        <div class="entry" id="mcp">
+          <div class="entry-header">
+            <div>
+              <div class="entry-term">Model Context Protocol (MCP)</div>
+              <div class="entry-badges">
+                <span class="badge badge-tech">Technical</span>
+              </div>
+            </div>
+          </div>
+          <p class="entry-oneliner">
+            The open standard for connecting AI agents to external tools and data sources, providing a uniform interface for service discovery and invocation.
+          </p>
+          <p class="entry-why">
+            <strong>Why it matters:</strong> Without a standard protocol, every department would need to build bespoke integrations with every agent. MCP provides a common language: each department's services are exposed as MCP tools, allowing the agent to discover available services, understand their inputs and outputs, and invoke them through a single standard interface. This means a new department can become agent-accessible by publishing MCP-compliant tool definitions, without requiring changes to the agent itself.
+          </p>
+          <div class="entry-body">
+            <p>In this architecture, the MCP server exposes each legible service as a tool with a typed schema describing its inputs (required data fields), outputs (expected results), and metadata (department, service type, prerequisites). The agent's MCP client discovers these tools at runtime and invokes them through the capability invocation gateway, which enforces policy, consent, and evidence recording regardless of which protocol carries the request.</p>
+          </div>
         </div>
 
       </div>
@@ -2069,42 +2373,6 @@
           <p class="entry-why">
             <strong>Why it matters:</strong> Real-world cases are messy. Policies define named edge cases (missing documents, name discrepancies, overseas complications, very recent events) with specific handling instructions: extend a timeline, add a fee, request additional evidence, or hand off to a specialist.
           </p>
-        </div>
-
-        <!-- AGENT REASONING -->
-        <div class="entry" id="agent-reasoning">
-          <div class="entry-header">
-            <div>
-              <div class="entry-term">Agent Reasoning</div>
-              <div class="entry-badges">
-                <span class="badge badge-exec">Executive</span>
-                <span class="badge badge-product">Product</span>
-              </div>
-            </div>
-          </div>
-          <p class="entry-oneliner">
-            A transparent view of the agent's internal thinking process &mdash; why it chose a particular service, how it evaluated eligibility, and what it plans to do next.
-          </p>
-          <p class="entry-why">
-            <strong>Why it matters:</strong> Citizens and auditors should be able to understand not just what the agent did, but why. The reasoning panel exposes the agent's thought process in plain language, building trust and enabling scrutiny. If the agent is wrong, the reasoning makes it clear where the error lies.
-          </p>
-
-          <!-- Snippet: Reasoning panel -->
-          <div class="snippet">
-            <div class="snippet-label">Citizen app &mdash; Agent reasoning panel</div>
-            <div class="snippet-body">
-              <div style="background:#0b0c0c;color:rgba(255,255,255,0.9);padding:0.6rem 0.75rem;">
-                <div style="font-size:0.8rem;font-weight:700;margin-bottom:0.5rem;">Agent Reasoning</div>
-                <div style="font-size:0.7rem;line-height:1.6;opacity:0.85;font-family:'Inter',sans-serif;">
-                  Sarah mentioned her mother passed away on 2 January. She is named executor in the will.
-                  <br><br>
-                  I will propose the bereavement life event services. The death must be registered within 5 days, so that is the first priority. Tell Us Once can run in parallel. Probate requires the death certificate, so it comes after.
-                  <br><br>
-                  Sarah's mother's estate value (~&pound;380,000) is below the IHT threshold (&pound;325,000 + &pound;175,000 residence nil-rate band = &pound;500,000), so no IHT liability. I will confirm this with the policy evaluation before telling Sarah.
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
 
       </div>
@@ -2258,6 +2526,39 @@
           </div>
         </div>
 
+        <!-- PERSONA -->
+        <div class="entry" id="persona">
+          <div class="entry-header">
+            <div>
+              <div class="entry-term">Persona</div>
+              <div class="entry-badges">
+                <span class="badge badge-exec">Executive</span>
+                <span class="badge badge-product">Product</span>
+              </div>
+            </div>
+          </div>
+          <p class="entry-oneliner">
+            A richly modelled citizen profile representing a real-world life situation &mdash; with verified credentials, family relationships, employment history, health conditions, and a specific life event triggering their interaction with government.
+          </p>
+          <p class="entry-why">
+            <strong>Why it matters:</strong> Personas are how the system is tested and demonstrated. Each persona exercises a different cross-section of government services, relationships, and edge cases. They prove that the architecture works not just for simple transactions but for the complex, messy reality of citizens' lives &mdash; bereavement with overseas property, immigration with language barriers, prison release with housing deadlines.
+          </p>
+          <div class="entry-body">
+            <p>Eight personas represent the breadth of government interaction:</p>
+            <ul>
+              <li><strong>Sarah Okafor</strong> &mdash; Bereavement. Executor dealing with death registration, probate, IHT, and notifying multiple departments.</li>
+              <li><strong>Amina Hassan</strong> &mdash; Refugee arriving in the UK. Needs NI number, right to work, Universal Credit, GP registration.</li>
+              <li><strong>Marcus Taylor</strong> &mdash; Prison leaver. Universal Credit, approved premises deadline, DBS disclosure, driving licence.</li>
+              <li><strong>Priya Anand</strong> &mdash; Growing family. Childcare, Free School Meals, Child Benefit, maternity entitlements.</li>
+              <li><strong>James Whitfield</strong> &mdash; Child with special needs. EHCP appeals, PIP, tribunal, legal aid.</li>
+              <li><strong>Daniel Obi</strong> &mdash; Self-employed. Making Tax Digital, Self Assessment, VAT registration, tax refunds.</li>
+              <li><strong>Zara Begum</strong> &mdash; First-time government user. Student finance, first passport, NINO, provisional licence. Low institutional literacy.</li>
+              <li><strong>Fatima &amp; Tomasz Nowak</strong> &mdash; Household with multiple children. EU licence exchange, secondary school transfer, HICBC risk, household UC.</li>
+            </ul>
+            <p>Each persona carries full data across all tiers (verified credentials, submitted data, inferred facts), family relationships, and field source attribution &mdash; making them realistic enough to exercise the entire system end-to-end.</p>
+          </div>
+        </div>
+
       </div>
     </div>
 
@@ -2280,5 +2581,325 @@
       </div>
     </div>
 
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <script>
+      (function () {
+        const buttons = document.querySelectorAll('.filter-btn');
+        const entries = document.querySelectorAll('.entry');
+        const tocLinks = document.querySelectorAll('.toc-group li');
+        const countEl = document.getElementById('filterCount');
+        const filterBar = document.getElementById('filterBar');
+
+        // Map each entry to its audience set based on badge classes
+        const entryAudiences = new Map();
+        entries.forEach(entry => {
+          const badges = entry.querySelectorAll('.badge');
+          const audiences = new Set();
+          badges.forEach(b => {
+            if (b.classList.contains('badge-exec')) audiences.add('exec');
+            if (b.classList.contains('badge-product')) audiences.add('product');
+            if (b.classList.contains('badge-tech')) audiences.add('tech');
+          });
+          entryAudiences.set(entry, audiences);
+        });
+
+        // Map TOC links to entries by href -> id
+        const tocMap = new Map();
+        tocLinks.forEach(li => {
+          const a = li.querySelector('a');
+          if (a && a.getAttribute('href')) {
+            const id = a.getAttribute('href').replace('#', '');
+            tocMap.set(li, id);
+          }
+        });
+
+        function applyFilter(filter) {
+          let shown = 0;
+          const total = entries.length;
+
+          entries.forEach(entry => {
+            const audiences = entryAudiences.get(entry);
+            const visible = filter === 'all' || audiences.has(filter);
+            entry.classList.toggle('hidden-by-filter', !visible);
+            if (visible) shown++;
+          });
+
+          // Update TOC
+          tocLinks.forEach(li => {
+            const entryId = tocMap.get(li);
+            if (!entryId) return;
+            const entry = document.getElementById(entryId);
+            if (!entry) return;
+            const audiences = entryAudiences.get(entry);
+            const visible = filter === 'all' || (audiences && audiences.has(filter));
+            li.classList.toggle('hidden-by-filter', !visible);
+          });
+
+          // Dim group headers if all entries hidden
+          document.querySelectorAll('.section, .section-alt').forEach(section => {
+            const sectionEntries = section.querySelectorAll('.entry');
+            if (sectionEntries.length === 0) return;
+            const allHidden = Array.from(sectionEntries).every(e => e.classList.contains('hidden-by-filter'));
+            section.classList.toggle('all-hidden', allHidden);
+          });
+
+          // Update count
+          if (filter === 'all') {
+            countEl.textContent = '';
+          } else {
+            countEl.textContent = shown + ' of ' + total + ' concepts';
+          }
+
+          // Update active button
+          buttons.forEach(b => b.classList.toggle('active', b.dataset.filter === filter));
+        }
+
+        buttons.forEach(btn => {
+          btn.addEventListener('click', () => applyFilter(btn.dataset.filter));
+        });
+
+        // Shadow on scroll
+        window.addEventListener('scroll', () => {
+          filterBar.classList.toggle('scrolled', window.scrollY > 100);
+        }, { passive: true });
+      })();
+
+      // ── Snippet download controls ──
+      (function () {
+        var snippets = document.querySelectorAll('.snippet');
+        snippets.forEach(function (snippet) {
+          var label = snippet.querySelector('.snippet-label');
+          var body = snippet.querySelector('.snippet-body');
+          if (!body) return;
+
+          // Create download controls
+          var dl = document.createElement('div');
+          dl.className = 'snippet-dl';
+
+          var pngBtn = document.createElement('button');
+          pngBtn.className = 'snippet-dl-btn';
+          pngBtn.textContent = 'PNG';
+          pngBtn.title = 'Download as image';
+
+          var tblBtn = document.createElement('button');
+          tblBtn.className = 'snippet-dl-btn';
+          tblBtn.textContent = 'Table';
+          tblBtn.title = 'Download as HTML table';
+
+          dl.appendChild(pngBtn);
+          dl.appendChild(tblBtn);
+          snippet.appendChild(dl);
+
+          // File name from label text
+          function slugify(text) {
+            return text.replace(/[^a-z0-9]+/gi, '-').replace(/^-|-$/g, '').toLowerCase();
+          }
+          var fileName = label ? slugify(label.textContent) : 'snippet';
+
+          // PNG download
+          pngBtn.addEventListener('click', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            // Temporarily hide the download buttons
+            dl.style.display = 'none';
+            html2canvas(snippet, {
+              backgroundColor: null,
+              scale: 2,
+              useCORS: true,
+              logging: false
+            }).then(function (canvas) {
+              dl.style.display = '';
+              var link = document.createElement('a');
+              link.download = fileName + '.png';
+              link.href = canvas.toDataURL('image/png');
+              link.click();
+            }).catch(function () {
+              dl.style.display = '';
+            });
+          });
+
+          // Table download
+          tblBtn.addEventListener('click', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            var title = label ? label.textContent.trim() : 'Snippet';
+            var rows = [];
+
+            // Extract text content as structured rows
+            var panels = body.querySelectorAll('.s-panel, [style]');
+            var allDivs = body.querySelectorAll('div');
+            var visited = new Set();
+
+            // Walk through the snippet body and extract meaningful text pairs
+            var items = body.querySelectorAll('[style*="display:flex"], [style*="display: flex"], tr, li');
+            if (items.length > 0) {
+              items.forEach(function (item) {
+                if (visited.has(item)) return;
+                // Skip nested flex items
+                var parent = item.parentElement;
+                while (parent && parent !== body) {
+                  if (visited.has(parent)) return;
+                  parent = parent.parentElement;
+                }
+                visited.add(item);
+                var texts = [];
+                item.querySelectorAll('div, span, td, th').forEach(function (el) {
+                  var t = el.textContent.trim();
+                  if (t && !texts.includes(t) && t.length < 200) {
+                    texts.push(t);
+                  }
+                });
+                if (texts.length > 0) {
+                  rows.push(texts);
+                }
+              });
+            }
+
+            // Fallback: just get all text blocks
+            if (rows.length === 0) {
+              var blocks = body.querySelectorAll('div, p, span');
+              blocks.forEach(function (el) {
+                var t = el.textContent.trim();
+                if (t && t.length < 200 && el.children.length === 0) {
+                  rows.push([t]);
+                }
+              });
+            }
+
+            // Build HTML table
+            var maxCols = 1;
+            rows.forEach(function (r) { if (r.length > maxCols) maxCols = r.length; });
+            var html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>' + title + '</title>';
+            html += '<style>body{font-family:Arial,sans-serif;padding:2rem;}table{border-collapse:collapse;width:100%;}';
+            html += 'th,td{border:1px solid #b1b4b6;padding:0.5rem 0.75rem;text-align:left;font-size:0.9rem;}';
+            html += 'th{background:#f3f2f1;font-weight:600;}caption{font-size:1.1rem;font-weight:700;margin-bottom:0.75rem;text-align:left;}</style></head>';
+            html += '<body><table><caption>' + title + '</caption><tbody>';
+            rows.forEach(function (r) {
+              html += '<tr>';
+              r.forEach(function (cell) { html += '<td>' + cell + '</td>'; });
+              // Pad if needed
+              for (var i = r.length; i < maxCols; i++) html += '<td></td>';
+              html += '</tr>';
+            });
+            html += '</tbody></table></body></html>';
+
+            var blob = new Blob([html], { type: 'text/html' });
+            var link = document.createElement('a');
+            link.download = fileName + '.html';
+            link.href = URL.createObjectURL(blob);
+            link.click();
+            URL.revokeObjectURL(link.href);
+          });
+        });
+      })();
+    </script>
+    <script>
+    // ── Exportable icons, diagrams, and illustrations ──
+    (function () {
+      function makeExportable(el, name) {
+        el.classList.add('exportable');
+        var hint = document.createElement('div');
+        hint.className = 'export-hint';
+        hint.innerHTML = '&#8595;';
+        hint.title = 'Download as PNG';
+        el.appendChild(hint);
+        el.addEventListener('click', function (e) {
+          e.preventDefault();
+          e.stopPropagation();
+          hint.style.display = 'none';
+          el.style.outline = 'none';
+          html2canvas(el, { backgroundColor: null, scale: 3, useCORS: true, logging: false }).then(function (canvas) {
+            hint.style.display = '';
+            el.style.outline = '';
+            var link = document.createElement('a');
+            link.download = name + '.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+          }).catch(function () { hint.style.display = ''; el.style.outline = ''; });
+        });
+      }
+
+      // Icons with s-icon class
+      document.querySelectorAll('.s-icon').forEach(function (el, i) {
+        makeExportable(el, 'icon-' + (i + 1));
+      });
+
+      // Pipeline diagrams
+      document.querySelectorAll('.pipeline').forEach(function (el, i) {
+        var wrapper = document.createElement('div');
+        wrapper.className = 'pipeline-exportable';
+        el.parentNode.insertBefore(wrapper, el);
+        wrapper.appendChild(el);
+        var hint = document.createElement('div');
+        hint.className = 'export-hint';
+        hint.innerHTML = '&#8595;';
+        hint.title = 'Download as PNG';
+        wrapper.appendChild(hint);
+        wrapper.addEventListener('click', function (e) {
+          if (e.target.closest('a')) return;
+          e.preventDefault();
+          hint.style.display = 'none';
+          html2canvas(el, { backgroundColor: '#ffffff', scale: 3, useCORS: true, logging: false }).then(function (canvas) {
+            hint.style.display = '';
+            var link = document.createElement('a');
+            link.download = 'pipeline-diagram-' + (i + 1) + '.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+          }).catch(function () { hint.style.display = ''; });
+        });
+      });
+
+      // Stat rows
+      document.querySelectorAll('.stat-row, .gap-kpis').forEach(function (el, i) {
+        var wrapper = document.createElement('div');
+        wrapper.className = 'pipeline-exportable';
+        wrapper.style.display = 'block';
+        el.parentNode.insertBefore(wrapper, el);
+        wrapper.appendChild(el);
+        var hint = document.createElement('div');
+        hint.className = 'export-hint';
+        hint.innerHTML = '&#8595;';
+        hint.title = 'Download as PNG';
+        wrapper.appendChild(hint);
+        wrapper.addEventListener('click', function (e) {
+          hint.style.display = 'none';
+          html2canvas(el, { backgroundColor: '#ffffff', scale: 3, useCORS: true, logging: false }).then(function (canvas) {
+            hint.style.display = '';
+            var link = document.createElement('a');
+            link.download = 'stats-' + (i + 1) + '.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+          }).catch(function () { hint.style.display = ''; });
+        });
+      });
+
+      // Feature, pillar, guarantee, artefact, and ask cards
+      document.querySelectorAll('.feature-card, .pillar-card, .guarantee-card, .artefact-card, .ask-card').forEach(function (el) {
+        var wrapper = document.createElement('div');
+        wrapper.className = 'pipeline-exportable';
+        wrapper.style.display = 'block';
+        el.parentNode.insertBefore(wrapper, el);
+        wrapper.appendChild(el);
+        var hint = document.createElement('div');
+        hint.className = 'export-hint';
+        hint.innerHTML = '&#8595;';
+        hint.title = 'Download as PNG';
+        wrapper.appendChild(hint);
+        var h3 = el.querySelector('h3');
+        var name = h3 ? h3.textContent.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-') : 'card';
+        wrapper.addEventListener('click', function (e) {
+          if (e.target.closest('a')) return;
+          hint.style.display = 'none';
+          html2canvas(el, { backgroundColor: '#ffffff', scale: 3, useCORS: true, logging: false }).then(function (canvas) {
+            hint.style.display = '';
+            var link = document.createElement('a');
+            link.download = name + '.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+          }).catch(function () { hint.style.display = ''; });
+        });
+      });
+    })();
+    </script>
   </body>
 </html>
