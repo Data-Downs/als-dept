@@ -1,5 +1,3 @@
-const PASSWORD = "legibility2026";
-
 const LOGIN_PAGE = `<!doctype html>
 <html lang="en-GB">
 <head>
@@ -78,9 +76,14 @@ const ERROR_LOGIN_PAGE = LOGIN_PAGE.replace(
   'class="error show"'
 );
 
-export const onRequest: PagesFunction = async (context) => {
-  const { request } = context;
+interface Env {
+  DOCS_PASSWORD: string;
+}
+
+export const onRequest: PagesFunction<Env> = async (context) => {
+  const { request, env } = context;
   const url = new URL(request.url);
+  const PASSWORD = env.DOCS_PASSWORD;
 
   // Allow static assets through without auth
   if (/\.(css|js|png|jpg|jpeg|gif|svg|ico|woff2?|ttf|eot)$/i.test(url.pathname)) {

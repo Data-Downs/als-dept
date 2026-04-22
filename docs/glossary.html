@@ -1,2905 +1,523 @@
 <!doctype html>
 <html lang="en-GB">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Concept Glossary — Agentic Legibility Stack</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
-      rel="stylesheet"
-    />
-    <style>
-      /* ── Reset & Base ── */
-      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-      html { scroll-behavior: smooth; }
-      body {
-        font-family: "Inter", Arial, sans-serif;
-        color: #0b0c0c;
-        line-height: 1.6;
-        background: #fff;
-        -webkit-font-smoothing: antialiased;
-      }
-      a { color: #1d70b8; text-decoration: none; }
-      a:hover { text-decoration: underline; color: #003078; }
-      code, pre { font-family: "JetBrains Mono", monospace; }
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Glossary — Agentic Legibility Stack</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    /* ── Tokens ── */
+    :root {
+      --ink: #0b0c0c;
+      --ink-soft: #505a5f;
+      --ink-faint: #6f777b;
+      --surface: #fff;
+      --surface-alt: #f8f8f7;
+      --border: #d5d8da;
+      --border-light: #e8e8e6;
+      --blue: #1d70b8;
+      --blue-dark: #003078;
+      --blue-bg: #e8f0fe;
+      --green: #00703c;
+      --green-bg: #e8f5ee;
+      --purple: #4c2c92;
+      --purple-bg: #f0ebf5;
+      --orange: #f47738;
+      --max-w: 880px;
+      --section-py: 5rem;
+    }
 
-      /* ── Layout ── */
-      .container { max-width: 960px; margin: 0 auto; padding: 0 1.5rem; }
-      .section { padding: 4rem 0; }
-      .section-alt { background: #f3f2f1; }
+    /* ── Reset ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+    body { font-family: "Inter", Arial, sans-serif; color: var(--ink); line-height: 1.65; background: var(--surface); font-size: 16px; }
+    a { color: var(--blue); text-decoration: none; }
+    a:hover { text-decoration: underline; color: var(--blue-dark); }
+    ul, ol { padding-left: 1.25em; }
+    li + li { margin-top: 0.35em; }
 
-      h1, h2, h3 { line-height: 1.2; }
-      h2 { font-size: 1.75rem; font-weight: 700; margin-bottom: 1rem; }
-      h3 { font-size: 1.25rem; font-weight: 600; margin-bottom: 0.5rem; }
-      .section-intro {
-        font-size: 1.1rem;
-        color: #505a5f;
-        max-width: 700px;
-        margin-bottom: 2rem;
-      }
+    /* ── Layout ── */
+    .container { max-width: var(--max-w); margin: 0 auto; padding: 0 1.5rem; }
+    .section { padding: var(--section-py) 0; }
+    .section-alt { background: var(--surface-alt); }
 
-      /* ── Nav ── */
-      .nav {
-        background: #fff;
-        border-bottom: 1px solid #b1b4b6;
-        padding: 0.75rem 0;
-        position: sticky;
-        top: 0;
-        z-index: 100;
-      }
-      .nav .container {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 1rem;
-      }
-      .nav-brand { font-weight: 700; font-size: 1rem; color: #0b0c0c; white-space: nowrap; }
-      .nav-links { display: flex; gap: 1.25rem; list-style: none; flex-wrap: wrap; align-items: center; }
-      .nav-links a { font-size: 0.85rem; font-weight: 500; color: #505a5f; }
-      .nav-links a:hover { color: #1d70b8; text-decoration: none; }
-      @media (max-width: 640px) {
-        .nav-links { display: none; }
-      }
+    /* ── Nav ── */
+    .nav { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0.7rem 0; position: sticky; top: 0; z-index: 100; }
+    .nav .container { display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; }
+    .nav-brand { font-weight: 600; font-size: 1.05rem; color: var(--ink); white-space: nowrap; letter-spacing: -0.01em; text-decoration: none; }
+    .nav-brand:hover { color: var(--ink); text-decoration: none; }
+    .nav-links { display: flex; gap: 1.5rem; list-style: none; padding: 0; margin: 0; flex-wrap: wrap; align-items: baseline; }
+    .nav-links li { line-height: 1; }
+    .nav-links a { font-size: 0.8rem; font-weight: 500; color: var(--ink-soft); letter-spacing: 0.01em; line-height: 1; }
+    .nav-links a:hover { color: var(--blue); text-decoration: none; }
+    .nav-links a.active { color: var(--ink); font-weight: 700; }
+    @media (max-width: 700px) { .nav-links { display: none; } }
 
-      /* ── Hero ── */
-      .hero { padding: 5rem 0 3rem; }
-      .hero-label {
-        display: inline-block;
-        background: #f3f2f1;
-        color: #505a5f;
-        font-size: 0.8rem;
-        font-weight: 600;
-        padding: 0.25rem 0.75rem;
-        border-radius: 2px;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        margin-bottom: 1.25rem;
-      }
-      .hero h1 { font-size: 2.75rem; font-weight: 700; margin-bottom: 0.75rem; }
-      .hero-subtitle {
-        font-size: 1.35rem;
-        color: #505a5f;
-        font-weight: 400;
-        max-width: 700px;
-        margin-bottom: 1.5rem;
-      }
-      @media (max-width: 640px) {
-        .hero h1 { font-size: 2rem; }
-        .hero-subtitle { font-size: 1.15rem; }
-      }
+    /* ── Typography ── */
+    h1 { font-size: 2.75rem; font-weight: 700; line-height: 1.12; letter-spacing: -0.025em; color: var(--ink); }
+    h2 { font-size: 1.85rem; font-weight: 600; line-height: 1.2; letter-spacing: -0.02em; margin-bottom: 0.75rem; }
+    h3 { font-size: 1.1rem; font-weight: 700; line-height: 1.3; margin-bottom: 0.35rem; }
+    @media (max-width: 640px) { h1 { font-size: 2rem; } }
 
-      /* ── Audience pills ── */
-      .audience-pills {
-        display: flex;
-        gap: 0.5rem;
-        flex-wrap: wrap;
-        margin-bottom: 2rem;
-      }
-      .pill {
-        font-size: 0.75rem;
-        font-weight: 600;
-        padding: 0.3rem 0.75rem;
-        border-radius: 2rem;
-        border: 1.5px solid;
-        cursor: pointer;
-        transition: all 0.2s;
-        user-select: none;
-      }
-      .pill:hover { transform: translateY(-1px); }
-      .pill-exec { border-color: #1d70b8; color: #1d70b8; background: #e8f0fe; }
-      .pill-exec.active, .pill-exec:hover { background: #1d70b8; color: #fff; }
-      .pill-product { border-color: #912b88; color: #912b88; background: #f9e8f7; }
-      .pill-product.active, .pill-product:hover { background: #912b88; color: #fff; }
-      .pill-tech { border-color: #00703c; color: #00703c; background: #e6f3ec; }
-      .pill-tech.active, .pill-tech:hover { background: #00703c; color: #fff; }
-      .pill-all { border-color: #505a5f; color: #505a5f; background: #f3f2f1; }
-      .pill-all.active, .pill-all:hover { background: #505a5f; color: #fff; }
+    /* ── Hero ── */
+    .hero { padding: 5.5rem 0 3.5rem; }
+    .hero-label {
+      display: inline-block;
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      color: var(--ink-faint);
+      margin-bottom: 1.5rem;
+      border-bottom: 2px solid var(--ink);
+      padding-bottom: 0.2rem;
+    }
+    .hero h1 { margin-bottom: 1rem; max-width: 600px; }
+    .hero-subtitle { font-size: 1.3rem; font-weight: 400; font-style: italic; color: var(--ink-soft); max-width: 580px; line-height: 1.5; }
+    @media (max-width: 640px) { .hero-subtitle { font-size: 1.1rem; } }
 
-      /* ── Filter bar ── */
-      .filter-bar {
-        background: #fff;
-        border-bottom: 1px solid #d2d2d2;
-        padding: 0.75rem 0;
-        position: sticky;
-        top: 41px; /* below nav */
-        z-index: 99;
-        transition: box-shadow 0.2s;
-      }
-      .filter-bar.scrolled { box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
-      .filter-bar .container {
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-        flex-wrap: wrap;
-      }
-      .filter-label {
-        font-size: 0.8rem;
-        font-weight: 600;
-        color: #505a5f;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        white-space: nowrap;
-      }
-      .filter-btn {
-        font-size: 0.8rem;
-        font-weight: 600;
-        padding: 0.4rem 1rem;
-        border-radius: 2rem;
-        border: 2px solid;
-        cursor: pointer;
-        transition: all 0.2s;
-        background: transparent;
-        font-family: inherit;
-      }
-      .filter-btn:hover { transform: translateY(-1px); }
-      .filter-btn[data-filter="all"] { border-color: #505a5f; color: #505a5f; }
-      .filter-btn[data-filter="all"].active { background: #505a5f; color: #fff; }
-      .filter-btn[data-filter="exec"] { border-color: #1d70b8; color: #1d70b8; }
-      .filter-btn[data-filter="exec"].active { background: #1d70b8; color: #fff; }
-      .filter-btn[data-filter="product"] { border-color: #912b88; color: #912b88; }
-      .filter-btn[data-filter="product"].active { background: #912b88; color: #fff; }
-      .filter-btn[data-filter="tech"] { border-color: #00703c; color: #00703c; }
-      .filter-btn[data-filter="tech"].active { background: #00703c; color: #fff; }
-      .filter-count {
-        font-size: 0.8rem;
-        color: #505a5f;
-        margin-left: auto;
-        white-space: nowrap;
-      }
+    /* ── Search ── */
+    .search-bar { margin-bottom: 2.5rem; }
+    .search-input {
+      width: 100%;
+      max-width: 400px;
+      padding: 0.6rem 1rem;
+      border: 1.5px solid var(--border);
+      font-family: inherit;
+      font-size: 0.9rem;
+      color: var(--ink);
+      background: var(--surface);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .search-input::placeholder { color: var(--ink-faint); }
+    .search-input:focus { border-color: var(--blue); }
+    .search-count { font-size: 0.8rem; color: var(--ink-faint); margin-top: 0.5rem; }
 
-      /* ── Entry transitions for filtering ── */
-      .entry {
-        transition: opacity 0.25s, max-height 0.3s ease, padding 0.3s ease, margin 0.3s ease;
-        overflow: hidden;
-      }
-      .entry.hidden-by-filter {
-        opacity: 0;
-        max-height: 0;
-        padding-top: 0;
-        padding-bottom: 0;
-        border-top-color: transparent;
-        margin: 0;
-        pointer-events: none;
-      }
-      .toc-group li {
-        transition: opacity 0.2s;
-      }
-      .toc-group li.hidden-by-filter {
-        opacity: 0.3;
-      }
-      .group-section {
-        transition: opacity 0.3s;
-      }
-      .group-section.all-hidden .group-header {
-        opacity: 0.3;
-      }
+    /* ── Group sections ── */
+    .group { margin-bottom: 3.5rem; }
+    .group:last-child { margin-bottom: 0; }
+    .group-title {
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      color: var(--ink-faint);
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid var(--ink);
+      margin-bottom: 1.5rem;
+      display: inline-block;
+    }
 
-      /* ── TOC ── */
-      .toc {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-        gap: 0.75rem;
-        margin-bottom: 3rem;
-      }
-      .toc-group h4 {
-        font-size: 0.7rem;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.08em;
-        color: #505a5f;
-        margin-bottom: 0.5rem;
-        padding-bottom: 0.35rem;
-        border-bottom: 2px solid;
-      }
-      .toc-group ul { list-style: none; }
-      .toc-group li { margin-bottom: 0.25rem; }
-      .toc-group a { font-size: 0.85rem; font-weight: 500; color: #0b0c0c; }
-      .toc-group a:hover { color: #1d70b8; }
+    /* ── Term entries ── */
+    .term { padding: 1rem 0; border-bottom: 1px solid var(--border-light); }
+    .term:last-child { border-bottom: none; }
+    .term.hidden { display: none; }
+    .term-name { font-size: 0.95rem; font-weight: 700; color: var(--ink); margin-bottom: 0.15rem; }
+    .term-name a { color: var(--ink); }
+    .term-name a:hover { color: var(--blue); }
+    .term-def { font-size: 0.88rem; color: var(--ink-soft); line-height: 1.6; max-width: 720px; }
+    .term-note { font-size: 0.82rem; color: var(--ink-faint); line-height: 1.55; margin-top: 0.35rem; max-width: 720px; }
 
-      /* ── Glossary entries ── */
-      .entry {
-        padding: 2.5rem 0;
-        border-top: 1px solid #e0dfde;
-      }
-      .entry:first-child { border-top: none; }
-      .entry-header {
-        display: flex;
-        align-items: flex-start;
-        gap: 1rem;
-        margin-bottom: 1rem;
-        flex-wrap: wrap;
-      }
-      .entry-term {
-        font-size: 1.5rem;
-        font-weight: 700;
-        line-height: 1.2;
-      }
-      .entry-badges { display: flex; gap: 0.35rem; flex-wrap: wrap; align-items: center; margin-top: 0.25rem; }
-      .badge {
-        font-size: 0.6rem;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.06em;
-        padding: 0.2rem 0.5rem;
-        border-radius: 2px;
-      }
-      .badge-exec { background: #1d70b8; color: #fff; }
-      .badge-product { background: #912b88; color: #fff; }
-      .badge-tech { background: #00703c; color: #fff; }
-      .entry-oneliner {
-        font-size: 1.1rem;
-        color: #0b0c0c;
-        font-weight: 500;
-        margin-bottom: 0.75rem;
-        max-width: 720px;
-      }
-      .entry-why {
-        font-size: 0.95rem;
-        color: #505a5f;
-        margin-bottom: 1.25rem;
-        max-width: 720px;
-      }
-      .entry-why strong { color: #0b0c0c; font-weight: 600; }
-      .entry-body {
-        font-size: 0.95rem;
-        color: #505a5f;
-        max-width: 720px;
-        margin-bottom: 1.5rem;
-      }
-      .entry-body p { margin-bottom: 0.75rem; }
-      .entry-body ul { margin-left: 1.25rem; margin-bottom: 0.75rem; }
-      .entry-body li { margin-bottom: 0.3rem; }
+    /* ── Footer ── */
+    .footer { border-top: 1px solid var(--border); padding: 3rem 0 2rem; }
+    .footer-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem; }
+    @media (max-width: 640px) { .footer-grid { grid-template-columns: 1fr; } }
+    .footer h4 { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.06em; color: var(--ink-faint); margin-bottom: 0.75rem; }
+    .footer ul { list-style: none; padding: 0; }
+    .footer li { margin-bottom: 0.35rem; }
+    .footer li a { font-size: 0.85rem; color: var(--ink-soft); font-weight: 500; }
+    .footer li a:hover { color: var(--blue); }
+    .footer-note { font-size: 0.75rem; color: var(--ink-faint); border-top: 1px solid var(--border-light); padding-top: 1.5rem; }
+  </style>
+  <script async defer src="https://scripts.withcabin.com/hello.js"></script>
+</head>
+<body>
 
-      /* ── Interface snippets ── */
-      .snippet {
-        margin-top: 1.25rem;
-        border: 1px solid #d2d2d2;
-        border-radius: 6px;
-        overflow: hidden;
-        max-width: 375px;
-        background: #fff;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-      }
-      .snippet-label {
-        font-size: 0.65rem;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.08em;
-        color: #505a5f;
-        background: #f8f8f8;
-        padding: 0.4rem 0.75rem;
-        border-bottom: 1px solid #e8e8e8;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-      }
-      .snippet-label::before {
-        content: "";
-        display: inline-block;
-        width: 6px;
-        height: 6px;
-        border-radius: 50%;
-        background: #00703c;
-      }
-      .snippet-body {
-        padding: 0;
-        font-size: 0.85rem;
-      }
-
-      /* Snippet internal styling — mini UI recreations */
-      .s-panel {
-        padding: 0.75rem 1rem;
-      }
-      .s-header {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        margin-bottom: 0.5rem;
-      }
-      .s-icon {
-        width: 24px;
-        height: 24px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 0.7rem;
-        font-weight: 700;
-        color: #fff;
-        flex-shrink: 0;
-      }
-      .s-title { font-size: 0.8rem; font-weight: 700; }
-      .s-subtitle { font-size: 0.7rem; color: #505a5f; }
-      .s-desc { font-size: 0.75rem; color: #505a5f; margin-bottom: 0.5rem; }
-      .s-tag {
-        display: inline-block;
-        font-size: 0.65rem;
-        padding: 0.15rem 0.5rem;
-        border-radius: 10px;
-        margin-right: 0.25rem;
-        margin-bottom: 0.25rem;
-      }
-      .s-tag-purple { background: #f5e6f4; color: #912b88; }
-      .s-tag-blue { background: #e8f0fe; color: #1d70b8; }
-      .s-tag-green { background: #e6f3ec; color: #00703c; }
-      .s-tag-grey { background: #f3f2f1; color: #505a5f; }
-      .s-tag-red { background: #fde8e8; color: #d4351c; }
-      .s-btn {
-        display: inline-block;
-        font-size: 0.7rem;
-        font-weight: 700;
-        padding: 0.4rem 1rem;
-        border-radius: 20px;
-        border: none;
-        cursor: default;
-        margin-right: 0.35rem;
-      }
-      .s-btn-purple { background: #912b88; color: #fff; }
-      .s-btn-outline { background: transparent; border: 1.5px solid #b1b4b6; color: #505a5f; }
-      .s-btn-green { background: #00703c; color: #fff; }
-      .s-btn-blue { background: #1d70b8; color: #fff; }
-      .s-divider { border: none; border-top: 1px solid #e8e8e8; margin: 0.5rem 0; }
-      .s-row {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 0.35rem 0;
-        font-size: 0.75rem;
-      }
-      .s-row-label { color: #505a5f; }
-      .s-row-value { font-weight: 600; color: #0b0c0c; }
-      .s-mono { font-family: "JetBrains Mono", monospace; font-size: 0.7rem; }
-      .s-required { font-size: 0.6rem; color: #d4351c; font-weight: 600; }
-      .s-verified {
-        font-size: 0.55rem;
-        font-weight: 700;
-        background: #e8f0fe;
-        color: #1d70b8;
-        padding: 0.1rem 0.35rem;
-        border-radius: 2px;
-        margin-left: 0.35rem;
-      }
-      .s-field {
-        margin-bottom: 0.5rem;
-      }
-      .s-field-label {
-        font-size: 0.7rem;
-        font-weight: 600;
-        color: #0b0c0c;
-        margin-bottom: 0.2rem;
-      }
-      .s-field-input {
-        width: 100%;
-        padding: 0.4rem 0.5rem;
-        border: 1.5px solid #b1b4b6;
-        border-radius: 4px;
-        font-size: 0.75rem;
-        color: #0b0c0c;
-        background: #fff;
-        font-family: inherit;
-      }
-      .s-field-input.readonly {
-        background: #f3f2f1;
-        border-color: #d2d2d2;
-        color: #505a5f;
-      }
-      .s-progress {
-        display: flex;
-        align-items: center;
-        gap: 0.2rem;
-        margin: 0.5rem 0;
-      }
-      .s-step {
-        width: 20px;
-        height: 20px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 0.55rem;
-        font-weight: 700;
-        flex-shrink: 0;
-      }
-      .s-step-done { background: #00703c; color: #fff; }
-      .s-step-active { background: #1d70b8; color: #fff; box-shadow: 0 0 0 3px #bfdbfe; }
-      .s-step-future { background: #e0dfde; color: #b1b4b6; }
-      .s-connector { flex: 1; height: 2px; min-width: 8px; }
-      .s-connector-done { background: #00703c; }
-      .s-connector-future { background: #e0dfde; }
-      .s-step-label { font-size: 0.55rem; text-align: center; margin-top: 0.15rem; }
-      .s-handoff {
-        border-left: 3px solid;
-        padding: 0.5rem 0.75rem;
-        border-radius: 0 4px 4px 0;
-        margin: 0.5rem 0;
-      }
-      .s-timeline-dot {
-        width: 16px;
-        height: 16px;
-        border-radius: 50%;
-        border: 1.5px solid;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 0.55rem;
-        flex-shrink: 0;
-      }
-      .s-timeline-line {
-        width: 1px;
-        height: 16px;
-        background: #e0dfde;
-        margin-left: 7.5px;
-      }
-      .s-bar-track { width: 100%; height: 6px; background: #e0dfde; border-radius: 3px; overflow: hidden; }
-      .s-bar-fill { height: 100%; border-radius: 3px; }
-      .s-outcome {
-        border-radius: 8px;
-        overflow: hidden;
-        border: 1px solid #e0dfde;
-      }
-      .s-outcome-dept {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        padding: 0.5rem 0.75rem;
-        border-left: 2px solid;
-        margin: 0 0.75rem;
-        font-size: 0.75rem;
-        color: #0b0c0c;
-      }
-      .s-crown { font-size: 0.85rem; }
-      .s-ref-bar {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        background: #f8f8f8;
-        border-radius: 4px;
-        padding: 0.3rem 0.6rem;
-        margin: 0.5rem 0;
-      }
-      .s-ref-label {
-        font-size: 0.55rem;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.06em;
-        color: #b1b4b6;
-      }
-      .s-ref-value { font-family: "JetBrains Mono", monospace; font-size: 0.75rem; font-weight: 700; }
-      .s-status-badge {
-        display: flex;
-        align-items: center;
-        gap: 0.35rem;
-        padding: 0.3rem 0.6rem;
-        border-radius: 4px;
-        font-size: 0.7rem;
-        font-weight: 600;
-      }
-
-      /* ── Group separators ── */
-      .group-header {
-        padding: 3rem 0 1rem;
-      }
-      .group-header h2 {
-        font-size: 1.5rem;
-        font-weight: 800;
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-      }
-      .group-number {
-        font-size: 0.75rem;
-        font-weight: 800;
-        color: #fff;
-        background: #0b0c0c;
-        width: 28px;
-        height: 28px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 50%;
-        flex-shrink: 0;
-      }
-      .group-desc {
-        font-size: 1rem;
-        color: #505a5f;
-        max-width: 700px;
-        margin-top: 0.5rem;
-      }
-
-      /* ── Artefact example ── */
-      .artefact-example {
-        margin-top: 1.25rem;
-        max-width: 520px;
-      }
-      .artefact-example pre {
-        background: #1a1a2e;
-        color: #e0e0e0;
-        padding: 1rem 1.25rem;
-        border-radius: 6px;
-        font-size: 0.75rem;
-        line-height: 1.7;
-        overflow-x: auto;
-      }
-      .artefact-example pre .key { color: #7dd3fc; }
-      .artefact-example pre .str { color: #86efac; }
-      .artefact-example pre .num { color: #fbbf24; }
-      .artefact-example pre .comment { color: #6b7280; font-style: italic; }
-
-      /* ── Print ── */
-      @media print {
-        .nav { position: static; }
-        .snippet { break-inside: avoid; }
-        .entry { break-inside: avoid; }
-      }
-
-      /* ── Subtle entry animation ── */
-      @media (prefers-reduced-motion: no-preference) {
-        .entry {
-          animation: fadeUp 0.4s ease both;
-        }
-        @keyframes fadeUp {
-          from { opacity: 0; transform: translateY(12px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-      }
-
-      /* ── Snippet download controls ── */
-      .snippet {
-        position: relative;
-      }
-      .snippet-dl {
-        position: absolute;
-        top: 6px;
-        right: 6px;
-        display: flex;
-        gap: 2px;
-        opacity: 0;
-        transition: opacity 0.2s;
-        z-index: 10;
-      }
-      .snippet:hover .snippet-dl,
-      .snippet:focus-within .snippet-dl {
-        opacity: 1;
-      }
-      .snippet-dl-btn {
-        font-family: "Inter", Arial, sans-serif;
-        font-size: 0.6rem;
-        font-weight: 600;
-        padding: 0.2rem 0.5rem;
-        border-radius: 3px;
-        border: 1px solid #b1b4b6;
-        background: #fff;
-        color: #505a5f;
-        cursor: pointer;
-        transition: all 0.15s;
-        line-height: 1;
-        text-transform: uppercase;
-        letter-spacing: 0.03em;
-      }
-      .snippet-dl-btn:hover {
-        background: #f3f2f1;
-        border-color: #505a5f;
-        color: #0b0c0c;
-      }
-
-      /* ── Exportable icon overlay ── */
-      .exportable {
-        position: relative;
-        cursor: pointer;
-      }
-      .exportable .export-hint {
-        position: absolute;
-        top: -4px;
-        right: -4px;
-        width: 16px;
-        height: 16px;
-        border-radius: 50%;
-        background: #505a5f;
-        color: #fff;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 8px;
-        font-weight: 700;
-        opacity: 0;
-        transition: opacity 0.2s;
-        pointer-events: none;
-        z-index: 5;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.15);
-      }
-      .exportable:hover .export-hint {
-        opacity: 1;
-      }
-      .exportable:hover {
-        outline: 2px dashed #b1b4b6;
-        outline-offset: 3px;
-        border-radius: 8px;
-      }
-      .pipeline-exportable {
-        position: relative;
-        display: inline-block;
-      }
-      .pipeline-exportable .export-hint {
-        position: absolute;
-        top: -8px;
-        right: -8px;
-        width: 18px;
-        height: 18px;
-        border-radius: 50%;
-        background: #505a5f;
-        color: #fff;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 8px;
-        font-weight: 700;
-        opacity: 0;
-        transition: opacity 0.2s;
-        cursor: pointer;
-        z-index: 5;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.15);
-      }
-      .pipeline-exportable:hover .export-hint {
-        opacity: 1;
-      }
-    </style>
-    <script async defer src="https://scripts.withcabin.com/hello.js"></script>
-  </head>
-  <body>
-
-    <!-- ── Navigation ── -->
-    <nav class="nav">
-      <div class="container">
-        <span class="nav-brand">Agentic Legibility Stack</span>
-        <ul class="nav-links">
-          <li><a href="index.html">All documents</a></li>
-          <li><a href="overview.html">Overview</a></li>
-          <li><a href="briefing-executive.html">Executive briefing</a></li>
-          <li><a href="guide-product.html">Product guide</a></li>
-          <li><a href="reference-technical.html">Technical reference</a></li>
-          <li><a href="glossary.html" class="active">Glossary</a></li>
-        </ul>
-      </div>
-    </nav>
-
-    <!-- ── Hero ── -->
-    <header class="hero">
-      <div class="container">
-        <span class="hero-label">Reference</span>
-        <h1>Concept Glossary</h1>
-        <p class="hero-subtitle">
-          Every concept in the Agentic Legibility Stack, defined for three audiences: executive leaders, product and service teams, and technical architects.
-        </p>
-        <p style="font-size:0.95rem;color:#505a5f;max-width:700px;margin-bottom:2rem;">
-          This glossary describes the <strong>target operating model</strong> for how UK government services could work through AI agents. Interface examples are drawn from working prototypes that illustrate these concepts in action.
-        </p>
-
-        <!-- Audience legend -->
-        <div style="display:flex;gap:0.75rem;flex-wrap:wrap;margin-bottom:1rem;">
-          <span class="badge badge-exec" style="font-size:0.7rem;padding:0.25rem 0.6rem;">Permanent Secretaries</span>
-          <span class="badge badge-product" style="font-size:0.7rem;padding:0.25rem 0.6rem;">Product &amp; Service Teams</span>
-          <span class="badge badge-tech" style="font-size:0.7rem;padding:0.25rem 0.6rem;">Technical Architects</span>
-        </div>
-        <p style="font-size:0.8rem;color:#505a5f;">
-          Badges on each entry show which audiences it is most relevant to. All entries are accessible to everyone.
-        </p>
-      </div>
-    </header>
-
-    <!-- ── Filter Bar ── -->
-    <div class="filter-bar" id="filterBar">
-      <div class="container">
-        <span class="filter-label">Show:</span>
-        <button class="filter-btn active" data-filter="all">All concepts</button>
-        <button class="filter-btn" data-filter="exec">Permanent Secretaries</button>
-        <button class="filter-btn" data-filter="product">Product &amp; Service Teams</button>
-        <button class="filter-btn" data-filter="tech">Technical Architects</button>
-        <span class="filter-count" id="filterCount"></span>
-      </div>
+  <!-- ── Nav ── -->
+  <nav class="nav">
+    <div class="container">
+      <div class="nav-brand">Agentic Legibility Stack</div>
+      <ul class="nav-links">
+        <li><a href="citizen-app.html">Citizen app</a></li>
+        <li><a href="legibility-studio.html">Legibility Studio</a></li>
+        <li><a href="technical.html">Technical</a></li>
+        <li><a href="departments.html">Departments</a></li>
+        <li><a href="glossary.html" class="active">Glossary</a></li>
+      </ul>
     </div>
+  </nav>
 
-    <!-- ── Table of Contents ── -->
-    <div class="section-alt" style="padding:2rem 0;">
-      <div class="container">
-        <div class="toc">
-          <div class="toc-group" style="--border-color:#1d70b8;">
-            <h4 style="border-bottom-color:#1d70b8;">1. Foundations</h4>
-            <ul>
-              <li><a href="#legibility">Legibility</a></li>
-              <li><a href="#service-artefact">Service Artefact</a></li>
-              <li><a href="#service-graph">Service Graph</a></li>
-              <li><a href="#life-event">Life Event</a></li>
-              <li><a href="#identity-authentication">Identity and Authentication</a></li>
-            </ul>
-          </div>
-          <div class="toc-group">
-            <h4 style="border-bottom-color:#912b88;">2. Citizen Experience</h4>
-            <ul>
-              <li><a href="#chat">Chat</a></li>
-              <li><a href="#task">Task</a></li>
-              <li><a href="#card">Card</a></li>
-              <li><a href="#journey">Journey</a></li>
-              <li><a href="#outcome">Outcome</a></li>
-              <li><a href="#service-proposal">Service Proposal</a></li>
-              <li><a href="#proactivity">Proactivity</a></li>
-              <li><a href="#plan">Plan</a></li>
-              <li><a href="#household">Household</a></li>
-              <li><a href="#delegation">Delegation</a></li>
-              <li><a href="#relationship-permissions">Relationship Permissions</a></li>
-            </ul>
-          </div>
-          <div class="toc-group">
-            <h4 style="border-bottom-color:#00703c;">3. Data Architecture</h4>
-            <ul>
-              <li><a href="#citizen-data-model">Citizen Data Model</a></li>
-              <li><a href="#data-tiers">Data Tiers</a></li>
-              <li><a href="#field-source">Field Source Attribution</a></li>
-              <li><a href="#wallet-credentials">Wallet Credentials</a></li>
-              <li><a href="#govuk-wallet">GOV.UK Wallet</a></li>
-            </ul>
-          </div>
-          <div class="toc-group">
-            <h4 style="border-bottom-color:#912b88;">4. Consent &amp; Control</h4>
-            <ul>
-              <li><a href="#consent-grant">Consent Grant</a></li>
-              <li><a href="#consent-audit">Consent Audit</a></li>
-            </ul>
-          </div>
-          <div class="toc-group">
-            <h4 style="border-bottom-color:#f47738;">5. Accountability</h4>
-            <ul>
-              <li><a href="#evidence-plane">Evidence Plane</a></li>
-              <li><a href="#trace-event">Trace Event</a></li>
-              <li><a href="#receipt">Receipt</a></li>
-              <li><a href="#case-store">Case Store</a></li>
-              <li><a href="#replay">Replay</a></li>
-              <li><a href="#agent-reasoning">Agent Reasoning</a></li>
-            </ul>
-          </div>
-          <div class="toc-group">
-            <h4 style="border-bottom-color:#0b0c0c;">6. Orchestration</h4>
-            <ul>
-              <li><a href="#deterministic-boundary">Deterministic Boundary</a></li>
-              <li><a href="#state-machine">State Machine</a></li>
-              <li><a href="#policy-evaluation">Policy Evaluation</a></li>
-              <li><a href="#field-collection">Field Collection</a></li>
-              <li><a href="#capability-invocation">Capability Invocation</a></li>
-              <li><a href="#mcp">Model Context Protocol (MCP)</a></li>
-            </ul>
-          </div>
-          <div class="toc-group">
-            <h4 style="border-bottom-color:#d4351c;">7. Safety &amp; Escalation</h4>
-            <ul>
-              <li><a href="#handoff">Handoff</a></li>
-              <li><a href="#safeguarding">Safeguarding</a></li>
-              <li><a href="#edge-case">Edge Case Detection</a></li>
-            </ul>
-          </div>
-          <div class="toc-group">
-            <h4 style="border-bottom-color:#4c6272;">8. Administration</h4>
-            <ul>
-              <li><a href="#gap-analysis">Gap Analysis</a></li>
-              <li><a href="#service-coverage">Service Coverage</a></li>
-              <li><a href="#legibility-studio">Legibility Studio</a></li>
-              <li><a href="#persona">Persona</a></li>
-            </ul>
-          </div>
+
+  <!-- ── Hero ── -->
+  <div class="hero">
+    <div class="container">
+      <div class="hero-label">Reference</div>
+      <h1>Glossary</h1>
+      <p class="hero-subtitle">Key concepts and terminology used across the Agentic Legibility Stack.</p>
+    </div>
+  </div>
+
+
+  <!-- ── Main content ── -->
+  <div class="section" style="padding-top: 0;">
+    <div class="container">
+
+      <!-- Search -->
+      <div class="search-bar">
+        <input type="text" class="search-input" id="glossary-search" placeholder="Filter terms..." autocomplete="off" />
+        <div class="search-count" id="search-count"></div>
+      </div>
+
+
+      <!-- ═══════ 1. Foundations ═══════ -->
+      <div class="group" data-group="foundations">
+        <div class="group-title">Foundations</div>
+
+        <div class="term" data-term="service description">
+          <div class="term-name">Service description</div>
+          <div class="term-def">A structured, machine-readable description of a government service that an AI agent can understand and act on.</div>
+          <div class="term-note">Each service description has four dimensions: <strong>identity</strong> (what the service is), <strong>eligibility</strong> (who qualifies), <strong>journey</strong> (what steps are involved), and <strong>data sharing</strong> (what consent is needed). Previously called "service artefacts".</div>
+        </div>
+
+        <div class="term" data-term="identity">
+          <div class="term-name">Identity (service dimension)</div>
+          <div class="term-def">The dimension of a service description that declares what the service is, which department owns it, and what it does.</div>
+          <div class="term-note">Previously called "manifest". Gives the agent enough context to decide whether a service is relevant to a citizen's situation.</div>
+        </div>
+
+        <div class="term" data-term="eligibility">
+          <div class="term-name">Eligibility (service dimension)</div>
+          <div class="term-def">The dimension of a service description that defines who qualifies, expressed as deterministic rules that code can evaluate.</div>
+          <div class="term-note">Previously called "policy". The AI never decides eligibility — it is always evaluated by code against the published rules.</div>
+        </div>
+
+        <div class="term" data-term="journey">
+          <div class="term-name">Journey (service dimension)</div>
+          <div class="term-def">The dimension of a service description that defines the valid sequence of steps from start to completion.</div>
+          <div class="term-note">Previously called "state model". Prevents the agent from skipping steps or advancing out of order.</div>
+        </div>
+
+        <div class="term" data-term="data sharing">
+          <div class="term-name">Data sharing (service dimension)</div>
+          <div class="term-def">The dimension of a service description that specifies what data fields are needed, from whom, and what consent is required before sharing.</div>
+          <div class="term-note">Previously called "consent model". Consent is enforced by code, not by the AI.</div>
+        </div>
+
+        <div class="term" data-term="legibility">
+          <div class="term-name">Legibility</div>
+          <div class="term-def">Making a government service machine-readable so an AI agent can understand it, assess eligibility, and act on it for a citizen.</div>
+          <div class="term-note">A service is "legible" when all four dimensions of its service description are published and complete.</div>
+        </div>
+
+        <div class="term" data-term="deterministic boundary">
+          <div class="term-name">Deterministic boundary</div>
+          <div class="term-def">The strict separation between what the AI language model decides and what code decides.</div>
+          <div class="term-note">The AI handles language — interpreting situations, explaining outcomes, adjusting tone. Code handles rules — eligibility, state transitions, consent enforcement, data validation. See <a href="technical.html">technical architecture</a>.</div>
         </div>
       </div>
-    </div>
 
 
-    <!-- ══════════════════════════════════════════════════ -->
-    <!--  GROUP 1: FOUNDATIONS                              -->
-    <!-- ══════════════════════════════════════════════════ -->
-    <div class="section">
-      <div class="container">
-        <div class="group-header" style="padding-top:0;">
-          <h2><span class="group-number">1</span> Foundations</h2>
-          <p class="group-desc">The core ideas that underpin the entire model. If you read nothing else, read these five definitions.</p>
+      <!-- ═══════ 2. Citizen experience ═══════ -->
+      <div class="group" data-group="citizen">
+        <div class="group-title">Citizen experience</div>
+
+        <div class="term" data-term="life event">
+          <div class="term-name"><a href="life-events-catalogue.html">Life event</a></div>
+          <div class="term-def">A significant moment in a citizen's life that triggers interaction with multiple government services across departments.</div>
+          <div class="term-note">Examples: bereavement, having a child, losing a job. The system matches a citizen's situation to a life event and proposes all relevant services at once.</div>
         </div>
 
-        <!-- LEGIBILITY -->
-        <div class="entry" id="legibility">
-          <div class="entry-header">
-            <div>
-              <div class="entry-term">Legibility</div>
-              <div class="entry-badges">
-                <span class="badge badge-exec">Executive</span>
-                <span class="badge badge-product">Product</span>
-                <span class="badge badge-tech">Technical</span>
-              </div>
-            </div>
-          </div>
-          <p class="entry-oneliner">
-            Making a government service machine-readable so an AI agent can understand it, assess eligibility, and act on it for a citizen.
-          </p>
-          <p class="entry-why">
-            <strong>Why it matters:</strong> Today, government services are designed for humans reading web pages. When AI agents act on behalf of citizens, they need structured, machine-readable descriptions of what each service does, who is eligible, what data is required, and what consent is needed. Without legibility, agents guess &mdash; and guessing about eligibility, entitlements, or legal obligations is unacceptable.
-          </p>
-          <div class="entry-body">
-            <p>
-              A service is "legible" when it publishes four structured artefacts (see <a href="#service-artefact">Service Artefact</a>) that tell any authorised agent everything it needs to know to act on that service. Legibility is the supply-side of the agentic equation: departments publish, agents consume.
-            </p>
-            <p>
-              A fully legible government would mean that a citizen experiencing bereavement, starting a business, or leaving prison could have an agent identify every relevant service, check eligibility for each, and begin acting &mdash; across departmental boundaries &mdash; in a single conversation.
-            </p>
-          </div>
+        <div class="term" data-term="service">
+          <div class="term-name">Service</div>
+          <div class="term-def">A single government service that a citizen can access through the agent — such as registering a death, applying for bereavement support, or notifying DVLA.</div>
         </div>
 
-        <!-- SERVICE ARTEFACT -->
-        <div class="entry" id="service-artefact">
-          <div class="entry-header">
-            <div>
-              <div class="entry-term">Service Artefact</div>
-              <div class="entry-badges">
-                <span class="badge badge-exec">Executive</span>
-                <span class="badge badge-product">Product</span>
-                <span class="badge badge-tech">Technical</span>
-              </div>
-            </div>
-          </div>
-          <p class="entry-oneliner">
-            A structured machine-readable file that describes one aspect of a government service to an AI agent.
-          </p>
-          <p class="entry-why">
-            <strong>Why it matters:</strong> Artefacts are the unit of work for making services legible. Each department publishes four artefacts per service. Together, they form a complete contract between the department and any agent acting for a citizen.
-          </p>
-          <div class="entry-body">
-            <p>The four artefact types are:</p>
-            <ul>
-              <li><strong>Manifest</strong> &mdash; What the service does, which department runs it, input/output schemas, fees, SLAs, and redress routes</li>
-              <li><strong>Policy Ruleset</strong> &mdash; Eligibility rules expressed as evaluable conditions, with failure reasons, edge cases, and alternative services</li>
-              <li><strong>State Model</strong> &mdash; The valid states a service interaction passes through (e.g. identity verified &rarr; eligibility checked &rarr; consent given &rarr; submitted), with guards on each transition</li>
-              <li><strong>Consent Model</strong> &mdash; What data the service needs, from which source, for what purpose, and whether each data-sharing grant is required or optional</li>
-            </ul>
-          </div>
-
-          <!-- Artefact contents table -->
-          <div class="snippet" style="max-width:520px;">
-            <div class="snippet-label">
-              What a service artefact contains (manifest example)
-            </div>
-            <div class="snippet-body">
-              <div class="s-panel" style="padding:0;">
-                <table style="width:100%;border-collapse:collapse;font-size:0.75rem;">
-                  <thead>
-                    <tr style="background:#f8f8f8;text-align:left;">
-                      <th style="padding:0.5rem 0.75rem;font-weight:700;border-bottom:1px solid #e0dfde;">Field</th>
-                      <th style="padding:0.5rem 0.75rem;font-weight:700;border-bottom:1px solid #e0dfde;">Purpose</th>
-                      <th style="padding:0.5rem 0.75rem;font-weight:700;border-bottom:1px solid #e0dfde;">Example</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td style="padding:0.4rem 0.75rem;border-bottom:1px solid #f0f0f0;font-weight:600;">Service name</td>
-                      <td style="padding:0.4rem 0.75rem;border-bottom:1px solid #f0f0f0;color:#505a5f;">Human-readable title the agent presents to citizens</td>
-                      <td style="padding:0.4rem 0.75rem;border-bottom:1px solid #f0f0f0;">Renew Driving Licence</td>
-                    </tr>
-                    <tr>
-                      <td style="padding:0.4rem 0.75rem;border-bottom:1px solid #f0f0f0;font-weight:600;">Department</td>
-                      <td style="padding:0.4rem 0.75rem;border-bottom:1px solid #f0f0f0;color:#505a5f;">Which department owns and operates the service</td>
-                      <td style="padding:0.4rem 0.75rem;border-bottom:1px solid #f0f0f0;">DVLA</td>
-                    </tr>
-                    <tr>
-                      <td style="padding:0.4rem 0.75rem;border-bottom:1px solid #f0f0f0;font-weight:600;">Description</td>
-                      <td style="padding:0.4rem 0.75rem;border-bottom:1px solid #f0f0f0;color:#505a5f;">What the service does, for agent understanding</td>
-                      <td style="padding:0.4rem 0.75rem;border-bottom:1px solid #f0f0f0;">Renew a photocard driving licence online</td>
-                    </tr>
-                    <tr>
-                      <td style="padding:0.4rem 0.75rem;border-bottom:1px solid #f0f0f0;font-weight:600;">Eligibility summary</td>
-                      <td style="padding:0.4rem 0.75rem;border-bottom:1px solid #f0f0f0;color:#505a5f;">High-level conditions the citizen must meet</td>
-                      <td style="padding:0.4rem 0.75rem;border-bottom:1px solid #f0f0f0;">UK resident, aged 16+, valid licence to renew</td>
-                    </tr>
-                    <tr>
-                      <td style="padding:0.4rem 0.75rem;border-bottom:1px solid #f0f0f0;font-weight:600;">Required data fields</td>
-                      <td style="padding:0.4rem 0.75rem;border-bottom:1px solid #f0f0f0;color:#505a5f;">What the agent needs to collect or verify</td>
-                      <td style="padding:0.4rem 0.75rem;border-bottom:1px solid #f0f0f0;">Full name, date of birth, NI number, address, photo</td>
-                    </tr>
-                    <tr>
-                      <td style="padding:0.4rem 0.75rem;border-bottom:1px solid #f0f0f0;font-weight:600;">Processing time</td>
-                      <td style="padding:0.4rem 0.75rem;border-bottom:1px solid #f0f0f0;color:#505a5f;">Expected service level for completion</td>
-                      <td style="padding:0.4rem 0.75rem;border-bottom:1px solid #f0f0f0;">10 working days</td>
-                    </tr>
-                    <tr>
-                      <td style="padding:0.4rem 0.75rem;font-weight:600;">Redress route</td>
-                      <td style="padding:0.4rem 0.75rem;color:#505a5f;">How to challenge the outcome if needed</td>
-                      <td style="padding:0.4rem 0.75rem;">Contact DVLA; escalate to PHSO</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-          <div class="entry-body" style="margin-top:1rem;">
-            <p style="font-size:0.85rem;color:#505a5f;font-style:italic;">In the target model, departments publish this information through APIs conforming to a standard schema.</p>
-          </div>
+        <div class="term" data-term="card">
+          <div class="term-name"><a href="card-catalogue.html">Card</a></div>
+          <div class="term-def">A structured data-collection interface embedded within the conversation, replacing traditional government web forms.</div>
+          <div class="term-note">Cards handle consent requests, data collection, identity verification, and outcome confirmations. They are deterministic — the AI cannot alter what a card asks for or skip required fields.</div>
         </div>
 
-        <!-- SERVICE GRAPH -->
-        <div class="entry" id="service-graph">
-          <div class="entry-header">
-            <div>
-              <div class="entry-term">Service Graph</div>
-              <div class="entry-badges">
-                <span class="badge badge-product">Product</span>
-                <span class="badge badge-tech">Technical</span>
-              </div>
-            </div>
-          </div>
-          <p class="entry-oneliner">
-            A connected map of all government services showing which services require, enable, or relate to each other.
-          </p>
-          <p class="entry-why">
-            <strong>Why it matters:</strong> Citizens don't experience government as isolated transactions &mdash; they experience life events that touch multiple departments. The service graph lets an agent reason about sequences ("you need a National Insurance number before you can apply for Universal Credit") and proactively suggest services the citizen may not know they are entitled to.
-          </p>
-          <div class="entry-body">
-            <p>The graph contains service nodes with metadata (department, type, eligibility factors) and typed edges:</p>
-            <ul>
-              <li><strong>REQUIRES</strong> &mdash; Service A must be completed before Service B can begin (prerequisite)</li>
-              <li><strong>ENABLES</strong> &mdash; Completing Service A opens up eligibility for Service B (opportunity)</li>
-            </ul>
-            <p>Each service is classified by interaction type: benefit, obligation, registration, application, legal process, document, or grant.</p>
-            <p>The graph data model used in this architecture builds on the work of <strong>Maxwell Riess</strong>, whose <a href="https://maxwellriess.github.io/UK-Gov-Service-Graph-poc/" target="_blank" rel="noopener">UK Government Service Graph proof of concept</a> mapped the relationships between government services and demonstrated that a connected, navigable graph of public services is both feasible and powerful. His research provided the foundational graph structure for this prototype.</p>
-          </div>
+        <div class="term" data-term="task">
+          <div class="term-name">Task</div>
+          <div class="term-def">A discrete unit of work within a journey — something the agent will do or something the citizen must confirm — with a tracked status.</div>
         </div>
 
-        <!-- LIFE EVENT -->
-        <div class="entry" id="life-event">
-          <div class="entry-header">
-            <div>
-              <div class="entry-term">Life Event</div>
-              <div class="entry-badges">
-                <span class="badge badge-exec">Executive</span>
-                <span class="badge badge-product">Product</span>
-              </div>
-            </div>
-          </div>
-          <p class="entry-oneliner">
-            A significant moment in a citizen's life that triggers interaction with multiple government services across departments.
-          </p>
-          <p class="entry-why">
-            <strong>Why it matters:</strong> Citizens don't think in terms of departments or service names. They think "my mother died" or "I'm starting my first job." Life events are the entry points through which an agent discovers relevant services, rather than expecting citizens to know which department to approach.
-          </p>
-          <div class="entry-body">
-            <p>The model maps 16 life events &mdash; including bereavement, having a baby, moving house, starting a business, leaving prison, retiring, and arriving in the UK &mdash; to the services each triggers. An agent uses a citizen's situation to identify the relevant life event and proactively surface all connected services.</p>
-          </div>
+        <div class="term" data-term="notification">
+          <div class="term-name">Notification</div>
+          <div class="term-def">A proactive message from the system alerting a citizen to a service they may be eligible for, a deadline approaching, or an action they need to take.</div>
         </div>
 
-        <!-- IDENTITY AND AUTHENTICATION -->
-        <div class="entry" id="identity-authentication">
-          <div class="entry-header">
-            <div>
-              <div class="entry-term">Identity and Authentication</div>
-              <div class="entry-badges">
-                <span class="badge badge-exec">Executive</span>
-                <span class="badge badge-product">Product</span>
-                <span class="badge badge-tech">Technical</span>
-              </div>
-            </div>
-          </div>
-          <p class="entry-oneliner">
-            How citizens prove who they are before an AI agent can access government services on their behalf &mdash; built on GOV.UK One Login.
-          </p>
-          <p class="entry-why">
-            <strong>Why it matters:</strong> Trust is the foundation of agentic government services. Without verified identity, the agent cannot access any service, share any data, or take any action. Identity and authentication ensure that only the right person (or their authorised delegate) can instruct the agent, and that departments can trust the identity claims the agent presents. This protects citizens from fraud and misuse, and gives departments the assurance they need to accept agent-mediated interactions.
-          </p>
-          <div class="entry-body">
-            <p>Citizens authenticate through GOV.UK One Login, which provides a verified identity at the level required by each service. The agent cannot bypass or substitute this step. Once authenticated, the citizen's verified identity flows through to every service interaction, consent grant, and evidence record &mdash; creating an unbroken chain of accountability from person to action.</p>
-          </div>
+        <div class="term" data-term="wallet">
+          <div class="term-name">Wallet</div>
+          <div class="term-def">The citizen's portable store of verified credentials — digital equivalents of documents like driving licences, passports, and benefit entitlements.</div>
+          <div class="term-note">Credentials are issued by departments and held by the citizen. The wallet also stores consent preferences and earned credentials from completed services.</div>
         </div>
 
-      </div>
-    </div>
-
-
-    <!-- ══════════════════════════════════════════════════ -->
-    <!--  GROUP 2: CITIZEN EXPERIENCE                      -->
-    <!-- ══════════════════════════════════════════════════ -->
-    <div class="section section-alt">
-      <div class="container">
-        <div class="group-header" style="padding-top:0;">
-          <h2><span class="group-number">2</span> Citizen Experience</h2>
-          <p class="group-desc">The citizen experience follows a natural arc: a conversation starts, tasks are identified, data is collected to fulfil them, journeys complete, and plans coordinate multiple services across a life event.</p>
+        <div class="term" data-term="credential">
+          <div class="term-name">Credential</div>
+          <div class="term-def">A government-issued verifiable credential held in the citizen's wallet — the digital equivalent of a physical document.</div>
         </div>
 
-        <!-- CHAT -->
-        <div class="entry" id="chat">
-          <div class="entry-header">
-            <div>
-              <div class="entry-term">Chat</div>
-              <div class="entry-badges">
-                <span class="badge badge-exec">Executive</span>
-                <span class="badge badge-product">Product</span>
-              </div>
-            </div>
-          </div>
-          <p class="entry-oneliner">
-            The conversational interface through which citizens interact with government services &mdash; describing their situation, answering questions, reviewing tasks, and giving consent.
-          </p>
-          <p class="entry-why">
-            <strong>Why it matters:</strong> Chat is the primary interface between the citizen and the system. Through a single conversational thread, citizens describe their situation, review what the agent proposes, answer questions, give consent, and confirm actions. Triage &mdash; identifying needs, matching services, and proposing a plan &mdash; is one of its key capabilities, not its name. The chat also hosts focused service journeys, inline cards, task confirmations, and consent panels.
-          </p>
-          <div class="entry-body">
-            <p>Chat encompasses two primary modes: <strong>triage mode</strong>, an open-ended conversation where the agent listens to the citizen's situation, identifies their life event, and proposes relevant services; and <strong>journey mode</strong>, a focused single-service interaction where the agent collects data, obtains consent, and advances through a service's state model. Cards, tasks, and consent panels all appear inline within the chat &mdash; making it the single surface through which the entire citizen experience is delivered.</p>
-          </div>
-
-          <!-- Snippet: Service proposal plan -->
-          <div class="snippet">
-            <div class="snippet-label">Citizen app &mdash; Service plan proposed in chat</div>
-            <div class="snippet-body">
-              <div class="s-panel" style="background:#fff;padding:0;overflow:hidden;">
-                <!-- Service 1: Available -->
-                <div style="display:flex;align-items:flex-start;gap:0.75rem;padding:0.75rem 0.75rem;border-bottom:1px solid #f3f2f1;">
-                  <div style="width:28px;height:28px;border-radius:50%;background:#1d70b8;color:#fff;display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:700;flex-shrink:0;margin-top:1px;">1</div>
-                  <div style="flex:1;min-width:0;">
-                    <div style="font-size:0.8rem;font-weight:700;color:#0b0c0c;margin-bottom:1px;">Register the death</div>
-                    <div style="font-size:0.7rem;font-weight:500;color:#505a5f;margin-bottom:4px;">General Register Office</div>
-                    <div style="display:flex;align-items:center;gap:0.3rem;font-size:0.6rem;color:#505a5f;border-top:1px solid #f3f2f1;padding-top:4px;">
-                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#1d70b8" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-                      <span style="color:#1d70b8;font-weight:600;">Agent will complete</span>
-                      <span style="margin-left:auto;color:#505a5f;">~15 min</span>
-                    </div>
-                  </div>
-                  <span style="font-size:0.6rem;font-weight:700;padding:0.2rem 0.6rem;border-radius:2rem;background:#eff6ff;color:#1d70b8;font-weight:600;white-space:nowrap;margin-top:2px;">Delegate</span>
-                </div>
-                <!-- Service 2: Available -->
-                <div style="display:flex;align-items:flex-start;gap:0.75rem;padding:0.75rem 0.75rem;border-bottom:1px solid #f3f2f1;">
-                  <div style="width:28px;height:28px;border-radius:50%;background:#1d70b8;color:#fff;display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:700;flex-shrink:0;margin-top:1px;">2</div>
-                  <div style="flex:1;min-width:0;">
-                    <div style="font-size:0.8rem;font-weight:700;color:#0b0c0c;margin-bottom:1px;">Tell Us Once</div>
-                    <div style="font-size:0.7rem;font-weight:500;color:#505a5f;margin-bottom:4px;">DWP</div>
-                    <div style="display:flex;align-items:center;gap:0.3rem;font-size:0.6rem;color:#505a5f;border-top:1px solid #f3f2f1;padding-top:4px;">
-                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#1d70b8" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-                      <span style="color:#1d70b8;font-weight:600;">Agent will notify 9 departments</span>
-                      <span style="margin-left:auto;color:#505a5f;">~5 min</span>
-                    </div>
-                  </div>
-                  <span style="font-size:0.6rem;font-weight:700;padding:0.2rem 0.6rem;border-radius:2rem;background:#eff6ff;color:#1d70b8;font-weight:600;white-space:nowrap;margin-top:2px;">Delegate</span>
-                </div>
-                <!-- Service 3: Locked -->
-                <div style="display:flex;align-items:flex-start;gap:0.75rem;padding:0.75rem 0.75rem;border-bottom:1px solid #f3f2f1;opacity:0.7;">
-                  <div style="width:28px;height:28px;border-radius:50%;background:#e5e7eb;color:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;">
-                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                  </div>
-                  <div style="flex:1;min-width:0;">
-                    <div style="font-size:0.8rem;font-weight:700;color:#0b0c0c;margin-bottom:1px;">Apply for probate</div>
-                    <div style="font-size:0.7rem;font-weight:500;color:#505a5f;margin-bottom:4px;">HMCTS</div>
-                    <div style="display:flex;align-items:center;gap:0.3rem;font-size:0.6rem;color:#505a5f;border-top:1px solid #f3f2f1;padding-top:4px;">
-                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#505a5f" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                      <span>Requires: Register the death</span>
-                    </div>
-                  </div>
-                </div>
-                <!-- Delegate all -->
-                <div style="padding:0.6rem 0.75rem;">
-                  <div style="background:#00703c;color:#fff;text-align:center;padding:0.55rem 1rem;font-size:0.78rem;font-weight:700;border-radius:2rem;cursor:pointer;">
-                    Delegate all to agent
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+        <div class="term" data-term="delegation">
+          <div class="term-name">Delegation</div>
+          <div class="term-def">The ability for one citizen to act on behalf of another — a parent for a child, an executor for a deceased person, a carer for a vulnerable adult.</div>
+          <div class="term-note">Delegation is scoped by relationship type and grants specific, granular permissions — not blanket authority.</div>
         </div>
 
-        <!-- TASK -->
-        <div class="entry" id="task">
-          <div class="entry-header">
-            <div>
-              <div class="entry-term">Task</div>
-              <div class="entry-badges">
-                <span class="badge badge-product">Product</span>
-                <span class="badge badge-tech">Technical</span>
-              </div>
-            </div>
-          </div>
-          <p class="entry-oneliner">
-            A discrete unit of delegated work within a journey &mdash; something the agent will do or something the citizen must confirm &mdash; with a tracked status and an owner.
-          </p>
-          <p class="entry-why">
-            <strong>Why it matters:</strong> Tasks are how the citizen stays in control of what the agent does on their behalf. Before the agent submits anything to government, the citizen sees a clear list of tasks: what the agent will do, what choices the citizen has made, and a final confirmation step. Tasks are not forms (that's what cards are for) &mdash; they are commitments to action.
-          </p>
-          <div class="entry-body">
-            <p>Each task has an owner (<strong>agent</strong> or <strong>citizen</strong>), a status (accepted, in progress, completed), optional due dates, and may require specific data. Agent tasks describe actions like "submit your UC claim" or "renew your driving licence." Citizen tasks ask for decisions: "which child is this for?" or "do you want to add your partner?"</p>
-            <p>Before any submission, the citizen reviews all tasks in a confirmation summary &mdash; with the ability to change any choice before proceeding.</p>
-          </div>
-
-          <!-- Snippet: Task summary confirmation -->
-          <div class="snippet">
-            <div class="snippet-label">Citizen app &mdash; Task confirmation before submission</div>
-            <div class="snippet-body">
-              <div class="s-panel" style="background:#fffbeb;">
-                <div class="s-header" style="margin-bottom:0.25rem;">
-                  <div class="s-icon" style="background:#fef3c7;width:22px;height:22px;">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#b58105" stroke-width="2"><path d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>
-                  </div>
-                  <span style="font-size:0.75rem;font-weight:700;color:#92400e;">Confirm before submitting</span>
-                </div>
-                <div style="font-size:0.7rem;color:#0b0c0c;font-weight:500;margin-bottom:0.15rem;">By continuing, the agent will submit information on your behalf.</div>
-                <div style="font-size:0.65rem;color:#505a5f;margin-bottom:0.6rem;">Review what will happen next. You can change your choices before confirming.</div>
-
-                <div style="font-size:0.6rem;font-weight:700;color:#1d70b8;text-transform:uppercase;margin-bottom:0.3rem;">The agent will</div>
-                <div style="padding:0.35rem 0;border-top:1px solid #fde68a;">
-                  <div style="display:flex;justify-content:space-between;align-items:flex-start;">
-                    <div>
-                      <div style="font-size:0.75rem;font-weight:600;">Renew driving licence for AB12 CDE</div>
-                      <div style="font-size:0.6rem;color:#505a5f;">Online renewal via DVLA</div>
-                    </div>
-                    <a style="font-size:0.6rem;color:#1d70b8;cursor:pointer;">Change</a>
-                  </div>
-                </div>
-                <div style="padding:0.35rem 0;border-top:1px solid #fde68a;">
-                  <div style="display:flex;justify-content:space-between;align-items:flex-start;">
-                    <div>
-                      <div style="font-size:0.75rem;font-weight:600;">Update address with DVLA</div>
-                      <div style="font-size:0.6rem;color:#505a5f;">42 Maple Road, SE15 3AH</div>
-                    </div>
-                    <a style="font-size:0.6rem;color:#1d70b8;cursor:pointer;">Change</a>
-                  </div>
-                </div>
-
-                <div style="font-size:0.6rem;font-weight:700;color:#505a5f;text-transform:uppercase;margin-top:0.5rem;margin-bottom:0.3rem;">Your choices</div>
-                <div style="padding:0.35rem 0;border-top:1px solid #fde68a;">
-                  <div style="display:flex;justify-content:space-between;align-items:flex-start;">
-                    <div>
-                      <div style="font-size:0.75rem;font-weight:600;">Use existing passport photo</div>
-                      <div style="font-size:0.6rem;color:#505a5f;">Yes &mdash; use most recent</div>
-                    </div>
-                    <a style="font-size:0.6rem;color:#1d70b8;cursor:pointer;">Change</a>
-                  </div>
-                </div>
-
-                <div style="margin-top:0.75rem;">
-                  <span class="s-btn s-btn-green" style="width:100%;display:block;text-align:center;padding:0.5rem;">Confirm and continue</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- CARD -->
-        <div class="entry" id="card">
-          <div class="entry-header">
-            <div>
-              <div class="entry-term">Card</div>
-              <div class="entry-badges">
-                <span class="badge badge-product">Product</span>
-                <span class="badge badge-tech">Technical</span>
-              </div>
-            </div>
-          </div>
-          <p class="entry-oneliner">
-            A structured data-collection interface embedded within the conversation, replacing traditional government web forms.
-          </p>
-          <p class="entry-why">
-            <strong>Why it matters:</strong> Cards allow the agent to collect verified, structured data from citizens within a conversational flow. Fields pre-fill from verified sources (e.g. GOV.UK Wallet credentials), are marked as verified when government-sourced, and only ask for what's genuinely needed.
-          </p>
-          <div class="entry-body">
-            <p>Card types include generic forms, payment collection, document uploads, and bank details. Each card is defined by a schema specifying field types, validation rules, required/optional status, and conditional visibility (some fields only appear based on answers to others).</p>
-          </div>
-
-          <!-- Snippet: Form card -->
-          <div class="snippet">
-            <div class="snippet-label">Citizen app &mdash; Data collection card with verified pre-fill</div>
-            <div class="snippet-body">
-              <div class="s-panel" style="background:#f8f8f8;">
-                <div class="s-field">
-                  <div class="s-field-label">Full name <span class="s-verified">Verified</span></div>
-                  <input class="s-field-input readonly" value="Sarah Okafor" disabled>
-                </div>
-                <div class="s-field">
-                  <div class="s-field-label">Date of birth <span class="s-verified">Verified</span></div>
-                  <input class="s-field-input readonly" value="14/03/1985" disabled>
-                </div>
-                <div class="s-field">
-                  <div class="s-field-label">Relationship to deceased <span class="s-required">*</span></div>
-                  <input class="s-field-input" value="Daughter (executor)" disabled>
-                </div>
-                <div class="s-field">
-                  <div class="s-field-label">Date of death <span class="s-required">*</span></div>
-                  <input class="s-field-input" value="02/01/2026" disabled>
-                </div>
-                <div style="margin-top:0.75rem;">
-                  <span class="s-btn s-btn-green" style="width:100%;display:block;text-align:center;padding:0.5rem;">Confirm details</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- JOURNEY -->
-        <div class="entry" id="journey">
-          <div class="entry-header">
-            <div>
-              <div class="entry-term">Journey</div>
-              <div class="entry-badges">
-                <span class="badge badge-product">Product</span>
-                <span class="badge badge-tech">Technical</span>
-              </div>
-            </div>
-          </div>
-          <p class="entry-oneliner">
-            A focused, single-service interaction where the agent collects data, obtains consent, and advances through the service's state model to completion.
-          </p>
-          <p class="entry-why">
-            <strong>Why it matters:</strong> Journeys replace traditional government web forms with a conversational, guided experience. The agent knows what data is needed, what has already been verified, and what state the interaction is in &mdash; so the citizen never fills in the same information twice.
-          </p>
-          <div class="entry-body">
-            <p>A journey progresses through defined states (identity &rarr; eligibility &rarr; consent &rarr; data collection &rarr; submission &rarr; outcome). The agent can only advance through valid transitions &mdash; it cannot skip eligibility checks or bypass consent. Progress is shown to the citizen in real time.</p>
-          </div>
-
-          <!-- Snippet: State progress tracker -->
-          <div class="snippet">
-            <div class="snippet-label">Citizen app &mdash; Journey progress indicator</div>
-            <div class="snippet-body">
-              <div class="s-panel">
-                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.4rem;">
-                  <span style="font-size:0.55rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#505a5f;">UC Application Progress</span>
-                  <span style="font-size:0.7rem;font-weight:600;color:#1d70b8;">Housing details</span>
-                </div>
-                <div class="s-progress">
-                  <div class="s-step s-step-done">&#10003;</div>
-                  <div class="s-connector s-connector-done"></div>
-                  <div class="s-step s-step-done">&#10003;</div>
-                  <div class="s-connector s-connector-done"></div>
-                  <div class="s-step s-step-done">&#10003;</div>
-                  <div class="s-connector s-connector-done"></div>
-                  <div class="s-step s-step-active">4</div>
-                  <div class="s-connector s-connector-future"></div>
-                  <div class="s-step s-step-future">5</div>
-                  <div class="s-connector s-connector-future"></div>
-                  <div class="s-step s-step-future">6</div>
-                </div>
-                <div style="display:flex;justify-content:space-between;font-size:0.5rem;color:#505a5f;margin-top:0.1rem;">
-                  <span style="color:#00703c;">Identity</span>
-                  <span style="color:#00703c;">Eligibility</span>
-                  <span style="color:#00703c;">Consent</span>
-                  <span style="font-weight:700;color:#1d70b8;">Details</span>
-                  <span style="color:#b1b4b6;">Submit</span>
-                  <span style="color:#b1b4b6;">Active</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- OUTCOME -->
-        <div class="entry" id="outcome">
-          <div class="entry-header">
-            <div>
-              <div class="entry-term">Outcome</div>
-              <div class="entry-badges">
-                <span class="badge badge-exec">Executive</span>
-                <span class="badge badge-product">Product</span>
-              </div>
-            </div>
-          </div>
-          <p class="entry-oneliner">
-            The formal result of a completed service journey, presented as a department-branded confirmation with a reference number and next steps.
-          </p>
-          <p class="entry-why">
-            <strong>Why it matters:</strong> Outcomes give citizens tangible proof that something happened. They carry department branding, official reference numbers, and clear next steps &mdash; so citizens know exactly where they stand and can follow up if needed.
-          </p>
-          <div class="entry-body">
-            <p>Outcome types include payments (scheduled to bank), credentials (added to wallet), registrations (confirmed), documents (issued), and notifications (departments informed). Each carries a unique reference, the issuing department's identity, and a timestamp.</p>
-          </div>
-
-          <!-- Snippet: Outcome card -->
-          <div class="snippet">
-            <div class="snippet-label">Citizen app &mdash; Completed journey outcome</div>
-            <div class="snippet-body">
-              <div class="s-panel">
-                <div class="s-outcome-dept" style="border-left-color:#9b1a47;">
-                  <svg width="14" height="12" viewBox="0 0 64 60" fill="#0b0c0c" class="shrink-0"><circle cx="20" cy="17.6" r="3.7"/><circle cx="10.2" cy="23.5" r="3.7"/><circle cx="3.7" cy="33.2" r="3.7"/><circle cx="31.7" cy="30.6" r="3.7"/><circle cx="43.3" cy="17.6" r="3.7"/><circle cx="53.2" cy="23.5" r="3.7"/><circle cx="59.7" cy="33.2" r="3.7"/></svg>
-                  <span style="font-size:0.75rem;">General Register Office</span>
-                </div>
-                <div style="padding:0.75rem;">
-                  <div style="font-size:0.85rem;font-weight:700;margin-bottom:0.5rem;">Death certificate &mdash; registered</div>
-                  <div class="s-ref-bar">
-                    <span class="s-ref-label">Ref</span>
-                    <span class="s-ref-value">GOV-A3F2-81D4</span>
-                  </div>
-                  <div class="s-row">
-                    <span class="s-row-label">Certificate number</span>
-                    <span class="s-row-value s-mono">DC-2026-004821</span>
-                  </div>
-                  <div class="s-row">
-                    <span class="s-row-label">Copies ordered</span>
-                    <span class="s-row-value">3 certified copies</span>
-                  </div>
-                  <div class="s-row" style="border-top:1px solid #f0f0f0;padding-top:0.4rem;">
-                    <span class="s-row-label">Fee charged</span>
-                    <span class="s-row-value" style="color:#0b0c0c;font-size:0.9rem;">&pound;33.00</span>
-                  </div>
-                  <div style="margin-top:0.75rem;">
-                    <div class="s-status-badge" style="background:#e6f3ec;color:#00703c;">
-                      <span>&#10003;</span>
-                      <span>Registration confirmed</span>
-                    </div>
-                  </div>
-                  <div style="font-size:0.6rem;color:#b1b4b6;margin-top:0.5rem;">Issued 22 March 2026</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- SERVICE PROPOSAL -->
-        <div class="entry" id="service-proposal">
-          <div class="entry-header">
-            <div>
-              <div class="entry-term">Service Proposal</div>
-              <div class="entry-badges">
-                <span class="badge badge-product">Product</span>
-              </div>
-            </div>
-          </div>
-          <p class="entry-oneliner">
-            The agent's suggestion of which government services are relevant to a citizen's situation, with a recommended order of action.
-          </p>
-          <p class="entry-why">
-            <strong>Why it matters:</strong> Proactive service discovery is one of the most powerful capabilities of the agentic model. Rather than citizens searching for services, the agent proposes them &mdash; including services from other departments the citizen may never have heard of.
-          </p>
-          <div class="entry-body">
-            <p>Two discovery strategies exist to balance caution with comprehensiveness:</p>
-            <ul>
-              <li><strong>Conservative discovery</strong> &mdash; Surfaces only high-confidence matches where eligibility is clear from the data available. Avoids false positives.</li>
-              <li><strong>Expansive discovery</strong> &mdash; Surfaces all potentially relevant services, including edge cases where eligibility is uncertain. Maximises awareness.</li>
-            </ul>
-            <p>The citizen always decides which proposals to pursue. Services are sorted by prerequisite order &mdash; foundational services (like getting a National Insurance number) appear first.</p>
-          </div>
-        </div>
-
-        <!-- PROACTIVITY -->
-        <div class="entry" id="proactivity">
-          <div class="entry-header">
-            <div>
-              <div class="entry-term">Proactivity</div>
-              <div class="entry-badges">
-                <span class="badge badge-exec">Executive</span>
-                <span class="badge badge-product">Product</span>
-                <span class="badge badge-tech">Technical</span>
-              </div>
-            </div>
-          </div>
-          <p class="entry-oneliner">
-            The system's ability to surface services a citizen is likely entitled to or obligated by &mdash; before they ask, and sometimes before they know they exist.
-          </p>
-          <p class="entry-why">
-            <strong>Why it matters:</strong> Billions of pounds in benefits go unclaimed each year because citizens don't know they're eligible. Obligations are missed because people don't know about deadlines. Proactivity flips government from "find it yourself" to "we'll tell you what you need to know." When a citizen mentions they're having a baby, the agent doesn't just help with maternity pay &mdash; it surfaces Child Benefit, Tax-Free Childcare, Sure Start, and the HICBC risk, ordered by priority and urgency.
-          </p>
-          <div class="entry-body">
-            <p>Each service in the graph carries proactivity metadata:</p>
-            <ul>
-              <li><strong>Mode</strong> &mdash; <em>suggest</em> (proactively recommend), <em>warn</em> (alert to an obligation or risk), or <em>inform</em> (make available but don't push)</li>
-              <li><strong>Priority</strong> &mdash; a numeric ordering that controls which services appear first in plans and proposals (urgent obligations before optional entitlements)</li>
-              <li><strong>Framing</strong> &mdash; how the service is presented to the citizen (e.g. "You may be entitled to..." vs "You are required to..." vs "You should be aware that...")</li>
-              <li><strong>Timing</strong> &mdash; when the service becomes relevant relative to the life event (immediately, within days, within weeks)</li>
-            </ul>
-            <p>Proactivity also drives <strong>auto-skip</strong> in plans: when the citizen's verified information shows a service is clearly irrelevant (e.g. provisional driving licence for someone who already drives), the system removes it with a human-readable reason and a "start anyway" override.</p>
-          </div>
-        </div>
-
-        <!-- PLAN -->
-        <div class="entry" id="plan">
-          <div class="entry-header">
-            <div>
-              <div class="entry-term">Plan</div>
-              <div class="entry-badges">
-                <span class="badge badge-exec">Executive</span>
-                <span class="badge badge-product">Product</span>
-                <span class="badge badge-tech">Technical</span>
-              </div>
-            </div>
-          </div>
-          <p class="entry-oneliner">
-            A personalised, ordered sequence of government services for a life event &mdash; derived from the service graph, filtered by the citizen's circumstances, and tracked to completion.
-          </p>
-          <p class="entry-why">
-            <strong>Why it matters:</strong> A plan is the bridge between "I need help" and "here's everything you need to do, in the right order." It takes the abstract service graph and materialises it for a specific citizen: removing services they're not eligible for, ordering the rest by dependency (register the death before applying for probate), and tracking progress as services complete. Plans make the cross-departmental nature of government visible and manageable.
-          </p>
-          <div class="entry-body">
-            <p>Plans are organised by dependency depth &mdash; foundational services at the top, dependent services below. Each service in the plan shows:</p>
-            <ul>
-              <li>Its current status: <strong>available</strong>, <strong>in progress</strong>, <strong>completed</strong>, <strong>skipped</strong>, or <strong>locked</strong> (waiting on a prerequisite)</li>
-              <li>Whether it was <strong>auto-skipped</strong> based on citizen data, with a human-readable reason and the option to override</li>
-              <li>Personalised hints (e.g. "You left TechCo on 15 January &mdash; your employer must issue a P45 within 14 days")</li>
-              <li>Whether the citizen or the agent will handle it</li>
-            </ul>
-            <p>Citizens can start plans from the Services section of their dashboard, which shows life events as browsable cards. Expanding one reveals the plan's services. Once started, the plan tracks progress with a percentage bar and "X of Y services" count.</p>
-          </div>
-
-          <!-- Snippet: Plan view -->
-          <div class="snippet" style="max-width:520px;">
-            <div class="snippet-label">Citizen app &mdash; Active plan for a life event</div>
-            <div class="snippet-body">
-              <div class="s-panel">
-                <!-- Plan header -->
-                <div style="display:flex;align-items:center;gap:0.6rem;margin-bottom:0.5rem;">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1d70b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4c0-1.11.89-2 2-2s2 .89 2 2-.89 2-2 2-2-.89-2-2zm4 18v-6h2.5l-2.54-7.63A2.01 2.01 0 0 0 18.06 7h-.12a2 2 0 0 0-1.9 1.37l-.86 2.58c1.08.6 1.82 1.73 1.82 3.05v8h3zm-7.5-10.5c.83 0 1.5-.67 1.5-1.5s-.67-1.5-1.5-1.5S11 9.17 11 10s.67 1.5 1.5 1.5zM5.5 6c1.11 0 2-.89 2-2s-.89-2-2-2-2 .89-2 2 .89 2 2 2zm2 16v-7H9V9c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v6h1.5v7h4zm6.5 0v-4h1v-4c0-.82-.68-1.5-1.5-1.5h-2c-.82 0-1.5.68-1.5 1.5v4h1v4h3z" fill="#1d70b8" stroke="none"/></svg>
-                  <div>
-                    <div style="font-size:1rem;font-weight:700;">Having a Baby</div>
-                    <div style="font-size:0.7rem;color:#505a5f;">3 of 8 services complete &middot; 38%</div>
-                  </div>
-                </div>
-                <!-- Progress bar -->
-                <div class="s-bar-track" style="margin-bottom:0.75rem;">
-                  <div class="s-bar-fill" style="width:38%;background:#00703c;"></div>
-                </div>
-
-                <!-- Group 1: Prerequisites -->
-                <div style="font-size:0.6rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#505a5f;margin-bottom:0.3rem;">Foundations</div>
-                <!-- Completed service -->
-                <div style="display:flex;align-items:center;gap:0.5rem;padding:0.4rem 0;border-bottom:1px solid #f0f0f0;opacity:0.6;">
-                  <div class="s-step s-step-done" style="width:18px;height:18px;">&#10003;</div>
-                  <div style="flex:1;">
-                    <div style="font-size:0.75rem;font-weight:600;text-decoration:line-through;">Register with a GP</div>
-                    <div style="font-size:0.6rem;color:#505a5f;">NHS</div>
-                  </div>
-                  <span class="s-tag s-tag-green" style="font-size:0.55rem;">Done</span>
-                </div>
-                <!-- Completed service -->
-                <div style="display:flex;align-items:center;gap:0.5rem;padding:0.4rem 0;border-bottom:1px solid #f0f0f0;opacity:0.6;">
-                  <div class="s-step s-step-done" style="width:18px;height:18px;">&#10003;</div>
-                  <div style="flex:1;">
-                    <div style="font-size:0.75rem;font-weight:600;text-decoration:line-through;">Maternity pay entitlement</div>
-                    <div style="font-size:0.6rem;color:#505a5f;">HMRC</div>
-                  </div>
-                  <span class="s-tag s-tag-green" style="font-size:0.55rem;">Done</span>
-                </div>
-
-                <!-- Connector -->
-                <div style="display:flex;justify-content:center;padding:0.3rem 0;">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#b1b4b6" stroke-width="2"><path d="M12 5v14M19 12l-7 7-7-7"/></svg>
-                </div>
-
-                <!-- Group 2: In progress -->
-                <div style="font-size:0.6rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#505a5f;margin-bottom:0.3rem;">Entitlements</div>
-                <!-- In-progress service -->
-                <div style="display:flex;align-items:center;gap:0.5rem;padding:0.4rem 0;border-bottom:1px solid #f0f0f0;">
-                  <div class="s-step s-step-active" style="width:18px;height:18px;font-size:0.5rem;">3</div>
-                  <div style="flex:1;">
-                    <div style="font-size:0.75rem;font-weight:700;">Child Benefit</div>
-                    <div style="font-size:0.6rem;color:#505a5f;">HMRC &middot; benefit</div>
-                  </div>
-                  <span class="s-tag s-tag-blue" style="font-size:0.55rem;font-weight:600;">In progress</span>
-                </div>
-                <!-- Available service -->
-                <div style="display:flex;align-items:center;gap:0.5rem;padding:0.4rem 0;border-bottom:1px solid #f0f0f0;">
-                  <div class="s-step s-step-future" style="width:18px;height:18px;font-size:0.5rem;">4</div>
-                  <div style="flex:1;">
-                    <div style="font-size:0.75rem;font-weight:600;">Tax-Free Childcare</div>
-                    <div style="font-size:0.6rem;color:#505a5f;">HMRC &middot; entitlement</div>
-                  </div>
-                  <span class="s-btn s-btn-blue" style="font-size:0.55rem;padding:0.2rem 0.5rem;">Start</span>
-                </div>
-                <!-- Auto-skipped service -->
-                <div style="display:flex;align-items:center;gap:0.5rem;padding:0.4rem 0;opacity:0.5;">
-                  <div style="width:18px;height:18px;border-radius:50%;background:#fef3c7;display:flex;align-items:center;justify-content:center;font-size:0.55rem;color:#b45309;flex-shrink:0;">&#8722;</div>
-                  <div style="flex:1;">
-                    <div style="font-size:0.75rem;font-weight:600;color:#505a5f;">Free School Meals</div>
-                    <div style="font-size:0.6rem;color:#b1b4b6;">Auto-skipped: baby is under school age</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- HOUSEHOLD -->
-        <div class="entry" id="household">
-          <div class="entry-header">
-            <div>
-              <div class="entry-term">Household</div>
-              <div class="entry-badges">
-                <span class="badge badge-exec">Executive</span>
-                <span class="badge badge-product">Product</span>
-                <span class="badge badge-tech">Technical</span>
-              </div>
-            </div>
-          </div>
-          <p class="entry-oneliner">
-            A group of related citizens who share a home and whose government entitlements may depend on each other &mdash; making the family unit a first-class concept in the system.
-          </p>
-          <p class="entry-why">
-            <strong>Why it matters:</strong> Government services rarely affect just one person. Universal Credit is assessed at the household level. Child Benefit depends on the highest earner's income. Tax-Free Childcare involves both parents. School admissions depend on address and siblings. The household model lets the agent reason about entitlements, obligations, and risks across family members &mdash; not just for individuals in isolation.
-          </p>
-          <div class="entry-body">
-            <p>A household has members (each with a role: primary, partner, child, dependant), a shared address, and relationship links between members. This enables:</p>
-            <ul>
-              <li><strong>Household-level entitlement calculations</strong> &mdash; UC claim amounts, benefit caps, council tax bands</li>
-              <li><strong>Cross-member risk detection</strong> &mdash; e.g. alerting a family when one earner approaches the &pound;50,000 High Income Child Benefit Charge threshold</li>
-              <li><strong>Shared service plans</strong> &mdash; a bereavement plan that coordinates actions across executor, spouse, and children</li>
-              <li><strong>The "acting for" pattern</strong> &mdash; a parent sees their children's services alongside their own on the dashboard</li>
-            </ul>
-          </div>
-        </div>
-
-        <!-- DELEGATION -->
-        <div class="entry" id="delegation">
-          <div class="entry-header">
-            <div>
-              <div class="entry-term">Delegation</div>
-              <div class="entry-badges">
-                <span class="badge badge-exec">Executive</span>
-                <span class="badge badge-product">Product</span>
-                <span class="badge badge-tech">Technical</span>
-              </div>
-            </div>
-          </div>
-          <p class="entry-oneliner">
-            The ability for one citizen to act on behalf of another &mdash; a parent for a child, an executor for a deceased person, a carer for a vulnerable adult, or an attorney for someone who lacks capacity.
-          </p>
-          <p class="entry-why">
-            <strong>Why it matters:</strong> Government services are rarely used by individuals in isolation. Parents manage services for children, families coordinate shared entitlements, executors handle the affairs of the deceased, and attorneys make decisions for those who cannot. The delegation model makes these real-world relationships a first-class concept, with scoped permissions and a full audit trail of every action taken on someone else's behalf.
-          </p>
-          <div class="entry-body">
-            <p>Delegation is built on formal relationship types &mdash; each carrying default permissions that reflect the legal reality:</p>
-            <ul>
-              <li><strong>Parent / Guardian</strong> &mdash; full authority over a minor child's services</li>
-              <li><strong>Executor</strong> &mdash; can view data, submit forms, make payments, and correspond on behalf of a deceased person's estate</li>
-              <li><strong>Attorney (LPA)</strong> &mdash; can view data, submit, manage consent, make payments, and correspond &mdash; reflecting Lasting Power of Attorney</li>
-              <li><strong>Carer</strong> &mdash; can view status and receive alerts, but not submit or make decisions without explicit additional grants</li>
-              <li><strong>Spouse / Partner</strong> &mdash; view status and receive alerts by mutual agreement; further permissions require explicit consent</li>
-              <li><strong>Representative</strong> &mdash; can view status, view data, and correspond &mdash; suitable for advice workers and support organisations</li>
-            </ul>
-            <p>Every delegated action is logged with who acted, on whose behalf, what they did, and when. This creates an auditable trail for safeguarding and legal accountability.</p>
-          </div>
-        </div>
-
-        <!-- RELATIONSHIP PERMISSIONS -->
-        <div class="entry" id="relationship-permissions">
-          <div class="entry-header">
-            <div>
-              <div class="entry-term">Relationship Permissions</div>
-              <div class="entry-badges">
-                <span class="badge badge-product">Product</span>
-                <span class="badge badge-tech">Technical</span>
-              </div>
-            </div>
-          </div>
-          <p class="entry-oneliner">
-            Scoped, granular permissions that control exactly what one person can do on behalf of another &mdash; from view-only access to full authority.
-          </p>
-          <p class="entry-why">
-            <strong>Why it matters:</strong> "Acting on behalf of" is not binary. A spouse viewing your benefit status is different from an executor submitting a probate application is different from a carer appealing a PIP decision. Relationship permissions ensure that delegation is precise, auditable, and matches the legal authority the person actually holds.
-          </p>
-          <div class="entry-body">
-            <p>Permission scopes include:</p>
-            <ul>
-              <li><strong>view_status</strong> &mdash; see the current state of a service journey</li>
-              <li><strong>view_data</strong> &mdash; see personal data held about the subject</li>
-              <li><strong>submit_on_behalf</strong> &mdash; submit forms and applications</li>
-              <li><strong>receive_alerts</strong> &mdash; get notifications about status changes</li>
-              <li><strong>manage_consent</strong> &mdash; grant or revoke data-sharing consent</li>
-              <li><strong>make_payments</strong> &mdash; authorise fees and payments</li>
-              <li><strong>appeal_decisions</strong> &mdash; challenge outcomes on the subject's behalf</li>
-              <li><strong>correspond</strong> &mdash; communicate with departments</li>
-              <li><strong>full_authority</strong> &mdash; all of the above (expands automatically)</li>
-            </ul>
-            <p>Permissions can be time-limited (e.g. an executor's authority expires when probate completes) and service-filtered (e.g. a carer can only view health-related services).</p>
-          </div>
-
-          <!-- Snippet: Multi-user context -->
-          <div class="snippet">
-            <div class="snippet-label">Citizen app &mdash; Task card with family member selection</div>
-            <div class="snippet-body">
-              <div class="s-panel" style="background:#fff;">
-                <div style="font-size:0.8rem;font-weight:700;margin-bottom:0.2rem;">Who is this Free School Meals application for?</div>
-                <div style="font-size:0.65rem;color:#505a5f;margin-bottom:0.6rem;">Select the child you are applying for.</div>
-                <!-- Options -->
-                <div style="display:flex;flex-direction:column;gap:0.35rem;">
-                  <label style="display:flex;align-items:center;gap:0.5rem;padding:0.5rem;border:1.5px solid #1d70b8;border-radius:6px;background:#e8f0fe;cursor:pointer;">
-                    <span style="width:16px;height:16px;border-radius:50%;border:2px solid #1d70b8;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                      <span style="width:8px;height:8px;border-radius:50%;background:#1d70b8;"></span>
-                    </span>
-                    <span style="font-size:0.75rem;font-weight:600;">Aarav Anand</span>
-                  </label>
-                  <label style="display:flex;align-items:center;gap:0.5rem;padding:0.5rem;border:1.5px solid #e0dfde;border-radius:6px;cursor:pointer;">
-                    <span style="width:16px;height:16px;border-radius:50%;border:2px solid #b1b4b6;flex-shrink:0;"></span>
-                    <span style="font-size:0.75rem;font-weight:600;">Meera Anand</span>
-                  </label>
-                  <label style="display:flex;align-items:center;gap:0.5rem;padding:0.5rem;border:1.5px solid #e0dfde;border-radius:6px;cursor:pointer;">
-                    <span style="width:16px;height:16px;border-radius:50%;border:2px solid #b1b4b6;flex-shrink:0;"></span>
-                    <span style="font-size:0.75rem;font-weight:600;">Someone else</span>
-                  </label>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-      </div>
-    </div>
-
-
-    <!-- ══════════════════════════════════════════════════ -->
-    <!--  GROUP 3: DATA ARCHITECTURE                       -->
-    <!-- ══════════════════════════════════════════════════ -->
-    <div class="section">
-      <div class="container">
-        <div class="group-header" style="padding-top:0;">
-          <h2><span class="group-number">3</span> Data Architecture</h2>
-          <p class="group-desc">How citizen data is structured, sourced, trusted, and controlled throughout the system.</p>
-        </div>
-
-        <!-- CITIZEN DATA MODEL -->
-        <div class="entry" id="citizen-data-model">
-          <div class="entry-header">
-            <div>
-              <div class="entry-term">Citizen Data Model</div>
-              <div class="entry-badges">
-                <span class="badge badge-product">Product</span>
-                <span class="badge badge-tech">Technical</span>
-              </div>
-            </div>
-          </div>
-          <p class="entry-oneliner">
-            A unified, citizen-owned data structure that holds personal information, entitlements, and relationships &mdash; drawn from multiple departments but controlled by the citizen.
-          </p>
-          <p class="entry-why">
-            <strong>Why it matters:</strong> Today, every department holds a fragment of a citizen's data. The citizen data model brings these fragments together from the citizen's perspective &mdash; so the agent can pre-fill forms, check eligibility across departments, and avoid asking for information the government already holds.
-          </p>
-          <div class="entry-body">
-            <p>The model includes a base profile (identity, address, employment, finances, vehicles, children, benefits, health) and life-situation extensions (bereavement details, immigration status, criminal justice status, childcare needs, etc.). Every field carries metadata about its source department and trust tier.</p>
-          </div>
-        </div>
-
-        <!-- DATA TIERS -->
-        <div class="entry" id="data-tiers">
-          <div class="entry-header">
-            <div>
-              <div class="entry-term">Data Tiers</div>
-              <div class="entry-badges">
-                <span class="badge badge-exec">Executive</span>
-                <span class="badge badge-product">Product</span>
-                <span class="badge badge-tech">Technical</span>
-              </div>
-            </div>
-          </div>
-          <p class="entry-oneliner">
-            A three-level trust classification for citizen data: verified (government-sourced), submitted (citizen-entered), and inferred (agent-derived).
-          </p>
-          <p class="entry-why">
-            <strong>Why it matters:</strong> Not all data is equally trustworthy. A National Insurance number from HMRC's systems is more reliable than one typed by a citizen, which is more reliable than one inferred by an agent. Data tiers let the system and the citizen see exactly how confident each piece of information is.
-          </p>
-          <div class="entry-body">
-            <ul>
-              <li><strong>Tier 1 &mdash; Verified:</strong> Government-issued credentials from a department's systems (via GOV.UK Wallet or direct API). Displayed as read-only in forms. Cannot be edited by the citizen or agent.</li>
-              <li><strong>Tier 2 &mdash; Submitted:</strong> Data the citizen entered during previous interactions. Used for pre-fill suggestions. Citizen can correct it.</li>
-              <li><strong>Tier 3 &mdash; Inferred:</strong> Conclusions drawn by the agent from available data (e.g. "likely eligible for Carer's Allowance based on caring responsibilities"). Always flagged as inferred. Never submitted to departments without citizen confirmation.</li>
-            </ul>
-          </div>
-
-          <!-- Snippet: Personal data dashboard -->
-          <div class="snippet">
-            <div class="snippet-label">Citizen app &mdash; Personal data dashboard showing tiers</div>
-            <div class="snippet-body">
-              <div class="s-panel">
-                <div class="s-header">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#00703c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                  <div>
-                    <div class="s-title">Verified credentials</div>
-                  </div>
-                  <span class="s-tag s-tag-green" style="margin-left:auto;font-weight:700;">high</span>
-                </div>
-                <div style="font-size:0.65rem;color:#505a5f;margin-bottom:0.5rem;">Source: GOV.UK One Login (verified 15 Jan 2026)</div>
-                <div class="s-row" style="border-bottom:1px solid #f0f0f0;">
-                  <span class="s-row-label">Full name</span>
-                  <span class="s-row-value">Sarah Okafor</span>
-                </div>
-                <div class="s-row" style="border-bottom:1px solid #f0f0f0;">
-                  <span class="s-row-label">Date of birth</span>
-                  <span class="s-row-value">14/03/1985</span>
-                </div>
-                <div class="s-row" style="border-bottom:1px solid #f0f0f0;">
-                  <span class="s-row-label">NI number</span>
-                  <span class="s-row-value"><span class="s-mono">****7291</span> <a style="font-size:0.65rem;margin-left:0.25rem;cursor:pointer;">Show</a></span>
-                </div>
-                <div class="s-row">
-                  <span class="s-row-label">Address</span>
-                  <span class="s-row-value" style="text-align:right;font-size:0.7rem;">42 Maple Road, London, SE15 3AH</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- FIELD SOURCE ATTRIBUTION -->
-        <div class="entry" id="field-source">
-          <div class="entry-header">
-            <div>
-              <div class="entry-term">Field Source Attribution</div>
-              <div class="entry-badges">
-                <span class="badge badge-product">Product</span>
-                <span class="badge badge-tech">Technical</span>
-              </div>
-            </div>
-          </div>
-          <p class="entry-oneliner">
-            Every data field in the citizen model carries metadata about which department originally holds or issued it.
-          </p>
-          <p class="entry-why">
-            <strong>Why it matters:</strong> Citizens have a right to know who holds their data. Source attribution enables "this comes from HMRC" explanations, supports GDPR right-of-access requests, and lets the agent explain where pre-filled data originates &mdash; building trust and transparency.
-          </p>
-          <div class="entry-body">
-            <p>Each field records its source department (e.g. "HMRC", "DVLA", "Home Office"), its topic classification (e.g. "identity", "financial", "immigration"), and its trust tier. When data is shared with a new service, the consent panel shows where each field comes from.</p>
-          </div>
-        </div>
-
-        <!-- WALLET CREDENTIALS -->
-        <div class="entry" id="wallet-credentials">
-          <div class="entry-header">
-            <div>
-              <div class="entry-term">Wallet Credentials</div>
-              <div class="entry-badges">
-                <span class="badge badge-exec">Executive</span>
-                <span class="badge badge-product">Product</span>
-              </div>
-            </div>
-          </div>
-          <p class="entry-oneliner">
-            Government-issued verifiable credentials held in the citizen's GOV.UK Wallet &mdash; digital equivalents of physical documents like driving licences, passports, and veteran status.
-          </p>
-          <p class="entry-why">
-            <strong>Why it matters:</strong> Wallet credentials are the highest-trust data source in the system. When a citizen presents a driving licence credential from their wallet, the agent and the receiving department know it's genuine &mdash; no manual verification needed. This eliminates the need to post physical documents or visit offices to prove identity.
-          </p>
-        </div>
-
-        <!-- GOV.UK WALLET -->
-        <div class="entry" id="govuk-wallet">
-          <div class="entry-header">
-            <div>
-              <div class="entry-term">GOV.UK Wallet</div>
-              <div class="entry-badges">
-                <span class="badge badge-exec">Executive</span>
-                <span class="badge badge-product">Product</span>
-                <span class="badge badge-tech">Technical</span>
-              </div>
-            </div>
-          </div>
-          <p class="entry-oneliner">
-            The citizen's portable store of verified credentials &mdash; digital equivalents of documents like driving licences, passports, and benefit entitlements &mdash; issued by departments and held by the citizen.
-          </p>
-          <p class="entry-why">
-            <strong>Why it matters:</strong> The GOV.UK Wallet puts citizens in control of their own verified information. Departments issue credentials into the wallet; the citizen decides when and with whom to share them. The agent draws on wallet data to pre-fill forms and prove eligibility, eliminating redundant data entry and the need to post physical documents. Because credentials are department-issued and cryptographically verifiable, they carry the highest level of trust in the system.
-          </p>
-          <div class="entry-body">
-            <p>The wallet holds credentials such as driving licences, passports, National Insurance numbers, benefit entitlement letters, veteran status, and professional qualifications. Each credential is issued by its owning department, carries an expiry date and verification status, and can be selectively shared with other services. The citizen can view, manage, and revoke access to their wallet contents at any time.</p>
-          </div>
-        </div>
-
-      </div>
-    </div>
-
-
-    <!-- ══════════════════════════════════════════════════ -->
-    <!--  GROUP 4: CONSENT & CONTROL                       -->
-    <!-- ══════════════════════════════════════════════════ -->
-    <div class="section section-alt">
-      <div class="container">
-        <div class="group-header" style="padding-top:0;">
-          <h2><span class="group-number">4</span> Consent &amp; Control</h2>
-          <p class="group-desc">How citizens maintain control over their data when an AI agent acts on their behalf.</p>
-        </div>
-
-        <!-- CONSENT GRANT -->
-        <div class="entry" id="consent-grant">
-          <div class="entry-header">
-            <div>
-              <div class="entry-term">Consent Grant</div>
-              <div class="entry-badges">
-                <span class="badge badge-exec">Executive</span>
-                <span class="badge badge-product">Product</span>
-                <span class="badge badge-tech">Technical</span>
-              </div>
-            </div>
-          </div>
-          <p class="entry-oneliner">
-            A specific, informed permission from a citizen for the agent to share named data fields with a named department for a stated purpose.
-          </p>
-          <p class="entry-why">
-            <strong>Why it matters:</strong> Nothing happens without consent. Every time the agent needs to share citizen data with a government service, it presents a consent grant explaining exactly what data will be shared, where it comes from, why it's needed, and how long the sharing lasts. The citizen explicitly agrees or declines each grant. This is not a blanket "I agree to terms and conditions" &mdash; it is granular, informed, revocable consent.
-          </p>
-          <div class="entry-body">
-            <p>Each grant specifies: a description (what the citizen is agreeing to), the data fields being shared, the source of that data, the purpose, the duration, and whether it's required or optional for the service to proceed.</p>
-            <p>Consent is always revocable. A citizen can withdraw any previously granted consent at any time. When they do, the system clearly explains the consequences &mdash; for example, "revoking this consent will cancel your application" &mdash; so the decision is informed. Consent that cannot be withdrawn is not real consent. The full lifecycle of every grant (given, declined, revoked) is recorded in the <a href="#consent-audit">Consent Audit</a>.</p>
-          </div>
-
-          <!-- Snippet: Consent panel -->
-          <div class="snippet">
-            <div class="snippet-label">Citizen app &mdash; Consent panel for driving licence renewal</div>
-            <div class="snippet-body">
-              <div class="s-panel" style="background:#fff;">
-                <!-- Header -->
-                <div class="s-header" style="margin-bottom:0.35rem;">
-                  <div class="s-icon" style="background:#f5e6f4;width:22px;height:22px;">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#912b88" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
-                  </div>
-                  <span style="font-size:0.75rem;font-weight:700;color:#912b88;">Data sharing consent</span>
-                </div>
-                <div class="s-desc" style="margin-left:30px;margin-bottom:0.5rem;">
-                  DVLA needs access to the following to process your renewal.
-                </div>
-                <hr class="s-divider">
-                <!-- Grant 1 -->
-                <div style="padding:0.5rem 0;">
-                  <div style="display:flex;justify-content:space-between;align-items:flex-start;">
-                    <div style="font-size:0.75rem;font-weight:600;">Verify your identity using GOV.UK One Login</div>
-                    <span class="s-required">Required</span>
-                  </div>
-                  <div style="font-size:0.65rem;color:#505a5f;margin:0.25rem 0;">To confirm you are who you say you are</div>
-                  <div style="font-size:0.6rem;font-weight:700;color:#505a5f;text-transform:uppercase;margin-bottom:0.3rem;">Data to be shared:</div>
-                  <div>
-                    <span class="s-tag s-tag-purple">full name</span>
-                    <span class="s-tag s-tag-purple">date of birth</span>
-                    <span class="s-tag s-tag-purple">NI number</span>
-                  </div>
-                  <div style="font-size:0.6rem;color:#505a5f;margin-top:0.3rem;">Source: <strong>One Login</strong> &middot; Duration: session</div>
-                  <div style="margin-top:0.4rem;">
-                    <span class="s-btn s-btn-purple" style="font-size:0.6rem;">&#10003; I agree</span>
-                    <span class="s-btn s-btn-outline" style="font-size:0.6rem;">No thanks</span>
-                  </div>
-                </div>
-                <hr class="s-divider">
-                <!-- Grant 2 -->
-                <div style="padding:0.5rem 0;">
-                  <div style="display:flex;justify-content:space-between;align-items:flex-start;">
-                    <div style="font-size:0.75rem;font-weight:600;">Share your passport photo with DVLA</div>
-                    <span class="s-required">Required</span>
-                  </div>
-                  <div style="font-size:0.65rem;color:#505a5f;margin:0.25rem 0;">DVLA will use your most recent passport photo for the new licence</div>
-                  <div style="font-size:0.6rem;font-weight:700;color:#505a5f;text-transform:uppercase;margin-bottom:0.3rem;">Data to be shared:</div>
-                  <div>
-                    <span class="s-tag s-tag-purple">passport photo</span>
-                  </div>
-                  <div style="font-size:0.6rem;color:#505a5f;margin-top:0.3rem;">Source: <strong>HM Passport Office</strong> &middot; Duration: session</div>
-                  <div style="margin-top:0.4rem;">
-                    <span class="s-btn s-btn-outline" style="font-size:0.6rem;">I agree</span>
-                    <span class="s-btn s-btn-outline" style="font-size:0.6rem;">No thanks</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- CONSENT AUDIT -->
-        <div class="entry" id="consent-audit">
-          <div class="entry-header">
-            <div>
-              <div class="entry-term">Consent Audit</div>
-              <div class="entry-badges">
-                <span class="badge badge-exec">Executive</span>
-                <span class="badge badge-product">Product</span>
-                <span class="badge badge-tech">Technical</span>
-              </div>
-            </div>
-          </div>
-          <p class="entry-oneliner">
-            A chronological record of every consent decision a citizen has made &mdash; what they agreed to, what they declined, and what they later revoked.
-          </p>
-          <p class="entry-why">
-            <strong>Why it matters:</strong> For regulatory compliance and citizen trust. The consent audit gives citizens a complete picture of who has access to their data and why, and gives departments an auditable trail for data protection purposes.
-          </p>
-
-          <!-- Snippet: Consent timeline -->
-          <div class="snippet">
-            <div class="snippet-label">Citizen app &mdash; Consent history timeline</div>
-            <div class="snippet-body">
-              <div class="s-panel">
-                <div style="font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#505a5f;margin-bottom:0.5rem;">Consent History</div>
-                <!-- Entry 1 -->
-                <div style="display:flex;gap:0.5rem;align-items:flex-start;">
-                  <div>
-                    <div class="s-timeline-dot" style="border-color:#00703c;background:#e6f3ec;color:#00703c;">&#10003;</div>
-                    <div class="s-timeline-line"></div>
-                  </div>
-                  <div style="flex:1;padding-bottom:0.35rem;">
-                    <div style="display:flex;justify-content:space-between;">
-                      <span style="font-size:0.75rem;font-weight:600;">Consent given</span>
-                      <span style="font-size:0.6rem;color:#b1b4b6;">22/03/2026, 10:31</span>
-                    </div>
-                    <div style="font-size:0.65rem;color:#505a5f;">Identity verification for DVLA</div>
-                    <div style="margin-top:0.25rem;">
-                      <span class="s-tag s-tag-blue">full name</span>
-                      <span class="s-tag s-tag-blue">date of birth</span>
-                      <span class="s-tag s-tag-blue">NI number</span>
-                    </div>
-                  </div>
-                </div>
-                <!-- Entry 2 -->
-                <div style="display:flex;gap:0.5rem;align-items:flex-start;">
-                  <div>
-                    <div class="s-timeline-dot" style="border-color:#d4351c;background:#fde8e8;color:#d4351c;">&#10007;</div>
-                    <div class="s-timeline-line"></div>
-                  </div>
-                  <div style="flex:1;padding-bottom:0.35rem;">
-                    <div style="display:flex;justify-content:space-between;">
-                      <span style="font-size:0.75rem;font-weight:600;">Consent denied</span>
-                      <span style="font-size:0.6rem;color:#b1b4b6;">22/03/2026, 10:32</span>
-                    </div>
-                    <div style="font-size:0.65rem;color:#505a5f;">Optional marketing data for HMRC</div>
-                  </div>
-                </div>
-                <!-- Entry 3 -->
-                <div style="display:flex;gap:0.5rem;align-items:flex-start;">
-                  <div>
-                    <div class="s-timeline-dot" style="border-color:#f47738;background:#fef3e6;color:#f47738;">&#8617;</div>
-                  </div>
-                  <div style="flex:1;">
-                    <div style="display:flex;justify-content:space-between;">
-                      <span style="font-size:0.75rem;font-weight:600;">Consent revoked</span>
-                      <span style="font-size:0.6rem;color:#b1b4b6;">22/03/2026, 14:15</span>
-                    </div>
-                    <div style="font-size:0.65rem;color:#505a5f;">Address sharing for DVLA</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-      </div>
-    </div>
-
-
-    <!-- ══════════════════════════════════════════════════ -->
-    <!--  GROUP 5: ACCOUNTABILITY                          -->
-    <!-- ══════════════════════════════════════════════════ -->
-    <div class="section">
-      <div class="container">
-        <div class="group-header" style="padding-top:0;">
-          <h2><span class="group-number">5</span> Accountability</h2>
-          <p class="group-desc">How the system records what happened, why, and for whom &mdash; creating an auditable evidence trail for every agent action.</p>
-        </div>
-
-        <!-- EVIDENCE PLANE -->
-        <div class="entry" id="evidence-plane">
-          <div class="entry-header">
-            <div>
-              <div class="entry-term">Evidence Plane</div>
-              <div class="entry-badges">
-                <span class="badge badge-exec">Executive</span>
-                <span class="badge badge-product">Product</span>
-                <span class="badge badge-tech">Technical</span>
-              </div>
-            </div>
-          </div>
-          <p class="entry-oneliner">
-            A separate, append-only audit layer that records every action the system takes &mdash; independent of the control logic that makes decisions.
-          </p>
-          <p class="entry-why">
-            <strong>Why it matters:</strong> When an AI agent acts on behalf of a citizen with government services, there must be an unimpeachable record of what happened. The evidence plane is the system's answer to "prove it." It is separate from the logic that drives decisions, so it cannot be retroactively altered by the same system that made the decision.
-          </p>
-          <div class="entry-body">
-            <p>The evidence plane records trace events, generates citizen-facing receipts, maintains a case store for in-flight journeys, and supports full replay of any past interaction. It is the foundation for accountability, complaints, appeals, and regulatory compliance.</p>
-          </div>
-        </div>
-
-        <!-- TRACE EVENT -->
-        <div class="entry" id="trace-event">
-          <div class="entry-header">
-            <div>
-              <div class="entry-term">Trace Event</div>
-              <div class="entry-badges">
-                <span class="badge badge-product">Product</span>
-                <span class="badge badge-tech">Technical</span>
-              </div>
-            </div>
-          </div>
-          <p class="entry-oneliner">
-            A single, timestamped record of something the system did &mdash; invoked a capability, evaluated a policy, transitioned state, granted consent, or called the language model.
-          </p>
-          <p class="entry-why">
-            <strong>Why it matters:</strong> Trace events are the atoms of accountability. Each one says what happened, when, in which session, and with which context. Together, they reconstruct the complete story of any interaction &mdash; essential for auditing, debugging, and responding to complaints or appeals.
-          </p>
-          <div class="entry-body">
-            <p>The standard event taxonomy includes: capability invoked/result, state transition, consent granted/denied/revoked, policy evaluated, LLM request/response, credential presented, receipt issued, error raised, handoff initiated, and field extracted. Each event carries trace, span, and session identifiers for correlation across the full interaction.</p>
-          </div>
-        </div>
-
-        <!-- RECEIPT -->
-        <div class="entry" id="receipt">
-          <div class="entry-header">
-            <div>
-              <div class="entry-term">Receipt</div>
-              <div class="entry-badges">
-                <span class="badge badge-exec">Executive</span>
-                <span class="badge badge-product">Product</span>
-              </div>
-            </div>
-          </div>
-          <p class="entry-oneliner">
-            A citizen-facing record of an action taken by the agent, showing what was done, the outcome, and what data was shared.
-          </p>
-          <p class="entry-why">
-            <strong>Why it matters:</strong> Receipts are the citizen's proof. They translate the technical trace into human-readable confirmation: "Applied for Universal Credit on your behalf. Status: submitted. Data shared: name, NI number, address, bank details." Citizens can review, download, and use receipts as evidence.
-          </p>
-
-          <!-- Snippet: Receipt viewer -->
-          <div class="snippet">
-            <div class="snippet-label">Citizen app &mdash; Receipt for a service action</div>
-            <div class="snippet-body">
-              <div class="s-panel">
-                <div style="font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#505a5f;margin-bottom:0.5rem;">Your Receipts</div>
-                <div style="background:#fff;border:1px solid #e0dfde;border-radius:6px;padding:0.6rem;">
-                  <div style="display:flex;justify-content:space-between;align-items:flex-start;">
-                    <div>
-                      <div style="font-size:0.8rem;font-weight:600;">Submitted UC claim to DWP</div>
-                      <div style="font-size:0.6rem;color:#505a5f;margin-top:0.15rem;">Universal Credit application</div>
-                    </div>
-                    <span class="s-tag s-tag-green" style="font-weight:600;">success</span>
-                  </div>
-                  <div style="font-size:0.65rem;color:#b1b4b6;margin-top:0.35rem;">22/03/2026, 11:42:18</div>
-                  <div style="margin-top:0.4rem;">
-                    <span style="font-size:0.65rem;color:#505a5f;">Data shared: </span>
-                    <span class="s-tag s-tag-blue">full name</span>
-                    <span class="s-tag s-tag-blue">NI number</span>
-                    <span class="s-tag s-tag-blue">address</span>
-                    <span class="s-tag s-tag-blue">bank details</span>
-                  </div>
-                  <div style="font-size:0.55rem;color:#b1b4b6;margin-top:0.35rem;">Receipt reference: GOV-UC-2026-04821</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- CASE STORE -->
-        <div class="entry" id="case-store">
-          <div class="entry-header">
-            <div>
-              <div class="entry-term">Case Store</div>
-              <div class="entry-badges">
-                <span class="badge badge-product">Product</span>
-                <span class="badge badge-tech">Technical</span>
-              </div>
-            </div>
-          </div>
-          <p class="entry-oneliner">
-            A ledger of in-flight service cases, continuously updated from trace events, showing current state, history, and progress for every active journey.
-          </p>
-          <p class="entry-why">
-            <strong>Why it matters:</strong> Citizens and departments need to see where a case stands at any moment. The case store enables the dashboard to show "your UC claim is at step 4 of 6" and allows a human call centre agent to pick up exactly where the AI agent left off.
-          </p>
-        </div>
-
-        <!-- REPLAY -->
-        <div class="entry" id="replay">
-          <div class="entry-header">
-            <div>
-              <div class="entry-term">Replay</div>
-              <div class="entry-badges">
-                <span class="badge badge-tech">Technical</span>
-              </div>
-            </div>
-          </div>
-          <p class="entry-oneliner">
-            The ability to step through a past interaction event by event, reconstructing the exact state of the conversation, data, and decisions at each point.
-          </p>
-          <p class="entry-why">
-            <strong>Why it matters:</strong> When a citizen complains, an ombudsman investigates, or a department audits decisions, replay shows precisely what happened and why. It transforms accountability from "trust us" to "see for yourself."
-          </p>
-        </div>
-
-        <!-- AGENT REASONING -->
-        <div class="entry" id="agent-reasoning">
-          <div class="entry-header">
-            <div>
-              <div class="entry-term">Agent Reasoning</div>
-              <div class="entry-badges">
-                <span class="badge badge-exec">Executive</span>
-                <span class="badge badge-product">Product</span>
-              </div>
-            </div>
-          </div>
-          <p class="entry-oneliner">
-            A transparent view of the agent's internal thinking process &mdash; why it chose a particular service, how it evaluated eligibility, and what it plans to do next.
-          </p>
-          <p class="entry-why">
-            <strong>Why it matters:</strong> Citizens and auditors should be able to understand not just what the agent did, but why. The reasoning panel exposes the agent's thought process in plain language, building trust and enabling scrutiny. If the agent is wrong, the reasoning makes it clear where the error lies.
-          </p>
-
-          <!-- Snippet: Reasoning panel -->
-          <div class="snippet">
-            <div class="snippet-label">Citizen app &mdash; Agent reasoning panel</div>
-            <div class="snippet-body">
-              <div style="background:#0b0c0c;color:rgba(255,255,255,0.9);padding:0.6rem 0.75rem;">
-                <div style="font-size:0.8rem;font-weight:700;margin-bottom:0.5rem;">Agent Reasoning</div>
-                <div style="font-size:0.7rem;line-height:1.6;opacity:0.85;font-family:'Inter',sans-serif;">
-                  Sarah mentioned her mother passed away on 2 January. She is named executor in the will.
-                  <br><br>
-                  I will propose the bereavement life event services. The death must be registered within 5 days, so that is the first priority. Tell Us Once can run in parallel. Probate requires the death certificate, so it comes after.
-                  <br><br>
-                  Sarah's mother's estate value (~&pound;380,000) is below the IHT threshold (&pound;325,000 + &pound;175,000 residence nil-rate band = &pound;500,000), so no IHT liability. I will confirm this with the policy evaluation before telling Sarah.
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-      </div>
-    </div>
-
-
-    <!-- ══════════════════════════════════════════════════ -->
-    <!--  GROUP 6: ORCHESTRATION                           -->
-    <!-- ══════════════════════════════════════════════════ -->
-    <div class="section section-alt">
-      <div class="container">
-        <div class="group-header" style="padding-top:0;">
-          <h2><span class="group-number">6</span> Orchestration</h2>
-          <p class="group-desc">How the system coordinates between the AI language model and deterministic government logic &mdash; ensuring the agent follows the rules.</p>
-        </div>
-
-        <!-- DETERMINISTIC BOUNDARY -->
-        <div class="entry" id="deterministic-boundary">
-          <div class="entry-header">
-            <div>
-              <div class="entry-term">Deterministic Boundary</div>
-              <div class="entry-badges">
-                <span class="badge badge-exec">Executive</span>
-                <span class="badge badge-product">Product</span>
-                <span class="badge badge-tech">Technical</span>
-              </div>
-            </div>
-          </div>
-          <p class="entry-oneliner">
-            The strict separation between what the AI language model decides and what code decides &mdash; the model generates natural language; code enforces rules.
-          </p>
-          <p class="entry-why">
-            <strong>Why it matters:</strong> This is the architectural guarantee that the agent cannot hallucinate eligibility, skip consent, or invent entitlements. The language model handles citizen-facing conversation (explaining, clarifying, summarising). All consequential decisions &mdash; "is this person eligible?", "has consent been given?", "is this state transition valid?" &mdash; are made by deterministic code that evaluates the published policy and state model. The model cannot override this boundary.
-          </p>
-          <div class="entry-body">
-            <p>
-              In practice: the language model proposes a state transition; the orchestrator checks it against the state model and rejects it if invalid. The model suggests a citizen is eligible; the policy evaluator runs the actual rules and may disagree. This separation is what makes the system trustworthy enough for government use.
-            </p>
-          </div>
-        </div>
-
-        <!-- STATE MACHINE -->
-        <div class="entry" id="state-machine">
-          <div class="entry-header">
-            <div>
-              <div class="entry-term">State Machine</div>
-              <div class="entry-badges">
-                <span class="badge badge-product">Product</span>
-                <span class="badge badge-tech">Technical</span>
-              </div>
-            </div>
-          </div>
-          <p class="entry-oneliner">
-            A formal model of the valid states a service interaction can be in, and the valid transitions between them &mdash; preventing the agent from skipping steps.
-          </p>
-          <p class="entry-why">
-            <strong>Why it matters:</strong> Government processes have mandatory sequences. You cannot submit a benefits claim before verifying identity. You cannot make a payment before confirming the amount. The state machine enforces this at the system level, making it impossible for the agent to skip, reorder, or shortcut steps &mdash; no matter what the citizen asks or the language model suggests.
-          </p>
-        </div>
-
-        <!-- POLICY EVALUATION -->
-        <div class="entry" id="policy-evaluation">
-          <div class="entry-header">
-            <div>
-              <div class="entry-term">Policy Evaluation</div>
-              <div class="entry-badges">
-                <span class="badge badge-product">Product</span>
-                <span class="badge badge-tech">Technical</span>
-              </div>
-            </div>
-          </div>
-          <p class="entry-oneliner">
-            Running a citizen's data against the published eligibility rules for a service, returning a definitive pass/fail with reasons.
-          </p>
-          <p class="entry-why">
-            <strong>Why it matters:</strong> Eligibility is not a matter of opinion &mdash; it is a matter of rules. Policy evaluation means the agent does not guess whether someone qualifies. It evaluates conditions (age &ge; 18, income &le; threshold, residency = UK) and returns a clear answer with specific failure reasons if ineligible. When eligibility is uncertain, it identifies which data is missing rather than speculating.
-          </p>
-          <div class="entry-body">
-            <p>Policies also define: edge cases (recent bereavement, name discrepancy, overseas applicant), alternative services if ineligible, and triggers for human handoff when a case falls outside automated rules.</p>
-          </div>
-        </div>
-
-        <!-- FIELD COLLECTION -->
-        <div class="entry" id="field-collection">
-          <div class="entry-header">
-            <div>
-              <div class="entry-term">Field Collection</div>
-              <div class="entry-badges">
-                <span class="badge badge-product">Product</span>
-                <span class="badge badge-tech">Technical</span>
-              </div>
-            </div>
-          </div>
-          <p class="entry-oneliner">
-            Tracking which data fields a service requires versus which have already been collected or verified &mdash; so the agent only asks for what is genuinely missing.
-          </p>
-          <p class="entry-why">
-            <strong>Why it matters:</strong> Citizens are frustrated by forms that ask for information the government already holds. Field collection cross-references the service's requirements against verified credentials, previously submitted data, and facts already gathered in the conversation &mdash; then only asks for the gap.
-          </p>
-        </div>
-
-        <!-- CAPABILITY INVOCATION -->
-        <div class="entry" id="capability-invocation">
-          <div class="entry-header">
-            <div>
-              <div class="entry-term">Capability Invocation</div>
-              <div class="entry-badges">
-                <span class="badge badge-tech">Technical</span>
-              </div>
-            </div>
-          </div>
-          <p class="entry-oneliner">
-            A single gateway through which every service action passes &mdash; ensuring that every invocation is policy-checked, consent-verified, and trace-recorded.
-          </p>
-          <p class="entry-why">
-            <strong>Why it matters:</strong> Without a single integration point, individual components might skip consent checks, bypass policy evaluation, or fail to record actions. The capability invoker acts as a unified service gateway, guaranteeing that nothing reaches a government service without passing through the full accountability pipeline.
-          </p>
-        </div>
-
-        <!-- MODEL CONTEXT PROTOCOL (MCP) -->
-        <div class="entry" id="mcp">
-          <div class="entry-header">
-            <div>
-              <div class="entry-term">Model Context Protocol (MCP)</div>
-              <div class="entry-badges">
-                <span class="badge badge-tech">Technical</span>
-              </div>
-            </div>
-          </div>
-          <p class="entry-oneliner">
-            The open standard for connecting AI agents to external tools and data sources, providing a uniform interface for service discovery and invocation.
-          </p>
-          <p class="entry-why">
-            <strong>Why it matters:</strong> Without a standard protocol, every department would need to build bespoke integrations with every agent. MCP provides a common language: each department's services are exposed as MCP tools, allowing the agent to discover available services, understand their inputs and outputs, and invoke them through a single standard interface. This means a new department can become agent-accessible by publishing MCP-compliant tool definitions, without requiring changes to the agent itself.
-          </p>
-          <div class="entry-body">
-            <p>In this architecture, the MCP server exposes each legible service as a tool with a typed schema describing its inputs (required data fields), outputs (expected results), and metadata (department, service type, prerequisites). The agent's MCP client discovers these tools at runtime and invokes them through the capability invocation gateway, which enforces policy, consent, and evidence recording regardless of which protocol carries the request.</p>
-          </div>
-        </div>
-
-      </div>
-    </div>
-
-
-    <!-- ══════════════════════════════════════════════════ -->
-    <!--  GROUP 7: SAFETY & ESCALATION                     -->
-    <!-- ══════════════════════════════════════════════════ -->
-    <div class="section">
-      <div class="container">
-        <div class="group-header" style="padding-top:0;">
-          <h2><span class="group-number">7</span> Safety &amp; Escalation</h2>
-          <p class="group-desc">How the system protects citizens by knowing when to stop and hand over to a human.</p>
-        </div>
-
-        <!-- HANDOFF -->
-        <div class="entry" id="handoff">
-          <div class="entry-header">
-            <div>
-              <div class="entry-term">Handoff</div>
-              <div class="entry-badges">
-                <span class="badge badge-exec">Executive</span>
-                <span class="badge badge-product">Product</span>
-                <span class="badge badge-tech">Technical</span>
-              </div>
-            </div>
-          </div>
-          <p class="entry-oneliner">
-            The structured escalation of a citizen's case from the AI agent to a human, with full context about what has already been done.
-          </p>
-          <p class="entry-why">
-            <strong>Why it matters:</strong> AI agents will not be able to handle every case. Complex situations, edge cases, distressed citizens, and safeguarding concerns all require human judgement. Handoff ensures that when the agent reaches its limits, it transfers to a human with everything they need to continue &mdash; the citizen never has to start over.
-          </p>
-          <div class="entry-body">
-            <p>The handoff package includes: the citizen's identity, the urgency level, the reason for escalation, steps completed so far, what is blocked, data collected, all trace events and receipts, and suggested next actions for the human agent. Urgency levels range from routine to safeguarding-level immediate response.</p>
-          </div>
-
-          <!-- Snippet: Handoff notice -->
-          <div class="snippet">
-            <div class="snippet-label">Citizen app &mdash; Handoff to human with context</div>
-            <div class="snippet-body">
-              <div class="s-panel">
-                <div class="s-handoff" style="border-left-color:#f47738;background:#fff7ed;">
-                  <div style="font-size:0.8rem;font-weight:700;">Priority handoff</div>
-                  <div style="font-size:0.75rem;color:#505a5f;margin:0.35rem 0;">This application has an edge case that requires specialist review &mdash; the estate value is close to the Inheritance Tax threshold and involves overseas property.</div>
-                  <div style="background:#fff;border:1px solid #e0dfde;border-radius:4px;padding:0.5rem;margin-top:0.4rem;">
-                    <div style="font-size:0.75rem;font-weight:700;">HMCTS Probate</div>
-                    <div style="font-size:0.7rem;margin-top:0.2rem;">Phone: <strong>0300 303 0648</strong></div>
-                    <div style="font-size:0.6rem;color:#505a5f;">Mon&ndash;Fri 8am&ndash;6pm</div>
-                  </div>
-                  <div style="font-size:0.65rem;color:#505a5f;margin-top:0.4rem;">
-                    Your case reference and everything the agent has collected will be available to the specialist. You will not need to repeat any information.
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- SAFEGUARDING -->
-        <div class="entry" id="safeguarding">
-          <div class="entry-header">
-            <div>
-              <div class="entry-term">Safeguarding</div>
-              <div class="entry-badges">
-                <span class="badge badge-exec">Executive</span>
-                <span class="badge badge-product">Product</span>
-              </div>
-            </div>
-          </div>
-          <p class="entry-oneliner">
-            Automatic detection of distress, self-harm indicators, or vulnerability in a citizen's messages, triggering immediate escalation to human support.
-          </p>
-          <p class="entry-why">
-            <strong>Why it matters:</strong> Citizens interacting with government services are sometimes in crisis &mdash; facing eviction, fleeing domestic violence, experiencing mental health emergencies. The system monitors for safeguarding triggers and immediately routes to appropriate human support when detected, overriding any service journey in progress.
-          </p>
-        </div>
-
-        <!-- EDGE CASE DETECTION -->
-        <div class="entry" id="edge-case">
-          <div class="entry-header">
-            <div>
-              <div class="entry-term">Edge Case Detection</div>
-              <div class="entry-badges">
-                <span class="badge badge-product">Product</span>
-                <span class="badge badge-tech">Technical</span>
-              </div>
-            </div>
-          </div>
-          <p class="entry-oneliner">
-            Identifying when a citizen's situation falls outside the standard path defined by a service's policy &mdash; and knowing what to do about it.
-          </p>
-          <p class="entry-why">
-            <strong>Why it matters:</strong> Real-world cases are messy. Policies define named edge cases (missing documents, name discrepancies, overseas complications, very recent events) with specific handling instructions: extend a timeline, add a fee, request additional evidence, or hand off to a specialist.
-          </p>
-        </div>
-
-      </div>
-    </div>
-
-
-    <!-- ══════════════════════════════════════════════════ -->
-    <!--  GROUP 8: ADMINISTRATION                          -->
-    <!-- ══════════════════════════════════════════════════ -->
-    <div class="section section-alt">
-      <div class="container">
-        <div class="group-header" style="padding-top:0;">
-          <h2><span class="group-number">8</span> Administration</h2>
-          <p class="group-desc">How departments publish, manage, and monitor the legibility of their services.</p>
-        </div>
-
-        <!-- GAP ANALYSIS -->
-        <div class="entry" id="gap-analysis">
-          <div class="entry-header">
-            <div>
-              <div class="entry-term">Gap Analysis</div>
-              <div class="entry-badges">
-                <span class="badge badge-exec">Executive</span>
-                <span class="badge badge-product">Product</span>
-              </div>
-            </div>
-          </div>
-          <p class="entry-oneliner">
-            A department-level view showing how many services have been made legible versus how many remain to be done.
-          </p>
-          <p class="entry-why">
-            <strong>Why it matters:</strong> Gap analysis turns the legibility programme from an abstract goal into a measurable one. Departments can see exactly where they stand: "12 of your 201 services have full artefacts. 189 are catalogued but not yet legible." This drives prioritisation and resource allocation.
-          </p>
-
-          <!-- Snippet: Gap analysis dashboard -->
-          <div class="snippet" style="max-width:520px;">
-            <div class="snippet-label">Legibility Studio &mdash; Department coverage dashboard</div>
-            <div class="snippet-body">
-              <div class="s-panel">
-                <!-- KPIs -->
-                <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:0.5rem;margin-bottom:0.75rem;">
-                  <div style="background:#f8f8f8;padding:0.4rem;border-radius:4px;text-align:center;">
-                    <div style="font-size:1rem;font-weight:800;">1,544</div>
-                    <div style="font-size:0.5rem;color:#505a5f;">Total Services</div>
-                  </div>
-                  <div style="background:#f8f8f8;padding:0.4rem;border-radius:4px;text-align:center;">
-                    <div style="font-size:1rem;font-weight:800;color:#00703c;">28</div>
-                    <div style="font-size:0.5rem;color:#505a5f;">Full Artefacts</div>
-                  </div>
-                  <div style="background:#f8f8f8;padding:0.4rem;border-radius:4px;text-align:center;">
-                    <div style="font-size:1rem;font-weight:800;">2%</div>
-                    <div style="font-size:0.5rem;color:#505a5f;">Coverage</div>
-                  </div>
-                  <div style="background:#f8f8f8;padding:0.4rem;border-radius:4px;text-align:center;">
-                    <div style="font-size:1rem;font-weight:800;color:#d4351c;">1,516</div>
-                    <div style="font-size:0.5rem;color:#505a5f;">Need Artefacts</div>
-                  </div>
-                </div>
-                <!-- Department rows -->
-                <div style="font-size:0.7rem;font-weight:700;margin-bottom:0.35rem;">Coverage by Department</div>
-                <!-- HMRC -->
-                <div style="padding:0.35rem;border:1px solid #e0dfde;border-radius:4px;margin-bottom:0.35rem;">
-                  <div style="display:flex;justify-content:space-between;font-size:0.7rem;margin-bottom:0.2rem;">
-                    <span style="font-weight:700;">HM Revenue &amp; Customs</span>
-                    <span style="color:#505a5f;">201 services</span>
-                  </div>
-                  <div class="s-bar-track">
-                    <div class="s-bar-fill" style="width:4%;background:#00703c;"></div>
-                  </div>
-                  <div style="display:flex;justify-content:space-between;font-size:0.6rem;color:#505a5f;margin-top:0.15rem;">
-                    <span><strong style="color:#00703c;">8</strong> full / <strong style="color:#b1b4b6;">193</strong> catalogue</span>
-                    <strong>4%</strong>
-                  </div>
-                </div>
-                <!-- DWP -->
-                <div style="padding:0.35rem;border:1px solid #e0dfde;border-radius:4px;margin-bottom:0.35rem;">
-                  <div style="display:flex;justify-content:space-between;font-size:0.7rem;margin-bottom:0.2rem;">
-                    <span style="font-weight:700;">DWP</span>
-                    <span style="color:#505a5f;">115 services</span>
-                  </div>
-                  <div class="s-bar-track">
-                    <div class="s-bar-fill" style="width:5%;background:#1d70b8;"></div>
-                  </div>
-                  <div style="display:flex;justify-content:space-between;font-size:0.6rem;color:#505a5f;margin-top:0.15rem;">
-                    <span><strong style="color:#1d70b8;">6</strong> full / <strong style="color:#b1b4b6;">109</strong> catalogue</span>
-                    <strong>5%</strong>
-                  </div>
-                </div>
-                <!-- Home Office -->
-                <div style="padding:0.35rem;border:1px solid #e0dfde;border-radius:4px;">
-                  <div style="display:flex;justify-content:space-between;font-size:0.7rem;margin-bottom:0.2rem;">
-                    <span style="font-weight:700;">Home Office</span>
-                    <span style="color:#505a5f;">178 services</span>
-                  </div>
-                  <div class="s-bar-track">
-                    <div class="s-bar-fill" style="width:2%;background:#d4351c;"></div>
-                  </div>
-                  <div style="display:flex;justify-content:space-between;font-size:0.6rem;color:#505a5f;margin-top:0.15rem;">
-                    <span><strong style="color:#d4351c;">4</strong> full / <strong style="color:#b1b4b6;">174</strong> catalogue</span>
-                    <strong>2%</strong>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- SERVICE COVERAGE -->
-        <div class="entry" id="service-coverage">
-          <div class="entry-header">
-            <div>
-              <div class="entry-term">Service Coverage</div>
-              <div class="entry-badges">
-                <span class="badge badge-exec">Executive</span>
-                <span class="badge badge-product">Product</span>
-              </div>
-            </div>
-          </div>
-          <p class="entry-oneliner">
-            A per-service assessment of which of the four artefacts (manifest, policy, state model, consent) have been published, and which are missing.
-          </p>
-          <p class="entry-why">
-            <strong>Why it matters:</strong> Coverage answers "what does my department still need to do?" at the individual service level. A service with a manifest but no policy can be described but not triaged for eligibility. A service with no consent model cannot share citizen data. Coverage drives the work plan for making services fully legible.
-          </p>
-          <div class="entry-body">
-            <p>Services are classified by source: <strong>Full</strong> (all artefacts published, ready for agent use), or <strong>Catalogue</strong> (known to exist on GOV.UK but not yet legible). They are prioritised as demo-critical, transactional, or reference.</p>
-          </div>
-        </div>
-
-        <!-- LEGIBILITY STUDIO -->
-        <div class="entry" id="legibility-studio">
-          <div class="entry-header">
-            <div>
-              <div class="entry-term">Legibility Studio</div>
-              <div class="entry-badges">
-                <span class="badge badge-exec">Executive</span>
-                <span class="badge badge-product">Product</span>
-              </div>
-            </div>
-          </div>
-          <p class="entry-oneliner">
-            A department-facing platform where service owners author, publish, and monitor the legibility artefacts for their services.
-          </p>
-          <p class="entry-why">
-            <strong>Why it matters:</strong> Making services legible must be as straightforward as possible for departments. The Legibility Studio provides tools for authoring manifests, defining policy rules, mapping state models, and specifying consent requirements &mdash; alongside gap analysis, evidence audit, and the ability to test how agents will experience a service before it goes live.
-          </p>
-          <div class="entry-body">
-            <p>
-              The studio also gives departments visibility into how their services are actually being used: which personas access which services, how often journeys complete versus hand off, and where the evidence trail shows friction. This closes the loop between publishing and operating legible services.
-            </p>
-          </div>
-        </div>
-
-        <!-- PERSONA -->
-        <div class="entry" id="persona">
-          <div class="entry-header">
-            <div>
-              <div class="entry-term">Persona</div>
-              <div class="entry-badges">
-                <span class="badge badge-exec">Executive</span>
-                <span class="badge badge-product">Product</span>
-              </div>
-            </div>
-          </div>
-          <p class="entry-oneliner">
-            A richly modelled citizen profile representing a real-world life situation &mdash; with verified credentials, family relationships, employment history, health conditions, and a specific life event triggering their interaction with government.
-          </p>
-          <p class="entry-why">
-            <strong>Why it matters:</strong> Personas are how the system is tested and demonstrated. Each persona exercises a different cross-section of government services, relationships, and edge cases. They prove that the architecture works not just for simple transactions but for the complex, messy reality of citizens' lives &mdash; bereavement with overseas property, immigration with language barriers, prison release with housing deadlines.
-          </p>
-          <div class="entry-body">
-            <p>Eight personas represent the breadth of government interaction:</p>
-            <ul>
-              <li><strong>Sarah Okafor</strong> &mdash; Bereavement. Executor dealing with death registration, probate, IHT, and notifying multiple departments.</li>
-              <li><strong>Amina Hassan</strong> &mdash; Refugee arriving in the UK. Needs NI number, right to work, Universal Credit, GP registration.</li>
-              <li><strong>Marcus Taylor</strong> &mdash; Prison leaver. Universal Credit, approved premises deadline, DBS disclosure, driving licence.</li>
-              <li><strong>Priya Anand</strong> &mdash; Growing family. Childcare, Free School Meals, Child Benefit, maternity entitlements.</li>
-              <li><strong>James Whitfield</strong> &mdash; Child with special needs. EHCP appeals, PIP, tribunal, legal aid.</li>
-              <li><strong>Daniel Obi</strong> &mdash; Self-employed. Making Tax Digital, Self Assessment, VAT registration, tax refunds.</li>
-              <li><strong>Zara Begum</strong> &mdash; First-time government user. Student finance, first passport, NINO, provisional licence. Low institutional literacy.</li>
-              <li><strong>Fatima &amp; Tomasz Nowak</strong> &mdash; Household with multiple children. EU licence exchange, secondary school transfer, HICBC risk, household UC.</li>
-            </ul>
-            <p>Each persona carries full data across all tiers (verified credentials, submitted data, inferred facts), family relationships, and field source attribution &mdash; making them realistic enough to exercise the entire system end-to-end.</p>
-          </div>
-        </div>
-
-      </div>
-    </div>
-
-
-    <!-- ── Confirmation section ── -->
-    <div class="section" style="padding:3rem 0;">
-      <div class="container">
-        <div style="background:#0b0c0c;border-radius:2px;padding:2rem;color:rgba(255,255,255,0.9);max-width:700px;">
-          <h2 style="color:#fff;font-size:1.25rem;margin-bottom:0.5rem;">Using this glossary</h2>
-          <p style="font-size:0.95rem;margin-bottom:1rem;opacity:0.85;">
-            This document defines the target operating model, not a specific technology implementation. The concepts described here represent what government services could look like when they are designed to be consumed by AI agents acting on behalf of citizens.
-          </p>
-          <p style="font-size:0.95rem;margin-bottom:1rem;opacity:0.85;">
-            Interface examples are drawn from working prototypes that illustrate each concept in practice. They demonstrate the citizen experience and administrative tools that emerge from these concepts.
-          </p>
-          <p style="font-size:0.85rem;opacity:0.6;">
-            Agentic Legibility Stack &middot; Concept Glossary &middot; March 2026
-          </p>
+        <div class="term" data-term="consent grant">
+          <div class="term-name">Consent grant</div>
+          <div class="term-def">A specific, informed permission from a citizen for the agent to share named data fields with a named department for a stated purpose.</div>
+          <div class="term-note">Consent is always explicit, always revocable, and always recorded in the audit trail. Citizens can set standing preferences that apply automatically to future interactions.</div>
         </div>
       </div>
+
+
+      <!-- ═══════ 3. Data ═══════ -->
+      <div class="group" data-group="data">
+        <div class="group-title">Data</div>
+
+        <div class="term" data-term="data field">
+          <div class="term-name">Data field</div>
+          <div class="term-def">A single piece of information a service requires from a citizen — such as date of birth, National Insurance number, or address.</div>
+        </div>
+
+        <div class="term" data-term="source attribution">
+          <div class="term-name">Source attribution</div>
+          <div class="term-def">Metadata on every data field recording which department originally holds or issued it.</div>
+        </div>
+
+        <div class="term" data-term="verified data">
+          <div class="term-name">Verified data</div>
+          <div class="term-def">Data sourced directly from a government department — the authoritative version of a fact about a citizen.</div>
+        </div>
+
+        <div class="term" data-term="submitted data">
+          <div class="term-name">Submitted data</div>
+          <div class="term-def">Data entered by the citizen themselves, not yet confirmed against a government source.</div>
+        </div>
+
+        <div class="term" data-term="inferred data">
+          <div class="term-name">Inferred data</div>
+          <div class="term-def">Data derived by the agent from context — such as inferring marital status from a bereavement report. Always flagged as inferred and confirmed before use.</div>
+        </div>
+
+        <div class="term" data-term="pre-fill">
+          <div class="term-name">Pre-fill</div>
+          <div class="term-def">Automatically populating data fields with information already held — from the wallet, a previous service, or a verified government source — so the citizen is not asked twice.</div>
+        </div>
+
+        <div class="term" data-term="canonical alias">
+          <div class="term-name">Canonical alias</div>
+          <div class="term-def">A mapping that recognises when different services ask for the same data under different names — "NI number", "national insurance number", and "NINO" all resolve to one field.</div>
+        </div>
+
+        <div class="term" data-term="field deduplication">
+          <div class="term-name">Field deduplication</div>
+          <div class="term-def">Merging data requirements across multiple services so the citizen is asked once for each piece of information, even when several services need it.</div>
+        </div>
+      </div>
+
+
+      <!-- ═══════ 4. Accountability ═══════ -->
+      <div class="group" data-group="accountability">
+        <div class="group-title">Accountability</div>
+
+        <div class="term" data-term="trace event">
+          <div class="term-name">Trace event</div>
+          <div class="term-def">A single, timestamped record of something the system did — invoked a capability, evaluated eligibility, transitioned state, granted consent, or called the language model.</div>
+        </div>
+
+        <div class="term" data-term="evidence plane">
+          <div class="term-name">Evidence plane</div>
+          <div class="term-def">A separate, append-only audit layer that records every action the system takes — independent of the control logic that makes decisions.</div>
+          <div class="term-note">The evidence plane cannot be edited or deleted. It exists so that any interaction can be fully reconstructed after the fact. See <a href="technical.html">technical architecture</a>.</div>
+        </div>
+
+        <div class="term" data-term="receipt">
+          <div class="term-name">Receipt</div>
+          <div class="term-def">A citizen-facing record of an action taken by the agent, showing what was done, the outcome, and what data was shared.</div>
+        </div>
+
+        <div class="term" data-term="replay">
+          <div class="term-name">Replay</div>
+          <div class="term-def">Stepping through a past interaction event by event, reconstructing the exact state of the conversation, data, and decisions at each point.</div>
+        </div>
+
+        <div class="term" data-term="audit trail">
+          <div class="term-name">Audit trail</div>
+          <div class="term-def">The complete, immutable record of every decision, data share, and consent grant across a citizen's interaction — available to the citizen, the department, and oversight bodies.</div>
+        </div>
+      </div>
+
+
+      <!-- ═══════ 5. Orchestration ═══════ -->
+      <div class="group" data-group="orchestration">
+        <div class="group-title">Orchestration</div>
+
+        <div class="term" data-term="orchestrator">
+          <div class="term-name">Orchestrator</div>
+          <div class="term-def">The central coordinator that manages the flow of a citizen's interaction — routing between services, injecting context, and delegating language-only work to the AI.</div>
+          <div class="term-note">The orchestrator never makes policy decisions. It delegates language to the LLM and rules to deterministic code. See <a href="technical.html">technical architecture</a>.</div>
+        </div>
+
+        <div class="term" data-term="state machine">
+          <div class="term-name">State machine</div>
+          <div class="term-def">A formal model of the valid states a service interaction can be in and the valid transitions between them — preventing the agent from skipping steps.</div>
+        </div>
+
+        <div class="term" data-term="policy evaluator">
+          <div class="term-name">Policy evaluator</div>
+          <div class="term-def">The component that runs a citizen's data against published eligibility rules, returning a definitive pass or fail with reasons.</div>
+        </div>
+
+        <div class="term" data-term="capability invoker">
+          <div class="term-name">Capability invoker</div>
+          <div class="term-def">The single gateway through which every service action passes — ensuring that every invocation is policy-checked, consent-verified, and trace-recorded.</div>
+        </div>
+
+        <div class="term" data-term="consent manager">
+          <div class="term-name">Consent manager</div>
+          <div class="term-def">The component that checks whether consent exists before any data is shared, enforces standing preferences, and records all consent decisions.</div>
+        </div>
+
+        <div class="term" data-term="field collector">
+          <div class="term-name">Field collector</div>
+          <div class="term-def">The component that tracks which data fields a service requires versus which have already been collected or verified — so the agent only asks for what is genuinely missing.</div>
+        </div>
+      </div>
+
+
+      <!-- ═══════ 6. Safety ═══════ -->
+      <div class="group" data-group="safety">
+        <div class="group-title">Safety</div>
+
+        <div class="term" data-term="edge case">
+          <div class="term-name">Edge case</div>
+          <div class="term-def">When a citizen's situation falls outside the standard path defined by a service's policy — and the system must decide whether to adapt, flag, or escalate.</div>
+        </div>
+
+        <div class="term" data-term="handoff">
+          <div class="term-name">Handoff</div>
+          <div class="term-def">The structured escalation of a citizen's case from the AI agent to a human, with full context about what has already been done.</div>
+          <div class="term-note">Handoffs preserve continuity — the human sees the conversation history, data collected, and current state, so the citizen does not have to start over.</div>
+        </div>
+
+        <div class="term" data-term="escalation">
+          <div class="term-name">Escalation</div>
+          <div class="term-def">Moving a citizen's interaction to a higher level of support — from agent to human, or from front-line to specialist — when the situation requires it.</div>
+        </div>
+
+        <div class="term" data-term="safeguarding">
+          <div class="term-name">Safeguarding</div>
+          <div class="term-def">Automatic detection of distress, self-harm indicators, or vulnerability in a citizen's messages, triggering immediate escalation to human support.</div>
+        </div>
+      </div>
+
+
+      <!-- ═══════ 7. Administration ═══════ -->
+      <div class="group" data-group="admin">
+        <div class="group-title">Administration</div>
+
+        <div class="term" data-term="legibility studio">
+          <div class="term-name">Legibility Studio</div>
+          <div class="term-def">The department-facing platform where service owners author, publish, and monitor the service descriptions that make their services accessible to agents.</div>
+          <div class="term-note">Combines authoring (write service descriptions), auditing (review agent interactions), and measurement (track coverage and gaps). See <a href="legibility-studio.html">Legibility Studio deep dive</a>.</div>
+        </div>
+
+        <div class="term" data-term="coverage">
+          <div class="term-name">Coverage</div>
+          <div class="term-def">A department-level view showing how many services have been made legible versus how many remain to be done.</div>
+        </div>
+
+        <div class="term" data-term="gap analysis">
+          <div class="term-name">Gap analysis</div>
+          <div class="term-def">A per-service assessment of which of the four dimensions (identity, eligibility, journey, data sharing) have been published, and which are missing.</div>
+        </div>
+
+        <div class="term" data-term="service catalogue">
+          <div class="term-name">Service catalogue</div>
+          <div class="term-def">The complete inventory of a department's services, whether or not they have been made legible — the starting point for prioritisation.</div>
+        </div>
+
+        <div class="term" data-term="service typology">
+          <div class="term-name">Service typology</div>
+          <div class="term-def">A classification system for government services based on their interaction pattern — application, registration, notification, lookup, payment — which determines the shape of their service description.</div>
+        </div>
+      </div>
+
     </div>
+  </div>
 
-    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
-    <script>
-      (function () {
-        const buttons = document.querySelectorAll('.filter-btn');
-        const entries = document.querySelectorAll('.entry');
-        const tocLinks = document.querySelectorAll('.toc-group li');
-        const countEl = document.getElementById('filterCount');
-        const filterBar = document.getElementById('filterBar');
 
-        // Map each entry to its audience set based on badge classes
-        const entryAudiences = new Map();
-        entries.forEach(entry => {
-          const badges = entry.querySelectorAll('.badge');
-          const audiences = new Set();
-          badges.forEach(b => {
-            if (b.classList.contains('badge-exec')) audiences.add('exec');
-            if (b.classList.contains('badge-product')) audiences.add('product');
-            if (b.classList.contains('badge-tech')) audiences.add('tech');
-          });
-          entryAudiences.set(entry, audiences);
-        });
+  <!-- ── Footer ── -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <h4>Deep dives</h4>
+          <ul>
+            <li><a href="citizen-app.html">Citizen app</a></li>
+            <li><a href="legibility-studio.html">Legibility Studio</a></li>
+            <li><a href="technical.html">Technical architecture</a></li>
+            <li><a href="departments.html">Departments</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Reference</h4>
+          <ul>
+            <li><a href="glossary.html">Glossary</a></li>
+            <li><a href="explorations.html">Further explorations</a></li>
+            <li><a href="card-catalogue.html">Card catalogue</a></li>
+            <li><a href="life-events-catalogue.html">Life events</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-note">Agentic Legibility Stack — Department Demo Documentation</div>
+    </div>
+  </footer>
 
-        // Map TOC links to entries by href -> id
-        const tocMap = new Map();
-        tocLinks.forEach(li => {
-          const a = li.querySelector('a');
-          if (a && a.getAttribute('href')) {
-            const id = a.getAttribute('href').replace('#', '');
-            tocMap.set(li, id);
-          }
-        });
 
-        function applyFilter(filter) {
-          let shown = 0;
-          const total = entries.length;
-
-          entries.forEach(entry => {
-            const audiences = entryAudiences.get(entry);
-            const visible = filter === 'all' || audiences.has(filter);
-            entry.classList.toggle('hidden-by-filter', !visible);
-            if (visible) shown++;
-          });
-
-          // Update TOC
-          tocLinks.forEach(li => {
-            const entryId = tocMap.get(li);
-            if (!entryId) return;
-            const entry = document.getElementById(entryId);
-            if (!entry) return;
-            const audiences = entryAudiences.get(entry);
-            const visible = filter === 'all' || (audiences && audiences.has(filter));
-            li.classList.toggle('hidden-by-filter', !visible);
-          });
-
-          // Dim group headers if all entries hidden
-          document.querySelectorAll('.section, .section-alt').forEach(section => {
-            const sectionEntries = section.querySelectorAll('.entry');
-            if (sectionEntries.length === 0) return;
-            const allHidden = Array.from(sectionEntries).every(e => e.classList.contains('hidden-by-filter'));
-            section.classList.toggle('all-hidden', allHidden);
-          });
-
-          // Update count
-          if (filter === 'all') {
-            countEl.textContent = '';
-          } else {
-            countEl.textContent = shown + ' of ' + total + ' concepts';
-          }
-
-          // Update active button
-          buttons.forEach(b => b.classList.toggle('active', b.dataset.filter === filter));
-        }
-
-        buttons.forEach(btn => {
-          btn.addEventListener('click', () => applyFilter(btn.dataset.filter));
-        });
-
-        // Shadow on scroll
-        window.addEventListener('scroll', () => {
-          filterBar.classList.toggle('scrolled', window.scrollY > 100);
-        }, { passive: true });
-      })();
-
-      // ── Snippet download controls ──
-      (function () {
-        var snippets = document.querySelectorAll('.snippet');
-        snippets.forEach(function (snippet) {
-          var label = snippet.querySelector('.snippet-label');
-          var body = snippet.querySelector('.snippet-body');
-          if (!body) return;
-
-          // Create download controls
-          var dl = document.createElement('div');
-          dl.className = 'snippet-dl';
-
-          var pngBtn = document.createElement('button');
-          pngBtn.className = 'snippet-dl-btn';
-          pngBtn.textContent = 'PNG';
-          pngBtn.title = 'Download as image';
-
-          var tblBtn = document.createElement('button');
-          tblBtn.className = 'snippet-dl-btn';
-          tblBtn.textContent = 'Table';
-          tblBtn.title = 'Download as HTML table';
-
-          dl.appendChild(pngBtn);
-          dl.appendChild(tblBtn);
-          snippet.appendChild(dl);
-
-          // File name from label text
-          function slugify(text) {
-            return text.replace(/[^a-z0-9]+/gi, '-').replace(/^-|-$/g, '').toLowerCase();
-          }
-          var fileName = label ? slugify(label.textContent) : 'snippet';
-
-          // PNG download
-          pngBtn.addEventListener('click', function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-            // Temporarily hide the download buttons
-            dl.style.display = 'none';
-            html2canvas(snippet, {
-              backgroundColor: null,
-              scale: 2,
-              useCORS: true,
-              logging: false
-            }).then(function (canvas) {
-              dl.style.display = '';
-              var link = document.createElement('a');
-              link.download = fileName + '.png';
-              link.href = canvas.toDataURL('image/png');
-              link.click();
-            }).catch(function () {
-              dl.style.display = '';
-            });
-          });
-
-          // Table download
-          tblBtn.addEventListener('click', function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-            var title = label ? label.textContent.trim() : 'Snippet';
-            var rows = [];
-
-            // Extract text content as structured rows
-            var panels = body.querySelectorAll('.s-panel, [style]');
-            var allDivs = body.querySelectorAll('div');
-            var visited = new Set();
-
-            // Walk through the snippet body and extract meaningful text pairs
-            var items = body.querySelectorAll('[style*="display:flex"], [style*="display: flex"], tr, li');
-            if (items.length > 0) {
-              items.forEach(function (item) {
-                if (visited.has(item)) return;
-                // Skip nested flex items
-                var parent = item.parentElement;
-                while (parent && parent !== body) {
-                  if (visited.has(parent)) return;
-                  parent = parent.parentElement;
-                }
-                visited.add(item);
-                var texts = [];
-                item.querySelectorAll('div, span, td, th').forEach(function (el) {
-                  var t = el.textContent.trim();
-                  if (t && !texts.includes(t) && t.length < 200) {
-                    texts.push(t);
-                  }
-                });
-                if (texts.length > 0) {
-                  rows.push(texts);
-                }
-              });
-            }
-
-            // Fallback: just get all text blocks
-            if (rows.length === 0) {
-              var blocks = body.querySelectorAll('div, p, span');
-              blocks.forEach(function (el) {
-                var t = el.textContent.trim();
-                if (t && t.length < 200 && el.children.length === 0) {
-                  rows.push([t]);
-                }
-              });
-            }
-
-            // Build HTML table
-            var maxCols = 1;
-            rows.forEach(function (r) { if (r.length > maxCols) maxCols = r.length; });
-            var html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>' + title + '</title>';
-            html += '<style>body{font-family:Arial,sans-serif;padding:2rem;}table{border-collapse:collapse;width:100%;}';
-            html += 'th,td{border:1px solid #b1b4b6;padding:0.5rem 0.75rem;text-align:left;font-size:0.9rem;}';
-            html += 'th{background:#f3f2f1;font-weight:600;}caption{font-size:1.1rem;font-weight:700;margin-bottom:0.75rem;text-align:left;}</style></head>';
-            html += '<body><table><caption>' + title + '</caption><tbody>';
-            rows.forEach(function (r) {
-              html += '<tr>';
-              r.forEach(function (cell) { html += '<td>' + cell + '</td>'; });
-              // Pad if needed
-              for (var i = r.length; i < maxCols; i++) html += '<td></td>';
-              html += '</tr>';
-            });
-            html += '</tbody></table></body></html>';
-
-            var blob = new Blob([html], { type: 'text/html' });
-            var link = document.createElement('a');
-            link.download = fileName + '.html';
-            link.href = URL.createObjectURL(blob);
-            link.click();
-            URL.revokeObjectURL(link.href);
-          });
-        });
-      })();
-    </script>
-    <script>
-    // ── Exportable icons, diagrams, and illustrations ──
+  <!-- ── Search/filter script ── -->
+  <script>
     (function () {
-      function makeExportable(el, name) {
-        el.classList.add('exportable');
-        var hint = document.createElement('div');
-        hint.className = 'export-hint';
-        hint.innerHTML = '&#8595;';
-        hint.title = 'Download as PNG';
-        el.appendChild(hint);
-        el.addEventListener('click', function (e) {
-          e.preventDefault();
-          e.stopPropagation();
-          hint.style.display = 'none';
-          el.style.outline = 'none';
-          html2canvas(el, { backgroundColor: null, scale: 3, useCORS: true, logging: false }).then(function (canvas) {
-            hint.style.display = '';
-            el.style.outline = '';
-            var link = document.createElement('a');
-            link.download = name + '.png';
-            link.href = canvas.toDataURL('image/png');
-            link.click();
-          }).catch(function () { hint.style.display = ''; el.style.outline = ''; });
+      const input = document.getElementById('glossary-search');
+      const countEl = document.getElementById('search-count');
+      const terms = document.querySelectorAll('.term');
+      const groups = document.querySelectorAll('.group');
+      const total = terms.length;
+
+      function update() {
+        const q = input.value.trim().toLowerCase();
+        let visible = 0;
+
+        terms.forEach(function (term) {
+          const text = term.textContent.toLowerCase();
+          const match = !q || text.indexOf(q) !== -1;
+          term.classList.toggle('hidden', !match);
+          if (match) visible++;
         });
+
+        // Hide group headings when all terms in the group are hidden
+        groups.forEach(function (group) {
+          const groupTerms = group.querySelectorAll('.term');
+          const anyVisible = Array.from(groupTerms).some(function (t) {
+            return !t.classList.contains('hidden');
+          });
+          group.style.display = anyVisible ? '' : 'none';
+        });
+
+        if (q) {
+          countEl.textContent = visible + ' of ' + total + ' terms';
+        } else {
+          countEl.textContent = '';
+        }
       }
 
-      // Icons with s-icon class
-      document.querySelectorAll('.s-icon').forEach(function (el, i) {
-        makeExportable(el, 'icon-' + (i + 1));
-      });
-
-      // Pipeline diagrams
-      document.querySelectorAll('.pipeline').forEach(function (el, i) {
-        var wrapper = document.createElement('div');
-        wrapper.className = 'pipeline-exportable';
-        el.parentNode.insertBefore(wrapper, el);
-        wrapper.appendChild(el);
-        var hint = document.createElement('div');
-        hint.className = 'export-hint';
-        hint.innerHTML = '&#8595;';
-        hint.title = 'Download as PNG';
-        wrapper.appendChild(hint);
-        wrapper.addEventListener('click', function (e) {
-          if (e.target.closest('a')) return;
-          e.preventDefault();
-          hint.style.display = 'none';
-          html2canvas(el, { backgroundColor: '#ffffff', scale: 3, useCORS: true, logging: false }).then(function (canvas) {
-            hint.style.display = '';
-            var link = document.createElement('a');
-            link.download = 'pipeline-diagram-' + (i + 1) + '.png';
-            link.href = canvas.toDataURL('image/png');
-            link.click();
-          }).catch(function () { hint.style.display = ''; });
-        });
-      });
-
-      // Stat rows
-      document.querySelectorAll('.stat-row, .gap-kpis').forEach(function (el, i) {
-        var wrapper = document.createElement('div');
-        wrapper.className = 'pipeline-exportable';
-        wrapper.style.display = 'block';
-        el.parentNode.insertBefore(wrapper, el);
-        wrapper.appendChild(el);
-        var hint = document.createElement('div');
-        hint.className = 'export-hint';
-        hint.innerHTML = '&#8595;';
-        hint.title = 'Download as PNG';
-        wrapper.appendChild(hint);
-        wrapper.addEventListener('click', function (e) {
-          hint.style.display = 'none';
-          html2canvas(el, { backgroundColor: '#ffffff', scale: 3, useCORS: true, logging: false }).then(function (canvas) {
-            hint.style.display = '';
-            var link = document.createElement('a');
-            link.download = 'stats-' + (i + 1) + '.png';
-            link.href = canvas.toDataURL('image/png');
-            link.click();
-          }).catch(function () { hint.style.display = ''; });
-        });
-      });
-
-      // Feature, pillar, guarantee, artefact, and ask cards
-      document.querySelectorAll('.feature-card, .pillar-card, .guarantee-card, .artefact-card, .ask-card').forEach(function (el) {
-        var wrapper = document.createElement('div');
-        wrapper.className = 'pipeline-exportable';
-        wrapper.style.display = 'block';
-        el.parentNode.insertBefore(wrapper, el);
-        wrapper.appendChild(el);
-        var hint = document.createElement('div');
-        hint.className = 'export-hint';
-        hint.innerHTML = '&#8595;';
-        hint.title = 'Download as PNG';
-        wrapper.appendChild(hint);
-        var h3 = el.querySelector('h3');
-        var name = h3 ? h3.textContent.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-') : 'card';
-        wrapper.addEventListener('click', function (e) {
-          if (e.target.closest('a')) return;
-          hint.style.display = 'none';
-          html2canvas(el, { backgroundColor: '#ffffff', scale: 3, useCORS: true, logging: false }).then(function (canvas) {
-            hint.style.display = '';
-            var link = document.createElement('a');
-            link.download = name + '.png';
-            link.href = canvas.toDataURL('image/png');
-            link.click();
-          }).catch(function () { hint.style.display = ''; });
-        });
-      });
+      input.addEventListener('input', update);
     })();
-    </script>
-  </body>
+  </script>
+
+</body>
 </html>

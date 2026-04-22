@@ -1,1217 +1,816 @@
 <!doctype html>
 <html lang="en-GB">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Legibility Studio — Agentic Legibility Stack</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
-      rel="stylesheet"
-    />
-    <style>
-      /* ── Reset & Base ── */
-      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-      html { scroll-behavior: smooth; }
-      body {
-        font-family: "Inter", Arial, sans-serif;
-        color: #0b0c0c;
-        line-height: 1.6;
-        background: #fff;
-        -webkit-font-smoothing: antialiased;
-      }
-      a { color: #1d70b8; text-decoration: none; }
-      a:hover { text-decoration: underline; color: #003078; }
-      code, pre { font-family: "JetBrains Mono", monospace; }
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Legibility Studio — Agentic Legibility Stack</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    /* ── Tokens ── */
+    :root {
+      --ink: #0b0c0c;
+      --ink-soft: #505a5f;
+      --ink-faint: #6f777b;
+      --surface: #fff;
+      --surface-alt: #f8f8f7;
+      --border: #d5d8da;
+      --border-light: #e8e8e6;
+      --blue: #1d70b8;
+      --blue-dark: #003078;
+      --blue-bg: #e8f0fe;
+      --green: #00703c;
+      --green-bg: #e8f5ee;
+      --red: #d4351c;
+      --red-bg: #fce8e4;
+      --orange: #f47738;
+      --orange-bg: #fef3e8;
+      --purple: #4c2c92;
+      --purple-bg: #f0ebf5;
+      --max-w: 880px;
+      --section-py: 5rem;
+    }
 
-      /* ── Layout ── */
-      .container { max-width: 960px; margin: 0 auto; padding: 0 1.5rem; }
-      .section { padding: 4rem 0; }
-      .section-alt { background: #f3f2f1; }
+    /* ── Reset ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+    body { font-family: "Inter", Arial, sans-serif; color: var(--ink); line-height: 1.65; background: var(--surface); font-size: 16px; }
+    a { color: var(--blue); text-decoration: none; }
+    a:hover { text-decoration: underline; color: var(--blue-dark); }
+    ul, ol { padding-left: 1.25em; }
+    li + li { margin-top: 0.35em; }
 
-      h1, h2, h3 { line-height: 1.2; }
-      h2 { font-size: 1.75rem; font-weight: 700; margin-bottom: 1rem; }
-      h3 { font-size: 1.25rem; font-weight: 600; margin-bottom: 0.5rem; }
-      h4 { font-size: 1.05rem; font-weight: 600; margin-bottom: 0.5rem; line-height: 1.3; }
-      .section-intro {
-        font-size: 1.1rem;
-        color: #505a5f;
-        max-width: 700px;
-        margin-bottom: 2rem;
-      }
-      .body-text {
-        font-size: 0.95rem;
-        color: #505a5f;
-        max-width: 720px;
-        margin-bottom: 1rem;
-      }
-      .body-text strong { color: #0b0c0c; font-weight: 600; }
+    /* ── Layout ── */
+    .container { max-width: var(--max-w); margin: 0 auto; padding: 0 1.5rem; }
+    .section { padding: var(--section-py) 0; }
+    .section-alt { background: var(--surface-alt); }
 
-      /* ── Nav ── */
-      .nav {
-        background: #fff;
-        border-bottom: 1px solid #b1b4b6;
-        padding: 0.75rem 0;
-        position: sticky;
-        top: 0;
-        z-index: 100;
-      }
-      .nav .container {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 1rem;
-      }
-      .nav-brand { font-weight: 700; font-size: 1rem; color: #0b0c0c; white-space: nowrap; }
-      .nav-links { display: flex; gap: 1.25rem; list-style: none; flex-wrap: wrap; align-items: center; }
-      .nav-links a { font-size: 0.85rem; font-weight: 500; color: #505a5f; }
-      .nav-links a:hover { color: #1d70b8; text-decoration: none; }
-      @media (max-width: 640px) {
-        .nav-links { display: none; }
-      }
+    /* ── Nav ── */
+    .nav { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0.7rem 0; position: sticky; top: 0; z-index: 100; }
+    .nav .container { display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; }
+    .nav-brand { font-weight: 600; font-size: 1.05rem; color: var(--ink); white-space: nowrap; letter-spacing: -0.01em; text-decoration: none; }
+    .nav-brand:hover { color: var(--ink); text-decoration: none; }
+    .nav-links { display: flex; gap: 1.5rem; list-style: none; padding: 0; margin: 0; flex-wrap: wrap; align-items: baseline; }
+    .nav-links li { line-height: 1; }
+    .nav-links a { font-size: 0.8rem; font-weight: 500; color: var(--ink-soft); letter-spacing: 0.01em; line-height: 1; }
+    .nav-links a:hover { color: var(--blue); text-decoration: none; }
+    .nav-links a.active { color: var(--ink); font-weight: 700; }
+    @media (max-width: 700px) { .nav-links { display: none; } }
 
-      /* ── Hero ── */
-      .hero { padding: 5rem 0 3rem; }
-      .hero-label {
-        display: inline-block;
-        background: #f3f2f1;
-        color: #505a5f;
-        font-size: 0.8rem;
-        font-weight: 600;
-        padding: 0.25rem 0.75rem;
-        border-radius: 2px;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        margin-bottom: 1.25rem;
-      }
-      .hero h1 { font-size: 2.75rem; font-weight: 700; margin-bottom: 0.75rem; }
-      .hero-subtitle {
-        font-size: 1.35rem;
-        color: #505a5f;
-        font-weight: 400;
-        max-width: 700px;
-        margin-bottom: 1.5rem;
-      }
-      @media (max-width: 640px) {
-        .hero h1 { font-size: 2rem; }
-        .hero-subtitle { font-size: 1.15rem; }
-      }
+    /* ── Typography ── */
+    h1 { font-size: 2.75rem; font-weight: 700; line-height: 1.12; letter-spacing: -0.025em; color: var(--ink); }
+    h2 { font-size: 1.85rem; font-weight: 600; line-height: 1.2; letter-spacing: -0.02em; margin-bottom: 0.75rem; }
+    h3 { font-size: 1.1rem; font-weight: 700; line-height: 1.3; margin-bottom: 0.35rem; }
+    h4 { font-size: 0.95rem; font-weight: 700; line-height: 1.3; margin-bottom: 0.25rem; }
 
-      /* ── Section Heading ── */
-      .section-heading {
-        display: flex;
-        align-items: center;
-        margin-bottom: 1rem;
-      }
-      .section-number {
-        background: #0b0c0c;
-        color: #fff;
-        width: 28px;
-        height: 28px;
-        border-radius: 50%;
-        font-size: 0.75rem;
-        font-weight: 800;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        flex-shrink: 0;
-        margin-right: 0.75rem;
-      }
+    .section-intro { font-size: 1.08rem; color: var(--ink-soft); max-width: 640px; margin-bottom: 2.5rem; line-height: 1.7; }
+    .body-text { font-size: 0.92rem; color: var(--ink-soft); max-width: 640px; margin-bottom: 1rem; line-height: 1.7; }
+    .body-text strong { color: var(--ink); font-weight: 600; }
 
-      /* ── Feature cards ── */
-      .feature-grid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 1.25rem;
-        margin-top: 1.5rem;
-      }
-      .feature-card {
-        border: 1px solid #e0dfde;
-        border-radius: 6px;
-        padding: 1.5rem;
-        background: #fff;
-        border-top: 4px solid;
-      }
-      .feature-card h3 { font-size: 1rem; margin-bottom: 0.5rem; }
-      .feature-card p { font-size: 0.9rem; color: #505a5f; }
-      @media (max-width: 640px) {
-        .feature-grid { grid-template-columns: 1fr; }
-      }
+    /* ── Section heading with number ── */
+    .section-heading { display: flex; align-items: baseline; gap: 0.75rem; margin-bottom: 0.75rem; }
+    .section-num {
+      font-size: 1.85rem;
+      font-weight: 400;
+      color: var(--ink-faint);
+      flex-shrink: 0;
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+    }
 
-      /* ── Page cards (two-col) ── */
-      .page-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 1.5rem;
-        margin-top: 1.5rem;
-      }
-      .page-card {
-        border: 1px solid #e0dfde;
-        border-radius: 6px;
-        background: #fff;
-        overflow: hidden;
-      }
-      .page-card-header {
-        padding: 1.25rem 1.5rem;
-        border-bottom: 1px solid #e0dfde;
-      }
-      .page-card-header h3 {
-        font-size: 1.1rem;
-        margin-bottom: 0.25rem;
-      }
-      .page-card-header p {
-        font-size: 0.8rem;
-        color: #505a5f;
-      }
-      .page-card-body {
-        padding: 1.25rem 1.5rem;
-      }
-      .page-card-body ul {
-        list-style: none;
-        font-size: 0.9rem;
-      }
-      .page-card-body li {
-        padding: 0.4rem 0;
-        border-bottom: 1px solid #f3f2f1;
-        display: flex;
-        gap: 0.5rem;
-        align-items: flex-start;
-      }
-      .page-card-body li:last-child { border-bottom: none; }
-      .page-card-body li::before {
-        content: "→";
-        color: #b1b4b6;
-        flex-shrink: 0;
-        font-size: 0.85rem;
-      }
-      @media (max-width: 640px) {
-        .page-grid { grid-template-columns: 1fr; }
-      }
+    /* ── Hero ── */
+    .hero { padding: 5.5rem 0 3.5rem; }
+    .hero-label {
+      display: inline-block;
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      color: var(--ink-faint);
+      margin-bottom: 1.5rem;
+      border-bottom: 2px solid var(--ink);
+      padding-bottom: 0.2rem;
+    }
+    .hero h1 { margin-bottom: 1rem; max-width: 600px; }
+    .hero-subtitle { font-size: 1.3rem; font-weight: 400; font-style: italic; color: var(--ink-soft); max-width: 580px; line-height: 1.5; margin-bottom: 1.5rem; }
+    .hero-body { font-size: 0.95rem; color: var(--ink-soft); max-width: 600px; line-height: 1.7; margin-bottom: 2rem; }
+    @media (max-width: 640px) { h1 { font-size: 2rem; } .hero-subtitle { font-size: 1.1rem; } }
 
-      /* ── Stat row ── */
-      .stat-row {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 1.25rem;
-        margin-top: 2rem;
-      }
-      .stat-item {
-        text-align: center;
-        padding: 1.25rem 1rem;
-        background: #fff;
-        border: 1px solid #e0dfde;
-        border-radius: 6px;
-      }
-      .stat-value { font-size: 2rem; font-weight: 800; color: #0b0c0c; }
-      .stat-label { font-size: 0.75rem; color: #505a5f; margin-top: 0.25rem; }
-      @media (max-width: 640px) {
-        .stat-row { grid-template-columns: repeat(2, 1fr); }
-      }
+    /* ── Callout ── */
+    .callout {
+      padding: 1rem 1.25rem;
+      border-left: 3px solid var(--blue);
+      background: var(--blue-bg);
+      font-size: 0.9rem;
+      line-height: 1.6;
+      color: var(--ink);
+      max-width: 600px;
+      margin-top: 1.5rem;
+    }
+    .callout strong { font-weight: 600; }
+    .callout--green { border-left-color: var(--green); background: var(--green-bg); }
+    .callout--purple { border-left-color: var(--purple); background: var(--purple-bg); }
+    .callout--orange { border-left-color: var(--orange); background: var(--orange-bg); }
+    .callout a { font-weight: 600; }
 
-      /* ── Artefact list ── */
-      .artefact-list {
-        list-style: none;
-        margin-top: 1rem;
-      }
-      .artefact-list li {
-        padding: 0.75rem 1rem;
-        border: 1px solid #e0dfde;
-        border-radius: 4px;
-        margin-bottom: 0.5rem;
-        background: #fff;
-        display: flex;
-        gap: 0.75rem;
-        align-items: flex-start;
-      }
-      .artefact-icon {
-        width: 32px;
-        height: 32px;
-        border-radius: 4px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-shrink: 0;
-        font-size: 0.7rem;
-        font-weight: 700;
-        color: #fff;
-      }
-      .artefact-content h4 { font-size: 0.9rem; margin-bottom: 0.15rem; }
-      .artefact-content p { font-size: 0.8rem; color: #505a5f; margin: 0; }
+    /* ── Capability cards (three-col) ── */
+    .cap-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.25rem; margin: 2rem 0; }
+    @media (max-width: 640px) { .cap-grid { grid-template-columns: 1fr; } }
+    .cap-card { border: 1px solid var(--border); border-top: 3px solid; padding: 1.5rem; }
+    .cap-card h4 { font-size: 1rem; font-weight: 700; margin-bottom: 0.5rem; }
+    .cap-card p { font-size: 0.88rem; color: var(--ink-soft); line-height: 1.6; }
 
-      /* ── Callout ── */
-      .callout {
-        border-left: 4px solid #b1b4b6;
-        padding: 1rem 1.25rem;
-        background: #f3f2f1;
-        font-size: 0.95rem;
-        color: #505a5f;
-        margin-top: 1.5rem;
-        border-radius: 0 4px 4px 0;
-      }
-      .callout-blue { border-left-color: #1d70b8; }
-      .callout-green { border-left-color: #00703c; }
-      .callout-purple { border-left-color: #912b88; }
+    /* ── Split comparison ── */
+    .split { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin: 2rem 0; }
+    @media (max-width: 640px) { .split { grid-template-columns: 1fr; } }
+    .split-col { padding: 1.5rem; border-radius: 2px; }
+    .split-col h3 { font-size: 1.15rem; font-weight: 600; letter-spacing: -0.01em; margin-bottom: 1rem; }
+    .split-col ul { list-style: none; padding: 0; }
+    .split-col li { font-size: 0.88rem; line-height: 1.55; padding: 0.4em 0; border-bottom: 1px solid var(--border-light); }
+    .split-col li:last-child { border-bottom: none; }
 
-      /* ── Pipeline ── */
-      .pipeline {
-        display: flex;
-        align-items: center;
-        gap: 0;
-        margin: 2rem 0;
-        flex-wrap: wrap;
-        justify-content: center;
-      }
-      .pipeline-box {
-        padding: 0.6rem 1.25rem;
-        border-radius: 4px;
-        font-size: 0.8rem;
-        font-weight: 600;
-        text-align: center;
-        white-space: nowrap;
-      }
-      .pipeline-box-dark { background: #0b0c0c; color: #fff; }
-      .pipeline-box-blue { background: #e8f0fe; color: #1d70b8; border: 1.5px solid #1d70b8; }
-      .pipeline-box-green { background: #e6f3ec; color: #00703c; border: 1.5px solid #00703c; }
-      .pipeline-box-purple { background: #f5e6f4; color: #912b88; border: 1.5px solid #912b88; }
-      .pipeline-box-orange { background: #fef3e8; color: #f47738; border: 1.5px solid #f47738; }
-      .pipeline-arrow { font-size: 1.25rem; color: #b1b4b6; padding: 0 0.35rem; }
+    /* ── Dimension cards ── */
+    .dim-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin: 2rem 0; }
+    @media (max-width: 640px) { .dim-grid { grid-template-columns: 1fr; } }
+    .dim-card { border: 1px solid var(--border); padding: 1.5rem; }
+    .dim-card--identity { border-left: 4px solid var(--blue); }
+    .dim-card--eligibility { border-left: 4px solid var(--green); }
+    .dim-card--journey { border-left: 4px solid var(--orange); }
+    .dim-card--data { border-left: 4px solid var(--purple); }
+    .dim-card h3 { font-size: 1.15rem; font-weight: 600; margin-bottom: 0.5rem; }
+    .dim-card p { font-size: 0.88rem; color: var(--ink); line-height: 1.6; }
+    .dim-card .dim-fields { font-size: 0.82rem; color: var(--ink-faint); font-style: italic; margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid var(--border-light); line-height: 1.55; }
 
-      /* ── Snippet mockups ── */
-      .snippet {
-        margin-top: 1.25rem;
-        border: 1px solid #d2d2d2;
-        border-radius: 6px;
-        overflow: hidden;
-        background: #fff;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-      }
-      .snippet-wide { max-width: 100%; }
-      .snippet-label {
-        font-size: 0.65rem;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.08em;
-        color: #505a5f;
-        background: #f8f8f8;
-        padding: 0.4rem 0.75rem;
-        border-bottom: 1px solid #e8e8e8;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-      }
-      .snippet-label::before {
-        content: "";
-        width: 6px;
-        height: 6px;
-        border-radius: 50%;
-        background: #00703c;
-        flex-shrink: 0;
-      }
-      .snippet-body { padding: 0; font-size: 0.85rem; }
+    /* ── Steps ── */
+    .steps { margin: 2rem 0; }
+    .step { display: grid; grid-template-columns: 2.5rem 1fr; gap: 0.75rem; padding: 1.25rem 0; border-bottom: 1px solid var(--border-light); }
+    .step:last-child { border-bottom: none; }
+    .step-num {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--border);
+      line-height: 1;
+      padding-top: 0.1rem;
+    }
+    .step h4 { font-size: 0.95rem; font-weight: 700; margin-bottom: 0.2rem; }
+    .step p { font-size: 0.88rem; color: var(--ink-soft); line-height: 1.6; }
 
-      /* ── Mock UI elements ── */
-      .mock-sidebar {
-        display: flex;
-        min-height: 280px;
-      }
-      .mock-sidebar-nav {
-        width: 180px;
-        background: #1a1a2e;
-        color: #fff;
-        padding: 1rem 0;
-        flex-shrink: 0;
-      }
-      .mock-sidebar-brand {
-        font-size: 0.7rem;
-        font-weight: 700;
-        padding: 0 0.75rem 0.75rem;
-        border-bottom: 1px solid rgba(255,255,255,0.1);
-        margin-bottom: 0.5rem;
-        color: rgba(255,255,255,0.7);
-      }
-      .mock-sidebar-item {
-        padding: 0.4rem 0.75rem;
-        font-size: 0.72rem;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        color: rgba(255,255,255,0.6);
-        cursor: default;
-      }
-      .mock-sidebar-item.active {
-        background: rgba(255,255,255,0.1);
-        color: #fff;
-      }
-      .mock-sidebar-item .dot {
-        width: 5px;
-        height: 5px;
-        border-radius: 50%;
-        background: currentColor;
-        flex-shrink: 0;
-      }
-      .mock-content {
-        flex: 1;
-        padding: 1rem 1.25rem;
-        background: #f8f8f8;
-      }
-      .mock-kpi-row {
-        display: flex;
-        gap: 0.75rem;
-        margin-bottom: 1rem;
-      }
-      .mock-kpi {
-        flex: 1;
-        background: #fff;
-        border: 1px solid #e0dfde;
-        border-radius: 4px;
-        padding: 0.6rem 0.75rem;
-        text-align: center;
-      }
-      .mock-kpi-value {
-        font-size: 1.1rem;
-        font-weight: 800;
-        color: #0b0c0c;
-      }
-      .mock-kpi-label {
-        font-size: 0.55rem;
-        color: #505a5f;
-        text-transform: uppercase;
-        letter-spacing: 0.04em;
-      }
-      .mock-table {
-        width: 100%;
-        background: #fff;
-        border: 1px solid #e0dfde;
-        border-radius: 4px;
-        overflow: hidden;
-      }
-      .mock-table-header {
-        display: grid;
-        grid-template-columns: 2fr 1fr 0.5fr 0.5fr 0.5fr 1fr;
-        padding: 0.4rem 0.75rem;
-        background: #f3f2f1;
-        font-size: 0.6rem;
-        font-weight: 600;
-        color: #505a5f;
-        text-transform: uppercase;
-        letter-spacing: 0.04em;
-      }
-      .mock-table-row {
-        display: grid;
-        grid-template-columns: 2fr 1fr 0.5fr 0.5fr 0.5fr 1fr;
-        padding: 0.4rem 0.75rem;
-        font-size: 0.65rem;
-        border-top: 1px solid #f3f2f1;
-        align-items: center;
-      }
-      .mock-tag {
-        display: inline-block;
-        font-size: 0.55rem;
-        padding: 0.1rem 0.35rem;
-        border-radius: 2px;
-        font-weight: 600;
-      }
-      .mock-tag-blue { background: #e8f0fe; color: #1d70b8; }
-      .mock-tag-green { background: #e6f3ec; color: #00703c; }
-      .mock-tag-grey { background: #f3f2f1; color: #505a5f; }
-      .mock-check { color: #00703c; font-weight: 700; }
-      .mock-cross { color: #d4351c; }
-      .mock-bar {
-        height: 6px;
-        border-radius: 3px;
-        background: #e0dfde;
-        overflow: hidden;
-      }
-      .mock-bar-fill {
-        height: 100%;
-        border-radius: 3px;
-      }
+    /* ── Stats ── */
+    .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-top: 2.5rem; }
+    @media (max-width: 640px) { .stats { grid-template-columns: 1fr 1fr; } }
+    .stat { text-align: center; padding: 1.25rem 0.75rem; border: 1px solid var(--border); }
+    .stat-value { font-size: 2rem; font-weight: 700; color: var(--ink); line-height: 1; margin-bottom: 0.3rem; letter-spacing: -0.02em; }
+    .stat-label { font-size: 0.75rem; color: var(--ink-faint); letter-spacing: 0.01em; }
 
-      /* ── Data flow ── */
-      .data-flow {
-        display: grid;
-        grid-template-columns: 1fr auto 1fr auto 1fr;
-        gap: 0;
-        align-items: center;
-        margin: 2rem 0;
-      }
-      .data-flow-box {
-        padding: 1rem;
-        border: 1px solid #e0dfde;
-        border-radius: 6px;
-        background: #fff;
-        text-align: center;
-      }
-      .data-flow-box h4 { font-size: 0.85rem; margin-bottom: 0.25rem; }
-      .data-flow-box p { font-size: 0.75rem; color: #505a5f; margin: 0; }
-      .data-flow-arrow {
-        text-align: center;
-        color: #b1b4b6;
-        font-size: 1.25rem;
-        padding: 0 0.25rem;
-      }
-      @media (max-width: 640px) {
-        .data-flow {
-          grid-template-columns: 1fr;
-          gap: 0.5rem;
-        }
-        .data-flow-arrow { transform: rotate(90deg); }
-      }
+    /* ── Typology pills ── */
+    .typo-grid { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 1.5rem 0; }
+    .typo-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.4rem 0.85rem;
+      border-radius: 2px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      border: 1px solid;
+    }
 
-      /* ── TOC ── */
-      .toc-list {
-        list-style: none;
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-        gap: 0.5rem;
-        margin-top: 1rem;
-      }
-      .toc-list a {
-        display: block;
-        padding: 0.6rem 0.75rem;
-        font-size: 0.9rem;
-        font-weight: 500;
-        color: #0b0c0c;
-        border-left: 3px solid #e0dfde;
-      }
-      .toc-list a:hover {
-        background: #f3f2f1;
-        border-left-color: #1d70b8;
-        text-decoration: none;
-      }
+    /* ── Coverage bars ── */
+    .coverage-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; margin: 1.5rem 0; }
+    @media (max-width: 640px) { .coverage-grid { grid-template-columns: 1fr; } }
+    .coverage-card { background: var(--surface); border: 1px solid var(--border); padding: 1rem; }
+    .coverage-card h4 { font-size: 0.82rem; font-weight: 600; color: var(--ink-soft); margin-bottom: 0.5rem; }
+    .coverage-bar { height: 6px; border-radius: 3px; background: var(--border-light); overflow: hidden; margin-bottom: 0.35rem; }
+    .coverage-fill { height: 100%; border-radius: 3px; }
+    .coverage-label { font-size: 0.72rem; color: var(--ink-faint); }
 
-      /* ── Footer ── */
-      .footer {
-        padding: 2rem 0;
-        text-align: center;
-        font-size: 0.8rem;
-        color: #b1b4b6;
-        border-top: 1px solid #e0dfde;
-      }
-    </style>
-    <script async defer src="https://scripts.withcabin.com/hello.js"></script>
-  </head>
-  <body>
+    /* ── Event type pills ── */
+    .event-grid { display: flex; flex-wrap: wrap; gap: 0.4rem; margin: 1.5rem 0; }
+    .event-pill {
+      display: inline-block;
+      padding: 0.3rem 0.65rem;
+      border-radius: 2px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      border: 1px solid;
+    }
 
-    <!-- ── Navigation ── -->
-    <nav class="nav">
-      <div class="container">
-        <span class="nav-brand">Agentic Legibility Stack</span>
-        <ul class="nav-links">
-          <li><a href="index.html">All documents</a></li>
-          <li><a href="overview.html">Overview</a></li>
-          <li><a href="briefing-executive.html">Executive briefing</a></li>
-          <li><a href="guide-product.html">Product guide</a></li>
-          <li><a href="reference-technical.html">Technical reference</a></li>
-          <li><a href="glossary.html">Glossary</a></li>
-        </ul>
+    /* ── Mock UI ── */
+    .mock-frame {
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+      margin: 2rem 0;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+    .mock-toolbar {
+      background: var(--surface-alt);
+      border-bottom: 1px solid var(--border);
+      padding: 0.5rem 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .mock-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+    .mock-toolbar-label { font-size: 0.7rem; font-weight: 600; color: var(--ink-faint); margin-left: auto; }
+    .mock-body { display: flex; min-height: 260px; }
+    .mock-sidebar {
+      width: 170px;
+      background: #1a1a2e;
+      color: #fff;
+      padding: 1rem 0;
+      flex-shrink: 0;
+    }
+    .mock-sidebar-brand {
+      font-size: 0.68rem;
+      font-weight: 700;
+      padding: 0 0.75rem 0.75rem;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      margin-bottom: 0.5rem;
+      color: rgba(255,255,255,0.6);
+    }
+    .mock-sidebar-item {
+      padding: 0.35rem 0.75rem;
+      font-size: 0.7rem;
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      color: rgba(255,255,255,0.5);
+      cursor: default;
+    }
+    .mock-sidebar-item.active { background: rgba(255,255,255,0.1); color: #fff; }
+    .mock-sidebar-item .dot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
+    .mock-content {
+      flex: 1;
+      padding: 1rem 1.25rem;
+      background: var(--surface-alt);
+    }
+    .mock-kpi-row { display: flex; gap: 0.6rem; margin-bottom: 0.75rem; }
+    .mock-kpi {
+      flex: 1;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      padding: 0.5rem 0.6rem;
+      text-align: center;
+    }
+    .mock-kpi-value { font-size: 1rem; font-weight: 800; color: var(--ink); }
+    .mock-kpi-label { font-size: 0.5rem; color: var(--ink-faint); }
+    .mock-table {
+      width: 100%;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .mock-table-header {
+      display: grid;
+      grid-template-columns: 2fr 1fr 0.5fr 0.5fr 0.5fr 0.5fr 1fr;
+      padding: 0.35rem 0.6rem;
+      background: var(--surface-alt);
+      font-size: 0.55rem;
+      font-weight: 600;
+      color: var(--ink-faint);
+    }
+    .mock-table-row {
+      display: grid;
+      grid-template-columns: 2fr 1fr 0.5fr 0.5fr 0.5fr 0.5fr 1fr;
+      padding: 0.35rem 0.6rem;
+      font-size: 0.62rem;
+      border-top: 1px solid var(--border-light);
+      align-items: center;
+    }
+    .mock-check { color: var(--green); font-weight: 700; }
+    .mock-cross { color: var(--ink-faint); }
+    .mock-tag {
+      display: inline-block;
+      font-size: 0.5rem;
+      padding: 0.1rem 0.3rem;
+      border-radius: 2px;
+      font-weight: 600;
+    }
+    .mock-tag-green { background: var(--green-bg); color: var(--green); }
+    .mock-tag-blue { background: var(--blue-bg); color: var(--blue); }
+    .mock-tag-grey { background: var(--surface-alt); color: var(--ink-faint); }
+
+    /* ── Footer ── */
+    .footer { border-top: 1px solid var(--border); padding: 3rem 0 2rem; }
+    .footer-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem; }
+    @media (max-width: 640px) { .footer-grid { grid-template-columns: 1fr; } }
+    .footer h4 { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.06em; color: var(--ink-faint); margin-bottom: 0.75rem; }
+    .footer ul { list-style: none; padding: 0; }
+    .footer li { margin-bottom: 0.35rem; }
+    .footer li a { font-size: 0.85rem; color: var(--ink-soft); font-weight: 500; }
+    .footer li a:hover { color: var(--blue); }
+    .footer-note { font-size: 0.75rem; color: var(--ink-faint); border-top: 1px solid var(--border-light); padding-top: 1.5rem; }
+  </style>
+  <script async defer src="https://scripts.withcabin.com/hello.js"></script>
+</head>
+<body>
+
+  <!-- ── Nav ── -->
+  <nav class="nav">
+    <div class="container">
+      <a href="index.html" class="nav-brand">Agentic Legibility Stack</a>
+      <ul class="nav-links">
+        <li><a href="citizen-app.html">Citizen app</a></li>
+        <li><a href="legibility-studio.html" class="active">Legibility Studio</a></li>
+        <li><a href="technical.html">Technical</a></li>
+        <li><a href="departments.html">Departments</a></li>
+        <li><a href="glossary.html">Glossary</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ── Hero ── -->
+  <header class="hero">
+    <div class="container">
+      <div class="hero-label">Deep dive</div>
+      <h1>The Legibility Studio</h1>
+      <p class="hero-subtitle">Where departments make their services ready for agents. Author, audit, and measure &mdash; one platform for service legibility.</p>
+      <p class="hero-body">For an AI agent to act on a citizen's behalf, it needs more than an API. It needs to understand what a service does, who is eligible, what steps are involved, and how data is shared. The Legibility Studio is where departments publish that understanding as structured, machine-readable service descriptions &mdash; and where they monitor how agents are using them.</p>
+    </div>
+  </header>
+
+
+  <!-- ════════════════════════════════ 01 ════════════════════════════════ -->
+  <div class="section section-alt" id="how-it-works">
+    <div class="container">
+      <div class="section-heading">
+        <span class="section-num">01</span>
+        <h2>How the studio works</h2>
       </div>
-    </nav>
+      <p class="section-intro">The Legibility Studio has three capabilities, each addressing a different question that department teams need answered.</p>
 
-    <!-- ── Hero ── -->
-    <header class="hero">
-      <div class="container">
-        <span class="hero-label">Application Guide</span>
-        <h1>Legibility Studio</h1>
-        <p class="hero-subtitle">
-          The admin platform where service designers author, audit, and manage the artefacts
-          that make government services legible to AI agents.
-        </p>
-        <p class="body-text">
-          For an AI agent to act on a citizen's behalf it needs more than an API &mdash; it needs
-          to understand what a service does, what it requires, what policy governs it, and how consent
-          is managed. Legibility Studio is where departments publish that understanding as structured,
-          machine-readable artefacts.
-        </p>
-
-        <ul class="toc-list">
-          <li><a href="#at-a-glance">At a glance</a></li>
-          <li><a href="#dashboard">Dashboard</a></li>
-          <li><a href="#services">Service catalogue</a></li>
-          <li><a href="#artefacts">Artefact model</a></li>
-          <li><a href="#gap-analysis">Gap analysis</a></li>
-          <li><a href="#evidence">Evidence explorer</a></li>
-          <li><a href="#ledger">Service ledger</a></li>
-          <li><a href="#personas">Personas</a></li>
-          <li><a href="#architecture">Architecture</a></li>
-        </ul>
-      </div>
-    </header>
-
-    <!-- ── 1. At a glance ── -->
-    <div class="section section-alt" id="at-a-glance">
-      <div class="container">
-        <div class="section-heading">
-          <span class="section-number">1</span>
-          <h2>At a glance</h2>
+      <div class="cap-grid">
+        <div class="cap-card" style="border-top-color: var(--blue);">
+          <h4>Author</h4>
+          <p>Create and edit the four dimensions of a service description &mdash; identity, eligibility, journey, and data sharing &mdash; through a structured editor with LLM-assisted generation for teams starting from scratch.</p>
         </div>
-        <p class="section-intro">
-          Legibility Studio is a Next.js application (port 3101) with six primary views.
-          It reads service definitions from local artefact stores and fetches operational data
-          from the citizen app API.
-        </p>
+        <div class="cap-card" style="border-top-color: var(--green);">
+          <h4>Audit</h4>
+          <p>Trace every agent interaction back to the policy rule, state transition, and consent grant that governed it. Browse sessions, replay journeys, inspect every decision the agent made on a citizen's behalf.</p>
+        </div>
+        <div class="cap-card" style="border-top-color: var(--purple);">
+          <h4>Measure</h4>
+          <p>Track service description coverage across your department. See which services are agent-ready, which have gaps, and where to focus next. Operational metrics show how services perform once live.</p>
+        </div>
+      </div>
 
-        <div class="snippet snippet-wide">
-          <div class="snippet-label">Legibility Studio &mdash; Services view</div>
-          <div class="snippet-body">
-            <div class="mock-sidebar">
-              <div class="mock-sidebar-nav">
-                <div class="mock-sidebar-brand">Legibility Studio</div>
-                <div class="mock-sidebar-item"><span class="dot"></span> Dashboard</div>
-                <div class="mock-sidebar-item active"><span class="dot"></span> Services</div>
-                <div class="mock-sidebar-item"><span class="dot"></span> Evidence</div>
-                <div class="mock-sidebar-item"><span class="dot"></span> Personas</div>
-                <div class="mock-sidebar-item"><span class="dot"></span> Gap Analysis</div>
-                <div class="mock-sidebar-item"><span class="dot"></span> Settings</div>
+      <p class="body-text">The studio is a Next.js application that reads service definitions from local stores and fetches operational data (traces, case ledger) from the citizen app API via HTTP. It never accesses the evidence database directly &mdash; this architectural boundary keeps native module dependencies cleanly separated.</p>
+
+      <!-- Mock UI -->
+      <div class="mock-frame">
+        <div class="mock-toolbar">
+          <span class="mock-dot" style="background:#ff5f57;"></span>
+          <span class="mock-dot" style="background:#ffbd2e;"></span>
+          <span class="mock-dot" style="background:#28c840;"></span>
+          <span class="mock-toolbar-label">Legibility Studio &mdash; services</span>
+        </div>
+        <div class="mock-body">
+          <div class="mock-sidebar">
+            <div class="mock-sidebar-brand">Legibility Studio</div>
+            <div class="mock-sidebar-item"><span class="dot"></span> Dashboard</div>
+            <div class="mock-sidebar-item active"><span class="dot"></span> Services</div>
+            <div class="mock-sidebar-item"><span class="dot"></span> Evidence</div>
+            <div class="mock-sidebar-item"><span class="dot"></span> Gap analysis</div>
+            <div class="mock-sidebar-item"><span class="dot"></span> Personas</div>
+          </div>
+          <div class="mock-content">
+            <div class="mock-kpi-row">
+              <div class="mock-kpi"><div class="mock-kpi-value">1,653</div><div class="mock-kpi-label">Services</div></div>
+              <div class="mock-kpi"><div class="mock-kpi-value">113</div><div class="mock-kpi-label">Described</div></div>
+              <div class="mock-kpi"><div class="mock-kpi-value">7%</div><div class="mock-kpi-label">Coverage</div></div>
+              <div class="mock-kpi"><div class="mock-kpi-value">8</div><div class="mock-kpi-label">Departments</div></div>
+            </div>
+            <div class="mock-table">
+              <div class="mock-table-header">
+                <span>Service</span><span>Dept</span><span>Id</span><span>El</span><span>Jo</span><span>Da</span><span>Source</span>
               </div>
-              <div class="mock-content">
-                <div class="mock-kpi-row">
-                  <div class="mock-kpi"><div class="mock-kpi-value">1,653</div><div class="mock-kpi-label">Services</div></div>
-                  <div class="mock-kpi"><div class="mock-kpi-value">113</div><div class="mock-kpi-label">Full artefacts</div></div>
-                  <div class="mock-kpi"><div class="mock-kpi-value">7%</div><div class="mock-kpi-label">Coverage</div></div>
-                  <div class="mock-kpi"><div class="mock-kpi-value">8</div><div class="mock-kpi-label">Departments</div></div>
-                </div>
-                <div class="mock-table">
-                  <div class="mock-table-header">
-                    <span>Service</span><span>Dept</span><span>P</span><span>S</span><span>C</span><span>Source</span>
-                  </div>
-                  <div class="mock-table-row">
-                    <span>Tell HMRC about a death</span><span style="color:#505a5f">HMRC</span><span class="mock-check">✓</span><span class="mock-check">✓</span><span class="mock-check">✓</span><span><span class="mock-tag mock-tag-green">Full</span></span>
-                  </div>
-                  <div class="mock-table-row">
-                    <span>Apply for Carer's Allowance</span><span style="color:#505a5f">DWP</span><span class="mock-check">✓</span><span class="mock-check">✓</span><span class="mock-cross">—</span><span><span class="mock-tag mock-tag-green">Full</span></span>
-                  </div>
-                  <div class="mock-table-row">
-                    <span>Renew driving licence</span><span style="color:#505a5f">DVLA</span><span class="mock-check">✓</span><span class="mock-cross">—</span><span class="mock-cross">—</span><span><span class="mock-tag mock-tag-blue">Catalogue</span></span>
-                  </div>
-                  <div class="mock-table-row">
-                    <span>Register a death</span><span style="color:#505a5f">HMCTS</span><span class="mock-check">✓</span><span class="mock-check">✓</span><span class="mock-check">✓</span><span><span class="mock-tag mock-tag-green">Full</span></span>
-                  </div>
-                </div>
+              <div class="mock-table-row">
+                <span>Tell HMRC about a death</span><span style="color:var(--ink-faint)">HMRC</span><span class="mock-check">&#10003;</span><span class="mock-check">&#10003;</span><span class="mock-check">&#10003;</span><span class="mock-check">&#10003;</span><span><span class="mock-tag mock-tag-green">Full</span></span>
+              </div>
+              <div class="mock-table-row">
+                <span>Apply for Carer's Allowance</span><span style="color:var(--ink-faint)">DWP</span><span class="mock-check">&#10003;</span><span class="mock-check">&#10003;</span><span class="mock-check">&#10003;</span><span class="mock-cross">&mdash;</span><span><span class="mock-tag mock-tag-green">Full</span></span>
+              </div>
+              <div class="mock-table-row">
+                <span>Renew driving licence</span><span style="color:var(--ink-faint)">DVLA</span><span class="mock-check">&#10003;</span><span class="mock-cross">&mdash;</span><span class="mock-cross">&mdash;</span><span class="mock-cross">&mdash;</span><span><span class="mock-tag mock-tag-blue">Catalogue</span></span>
+              </div>
+              <div class="mock-table-row">
+                <span>Register a death</span><span style="color:var(--ink-faint)">HMCTS</span><span class="mock-check">&#10003;</span><span class="mock-check">&#10003;</span><span class="mock-check">&#10003;</span><span class="mock-check">&#10003;</span><span><span class="mock-tag mock-tag-green">Full</span></span>
               </div>
             </div>
           </div>
         </div>
+      </div>
 
-        <div class="feature-grid" style="margin-top:2rem;">
-          <div class="feature-card" style="border-top-color:#1d70b8;">
-            <h3>Author</h3>
-            <p>Create and edit the four artefact types &mdash; manifest, policy, state model, consent &mdash; through a structured form editor.</p>
-          </div>
-          <div class="feature-card" style="border-top-color:#00703c;">
-            <h3>Audit</h3>
-            <p>Trace every agent interaction back to the policy rule, state transition, and consent grant that governed it.</p>
-          </div>
-          <div class="feature-card" style="border-top-color:#912b88;">
-            <h3>Measure</h3>
-            <p>Track artefact coverage by department, identify gaps, and monitor operational performance via the service ledger.</p>
+      <p class="body-text">The table columns &mdash; Id, El, Jo, Da &mdash; show at a glance which of the four dimensions each service has: <strong>identity</strong>, <strong>eligibility</strong>, <strong>journey</strong>, and <strong>data sharing</strong>. A service with all four ticks is agent-ready. Anything less shows exactly what is missing.</p>
+    </div>
+  </div>
+
+
+  <!-- ════════════════════════════════ 02 ════════════════════════════════ -->
+  <div class="section" id="catalogue">
+    <div class="container">
+      <div class="section-heading">
+        <span class="section-num">02</span>
+        <h2>Service catalogue and typologies</h2>
+      </div>
+      <p class="section-intro">The catalogue holds every government service the system knows about. Services arrive from two sources and are classified into eight interaction typologies.</p>
+
+      <h3>Two source types</h3>
+      <p class="body-text">The distinction matters because the two types represent very different levels of readiness.</p>
+
+      <div class="split">
+        <div class="split-col" style="background: var(--green-bg); border-top: 3px solid var(--green);">
+          <h3 style="color: var(--green);">Full services</h3>
+          <ul>
+            <li>Complete service descriptions with all four dimensions authored</li>
+            <li>Stored in the service registry and published to all channels</li>
+            <li>Used in agent orchestration and audit</li>
+            <li>Editable through the studio's structured form editor</li>
+            <li>Actions: detail view, edit, view ledger, delete</li>
+          </ul>
+        </div>
+        <div class="split-col" style="background: var(--blue-bg); border-top: 3px solid var(--blue);">
+          <h3 style="color: var(--blue);">Catalogue-only services</h3>
+          <ul>
+            <li>Basic metadata only &mdash; name, department, life event mapping</li>
+            <li>Imported from the GOV.UK service graph</li>
+            <li>Can be promoted to full services with one click</li>
+            <li>LLM generation can scaffold service descriptions automatically</li>
+            <li>Represents the long tail of 1,500+ government services</li>
+          </ul>
+        </div>
+      </div>
+
+      <h3 style="margin-top: 2rem;">Eight service typologies</h3>
+      <p class="body-text">Every service is classified by interaction pattern. The typology breakdown helps designers identify under-served categories and ensures the system handles every kind of government service.</p>
+
+      <div class="typo-grid">
+        <span class="typo-pill" style="background: #0b0c0c; color: #fff; border-color: #0b0c0c;">Benefit</span>
+        <span class="typo-pill" style="background: var(--blue-bg); color: var(--blue); border-color: var(--blue);">Entitlement</span>
+        <span class="typo-pill" style="background: var(--green-bg); color: var(--green); border-color: var(--green);">Obligation</span>
+        <span class="typo-pill" style="background: var(--purple-bg); color: var(--purple); border-color: var(--purple);">Registration</span>
+        <span class="typo-pill" style="background: var(--orange-bg); color: var(--orange); border-color: var(--orange);">Application</span>
+        <span class="typo-pill" style="background: var(--blue-bg); color: var(--blue-dark); border-color: var(--blue-dark);">Document</span>
+        <span class="typo-pill" style="background: var(--green-bg); color: var(--green); border-color: var(--green);">Legal process</span>
+        <span class="typo-pill" style="background: var(--purple-bg); color: var(--purple); border-color: var(--purple);">Grant</span>
+      </div>
+
+      <p class="body-text">A <strong>benefit</strong> service pays money to a citizen (Universal Credit, Carer's Allowance). An <strong>obligation</strong> requires the citizen to do something (file a tax return, register a death). An <strong>application</strong> is a one-off request with a decision (apply for a passport, request planning permission). Typologies affect how the agent frames its conversation and which state machine patterns apply.</p>
+
+      <h3 style="margin-top: 2rem;">Filtering and search</h3>
+      <p class="body-text">The services table supports filtering by <strong>source</strong> (full / catalogue / all), <strong>typology</strong>, <strong>department</strong>, <strong>life event</strong>, and free-text search. Services are split into two sections: promoted agent services (highlighted at the top) and the full catalogue table below. This lets department teams focus on the services they are actively working on while keeping the full landscape visible.</p>
+    </div>
+  </div>
+
+
+  <!-- ════════════════════════════════ 03 ════════════════════════════════ -->
+  <div class="section section-alt" id="editor">
+    <div class="container">
+      <div class="section-heading">
+        <span class="section-num">03</span>
+        <h2>The service editor</h2>
+      </div>
+      <p class="section-intro">The editor is where departments author the four dimensions of a service description. It guides teams through each dimension with structured forms, validation, and contextual help.</p>
+
+      <h3>Four dimensions of a service description</h3>
+      <p class="body-text">Every transactional government service publishes a description with four dimensions. Together they form a complete contract between a department and any authorised agent.</p>
+
+      <div class="dim-grid">
+        <div class="dim-card dim-card--identity">
+          <h3>Identity</h3>
+          <p>What the service does, what data it needs, what it produces, and who to contact when something goes wrong. This is the service's public contract &mdash; its name, department, description, input and output fields, SLA, fees, availability, and redress routes.</p>
+          <div class="dim-fields">Includes: service name, department, description, input fields with types, output fields, SLA, fees, availability hours, complaint URL, appeal process, ombudsman details</div>
+        </div>
+        <div class="dim-card dim-card--eligibility">
+          <h3>Eligibility</h3>
+          <p>Structured rules that determine who can use the service. Each rule operates on a single data field using a simple operator. If a rule fails, the citizen sees a plain-English explanation and, where possible, a redirect to an alternative service.</p>
+          <div class="dim-fields">Includes: eligibility rules with conditions, operators, failure reasons, alternative services, edge cases, handoff triggers</div>
+        </div>
+        <div class="dim-card dim-card--journey">
+          <h3>Journey</h3>
+          <p>A state machine defining the lifecycle of a service interaction: states, transitions with triggers, and terminal conditions. The agent follows this path deterministically &mdash; it cannot skip steps or invent new ones.</p>
+          <div class="dim-fields">Includes: states, transitions, triggers, terminal states, branching logic for eligibility failures, consent refusals, and edge cases</div>
+        </div>
+        <div class="dim-card dim-card--data">
+          <h3>Data sharing</h3>
+          <p>Every data-sharing grant the service requires: which fields are shared, where they come from, for what purpose, how long the grant lasts, and whether it is required or optional. Nothing is shared without the citizen's explicit consent.</p>
+          <div class="dim-fields">Includes: grant ID, description, fields shared, source, purpose, duration, required/optional flag, delegation scope, revocability</div>
+        </div>
+      </div>
+
+      <h3 style="margin-top: 2rem;">What the editor covers</h3>
+      <p class="body-text">The editor presents each dimension as a structured form section. Product teams work through:</p>
+
+      <div class="cap-grid">
+        <div class="cap-card" style="border-top-color: var(--blue);">
+          <h4>Core and schema</h4>
+          <p>Service name, department, description, input and output field definitions with types. The identity dimension.</p>
+        </div>
+        <div class="cap-card" style="border-top-color: var(--green);">
+          <h4>Rules and redress</h4>
+          <p>Eligibility rules with conditions, SLA, fees, availability, complaint URL, appeal process, ombudsman, escalation phone and hours.</p>
+        </div>
+        <div class="cap-card" style="border-top-color: var(--purple);">
+          <h4>Journey and consent</h4>
+          <p>State definitions with transitions, consent grants, delegation scope, card definitions for the citizen chat UI.</p>
+        </div>
+      </div>
+
+      <p class="body-text">The editor also includes a <strong>card definitions</strong> section for mapping service states to visual cards displayed in the citizen chat, and an <strong>audit</strong> section for data retention period, data controller, and lawful basis.</p>
+
+      <h3 style="margin-top: 2rem;">What product teams need to decide</h3>
+      <p class="body-text">The editor guides, but the decisions belong to the team. For each dimension:</p>
+
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div>
+            <h4>Identity</h4>
+            <p>What is the citizen-facing name? What data does the service need as input? What does it produce? What are the SLA commitments? Who handles complaints? These are facts your department already knows.</p>
           </div>
         </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div>
+            <h4>Eligibility</h4>
+            <p>What are the hard rules? Who is not eligible and why? What happens when someone fails a rule &mdash; is there an alternative service, or should the agent hand off to a human? Write the failure messages in plain English.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div>
+            <h4>Journey</h4>
+            <p>Start with the happy path. Then ask: what if they are not eligible? What if there is a medical complication? What if they refuse consent? Each of these becomes a branch in the state model.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">4</div>
+          <div>
+            <h4>Data sharing</h4>
+            <p>What data is shared, with whom, and for how long? Which grants are required and which are optional? What is the lawful basis? Can the citizen revoke consent after the fact?</p>
+          </div>
+        </div>
+      </div>
+
+      <h3 style="margin-top: 2rem;">LLM-assisted generation</h3>
+      <p class="body-text">For catalogue-only services that lack descriptions, a <strong>generate</strong> action triggers the LLM to scaffold eligibility rules, a journey model, and data sharing grants from the service's basic metadata. Generated descriptions are timestamped and marked as machine-generated for human review. This gets teams to a first draft in seconds rather than days &mdash; the real work is in refining the rules and edge cases.</p>
+
+      <div class="callout--green callout">
+        <strong>Completeness scoring.</strong> The service detail page shows a percentage score based on which dimensions are present and how thoroughly they are populated. A gap-analysis panel lists exactly which dimensions or fields are missing, so teams always know what remains to be done.
       </div>
     </div>
+  </div>
 
-    <!-- ── 2. Dashboard ── -->
-    <div class="section" id="dashboard">
-      <div class="container">
-        <div class="section-heading">
-          <span class="section-number">2</span>
-          <h2>Dashboard</h2>
-        </div>
-        <p class="body-text">
-          The home screen provides an operational summary: how many services are catalogued,
-          how many have complete artefact sets, overall coverage percentage, and active citizen cases.
-        </p>
-        <p class="body-text">
-          A <strong>Recent Cases</strong> table (paginated, pulled from the citizen app's ledger API)
-          shows the latest citizen interactions across all services. Quick-nav cards link directly
-          to Services, Evidence, and Gap Analysis.
-        </p>
 
-        <div class="stat-row">
-          <div class="stat-item">
-            <div class="stat-value">1,653</div>
-            <div class="stat-label">Services catalogued</div>
-          </div>
-          <div class="stat-item">
-            <div class="stat-value">113</div>
-            <div class="stat-label">With full artefacts</div>
-          </div>
-          <div class="stat-item">
-            <div class="stat-value">7%</div>
-            <div class="stat-label">Artefact coverage</div>
-          </div>
-          <div class="stat-item">
-            <div class="stat-value">1,540</div>
-            <div class="stat-label">Need artefacts</div>
-          </div>
+  <!-- ════════════════════════════════ 04 ════════════════════════════════ -->
+  <div class="section" id="gap-analysis">
+    <div class="container">
+      <div class="section-heading">
+        <span class="section-num">04</span>
+        <h2>Gap analysis and coverage</h2>
+      </div>
+      <p class="section-intro">The gap analysis view answers a single question for each department: how ready are your services for agent delivery?</p>
+
+      <div class="stats">
+        <div class="stat">
+          <div class="stat-value">1,653</div>
+          <div class="stat-label">Services catalogued</div>
         </div>
+        <div class="stat">
+          <div class="stat-value">113</div>
+          <div class="stat-label">With full descriptions</div>
+        </div>
+        <div class="stat">
+          <div class="stat-value">7%</div>
+          <div class="stat-label">Agent coverage</div>
+        </div>
+        <div class="stat">
+          <div class="stat-value">1,540</div>
+          <div class="stat-label">Need descriptions</div>
+        </div>
+      </div>
+
+      <p class="body-text" style="margin-top: 2rem;">The catalogue draws from the full GOV.UK services directory, so the gap is deliberately large. It represents the scale of the challenge, not a failure to deliver. The point is to make the gap visible and give departments a clear path to closing it.</p>
+
+      <h3 style="margin-top: 2rem;">Department coverage cards</h3>
+      <p class="body-text">Each department gets a summary card with a colour-coded progress bar showing the ratio of fully-described services to total services. Departments are colour-coded consistently across the platform.</p>
+
+      <div class="coverage-grid">
+        <div class="coverage-card">
+          <h4>HMRC</h4>
+          <div class="coverage-bar"><div class="coverage-fill" style="width: 100%; background: var(--green);"></div></div>
+          <div class="coverage-label">27 services &mdash; fully described</div>
+        </div>
+        <div class="coverage-card">
+          <h4>DWP</h4>
+          <div class="coverage-bar"><div class="coverage-fill" style="width: 78%; background: var(--blue);"></div></div>
+          <div class="coverage-label">21 services &mdash; 78% coverage</div>
+        </div>
+        <div class="coverage-card">
+          <h4>Home Office</h4>
+          <div class="coverage-bar"><div class="coverage-fill" style="width: 22%; background: var(--red);"></div></div>
+          <div class="coverage-label">6 services &mdash; early progress</div>
+        </div>
+        <div class="coverage-card">
+          <h4>MoJ</h4>
+          <div class="coverage-bar"><div class="coverage-fill" style="width: 45%; background: var(--purple);"></div></div>
+          <div class="coverage-label">12 services &mdash; 45% coverage</div>
+        </div>
+        <div class="coverage-card">
+          <h4>DVLA</h4>
+          <div class="coverage-bar"><div class="coverage-fill" style="width: 60%; background: var(--orange);"></div></div>
+          <div class="coverage-label">16 services &mdash; 60% coverage</div>
+        </div>
+        <div class="coverage-card">
+          <h4>Cabinet Office</h4>
+          <div class="coverage-bar"><div class="coverage-fill" style="width: 35%; background: var(--ink-faint);"></div></div>
+          <div class="coverage-label">9 services &mdash; 35% coverage</div>
+        </div>
+      </div>
+
+      <h3 style="margin-top: 2rem;">Priority sorting</h3>
+      <p class="body-text">Services in the gap table are sorted by priority. <strong>Demo-critical</strong> services appear first &mdash; those used in live department demonstrations. Then <strong>transactional</strong> services (applications, registrations, claims). Then reference material. Within each tier, services with complete descriptions appear above those with gaps.</p>
+
+      <h3 style="margin-top: 1.5rem;">What "agent-ready" means</h3>
+      <p class="body-text">A service is agent-ready when all four dimensions are present and populated. The agent can read the identity to understand the service, evaluate eligibility rules deterministically, follow the journey state machine step by step, and request consent grants as specified in the data sharing model. Without any one of these, the agent either cannot find the service, cannot determine eligibility, cannot guide the citizen through it, or cannot share data lawfully.</p>
+
+      <div class="callout">
+        <strong>The gap is the opportunity.</strong> 93% of government services are not yet described for agents. The studio makes this visible by design &mdash; not as criticism, but as a roadmap for departments to follow.
       </div>
     </div>
+  </div>
 
-    <!-- ── 3. Service catalogue ── -->
-    <div class="section section-alt" id="services">
-      <div class="container">
-        <div class="section-heading">
-          <span class="section-number">3</span>
-          <h2>Service catalogue</h2>
+
+  <!-- ════════════════════════════════ 05 ════════════════════════════════ -->
+  <div class="section section-alt" id="evidence">
+    <div class="container">
+      <div class="section-heading">
+        <span class="section-num">05</span>
+        <h2>Evidence explorer and replay</h2>
+      </div>
+      <p class="section-intro">Every agent interaction produces a trace &mdash; an append-only sequence of events stored in the evidence package. The evidence explorer lets department teams inspect exactly what happened during any citizen session.</p>
+
+      <h3>Two-panel layout</h3>
+      <p class="body-text">The left panel lists trace sessions by ID and timestamp with event counts. Selecting a trace opens its events in the right panel, which offers two views.</p>
+
+      <div class="split">
+        <div class="split-col" style="background: var(--blue-bg); border-top: 3px solid var(--blue);">
+          <h3 style="color: var(--blue);">Explorer</h3>
+          <ul>
+            <li>Filter events by type with colour-coded badges</li>
+            <li>Expand any event to inspect the full JSON payload</li>
+            <li>Summary bar shows event count, receipt count, and type breakdown</li>
+            <li>Search across all traces for specific services, users, or error types</li>
+          </ul>
         </div>
-        <p class="section-intro">
-          The catalogue holds every government service the system knows about. Services come from two sources
-          and are classified into eight typologies.
-        </p>
-
-        <h3>Two source types</h3>
-        <div class="page-grid" style="margin-bottom:2rem;">
-          <div class="page-card">
-            <div class="page-card-header" style="border-left: 4px solid #00703c;">
-              <h3 style="color:#00703c;">Full services</h3>
-              <p>Hand-authored artefact sets in <code>data/services/*/</code></p>
-            </div>
-            <div class="page-card-body">
-              <ul>
-                <li>Complete manifest, policy, state model, and consent files</li>
-                <li>Used in live demos and agent orchestration</li>
-                <li>Editable through the Studio form editor</li>
-                <li>Actions: detail view, edit, view ledger, delete</li>
-              </ul>
-            </div>
-          </div>
-          <div class="page-card">
-            <div class="page-card-header" style="border-left: 4px solid #1d70b8;">
-              <h3 style="color:#1d70b8;">Catalogue services</h3>
-              <p>Imported from the GOV.UK service graph</p>
-            </div>
-            <div class="page-card-body">
-              <ul>
-                <li>Basic metadata only &mdash; name, department, life event mapping</li>
-                <li>Can be <strong>promoted</strong> to full services</li>
-                <li>LLM <strong>generation</strong> can scaffold artefacts automatically</li>
-                <li>Represents the long tail of government services</li>
-              </ul>
-            </div>
-          </div>
+        <div class="split-col" style="background: var(--purple-bg); border-top: 3px solid var(--purple);">
+          <h3 style="color: var(--purple);">Replay</h3>
+          <ul>
+            <li>Step through events in the order they occurred</li>
+            <li>See the full chain of agent reasoning, decision by decision</li>
+            <li>Identify exactly where a journey diverged from the expected path</li>
+            <li>Useful for debugging service flows and consent sequences</li>
+          </ul>
         </div>
+      </div>
 
-        <h3>Eight service typologies</h3>
-        <p class="body-text">
-          Every service is classified by interaction pattern. The typology dashboard on the services page
-          shows a collapsible summary of distribution across all eight types, helping designers identify
-          under-served categories.
-        </p>
-        <div class="pipeline">
-          <span class="pipeline-box pipeline-box-dark">benefit</span>
-          <span class="pipeline-arrow">·</span>
-          <span class="pipeline-box pipeline-box-blue">entitlement</span>
-          <span class="pipeline-arrow">·</span>
-          <span class="pipeline-box pipeline-box-green">obligation</span>
-          <span class="pipeline-arrow">·</span>
-          <span class="pipeline-box pipeline-box-purple">registration</span>
-          <span class="pipeline-arrow">·</span>
-          <span class="pipeline-box pipeline-box-orange">application</span>
-          <span class="pipeline-arrow">·</span>
-          <span class="pipeline-box pipeline-box-blue">document</span>
-          <span class="pipeline-arrow">·</span>
-          <span class="pipeline-box pipeline-box-green">legal_process</span>
-          <span class="pipeline-arrow">·</span>
-          <span class="pipeline-box pipeline-box-purple">grant</span>
-        </div>
+      <h3 style="margin-top: 2rem;">Event types</h3>
+      <p class="body-text">Traces capture every decision point in the agent pipeline. Each event type is colour-coded for visual scanning.</p>
 
-        <h3>Filtering and search</h3>
-        <p class="body-text">
-          The services table supports filtering by <strong>source</strong> (full / catalogue / all),
-          <strong>typology</strong>, <strong>department</strong>, <strong>life event</strong>, and
-          free-text search. Services are split into two sections: promoted <em>Agent Services</em>
-          (highlighted) and the full <em>GOV Services</em> table.
-        </p>
+      <div class="event-grid">
+        <span class="event-pill" style="background: var(--blue-bg); color: var(--blue); border-color: var(--blue);">llm.request</span>
+        <span class="event-pill" style="background: var(--green-bg); color: var(--green); border-color: var(--green);">capability.invoked</span>
+        <span class="event-pill" style="background: var(--purple-bg); color: var(--purple); border-color: var(--purple);">policy.evaluated</span>
+        <span class="event-pill" style="background: var(--orange-bg); color: var(--orange); border-color: var(--orange);">consent.requested</span>
+        <span class="event-pill" style="background: var(--green-bg); color: var(--green); border-color: var(--green);">consent.granted</span>
+        <span class="event-pill" style="background: var(--surface-alt); color: var(--ink-faint); border-color: var(--border);">credential.verified</span>
+        <span class="event-pill" style="background: var(--surface-alt); color: var(--ink-faint); border-color: var(--border);">receipt.issued</span>
+        <span class="event-pill" style="background: var(--blue-bg); color: var(--blue); border-color: var(--blue);">state.transition</span>
+        <span class="event-pill" style="background: var(--orange-bg); color: var(--orange); border-color: var(--orange);">handoff.requested</span>
+        <span class="event-pill" style="background: var(--red-bg); color: var(--red); border-color: var(--red);">error</span>
+      </div>
+
+      <h3 style="margin-top: 2rem;">The evidence plane</h3>
+      <p class="body-text">Every agent action &mdash; from the initial LLM request through eligibility evaluation to consent grants and service completions &mdash; is captured as an immutable event. This is the evidential backbone that makes agentic government services auditable. No event can be deleted or modified after it is written.</p>
+
+      <p class="body-text">This matters for complaints and oversight. If a citizen disputes what they were told, the trace shows exactly what the agent said, which policy rules were evaluated, what consent was granted, and what data was shared. If a service owner suspects a pattern of failures, they can filter traces by error events or handoff requests to identify systemic issues.</p>
+
+      <div class="callout--green callout">
+        <strong>Traceability principle.</strong> Every action the agent takes on a citizen's behalf is logged with a cryptographic receipt. The citizen, the department, and any oversight body can independently verify what happened, when, and why. See the <a href="technical.html">technical architecture</a> for the evidence schema and receipt format.
       </div>
     </div>
+  </div>
 
-    <!-- ── 4. Artefact model ── -->
-    <div class="section" id="artefacts">
-      <div class="container">
-        <div class="section-heading">
-          <span class="section-number">4</span>
-          <h2>The artefact model</h2>
-        </div>
-        <p class="section-intro">
-          Each full service is defined by four artefact types stored as JSON files. Together they give
-          an AI agent everything it needs to execute a service on a citizen's behalf &mdash; deterministically,
-          with policy compliance and informed consent.
-        </p>
 
-        <ul class="artefact-list">
-          <li>
-            <div class="artefact-icon" style="background:#1d70b8;">M</div>
-            <div class="artefact-content">
-              <h4>Capability Manifest</h4>
-              <p>
-                What the service does, what data it needs (input fields), what it produces (output fields),
-                constraints (SLA, fees, availability hours), and redress information (complaint URL, appeal process,
-                ombudsman details). This is the service's public contract.
-              </p>
-            </div>
-          </li>
-          <li>
-            <div class="artefact-icon" style="background:#00703c;">P</div>
-            <div class="artefact-content">
-              <h4>Policy Ruleset</h4>
-              <p>
-                Eligibility rules expressed as structured conditions, with edge cases and exceptions.
-                The <code>PolicyEvaluator</code> in <code>@als/legibility</code> executes these deterministically &mdash;
-                the LLM never decides eligibility.
-              </p>
-            </div>
-          </li>
-          <li>
-            <div class="artefact-icon" style="background:#912b88;">S</div>
-            <div class="artefact-content">
-              <h4>State Model</h4>
-              <p>
-                A state machine defining the lifecycle of a service interaction: states, transitions with triggers,
-                and terminal conditions. The <code>StateMachine</code> in <code>@als/legibility</code> advances
-                through states as the agent collects data and evaluates policy.
-              </p>
-            </div>
-          </li>
-          <li>
-            <div class="artefact-icon" style="background:#f47738;">C</div>
-            <div class="artefact-content">
-              <h4>Consent Model</h4>
-              <p>
-                Data grants (what personal data is accessed, by whom, for how long), delegation scope,
-                and revocability rules. The <code>ConsentManager</code> checks these before any data
-                is shared with a service.
-              </p>
-            </div>
-          </li>
-        </ul>
-
-        <div class="callout callout-blue">
-          <strong>Completeness scoring.</strong> The service detail page shows a percentage score based on
-          which artefacts are present and how thoroughly they're populated. A yellow gap-analysis box
-          lists exactly which artefacts or fields are missing.
-        </div>
-
-        <h3 style="margin-top:2rem;">The service editor</h3>
-        <p class="body-text">
-          Each service can be edited through a structured form with sections for:
-        </p>
-        <div class="feature-grid">
-          <div class="feature-card" style="border-top-color:#1d70b8;">
-            <h3>Core &amp; Schema</h3>
-            <p>Name, department, description, input/output field definitions with types and descriptions.</p>
-          </div>
-          <div class="feature-card" style="border-top-color:#00703c;">
-            <h3>Constraints &amp; Redress</h3>
-            <p>SLA, fees, availability, complaint URL, appeal process, ombudsman, escalation phone and hours.</p>
-          </div>
-          <div class="feature-card" style="border-top-color:#912b88;">
-            <h3>Policy &amp; State</h3>
-            <p>Eligibility rules with conditions, state definitions with transitions, consent grants and delegation scope.</p>
-          </div>
-        </div>
-        <p class="body-text" style="margin-top:1rem;">
-          Additionally, the editor includes a <strong>Card Definitions</strong> section for mapping service states
-          to visual cards displayed in the citizen chat, and an <strong>Audit</strong> section for data retention
-          period, data controller, and lawful basis.
-        </p>
-
-        <h3 style="margin-top:2rem;">LLM-assisted generation</h3>
-        <p class="body-text">
-          For catalogue services that lack artefacts, a <strong>Generate</strong> button triggers the
-          <code>AnthropicAdapter</code> to scaffold policy, state model, and consent artefacts from the
-          service's basic metadata. Generated artefacts are timestamped and marked as machine-generated
-          for human review.
-        </p>
+  <!-- ════════════════════════════════ 06 ════════════════════════════════ -->
+  <div class="section" id="worked-example">
+    <div class="container">
+      <div class="section-heading">
+        <span class="section-num">06</span>
+        <h2>Worked example: publishing a service</h2>
       </div>
+      <p class="section-intro">A DVLA product team wants to make driving licence renewal available through the agent. Here is how they go from a blank service to a published, agent-ready description.</p>
+
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div>
+            <h4>Find the service in the catalogue</h4>
+            <p>The team opens the Legibility Studio and searches for "renew driving licence". The service already exists as a catalogue-only entry imported from the GOV.UK service graph &mdash; it has a name and department but no service description.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div>
+            <h4>Promote to a full service</h4>
+            <p>One click promotes the catalogue entry to a full service. This creates the directory structure in <code>data/services/dvla-renew-driving-licence/</code> and opens the service editor. The coverage score shows 0% &mdash; no dimensions have been authored yet.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div>
+            <h4>Author the identity dimension</h4>
+            <p>The team fills in the basics: service name as citizens should see it, responsible department (DVLA), input fields (driving licence number, address, photo), output fields (new licence reference, expected delivery date), SLA (three weeks), fee (&pound;14 online), and redress routes (complaint URL, DVLA contact centre). Coverage rises to 25%.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">4</div>
+          <div>
+            <h4>Generate a first draft with LLM</h4>
+            <p>Rather than starting from scratch on the remaining three dimensions, the team clicks <strong>generate</strong>. The LLM reads the identity metadata and scaffolds eligibility rules (age check, licence not revoked, not disqualified), a journey model (identify &rarr; check eligibility &rarr; consent &rarr; collect details &rarr; submit photo &rarr; payment &rarr; submitted &rarr; completed), and data sharing grants. Each generated item is marked as machine-generated.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">5</div>
+          <div>
+            <h4>Refine the eligibility rules</h4>
+            <p>The team reviews the generated rules. They add an over-70 edge case (different medical requirements), a revoked-licence handoff that routes to DVLA's licensing team, and plain-English failure messages for each rule. They remove a rule the LLM hallucinated about vehicle type.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">6</div>
+          <div>
+            <h4>Refine the journey model</h4>
+            <p>The generated happy path is close, but the team adds branching: a medical-review state for over-70 applicants, a handed-off state for revoked licences, and a consent-refused terminal state. They verify that every branch has a clear terminal condition &mdash; no citizen can get stuck in a loop.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">7</div>
+          <div>
+            <h4>Refine data sharing</h4>
+            <p>The team confirms that the photo retrieval grant (from HMPO) is correctly marked as required, and adds an optional grant for sharing the renewal outcome with DVLA's vehicle registration system. Duration is set to "session only" for the photo, "persistent" for the registration update.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">8</div>
+          <div>
+            <h4>Review and publish</h4>
+            <p>Coverage now shows 100%. The gap analysis panel is empty. The team saves, and the service description is written to the local store. The agent can now find this service, evaluate eligibility, guide citizens through the journey, and request consent &mdash; all deterministically, all auditable.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout--purple callout">
+        <strong>Time to publish.</strong> The entire process &mdash; from finding the service in the catalogue to a fully-described, agent-ready service &mdash; takes a product team approximately two hours. Most of that time is spent on edge cases and failure messages, not on the happy path. The LLM-assisted generation handles the scaffolding; the team's expertise goes into the decisions that matter.
+      </div>
+
+      <p class="body-text" style="margin-top: 2rem;">Once published, the service appears in the gap analysis view with full coverage. The evidence explorer will begin capturing traces as citizens interact with the service through the agent. Operational metrics &mdash; completion rate, handoff rate, bottleneck states &mdash; appear in the service's ledger dashboard, giving the DVLA team a live view of how their service performs in practice.</p>
+
+      <p class="body-text">For the full field-level specification of each dimension, see the <a href="technical.html">technical architecture</a>. For how these descriptions are consumed by the citizen app, see the <a href="citizen-app.html">citizen app deep dive</a>.</p>
     </div>
+  </div>
 
-    <!-- ── 5. Gap analysis ── -->
-    <div class="section section-alt" id="gap-analysis">
-      <div class="container">
-        <div class="section-heading">
-          <span class="section-number">5</span>
-          <h2>Gap analysis</h2>
+
+  <!-- ── Footer ── -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <h4>Deep dives</h4>
+          <ul>
+            <li><a href="index.html">Platform overview</a></li>
+            <li><a href="citizen-app.html">Citizen app</a></li>
+            <li><a href="legibility-studio.html">Legibility Studio</a></li>
+            <li><a href="technical.html">Technical architecture</a></li>
+            <li><a href="departments.html">Departments</a></li>
+          </ul>
         </div>
-        <p class="section-intro">
-          The gap analysis view answers a single question for each department: how ready are your services
-          for agent delivery?
-        </p>
-
-        <p class="body-text">
-          Top-level KPIs show <strong>1,653 total services</strong>, <strong>113 with full artefacts</strong>,
-          <strong>7% coverage</strong>, and <strong>1,540 services needing artefacts</strong>. The catalogue
-          draws from the full GOV.UK services directory, so the gap is deliberately large &mdash; it
-          represents the scale of the challenge, not a failure to deliver.
-        </p>
-
-        <h3>Department coverage cards</h3>
-        <p class="body-text">
-          Each department gets a summary card with a colour-coded progress bar showing the ratio of
-          full-artefact services to total services. Departments are colour-coded consistently across
-          the app (HMRC green, DWP blue, Home Office red, MoJ purple, DVLA orange, Cabinet Office grey).
-          Clicking a department filters the service table below.
-        </p>
-
-        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:0.75rem;margin:1.5rem 0;">
-          <div style="background:#fff;border:1px solid #e0dfde;border-radius:6px;padding:1rem;">
-            <div style="font-size:0.75rem;font-weight:600;color:#505a5f;margin-bottom:0.5rem;">HMRC</div>
-            <div class="mock-bar" style="margin-bottom:0.35rem;"><div class="mock-bar-fill" style="width:100%;background:#00703c;"></div></div>
-            <div style="font-size:0.65rem;color:#505a5f;">27 full services</div>
-          </div>
-          <div style="background:#fff;border:1px solid #e0dfde;border-radius:6px;padding:1rem;">
-            <div style="font-size:0.75rem;font-weight:600;color:#505a5f;">DWP</div>
-            <div class="mock-bar" style="margin-bottom:0.35rem;"><div class="mock-bar-fill" style="width:78%;background:#1d70b8;"></div></div>
-            <div style="font-size:0.65rem;color:#505a5f;">21 full services</div>
-          </div>
-          <div style="background:#fff;border:1px solid #e0dfde;border-radius:6px;padding:1rem;">
-            <div style="font-size:0.75rem;font-weight:600;color:#505a5f;">Home Office</div>
-            <div class="mock-bar" style="margin-bottom:0.35rem;"><div class="mock-bar-fill" style="width:22%;background:#d4351c;"></div></div>
-            <div style="font-size:0.65rem;color:#505a5f;">6 full services</div>
-          </div>
+        <div>
+          <h4>Reference</h4>
+          <ul>
+            <li><a href="glossary.html">Glossary</a></li>
+            <li><a href="explorations.html">Further explorations</a></li>
+            <li><a href="card-catalogue.html">Card catalogue</a></li>
+            <li><a href="life-events-catalogue.html">Life events</a></li>
+          </ul>
         </div>
-
-        <h3>Priority sorting</h3>
-        <p class="body-text">
-          Services in the gap table are sorted by priority: <strong>demo-critical</strong> services first
-          (those used in live department demonstrations), then <strong>transactional</strong> services,
-          then <strong>reference material</strong>. Within each priority tier, full services appear above
-          catalogue services. A toggle controls whether guides and reference material are included.
-        </p>
-
-        <p class="body-text">
-          Each row shows the service name, department, source type, and three checkmark columns for
-          <strong>Policy</strong>, <strong>States</strong>, and <strong>Consent</strong> artefact presence.
-        </p>
       </div>
+      <div class="footer-note">Agentic Legibility Stack &mdash; Department Demo Documentation</div>
     </div>
+  </footer>
 
-    <!-- ── 6. Evidence explorer ── -->
-    <div class="section" id="evidence">
-      <div class="container">
-        <div class="section-heading">
-          <span class="section-number">6</span>
-          <h2>Evidence explorer</h2>
-        </div>
-        <p class="section-intro">
-          Every agent interaction produces a trace &mdash; an append-only sequence of events stored in the
-          <code>@als/evidence</code> package. The evidence explorer lets designers inspect exactly what
-          happened during any citizen session.
-        </p>
-
-        <h3>Two-panel layout</h3>
-        <p class="body-text">
-          The left panel lists trace sessions (by ID and timestamp with event counts). Selecting a trace
-          opens its events in the right panel, which offers two tabs:
-        </p>
-
-        <div class="page-grid">
-          <div class="page-card">
-            <div class="page-card-header" style="border-left: 4px solid #1d70b8;">
-              <h3>Explorer tab</h3>
-              <p>Filtered event list with expandable payloads</p>
-            </div>
-            <div class="page-card-body">
-              <ul>
-                <li>Filter by event type with colour-coded badges</li>
-                <li>Expand any event to inspect the full JSON payload</li>
-                <li>Summary bar shows event count, receipt count, and type breakdown</li>
-              </ul>
-            </div>
-          </div>
-          <div class="page-card">
-            <div class="page-card-header" style="border-left: 4px solid #912b88;">
-              <h3>Replay tab</h3>
-              <p>Chronological event playback</p>
-            </div>
-            <div class="page-card-body">
-              <ul>
-                <li>Step through events in the order they occurred</li>
-                <li>See the full chain of agent reasoning</li>
-                <li>Useful for debugging service flows and consent sequences</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-
-        <h3 style="margin-top:2rem;">Event types</h3>
-        <p class="body-text">
-          Traces capture every decision point in the agent pipeline. Each event type is colour-coded
-          for visual scanning:
-        </p>
-        <div class="pipeline" style="flex-wrap:wrap;gap:0.35rem;">
-          <span class="pipeline-box" style="background:#e8f0fe;color:#1d70b8;border:1px solid #1d70b8;font-size:0.7rem;">llm.request</span>
-          <span class="pipeline-box" style="background:#e6f3ec;color:#00703c;border:1px solid #00703c;font-size:0.7rem;">capability.invoked</span>
-          <span class="pipeline-box" style="background:#f5e6f4;color:#912b88;border:1px solid #912b88;font-size:0.7rem;">policy.evaluated</span>
-          <span class="pipeline-box" style="background:#fef3e8;color:#f47738;border:1px solid #f47738;font-size:0.7rem;">consent.requested</span>
-          <span class="pipeline-box" style="background:#e6f3ec;color:#00703c;border:1px solid #00703c;font-size:0.7rem;">consent.granted</span>
-          <span class="pipeline-box" style="background:#f3f2f1;color:#505a5f;border:1px solid #b1b4b6;font-size:0.7rem;">credential.verified</span>
-          <span class="pipeline-box" style="background:#f3f2f1;color:#505a5f;border:1px solid #b1b4b6;font-size:0.7rem;">receipt.issued</span>
-          <span class="pipeline-box" style="background:#e8f0fe;color:#1d70b8;border:1px solid #1d70b8;font-size:0.7rem;">state.transition</span>
-          <span class="pipeline-box" style="background:#fef3e8;color:#f47738;border:1px solid #f47738;font-size:0.7rem;">handoff.requested</span>
-          <span class="pipeline-box" style="background:#fce4e4;color:#d4351c;border:1px solid #d4351c;font-size:0.7rem;">error</span>
-        </div>
-
-        <div class="callout callout-green" style="margin-top:1.5rem;">
-          <strong>Traceability principle.</strong> Every agent action &mdash; from the initial LLM request through
-          policy evaluation to consent grants and service completions &mdash; is captured as an immutable event.
-          This is the evidential backbone that makes agentic government services auditable.
-        </div>
-      </div>
-    </div>
-
-    <!-- ── 7. Service ledger ── -->
-    <div class="section section-alt" id="ledger">
-      <div class="container">
-        <div class="section-heading">
-          <span class="section-number">7</span>
-          <h2>Service ledger</h2>
-        </div>
-        <p class="section-intro">
-          The ledger tracks citizen cases as they move through services &mdash; providing operational
-          metrics for service owners and identifying where citizens get stuck.
-        </p>
-
-        <p class="body-text">
-          Each service has its own ledger dashboard, accessible from the service detail page. The ledger
-          fetches live data from the citizen app's API.
-        </p>
-
-        <h3>Operational KPIs</h3>
-        <div class="stat-row">
-          <div class="stat-item">
-            <div class="stat-value" style="font-size:1.5rem;">156</div>
-            <div class="stat-label">Total cases</div>
-          </div>
-          <div class="stat-item">
-            <div class="stat-value" style="font-size:1.5rem;">23</div>
-            <div class="stat-label">Active cases</div>
-          </div>
-          <div class="stat-item">
-            <div class="stat-value" style="font-size:1.5rem;">78%</div>
-            <div class="stat-label">Completion rate</div>
-          </div>
-          <div class="stat-item">
-            <div class="stat-value" style="font-size:1.5rem;">4%</div>
-            <div class="stat-label">Handoff rate</div>
-          </div>
-        </div>
-
-        <h3 style="margin-top:2rem;">What the ledger shows</h3>
-        <div class="page-grid">
-          <div class="page-card">
-            <div class="page-card-header">
-              <h3>Aggregate view</h3>
-            </div>
-            <div class="page-card-body">
-              <ul>
-                <li>Status breakdown bar (completed, active, handed off, rejected)</li>
-                <li>Agent vs human action ratio with visual bar chart</li>
-                <li>Average progress percentage across all cases</li>
-                <li>Bottleneck states &mdash; where cases stall most frequently</li>
-              </ul>
-            </div>
-          </div>
-          <div class="page-card">
-            <div class="page-card-header">
-              <h3>Case-level view</h3>
-            </div>
-            <div class="page-card-body">
-              <ul>
-                <li>Paginated case table (20 per page) with status filters</li>
-                <li>Per-case: user ID, current state, progress %, agent/human action counts</li>
-                <li>Click through to case detail with timeline and state flow visualisation</li>
-                <li>Review dialog for human assessment of case handling</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-
-        <div class="callout callout-purple" style="margin-top:1.5rem;">
-          <strong>Bottleneck detection.</strong> The <code>BottleneckChart</code> component identifies
-          states where cases accumulate without progressing. This surfaces design problems in service flows &mdash;
-          for example, a consent step that citizens consistently abandon, or a data-collection state
-          that requires information citizens don't have to hand.
-        </div>
-      </div>
-    </div>
-
-    <!-- ── 8. Personas ── -->
-    <div class="section" id="personas">
-      <div class="container">
-        <div class="section-heading">
-          <span class="section-number">8</span>
-          <h2>Personas</h2>
-        </div>
-        <p class="section-intro">
-          Test user identities used to simulate citizen interactions during demos and testing.
-          Each persona has a complete profile with demographic data, employment status, wallet credentials,
-          and department-specific context.
-        </p>
-
-        <p class="body-text">
-          The persona page shows a card grid with <strong>department filter tabs</strong> (configured via
-          <code>PERSONA_DEPARTMENTS</code> in <code>@als/personal-data</code>). Each card displays the
-          persona's avatar, name, age, location, employment status, income, and credential count.
-        </p>
-
-        <p class="body-text">
-          Personas are editable through a structured form with sections for basic identity, benefits,
-          family composition, health information, data sources, and a raw JSON editor for advanced fields.
-          Changes require a dev server restart to take effect.
-        </p>
-
-        <div class="callout">
-          <strong>Department-scoped personas.</strong> Personas are designed for specific department demos &mdash;
-          a bereavement persona for HMRC and DWP, an immigration persona for the Home Office, a sentencing
-          persona for MoJ. The department filter ensures designers see only the personas relevant to their demo.
-        </div>
-      </div>
-    </div>
-
-    <!-- ── 9. Architecture ── -->
-    <div class="section section-alt" id="architecture">
-      <div class="container">
-        <div class="section-heading">
-          <span class="section-number">9</span>
-          <h2>Architecture</h2>
-        </div>
-        <p class="section-intro">
-          Legibility Studio reads from two data sources and never imports the evidence package directly.
-        </p>
-
-        <h3>Data flow</h3>
-        <div class="data-flow">
-          <div class="data-flow-box">
-            <h4>Local stores</h4>
-            <p>ServiceArtefactStore<br>ServiceGraphStore<br>PersonaStore</p>
-          </div>
-          <div class="data-flow-arrow">→</div>
-          <div class="data-flow-box" style="border-color:#1d70b8;">
-            <h4 style="color:#1d70b8;">Legibility Studio</h4>
-            <p>Port 3101<br>Next.js + React 19</p>
-          </div>
-          <div class="data-flow-arrow">←</div>
-          <div class="data-flow-box">
-            <h4>Citizen app API</h4>
-            <p>Traces, ledger,<br>case data via HTTP</p>
-          </div>
-        </div>
-
-        <div class="callout callout-blue">
-          <strong>Architecture rule.</strong> Legibility Studio does <em>not</em> import <code>@als/evidence</code>
-          directly &mdash; doing so causes native module crashes (lru-cache / better-sqlite3 conflicts).
-          All evidence and ledger data is fetched via HTTP from the citizen app API at
-          <code>NEXT_PUBLIC_CITIZEN_API</code> (default <code>http://localhost:3100</code>).
-        </div>
-
-        <h3 style="margin-top:2rem;">Internal API routes</h3>
-        <p class="body-text">
-          Studio exposes its own API for service and persona management:
-        </p>
-        <div style="overflow-x:auto;">
-          <table style="width:100%;font-size:0.85rem;border-collapse:collapse;margin-top:0.75rem;">
-            <thead>
-              <tr style="border-bottom:2px solid #0b0c0c;text-align:left;">
-                <th style="padding:0.5rem 0.75rem;font-weight:600;">Method</th>
-                <th style="padding:0.5rem 0.75rem;font-weight:600;">Route</th>
-                <th style="padding:0.5rem 0.75rem;font-weight:600;">Purpose</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr style="border-bottom:1px solid #e0dfde;">
-                <td style="padding:0.4rem 0.75rem;"><code>GET</code></td>
-                <td style="padding:0.4rem 0.75rem;"><code>/api/services</code></td>
-                <td style="padding:0.4rem 0.75rem;color:#505a5f;">All services + life event mappings</td>
-              </tr>
-              <tr style="border-bottom:1px solid #e0dfde;">
-                <td style="padding:0.4rem 0.75rem;"><code>POST</code></td>
-                <td style="padding:0.4rem 0.75rem;"><code>/api/services</code></td>
-                <td style="padding:0.4rem 0.75rem;color:#505a5f;">Create a new service</td>
-              </tr>
-              <tr style="border-bottom:1px solid #e0dfde;">
-                <td style="padding:0.4rem 0.75rem;"><code>GET</code></td>
-                <td style="padding:0.4rem 0.75rem;"><code>/api/services/{id}</code></td>
-                <td style="padding:0.4rem 0.75rem;color:#505a5f;">Service detail with gap analysis</td>
-              </tr>
-              <tr style="border-bottom:1px solid #e0dfde;">
-                <td style="padding:0.4rem 0.75rem;"><code>PUT</code></td>
-                <td style="padding:0.4rem 0.75rem;"><code>/api/services/{id}</code></td>
-                <td style="padding:0.4rem 0.75rem;color:#505a5f;">Update service artefacts</td>
-              </tr>
-              <tr style="border-bottom:1px solid #e0dfde;">
-                <td style="padding:0.4rem 0.75rem;"><code>POST</code></td>
-                <td style="padding:0.4rem 0.75rem;"><code>/api/services/{id}/promote</code></td>
-                <td style="padding:0.4rem 0.75rem;color:#505a5f;">Toggle agent promotion</td>
-              </tr>
-              <tr style="border-bottom:1px solid #e0dfde;">
-                <td style="padding:0.4rem 0.75rem;"><code>POST</code></td>
-                <td style="padding:0.4rem 0.75rem;"><code>/api/services/{id}/generate</code></td>
-                <td style="padding:0.4rem 0.75rem;color:#505a5f;">LLM artefact generation</td>
-              </tr>
-              <tr style="border-bottom:1px solid #e0dfde;">
-                <td style="padding:0.4rem 0.75rem;"><code>GET</code></td>
-                <td style="padding:0.4rem 0.75rem;"><code>/api/personas</code></td>
-                <td style="padding:0.4rem 0.75rem;color:#505a5f;">All test personas</td>
-              </tr>
-              <tr>
-                <td style="padding:0.4rem 0.75rem;"><code>PUT</code></td>
-                <td style="padding:0.4rem 0.75rem;"><code>/api/personas/{userId}</code></td>
-                <td style="padding:0.4rem 0.75rem;color:#505a5f;">Update persona profile</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <h3 style="margin-top:2rem;">External API calls (to citizen app)</h3>
-        <div style="overflow-x:auto;">
-          <table style="width:100%;font-size:0.85rem;border-collapse:collapse;margin-top:0.75rem;">
-            <thead>
-              <tr style="border-bottom:2px solid #0b0c0c;text-align:left;">
-                <th style="padding:0.5rem 0.75rem;font-weight:600;">Route</th>
-                <th style="padding:0.5rem 0.75rem;font-weight:600;">Used by</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr style="border-bottom:1px solid #e0dfde;">
-                <td style="padding:0.4rem 0.75rem;"><code>/api/ledger/dashboard</code></td>
-                <td style="padding:0.4rem 0.75rem;color:#505a5f;">Dashboard &mdash; recent cases</td>
-              </tr>
-              <tr style="border-bottom:1px solid #e0dfde;">
-                <td style="padding:0.4rem 0.75rem;"><code>/api/traces</code></td>
-                <td style="padding:0.4rem 0.75rem;color:#505a5f;">Evidence &mdash; trace session list</td>
-              </tr>
-              <tr style="border-bottom:1px solid #e0dfde;">
-                <td style="padding:0.4rem 0.75rem;"><code>/api/traces/{traceId}</code></td>
-                <td style="padding:0.4rem 0.75rem;color:#505a5f;">Evidence &mdash; trace events + receipts</td>
-              </tr>
-              <tr style="border-bottom:1px solid #e0dfde;">
-                <td style="padding:0.4rem 0.75rem;"><code>/api/ledger/services/{id}/dashboard</code></td>
-                <td style="padding:0.4rem 0.75rem;color:#505a5f;">Ledger &mdash; service operational metrics</td>
-              </tr>
-              <tr>
-                <td style="padding:0.4rem 0.75rem;"><code>/api/ledger/services/{id}/cases</code></td>
-                <td style="padding:0.4rem 0.75rem;color:#505a5f;">Ledger &mdash; paginated case list</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-    <!-- ── Footer ── -->
-    <footer class="footer">
-      <div class="container">
-        <p>
-          <a href="index.html">Overview</a> &middot;
-          <a href="briefing-executive.html">Executive Briefing</a> &middot;
-          <a href="guide-product.html">Product Guide</a> &middot;
-          <a href="reference-technical.html">Technical Reference</a> &middot;
-          <a href="glossary.html">Glossary</a>
-        </p>
-      </div>
-    </footer>
-
-  </body>
+</body>
 </html>
