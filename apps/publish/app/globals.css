@@ -1,0 +1,20 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* GOV.UK accent colours */
+  --govuk-blue: #1d70b8;
+  --govuk-dark-blue: #003078;
+  --govuk-black: #0b0c0c;
+  --govuk-white: #ffffff;
+  --govuk-red: #d4351c;
+  --govuk-yellow: #ffdd00;
+  --govuk-green: #00703c;
+  --govuk-light-grey: #f3f2f1;
+  --govuk-mid-grey: #b1b4b6;
+  --govuk-dark-grey: #505a5f;
+
+  /* Layout */
+  --sidebar-width: 260px;
+}
