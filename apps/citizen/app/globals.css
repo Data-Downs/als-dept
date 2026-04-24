@@ -396,6 +396,24 @@ select {
   border-radius: 3px;
 }
 
+/* Frameless variant — keeps content size & ratio but strips device chrome */
+.phone-frame-device.frameless {
+  background: transparent;
+  border-radius: 0;
+  box-shadow: none;
+}
+.phone-frame-device.frameless::before,
+.phone-frame-device.frameless::after {
+  display: none;
+}
+.phone-frame-device.frameless .phone-frame-island,
+.phone-frame-device.frameless .phone-frame-home-indicator {
+  display: none;
+}
+.phone-frame-device.frameless .phone-frame-screen {
+  border-radius: 0;
+}
+
 /* Scale down on smaller desktops */
 @media (min-width: 768px) and (max-height: 920px) {
   .phone-frame-wrapper {

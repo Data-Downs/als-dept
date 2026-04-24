@@ -54,8 +54,35 @@ function BackgroundToggle() {
   );
 }
 
+function FrameToggle({ visible, onToggle }: { visible: boolean; onToggle: () => void }) {
+  return (
+    <button
+      onClick={onToggle}
+      className="fixed bottom-4 right-14 z-50 w-8 h-8 rounded-full border shadow-sm flex items-center justify-center bg-white/90 backdrop-blur text-neutral-700 hover:bg-white transition-colors"
+      style={{ borderColor: "rgba(0,0,0,0.15)" }}
+      title={visible ? "Hide phone frame" : "Show phone frame"}
+    >
+      <svg
+        width="14"
+        height="14"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden
+      >
+        <rect x="6" y="2" width="12" height="20" rx="2" />
+        {visible ? <line x1="10" y1="18" x2="14" y2="18" /> : null}
+      </svg>
+    </button>
+  );
+}
+
 export function PhoneFrame({ children }: { children: React.ReactNode }) {
   const isDesktop = useIsDesktop();
+  const [frameVisible, setFrameVisible] = useState(true);
 
   // On mobile or during SSR, render children directly
   if (!isDesktop) {
@@ -65,13 +92,14 @@ export function PhoneFrame({ children }: { children: React.ReactNode }) {
   // On desktop, wrap in phone frame with children rendered inside
   return (
     <div className="phone-frame-wrapper">
-      <div className="phone-frame-device">
+      <div className={`phone-frame-device${frameVisible ? "" : " frameless"}`}>
         <div className="phone-frame-island" />
         <div className="phone-frame-screen">{children}</div>
         <div className="phone-frame-home-indicator">
           <div className="phone-frame-home-bar" />
         </div>
       </div>
+      <FrameToggle visible={frameVisible} onToggle={() => setFrameVisible((v) => !v)} />
       <BackgroundToggle />
     </div>
   );
