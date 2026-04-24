@@ -323,15 +323,7 @@ export const SERVICE_LIFE_EVENTS: Record<string, string[]> = {
   travel: ["Arriving in the UK"],
 };
 
-// Demo: trimmed to the topics relevant to Anna's story
-const QUICK_ACCESS: Array<{ key: ServiceType; label: string }> = [
-  { key: "benefits", label: "Benefits" },
-  { key: "driving", label: "Driving & Transport" },
-  { key: "parenting", label: "Parenting & Guardianship" },
-  { key: "employment", label: "Employment" },
-];
-
-// Full set for the Browse topics overlay
+// All available topic categories — filtered per persona by isServiceRelevant()
 const ALL_TOPICS: Array<{ key: ServiceType; label: string }> = [
   { key: "benefits", label: "Benefits" },
   { key: "business", label: "Business" },
@@ -486,7 +478,7 @@ export function Dashboard() {
       {/* Topic cards → detail view */}
       <h3 className="text-base font-extrabold text-govuk-black mb-3">Topics</h3>
       {(() => {
-        const visibleTopics = QUICK_ACCESS.filter(
+        const visibleTopics = ALL_TOPICS.filter(
           ({ key }) =>
             isServiceRelevant(key, personaData) || addedTopics.has(key),
         );

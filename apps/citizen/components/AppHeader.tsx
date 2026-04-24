@@ -19,8 +19,7 @@ export function AppHeader() {
     currentView === "tasks" ||
     currentView === "plan";
 
-  const showCapture =
-    currentView === "chat" && conversationHistory.length > 0;
+  const showCapture = false;
 
   return (
     <header

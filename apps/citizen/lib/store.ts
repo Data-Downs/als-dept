@@ -95,6 +95,29 @@ interface AppStore {
   pendingCards: CardRequest[];
   cardsSubmitted: boolean;
 
+  // Decision Gates
+  pendingGates: Array<{
+    gateId: string;
+    definition: {
+      id: string;
+      question: string;
+      helpText?: string;
+      sensitive?: boolean;
+      options: Array<{
+        value: string;
+        label: string;
+        consequence?: string;
+        routingEffect?: {
+          enableServices?: string[];
+          skipServices?: string[];
+          setFacts?: Record<string, string>;
+        };
+      }>;
+    };
+  }>;
+  gateDecisions: Record<string, string>;
+  gateSubmitted: boolean;
+
   // Journey Outcomes
   pendingOutcomes: JourneyOutcome[];
 
@@ -145,6 +168,9 @@ interface AppStore {
   setConsentDecision: (grantId: string, decision: "granted" | "denied") => void;
   clearConsentDecision: (grantId: string) => void;
   submitConsent: () => Promise<void>;
+  setGateDecision: (gateId: string, value: string) => void;
+  clearGateDecision: (gateId: string) => void;
+  submitGateDecision: () => Promise<void>;
   setTaskCompletion: (taskId: string, message: string) => void;
   clearTaskCompletion: (taskId: string) => void;
   submitTasks: () => Promise<void>;
@@ -393,7 +419,7 @@ let toastTimer: ReturnType<typeof setTimeout> | null = null;
 export const useAppStore = create<AppStore>((set, get) => ({
   persona: null,
   agent: "dot",
-  serviceMode: "demo",
+  serviceMode: "mcp",
   personaData: null,
   enrichedData: null,
   currentView: "persona-picker",
@@ -422,6 +448,9 @@ export const useAppStore = create<AppStore>((set, get) => ({
   lastPipelineTrace: null,
   pendingCards: [],
   cardsSubmitted: false,
+  pendingGates: [],
+  gateDecisions: {},
+  gateSubmitted: false,
   pendingOutcomes: [],
   lifeEvents: [],
   activePlanId: null,
@@ -614,6 +643,9 @@ export const useAppStore = create<AppStore>((set, get) => ({
       lastPipelineTrace: null,
       pendingCards: [],
       cardsSubmitted: false,
+      pendingGates: [],
+      gateDecisions: {},
+      gateSubmitted: false,
       pendingOutcomes: [],
     });
     if (service !== undefined) {
@@ -798,6 +830,15 @@ export const useAppStore = create<AppStore>((set, get) => ({
           data.cardRequests && data.cardRequests.length > 0
             ? false
             : state.cardsSubmitted,
+        pendingGates: data.gateRequests ?? [],
+        gateDecisions:
+          data.gateRequests && data.gateRequests.length > 0
+            ? {}
+            : state.gateDecisions,
+        gateSubmitted:
+          data.gateRequests && data.gateRequests.length > 0
+            ? false
+            : state.gateSubmitted,
         pendingOutcomes:
           data.outcomes && data.outcomes.length > 0
             ? (() => {
@@ -903,6 +944,7 @@ export const useAppStore = create<AppStore>((set, get) => ({
               gated: false,
               govuk_url: "",
               eligibility_summary: "",
+              proactivity: s.proactivity,
             })),
             plan: data.lifeEventContext.plan,
           };
@@ -996,6 +1038,41 @@ export const useAppStore = create<AppStore>((set, get) => ({
 
     set({ consentSubmitted: true });
     await state.sendMessage(lines.join("\n"));
+  },
+
+  setGateDecision: (gateId: string, value: string) => {
+    set({
+      gateDecisions: { ...get().gateDecisions, [gateId]: value },
+    });
+  },
+
+  clearGateDecision: (gateId: string) => {
+    const updated = { ...get().gateDecisions };
+    delete updated[gateId];
+    set({ gateDecisions: updated });
+  },
+
+  submitGateDecision: async () => {
+    const state = get();
+    const { pendingGates, gateDecisions } = state;
+
+    const lines: string[] = [];
+    for (const gate of pendingGates) {
+      const selectedValue = gateDecisions[gate.gateId];
+      if (!selectedValue) continue;
+
+      const selectedOption = gate.definition.options.find(
+        (o) => o.value === selectedValue,
+      );
+      if (selectedOption) {
+        lines.push(selectedOption.label);
+      }
+    }
+
+    set({ gateSubmitted: true });
+    if (lines.length > 0) {
+      await state.sendMessage(lines.join("\n"));
+    }
   },
 
   setTaskCompletion: (taskId: string, message: string) => {

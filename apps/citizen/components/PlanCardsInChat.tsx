@@ -14,7 +14,7 @@ function getAgentDisplayName(agent: string): string {
 export function PlanCardsInChat() {
   const agent = useAppStore((s) => s.agent);
   const persona = useAppStore((s) => s.persona);
-  const lifeEvents = useAppStore((s) => s.lifeEvents);
+  const activePlan = useAppStore((s) => s.activePlan);
   const agentName = getAgentDisplayName(agent);
 
   const [delegated, setDelegated] = useState<Record<string, boolean>>({});
@@ -22,10 +22,8 @@ export function PlanCardsInChat() {
   const [interstitial, setInterstitial] = useState<string | null>(null);
   const timeoutsRef = useRef<ReturnType<typeof setTimeout>[]>([]);
 
-  // Find the relevant life event — prefer "Having a Baby", fall back to first
-  const lifeEvent =
-    lifeEvents.find((le) => le.name === "Having a Baby") || lifeEvents[0];
-  const services = lifeEvent?.services ?? [];
+  // Read services from the active plan (created when life event is matched)
+  const services = activePlan?.services ?? [];
 
   // Sort by proactivity priority
   const sortedServices = [...services].sort(

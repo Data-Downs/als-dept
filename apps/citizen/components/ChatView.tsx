@@ -10,6 +10,7 @@ import { TaskSummaryCard } from "./TaskSummaryCard";
 import { TaskReceiptCard } from "./TaskReceiptCard";
 import { ConsentPanel } from "./ConsentCard";
 import { ConsentSummaryCard } from "./ConsentSummaryCard";
+import { DecisionGateCard } from "./DecisionGateCard";
 import { StateProgressTracker } from "./StateProgressTracker";
 import { ServiceStepCard, SERVICE_STEP_DATA } from "./ServiceStepCard";
 import { JourneyCompleteCard } from "./JourneyCompleteCard";
@@ -65,6 +66,9 @@ export function ChatView() {
   const lastPipelineTrace = useAppStore((s) => s.lastPipelineTrace);
   const pendingCards = useAppStore((s) => s.pendingCards);
   const cardsSubmitted = useAppStore((s) => s.cardsSubmitted);
+  const pendingGates = useAppStore((s) => s.pendingGates);
+  const gateDecisions = useAppStore((s) => s.gateDecisions);
+  const gateSubmitted = useAppStore((s) => s.gateSubmitted);
   const pendingOutcomes = useAppStore((s) => s.pendingOutcomes);
   const lastAssistantRef = useRef<HTMLDivElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -99,11 +103,19 @@ export function ChatView() {
   }, [isMaxAgent, allTasksCompleted, tasksSubmitted, isLoading]);
 
   // Whether to show task cards (after the last assistant message)
+  // Gates suppress tasks — when a gate is pending, the gate takes precedence
   const showTasks =
-    !isLoading && lastResponseTasks.length > 0 && !tasksSubmitted;
+    !isLoading && lastResponseTasks.length > 0 && !tasksSubmitted &&
+    (pendingGates.length === 0 || gateSubmitted);
   // Whether to show dynamic form cards
   const showCards = !isLoading && pendingCards.length > 0 && !cardsSubmitted;
-  // Whether to show consent cards (after tasks/cards are done or when none exist)
+  // Whether to show decision gates (after cards are done)
+  const showGates =
+    !isLoading &&
+    pendingGates.length > 0 &&
+    !gateSubmitted &&
+    (pendingCards.length === 0 || cardsSubmitted);
+  // Whether to show consent cards (after tasks/cards/gates are done or when none exist)
   const showConsent =
     !isLoading &&
     pendingConsent.length > 0 &&
@@ -179,6 +191,7 @@ export function ChatView() {
     typeof lastMsg.content === "string" &&
     !showTasks &&
     !showCards &&
+    !showGates &&
     !showConsent &&
     !(ucState && TERMINAL_STATES.has(ucState));
 
@@ -424,6 +437,24 @@ export function ChatView() {
               }
               disabled={isLoading}
             />
+          </div>
+        )}
+
+        {/* Decision gates — tappable routing questions */}
+        {showGates && (
+          <div className="mt-1">
+            {pendingGates.map((gate) => (
+              <DecisionGateCard
+                key={gate.gateId}
+                gate={gate}
+                selectedValue={gateDecisions[gate.gateId]}
+                onSelect={(id, value) => {
+                  useAppStore.getState().setGateDecision(id, value);
+                }}
+                onSubmit={() => useAppStore.getState().submitGateDecision()}
+                disabled={isLoading}
+              />
+            ))}
           </div>
         )}
 
