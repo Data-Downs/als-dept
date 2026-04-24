@@ -131,6 +131,15 @@ function BottomTabBar() {
                 state.startNewConversation(null, null);
               }
               navigateTo("chat");
+              if (
+                state.persona === "sarah-okafor" &&
+                state.serviceMode === "demo"
+              ) {
+                useAppStore.setState({
+                  autoTypeMessage:
+                    "My husband died three weeks ago and I don't know what to do",
+                });
+              }
             }}
             icon={
               <svg

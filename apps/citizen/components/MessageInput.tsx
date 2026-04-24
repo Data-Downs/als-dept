@@ -38,6 +38,48 @@ export function MessageInput() {
   const startNewConversation = useAppStore((s) => s.startNewConversation);
   const agent = useAppStore((s) => s.agent);
   const conversationHistory = useAppStore((s) => s.conversationHistory);
+  const autoTypeMessage = useAppStore((s) => s.autoTypeMessage);
+
+  // ── Auto-type animation (demo-mode scripted opener) ──
+  useEffect(() => {
+    if (!autoTypeMessage) return;
+    const message = autoTypeMessage;
+    let cancelled = false;
+    let i = 1;
+    let timer: ReturnType<typeof setTimeout>;
+
+    const resize = () => {
+      const el = textareaRef.current;
+      if (!el) return;
+      el.style.height = "auto";
+      el.style.height = `${Math.min(el.scrollHeight, 120)}px`;
+    };
+
+    const typeNext = () => {
+      if (cancelled) return;
+      setText(message.slice(0, i));
+      resize();
+      if (i < message.length) {
+        i++;
+        timer = setTimeout(typeNext, 35 + Math.random() * 45);
+      } else {
+        timer = setTimeout(() => {
+          if (cancelled) return;
+          useAppStore.setState({ autoTypeMessage: null });
+          setText("");
+          if (textareaRef.current) {
+            textareaRef.current.style.height = "auto";
+          }
+          void useAppStore.getState().sendMessage(message);
+        }, 450);
+      }
+    };
+    typeNext();
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+    };
+  }, [autoTypeMessage]);
 
   // ── Voice recording flow ──
   const handleMicTap = useCallback(() => {

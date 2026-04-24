@@ -50,6 +50,8 @@ interface AppStore {
   currentReasoning: string;
   hasNewReasoning: boolean;
   isLoading: boolean;
+  /** When set, MessageInput animates the string into its textarea and submits. */
+  autoTypeMessage: string | null;
 
   // Handoff
   activeHandoff: {
@@ -432,6 +434,7 @@ export const useAppStore = create<AppStore>((set, get) => ({
   currentReasoning: "",
   hasNewReasoning: false,
   isLoading: false,
+  autoTypeMessage: null,
   activeHandoff: null,
   ucState: null,
   ucStateHistory: [],
