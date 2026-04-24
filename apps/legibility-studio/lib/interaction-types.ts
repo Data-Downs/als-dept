@@ -20,6 +20,7 @@ export const INTERACTION_TYPES = [
   "entitlement",
   "grant",
   "legal_process",
+  "obligation",
 ] as const;
 
 export type InteractionType = (typeof INTERACTION_TYPES)[number];
@@ -813,6 +814,52 @@ export const INTERACTION_TYPE_MAP: Record<
       ],
     },
   },
+
+  obligation: {
+    id: "obligation",
+    label: "Obligation / Notification",
+    description:
+      "A duty to notify, update, or comply — not necessarily a payment. Citizen lens: 'Something I need to do'.",
+    example: "Notify OPG of death, cancel driving licence, update DVLA address",
+    stateModelTemplate: {
+      states: [
+        { id: "not-started", type: "initial" },
+        { id: "identity-verified" },
+        { id: "consent-given" },
+        { id: "details-submitted" },
+        { id: "completed", type: "terminal", receipt: true },
+        { id: "handed-off", type: "terminal", receipt: true },
+      ],
+      transitions: [
+        {
+          from: "not-started",
+          to: "identity-verified",
+          trigger: "verify-identity",
+        },
+        {
+          from: "identity-verified",
+          to: "consent-given",
+          trigger: "grant-consent",
+        },
+        {
+          from: "consent-given",
+          to: "details-submitted",
+          trigger: "submit-details",
+        },
+        {
+          from: "details-submitted",
+          to: "completed",
+          trigger: "confirm",
+        },
+        {
+          from: "identity-verified",
+          to: "handed-off",
+          trigger: "handoff",
+          condition: "edge-case",
+        },
+      ],
+    },
+  },
 };
 
 /**
@@ -832,7 +879,7 @@ export function inferInteractionType(
     legal_process: "legal_process",
     // ── Direct mappings (unchanged) ──
     registration: "register",
-    obligation: "payment_service",
+    obligation: "obligation",
     licence: "license",
     license: "license",
     document: "license",

@@ -25,6 +25,7 @@ export const INTERACTION_TYPES = [
   "entitlement",
   "grant",
   "legal_process",
+  "obligation",
 ] as const;
 
 export type InteractionType = (typeof INTERACTION_TYPES)[number];
@@ -771,6 +772,31 @@ const REGISTRATION_EVENT_CARD: CardDefinition = {
   dataCategory: "registration",
 };
 
+const OBLIGATION_DETAILS_CARD: CardDefinition = {
+  cardType: "obligation-details",
+  title: "Notification details",
+  description: "Provide the details needed to complete this notification.",
+  fields: [
+    {
+      key: "reference_number",
+      label: "Reference number (if you have one)",
+      type: "text",
+      required: false,
+      placeholder: "e.g. your driving licence number, tax reference",
+      category: "obligation",
+    },
+    {
+      key: "effective_date",
+      label: "Date the change takes effect",
+      type: "date",
+      required: false,
+      category: "obligation",
+    },
+  ],
+  submitLabel: "Submit details",
+  dataCategory: "obligation",
+};
+
 /**
  * Template card registry — interaction-type-appropriate cards for graph services.
  * These are more generic than the static registry (which is tuned for hand-crafted services).
@@ -865,6 +891,12 @@ const TEMPLATE_CARD_REGISTRY: InteractionCardSet[] = [
       { stateId: "witness-attested", cards: [WITNESS_ATTESTATION_CARD] },
       { stateId: "document-submitted", cards: [DOCUMENT_UPLOAD_CARD] },
       { stateId: "details-submitted", cards: [APPLICATION_ELIGIBILITY_CARD] },
+    ],
+  },
+  {
+    interactionType: "obligation",
+    mappings: [
+      { stateId: "details-submitted", cards: [OBLIGATION_DETAILS_CARD] },
     ],
   },
 ];
@@ -1548,7 +1580,7 @@ export function inferInteractionType(
     legal_process: "legal_process",
     // ── Direct mappings (unchanged) ──
     registration: "register",
-    obligation: "payment_service",
+    obligation: "obligation",
     licence: "license",
     license: "license",
     document: "license",

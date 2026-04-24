@@ -104,6 +104,10 @@ export const OUTCOME_TEMPLATE_REGISTRY: Partial<
       FIRST_PAYMENT_FIELD,
       PAID_TO_FIELD,
     ],
+    credentialSpec: {
+      typePattern: "benefit-entitlement",
+      issuerField: "department",
+    },
   },
 
   entitlement: {
@@ -198,6 +202,10 @@ export const OUTCOME_TEMPLATE_REGISTRY: Partial<
         sourcePreference: ["outcomeHint", "inferred", "submitted"],
       },
     ],
+    credentialSpec: {
+      typePattern: "registration-certificate",
+      issuerField: "department",
+    },
   },
 
   legal_process: {
@@ -232,6 +240,10 @@ export const OUTCOME_TEMPLATE_REGISTRY: Partial<
         sourcePreference: ["outcomeHint"],
       },
     ],
+    credentialSpec: {
+      typePattern: "legal-document",
+      issuerField: "department",
+    },
   },
 
   grant: {
@@ -315,6 +327,10 @@ export const OUTCOME_TEMPLATE_REGISTRY: Partial<
         sourcePreference: ["outcomeHint"],
       },
     ],
+    credentialSpec: {
+      typePattern: "application-confirmation",
+      issuerField: "department",
+    },
   },
 
   appointment_booker: {
@@ -372,6 +388,35 @@ export const OUTCOME_TEMPLATE_REGISTRY: Partial<
         type: "text",
         fallback: "All required steps have been completed",
         sourcePreference: ["outcomeHint"],
+      },
+    ],
+  },
+
+  obligation: {
+    outcomeType: "registration",
+    titlePattern: "{serviceName} — Confirmed",
+    fields: [
+      {
+        key: "confirmation_reference",
+        label: "Reference",
+        type: "text",
+        highlight: true,
+        fallback: "Reference to be confirmed by {department}",
+        sourcePreference: ["outcomeHint", "inferred"],
+      },
+      {
+        key: "department_notified",
+        label: "Department notified",
+        type: "text",
+        fallback: "{department}",
+        sourcePreference: ["outcomeHint"],
+      },
+      {
+        key: "effective_date",
+        label: "Effective from",
+        type: "text",
+        fallback: "Date to be confirmed",
+        sourcePreference: ["outcomeHint", "inferred"],
       },
     ],
   },

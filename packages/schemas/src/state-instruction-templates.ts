@@ -847,6 +847,22 @@ export const TERMINAL_CONFIG_OVERRIDES: Partial<
         "An official certificate or confirmation will be sent to you. Keep this safe — you may need it as proof of registration.",
     },
   },
+  obligation: {
+    completed: {
+      title: "Obligation fulfilled",
+      description:
+        "This has been completed and the relevant department has been notified.",
+      nextSteps:
+        "You do not need to take any further action. Keep your confirmation reference for your records. If your circumstances change, you may need to notify the department again.",
+    },
+    "handed-off": {
+      title: "Referred to the department",
+      description:
+        "This has been referred to the relevant department for processing.",
+      nextSteps:
+        "Someone from the department will handle this. If there is a deadline, they are aware of it. You can contact them directly if you need an update.",
+    },
+  },
 };
 
 /**
@@ -954,6 +970,14 @@ export const TYPOLOGY_CONSENT_FRAMING: Partial<
     requiredDenialWarning:
       "These consents are required for your registration to proceed.",
     requiredDenialTitle: "Required consents declined",
+  },
+  obligation: {
+    panelTitle: "Data sharing consent",
+    panelDescription:
+      "To complete this notification, we need your permission to share certain information with the relevant department. This is a legal requirement.",
+    requiredDenialWarning:
+      "These consents are needed to fulfil this obligation. Without them, the notification cannot be processed and you may need to contact the department directly.",
+    requiredDenialTitle: "Required consents not yet given",
   },
 };
 
@@ -1124,6 +1148,24 @@ export const TYPOLOGY_ESCALATION_CONFIG: Partial<
       "Check if in-person attendance is required for this registration type",
     ],
   },
+  obligation: {
+    specialistType: "compliance officer",
+    noticeLabel: "Referred to the relevant department",
+    citizenGuidance:
+      "Someone from the department will handle this for you. If there is a deadline, they will take that into account. You do not need to take any further action unless they contact you.",
+    resources: [
+      {
+        label: "GOV.UK",
+        detail:
+          "Check your obligations and deadlines — gov.uk",
+      },
+    ],
+    suggestedActions: [
+      "Check whether a deadline applies and whether it has been met",
+      "Review submitted details for accuracy and completeness",
+      "Verify whether any fee or penalty applies",
+    ],
+  },
 };
 
 /**
@@ -1239,6 +1281,14 @@ export const TYPOLOGY_PROACTIVITY_CONFIG: Partial<
     priority: 60,
     iconHint: "info",
     accentColor: "#505a5f",
+  },
+  obligation: {
+    mode: "warn",
+    framingPrefix: "You may need to act on",
+    defaultProactive: true,
+    priority: 8,
+    iconHint: "alert",
+    accentColor: "#f47738",
   },
 };
 
@@ -1918,6 +1968,78 @@ Do NOT include any tasks in the JSON block.`,
   ],
 };
 
+// ── Obligation template (mandatory actions, deadline-driven, no eligibility gate) ──
+
+const OBLIGATION_TEMPLATE: StateInstructionTemplate = {
+  version: "1.0.0",
+  instructions: {
+    "not-started": `The citizen needs to complete {serviceName} with {department}.
+
+CRITICAL — IDENTITY IS ALREADY VERIFIED:
+The citizen is already authenticated via GOV.UK One Login. Identity verification is COMPLETE.
+Do NOT mention identity verification, One Login, or "verifying who you are" — it is DONE.
+
+CITIZEN EXPERIENCE LENS: "Fulfil an obligation"
+This is something the citizen is required to do — it may have a deadline or legal requirement.
+Be clear and direct about what is needed, but not alarming. Frame it as straightforward to complete.
+If this obligation is being done as part of a life event (e.g. bereavement), be sensitive to the context.
+
+WHAT TO DO IN THIS RESPONSE:
+1. Explain clearly what {serviceName} involves and why it's needed (1-2 sentences)
+2. If there is a deadline, mention it without urgency — "this is usually done within..."
+3. Explain that you need their consent to share certain data with {department}
+4. Tell them that interactive consent cards will appear below
+
+Set "stateTransition" to "verify-identity" in the JSON block.
+Do NOT skip ahead — complete this step only.
+Do NOT include any tasks in the JSON block.`,
+    "identity-verified": `Identity is verified. Move to consent.
+Set "stateTransition" to "grant-consent" in the JSON block.
+Do NOT include any tasks in the JSON block.`,
+    "consent-given": `Consent has been granted.
+Thank the citizen briefly. Explain that you now need the relevant details to complete {serviceName}.
+A form card will appear below to collect the necessary information.
+Set "stateTransition" to "submit-details" in the JSON block.
+Do NOT include any tasks in the JSON block.`,
+    "details-submitted": `Details have been submitted.
+Confirm the information back to the citizen. Explain that {department} has been notified and the obligation is now fulfilled.
+Set "stateTransition" to "confirm" in the JSON block.
+
+IMPORTANT: Include an "outcomeHints" object in your JSON output with specific values you told the citizen. Only include values you actually discussed — do NOT fabricate. Example:
+"outcomeHints": { "confirmation_reference": "NOT-2026-84921", "department_notified": "DVLA", "effective_date": "2026-04-17" }`,
+    completed: `The obligation has been fulfilled.
+Confirm clearly that {serviceName} is done. Reassure the citizen they do not need to take any further action on this.
+If this is part of a life event, mention what might come next.
+Visit {govukUrl} for reference.
+This is the FINAL message — do NOT ask follow-up questions.
+Do NOT include any tasks in the JSON block.`,
+    "handed-off": `This case has been referred to {department} for further review.
+Explain why, and provide:
+- Someone from {department} will be in touch
+- The citizen can also contact {department} directly
+- GOV.UK page for reference: {govukUrl}
+This is the FINAL message — do NOT ask follow-up questions.
+Do NOT include any tasks in the JSON block.`,
+  },
+  forcedTransitions: {
+    "not-started": "verify-identity",
+  },
+  autoTransitions: [
+    {
+      fromState: "identity-verified",
+      trigger: "grant-consent",
+      pattern:
+        "I have reviewed all consent|consent.*granted|granted.*consent|please proceed|I consent|go ahead|yes.*proceed|agree|done|let's go|ready|start",
+    },
+    {
+      fromState: "consent-given",
+      trigger: "submit-details",
+      pattern:
+        "provided|submitted|details.*correct|confirm|that's right|all correct|done",
+    },
+  ],
+};
+
 // ── Registry: interaction type → template ──
 
 export const INSTRUCTION_TEMPLATE_REGISTRY: Record<
@@ -1937,6 +2059,7 @@ export const INSTRUCTION_TEMPLATE_REGISTRY: Record<
   entitlement: ENTITLEMENT_TEMPLATE,
   grant: GRANT_TEMPLATE,
   legal_process: LEGAL_PROCESS_TEMPLATE,
+  obligation: OBLIGATION_TEMPLATE,
 };
 
 // ── State model templates (mirrored from legibility-studio/lib/interaction-types.ts) ──
@@ -2613,6 +2736,44 @@ const STATE_MODEL_TEMPLATES: Record<InteractionType, StateModelTemplate> = {
       { from: "decision", to: "handed-off", trigger: "handoff" },
     ],
   },
+  obligation: {
+    states: [
+      { id: "not-started", type: "initial" },
+      { id: "identity-verified" },
+      { id: "consent-given" },
+      { id: "details-submitted" },
+      { id: "completed", type: "terminal", receipt: true },
+      { id: "handed-off", type: "terminal", receipt: true },
+    ],
+    transitions: [
+      {
+        from: "not-started",
+        to: "identity-verified",
+        trigger: "verify-identity",
+      },
+      {
+        from: "identity-verified",
+        to: "consent-given",
+        trigger: "grant-consent",
+      },
+      {
+        from: "consent-given",
+        to: "details-submitted",
+        trigger: "submit-details",
+      },
+      {
+        from: "details-submitted",
+        to: "completed",
+        trigger: "confirm",
+      },
+      {
+        from: "identity-verified",
+        to: "handed-off",
+        trigger: "handoff",
+        condition: "edge-case",
+      },
+    ],
+  },
 };
 
 // ── Resolver functions ──
@@ -2690,6 +2851,7 @@ export const INTERACTION_TYPE_TITLES: Record<InteractionType, string> = {
   entitlement: "Entitlement Claim",
   grant: "Grant Application",
   legal_process: "Legal Process",
+  obligation: "Compliance notification",
 };
 
 /** Human-readable labels for template state IDs */
