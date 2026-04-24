@@ -124,6 +124,8 @@ export interface ScriptedResponse {
     serviceId: string;
     hints?: Record<string, string>;
   }>;
+  /** Optional nudge for text-only channels (WhatsApp) to drive conversation forward. */
+  nextStepPrompt?: string;
 }
 
 interface ScriptedEntry {

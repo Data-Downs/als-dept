@@ -24,17 +24,31 @@ export const JAMES_WHITFIELD_CHAT: ScriptedEntry[] = [
     response: {
       response: `I can see what's going on, James, and I want to help you get both of these sorted.
 
-**Your PIP claim**
-Your mandatory reconsideration has been pending since 10 February. That means DWP are reviewing the decision — but we don't have to just wait. I can put together a stronger evidence package using your MS nurse letter, your neurologist's report, and a daily living diary. If the reconsideration doesn't go your way, I can move straight to a tribunal appeal.
+Your PIP mandatory reconsideration has been pending since 10 February, and Owen's EHCP has a statutory deadline of **6 April** — only weeks away.
 
-**Owen's EHCP**
-His application was filed on 10 November 2025. The local authority has a statutory 20-week deadline — that's **6 April 2026**, only weeks away. They're currently in week 18, which means they should be finalising the plan now. I can chase the SEND team and make sure it's not stalled.
-
-Which would you like to tackle first — the PIP appeal or Owen's EHCP?`,
+Which would you like to tackle first?`,
       reasoning:
         "James has two urgent issues: PIP mandatory reconsideration pending since 2026-02-10, and EHCP for Owen filed 2025-11-10 with statutory deadline 2026-04-06 (week 18 of 20). The PIP outcome affects his Motability car (needs enhanced mobility). Being practical and direct — James's communication style is no-nonsense. Asking which to tackle first gives him control.",
-      tasks: [],
+      tasks: [
+        {
+          id: "task-pip-appeal",
+          description: "Strengthen your PIP mandatory reconsideration",
+          detail: "I can build a stronger evidence package using your MS nurse letter, neurologist's report, and daily living diary.",
+          type: "agent" as const,
+          dueDate: null,
+          dataNeeded: [],
+        },
+        {
+          id: "task-ehcp",
+          description: "Chase Owen's EHCP — week 18 of 20",
+          detail: "The local authority's statutory deadline is 6 April. I can chase the SEND team and make sure it's not stalled.",
+          type: "agent" as const,
+          dueDate: "2026-04-06",
+          dataNeeded: [],
+        },
+      ],
       conversationTitle: "PIP appeal and Owen's EHCP",
+      nextStepPrompt: "Which would you like to tackle first? Say 'PIP' or 'EHCP'.",
     },
   },
 
@@ -59,6 +73,7 @@ Which would you like to tackle first — the PIP appeal or Owen's EHCP?`,
 I've also arranged a **Blue Badge** for you — it's valid for 3 years and means you can park in disabled bays. You'll see the confirmations below.
 
 When you're ready, say the word and I'll chase Owen's EHCP.`,
+      nextStepPrompt: "Say 'Owen' or 'EHCP' when you're ready and I'll chase the SEND team.",
       reasoning:
         "Consent granted. Submitting medical evidence (MS nurse letter, neurologist report, daily living diary) to DWP for the mandatory reconsideration. The outcome: PIP enhanced daily living £108.55/wk + enhanced mobility £75.75/wk. Back-payment calculation: (£108.55 - £72.65) + £75.75 = £111.65/wk increase × 26 weeks = £2,902.90. Motability car depends on enhanced mobility — now secured. Also triggering Blue Badge as James qualifies automatically with enhanced mobility PIP.",
       tasks: [],
@@ -166,6 +181,7 @@ You'll see the confirmation below. If you ever need to review or amend the plan,
           },
         },
       ],
+      nextStepPrompt: "That's both sorted. If you need to review or amend Owen's plan, just ask.",
     },
   },
 
@@ -173,16 +189,27 @@ You'll see the confirmation below. If you ever need to review or amend the plan,
   {
     patterns: [/.*/],
     response: {
-      response: `I'm here to help, James. Here's what I can assist with:
-
-- **PIP appeal** — Strengthen your mandatory reconsideration with medical evidence
-- **Owen's EHCP** — Chase the local authority to finalise his Education, Health and Care Plan
-- **Other support** — Check what else you and your family might be entitled to
-
-What would you like to start with?`,
+      response: `I'm here to help, James. What would you like to start with?`,
       reasoning:
         "James's message didn't match a specific step. Offering the main paths: PIP appeal and EHCP. Keeping it simple and action-oriented.",
-      tasks: [],
+      tasks: [
+        {
+          id: "task-pip-appeal",
+          description: "Strengthen your PIP mandatory reconsideration",
+          detail: "I can build a stronger evidence package using your MS nurse letter, neurologist's report, and daily living diary.",
+          type: "agent" as const,
+          dueDate: null,
+          dataNeeded: [],
+        },
+        {
+          id: "task-ehcp",
+          description: "Chase Owen's EHCP — week 18 of 20",
+          detail: "The local authority's statutory deadline is 6 April. I can chase the SEND team and make sure it's not stalled.",
+          type: "agent" as const,
+          dueDate: "2026-04-06",
+          dataNeeded: [],
+        },
+      ],
       conversationTitle: "PIP appeal and EHCP support",
     },
   },

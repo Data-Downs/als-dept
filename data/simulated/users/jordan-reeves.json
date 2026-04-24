@@ -1,0 +1,117 @@
+{
+  "id": "jordan-reeves",
+  "name": "Jordan Reeves",
+  "personaId": "jordan-reeves",
+  "personaName": "Jordan Reeves",
+  "description": "18-year-old school leaver needing NI number, provisional licence, and first job setup — brand new to government services",
+  "date_of_birth": "2008-04-15",
+  "age": 18,
+  "national_insurance_number": null,
+  "address": {
+    "line_1": "42 Elm Road",
+    "line_2": "",
+    "city": "Nottingham",
+    "county": "Nottinghamshire",
+    "postcode": "NG5 3BP",
+    "country": "England"
+  },
+  "jurisdiction": "England",
+  "color": "#d53880",
+  "credentials": [],
+  "employment_status": "unemployed",
+  "employer": null,
+  "income": 0,
+  "savings": 820,
+  "bank_account": true,
+  "primaryContact": {
+    "firstName": "Jordan",
+    "lastName": "Reeves",
+    "dateOfBirth": "2008-04-15",
+    "email": "jordan.reeves03@gmail.com",
+    "phone": "07481920374"
+  },
+  "employment": {
+    "jordan": {
+      "status": "Unemployed",
+      "previousOccupation": null,
+      "qualification": "A-levels: Business Studies (B), Media Studies (C), English Language (C)",
+      "notes": "Just finished sixth form at Bulwell Academy. No work experience beyond part-time at Greggs during year 13. Wants to get into digital marketing or social media."
+    }
+  },
+  "financials": {
+    "combinedAnnualIncome": 0,
+    "householdIncome": 38000,
+    "monthlyRent": 0,
+    "councilTaxBand": null,
+    "councilTaxAnnual": 0,
+    "currentAccount": {
+      "bank": "Monzo",
+      "sortCode": "04-00-04",
+      "accountNumber": "71829304",
+      "balance": 820
+    },
+    "savingsAccount": null,
+    "notes": "Youth current account with Monzo. Birthday and Christmas money. Living with mum — no rent. Household income is mum's salary."
+  },
+  "benefits": {
+    "currentlyReceiving": [],
+    "previousClaims": [],
+    "potentiallyEligibleFor": []
+  },
+  "healthInfo": {
+    "jordan": {
+      "gpSurgery": "Bulwell Forest Garden Surgery",
+      "nhsNumber": "728 401 5839",
+      "conditions": [],
+      "medications": []
+    }
+  },
+  "family": {
+    "children": [],
+    "notes": "Lives with mum Karen Reeves (46, admin at Queen's Medical Centre). Parents separated — dad in Derby, occasional contact. Younger sister Mia (14) also at home.",
+    "supportNetwork": [
+      "Mum Karen",
+      "Mates from sixth form",
+      "Uncle Dave in Arnold"
+    ]
+  },
+  "housing": {
+    "type": "Living with parent",
+    "propertyType": "Three-bedroom council house",
+    "notes": "Council tenancy in mum's name. Jordan has lived here since birth."
+  },
+  "communicationStyle": {
+    "tone": "Informal, direct, slightly impatient. Uses slang occasionally. Not rude — just young and doesn't know how government works. Expects things to be as easy as signing up for an app.",
+    "techSavvy": "High — lives on phone. Uses apps for everything. Has never filled in a government form. Doesn't know what a National Insurance number is or why it matters.",
+    "primaryConcerns": [
+      "Getting an NI number so he can start work",
+      "Getting a provisional driving licence",
+      "Understanding what he needs to do now he's 18",
+      "Not having to go to an office or fill in paper forms"
+    ],
+    "typicalPhrases": [
+      "I've just turned 18 and I need to sort some stuff out",
+      "Do I need a National Insurance number? How do I get one?",
+      "Can I do all this on my phone?",
+      "My mum said I need to get this sorted before I can get a job",
+      "How long does this take? I've got an interview next week"
+    ]
+  },
+  "_fieldSources": {
+    "address": {
+      "source": "Local Authority",
+      "tier": "inferred",
+      "topic": "housing"
+    },
+    "primaryContact.dateOfBirth": {
+      "source": "NHS",
+      "tier": "verified",
+      "topic": "identity"
+    },
+    "healthInfo.jordan.nhsNumber": {
+      "source": "NHS",
+      "tier": "verified",
+      "topic": "health"
+    }
+  }
+}

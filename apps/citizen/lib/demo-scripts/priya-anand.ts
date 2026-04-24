@@ -25,23 +25,37 @@ export const PRIYA_ANAND_CHAT: ScriptedEntry[] = [
     response: {
       response: `I can see things are tight, Priya, and I want to help. Looking at your situation, there's quite a lot you're entitled to that nobody's told you about.
 
-Here's what I've found:
-
-1. **Tax-Free Childcare** — You're paying £800/month for Arjun's nursery, but you haven't set up a Tax-Free Childcare account. The government would top up your payments — that's a saving of **up to £2,000 a year**.
-
-2. **30 hours free childcare** — Meera is 4 and eligible for a 30-hour code for her nursery place. You haven't applied for this yet.
-
-3. **Free school meals** — When Meera starts at Langley Academy in September, she qualifies for free school meals based on your household income.
-
-4. **Universal Credit top-up** — Based on your combined income, you may be entitled to a monthly UC payment to help with rent, childcare, and living costs.
-
-5. **Sure Start Maternity Grant** — A one-off £500 payment for Arjun that you may still be able to claim.
-
-Shall I start with the biggest saving first — getting your Tax-Free Childcare set up and Meera's 30-hour code?`,
+Shall I start with the biggest saving first?`,
       reasoning:
         "Priya earns £14,200/yr as a TA, partner Dev earns £24,500/yr as a delivery driver. Combined £38,700. Two children: Meera (4, starting school Sept 2026) and Arjun (9 months, nursery £800/month at Little Stars Nursery Slough). Currently only receiving Child Benefit £102.40/4wks. Missing: TFC account, 30-hour code, FSM, UC top-up, and Sure Start. Starting with the highest-impact items — TFC and 30 hours.",
-      tasks: [],
+      tasks: [
+        {
+          id: "task-tfc",
+          description: "Set up Tax-Free Childcare",
+          detail: "You're paying £800/month for Arjun's nursery with no TFC account. The government tops up payments — saving up to £2,000 a year.",
+          type: "agent" as const,
+          dueDate: null,
+          dataNeeded: [],
+        },
+        {
+          id: "task-30-hours",
+          description: "Get Meera's 30-hour childcare code",
+          detail: "Meera is 4 and eligible for 30 hours free childcare. You haven't applied for this yet.",
+          type: "agent" as const,
+          dueDate: null,
+          dataNeeded: [],
+        },
+        {
+          id: "task-fsm",
+          description: "Register for free school meals",
+          detail: "When Meera starts at Langley Academy in September, she qualifies based on your household income.",
+          type: "agent" as const,
+          dueDate: null,
+          dataNeeded: [],
+        },
+      ],
       conversationTitle: "Help with money and childcare",
+      nextStepPrompt: "Say 'yes' or 'please' and I'll start with the biggest saving first.",
     },
   },
 
@@ -65,6 +79,7 @@ Shall I start with the biggest saving first — getting your Tax-Free Childcare 
 You'll see the confirmations below. This should make a real difference — especially the TFC account, which starts saving you money straight away.
 
 Would you like me to check your Universal Credit entitlement too?`,
+      nextStepPrompt: "Say 'Universal Credit' or 'yes' and I'll check what you're entitled to.",
       reasoning:
         "Consent granted. Triggering three outcomes: TFC account opening (linked to Little Stars Nursery, saving up to £2,000/yr), 30-hour code for Meera (she's 4, eligible), and FSM registration for Langley Academy. These are the 'wow' moment — three things she didn't know about, done in seconds.",
       tasks: [],
@@ -205,6 +220,7 @@ Here's your entitlement summary:`,
           },
         },
       ],
+      nextStepPrompt: "There's one more thing — a £500 Sure Start Maternity Grant for Arjun. Say 'grant' or 'what else'.",
     },
   },
 
@@ -243,6 +259,7 @@ Here's your confirmation:`,
           },
         },
       ],
+      nextStepPrompt: "That's everything sorted. You're now getting all the support you're entitled to.",
     },
   },
 
@@ -250,17 +267,35 @@ Here's your confirmation:`,
   {
     patterns: [/.*/],
     response: {
-      response: `I'm here to help, Priya. Here's what I can assist with:
-
-- **Childcare savings** — Tax-Free Childcare and 30 hours free childcare
-- **Free school meals** — For Meera when she starts school
-- **Universal Credit** — A monthly top-up based on your household income
-- **Sure Start Maternity Grant** — A one-off £500 payment for Arjun
-
-What would you like to look at?`,
+      response: `I'm here to help, Priya. What would you like to look at?`,
       reasoning:
         "Priya's message didn't match a specific step. Offering the main paths available. Keeping it simple and focused on the money-saving opportunities.",
-      tasks: [],
+      tasks: [
+        {
+          id: "task-tfc",
+          description: "Set up Tax-Free Childcare",
+          detail: "You're paying £800/month for Arjun's nursery with no TFC account. Saving up to £2,000 a year.",
+          type: "agent" as const,
+          dueDate: null,
+          dataNeeded: [],
+        },
+        {
+          id: "task-30-hours",
+          description: "Get Meera's 30-hour childcare code",
+          detail: "Meera is 4 and eligible for 30 hours free childcare. You haven't applied yet.",
+          type: "agent" as const,
+          dueDate: null,
+          dataNeeded: [],
+        },
+        {
+          id: "task-fsm",
+          description: "Register for free school meals",
+          detail: "When Meera starts at Langley Academy in September, she qualifies based on your household income.",
+          type: "agent" as const,
+          dueDate: null,
+          dataNeeded: [],
+        },
+      ],
       conversationTitle: "Help with money and childcare",
     },
   },

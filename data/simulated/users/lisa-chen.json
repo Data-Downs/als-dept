@@ -1,0 +1,181 @@
+{
+  "id": "lisa-chen",
+  "name": "Lisa Chen",
+  "personaId": "lisa-chen",
+  "personaName": "Lisa Chen",
+  "description": "37-year-old engineer moving house — HMRC and NHS know her, but DWP and DVLA don't. Expired driving licence, never claimed benefits.",
+  "date_of_birth": "1989-03-22",
+  "age": 37,
+  "national_insurance_number": "LC220389D",
+  "address": {
+    "line_1": "15 Victoria Terrace",
+    "line_2": "Clifton",
+    "city": "Bristol",
+    "county": "Bristol",
+    "postcode": "BS8 1HG",
+    "country": "England"
+  },
+  "jurisdiction": "England",
+  "color": "#005ea5",
+  "credentials": [
+    {
+      "type": "national-insurance",
+      "issuer": "HMRC",
+      "number": "LC220389D",
+      "issued": "2007-03-22",
+      "status": "valid"
+    },
+    {
+      "type": "driving-licence",
+      "issuer": "DVLA",
+      "number": "CHEN9890322LC9FJ",
+      "issued": "2014-06-10",
+      "expires": "2024-06-10",
+      "status": "expired"
+    }
+  ],
+  "employment_status": "employed",
+  "employer": "Arup Group Ltd",
+  "income": 48000,
+  "savings": 22000,
+  "bank_account": true,
+  "primaryContact": {
+    "firstName": "Lisa",
+    "middleName": "Wei",
+    "lastName": "Chen",
+    "dateOfBirth": "1989-03-22",
+    "nationalInsuranceNumber": "LC220389D",
+    "email": "lisa.chen@arup.com",
+    "phone": "07734218956"
+  },
+  "employment": {
+    "lisa": {
+      "status": "Employed",
+      "employer": "Arup Group Ltd",
+      "jobTitle": "Structural Engineer",
+      "startDate": "2019-09-01",
+      "annualIncome": 48000,
+      "taxCode": "1257L",
+      "payrollNumber": "ARUP2019-4821",
+      "hoursPerWeek": 37.5
+    }
+  },
+  "financials": {
+    "combinedAnnualIncome": 48000,
+    "householdIncome": 48000,
+    "monthlyRent": 950,
+    "councilTaxBand": "C",
+    "councilTaxAnnual": 1680,
+    "currentAccount": {
+      "bank": "Starling Bank",
+      "sortCode": "60-83-71",
+      "accountNumber": "39201847",
+      "balance": 3400
+    },
+    "savingsAccount": {
+      "bank": "Marcus by Goldman Sachs",
+      "sortCode": "60-83-71",
+      "accountNumber": "48291037",
+      "balance": 22000
+    },
+    "notes": "Single income. Renting in Clifton. Moving to Bath — new rental starting 1 May 2026. No debt beyond student loan."
+  },
+  "benefits": {
+    "currentlyReceiving": [],
+    "previousClaims": [],
+    "potentiallyEligibleFor": []
+  },
+  "healthInfo": {
+    "lisa": {
+      "gpSurgery": "Whiteladies Medical Group",
+      "nhsNumber": "491 837 2650",
+      "conditions": [],
+      "medications": []
+    }
+  },
+  "family": {
+    "children": [],
+    "notes": "Single, no dependents. Parents live in Reading — dad is retired engineer, mum is GP. Younger brother in Manchester.",
+    "supportNetwork": [
+      "Parents in Reading",
+      "Colleagues at Arup Bristol office",
+      "Running club friends"
+    ]
+  },
+  "housing": {
+    "type": "Private renter",
+    "propertyType": "One-bedroom flat",
+    "landlord": "Private — managed by CJ Hole lettings",
+    "monthlyRent": 950,
+    "tenancyEnd": "2026-04-30",
+    "notes": "Moving to 8 Circus Mews, Bath, BA1 2PW from 1 May 2026. New rent £1,100/month."
+  },
+  "moving": {
+    "currentAddress": {
+      "line_1": "15 Victoria Terrace",
+      "line_2": "Clifton",
+      "city": "Bristol",
+      "postcode": "BS8 1HG"
+    },
+    "newAddress": {
+      "line_1": "8 Circus Mews",
+      "line_2": "",
+      "city": "Bath",
+      "county": "Bath and North East Somerset",
+      "postcode": "BA1 2PW"
+    },
+    "moveDate": "2026-05-01",
+    "departmentsToNotify": ["HMRC", "DVLA", "Electoral Register", "Council Tax", "NHS/GP"],
+    "notes": "DVLA licence expired June 2024 — needs renewal not just address change. Never renewed because she cycles everywhere in Bristol. Will need car in Bath (no cycle infrastructure on commute route)."
+  },
+  "communicationStyle": {
+    "tone": "Brisk, efficient, well-organised. Treats this like a project — wants a checklist and to tick things off. Slightly frustrated that changing address with the government isn't as easy as changing it with Amazon.",
+    "techSavvy": "Very high — software-literate engineer. Has One Login already. Expects digital-first services. Impatient with paper forms or phone calls.",
+    "primaryConcerns": [
+      "Updating address across all departments in one go",
+      "Renewing expired driving licence before the move",
+      "Making sure council tax is sorted at both ends",
+      "Registering with a GP in Bath",
+      "Not missing anything — wants a complete list"
+    ],
+    "typicalPhrases": [
+      "I'm moving house next month and I need to update my address everywhere",
+      "Can you just do all the departments at once?",
+      "My driving licence expired two years ago — I need to renew it as well as change address",
+      "I already have One Login, can we skip the verification?",
+      "What's the full list of things I need to change?"
+    ]
+  },
+  "_fieldSources": {
+    "address": {
+      "source": "HMRC",
+      "tier": "verified",
+      "topic": "identity"
+    },
+    "primaryContact.nationalInsuranceNumber": {
+      "source": "HMRC",
+      "tier": "verified",
+      "topic": "identity"
+    },
+    "income": {
+      "source": "HMRC",
+      "tier": "verified",
+      "topic": "finance"
+    },
+    "employment.lisa": {
+      "source": "HMRC",
+      "tier": "verified",
+      "topic": "employment"
+    },
+    "healthInfo.lisa.nhsNumber": {
+      "source": "NHS",
+      "tier": "verified",
+      "topic": "health"
+    },
+    "credentials.driving-licence": {
+      "source": "DVLA",
+      "tier": "verified",
+      "topic": "identity"
+    }
+  }
+}

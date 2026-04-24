@@ -23,20 +23,45 @@ export const SARAH_OKAFOR_CHAT: ScriptedEntry[] = [
 
 You don't need to figure any of this out on your own. There are a few things that will need to happen, but none of them need to happen right now — and I'll be here to help with all of them.
 
-Here's what I can take care of with you:
-
-[MENTION:gro-register-death]
-[MENTION:dwp-tell-us-once]
-[MENTION:dwp-bereavement-support]
-[MENTION:hmcts-probate]
-
-You don't need to do everything today. But when you're ready, the first step is registering the death — I can walk you through exactly what's needed.
-
-Would you like to start with that, or would you rather come back to this another time?`,
+You don't need to do everything today. When you're ready, just say the word.`,
       reasoning:
-        "Sarah's husband David died on 26 February 2026. She is the named executor. Leading with compassion and offering just one concrete step (death registration — time-sensitive). Not overwhelming her with a full list. The SERVICE marker will render as a compact card. Offering to pause shows respect for her emotional state.",
-      tasks: [],
+        "Sarah's husband David died on 26 February 2026. She is the named executor. Leading with compassion and offering just one concrete step (death registration — time-sensitive). Not overwhelming her with a full list. Tasks render as interactive cards below. Offering to pause shows respect for her emotional state.",
+      tasks: [
+        {
+          id: "task-register-death",
+          description: "Register David's death",
+          detail: "Register with the General Register Office — needs to happen within 5 days and is the first step before everything else.",
+          type: "agent" as const,
+          dueDate: "2026-03-07",
+          dataNeeded: [],
+        },
+        {
+          id: "task-tell-us-once",
+          description: "Tell Us Once — notify all departments",
+          detail: "Notify HMRC, DWP, DVLA, Passport Office, local council, and electoral register in one go.",
+          type: "agent" as const,
+          dueDate: null,
+          dataNeeded: [],
+        },
+        {
+          id: "task-bereavement-support",
+          description: "Claim Bereavement Support Payment",
+          detail: "You may be entitled to a £3,500 lump sum and 18 monthly payments of £350.",
+          type: "agent" as const,
+          dueDate: null,
+          dataNeeded: [],
+        },
+        {
+          id: "task-probate",
+          description: "Handle probate and inheritance tax",
+          detail: "As the named executor in David's will, I can apply for the grant of probate and file the IHT return.",
+          type: "agent" as const,
+          dueDate: null,
+          dataNeeded: [],
+        },
+      ],
       conversationTitle: "Help after David's passing",
+      nextStepPrompt: "Just say 'yes' when you'd like me to start with the notifications.",
     },
   },
 
@@ -51,16 +76,29 @@ Would you like to start with that, or would you rather come back to this another
     response: {
       response: `That's all done, Sarah. I've taken care of three things for you — the confirmations are below.
 
-When you're ready, there are two more things I can help with:
-
-[MENTION:dwp-bereavement-support]
-[MENTION:hmcts-probate]
-
-There's no rush on either. Just let me know when you'd like to continue.`,
+There's no rush on what's next. Just let me know when you'd like to continue.`,
       reasoning:
         "Consent was granted. Triggering three outcomes at once: Tell Us Once notification, death registration, and death certificate. This is the first 'wow' moment — three official documents/confirmations materialising in one go. Being gentle and not rushing her to the next step.",
-      tasks: [],
+      tasks: [
+        {
+          id: "task-bereavement-support",
+          description: "Claim Bereavement Support Payment",
+          detail: "You may be entitled to a £3,500 lump sum and 18 monthly payments of £350.",
+          type: "agent" as const,
+          dueDate: null,
+          dataNeeded: [],
+        },
+        {
+          id: "task-probate",
+          description: "Handle probate and inheritance tax",
+          detail: "As the named executor in David's will, I can apply for the grant of probate and file the IHT return.",
+          type: "agent" as const,
+          dueDate: null,
+          dataNeeded: [],
+        },
+      ],
       conversationTitle: null,
+      nextStepPrompt: "When you're ready, I can look at Bereavement Support Payment — you may be entitled to financial support. Just say 'payment' or 'continue'.",
       outcomes: [
         {
           serviceId: "dwp-tell-us-once",
@@ -180,6 +218,7 @@ Here's your confirmation:`,
           },
         },
       ],
+      nextStepPrompt: "There's one more thing I can help with — probate and inheritance tax. Just say 'probate' when you're ready.",
     },
   },
 
@@ -228,6 +267,7 @@ Here are your confirmations:`,
           },
         },
       ],
+      nextStepPrompt: "That's everything taken care of, Sarah. If you need anything in the future, I'm here.",
     },
   },
 
@@ -235,16 +275,35 @@ Here are your confirmations:`,
   {
     patterns: [/.*/],
     response: {
-      response: `I'm here whenever you need me, Sarah. Here's what I can help with:
-
-[MENTION:dwp-tell-us-once]
-[MENTION:dwp-bereavement-support]
-[MENTION:hmcts-probate]
-
-Just let me know which feels right, or if you'd like me to explain any of these.`,
+      response: `I'm here whenever you need me, Sarah. Just let me know which feels right, or if you'd like me to explain any of these.`,
       reasoning:
         "Sarah's message didn't match a specific step. Offering the three main paths available to her. Keeping it simple and not overwhelming.",
-      tasks: [],
+      tasks: [
+        {
+          id: "task-tell-us-once",
+          description: "Tell Us Once — notify all departments",
+          detail: "Notify HMRC, DWP, DVLA, Passport Office, local council, and electoral register in one go.",
+          type: "agent" as const,
+          dueDate: null,
+          dataNeeded: [],
+        },
+        {
+          id: "task-bereavement-support",
+          description: "Claim Bereavement Support Payment",
+          detail: "You may be entitled to a £3,500 lump sum and 18 monthly payments of £350.",
+          type: "agent" as const,
+          dueDate: null,
+          dataNeeded: [],
+        },
+        {
+          id: "task-probate",
+          description: "Handle probate and inheritance tax",
+          detail: "As the named executor in David's will, I can apply for the grant of probate and file the IHT return.",
+          type: "agent" as const,
+          dueDate: null,
+          dataNeeded: [],
+        },
+      ],
       conversationTitle: "Help after bereavement",
     },
   },

@@ -22,21 +22,37 @@ export const MARCUS_TAYLOR_CHAT: ScriptedEntry[] = [
     response: {
       response: `I hear you, Marcus. Getting everything sorted after release is a lot to deal with, but I'm going to help you through it step by step.
 
-Looking at your situation, there are three things we need to get moving on:
-
-1. **Universal Credit** — This is the most urgent. You need money coming in, and UC is how we get that. The standard allowance for someone your age is **£393.45 a month**. But there's a catch — the first payment takes about 5 weeks.
-
-2. **Basic bank account** — You'll need one to receive UC payments. We can get a Lloyds basic account opened — no credit check, and they accept approved premises addresses.
-
-3. **Driving licence** — Yours expired while you were inside. We can get that renewed so it's one less thing hanging over you.
-
-You've got 6 weeks left at Kirkgate House before your approved premises placement ends on **30 April**. So timing matters here.
-
-Want to start with Universal Credit?`,
+You've got 6 weeks left at Kirkgate House before your approved premises placement ends on **30 April**. So timing matters here.`,
       reasoning:
         "Marcus was released on 5 February 2026. He's in approved premises with a deadline of 30 April (6 weeks remaining). No bank account, no income beyond a £46 discharge grant. UC is the priority — it's the gateway to housing element once he moves to permanent accommodation. Being direct and practical, matching his communication style. Not being patronising about his situation.",
-      tasks: [],
+      tasks: [
+        {
+          id: "task-universal-credit",
+          description: "Get Universal Credit started",
+          detail: "Most urgent — you need money coming in. Standard allowance is £393.45/month, but the first payment takes about 5 weeks.",
+          type: "agent" as const,
+          dueDate: null,
+          dataNeeded: [],
+        },
+        {
+          id: "task-bank-account",
+          description: "Open a basic bank account",
+          detail: "You'll need one to receive UC payments. Lloyds basic account — no credit check, accepts approved premises addresses.",
+          type: "agent" as const,
+          dueDate: null,
+          dataNeeded: [],
+        },
+        {
+          id: "task-driving-licence",
+          description: "Renew your driving licence",
+          detail: "Yours expired while you were inside. Renewing it also gives you valid photo ID again.",
+          type: "agent" as const,
+          dueDate: null,
+          dataNeeded: [],
+        },
+      ],
       conversationTitle: "Getting sorted after release",
+      nextStepPrompt: "Say 'yes' or 'let's go' and I'll get Universal Credit sorted first.",
     },
   },
 
@@ -60,6 +76,7 @@ Your first payment will be in about 5 weeks. One thing — they'll need a bank a
 You'll see the confirmations below. Your probation officer Karen Mitchell will be able to see these too if you need to show proof you're getting things sorted.
 
 When you're ready, I can help with your driving licence or anything else.`,
+      nextStepPrompt: "Say 'driving licence' when you're ready and I'll get that renewed.",
       reasoning:
         "Consent granted for UC data sharing. Triggering two outcomes: UC claim (£393.45/month standard allowance, single person 25+, no housing element in approved premises) and basic bank account (Lloyds, no credit check — essential for UC payments). Marcus has no bank account so this is a critical dependency. Mentioning probation officer by name to show the system knows his situation.",
       tasks: [],
@@ -169,6 +186,7 @@ Here's your confirmation:`,
           },
         },
       ],
+      nextStepPrompt: "That's the main things sorted. If you need anything else, just ask.",
     },
   },
 
@@ -176,16 +194,27 @@ Here's your confirmation:`,
   {
     patterns: [/.*/],
     response: {
-      response: `I'm here to help, Marcus. Here's what I can assist with:
-
-- **Universal Credit** — Get your claim started so you've got money coming in
-- **Driving licence** — Renew your expired licence
-- **Finding work** — Help with getting back into construction, including CSCS card renewal and DBS disclosure
-
-What would you like to sort out?`,
+      response: `I'm here to help, Marcus. What would you like to sort out?`,
       reasoning:
         "Marcus's message didn't match a specific step. Offering the main paths available to him. Keeping it direct and practical, matching his communication style.",
-      tasks: [],
+      tasks: [
+        {
+          id: "task-universal-credit",
+          description: "Get Universal Credit started",
+          detail: "Most urgent — you need money coming in. Standard allowance is £393.45/month.",
+          type: "agent" as const,
+          dueDate: null,
+          dataNeeded: [],
+        },
+        {
+          id: "task-driving-licence",
+          description: "Renew your driving licence",
+          detail: "Yours expired while you were inside. Renewing it also gives you valid photo ID again.",
+          type: "agent" as const,
+          dueDate: null,
+          dataNeeded: [],
+        },
+      ],
       conversationTitle: "Getting sorted after release",
     },
   },

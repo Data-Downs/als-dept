@@ -22,19 +22,37 @@ export const DANIEL_OBI_CHAT: ScriptedEntry[] = [
       /sole trader/i,
     ],
     response: {
-      response: `Right, Daniel — let me take a look at everything. I can see three things that need your attention:
-
-1. **Tax refund — £1,800 owed to you.** You've been on the wrong tax code (BR instead of 1257L) since last year, which means you've overpaid. HMRC owe you £1,800 and it's been pending since October 2025.
-
-2. **Unpaid invoice — £4,200 from Mr R. Karim.** That kitchen and bathroom job is now 3 months overdue. I can help you file a formal money claim through the courts if he still won't pay.
-
-3. **Making Tax Digital deadline — 6 April 2026.** You're required to enrol for MTD but haven't yet. That's just over two weeks away.
-
-Which one do you want to sort first?`,
+      response: `Right, Daniel — let me take a look at everything. I can see three things that need your attention:`,
       reasoning:
         "Daniel's persona data shows three clear issues: (1) tax code error BR instead of 1257L with £1,800 refund pending since Oct 2025, (2) Mr R. Karim owes £4,200, 3 months overdue, (3) MTD status is required_not_enrolled with deadline 2026-04-06. Presenting all three upfront in plain language — Daniel is practical and no-nonsense.",
-      tasks: [],
+      tasks: [
+        {
+          id: "task-tax-refund",
+          description: "Get your £1,800 tax refund",
+          detail: "You've been on the wrong tax code (BR instead of 1257L) since last year. HMRC owe you £1,800.",
+          type: "agent" as const,
+          dueDate: null,
+          dataNeeded: [],
+        },
+        {
+          id: "task-money-claim",
+          description: "Chase unpaid invoice — £4,200",
+          detail: "Mr R. Karim's kitchen and bathroom job is 3 months overdue. I can file a money claim through the courts.",
+          type: "agent" as const,
+          dueDate: null,
+          dataNeeded: [],
+        },
+        {
+          id: "task-mtd",
+          description: "Enrol for Making Tax Digital",
+          detail: "You're required to enrol but haven't yet. Deadline is 6 April 2026 — just over two weeks away.",
+          type: "user" as const,
+          dueDate: "2026-04-06",
+          dataNeeded: [],
+        },
+      ],
       conversationTitle: "Tax, unpaid invoice, and MTD",
+      nextStepPrompt: "Which one do you want to sort first? Say 'tax refund', 'money claim', or 'MTD'.",
     },
   },
 
@@ -78,6 +96,7 @@ Here's your confirmation:`,
           },
         },
       ],
+      nextStepPrompt: "Want to sort the unpaid invoice next? Say 'money claim' or 'client'.",
     },
   },
 
@@ -123,6 +142,7 @@ Here's your confirmation:`,
           },
         },
       ],
+      nextStepPrompt: "Last thing — Making Tax Digital. Say 'MTD' or 'enrol' and I'll get that sorted.",
     },
   },
 
@@ -165,6 +185,7 @@ I'd recommend setting up the software now so you're ready for the first quarter.
           },
         },
       ],
+      nextStepPrompt: "That's everything sorted. If you need anything else, just ask.",
     },
   },
 
@@ -172,17 +193,35 @@ I'd recommend setting up the software now so you're ready for the first quarter.
   {
     patterns: [/.*/],
     response: {
-      response: `I can help with that, Daniel. Here's what I'm tracking for you:
-
-- **Tax refund** — £1,800 owed to you from the wrong tax code
-- **Unpaid invoice** — £4,200 from Mr Karim, 3 months overdue
-- **Making Tax Digital** — enrolment deadline 6 April 2026
-- **General business help** — van tax, expenses, UC eligibility during quiet months
-
-What would you like to sort out?`,
+      response: `I can help with that, Daniel. What would you like to sort out?`,
       reasoning:
-        "Daniel's message didn't match a specific step. Offering the main issues from his persona data plus general business help. Keeping it direct and practical.",
-      tasks: [],
+        "Daniel's message didn't match a specific step. Offering the main issues from his persona data. Keeping it direct and practical.",
+      tasks: [
+        {
+          id: "task-tax-refund",
+          description: "Get your £1,800 tax refund",
+          detail: "You've been on the wrong tax code (BR instead of 1257L) since last year. HMRC owe you £1,800.",
+          type: "agent" as const,
+          dueDate: null,
+          dataNeeded: [],
+        },
+        {
+          id: "task-money-claim",
+          description: "Chase unpaid invoice — £4,200",
+          detail: "Mr R. Karim's kitchen and bathroom job is 3 months overdue. I can file a money claim through the courts.",
+          type: "agent" as const,
+          dueDate: null,
+          dataNeeded: [],
+        },
+        {
+          id: "task-mtd",
+          description: "Enrol for Making Tax Digital",
+          detail: "You're required to enrol but haven't yet. Deadline is 6 April 2026.",
+          type: "user" as const,
+          dueDate: "2026-04-06",
+          dataNeeded: [],
+        },
+      ],
       conversationTitle: "Self-employment help",
     },
   },
