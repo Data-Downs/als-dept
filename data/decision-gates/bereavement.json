@@ -1,0 +1,80 @@
+{
+  "lifeEventId": "bereavement",
+  "gates": [
+    {
+      "id": "bereavement-death-registered",
+      "question": "Have you been able to register the death yet?",
+      "helpText": "In England and Wales, a death must usually be registered within 5 days. The register office will give you documents you need for other steps.",
+      "sensitive": true,
+      "options": [
+        {
+          "value": "yes",
+          "label": "Yes, I've registered the death",
+          "consequence": "That's one important step already done. I can help with what comes next.",
+          "routingEffect": {
+            "skipServices": ["gro-register-death"],
+            "enableServices": ["dwp-tell-us-once", "dwp-bereavement-support", "hmcts-probate"],
+            "setFacts": { "death_registered": "yes" }
+          }
+        },
+        {
+          "value": "no",
+          "label": "No, not yet",
+          "consequence": "That's usually the first step, and I can help you with it.",
+          "routingEffect": {
+            "enableServices": ["gro-register-death"],
+            "setFacts": { "death_registered": "no" }
+          }
+        },
+        {
+          "value": "not-sure",
+          "label": "I'm not sure what that involves",
+          "consequence": "That's completely okay. Let me explain what's involved so we can work out the right next step together.",
+          "routingEffect": {
+            "setFacts": { "death_registered": "unknown" }
+          }
+        }
+      ],
+      "context": {
+        "lifeEventId": "bereavement"
+      }
+    },
+    {
+      "id": "bereavement-has-will",
+      "question": "Do you know if they left a will?",
+      "helpText": "This helps determine whether probate is needed and how the estate will be handled.",
+      "sensitive": true,
+      "options": [
+        {
+          "value": "yes",
+          "label": "Yes, there is a will",
+          "consequence": "The executor named in the will can apply for probate when the time comes.",
+          "routingEffect": {
+            "enableServices": ["hmcts-probate"],
+            "setFacts": { "has_will": "yes" }
+          }
+        },
+        {
+          "value": "no",
+          "label": "No, there isn't a will",
+          "consequence": "That's okay — there's a legal process called 'letters of administration' that covers this.",
+          "routingEffect": {
+            "enableServices": ["hmcts-probate"],
+            "setFacts": { "has_will": "no" }
+          }
+        },
+        {
+          "value": "not-sure",
+          "label": "I don't know yet",
+          "consequence": "That's fine — we can come back to this when you're ready.",
+          "routingEffect": {
+            "setFacts": { "has_will": "unknown" }
+          }
+        }
+      ],
+      "context": {
+        "lifeEventId": "bereavement"
+      }
+    }
+  ]
+}

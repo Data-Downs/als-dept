@@ -33,7 +33,13 @@ import {
   OUTCOME_TEMPLATE_REGISTRY,
   buildOutcomeFromTemplate,
   resolveTerminalConfig,
+  resolveProactivityConfig,
+  loadGatesIntoRegistry,
+  resolveGate,
+  getAvailableGates,
   type InteractionType,
+  type DecisionGateDefinition,
+  type DecisionGateFile,
 } from "@als/schemas";
 import type { JourneyOutcome } from "@als/schemas";
 import type { StateCardMapping } from "@als/schemas";
@@ -288,6 +294,61 @@ async function loadConsentModel(
     }
   }
   return null;
+}
+
+async function loadDecisionGates(
+  lifeEventId?: string,
+  serviceId?: string,
+): Promise<DecisionGateDefinition[]> {
+  const gates: DecisionGateDefinition[] = [];
+
+  // Load life-event-level gates
+  if (lifeEventId) {
+    for (const base of [
+      path.join(process.cwd(), "..", "..", "data", "decision-gates"),
+      path.join(process.cwd(), "data", "decision-gates"),
+    ]) {
+      try {
+        const raw = await fs.readFile(
+          path.join(base, `${lifeEventId}.json`),
+          "utf-8",
+        );
+        const file = JSON.parse(raw) as DecisionGateFile;
+        if (file.gates) gates.push(...file.gates);
+        break;
+      } catch {
+        continue;
+      }
+    }
+  }
+
+  // Load service-level gates
+  if (serviceId) {
+    const slug = serviceDirSlug(serviceId);
+    for (const base of [
+      path.join(process.cwd(), "..", "..", "data", "services"),
+      path.join(process.cwd(), "data", "services"),
+    ]) {
+      try {
+        const raw = await fs.readFile(
+          path.join(base, slug, "decision-gates.json"),
+          "utf-8",
+        );
+        const file = JSON.parse(raw) as DecisionGateFile;
+        if (file.gates) gates.push(...file.gates);
+        break;
+      } catch {
+        continue;
+      }
+    }
+  }
+
+  // Register loaded gates
+  if (gates.length > 0) {
+    loadGatesIntoRegistry(gates);
+  }
+
+  return gates;
 }
 
 async function loadStateInstructions(
@@ -655,6 +716,25 @@ type ChatOutput = OrchestratorOutput & {
     preferenceId: string;
     reason: string;
   }>;
+  gateRequests?: Array<{
+    gateId: string;
+    definition: {
+      id: string;
+      question: string;
+      helpText?: string;
+      sensitive?: boolean;
+      options: Array<{
+        value: string;
+        label: string;
+        consequence?: string;
+        routingEffect?: {
+          enableServices?: string[];
+          skipServices?: string[];
+          setFacts?: Record<string, string>;
+        };
+      }>;
+    };
+  }>;
   lifeEventContext?: {
     lifeEventId: string;
     lifeEventName: string;
@@ -665,6 +745,13 @@ type ChatOutput = OrchestratorOutput & {
       dept: string;
       serviceType: string;
       desc: string;
+      proactivity?: {
+        mode: string;
+        framingPrefix: string;
+        priority: number;
+        iconHint: string;
+        accentColor: string;
+      };
     }>;
     plan?: {
       entryServiceIds: string[];
@@ -892,6 +979,20 @@ async function chatHandler(input: unknown): Promise<ChatOutput> {
     }
   }
 
+  // ── Load Decision Gates ──
+  const decisionGates = await loadDecisionGates(
+    clientLifeEventId || undefined,
+    serviceId !== "triage" ? serviceId : undefined,
+  );
+  // Build slim gate descriptions for the orchestrator prompt
+  const availableGatesForPrompt = decisionGates.length > 0
+    ? decisionGates.map((g) => ({
+        id: g.id,
+        question: g.question,
+        options: g.options.map((o) => ({ value: o.value, label: o.label })),
+      }))
+    : undefined;
+
   // ── Run Orchestrator ──
   const orchestrator = new Orchestrator({ adapter, strategy });
 
@@ -948,6 +1049,7 @@ async function chatHandler(input: unknown): Promise<ChatOutput> {
         }
       : undefined,
     lifeEventContext: orchestratorLifeEventCtx,
+    availableGates: availableGatesForPrompt,
   });
 
   // ── Validate and resolve service/need proposals ──
@@ -1035,6 +1137,7 @@ async function chatHandler(input: unknown): Promise<ChatOutput> {
 
   // ── Match needProposal to life event ──
   let lifeEventContext: ChatOutput["lifeEventContext"] | undefined;
+  let autoAttachedGateRequests: ChatOutput["gateRequests"];
   if (result.needProposal && result.needProposal.services.length >= 2) {
     try {
       const { matchNeedToLifeEvent, matchLifeEventById } = await import(
@@ -1076,13 +1179,24 @@ async function chatHandler(input: unknown): Promise<ChatOutput> {
 
         const filteredServices = allServices
           .filter((n) => !excludedIds.has(n.id))
-          .map((n) => ({
-            id: n.id,
-            name: n.name,
-            dept: n.dept,
-            serviceType: n.serviceType,
-            desc: n.desc,
-          }));
+          .map((n) => {
+            const iType = inferInteractionType(n.serviceType);
+            const proactivity = resolveProactivityConfig(iType);
+            return {
+              id: n.id,
+              name: n.name,
+              dept: n.dept,
+              serviceType: n.serviceType,
+              desc: n.desc,
+              proactivity: {
+                mode: proactivity.mode,
+                framingPrefix: proactivity.framingPrefix,
+                priority: proactivity.priority,
+                iconHint: proactivity.iconHint,
+                accentColor: proactivity.accentColor,
+              },
+            };
+          });
 
         // Filter plan graph to match remaining services
         const remainingIds = new Set(filteredServices.map((s) => s.id));
@@ -1125,6 +1239,20 @@ async function chatHandler(input: unknown): Promise<ChatOutput> {
           plan: filteredPlan,
           mergedFieldPrompt,
         };
+
+        // Auto-attach the first decision gate for this life event
+        const lifeEventGates = await loadDecisionGates(matchedLE.id);
+        if (lifeEventGates.length > 0) {
+          autoAttachedGateRequests = [{
+            gateId: lifeEventGates[0].id,
+            definition: lifeEventGates[0],
+          }];
+          // Suppress tasks when a gate is being shown — the gate takes precedence
+          result.tasks = [];
+          console.log(
+            `   [DecisionGate] Auto-attached gate: ${lifeEventGates[0].id}`,
+          );
+        }
 
         console.log(
           `   [LifeEvent] Matched: "${matchedLE.name}" (${filteredServices.length} services)`,
@@ -1679,11 +1807,30 @@ async function chatHandler(input: unknown): Promise<ChatOutput> {
     );
   }
 
+  // ── Resolve Decision Gate requests ──
+  // Gates can come from two sources:
+  // 1. Auto-attached on life event match (first turn — deterministic)
+  // 2. LLM-signalled via decisionGateId (subsequent turns)
+  let gateRequests: ChatOutput["gateRequests"] = autoAttachedGateRequests;
+  if (!gateRequests && result.decisionGateId) {
+    const gateDef = resolveGate(result.decisionGateId);
+    if (gateDef) {
+      gateRequests = [{ gateId: gateDef.id, definition: gateDef }];
+      result.tasks = []; // Suppress tasks when gate is shown
+      console.log(`   [DecisionGate] Resolved gate: ${gateDef.id}`);
+    } else {
+      console.warn(
+        `   [DecisionGate] LLM signalled unknown gate ID: ${result.decisionGateId}`,
+      );
+    }
+  }
+
   return {
     ...result,
     consentRequests: filteredConsentRequests,
     resolvedConsents: resolvedConsents.length > 0 ? resolvedConsents : undefined,
     cardRequests: cardRequests.length > 0 ? cardRequests : undefined,
+    gateRequests,
     interactionType: resolvedInteractionType,
     outcomes,
     lifeEventContext,
@@ -1756,6 +1903,16 @@ export async function POST(request: NextRequest) {
         "@/lib/demo-scripts/priya-anand"
       );
       personaScripts = PRIYA_ANAND_CHAT;
+    } else if (persona === "jordan-reeves") {
+      const { JORDAN_REEVES_CHAT } = await import(
+        "@/lib/demo-scripts/jordan-reeves"
+      );
+      personaScripts = JORDAN_REEVES_CHAT;
+    } else if (persona === "lisa-chen") {
+      const { LISA_CHEN_CHAT } = await import(
+        "@/lib/demo-scripts/lisa-chen"
+      );
+      personaScripts = LISA_CHEN_CHAT;
     }
 
     const lastUserMsg = [...messages]
@@ -1887,6 +2044,7 @@ export async function POST(request: NextRequest) {
       traceId,
       consentRequests: scripted.consentRequests,
       outcomes,
+      nextStepPrompt: scripted.nextStepPrompt,
       needProposal: demoLifeEventContext ? {
         need: "Help after bereavement",
         services: demoLifeEventContext.services.map((s) => s.id),

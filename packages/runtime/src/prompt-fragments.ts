@@ -120,6 +120,7 @@ Rules:
 - "serviceProposal": when in triage and you have identified a specific service, include: { "serviceId": "dept-slug-name", "serviceName": "Human-readable name", "reason": "One sentence why" }. The serviceId format is typically "dept-service-name" (e.g. "dvla.renew-driving-licence", "dwp-universal-credit", "hmrc-child-benefit", "la-blue-badge", "hmcts-probate"). Use the exact IDs from the service catalog in the prompt. Only ONE per response. Do NOT include both serviceProposal and stateTransition.
 - "needProposal": when in triage and the citizen's need spans MULTIPLE services across departments, include: { "need": "Short description", "services": ["service-id-1", "service-id-2"], "sharedDataNeeded": ["income", "children"] }. Use this INSTEAD of serviceProposal when 2+ services are relevant.
 - "outcomeHints": optional object with specific values discussed at terminal success states (amounts, dates, reference numbers). Only include when instructed by state instructions.
+- "decisionGateId": when AVAILABLE DECISION GATES are listed in the prompt and you recognise the conversation has reached one of those routing questions, set this to the gate ID. The UI will render tappable options — do NOT ask the question as plain text. Only use IDs from the AVAILABLE DECISION GATES list.
 - The JSON block will be stripped before showing your response to the citizen`;
 
 export const FACT_EXTRACTION_INSTRUCTIONS = `PERSONAL DATA EXTRACTION:

@@ -98,6 +98,12 @@ export interface OrchestratorInput {
     mergedFieldPrompt: string;
     completedServiceIds: string[];
   };
+  /** Available decision gates for LLM to signal */
+  availableGates?: Array<{
+    id: string;
+    question: string;
+    options: Array<{ value: string; label: string }>;
+  }>;
 }
 
 export interface OrchestratorOutput {
@@ -173,6 +179,8 @@ export interface OrchestratorOutput {
     serviceId: string;
     status: "data_complete" | "submitted";
   }>;
+  /** Decision gate ID signalled by LLM for structured routing questions */
+  decisionGateId?: string;
 }
 
 // ── Structured output parser ──
@@ -235,6 +243,7 @@ interface ParsedStructuredOutput {
     serviceId: string;
     status: "data_complete" | "submitted";
   }>;
+  decisionGateId?: string;
 }
 
 const ISO_DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
@@ -455,6 +464,11 @@ function parseStructuredOutput(responseText: string): {
         };
       }
     }
+  }
+
+  // Decision gate ID (LLM signals a routing question should be shown)
+  if (typeof raw.decisionGateId === "string" && raw.decisionGateId.trim()) {
+    output.decisionGateId = raw.decisionGateId.trim();
   }
 
   // Service completions (life event journey — LLM signals services are done)
@@ -904,6 +918,7 @@ export class Orchestrator {
           factsAlreadyKnown,
           unresolvedContradictions,
           lifeEventContext,
+          availableGates: input.availableGates,
         });
       } else {
         systemPrompt = this.buildJourneyPrompt({
@@ -1370,6 +1385,7 @@ export class Orchestrator {
       serviceProposal: structuredOutput?.serviceProposal,
       needProposal: structuredOutput?.needProposal,
       serviceCompletions: structuredOutput?.serviceCompletions,
+      decisionGateId: structuredOutput?.decisionGateId,
       versionMetadata,
       pipelineTrace,
     };
@@ -1405,6 +1421,7 @@ export class Orchestrator {
     factsAlreadyKnown?: string;
     unresolvedContradictions?: string;
     lifeEventContext?: OrchestratorInput["lifeEventContext"];
+    availableGates?: OrchestratorInput["availableGates"];
   }): string {
     const {
       agent,
@@ -1417,6 +1434,7 @@ export class Orchestrator {
       factsAlreadyKnown,
       unresolvedContradictions,
       lifeEventContext: leCtx,
+      availableGates,
     } = opts;
 
     const parts: string[] = [];
@@ -1441,24 +1459,36 @@ export class Orchestrator {
         .join("\n");
 
       parts.push(`LIFE EVENT: ${leCtx.lifeEventName}
-You are guiding this citizen through a life event that involves multiple government services.
-Your role is to collect information ONCE and apply it across all services.
-DO NOT treat these as separate form-filling exercises.
-DO NOT say "now let's move on to the next service" — the citizen should not see departmental boundaries.
-Sequence by what makes emotional sense — acknowledge the situation first, then practical admin, then financial support, then legal matters.
+You are helping a citizen through a life event involving multiple government services.
 
-SERVICES INVOLVED:
+YOUR ROLE:
+- Be warm and empathetic. Keep responses short — 3-4 sentences maximum.
+- The system handles service presentation, routing questions, and plan display automatically.
+- Do NOT list, name, or describe individual services in your response text.
+- Do NOT use bullet points, numbered lists, bold text, or markdown tables.
+- When you have enough data for a service, emit "serviceCompletions" in your JSON output.
+- When a decision gate has been answered, include [PLAN_CARDS] on its own line to show the service plan.
+
+SERVICES INVOLVED (internal context — do NOT present these to the citizen):
 ${serviceList}
 
-${leCtx.mergedFieldPrompt}
+${leCtx.mergedFieldPrompt}`);
+      parts.push("---");
+    }
 
-APPROACH:
-- Respond to the citizen's emotional state first — be warm and human
-- Gather shared information naturally through conversation, not as a checklist
-- When you have enough data for a service, emit a "serviceCompletions" entry in your JSON output
-- Pre-fill from the persona data wherever possible — do not ask for data the government already holds
-- Present outcomes as they happen — "I've notified HMRC, DWP, and the Passport Office" not "Service 1 complete"
-- The citizen should feel like they're talking to one knowledgeable person who handles everything`);
+    // Decision gates — structured routing questions the LLM can signal
+    if (availableGates && availableGates.length > 0) {
+      const gateLines = availableGates.map((g) => {
+        const optionLabels = g.options.map((o) => o.label).join(" / ");
+        return `- ${g.id}: "${g.question}" (${optionLabels})`;
+      });
+      parts.push(`AVAILABLE DECISION GATES:
+${gateLines.join("\n")}
+
+When you recognise the conversation has reached one of these routing questions, set "decisionGateId" in your JSON output to the gate ID.
+The UI will render tappable options for the citizen — do NOT ask these questions as plain text.
+Only use gate IDs from the list above. Do not fabricate gate IDs.
+Only signal ONE gate per response.`);
       parts.push("---");
     }
 
@@ -1492,14 +1522,18 @@ APPROACH:
       parts.push(TITLE_INSTRUCTIONS);
     }
 
-    // Service proposal instructions (how to transition from triage to a service)
-    parts.push(
-      agent.toLowerCase() === "max"
-        ? SERVICE_PROPOSAL_INSTRUCTIONS_MAX
-        : SERVICE_PROPOSAL_INSTRUCTIONS_DOT,
-    );
-
-    parts.push(TASK_INSTRUCTIONS);
+    // Service proposal and task instructions — skipped in life event mode
+    // to avoid contradicting life event directives
+    if (!leCtx) {
+      parts.push(
+        agent.toLowerCase() === "max"
+          ? SERVICE_PROPOSAL_INSTRUCTIONS_MAX
+          : SERVICE_PROPOSAL_INSTRUCTIONS_DOT,
+      );
+      parts.push(TASK_INSTRUCTIONS);
+    } else {
+      parts.push(`TASKS: Keep "tasks": [] in your JSON output. The system handles service presentation through plan cards and decision gates.`);
+    }
     parts.push(STRUCTURED_OUTPUT_INSTRUCTIONS);
 
     return parts.join("\n\n");

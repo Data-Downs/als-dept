@@ -550,6 +550,26 @@ export type {
   ServiceMilestoneConfig,
 } from "./state-instruction-templates";
 
+// ── Decision Gates ──
+
+export type {
+  DecisionGateOption,
+  DecisionGateDefinition,
+  DecisionGateRequest,
+  DecisionGateAnswer,
+  DecisionGateRoutingEffect,
+  DecisionGateFile,
+} from "./decision-gate-types";
+
+export {
+  loadGatesIntoRegistry,
+  resolveGate,
+  getGatesForLifeEvent,
+  getGatesForService,
+  getAvailableGates,
+  buildGatePromptFragment,
+} from "./decision-gate-registry";
+
 // ── Utility types ──
 
 export interface JsonSchema {
