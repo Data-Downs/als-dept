@@ -10,6 +10,57 @@ import { getServiceClient } from "@/lib/service-client";
 
 export const dynamic = "force-dynamic";
 
+type Edge = { from: string; to: string; type: "REQUIRES" | "ENABLES" };
+
+/** Depth-group a plan's services from its entry points over its edges. */
+function buildGroups(
+  entryIds: string[],
+  edges: Edge[],
+  memberIds: string[],
+): Array<{
+  depth: number;
+  label: string;
+  prerequisiteIds: string[];
+  serviceIds: string[];
+}> {
+  const members = new Set(memberIds);
+  const placed = new Set<string>();
+  const groups: Array<{
+    depth: number;
+    label: string;
+    prerequisiteIds: string[];
+    serviceIds: string[];
+  }> = [];
+  let frontier = entryIds.filter((id) => members.has(id));
+  let depth = 0;
+  while (frontier.length > 0) {
+    const layer = [...new Set(frontier)].filter((id) => !placed.has(id));
+    if (layer.length === 0) break;
+    layer.forEach((id) => placed.add(id));
+    groups.push({
+      depth,
+      label: depth === 0 ? "Start here" : `Next steps`,
+      prerequisiteIds: [],
+      serviceIds: layer,
+    });
+    frontier = edges
+      .filter((e) => layer.includes(e.from))
+      .map((e) => e.to)
+      .filter((id) => members.has(id) && !placed.has(id));
+    depth++;
+  }
+  const rest = memberIds.filter((id) => !placed.has(id));
+  if (rest.length > 0) {
+    groups.push({
+      depth,
+      label: "Also relevant",
+      prerequisiteIds: [],
+      serviceIds: rest,
+    });
+  }
+  return groups;
+}
+
 /**
  * GET /api/life-events?persona=mary-summers
  * Returns all life events with their associated services.
@@ -119,6 +170,87 @@ export async function GET(request: NextRequest) {
         : {}),
     };
   });
+
+  // Append published plan templates that aren't one of the engine's life events
+  // (net-new plans authored in the studio). Member services are resolved from
+  // the studio, since they may be catalogue services the graph engine doesn't hold.
+  const engineIds = new Set(rawLifeEvents.map((le) => le.id));
+  if (client && published) {
+    for (const t of published.plans) {
+      if (engineIds.has(t.id)) continue;
+      try {
+        const memberIds = [
+          ...new Set([
+            ...t.entryServiceIds,
+            ...t.edges.flatMap((e) => [e.from, e.to]),
+            ...(t.membership.serviceIds ?? []),
+          ]),
+        ];
+
+        const services = [];
+        for (const id of memberIds) {
+          const svc = await client.getService(id);
+          if (!svc) continue;
+          const manifest = (svc.manifest as Record<string, unknown>) || {};
+          const serviceType =
+            (svc.serviceType as string) ||
+            (manifest.serviceType as string) ||
+            "guide";
+          const interactionType = inferInteractionType(serviceType);
+          const proactivity = resolveProactivityConfig(interactionType);
+          services.push({
+            id,
+            name: (svc.name as string) || (manifest.name as string) || id,
+            dept:
+              (svc.department as string) ||
+              (manifest.department as string) ||
+              "",
+            serviceType,
+            interactionType,
+            proactive: false,
+            gated: false,
+            desc: (manifest.description as string) || "",
+            govuk_url: (manifest.govuk_url as string) || "",
+            eligibility_summary: (manifest.eligibility_summary as string) || "",
+            proactivity: {
+              mode: proactivity.mode,
+              framingPrefix: proactivity.framingPrefix,
+              priority: proactivity.priority,
+              iconHint: proactivity.iconHint,
+              accentColor: proactivity.accentColor,
+            },
+          });
+        }
+
+        if (services.length === 0) continue;
+        const memberSet = services.map((s) => s.id);
+
+        const entry = {
+          id: t.id,
+          icon: t.icon,
+          name: t.name,
+          desc: t.description,
+          entryNodeCount: t.entryServiceIds.length,
+          totalServiceCount: services.length,
+          services,
+          plan: {
+            entryServiceIds: t.entryServiceIds.filter((id) =>
+              memberSet.includes(id),
+            ),
+            groups: buildGroups(t.entryServiceIds, t.edges, memberSet),
+            edges: t.edges.filter(
+              (e) => memberSet.includes(e.from) && memberSet.includes(e.to),
+            ),
+          },
+          templateId: t.id,
+          templateVersion: t.version,
+        };
+        lifeEvents.push(entry as unknown as (typeof lifeEvents)[number]);
+      } catch {
+        // Skip a template-only plan that fails to resolve — never break the list.
+      }
+    }
+  }
 
   return NextResponse.json({ lifeEvents });
 }

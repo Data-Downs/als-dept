@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from "react";
 import type { CardDefinition } from "@als/schemas";
+import { isFieldVisible, isComplete, collectSubmission } from "@als/schemas";
 import { FieldRenderer } from "./field-renderers";
 
 interface GenericFormCardProps {
@@ -38,35 +39,14 @@ export function GenericFormCard({
     [],
   );
 
-  const isFieldVisible = (
-    field: (typeof definition.fields)[number],
-  ): boolean => {
-    if (!field.showWhen) return true;
-    const depValue = String(values[field.showWhen.field] ?? "");
-    return field.showWhen.values.includes(depValue);
-  };
+  const fieldVisible = (field: (typeof definition.fields)[number]): boolean =>
+    isFieldVisible(field, values);
 
-  const canSubmit = definition.fields
-    .filter((f) => f.required && isFieldVisible(f))
-    .every((f) => {
-      const val = values[f.key];
-      return val !== "" && val !== undefined && val !== null;
-    });
+  const canSubmit = isComplete(definition, values);
 
   const handleSubmit = () => {
     if (!canSubmit) return;
-    // Only include visible fields
-    const submittable: Record<string, string | number | boolean> = {};
-    for (const field of definition.fields) {
-      if (
-        isFieldVisible(field) &&
-        values[field.key] !== "" &&
-        values[field.key] !== undefined
-      ) {
-        submittable[field.key] = values[field.key];
-      }
-    }
-    onSubmit(submittable);
+    onSubmit(collectSubmission(definition, values));
   };
 
   return (
@@ -76,7 +56,7 @@ export function GenericFormCard({
       )}
 
       {definition.fields.map((field) => {
-        if (!isFieldVisible(field)) return null;
+        if (!fieldVisible(field)) return null;
 
         // Checkbox has label inline
         if (field.type === "checkbox") {

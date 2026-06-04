@@ -1,0 +1,29 @@
+{
+  "name": "@als/gov-web",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --port 3108 -H 0.0.0.0",
+    "build": "next build",
+    "start": "next start --port 3108",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@als/evidence": "*",
+    "@als/schemas": "*",
+    "@als/service-graph": "*",
+    "@als/service-store": "*",
+    "govuk-frontend": "^5.7.1",
+    "next": "15.1.12",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-markdown": "^9.0.1",
+    "remark-gfm": "^4.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "typescript": "^5.7.0"
+  }
+}

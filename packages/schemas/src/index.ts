@@ -596,6 +596,35 @@ export type {
   PlanIndexEntry,
 } from "./service-markdown";
 
+// ── Field merge (canonical field collapse) ──
+
+export {
+  FIELD_ALIASES,
+  canonicalFieldKey,
+  mergeConsentFields,
+} from "./field-merge";
+export type {
+  MergedField,
+  MergedFieldSummary,
+  ServiceConsentFields,
+} from "./field-merge";
+
+// ── Card logic (shared renderer contract) ──
+
+export {
+  isFieldVisible,
+  getVisibleFields,
+  isComplete,
+  collectSubmission,
+  FIELD_DESCRIPTORS,
+} from "./card-logic";
+export type {
+  FieldValue,
+  FieldValues,
+  GovukControl,
+  FieldDescriptor,
+} from "./card-logic";
+
 // ── Plan layer ──
 
 export {

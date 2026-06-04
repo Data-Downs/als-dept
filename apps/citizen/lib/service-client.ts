@@ -10,6 +10,8 @@
  * - Returns null on any error (caller falls back to bundled data)
  */
 
+import type { PlanTemplate } from "@als/schemas";
+
 /** Minimal Fetcher interface — matches Cloudflare Service Binding */
 interface Fetcher {
   fetch(input: RequestInfo | URL, init?: RequestInit): Promise<Response>;
@@ -71,14 +73,7 @@ export class ServiceClient {
   }
 
   /** GET /api/v1/plans — published plan templates, or null on error/no-studio */
-  async getPlans(): Promise<{
-    plans: Array<{
-      id: string;
-      version: string;
-      entryServiceIds: string[];
-      edges: Array<{ from: string; to: string; type: "REQUIRES" | "ENABLES" }>;
-    }>;
-  } | null> {
+  async getPlans(): Promise<{ plans: PlanTemplate[] } | null> {
     return this.fetchJson("/api/v1/plans");
   }
 
