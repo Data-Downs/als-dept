@@ -6,6 +6,8 @@
 export {
   ServiceArtefactStore,
   ServiceGraphStore,
+  DecisionGateStore,
+  PlanTemplateStore,
   seedServiceStore,
 } from "@als/service-store";
 

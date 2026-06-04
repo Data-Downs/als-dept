@@ -5,3 +5,5 @@ export type { ConsentDecision } from "./consent-model";
 export { ArtefactStore } from "./artefact-store";
 export type { ServiceArtefacts } from "./artefact-store";
 export { FieldCollector } from "./field-collector";
+export { projectPlan, accumulateGateAnswers } from "./plan-aggregator";
+export type { PlanScaffold } from "./plan-aggregator";

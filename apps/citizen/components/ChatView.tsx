@@ -26,6 +26,7 @@ import { PipelineTraceBar } from "./PipelineTraceBar";
 import { PlanCardsInChat } from "./PlanCardsInChat";
 import { RegisterBirthCard } from "./RegisterBirthCard";
 import OutcomeCard from "./OutcomeCard";
+import { AgentConsentNotice } from "./AgentConsentNotice";
 
 const TERMINAL_STATES = getAllTerminalStateIds();
 
@@ -216,6 +217,7 @@ export function ChatView() {
         {/* Empty state */}
         {conversationHistory.length === 0 && !isLoading && (
           <div className="text-center text-govuk-dark-grey py-12">
+            <AgentConsentNotice />
             <svg
               className="mx-auto mb-3 opacity-40"
               width="40"

@@ -4,6 +4,8 @@ import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
   Server,
+  Route,
+  GitFork,
   FileSearch,
   BarChart3,
   Users,
@@ -32,6 +34,18 @@ const mainNav: NavItem[] = [
     href: "/services",
     icon: <Server size={18} />,
     matchPrefix: "/services",
+  },
+  {
+    label: "Plans",
+    href: "/plans",
+    icon: <Route size={18} />,
+    matchPrefix: "/plans",
+  },
+  {
+    label: "Gates",
+    href: "/gates",
+    icon: <GitFork size={18} />,
+    matchPrefix: "/gates",
   },
   {
     label: "Evidence",

@@ -13,6 +13,12 @@
 
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { ArtefactStore, type ServiceArtefacts } from "@als/legibility";
+import { serviceToMarkdown, planToMarkdown } from "@als/schemas";
+import type {
+  PlanTemplate,
+  PlanServiceSummary,
+  DecisionGateDefinition,
+} from "@als/schemas";
 
 function slugToPrefix(serviceId: string): string {
   const slug = ArtefactStore.slugFromId(serviceId);
@@ -27,6 +33,31 @@ export function registerResourcesForService(
   const prefix = slugToPrefix(serviceId);
   const serviceName = artefacts.manifest.name;
   let count = 0;
+
+  // Markdown capability card — prose rendering for the agent to read before
+  // calling the structured tools.
+  mcpServer.resource(
+    `${prefix}-capability-card`,
+    `service://${serviceId}/capability-card`,
+    {
+      description: `Human-readable capability card for ${serviceName}`,
+      mimeType: "text/markdown",
+    },
+    () => ({
+      contents: [
+        {
+          uri: `service://${serviceId}/capability-card`,
+          text: serviceToMarkdown({
+            manifest: artefacts.manifest,
+            policy: artefacts.policy,
+            stateModel: artefacts.stateModel,
+            consent: artefacts.consent,
+          }),
+        },
+      ],
+    }),
+  );
+  count++;
 
   // Always register manifest
   mcpServer.resource(
@@ -124,6 +155,56 @@ export function registerAllResources(
     total += registerResourcesForService(mcpServer, serviceId, artefacts);
   }
   return total;
+}
+
+/**
+ * Register a plan template as MCP resources:
+ *   - plan://{planId}/capability-card → Markdown plan card
+ *   - plan://{planId}/template        → structured plan template JSON
+ */
+export function registerResourcesForPlan(
+  mcpServer: McpServer,
+  plan: PlanTemplate,
+  services: PlanServiceSummary[],
+  gates: DecisionGateDefinition[],
+): number {
+  const prefix = plan.id.replace(/[^a-z0-9]/gi, "_");
+
+  mcpServer.resource(
+    `${prefix}-plan-card`,
+    `plan://${plan.id}/capability-card`,
+    {
+      description: `Capability card for the ${plan.name} plan`,
+      mimeType: "text/markdown",
+    },
+    () => ({
+      contents: [
+        {
+          uri: `plan://${plan.id}/capability-card`,
+          text: planToMarkdown({ plan, services, gates }),
+        },
+      ],
+    }),
+  );
+
+  mcpServer.resource(
+    `${prefix}-plan-template`,
+    `plan://${plan.id}/template`,
+    {
+      description: `Structured plan template for ${plan.name}`,
+      mimeType: "application/json",
+    },
+    () => ({
+      contents: [
+        {
+          uri: `plan://${plan.id}/template`,
+          text: JSON.stringify(plan, null, 2),
+        },
+      ],
+    }),
+  );
+
+  return 2;
 }
 
 /**

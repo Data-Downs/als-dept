@@ -70,6 +70,18 @@ export class ServiceClient {
     return this.fetchJson("/api/v1/life-events");
   }
 
+  /** GET /api/v1/plans — published plan templates, or null on error/no-studio */
+  async getPlans(): Promise<{
+    plans: Array<{
+      id: string;
+      version: string;
+      entryServiceIds: string[];
+      edges: Array<{ from: string; to: string; type: "REQUIRES" | "ENABLES" }>;
+    }>;
+  } | null> {
+    return this.fetchJson("/api/v1/plans");
+  }
+
   /**
    * Get a specific artefact (manifest, policy, stateModel, consent) from a service.
    * Fetches the full service and extracts the requested artefact.

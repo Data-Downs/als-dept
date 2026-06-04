@@ -10,6 +10,10 @@
 
 export { ServiceArtefactStore } from "./service-store";
 export { ServiceGraphStore } from "./graph-store";
+export { DecisionGateStore } from "./gate-store";
+export type { GateFilter } from "./gate-store";
+export { PlanTemplateStore } from "./plan-store";
+export type { PlanFilter, PlanSummary } from "./plan-store";
 export { seedServiceStore } from "./seed";
 export type { SeedOptions, SeedResult } from "./seed";
 export { normaliseDepartment } from "./department-map";

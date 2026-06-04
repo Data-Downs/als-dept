@@ -12,6 +12,8 @@
 import {
   ServiceArtefactStore,
   ServiceGraphStore,
+  DecisionGateStore,
+  PlanTemplateStore,
   seedServiceStore,
   D1Adapter,
 } from "./service-store-imports";
@@ -20,6 +22,8 @@ import type { DatabaseAdapter } from "@als/evidence";
 let adapter: DatabaseAdapter | null = null;
 let artefactStore: ServiceArtefactStore | null = null;
 let graphStore: ServiceGraphStore | null = null;
+let planStore: PlanTemplateStore | null = null;
+let gateStore: DecisionGateStore | null = null;
 let initPromise: Promise<void> | null = null;
 
 async function ensureInit(): Promise<void> {
@@ -63,12 +67,16 @@ async function ensureInit(): Promise<void> {
 
       artefactStore = new ServiceArtefactStore(adapter);
       graphStore = new ServiceGraphStore(adapter);
+      planStore = new PlanTemplateStore(adapter);
+      gateStore = new DecisionGateStore(adapter);
 
       // On D1, tables are created by migrations — skip init().
       // On SQLite, init() creates tables if they don't exist.
       if (!isD1) {
         await artefactStore.init();
         await graphStore.init();
+        await planStore.init();
+        await gateStore.init();
       }
 
       // Auto-seed if the store is empty
@@ -100,6 +108,16 @@ export async function getServiceGraphStore(): Promise<ServiceGraphStore> {
   return graphStore!;
 }
 
+export async function getPlanTemplateStore(): Promise<PlanTemplateStore> {
+  await ensureInit();
+  return planStore!;
+}
+
+export async function getDecisionGateStore(): Promise<DecisionGateStore> {
+  await ensureInit();
+  return gateStore!;
+}
+
 /** Get the raw DatabaseAdapter (used by seed route) */
 export async function getServiceStoreAdapter(): Promise<DatabaseAdapter> {
   await ensureInit();
@@ -111,5 +129,7 @@ export function invalidateServiceStore(): void {
   adapter = null;
   artefactStore = null;
   graphStore = null;
+  planStore = null;
+  gateStore = null;
   initPromise = null;
 }

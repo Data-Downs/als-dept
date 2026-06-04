@@ -197,6 +197,9 @@ export interface ActivePlan {
   lifeEventId: string;
   lifeEventName: string;
   lifeEventIcon: string;
+  /** Published plan template this active plan was hydrated from (provenance). */
+  templateId?: string;
+  templateVersion?: string;
   startedAt: string;
   updatedAt: string;
   serviceProgress: Record<string, ServicePlanStatus>;
@@ -235,6 +238,9 @@ export interface LifeEventInfo {
   totalServiceCount: number;
   services: LifeEventService[];
   plan?: LifeEventPlan;
+  /** Published plan template backing this life event, if reachable. */
+  templateId?: string;
+  templateVersion?: string;
 }
 
 export interface LifeEventService {

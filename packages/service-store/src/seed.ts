@@ -15,8 +15,31 @@ import {
 } from "@als/service-graph";
 import { ServiceArtefactStore } from "./service-store";
 import { ServiceGraphStore } from "./graph-store";
+import { PlanTemplateStore } from "./plan-store";
+import { DecisionGateStore } from "./gate-store";
 import { FULL_SERVICES } from "./full-services";
 import { normaliseDepartment } from "./department-map";
+import {
+  DEFAULT_PLAN_SETTINGS,
+  DEFAULT_POSTURE,
+  type DecisionGateFile,
+} from "@als/schemas";
+
+// Decision-gate definitions, loaded lazily (filesystem available locally; absent
+// in the Worker bundle, where this returns []).
+let _gateFiles: DecisionGateFile[] | null = null;
+function getGateFiles(): DecisionGateFile[] {
+  if (!_gateFiles) {
+    _gateFiles = [];
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      _gateFiles.push(require("../../../data/decision-gates/bereavement.json"));
+    } catch {
+      /* no gate files in this context */
+    }
+  }
+  return _gateFiles;
+}
 
 // Catalogue data loaded lazily to avoid bloating the Worker bundle
 let _catalogueData: Array<Record<string, unknown>> | null = null;
@@ -45,6 +68,8 @@ export interface SeedResult {
   catalogueServices: number;
   edges: number;
   lifeEvents: number;
+  planTemplates: number;
+  decisionGates: number;
 }
 
 /**
@@ -60,7 +85,13 @@ export async function seedServiceStore(
 ): Promise<SeedResult> {
   const artefactStore = new ServiceArtefactStore(db);
   const graphStore = new ServiceGraphStore(db);
+  const planStore = new PlanTemplateStore(db);
+  const gateStore = new DecisionGateStore(db);
   const engine = new ServiceGraphEngine();
+
+  // Ensure the plan-layer tables exist (no-op if already created / on D1 migrations).
+  await planStore.init();
+  await gateStore.init();
 
   if (options.clear) {
     // Preserve LLM-generated services — only clear graph-only and non-generated entries
@@ -180,6 +211,72 @@ export async function seedServiceStore(
   await db.batch(leStatements);
   await db.batch(lesStatements);
 
+  // 4b. Migrate decision gates into the gate store. Idempotent (INSERT OR IGNORE)
+  //     and additive — never overwrites a gate edited/published in the studio.
+  const gateFiles = getGateFiles();
+  const gatesByLifeEvent = new Map<string, string[]>();
+  const gateStatements: Array<{ sql: string; params: unknown[] }> = [];
+  let gateCount = 0;
+  for (const file of gateFiles) {
+    for (const gate of file.gates) {
+      const lifeEventId = gate.context?.lifeEventId ?? file.lifeEventId ?? null;
+      const serviceId = gate.context?.serviceId ?? file.serviceId ?? null;
+      gateStatements.push({
+        sql: `INSERT OR IGNORE INTO decision_gates
+                (id, question, help_text, sensitive, options_json, context_life_event_id, context_service_id, published)
+              VALUES (?, ?, ?, ?, ?, ?, ?, 1)`,
+        params: [
+          gate.id,
+          gate.question,
+          gate.helpText ?? null,
+          gate.sensitive ? 1 : 0,
+          JSON.stringify(gate.options),
+          lifeEventId,
+          serviceId,
+        ],
+      });
+      if (lifeEventId) {
+        const list = gatesByLifeEvent.get(lifeEventId) ?? [];
+        list.push(gate.id);
+        gatesByLifeEvent.set(lifeEventId, list);
+      }
+      gateCount++;
+    }
+  }
+  await db.batch(gateStatements);
+
+  // 4c. Migrate the 16 life events into plan templates. Structure (entry services,
+  //     edges) is derived from the graph engine; gates attached by life event.
+  //     Published so existing journeys stay live. Idempotent and additive.
+  const planStatements: Array<{ sql: string; params: unknown[] }> = [];
+  let planCount = 0;
+  for (const le of LIFE_EVENTS) {
+    const lePlan = engine.getLifeEventPlan(le.id);
+    const entryServiceIds = lePlan?.entryServiceIds ?? le.entryNodes;
+    const edges = lePlan?.edges ?? [];
+    planStatements.push({
+      sql: `INSERT OR IGNORE INTO plan_templates
+              (id, version, name, icon, description, membership_mode,
+               entry_service_ids_json, service_ids_json, edges_json,
+               shared_fields_json, relevance_rules_json, gate_ids_json,
+               settings_json, posture_json, published)
+            VALUES (?, '1.0.0', ?, ?, ?, 'graph-traversal', ?, NULL, ?, '[]', '[]', ?, ?, ?, 1)`,
+      params: [
+        le.id,
+        le.name,
+        le.icon,
+        le.desc,
+        JSON.stringify(entryServiceIds),
+        JSON.stringify(edges),
+        JSON.stringify(gatesByLifeEvent.get(le.id) ?? []),
+        JSON.stringify(DEFAULT_PLAN_SETTINGS),
+        JSON.stringify(DEFAULT_POSTURE),
+      ],
+    });
+    planCount++;
+  }
+  await db.batch(planStatements);
+
   // 5. Seed catalogue services from GOV.UK spreadsheet
   // These are lightweight entries (no artefacts) — INSERT OR IGNORE to avoid
   // duplicating existing full or graph services.
@@ -273,5 +370,7 @@ export async function seedServiceStore(
     catalogueServices: catalogueCount,
     edges: EDGES.length,
     lifeEvents: LIFE_EVENTS.length,
+    planTemplates: planCount,
+    decisionGates: gateCount,
   };
 }

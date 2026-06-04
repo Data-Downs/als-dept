@@ -490,10 +490,12 @@ export function formDataToApiPayload(data: ServiceFormData) {
 
 function Section({
   title,
+  description,
   children,
   defaultOpen = false,
 }: {
   title: string;
+  description?: string;
   children: React.ReactNode;
   defaultOpen?: boolean;
 }) {
@@ -511,7 +513,14 @@ function Section({
         </span>
       </button>
       {open && (
-        <div className="border-t border-studio-border p-4">{children}</div>
+        <div className="border-t border-studio-border p-4">
+          {description && (
+            <p className="text-xs text-gray-500 leading-relaxed mb-4">
+              {description}
+            </p>
+          )}
+          {children}
+        </div>
       )}
     </div>
   );
@@ -521,20 +530,29 @@ function Section({
 
 function ToggleSection({
   title,
+  description,
   enabled,
   onToggle,
   children,
 }: {
   title: string;
+  description?: string;
   enabled: boolean;
   onToggle: (v: boolean) => void;
   children: React.ReactNode;
 }) {
   return (
     <div className="border border-studio-border rounded-xl bg-white mb-4">
-      <div className="p-4 flex justify-between items-center">
-        <span className="font-bold text-sm">{title}</span>
-        <label className="flex items-center gap-2 text-sm cursor-pointer">
+      <div className="p-4 flex justify-between items-center gap-4">
+        <div>
+          <span className="font-bold text-sm">{title}</span>
+          {description && (
+            <p className="text-xs text-gray-500 leading-relaxed mt-1">
+              {description}
+            </p>
+          )}
+        </div>
+        <label className="flex items-center gap-2 text-sm cursor-pointer whitespace-nowrap">
           <input
             type="checkbox"
             checked={enabled}
@@ -608,7 +626,11 @@ export default function ServiceForm({
   return (
     <form onSubmit={handleSubmit}>
       {/* Core Details — always visible */}
-      <Section title="Core Details" defaultOpen={true}>
+      <Section
+        title="Core Details"
+        description="Who provides this service and what it does. This is the identity an agent reads first to decide whether the service is the right match for a citizen's need."
+        defaultOpen={true}
+      >
         <FormField label="Service name" required error={errors.name}>
           <input
             type="text"
@@ -658,7 +680,10 @@ export default function ServiceForm({
       </Section>
 
       {/* Input/Output Schema */}
-      <Section title="Input / Output Schema">
+      <Section
+        title="Input / Output Schema"
+        description="The data contract. Input fields are what an agent must collect from the citizen before calling the service; output fields are what it gets back. Marking fields as required tells the agent what it cannot proceed without."
+      >
         <KeyValueEditor
           label="Input fields"
           fields={form.inputFields}
@@ -710,7 +735,10 @@ export default function ServiceForm({
       </Section>
 
       {/* Constraints */}
-      <Section title="Constraints">
+      <Section
+        title="Constraints"
+        description="The operational limits an agent should set expectations against: how long the service takes (SLA), what it costs, and when it's available. The agent uses these to tell the citizen what to expect before delegating."
+      >
         <FormField label="SLA" hint="e.g. 10 working days">
           <input
             type="text"
@@ -749,7 +777,10 @@ export default function ServiceForm({
       </Section>
 
       {/* Redress */}
-      <Section title="Redress">
+      <Section
+        title="Redress"
+        description="What a citizen can do if something goes wrong: where to complain, how to appeal a decision, and which ombudsman has oversight. Publishing redress routes means an agent can surface them at the moment they're needed, not bury them."
+      >
         <FormField label="Complaint URL">
           <input
             type="text"
@@ -777,7 +808,10 @@ export default function ServiceForm({
       </Section>
 
       {/* Audit */}
-      <Section title="Audit Requirements">
+      <Section
+        title="Audit Requirements"
+        description="The data governance terms under which the service runs: how long records are kept, who the data controller is, and the lawful basis for processing. These make the service accountable and let an agent honestly tell a citizen how their data will be handled."
+      >
         <FormField label="Retention period">
           <input
             type="text"
@@ -807,7 +841,10 @@ export default function ServiceForm({
       </Section>
 
       {/* Handoff */}
-      <Section title="Handoff Configuration">
+      <Section
+        title="Handoff Configuration"
+        description="How an agent escalates to a human when it reaches the limit of what it can do: the phone line to route to, when that line is open, and which team queue picks it up. This is the safety net under automation."
+      >
         <FormField label="Escalation phone">
           <input
             type="text"
@@ -838,6 +875,7 @@ export default function ServiceForm({
       {/* Policy Ruleset */}
       <ToggleSection
         title="Policy Ruleset"
+        description="The eligibility logic the platform evaluates deterministically — never the LLM. Each rule checks a field and gives a plain-language reason when it fails, so an agent can explain a decision rather than just deliver it."
         enabled={form.enablePolicy}
         onToggle={(v) => update("enablePolicy", v)}
       >
@@ -987,6 +1025,7 @@ export default function ServiceForm({
       {/* State Model */}
       <ToggleSection
         title="State Model"
+        description="The journey as a state machine: the stages the service moves through and the transitions between them. The platform runs this deterministically, so the agent always knows where a case is and what can happen next. Mark a state as a receipt point to issue a verifiable record when it's reached."
         enabled={form.enableStateModel}
         onToggle={(v) => update("enableStateModel", v)}
       >
@@ -1127,14 +1166,10 @@ export default function ServiceForm({
       {/* Card Definitions */}
       <ToggleSection
         title="Card Definitions (per-state overrides)"
+        description="Override the default cards an agent renders for specific states. Each state mapping defines which form cards the citizen sees when the service transitions to that state — use this only when the generated defaults don't fit."
         enabled={form.enableCardDefinitions}
         onToggle={(v) => update("enableCardDefinitions", v)}
       >
-        <p className="text-xs text-gray-500 mb-3">
-          Override the default card registry for specific states. Each state
-          mapping defines which form cards appear when the service transitions
-          to that state.
-        </p>
         <CardDefinitionsEditor
           mappings={form.cardDefinitions}
           onChange={(mappings) => update("cardDefinitions", mappings)}
@@ -1145,6 +1180,7 @@ export default function ServiceForm({
       {/* Consent Model */}
       <ToggleSection
         title="Consent Model"
+        description="What the citizen is asked to agree to before an agent acts on their behalf: which data is shared, why, for how long, and how consent can be revoked. Delegation settings define the bounds within which an agent is authorised to act."
         enabled={form.enableConsent}
         onToggle={(v) => update("enableConsent", v)}
       >

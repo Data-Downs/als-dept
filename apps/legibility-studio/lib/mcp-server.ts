@@ -17,9 +17,15 @@ import { handleToolCall } from "@als/mcp-server/src/tool-handlers";
 import {
   registerAllResources,
   registerAllPersonaResources,
+  registerResourcesForPlan,
 } from "@als/mcp-server/src/resource-generator";
 import { registerAllPrompts } from "@als/mcp-server/src/prompt-generator";
-import { getServiceArtefactStore } from "./service-store-init";
+import type { PlanServiceSummary, DecisionGateDefinition } from "@als/schemas";
+import {
+  getServiceArtefactStore,
+  getPlanTemplateStore,
+  getDecisionGateStore,
+} from "./service-store-init";
 import type { ServiceWithArtefacts } from "./service-store-imports";
 import { getAllUsers } from "./persona-store";
 
@@ -91,6 +97,52 @@ export async function createMcpServerFromD1(): Promise<{
     console.log(`[MCP/D1] Registered ${personaCount} persona resources`);
   } catch (err) {
     console.log("[MCP/D1] Failed to load personas:", (err as Error).message);
+  }
+
+  // 4c. Register plan resources (capability card + structured template per plan)
+  try {
+    const planStoreDb = await getPlanTemplateStore();
+    const gateStoreDb = await getDecisionGateStore();
+    const plans = await planStoreDb.listPlans({ published: true });
+    let planResourceCount = 0;
+    for (const plan of plans) {
+      const memberIds = new Set<string>(plan.entryServiceIds);
+      for (const e of plan.edges) {
+        memberIds.add(e.from);
+        memberIds.add(e.to);
+      }
+      for (const id of plan.membership.serviceIds ?? []) memberIds.add(id);
+
+      const planServices: PlanServiceSummary[] = [];
+      for (const id of memberIds) {
+        const full = await artefactStoreDb.getService(id);
+        if (full) {
+          planServices.push({
+            id: full.id,
+            name: full.name,
+            department: full.department,
+            description: full.description,
+          });
+        }
+      }
+
+      const gates: DecisionGateDefinition[] = [];
+      for (const gid of plan.attachedGateIds) {
+        const g = await gateStoreDb.getGate(gid);
+        if (g) gates.push(g);
+      }
+
+      planResourceCount += registerResourcesForPlan(
+        mcpServer,
+        plan,
+        planServices,
+        gates,
+      );
+    }
+    resourceCount += planResourceCount;
+    console.log(`[MCP/D1] Registered ${planResourceCount} plan resources`);
+  } catch (err) {
+    console.log("[MCP/D1] Failed to load plans:", (err as Error).message);
   }
 
   // 5. Register tools

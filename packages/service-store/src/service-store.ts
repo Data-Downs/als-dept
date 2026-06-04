@@ -66,6 +66,16 @@ export class ServiceArtefactStore {
     } catch {
       /* column already exists */
     }
+    try {
+      await this.db.exec(`ALTER TABLE services ADD COLUMN channels_json TEXT`);
+    } catch {
+      /* column already exists */
+    }
+    try {
+      await this.db.exec(`ALTER TABLE services ADD COLUMN priority TEXT`);
+    } catch {
+      /* column already exists */
+    }
   }
 
   /** Get a single service with full artefacts */

@@ -6,6 +6,7 @@ import {
 } from "@/lib/service-data";
 import { checkPersonaEligibility } from "@/lib/eligibility-filter";
 import { inferInteractionType, resolveProactivityConfig } from "@als/schemas";
+import { getServiceClient } from "@/lib/service-client";
 
 export const dynamic = "force-dynamic";
 
@@ -21,6 +22,15 @@ export async function GET(request: NextRequest) {
   // Optional persona-based filtering
   const personaId = request.nextUrl.searchParams.get("persona");
   const personaData = personaId ? getPersonaData(personaId) : null;
+
+  // Read published plan templates from the studio when reachable. The engine
+  // remains the structural source during cutover; the template stamps provenance
+  // (which published version backs this plan). Falls back silently if no studio.
+  const client = await getServiceClient();
+  const published = client ? await client.getPlans() : null;
+  const templateMap = new Map(
+    (published?.plans ?? []).map((p) => [p.id, p]),
+  );
 
   const lifeEvents = rawLifeEvents.map((le) => {
     const allServices = engine.getLifeEventServices(le.id);
@@ -92,6 +102,8 @@ export async function GET(request: NextRequest) {
       };
     }
 
+    const template = templateMap.get(le.id);
+
     return {
       id: le.id,
       icon: le.icon,
@@ -102,6 +114,9 @@ export async function GET(request: NextRequest) {
       totalServiceCount: services.length,
       services,
       plan: filteredPlan,
+      ...(template
+        ? { templateId: template.id, templateVersion: template.version }
+        : {}),
     };
   });
 

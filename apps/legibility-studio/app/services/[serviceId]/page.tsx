@@ -344,6 +344,62 @@ function ArtefactSection({
   );
 }
 
+// ── Markdown Capability Card ──
+function CapabilityCardSection({ serviceId }: { serviceId: string }) {
+  const [markdown, setMarkdown] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
+  const cardUrl = `/services/${encodeURIComponent(serviceId)}/md`;
+
+  useEffect(() => {
+    fetch(cardUrl)
+      .then((r) => (r.ok ? r.text() : null))
+      .then(setMarkdown)
+      .catch(() => setMarkdown(null));
+  }, [cardUrl]);
+
+  const copy = useCallback(() => {
+    if (!markdown) return;
+    navigator.clipboard.writeText(markdown).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    });
+  }, [markdown]);
+
+  return (
+    <div className="border border-studio-border rounded-xl bg-white">
+      <div className="p-4 flex justify-between items-center border-b border-studio-border">
+        <div>
+          <h3 className="font-bold text-sm">Agent capability card (Markdown)</h3>
+          <p className="text-xs text-gray-500 mt-0.5">
+            Prose rendering of the artefacts an agent reads before calling the
+            structured tools. Generated, not authored.
+          </p>
+        </div>
+        <div className="flex gap-2 shrink-0">
+          <button
+            onClick={copy}
+            disabled={!markdown}
+            className="text-xs font-medium border border-studio-border rounded-lg px-3 py-1.5 hover:bg-gray-50 disabled:opacity-40"
+          >
+            {copied ? "Copied" : "Copy"}
+          </button>
+          <a
+            href={cardUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="text-xs font-medium border border-studio-border rounded-lg px-3 py-1.5 hover:bg-gray-50"
+          >
+            Open .md
+          </a>
+        </div>
+      </div>
+      <pre className="text-xs overflow-auto max-h-96 whitespace-pre-wrap bg-gray-50 p-4 rounded-b-xl font-mono">
+        {markdown ?? "Loading capability card..."}
+      </pre>
+    </div>
+  );
+}
+
 export default function ServiceDetailPage({
   params,
 }: {
@@ -548,6 +604,8 @@ export default function ServiceDetailPage({
       {/* Artefact views */}
       <h2 className="text-xl font-bold mb-3">Artefacts</h2>
       <div className="space-y-3">
+        <CapabilityCardSection serviceId={serviceId} />
+
         <ArtefactSection
           title="Capability Manifest"
           present={!!service.manifest}

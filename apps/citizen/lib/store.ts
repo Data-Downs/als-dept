@@ -396,6 +396,12 @@ function createActivePlan(
     lifeEventId: lifeEvent.id,
     lifeEventName: lifeEvent.name,
     lifeEventIcon: lifeEvent.icon,
+    ...(lifeEvent.templateId
+      ? {
+          templateId: lifeEvent.templateId,
+          templateVersion: lifeEvent.templateVersion,
+        }
+      : {}),
     startedAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
     serviceProgress,

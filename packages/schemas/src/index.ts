@@ -340,6 +340,7 @@ export interface HandoffPackage {
     serviceArea: string;
     suggestedQueue: string;
     referenceNumber?: string;
+    specialistType?: string;
   };
 }
 
@@ -578,3 +579,44 @@ export interface JsonSchema {
   required?: string[];
   [key: string]: unknown;
 }
+
+// ── Service Markdown serialisation ──
+
+export {
+  serviceToMarkdown,
+  servicesToLlmsTxt,
+  planToMarkdown,
+  plansToLlmsTxt,
+} from "./service-markdown";
+export type {
+  ServiceMarkdownInput,
+  ServiceIndexEntry,
+  PlanMarkdownInput,
+  PlanServiceSummary,
+  PlanIndexEntry,
+} from "./service-markdown";
+
+// ── Plan layer ──
+
+export {
+  DEFAULT_PLAN_SETTINGS,
+  DEFAULT_POSTURE,
+  EMPTY_PLAN_CONTEXT,
+} from "./plan-template-types";
+export type {
+  ServicePlanStatus,
+  PlanEdge,
+  PlanFreshness,
+  PlanAssembly,
+  PlanSettings,
+  LayerPosture,
+  ServicePosture,
+  PlanMembershipMode,
+  PlanMembership,
+  PlanSharedField,
+  PlanRelevanceRule,
+  PlanTemplate,
+  PlanContext,
+  MemberStateSnapshot,
+  PlanProjection,
+} from "./plan-template-types";
