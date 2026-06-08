@@ -11,6 +11,7 @@
     "lint": "turbo lint",
     "test": "turbo test && vitest run --config vitest.config.ts",
     "clean": "rm -rf apps/citizen/.next apps/legibility-studio/.next",
+    "generate:full-services": "npx tsx scripts/generate-full-services.ts",
     "seed": "npx tsx scripts/seed-traces.ts",
     "seed:ledger": "npx tsx scripts/seed-ledger.ts",
     "seed:services": "npx tsx scripts/seed-service-store.ts",
