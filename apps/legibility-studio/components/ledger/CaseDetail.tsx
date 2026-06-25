@@ -89,7 +89,7 @@ export default function CaseDetail({
   const fetchData = () => {
     setLoading(true);
     fetch(
-      `${process.env.NEXT_PUBLIC_CITIZEN_API || "http://localhost:3100"}/api/ledger/services/${encodeURIComponent(serviceId)}/cases/${encodeURIComponent(userId)}`,
+      `${process.env.NEXT_PUBLIC_CITIZEN_API || "http://localhost:3106"}/api/ledger/services/${encodeURIComponent(serviceId)}/cases/${encodeURIComponent(userId)}`,
     )
       .then((r) => r.json())
       .then((data) => {
@@ -119,7 +119,7 @@ export default function CaseDetail({
     setResetting(true);
     try {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_CITIZEN_API || "http://localhost:3100"}/api/ledger/services/${encodeURIComponent(serviceId)}/cases/${encodeURIComponent(userId)}/reset`,
+        `${process.env.NEXT_PUBLIC_CITIZEN_API || "http://localhost:3106"}/api/ledger/services/${encodeURIComponent(serviceId)}/cases/${encodeURIComponent(userId)}/reset`,
         { method: "DELETE" },
       );
       const data = await res.json();

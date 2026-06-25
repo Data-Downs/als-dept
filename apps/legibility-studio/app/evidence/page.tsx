@@ -47,7 +47,7 @@ export default function EvidencePage() {
 
   useEffect(() => {
     fetch(
-      `${process.env.NEXT_PUBLIC_CITIZEN_API || "http://localhost:3100"}/api/traces`,
+      `${process.env.NEXT_PUBLIC_CITIZEN_API || "http://localhost:3106"}/api/traces`,
     )
       .then((r) => r.json())
       .then((data) => {
@@ -66,7 +66,7 @@ export default function EvidencePage() {
     setDetailLoading(true);
     try {
       const resp = await fetch(
-        `${process.env.NEXT_PUBLIC_CITIZEN_API || "http://localhost:3100"}/api/traces/${traceId}`,
+        `${process.env.NEXT_PUBLIC_CITIZEN_API || "http://localhost:3106"}/api/traces/${traceId}`,
       );
       const data = await resp.json();
       setTraceEvents(data.events || []);

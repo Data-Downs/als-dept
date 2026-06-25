@@ -33,7 +33,7 @@ export default function ReviewDialog({
 
     try {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_CITIZEN_API || "http://localhost:3100"}/api/ledger/services/${encodeURIComponent(serviceId)}/cases/${encodeURIComponent(userId)}/review`,
+        `${process.env.NEXT_PUBLIC_CITIZEN_API || "http://localhost:3106"}/api/ledger/services/${encodeURIComponent(serviceId)}/cases/${encodeURIComponent(userId)}/review`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

@@ -60,7 +60,7 @@ export default function StudioHomePage() {
     Promise.all([
       fetch("/api/services").then((r) => r.json()),
       fetch(
-        `${process.env.NEXT_PUBLIC_CITIZEN_API || "http://localhost:3100"}/api/ledger/dashboard`,
+        `${process.env.NEXT_PUBLIC_CITIZEN_API || "http://localhost:3106"}/api/ledger/dashboard`,
       )
         .then((r) => r.json())
         .catch(() => null),

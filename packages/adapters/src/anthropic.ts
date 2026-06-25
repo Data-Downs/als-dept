@@ -137,10 +137,10 @@ export class AnthropicAdapter implements ServiceAdapter {
           inputTokens: response.usage?.input_tokens,
           outputTokens: response.usage?.output_tokens,
           cacheCreationInputTokens:
-            (response.usage as Record<string, unknown>)
+            (response.usage as unknown as Record<string, unknown>)
               ?.cache_creation_input_tokens ?? 0,
           cacheReadInputTokens:
-            (response.usage as Record<string, unknown>)
+            (response.usage as unknown as Record<string, unknown>)
               ?.cache_read_input_tokens ?? 0,
         },
       };

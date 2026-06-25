@@ -429,6 +429,10 @@ function ServiceTable({
                       </>
                     ) : (
                       <>
+                        <a href={`/services/${encodeURIComponent(service.id)}`} className="text-xs font-semibold text-studio-accent hover:underline">Open</a>
+                        <span className="text-gray-300">|</span>
+                        <a href={`/services/${encodeURIComponent(service.id)}/edit`} className="text-xs font-semibold text-studio-accent hover:underline">Edit</a>
+                        <span className="text-gray-300">|</span>
                         <span className="text-xs text-gray-500">No artefacts</span>
                         {service.govuk_url && (
                           <>
