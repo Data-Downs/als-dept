@@ -85,6 +85,48 @@ function applicantRef(): string {
   return `${pick(FIRST)[0]}${pick(LAST)}${randint(10, 99)}`;
 }
 
+// Who drives a given state transition, inferred from the destination state.
+// citizen = the steps a person must personally take (prove identity, consent,
+// provide/confirm details, upload, sign, pay); system = automated outcomes
+// (checks, assessments, decisions, issuance); agent = everything done on the
+// citizen's behalf (submissions, notifications). The studio renders these as
+// the green "C / Citizen", grey "S / System" and blue "A / Agent" badges.
+function actorForState(toState: string): "agent" | "citizen" | "system" {
+  const s = toState.toLowerCase();
+  if (
+    s === "identity-verified" ||
+    s.includes("consent") ||
+    s.includes("personal-details") ||
+    s.includes("child-details") ||
+    s.includes("details-provided") ||
+    s.includes("details-confirmed") ||
+    s.includes("details-collected") ||
+    s.includes("housing") ||
+    s.includes("income") ||
+    s.includes("bank") ||
+    s.includes("upload") ||
+    s.includes("sign") ||
+    s.includes("appointment-booked") ||
+    s.includes("payment") ||
+    s.includes("paid")
+  )
+    return "citizen";
+  if (
+    s.includes("decision") ||
+    s.includes("assessment") ||
+    s.includes("determination") ||
+    s.includes("calculated") ||
+    s.includes("verified") ||
+    s.includes("registered") ||
+    s.includes("completed") ||
+    s.includes("issued") ||
+    s.includes("under-review") ||
+    s.includes("order-confirmed")
+  )
+    return "system";
+  return "agent";
+}
+
 const FAILURE_STATES = new Set(["rejected", "handed-off"]);
 
 interface StateDef {
@@ -225,9 +267,9 @@ for (const serviceId of serviceIds) {
         { fromState: from, toState: to, trigger: trig, ...(terminal ? { terminal } : {}) },
         serviceId,
       );
-      const actor = rand() < 0.6 ? "agent" : "human";
+      const actor = actorForState(to);
       if (actor === "agent") agentActions++;
-      else humanActions++;
+      else if (actor === "citizen") humanActions++;
       caseEventRows.push({ evtId, type: "state.transition", actor, summary: `State: ${from} -> ${to}`, min: minute });
     }
     pushEvent("llm.response", { responseChars: randint(200, 1600), status: "complete" }, serviceId);
