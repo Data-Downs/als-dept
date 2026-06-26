@@ -185,6 +185,27 @@ for (const serviceId of serviceIds) {
   const states = model.states ?? [];
   if (states.length < 2) continue;
 
+  // Consent grants define exactly which fields are shared, from where, and why
+  // — the privacy-preserving record of what was exchanged (no raw values).
+  let grants: Array<{
+    id: string;
+    description: string;
+    data_shared: string[];
+    source: string;
+    purpose: string;
+  }> = [];
+  try {
+    const cm = JSON.parse(
+      readFileSync(path.join(SERVICES_DIR, serviceId, "consent.json"), "utf8"),
+    );
+    grants = (cm.grants || []).filter(
+      (g: { data_shared?: string[] }) =>
+        Array.isArray(g.data_shared) && g.data_shared.length > 0,
+    );
+  } catch {
+    // Service has no consent model — leave grants empty.
+  }
+
   const triggerOf = new Map<string, string>();
   for (const t of model.transitions ?? []) {
     triggerOf.set(`${t.from}|${t.to}`, t.trigger ?? "advance");
@@ -270,6 +291,7 @@ for (const serviceId of serviceIds) {
       return id;
     };
 
+    const evtStart = eventCounter;
     pushEvent("llm.request", { agent: "dot", messageCount: 1 }, serviceId);
     pushEvent("capability.invoked", { serviceId, fromState: "not-started" }, serviceId);
 
@@ -328,17 +350,41 @@ for (const serviceId of serviceIds) {
           ? `State: ${from} -> rejected — ${rejectionReason}`
           : `State: ${from} -> ${to}`;
       caseEventRows.push({ evtId, type: "state.transition", actor, summary, min: minute });
+
+      // On reaching consent, record what the citizen actually shared: the
+      // field list, source and purpose for each grant — but not the values.
+      if (to.includes("consent") && grants.length > 0) {
+        for (const g of grants.slice(0, 4)) {
+          const cEvt = pushEvent(
+            "consent.granted",
+            {
+              grantId: g.id,
+              description: g.description,
+              dataShared: g.data_shared,
+              source: g.source,
+              purpose: g.purpose,
+            },
+            serviceId,
+          );
+          const fields =
+            g.data_shared.slice(0, 3).join(", ") +
+            (g.data_shared.length > 3 ? `, +${g.data_shared.length - 3} more` : "");
+          caseEventRows.push({
+            evtId: cEvt,
+            type: "consent.granted",
+            actor: "citizen",
+            summary: `Consent granted — shared ${fields} via ${g.source}`,
+            min: minute,
+          });
+        }
+      }
     }
     pushEvent("llm.response", { responseChars: randint(200, 1600), status: "complete" }, serviceId);
     if (outcome === "completed") {
       pushEvent("capability.result", { success: true, toState: finalState }, serviceId);
     }
 
-    const eventCount =
-      path_.length -
-      1 +
-      (outcome === "completed" ? 4 : 3) +
-      (outcome === "rejected" && rejectionReason ? 1 : 0);
+    const eventCount = eventCounter - evtStart;
     const lastActivity = isoMinus(daysAgo, minute);
 
     // ── case row ──

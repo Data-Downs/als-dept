@@ -163,6 +163,15 @@ export default function CaseDetail({
         )?.tracePayload?.reason as string | undefined)
       : undefined;
 
+  const sharedData = timeline
+    .filter((e) => e.eventType === "consent.granted" && e.tracePayload)
+    .map((e) => ({
+      source: (e.tracePayload!.source as string) || "—",
+      purpose: (e.tracePayload!.purpose as string) || "",
+      fields: (e.tracePayload!.dataShared as string[]) || [],
+    }))
+    .filter((s) => s.fields.length > 0);
+
   return (
     <div className="space-y-6">
       {/* Case Header */}
@@ -296,6 +305,43 @@ export default function CaseDetail({
           </div>
         </div>
       </div>
+
+      {/* Data shared */}
+      {sharedData.length > 0 && (
+        <div className="border border-studio-border rounded-xl bg-white p-4">
+          <h3 className="text-sm font-bold mb-3">Data shared</h3>
+          <div className="space-y-3">
+            {sharedData.map((s, i) => (
+              <div key={i}>
+                <div className="flex items-center gap-2 text-sm">
+                  <span className="font-semibold">{s.source}</span>
+                  {s.purpose && (
+                    <>
+                      <span className="text-gray-300">&middot;</span>
+                      <span className="text-gray-500">{s.purpose}</span>
+                    </>
+                  )}
+                </div>
+                <div className="mt-1.5 flex flex-wrap gap-1.5">
+                  {s.fields.map((f) => (
+                    <span
+                      key={f}
+                      className="px-2 py-0.5 text-xs bg-gray-100 text-gray-700 rounded font-mono"
+                    >
+                      {f}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+          <p className="text-xs text-gray-400 mt-3">
+            Field-level record of what was shared, from where, and why &mdash;
+            with consent. Values are held in the citizen&rsquo;s data store, not
+            the evidence log.
+          </p>
+        </div>
+      )}
 
       {/* Review info */}
       {caseData.reviewStatus && caseData.reviewReason && (
