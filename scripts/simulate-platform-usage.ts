@@ -196,11 +196,23 @@ for (const serviceId of serviceIds) {
   const successTerminal = happy[happy.length - 1];
   const totalStates = states.length;
 
-  const numCases = randint(2, 5);
-  for (let i = 0; i < numCases; i++) {
+  const numCases = randint(3, 6);
+  const outcomes: Outcome[] = Array.from({ length: numCases }, () => {
     const roll = rand();
-    const outcome: Outcome =
-      roll < 0.5 ? "completed" : roll < 0.8 ? "in-progress" : roll < 0.9 ? "rejected" : "handed-off";
+    return roll < 0.4
+      ? "completed"
+      : roll < 0.6
+        ? "in-progress"
+        : roll < 0.85
+          ? "rejected"
+          : "handed-off";
+  });
+  // Guarantee at least one rejected case per service so a rejection is always
+  // easy to find when demoing.
+  if (!outcomes.includes("rejected")) outcomes[outcomes.length - 1] = "rejected";
+
+  for (let i = 0; i < numCases; i++) {
+    const outcome: Outcome = outcomes[i];
 
     // Build the path of states this applicant walked through.
     let path_: string[];
