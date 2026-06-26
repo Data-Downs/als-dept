@@ -54,3 +54,6 @@ captures/
 
 # claude
 .claude/
+
+# Simulated-usage SQL batches (scripts/simulate-platform-usage.ts)
+.tmp-sim/
