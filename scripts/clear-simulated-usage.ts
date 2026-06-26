@@ -20,10 +20,13 @@ const D1_NAME = "als-evidence";
 const DO_REMOTE = process.argv.includes("--remote");
 const DO_LOCAL = process.argv.includes("--local") || !DO_REMOTE;
 
+// Cases use the real sha256 case_id, so they're identified via their sim_
+// trace events. FK-safe on both better-sqlite3 and D1: children first, then
+// the parent cases (matched through the trace events), then the trace events.
 const CLEANUP_SQL = [
-  "DELETE FROM case_events WHERE case_id LIKE 'simcase_%' OR trace_id LIKE 'sim_%';",
+  "DELETE FROM case_events WHERE trace_id LIKE 'sim_%';",
+  "DELETE FROM cases WHERE EXISTS (SELECT 1 FROM trace_events te WHERE te.trace_id LIKE 'sim_%' AND json_extract(te.metadata, '$.userId') = cases.user_id AND json_extract(te.metadata, '$.capabilityId') = cases.service_id);",
   "DELETE FROM trace_events WHERE trace_id LIKE 'sim_%';",
-  "DELETE FROM cases WHERE case_id LIKE 'simcase_%';",
 ];
 
 void (async () => {

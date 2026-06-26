@@ -17,6 +17,7 @@
 
 import { readFileSync, readdirSync, mkdirSync, writeFileSync, rmSync } from "fs";
 import { execSync } from "child_process";
+import crypto from "crypto";
 import path from "path";
 
 const SERVICES_DIR = path.resolve(process.cwd(), "data/services");
@@ -34,11 +35,26 @@ const DO_LOCAL = process.argv.includes("--local") || !DO_REMOTE;
 
 // Removes everything this script creates — kept in sync with
 // scripts/clear-simulated-usage.ts. Run first so re-runs replace cleanly.
+// Cases use the real sha256 case_id (so the studio's detail view resolves
+// them), so they're identified via their sim_ trace events instead. Order is
+// FK-safe on both better-sqlite3 and D1 (which enforce FKs and forbid temp
+// tables): delete children first, then the parent cases (matched through the
+// still-present trace events), then the trace events themselves.
 const SIM_CLEANUP_SQL = [
-  "DELETE FROM case_events WHERE case_id LIKE 'simcase_%' OR trace_id LIKE 'sim_%';",
+  "DELETE FROM case_events WHERE trace_id LIKE 'sim_%';",
+  "DELETE FROM cases WHERE EXISTS (SELECT 1 FROM trace_events te WHERE te.trace_id LIKE 'sim_%' AND json_extract(te.metadata, '$.userId') = cases.user_id AND json_extract(te.metadata, '$.capabilityId') = cases.service_id);",
   "DELETE FROM trace_events WHERE trace_id LIKE 'sim_%';",
-  "DELETE FROM cases WHERE case_id LIKE 'simcase_%';",
 ];
+
+// Matches CaseStore.caseId — the studio's case-detail view looks cases up by
+// this hash, so simulated cases must use it too.
+function caseIdFor(userId: string, serviceId: string): string {
+  return crypto
+    .createHash("sha256")
+    .update(`${userId}:${serviceId}`)
+    .digest("hex")
+    .slice(0, 16);
+}
 
 // ── Synthetic applicants (shown monospace as a case reference in the studio) ──
 const FIRST = [
@@ -99,6 +115,7 @@ type Outcome = "completed" | "in-progress" | "rejected" | "handed-off";
 const statements: string[] = [];
 let caseCounter = 0;
 let eventCounter = 0;
+const usedCaseIds = new Set<string>();
 const serviceIds = readdirSync(SERVICES_DIR).filter((d) => {
   try {
     return readFileSync(path.join(SERVICES_DIR, d, "state-model.json"), "utf8");
@@ -143,8 +160,14 @@ for (const serviceId of serviceIds) {
       path_ = [...happy.slice(0, stopAt), outcome === "rejected" ? "rejected" : "handed-off"];
     }
 
-    const userId = applicantRef();
-    const caseId = `simcase_${++caseCounter}_${serviceId.slice(0, 20)}`;
+    caseCounter++;
+    let userId = applicantRef();
+    let caseId = caseIdFor(userId, serviceId);
+    while (usedCaseIds.has(caseId)) {
+      userId = applicantRef();
+      caseId = caseIdFor(userId, serviceId);
+    }
+    usedCaseIds.add(caseId);
     const traceId = `sim_${caseCounter}_${Math.floor(rand() * 1e7).toString(36)}`;
     const daysAgo = randint(0, 60);
     const startedAt = isoMinus(daysAgo, 0);
