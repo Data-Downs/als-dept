@@ -78,6 +78,16 @@ export default function EvidencePage() {
     setDetailLoading(false);
   };
 
+  // Deep-link: /evidence?trace=<id> opens that trace directly (e.g. from a case).
+  useEffect(() => {
+    const t =
+      typeof window !== "undefined"
+        ? new URLSearchParams(window.location.search).get("trace")
+        : null;
+    if (t) loadTrace(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   if (loading) {
     return (
       <div className="text-center py-12 text-gray-500">Loading evidence...</div>

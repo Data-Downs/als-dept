@@ -155,6 +155,14 @@ export default function CaseDetail({
     );
   }
 
+  const traceId = timeline.find((e) => e.traceId)?.traceId;
+  const rejectionReason =
+    caseData.status === "rejected"
+      ? (timeline.find(
+          (e) => e.tracePayload && typeof e.tracePayload.reason === "string",
+        )?.tracePayload?.reason as string | undefined)
+      : undefined;
+
   return (
     <div className="space-y-6">
       {/* Case Header */}
@@ -194,6 +202,18 @@ export default function CaseDetail({
           </button>
         </div>
       </div>
+
+      {/* Rejection reason */}
+      {caseData.status === "rejected" && (
+        <div className="border border-red-200 bg-red-50 rounded-xl p-4">
+          <h3 className="text-sm font-bold text-red-800 mb-1">
+            Why this was rejected
+          </h3>
+          <p className="text-sm text-red-700">
+            {rejectionReason || "No reason was recorded for this rejection."}
+          </p>
+        </div>
+      )}
 
       {/* Progress */}
       <div className="border border-studio-border rounded-xl bg-white p-4">
@@ -290,7 +310,17 @@ export default function CaseDetail({
 
       {/* Timeline */}
       <div>
-        <h3 className="text-lg font-bold mb-3">Event Timeline</h3>
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="text-lg font-bold">Event Timeline</h3>
+          {traceId && (
+            <a
+              href={`/evidence?trace=${encodeURIComponent(traceId)}`}
+              className="text-sm font-semibold text-studio-accent hover:underline"
+            >
+              View full evidence trace &rarr;
+            </a>
+          )}
+        </div>
         <CaseTimelineView timeline={timeline} />
       </div>
 

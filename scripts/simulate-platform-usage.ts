@@ -127,6 +127,17 @@ function actorForState(toState: string): "agent" | "citizen" | "system" {
   return "agent";
 }
 
+// Plausible, service-agnostic reasons a rejection decision could carry.
+const REJECTION_REASONS = [
+  "Income exceeds the eligibility threshold for this service",
+  "Residency requirement not met — insufficient qualifying period",
+  "Required supporting evidence could not be verified",
+  "An active entitlement for this benefit already exists",
+  "Eligibility criteria not met based on the details provided",
+  "Identity could not be confirmed against authoritative records",
+  "Application submitted outside the qualifying window",
+];
+
 const FAILURE_STATES = new Set(["rejected", "handed-off"]);
 
 interface StateDef {
@@ -226,6 +237,8 @@ for (const serviceId of serviceIds) {
     const consentGranted = visited.some((s) => s === "consent-given" || s === "consent-granted") ? 1 : 0;
     const handedOff = outcome === "handed-off" ? 1 : 0;
 
+    const rejectionReason = outcome === "rejected" ? pick(REJECTION_REASONS) : null;
+
     // ── trace events ──
     let minute = 0;
     const span = `span_${caseCounter}`;
@@ -262,28 +275,64 @@ for (const serviceId of serviceIds) {
         : to === successTerminal
           ? "success"
           : undefined;
+      // A rejection is preceded by a policy evaluation that explains it.
+      if (to === "rejected" && rejectionReason) {
+        const pEvt = pushEvent(
+          "policy.evaluated",
+          {
+            eligible: false,
+            passed: k,
+            failed: 1,
+            reason: rejectionReason,
+            failedRules: [rejectionReason],
+          },
+          serviceId,
+        );
+        caseEventRows.push({
+          evtId: pEvt,
+          type: "policy.evaluated",
+          actor: "system",
+          summary: `Eligibility decision: rejected — ${rejectionReason}`,
+          min: minute,
+        });
+      }
+
       const evtId = pushEvent(
         "state.transition",
-        { fromState: from, toState: to, trigger: trig, ...(terminal ? { terminal } : {}) },
+        {
+          fromState: from,
+          toState: to,
+          trigger: trig,
+          ...(terminal ? { terminal } : {}),
+          ...(to === "rejected" && rejectionReason ? { reason: rejectionReason } : {}),
+        },
         serviceId,
       );
       const actor = actorForState(to);
       if (actor === "agent") agentActions++;
       else if (actor === "citizen") humanActions++;
-      caseEventRows.push({ evtId, type: "state.transition", actor, summary: `State: ${from} -> ${to}`, min: minute });
+      const summary =
+        to === "rejected" && rejectionReason
+          ? `State: ${from} -> rejected — ${rejectionReason}`
+          : `State: ${from} -> ${to}`;
+      caseEventRows.push({ evtId, type: "state.transition", actor, summary, min: minute });
     }
     pushEvent("llm.response", { responseChars: randint(200, 1600), status: "complete" }, serviceId);
     if (outcome === "completed") {
       pushEvent("capability.result", { success: true, toState: finalState }, serviceId);
     }
 
-    const eventCount = path_.length - 1 + (outcome === "completed" ? 4 : 3);
+    const eventCount =
+      path_.length -
+      1 +
+      (outcome === "completed" ? 4 : 3) +
+      (outcome === "rejected" && rejectionReason ? 1 : 0);
     const lastActivity = isoMinus(daysAgo, minute);
 
     // ── case row ──
     statements.push(
       `INSERT INTO cases (case_id, user_id, service_id, current_state, status, started_at, last_activity_at, states_completed, progress_percent, identity_verified, eligibility_checked, eligibility_result, consent_granted, handed_off, handoff_reason, agent_actions, human_actions, review_status, review_requested_at, review_reason, event_count) VALUES (` +
-        `${sql(caseId)}, ${sql(userId)}, ${sql(serviceId)}, ${sql(finalState)}, ${sql(status)}, ${sql(startedAt)}, ${sql(lastActivity)}, ${sql(JSON.stringify(visited))}, ${progress}, ${identityVerified}, ${eligibilityChecked}, ${eligibilityChecked ? 1 : "NULL"}, ${consentGranted}, ${handedOff}, ${handedOff ? sql("Complex case escalated to a human caseworker") : "NULL"}, ${agentActions}, ${humanActions}, NULL, NULL, NULL, ${eventCount});`,
+        `${sql(caseId)}, ${sql(userId)}, ${sql(serviceId)}, ${sql(finalState)}, ${sql(status)}, ${sql(startedAt)}, ${sql(lastActivity)}, ${sql(JSON.stringify(visited))}, ${progress}, ${identityVerified}, ${eligibilityChecked}, ${outcome === "rejected" ? 0 : eligibilityChecked ? 1 : "NULL"}, ${consentGranted}, ${handedOff}, ${handedOff ? sql("Complex case escalated to a human caseworker") : "NULL"}, ${agentActions}, ${humanActions}, NULL, NULL, NULL, ${eventCount});`,
     );
 
     // ── case_events (timeline) ──
