@@ -22,6 +22,7 @@ import type {
   OrchestratorAction,
   FieldExtraction,
   TraceEvent,
+  TraceEventType,
   PipelineStep,
   PipelineTrace,
 } from "@als/schemas";
@@ -56,6 +57,22 @@ export interface LLMAdapter {
     messages: Array<{ role: string; content: unknown }>;
     tools?: Array<ToolDefinition>;
   }): Promise<LLMChatResult>;
+}
+
+// ── Trace Sink Interface ──
+// Defined here so @als/runtime does NOT import @als/evidence — mirrors the
+// LLMAdapter decoupling above. The app layer provides an implementation
+// backed by the evidence TraceEmitter, bound to a traceId/session/user, so
+// the orchestrator can persist evidence trace events as it runs without
+// taking a dependency on the evidence package. Implementations must never
+// throw — a failed emit must not break a citizen's journey.
+
+export interface TraceSink {
+  emit(
+    type: TraceEventType,
+    payload: Record<string, unknown>,
+    capabilityId?: string,
+  ): Promise<void>;
 }
 
 // ── Orchestrator I/O ──
@@ -732,17 +749,30 @@ export class Orchestrator {
   private strategy: ServiceStrategy;
   private handoffManager: HandoffManager;
   private maxIterations: number;
+  private traceSink: TraceSink | null;
 
   constructor(opts: {
     adapter: LLMAdapter;
     strategy: ServiceStrategy;
     handoffManager?: HandoffManager;
     maxIterations?: number;
+    traceSink?: TraceSink;
   }) {
     this.adapter = opts.adapter;
     this.strategy = opts.strategy;
     this.handoffManager = opts.handoffManager || new HandoffManager();
     this.maxIterations = opts.maxIterations || 5;
+    this.traceSink = opts.traceSink || null;
+  }
+
+  /** Emit an evidence trace event through the sink, if one is connected. */
+  private async emitTrace(
+    type: TraceEventType,
+    payload: Record<string, unknown>,
+    capabilityId?: string,
+  ): Promise<void> {
+    if (!this.traceSink) return;
+    await this.traceSink.emit(type, payload, capabilityId);
   }
 
   async run(input: OrchestratorInput): Promise<OrchestratorOutput> {
@@ -799,6 +829,16 @@ export class Orchestrator {
           durationMs: Date.now() - t0,
           detail: `Eligible: ${policyResult.eligible}, ${policyResult.passed.length} passed, ${policyResult.failed.length} failed`,
         });
+        await this.emitTrace(
+          "policy.evaluated",
+          {
+            eligible: policyResult.eligible,
+            passed: policyResult.passed.length,
+            failed: policyResult.failed.length,
+            edgeCases: policyResult.edgeCases.length,
+          },
+          serviceId,
+        );
       } else {
         steps.push({
           id: "policy-eval",
@@ -887,6 +927,20 @@ export class Orchestrator {
           ? "No active service journey — using triage agent"
           : "Active service journey — using journey agent",
     });
+
+    // Capability id used to key ledger cases — only a real service journey
+    // (not triage) should open or advance a case. Conversation-level events
+    // (llm.request/response) on triage turns are persisted without it, so they
+    // still appear in the evidence trace list without creating a bogus case.
+    const ledgerCapabilityId =
+      selectedAgent === "journey" ? serviceId : undefined;
+    if (ledgerCapabilityId) {
+      await this.emitTrace(
+        "capability.invoked",
+        { serviceId, fromState: currentState, agent: selectedAgent },
+        ledgerCapabilityId,
+      );
+    }
 
     // ── 4-5. Build Strategy Context + System Prompt ──
     let systemPrompt: string;
@@ -977,6 +1031,11 @@ export class Orchestrator {
 
     {
       const t0 = Date.now();
+      await this.emitTrace(
+        "llm.request",
+        { agent: selectedAgent, hasTools, messageCount: loopMessages.length },
+        ledgerCapabilityId,
+      );
       for (let i = 0; i < this.maxIterations; i++) {
         const llmResult = await this.adapter.chat({
           systemPrompt,
@@ -1041,6 +1100,15 @@ export class Orchestrator {
           toolsUsed.length > 0 ? `${toolsUsed.length} tool calls` : undefined,
         agentName: selectedAgent,
       });
+      await this.emitTrace(
+        "llm.response",
+        {
+          responseChars: responseText.length,
+          toolCalls: toolsUsed.length,
+          status: responseText ? "complete" : "incomplete",
+        },
+        ledgerCapabilityId,
+      );
     }
 
     // ── 8-9. Parse Structured Output + Build Tasks ──
@@ -1234,6 +1302,27 @@ export class Orchestrator {
           : undefined,
     });
 
+    const terminalKind = (stateId: string): "success" | "rejected" | "handoff" | undefined => {
+      if (stateModelDef?.states.find((s) => s.id === stateId)?.type !== "terminal")
+        return undefined;
+      if (stateId === "rejected") return "rejected";
+      if (stateId === "handed-off") return "handoff";
+      return "success";
+    };
+    for (const t of stateTransitions) {
+      const terminal = terminalKind(t.toState);
+      await this.emitTrace(
+        "state.transition",
+        {
+          fromState: t.fromState,
+          toState: t.toState,
+          trigger: t.trigger,
+          ...(terminal ? { terminal } : {}),
+        },
+        ledgerCapabilityId ?? serviceId,
+      );
+    }
+
     // ── 11. Deterministic Task Injection ──
     {
       const t0 = Date.now();
@@ -1334,6 +1423,15 @@ export class Orchestrator {
           urgency: handoffPackage.urgency,
           routing: handoffPackage.routing as unknown as Record<string, unknown>,
         };
+        await this.emitTrace(
+          "handoff.initiated",
+          {
+            reason: handoffCheck.reason,
+            description: handoffCheck.description,
+            urgency: handoffPackage.urgency,
+          },
+          ledgerCapabilityId ?? serviceId,
+        );
       }
       steps.push({
         id: "handoff-check",
@@ -1368,6 +1466,18 @@ export class Orchestrator {
       totalDurationMs: Date.now() - pipelineStart,
       agentUsed: selectedAgent,
     };
+
+    if (ledgerCapabilityId) {
+      await this.emitTrace(
+        "capability.result",
+        {
+          success: true,
+          toState: ucStateInfo?.currentState ?? currentState,
+          transitions: stateTransitions.length,
+        },
+        ledgerCapabilityId,
+      );
+    }
 
     return {
       response: responseText,

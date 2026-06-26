@@ -19,6 +19,8 @@ import {
   D1Adapter,
 } from "@als/evidence";
 import type { DatabaseAdapter } from "@als/evidence";
+import type { TraceSink } from "@als/runtime";
+import type { TraceEventType } from "@als/schemas";
 
 let adapter: DatabaseAdapter | null = null;
 let store: TraceStore | null = null;
@@ -108,4 +110,32 @@ export async function getCaseStore(): Promise<CaseStore> {
 export async function getEvidenceAdapter(): Promise<DatabaseAdapter> {
   await ensureInit();
   return adapter!;
+}
+
+/**
+ * Build a TraceSink bound to a single trace (and citizen) for the Orchestrator
+ * to emit journey pipeline events as evidence. Backed by the shared
+ * TraceEmitter — its emit() swallows persistence errors, so a failed write
+ * never breaks a citizen's journey.
+ */
+export async function getTraceSink(
+  traceId: string,
+  userId?: string,
+): Promise<TraceSink> {
+  const em = await getTraceEmitter();
+  return {
+    async emit(
+      type: TraceEventType,
+      payload: Record<string, unknown>,
+      capabilityId?: string,
+    ): Promise<void> {
+      const span = em.startSpan({
+        traceId,
+        sessionId: traceId,
+        userId,
+        capabilityId,
+      });
+      await em.emit(type, span, payload);
+    },
+  };
 }

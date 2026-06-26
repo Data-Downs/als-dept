@@ -5,6 +5,7 @@ export { Orchestrator } from "./orchestrator";
 export type {
   LLMAdapter,
   LLMChatResult,
+  TraceSink,
   OrchestratorInput,
   OrchestratorOutput,
   ParsedTaskField,

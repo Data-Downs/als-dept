@@ -43,7 +43,11 @@ import {
 } from "@als/schemas";
 import type { JourneyOutcome } from "@als/schemas";
 import type { StateCardMapping } from "@als/schemas";
-import { getTraceEmitter, getReceiptGenerator } from "@/lib/evidence";
+import {
+  getTraceEmitter,
+  getReceiptGenerator,
+  getTraceSink,
+} from "@/lib/evidence";
 import {
   getServiceArtefact,
   getPersonaData,
@@ -708,6 +712,7 @@ interface ChatInput {
 }
 
 type ChatOutput = OrchestratorOutput & {
+  traceId?: string;
   cardRequests?: CardRequest[];
   interactionType?: string;
   outcomes?: JourneyOutcome[];
@@ -994,7 +999,9 @@ async function chatHandler(input: unknown): Promise<ChatOutput> {
     : undefined;
 
   // ── Run Orchestrator ──
-  const orchestrator = new Orchestrator({ adapter, strategy });
+  const traceId = `trace_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
+  const traceSink = await getTraceSink(traceId, persona);
+  const orchestrator = new Orchestrator({ adapter, strategy, traceSink });
 
   // Force journey mode when transitioning from triage (service was proposed
   // by triage agent on the previous turn, client updated currentService)
@@ -1827,6 +1834,7 @@ async function chatHandler(input: unknown): Promise<ChatOutput> {
 
   return {
     ...result,
+    traceId,
     consentRequests: filteredConsentRequests,
     resolvedConsents: resolvedConsents.length > 0 ? resolvedConsents : undefined,
     cardRequests: cardRequests.length > 0 ? cardRequests : undefined,
@@ -2033,6 +2041,65 @@ export async function POST(request: NextRequest) {
       } catch (err) {
         console.warn("Demo life event detection failed:", err);
       }
+    }
+
+    // ── Persist evidence for the demo turn ──
+    // Demo mode bypasses the orchestrator, so emit a comparable trace here: a
+    // conversation-level event for every turn (so the exchange appears in the
+    // evidence plane) plus capability events for any services the scripted turn
+    // completed (so ledger cases are opened and marked complete).
+    try {
+      const demoEmitter = await getTraceEmitter();
+      const demoSink = await getTraceSink(traceId, persona);
+      await demoSink.emit("llm.response", {
+        mode: "demo",
+        responseChars: scripted.response?.length ?? 0,
+      });
+      for (const entry of scripted.outcomes ?? []) {
+        // Resolve the service's real state model so the ledger has a
+        // denominator (total states) and the completion lands on the actual
+        // success-terminal state rather than a synthetic one.
+        const sm = await loadStateModel(entry.serviceId);
+        const states = (sm?.states ?? []) as Array<{
+          id: string;
+          type?: string;
+        }>;
+        if (states.length > 0) {
+          demoEmitter.setTotalStates(entry.serviceId, states.length);
+        }
+        const initialState =
+          states.find((s) => s.type === "initial")?.id ?? "not-started";
+        const successTerminal =
+          states.find(
+            (s) =>
+              s.type === "terminal" &&
+              s.id !== "rejected" &&
+              s.id !== "handed-off",
+          )?.id ?? "completed";
+
+        await demoSink.emit(
+          "capability.invoked",
+          { serviceId: entry.serviceId, mode: "demo" },
+          entry.serviceId,
+        );
+        await demoSink.emit(
+          "state.transition",
+          {
+            fromState: initialState,
+            toState: successTerminal,
+            trigger: "demo-complete",
+            terminal: "success",
+          },
+          entry.serviceId,
+        );
+        await demoSink.emit(
+          "capability.result",
+          { success: true, mode: "demo" },
+          entry.serviceId,
+        );
+      }
+    } catch (err) {
+      console.warn("Demo trace emission failed:", err);
     }
 
     return NextResponse.json({
