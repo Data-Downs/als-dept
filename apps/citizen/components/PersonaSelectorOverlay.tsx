@@ -21,9 +21,11 @@ export function PersonaSelectorOverlay() {
   const persona = useAppStore((s) => s.persona);
   const agent = useAppStore((s) => s.agent);
   const serviceMode = useAppStore((s) => s.serviceMode);
+  const planSource = useAppStore((s) => s.planSource);
   const setPersona = useAppStore((s) => s.setPersona);
   const setAgent = useAppStore((s) => s.setAgent);
   const setServiceMode = useAppStore((s) => s.setServiceMode);
+  const setPlanSource = useAppStore((s) => s.setPlanSource);
   const setOpen = useAppStore((s) => s.setPersonaSelectorOpen);
   const [personas, setPersonas] = useState<PersonaItem[]>([]);
   const [activeDept, setActiveDept] = useState<DepartmentCode | null>(null);
@@ -170,6 +172,26 @@ export function PersonaSelectorOverlay() {
               {m.toUpperCase()}
               <span className="block text-xs font-normal mt-0.5">
                 {m === "json" ? "Stable" : "Experimental"}
+              </span>
+            </button>
+          ))}
+        </div>
+
+        <h3 className="font-bold text-sm mb-3 mt-4">Plan source</h3>
+        <div className="flex gap-2">
+          {(["graph", "studio"] as const).map((s) => (
+            <button
+              key={s}
+              onClick={() => setPlanSource(s)}
+              className={`flex-1 py-2 px-3 rounded-lg border text-sm font-medium ${
+                planSource === s
+                  ? "border-govuk-blue bg-blue-50 text-govuk-blue"
+                  : "border-govuk-mid-grey text-govuk-dark-grey"
+              }`}
+            >
+              {s === "graph" ? "Graph" : "Studio"}
+              <span className="block text-xs font-normal mt-0.5">
+                {s === "graph" ? "Engine-derived" : "Published plans"}
               </span>
             </button>
           ))}

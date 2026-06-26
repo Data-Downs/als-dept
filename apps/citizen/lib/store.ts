@@ -3,6 +3,7 @@ import type {
   PersonaData,
   AgentType,
   ServiceMode,
+  PlanSource,
   ServiceType,
   ViewType,
   Conversation,
@@ -30,6 +31,7 @@ interface AppStore {
   persona: string | null;
   agent: AgentType;
   serviceMode: ServiceMode;
+  planSource: PlanSource;
   personaData: PersonaData | null;
   enrichedData: EnrichedData | null;
 
@@ -153,6 +155,7 @@ interface AppStore {
   setPersona: (id: string) => Promise<void>;
   setAgent: (agent: AgentType) => void;
   setServiceMode: (mode: ServiceMode) => void;
+  setPlanSource: (source: PlanSource) => Promise<void>;
   navigateTo: (
     view: ViewType,
     service?: ServiceType | null,
@@ -428,6 +431,7 @@ export const useAppStore = create<AppStore>((set, get) => ({
   persona: null,
   agent: "dot",
   serviceMode: "mcp",
+  planSource: "graph",
   personaData: null,
   enrichedData: null,
   currentView: "persona-picker",
@@ -543,7 +547,9 @@ export const useAppStore = create<AppStore>((set, get) => ({
 
     // Fetch life events before showing dashboard
     try {
-      const leResp = await fetch(`/api/life-events?persona=${id}`);
+      const leResp = await fetch(
+        `/api/life-events?persona=${id}&source=${get().planSource}`,
+      );
       if (leResp.ok) {
         const leData = await leResp.json();
         if (leData.lifeEvents) {
@@ -581,6 +587,29 @@ export const useAppStore = create<AppStore>((set, get) => ({
     set({ serviceMode: mode });
     if (typeof window !== "undefined") {
       sessionStorage.setItem("c02_serviceMode", mode);
+    }
+  },
+
+  setPlanSource: async (source: PlanSource) => {
+    set({ planSource: source });
+    if (typeof window !== "undefined") {
+      sessionStorage.setItem("c02_planSource", source);
+    }
+    // Re-fetch life events from the chosen source for the current persona.
+    const id = get().persona;
+    if (!id) return;
+    try {
+      const leResp = await fetch(
+        `/api/life-events?persona=${id}&source=${source}`,
+      );
+      if (leResp.ok) {
+        const leData = await leResp.json();
+        if (leData.lifeEvents) {
+          set({ lifeEvents: leData.lifeEvents });
+        }
+      }
+    } catch {
+      // non-critical — keep the existing list on failure
     }
   },
 

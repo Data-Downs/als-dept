@@ -282,6 +282,13 @@ export function AppShell() {
     if (savedAgent) {
       setAgent(savedAgent);
     }
+    const savedPlanSource = sessionStorage.getItem("c02_planSource") as
+      | "graph"
+      | "studio"
+      | null;
+    if (savedPlanSource) {
+      useAppStore.setState({ planSource: savedPlanSource });
+    }
     if (!persona) {
       const savedPersona = sessionStorage.getItem("c02_persona");
       if (savedPersona) {
