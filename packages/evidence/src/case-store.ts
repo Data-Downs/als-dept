@@ -134,23 +134,35 @@ export class CaseStore {
         if (fromState && !visited.includes(fromState)) visited.push(fromState);
         if (toState && !visited.includes(toState)) visited.push(toState);
 
-        const progress =
-          totalStates && totalStates > 0
-            ? Math.round((visited.length / totalStates) * 100)
-            : 0;
+        // Terminal outcome can be signalled explicitly via payload.terminal
+        // ("success" | "rejected" | "handoff") — the emitter knows the state
+        // model, so this works across services whose success-terminal state is
+        // not named "completed". The legacy toState allowlist remains a
+        // fallback for older/seeded events without the signal.
+        const terminalKind = payload.terminal as string | undefined;
 
         const isIdentityState = toState === "identity-verified";
         const isCompleted =
+          terminalKind === "success" ||
           toState === "claim-active" ||
           toState === "completed" ||
           toState === "Accepted";
-        const isRejected = toState === "rejected";
-        const isHandedOff = toState === "handed-off";
+        const isRejected = terminalKind === "rejected" || toState === "rejected";
+        const isHandedOff =
+          terminalKind === "handoff" || toState === "handed-off";
 
         let newStatus: CaseStatus = "in-progress";
         if (isCompleted) newStatus = "completed";
         else if (isRejected) newStatus = "rejected";
         else if (isHandedOff) newStatus = "handed-off";
+
+        // A completed journey is 100% done regardless of how many state
+        // transitions were observed (a demo or a fast path may jump states).
+        const progress = isCompleted
+          ? 100
+          : totalStates && totalStates > 0
+            ? Math.round((visited.length / totalStates) * 100)
+            : 0;
 
         await this.db.run(
           `UPDATE cases SET
