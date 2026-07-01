@@ -269,6 +269,11 @@ export interface CitizenProfile {
 
   credentials?: WalletCredential[];
 
+  // ── Government logins (Gateway / One Login / NHS) ──
+
+  /** The citizen's real, messy portfolio of government sign-ins. */
+  logins?: LoginPortfolio;
+
   // ── Legacy fields for backwards compatibility with TestUser ──
 
   /** @deprecated Use primaryContact.firstName + lastName */
@@ -345,6 +350,68 @@ export interface CitizenProfile {
 
   /** Per-field source attribution — which department holds each piece of data */
   _fieldSources?: Record<string, FieldSourceAttribution>;
+}
+
+// ── Government login portfolio ──
+//
+// Mirrors the real 2026 mess: Government Gateway and GOV.UK One Login coexist
+// with no clean cutover, a person may hold several Gateway IDs, may or may not
+// have a One Login (and may not have verified their identity), and NHS login is
+// separate again. This is the confusion that pushes citizens toward agents.
+
+/** The kind of sign-in a government service actually requires. */
+export type GovLoginType =
+  | "government-gateway"
+  | "one-login"
+  | "none-in-person";
+
+/** A Government Gateway account — the older login (10–12 digit user ID). */
+export interface GovernmentGatewayAccount {
+  /** The 10–12 digit Government Gateway user ID. */
+  userId: string;
+  password: string;
+  /** Human label, e.g. "Personal tax", "Self-employment", "Ltd company". */
+  label: string;
+  /** How this account came to exist, e.g. "David set it up, 2019". */
+  setUpBy?: string;
+  /** How well the citizen actually remembers or understands this login. */
+  familiarity?: "confident" | "hazy" | "forgotten";
+  /** Department keys this account is used for, e.g. ["hmrc"]. */
+  usedFor: string[];
+}
+
+/** How a One Login identity was proven (if at all). */
+export type OneLoginVerificationMethod =
+  | "app"
+  | "post-office"
+  | "security-questions";
+
+/** A GOV.UK One Login account — the newer login (email + password + IDV). */
+export interface OneLoginAccount {
+  email: string;
+  password: string;
+  /** Whether the citizen has proven their identity to the required level. */
+  identityVerified: boolean;
+  /** How identity was proven, if it was. */
+  verifiedVia?: OneLoginVerificationMethod;
+  /** Whether the GOV.UK One Login app is installed on their phone. */
+  appInstalled?: boolean;
+  usedFor: string[];
+}
+
+/** A separate NHS login — deliberately its own credential, not One Login. */
+export interface NhsLoginAccount {
+  email: string;
+  linked: boolean;
+}
+
+/** The realistic set of separate government logins one citizen accumulates. */
+export interface LoginPortfolio {
+  governmentGateway?: GovernmentGatewayAccount[];
+  oneLogin?: OneLoginAccount | null;
+  nhsLogin?: NhsLoginAccount | null;
+  /** Free-text note on this citizen's particular login confusion. */
+  notes?: string;
 }
 
 // ── Extension Block Interfaces ──

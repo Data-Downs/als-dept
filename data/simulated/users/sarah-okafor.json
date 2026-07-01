@@ -204,6 +204,21 @@
       ]
     }
   ],
+  "logins": {
+    "governmentGateway": [
+      {
+        "userId": "61 27 84 40 39 12",
+        "password": "••••••••",
+        "label": "Personal tax",
+        "setUpBy": "David set it up in 2019 for the tax on his pension",
+        "familiarity": "hazy",
+        "usedFor": ["hmrc", "hmcts"]
+      }
+    ],
+    "oneLogin": null,
+    "nhsLogin": { "email": "sarah.okafor@btinternet.com", "linked": true },
+    "notes": "David handled all the government admin. Sarah has an old Government Gateway login she barely remembers, and has never created a GOV.UK One Login — she'll have to make one, and prove her identity, for the bereavement services."
+  },
   "_fieldSources": {
     "address": {
       "source": "HMRC",
