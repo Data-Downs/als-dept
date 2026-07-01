@@ -1696,3 +1696,9 @@ export const useAppStore = create<AppStore>((set, get) => ({
     get().markServiceCompleted(serviceId);
   },
 }));
+
+// Dev-only: expose the store for manual testing in the browser console.
+// e.g. __store.setState({ currentService: "hmcts-probate" }); __store.getState().sendMessage("test")
+if (typeof window !== "undefined" && process.env.NODE_ENV !== "production") {
+  (window as unknown as { __store?: typeof useAppStore }).__store = useAppStore;
+}

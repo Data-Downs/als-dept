@@ -228,9 +228,9 @@ function BottomSheetLayer() {
       case "consent-preference":
         return <ConsentPreferenceSheet data={bottomSheet.data as Parameters<typeof ConsentPreferenceSheet>[0]["data"]} />;
       case "one-login":
-        return <LoginSheet loginType="one-login" />;
+        return <LoginSheet key="one-login" loginType="one-login" />;
       case "government-gateway":
-        return <LoginSheet loginType="government-gateway" />;
+        return <LoginSheet key="government-gateway" loginType="government-gateway" />;
       default:
         return null;
     }
