@@ -1,0 +1,396 @@
+<!doctype html>
+<html lang="en-GB">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GOV.UK One Login vs Government Gateway — State of Play 2026</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+      html { scroll-behavior: smooth; }
+      body {
+        font-family: "Inter", Arial, sans-serif;
+        color: #0b0c0c;
+        line-height: 1.6;
+        background: #fff;
+        -webkit-font-smoothing: antialiased;
+      }
+      a { color: #1d70b8; text-decoration: none; }
+      a:hover { text-decoration: underline; color: #003078; }
+      code { font-family: "JetBrains Mono", monospace; font-size: 0.85em; background: #f3f2f1; padding: 0.1em 0.35em; border-radius: 3px; }
+
+      .container { max-width: 960px; margin: 0 auto; padding: 0 1.5rem; }
+      .section { padding: 3.5rem 0; border-top: 1px solid #e5e4e2; }
+      .section-alt { background: #f8f8f8; }
+
+      h1, h2, h3 { line-height: 1.2; }
+      h2 { font-size: 1.6rem; font-weight: 700; margin-bottom: 0.75rem; }
+      h3 { font-size: 1.1rem; font-weight: 600; margin: 1.5rem 0 0.5rem; }
+      p { margin-bottom: 1rem; max-width: 760px; }
+      .section-intro { font-size: 1.1rem; color: #505a5f; max-width: 720px; margin-bottom: 1.5rem; }
+      ul, ol { margin: 0 0 1rem 1.25rem; max-width: 760px; }
+      li { margin-bottom: 0.4rem; }
+
+      .nav {
+        background: #fff; border-bottom: 1px solid #b1b4b6;
+        padding: 0.75rem 0; position: sticky; top: 0; z-index: 100;
+      }
+      .nav .container { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+      .nav-brand { font-weight: 700; font-size: 1rem; color: #0b0c0c; }
+      .nav-links { display: flex; gap: 1.1rem; list-style: none; flex-wrap: wrap; margin: 0; }
+      .nav-links a { font-size: 0.85rem; font-weight: 500; color: #505a5f; }
+      @media (max-width: 720px) { .nav-links { display: none; } }
+
+      .hero { padding: 4rem 0 2.5rem; }
+      .hero-label {
+        display: inline-block; background: #f3f2f1; color: #505a5f;
+        font-size: 0.8rem; font-weight: 600; padding: 0.25rem 0.75rem;
+        border-radius: 2px; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 1.25rem;
+      }
+      .hero h1 { font-size: 2.5rem; font-weight: 700; margin-bottom: 0.75rem; }
+      .hero-subtitle { font-size: 1.3rem; color: #505a5f; font-weight: 400; max-width: 720px; margin-bottom: 1.25rem; }
+      .hero-meta { font-size: 0.85rem; color: #505a5f; }
+      @media (max-width: 640px) { .hero h1 { font-size: 1.9rem; } .hero-subtitle { font-size: 1.1rem; } }
+
+      table { border-collapse: collapse; width: 100%; margin: 1rem 0 1.5rem; font-size: 0.92rem; }
+      th, td { text-align: left; padding: 0.6rem 0.75rem; border-bottom: 1px solid #e5e4e2; vertical-align: top; }
+      th { background: #f3f2f1; font-weight: 600; }
+      .pill { display: inline-block; font-size: 0.72rem; font-weight: 600; padding: 0.1rem 0.5rem; border-radius: 999px; white-space: nowrap; }
+      .pill-gw { background: #fbe9d0; color: #7a4b00; }
+      .pill-ol { background: #d3e5f5; color: #0b4a75; }
+      .pill-none { background: #eee; color: #505a5f; }
+
+      .callout { border-left: 4px solid #1d70b8; background: #f4f8fb; padding: 1rem 1.25rem; margin: 1.25rem 0; border-radius: 0 4px 4px 0; }
+      .callout.warn { border-color: #d4351c; background: #fef4f3; }
+      .callout h3 { margin-top: 0; }
+      .callout p:last-child { margin-bottom: 0; }
+
+      .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin: 1rem 0 1.5rem; }
+      @media (max-width: 720px) { .grid2 { grid-template-columns: 1fr; } }
+      .card { border: 1px solid #d5d3d0; border-radius: 6px; padding: 1.25rem; }
+      .card h3 { margin-top: 0; }
+      .card .tag { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; color: #505a5f; }
+
+      .conf { font-size: 0.85rem; }
+      .conf .lvl { font-weight: 600; }
+      .conf .high { color: #00703c; }
+      .conf .low { color: #b1611a; }
+
+      footer { padding: 2.5rem 0 4rem; color: #505a5f; font-size: 0.85rem; border-top: 1px solid #e5e4e2; }
+      footer a { font-weight: 500; }
+    </style>
+  </head>
+  <body>
+    <nav class="nav">
+      <div class="container">
+        <span class="nav-brand">One Login · Research</span>
+        <ul class="nav-links">
+          <li><a href="#systems">Two systems</a></li>
+          <li><a href="#map">Who sends you where</a></li>
+          <li><a href="#confusion">The confusion</a></li>
+          <li><a href="#app">The app &amp; IDV</a></li>
+          <li><a href="#sprawl">Credential sprawl</a></li>
+          <li><a href="#personas">For the simulation</a></li>
+          <li><a href="#sources">Sources</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <header class="hero">
+      <div class="container">
+        <span class="hero-label">Research · Reference</span>
+        <h1>GOV.UK One Login vs Government Gateway</h1>
+        <p class="hero-subtitle">
+          The state of play in 2026 — two parallel login systems, no clean cutover,
+          and why a citizen genuinely cannot tell which one they need.
+        </p>
+        <p class="hero-meta">
+          Compiled July 2026 · Grounded in gov.uk guidance, GDS blog posts, and
+          departmental sources · A living snapshot of a mid-rollout situation
+        </p>
+      </div>
+    </header>
+
+    <section class="section section-alt">
+      <div class="container">
+        <p class="section-intro">
+          The short version: the confusion citizens feel is not a personal failing.
+          It is structural. The UK runs two authentication systems side by side —
+          the older <strong>Government Gateway</strong> and the newer
+          <strong>GOV.UK One Login</strong> — and which one you need depends on the
+          service, on whether you are a new or existing customer, and on a migration
+          that has barely begun. The same person routinely holds both, plus an NHS
+          login, plus others, and no screen ever explains the difference.
+        </p>
+        <div class="callout warn">
+          <h3>Why this matters for the project</h3>
+          <p>
+            This login mess is the on-ramp to the whole thesis. A citizen who cannot
+            work out which login to use — and is asked to create yet another one, and
+            prove their identity, mid-crisis — is exactly the citizen who will hand
+            their credentials to a confident agent that says &ldquo;don&rsquo;t worry,
+            I&rsquo;ll deal with it.&rdquo; To simulate that honestly, the personas
+            must carry this same mess.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="systems">
+      <div class="container">
+        <h2>Two systems, side by side</h2>
+        <div class="grid2">
+          <div class="card">
+            <span class="tag">The old one</span>
+            <h3>Government Gateway</h3>
+            <p>
+              Introduced in the early 2000s. A <strong>sign-in only</strong> system:
+              a 10&ndash;12 digit user ID and a password. Historically it did
+              <em>not</em> prove who you are with documents — it used knowledge-based
+              checks (questions about your own data).
+            </p>
+            <p>
+              Still the primary route for <strong>HMRC</strong> — Self Assessment,
+              PAYE, VAT, Making Tax Digital — and used by other services too. A single
+              person can accumulate <strong>several Gateway IDs</strong> (personal tax,
+              self-employment, a company/organisation), because different registration
+              journeys mint new ones.
+            </p>
+          </div>
+          <div class="card">
+            <span class="tag">The new one</span>
+            <h3>GOV.UK One Login</h3>
+            <p>
+              Run by the Government Digital Service. Sign in with an
+              <strong>email and password</strong>, plus — where a service needs it —
+              real <strong>identity verification</strong> (scan a passport or driving
+              licence and take a face/liveness photo).
+            </p>
+            <p>
+              Intended as the single &ldquo;front door&rdquo; that will
+              <strong>eventually replace</strong> Government Gateway, the retired
+              GOV.UK Verify, and individual departmental logins. Emphasis on
+              <em>eventually</em>: there is no hard switchover.
+            </p>
+          </div>
+        </div>
+        <p class="conf">
+          <span class="lvl high">Confirmed.</span> gov.uk guidance states One Login
+          &ldquo;over time&hellip;will replace all other sign in routes including
+          Government Gateway.&rdquo; The multiple-Gateway-IDs phenomenon is
+          <span class="lvl low">indicative</span> — widely reported but not nailed to
+          a single primary source in this research pass.
+        </p>
+      </div>
+    </section>
+
+    <section class="section section-alt" id="map">
+      <div class="container">
+        <h2>Who sends you where (2026)</h2>
+        <p class="section-intro">
+          The heart of the confusion: it is service-by-service, with no consistent
+          rule a citizen could learn.
+        </p>
+        <table>
+          <thead>
+            <tr><th>Service</th><th>Login it demands</th><th>Identity check?</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>HMRC — tax, Self Assessment, PAYE, VAT, inheritance tax</td><td><span class="pill pill-gw">Government Gateway</span></td><td>No</td></tr>
+            <tr><td>Companies House — director / PSC filings</td><td><span class="pill pill-ol">GOV.UK One Login</span></td><td><strong>Yes</strong></td></tr>
+            <tr><td>HM Courts &amp; Tribunals — probate, appeals</td><td><span class="pill pill-gw">Government Gateway</span></td><td>No</td></tr>
+            <tr><td>DWP — State Pension, bereavement support, Tell Us Once</td><td><span class="pill pill-ol">GOV.UK One Login</span></td><td>No</td></tr>
+            <tr><td>DVLA — driving licence, vehicles</td><td><span class="pill pill-gw">Government Gateway</span></td><td>No</td></tr>
+            <tr><td>General Register Office — register a death</td><td><span class="pill pill-none">None — in person</span></td><td>—</td></tr>
+          </tbody>
+        </table>
+        <p>
+          One bereavement journey can bounce a person between a Gateway login they
+          barely remember (probate, inheritance tax) and a One Login they do not yet
+          have (Tell Us Once, bereavement support) — and a registrar&rsquo;s office
+          they must visit in person (registering the death). This table is the model
+          encoded into the simulation&rsquo;s service&rarr;login registry; the exact
+          per-service assignments are a reasonable reading of the 2026 position and
+          are easy to adjust as the rollout moves.
+        </p>
+      </div>
+    </section>
+
+    <section class="section" id="confusion">
+      <div class="container">
+        <h2>Why it confuses — three concrete failures</h2>
+
+        <h3>1. HMRC&rsquo;s sign-in screen offers three doors</h3>
+        <p>
+          Since 9 February 2026, signing in to HMRC presents a choice of
+          <strong>Government Gateway</strong>, <strong>GOV.UK One Login</strong>, or
+          <strong>&ldquo;Create new sign-in details.&rdquo;</strong> A citizen with no
+          way to know which applies to them is asked to pick — and picking wrong sends
+          them down a dead end.
+        </p>
+
+        <h3>2. The migration has barely started</h3>
+        <p>
+          One Login went live for HMRC on 9 February 2026, but <strong>only for a
+          proportion of brand-new customers.</strong> Every existing Government Gateway
+          holder keeps using their Gateway ID, with no action required and no
+          citizen-facing deadline. Bringing existing users across is the
+          <em>next</em> phase — not started, with a soft internal target around 2027
+          and a Gateway switch-off floated for the end of the parliament (~2029).
+        </p>
+
+        <h3>3. You can hold both — for different services</h3>
+        <p>
+          gov.uk&rsquo;s own words: a person may have a GOV.UK One Login for the State
+          Pension or Companies House and <strong>still need to use Government Gateway
+          for HMRC &ldquo;for now.&rdquo;</strong> Same citizen, two logins, split by
+          service, with nothing to reconcile them. This is the single clearest cause
+          of &ldquo;which login do I use?&rdquo;
+        </p>
+
+        <div class="callout">
+          <p>
+            <strong>The tell:</strong> in the user research behind this project,
+            citizens could not name which login belonged to which service — and
+            neither, initially, could the team. That is the design failing the
+            simulation must reproduce, not smooth over.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-alt" id="app">
+      <div class="container">
+        <h2>The GOV.UK One Login app &amp; identity verification</h2>
+        <p>
+          There is a dedicated <strong>GOV.UK One Login app</strong>, and almost
+          nobody understands what it is for — because it does two unrelated jobs.
+        </p>
+        <ul>
+          <li><strong>Proving your identity:</strong> scan an accepted photo ID
+            (passport, driving licence) and take a face/liveness photo; the app checks
+            the ID is real, that you are a real person, and that you match it.</li>
+          <li><strong>Generating security codes:</strong> it also acts as an
+            authenticator, producing the codes you enter when signing in.</li>
+        </ul>
+        <p>
+          It <strong>replaced</strong> the older &ldquo;GOV.UK ID Check&rdquo; app for
+          most users — but ID Check still exists for HMRC / Government Gateway checks.
+          So there are two apps, doing overlapping things, for adjacent systems.
+        </p>
+        <h3>Three ways to prove identity</h3>
+        <ol>
+          <li>The <strong>One Login app</strong> — document scan plus face photo.</li>
+          <li><strong>Security questions online</strong> — checked against data held by
+            Experian and DWP (this route went live around mid-February 2026).</li>
+          <li><strong>In person at a Post Office</strong> — around 4,500 branches, for
+            people who cannot use the app or online route.</li>
+        </ol>
+        <p>
+          This document-and-biometric proofing is the real functional difference from
+          Government Gateway (knowledge-based checks) and from the retired GOV.UK
+          Verify. It is also a genuine barrier: being asked to create a One Login
+          <em>and</em> prove your identity is a hard step to face in the middle of,
+          say, a bereavement.
+        </p>
+      </div>
+    </section>
+
+    <section class="section" id="sprawl">
+      <div class="container">
+        <h2>The wider credential sprawl</h2>
+        <p class="section-intro">
+          Gateway and One Login are only two of the logins a single person
+          accumulates. A realistic portfolio spans several unconnected accounts.
+        </p>
+        <ul>
+          <li><strong>One or more Government Gateway IDs</strong> — personal tax, and
+            possibly self-employment or a company.</li>
+          <li><strong>GOV.UK One Login</strong> — for newer services; may or may not
+            have identity verified.</li>
+          <li><strong>NHS login</strong> — separate again, for health services.</li>
+          <li><strong>The HMRC app</strong> — sits on top of Gateway/One Login.</li>
+          <li><strong>Personal Tax Account</strong> — reached via HMRC sign-in.</li>
+          <li><strong>Universal Credit / DWP sign-in</strong> — its own journey.</li>
+          <li><strong>Individual local-council accounts</strong> — council tax,
+            parking, bins, one per council.</li>
+        </ul>
+        <p class="conf">
+          <span class="lvl low">Indicative.</span> The specific relationships among
+          NHS login, the Personal Tax Account and the HMRC app were not each pinned to
+          a primary source in this pass — treat the sprawl as directionally accurate
+          and worth confirming before any claim leaves the building.
+        </p>
+      </div>
+    </section>
+
+    <section class="section section-alt" id="personas">
+      <div class="container">
+        <h2>What this means for the simulation</h2>
+        <p>
+          Personas cannot carry a single tidy login. Each needs a
+          <strong>credential portfolio</strong> that reflects the mess: the Gateway
+          ID(s) they hold, whether they have a One Login and whether its identity is
+          verified, and the separate NHS login — plus a note on their particular
+          confusion.
+        </p>
+        <h3>Worked example — Sarah Okafor</h3>
+        <ul>
+          <li>A <strong>Government Gateway</strong> login her late husband set up in
+            2019 for the tax on his pension. Familiarity: <em>hazy</em>.</li>
+          <li><strong>No GOV.UK One Login at all</strong> — she will have to create
+            one, and prove her identity, for the bereavement services.</li>
+          <li>A separate <strong>NHS login</strong>.</li>
+        </ul>
+        <p>
+          So a single bereavement journey drops her between a Gateway login she barely
+          remembers (probate, inheritance tax) and a One Login she does not have yet
+          (Tell Us Once, bereavement support). That wall — mid-grief — is precisely
+          what makes &ldquo;just let the agent do it&rdquo; feel like relief rather
+          than risk. The simulation exists to make that moment visible.
+        </p>
+      </div>
+    </section>
+
+    <section class="section" id="sources">
+      <div class="container">
+        <h2>Sources &amp; confidence</h2>
+        <p>
+          Strongest claims rest on primary gov.uk guidance and the official GDS blog
+          (high confidence). Dates, adoption figures and the fine mechanics of
+          app-based identity verification are softer — a live, mid-rollout situation
+          that will move.
+        </p>
+        <h3>Primary sources</h3>
+        <ul>
+          <li><a href="https://www.gov.uk/guidance/accessing-hmrc-online-services-using-govuk-one-login">Accessing HMRC online services using GOV.UK One Login</a> — the three-route sign-in screen; &ldquo;will replace all other sign in routes.&rdquo;</li>
+          <li><a href="https://www.gov.uk/government/news/hmrc-introducesgovukonelogin-for-new-customers">HMRC introduces GOV.UK One Login for new customers</a> — new-customers-only go-live; existing users stay on Gateway; the pension / Companies House overlap.</li>
+          <li><a href="https://gds.blog.gov.uk/2026/04/28/gov-uk-one-login-for-hmrc-how-we-made-it-happen-and-what-comes-next/">GDS blog: One Login for HMRC — how we made it happen (Apr 2026)</a> — 9 Feb 2026 go-live; existing-user migration is the next phase.</li>
+          <li><a href="https://www.gov.uk/guidance/proving-your-identity-with-the-govuk-one-login-app">Proving your identity with the GOV.UK One Login app</a> — the app&rsquo;s IDV role; replaced ID Check for most users.</li>
+          <li><a href="https://www.gov.uk/using-your-gov-uk-one-login/proving-your-identity">Proving your identity — the three routes</a> — app, security questions, Post Office.</li>
+        </ul>
+        <h3>Honest gaps</h3>
+        <p>
+          Not independently confirmed in this pass, and modelled on general knowledge:
+          that one person commonly holds <em>multiple</em> Government Gateway IDs; the
+          precise NHS login / Universal Credit / Personal Tax Account relationships;
+          the documented lineage from the retired GOV.UK Verify; and specific figures
+          (e.g. &ldquo;122 services&rdquo;, a Companies House director-verification
+          date). Worth firming up before any of it is used externally.
+        </p>
+      </div>
+    </section>
+
+    <footer>
+      <div class="container">
+        Reference note for the Agentic Legibility Stack · Compiled July 2026 ·
+        A snapshot of a moving target; re-check against live gov.uk guidance before relying on dates.
+      </div>
+    </footer>
+  </body>
+</html>
