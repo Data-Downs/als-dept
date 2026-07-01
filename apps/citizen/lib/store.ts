@@ -889,7 +889,10 @@ export const useAppStore = create<AppStore>((set, get) => ({
     // most newer services use GOV.UK One Login — and the two are tracked
     // separately, so signing into one does not sign you into the other. Every
     // route in funnels through sendMessage, so this one check covers them all.
-    if (state.authMode === "one-login") {
+    // Only gate when the citizen is actually entering a service. The opening
+    // triage message ("my husband died") has no service yet — reading it and
+    // proposing what to do must never sit behind a login.
+    if (state.authMode === "one-login" && state.currentService) {
       const loaded = [
         ...(state.activePlan?.services ?? []),
         ...state.lifeEvents.flatMap((le) => le.services),
