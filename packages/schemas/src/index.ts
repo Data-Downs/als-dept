@@ -78,6 +78,11 @@ export type ServiceLoginType =
 /** A service's declared authentication requirement (published metadata). */
 export interface ServiceAuth {
   login: ServiceLoginType;
+  /**
+   * If the service accepts more than one login, these are offered as a choice
+   * — the HMRC "One Login / Government Gateway / create new" situation.
+   */
+  accepts?: ServiceLoginType[];
   identityVerification?: boolean;
 }
 

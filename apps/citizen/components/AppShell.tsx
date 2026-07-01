@@ -227,10 +227,8 @@ function BottomSheetLayer() {
         return <WalletCredentialSheet data={bottomSheet.data as Parameters<typeof WalletCredentialSheet>[0]["data"]} />;
       case "consent-preference":
         return <ConsentPreferenceSheet data={bottomSheet.data as Parameters<typeof ConsentPreferenceSheet>[0]["data"]} />;
-      case "one-login":
-        return <LoginSheet key="one-login" loginType="one-login" />;
-      case "government-gateway":
-        return <LoginSheet key="government-gateway" loginType="government-gateway" />;
+      case "login":
+        return <LoginSheet />;
       default:
         return null;
     }
@@ -252,10 +250,8 @@ function BottomSheetLayer() {
         return "Credential details";
       case "consent-preference":
         return "Data permission";
-      case "one-login":
-        return "GOV.UK One Login";
-      case "government-gateway":
-        return "Government Gateway";
+      case "login":
+        return "Sign in";
       default:
         return undefined;
     }

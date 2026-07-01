@@ -3,8 +3,8 @@
 import { useState, useEffect } from "react";
 import { useAppStore } from "@/lib/store";
 
-type Phase = "signin" | "code" | "idv" | "success";
-type LoginType = "one-login" | "government-gateway";
+type Phase = "choose" | "signin" | "create" | "code" | "idv" | "success";
+type Login = "one-login" | "government-gateway";
 
 const ERROR_TEXT: Record<string, string> = {
   "wrong-code": "That code isn't right. Check your phone and try again.",
@@ -13,42 +13,63 @@ const ERROR_TEXT: Record<string, string> = {
 };
 
 /**
- * Simulated sign-in, shown when a citizen enters a government service. The SAME
- * component renders GOV.UK One Login (email) or Government Gateway (12-digit user
- * ID) depending on which login the SERVICE declared. When the service also
- * declares that it needs a verified identity, a One Login identity check (scan
- * ID + face) is added after sign-in — again, driven entirely by the service's
- * declaration, not by any special-casing here.
+ * Simulated sign-in, driven entirely by the service's declared auth:
+ * - accepts more than one login → the "One Login / Government Gateway / create
+ *   new" chooser (the HMRC confusion);
+ * - needs a login the citizen doesn't hold → a "create a GOV.UK One Login"
+ *   branch that flows into identity verification;
+ * - otherwise → sign in with the held credential.
  */
-export function LoginSheet({ loginType }: { loginType: LoginType }) {
+export function LoginSheet() {
   const personaData = useAppStore((s) => s.personaData);
+  const pendingAuth = useAppStore((s) => s.pendingAuth);
   const challenge = useAppStore((s) => s.oneLoginChallenge);
+  const oneLoginVerified = useAppStore((s) => s.oneLoginVerified);
   const beginLogin = useAppStore((s) => s.beginLogin);
   const submitLoginCode = useAppStore((s) => s.submitLoginCode);
   const completeIdentityCheck = useAppStore((s) => s.completeIdentityCheck);
 
-  const isGateway = loginType === "government-gateway";
-  const brandName = isGateway ? "Government Gateway" : "One Login";
-
-  // Start straight at the identity check if the citizen is already signed in
-  // (One Login) but this service needs their identity verified.
-  const [phase, setPhase] = useState<Phase>(() => {
-    const s = useAppStore.getState();
-    return loginType === "one-login" && s.oneLoginVerified && s.pendingIdentityCheck
-      ? "idv"
-      : "signin";
-  });
-  const [code, setCode] = useState("");
-  const [verifying, setVerifying] = useState(false);
+  const accepts = (
+    (pendingAuth?.accepts?.length
+      ? pendingAuth.accepts
+      : [pendingAuth?.login ?? "one-login"]
+    ).filter((l) => l && l !== "none-in-person")
+  ) as Login[];
+  const multi = accepts.length > 1;
+  const requiresIdentity = pendingAuth?.identityVerification === true;
 
   const pc = personaData as unknown as {
     primaryContact?: { email?: string; firstName?: string };
-    logins?: { governmentGateway?: Array<{ userId: string }> };
+    logins?: {
+      oneLogin?: unknown;
+      governmentGateway?: Array<{ userId: string }>;
+    };
   };
-  const email = pc?.primaryContact?.email ?? `${pc?.primaryContact?.firstName ?? "you"}@btinternet.com`;
+  const hasOneLogin = !!pc?.logins?.oneLogin || oneLoginVerified;
+  const hasGateway = (pc?.logins?.governmentGateway?.length ?? 0) > 0;
+  const email =
+    pc?.primaryContact?.email ??
+    `${pc?.primaryContact?.firstName ?? "you"}@btinternet.com`;
   const gatewayId = pc?.logins?.governmentGateway?.[0]?.userId ?? "61 27 84 40 39 12";
-  const username = isGateway ? gatewayId : email;
-  const usernameLabel = isGateway ? "Government Gateway user ID" : "Email";
+
+  const [activeLogin, setActiveLogin] = useState<Login>(() =>
+    multi ? "one-login" : (accepts[0] ?? "one-login"),
+  );
+  const [creating, setCreating] = useState(false);
+  const [phase, setPhase] = useState<Phase>(() => {
+    const s = useAppStore.getState();
+    if (s.oneLoginVerified && s.pendingIdentityCheck) return "idv";
+    if (multi) return "choose";
+    const only = accepts[0] ?? "one-login";
+    if (only === "one-login") return hasOneLogin ? "signin" : "create";
+    return "signin";
+  });
+  const [code, setCode] = useState("");
+  const [verifying, setVerifying] = useState(false);
+  const [chooseError, setChooseError] = useState<string | null>(null);
+
+  const isGateway = activeLogin === "government-gateway";
+  const brandName = isGateway ? "Government Gateway" : "One Login";
 
   // Once fully done, resume the message the citizen was trying to send.
   useEffect(() => {
@@ -65,22 +86,140 @@ export function LoginSheet({ loginType }: { loginType: LoginType }) {
     return () => clearTimeout(t);
   }, [phase]);
 
-  const Brand = () => (
+  const Brand = ({ label }: { label: string }) => (
     <div className="flex items-center gap-2">
       <span className="text-base font-bold text-govuk-black">GOV.UK</span>
-      <span className="text-base text-govuk-dark-grey">{brandName}</span>
+      <span className="text-base text-govuk-dark-grey">{label}</span>
     </div>
   );
 
-  // ── Sign-in phase ──
-  if (phase === "signin") {
+  const advanceAfterCode = () => {
+    const idNeeded =
+      activeLogin === "one-login" &&
+      requiresIdentity &&
+      !useAppStore.getState().identityVerified;
+    setPhase(idNeeded ? "idv" : "success");
+  };
+
+  // ── Chooser (the HMRC three-option situation) ──
+  if (phase === "choose") {
+    const Option = ({
+      title,
+      sub,
+      onClick,
+    }: {
+      title: string;
+      sub: string;
+      onClick: () => void;
+    }) => (
+      <button
+        type="button"
+        onClick={onClick}
+        className="w-full text-left rounded-xl border border-govuk-mid-grey/60 bg-white px-4 py-3 hover:border-govuk-blue transition-colors"
+      >
+        <p className="text-sm font-semibold text-govuk-black">{title}</p>
+        <p className="text-xs text-govuk-dark-grey mt-0.5">{sub}</p>
+      </button>
+    );
     return (
-      <div className="px-1 pb-2 space-y-5">
-        <Brand />
+      <div className="px-1 pb-2 space-y-4">
+        <Brand label="Sign in" />
         <p className="text-sm text-govuk-dark-grey">
           Sign in to continue to this government service.
         </p>
+        <div className="space-y-2.5">
+          <Option
+            title="GOV.UK One Login"
+            sub="Sign in with your email address"
+            onClick={() => {
+              setActiveLogin("one-login");
+              setChooseError(null);
+              setPhase(hasOneLogin ? "signin" : "create");
+              if (!hasOneLogin) setCreating(true);
+            }}
+          />
+          <Option
+            title="Government Gateway"
+            sub="Sign in with your 12-digit user ID"
+            onClick={() => {
+              setActiveLogin("government-gateway");
+              if (hasGateway) {
+                setChooseError(null);
+                setPhase("signin");
+              } else {
+                setChooseError(
+                  "We couldn't find a Government Gateway account for you.",
+                );
+              }
+            }}
+          />
+          <Option
+            title="Create new sign-in details"
+            sub="Set up a GOV.UK One Login"
+            onClick={() => {
+              setActiveLogin("one-login");
+              setChooseError(null);
+              setCreating(true);
+              setPhase("create");
+            }}
+          />
+        </div>
+        {chooseError && <p className="text-sm text-govuk-red">{chooseError}</p>}
+        <p className="text-[11px] text-center text-govuk-mid-grey">
+          Simulated GOV.UK sign-in for demonstration
+        </p>
+      </div>
+    );
+  }
 
+  // ── Create a GOV.UK One Login ──
+  if (phase === "create") {
+    return (
+      <div className="px-1 pb-2 space-y-5">
+        <Brand label="One Login" />
+        <div className="space-y-1">
+          <p className="text-sm font-medium text-govuk-black">
+            Create a GOV.UK One Login
+          </p>
+          <p className="text-sm text-govuk-dark-grey">
+            You don&rsquo;t have a GOV.UK One Login yet. You&rsquo;ll need to
+            create one — and prove your identity — to use this service.
+          </p>
+        </div>
+        <div className="rounded-xl border border-govuk-mid-grey/50 bg-govuk-light-grey/40 p-3">
+          <p className="text-[10px] uppercase tracking-wide text-govuk-mid-grey">
+            Email
+          </p>
+          <p className="text-sm font-medium text-govuk-black truncate">{email}</p>
+        </div>
+        <button
+          type="button"
+          onClick={() => {
+            setCreating(true);
+            beginLogin("one-login");
+            setPhase("code");
+          }}
+          className="w-full bg-govuk-blue text-white font-semibold text-sm py-3.5 rounded-lg hover:bg-govuk-blue/90 transition-colors"
+        >
+          Create your GOV.UK One Login
+        </button>
+        <p className="text-[11px] text-center text-govuk-mid-grey">
+          Simulated One Login for demonstration
+        </p>
+      </div>
+    );
+  }
+
+  // ── Sign in ──
+  if (phase === "signin") {
+    const username = isGateway ? gatewayId : email;
+    const usernameLabel = isGateway ? "Government Gateway user ID" : "Email";
+    return (
+      <div className="px-1 pb-2 space-y-5">
+        <Brand label={brandName} />
+        <p className="text-sm text-govuk-dark-grey">
+          Sign in to continue to this government service.
+        </p>
         <div className="rounded-xl border border-govuk-mid-grey/50 bg-govuk-light-grey/40 p-3">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-lg bg-govuk-blue/10 flex items-center justify-center">
@@ -96,11 +235,11 @@ export function LoginSheet({ loginType }: { loginType: LoginType }) {
             <span className="text-[10px] font-medium text-govuk-dark-grey bg-white border border-govuk-mid-grey/50 rounded px-1.5 py-0.5">Passwords</span>
           </div>
         </div>
-
         <button
           type="button"
           onClick={() => {
-            beginLogin(loginType);
+            setCreating(false);
+            beginLogin(activeLogin);
             setPhase("code");
           }}
           className="w-full bg-govuk-blue text-white font-semibold text-sm py-3.5 rounded-lg hover:bg-govuk-blue/90 transition-colors"
@@ -112,20 +251,23 @@ export function LoginSheet({ loginType }: { loginType: LoginType }) {
     );
   }
 
-  // ── Code phase ──
+  // ── Enter the code ──
   if (phase === "code") {
     return (
       <div className="px-1 pb-2 space-y-5">
-        <Brand />
+        <Brand label={brandName} />
         <div className="space-y-1">
           <p className="text-sm font-medium text-govuk-black">
-            {isGateway ? "Enter the access code" : "Enter the security code"}
+            {creating
+              ? "Confirm your email"
+              : isGateway
+                ? "Enter the access code"
+                : "Enter the security code"}
           </p>
           <p className="text-sm text-govuk-dark-grey">
             We&rsquo;ve sent a 6-digit code to your phone {challenge?.phoneHint ?? ""}. Check the notification at the top of your screen.
           </p>
         </div>
-
         <input
           type="text"
           inputMode="numeric"
@@ -136,20 +278,15 @@ export function LoginSheet({ loginType }: { loginType: LoginType }) {
           placeholder="——————"
           className="w-full text-center text-2xl tracking-[0.5em] font-semibold py-3 border-2 border-govuk-mid-grey rounded-lg focus:border-govuk-blue focus:outline-none"
         />
-
         {challenge?.error && (
           <p className="text-sm text-govuk-red">{ERROR_TEXT[challenge.error] ?? "Something went wrong."}</p>
         )}
-
         <button
           type="button"
           disabled={code.length !== 6}
           onClick={() => {
-            if (submitLoginCode(code)) {
-              setPhase(useAppStore.getState().pendingIdentityCheck ? "idv" : "success");
-            } else {
-              setCode("");
-            }
+            if (submitLoginCode(code)) advanceAfterCode();
+            else setCode("");
           }}
           className="w-full bg-govuk-blue text-white font-semibold text-sm py-3.5 rounded-lg hover:bg-govuk-blue/90 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
         >
@@ -159,7 +296,7 @@ export function LoginSheet({ loginType }: { loginType: LoginType }) {
     );
   }
 
-  // ── Identity-verification phase (3c) ──
+  // ── Prove your identity (3c) ──
   if (phase === "idv") {
     if (verifying) {
       return (
@@ -182,14 +319,13 @@ export function LoginSheet({ loginType }: { loginType: LoginType }) {
     }
     return (
       <div className="px-1 pb-2 space-y-5">
-        <Brand />
+        <Brand label="One Login" />
         <div className="space-y-1">
           <p className="text-sm font-medium text-govuk-black">Prove your identity</p>
           <p className="text-sm text-govuk-dark-grey">
             This service needs to confirm who you are. Use the GOV.UK One Login app to scan your photo ID and take a photo of yourself.
           </p>
         </div>
-
         <div className="rounded-xl border border-govuk-mid-grey/50 bg-govuk-light-grey/40 p-3 space-y-2.5">
           <div className="flex items-center gap-2.5 text-sm text-govuk-black">
             <span className="w-6 h-6 rounded bg-govuk-blue/10 flex items-center justify-center text-govuk-blue text-[11px] font-bold">1</span>
@@ -200,7 +336,6 @@ export function LoginSheet({ loginType }: { loginType: LoginType }) {
             Take a photo of your face to match it
           </div>
         </div>
-
         <button
           type="button"
           onClick={() => {
@@ -219,7 +354,7 @@ export function LoginSheet({ loginType }: { loginType: LoginType }) {
     );
   }
 
-  // ── Success phase ──
+  // ── Success ──
   return (
     <div className="px-1 pb-6 pt-2">
       <div className="flex flex-col items-center gap-3">
@@ -229,7 +364,7 @@ export function LoginSheet({ loginType }: { loginType: LoginType }) {
           </svg>
         </div>
         <p className="text-base font-semibold text-govuk-black text-center">
-          Signed in to GOV.UK {brandName}
+          {creating ? "GOV.UK One Login created" : `Signed in to GOV.UK ${brandName}`}
         </p>
       </div>
     </div>

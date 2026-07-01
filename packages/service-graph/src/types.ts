@@ -60,6 +60,7 @@ export interface ServiceNode {
   /** Declared login requirement for this service (read generically, not hard-coded). */
   auth?: {
     login: "government-gateway" | "one-login" | "none-in-person";
+    accepts?: Array<"government-gateway" | "one-login" | "none-in-person">;
     identityVerification?: boolean;
   };
 }

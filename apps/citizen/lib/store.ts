@@ -201,6 +201,7 @@ interface AppStore {
   gatewayVerified: boolean;
   identityVerified: boolean;
   pendingIdentityCheck: boolean;
+  pendingAuth: ServiceAuth | null;
   phoneNotification: {
     title: string;
     body: string;
@@ -553,6 +554,7 @@ export const useAppStore = create<AppStore>((set, get) => ({
   gatewayVerified: false,
   identityVerified: false,
   pendingIdentityCheck: false,
+  pendingAuth: null,
   phoneNotification: null,
   oneLoginChallenge: null,
   pendingMessage: null,
@@ -683,6 +685,7 @@ export const useAppStore = create<AppStore>((set, get) => ({
       gatewayVerified: false,
       identityVerified: false,
       pendingIdentityCheck: false,
+      pendingAuth: null,
       phoneNotification: null,
       oneLoginChallenge: null,
       pendingMessage: null,
@@ -898,30 +901,30 @@ export const useAppStore = create<AppStore>((set, get) => ({
         ...state.lifeEvents.flatMap((le) => le.services),
       ];
       const auth = resolveServiceAuth(loaded, state.currentService);
-      if (auth.login !== "none-in-person") {
-        const signedIn =
-          auth.login === "government-gateway"
+      // A service may accept more than one login (the HMRC three-option case).
+      const accepts = (
+        auth.accepts && auth.accepts.length ? auth.accepts : [auth.login]
+      ).filter((l) => l !== "none-in-person");
+      if (accepts.length > 0) {
+        const signedIn = accepts.some((l) =>
+          l === "government-gateway"
             ? state.gatewayVerified
-            : state.oneLoginVerified;
-        // Identity verification is a per-service declaration too (3c): a
-        // service that needs a verified One Login identity triggers the
-        // "prove who you are" wall when the citizen hasn't yet.
+            : state.oneLoginVerified,
+        );
+        // Identity verification is a per-service declaration too (3c).
         const needsIdentity =
-          auth.login === "one-login" &&
           auth.identityVerification === true &&
+          accepts.includes("one-login") &&
           !state.identityVerified;
         if (!signedIn || needsIdentity) {
           set({
             pendingMessage: text,
+            pendingAuth: auth,
+            pendingIdentityCheck: needsIdentity,
             oneLoginChallenge: null,
             phoneNotification: null,
-            pendingIdentityCheck: needsIdentity,
           });
-          state.openBottomSheet(
-            auth.login === "government-gateway"
-              ? "government-gateway"
-              : "one-login",
-          );
+          state.openBottomSheet("login");
           return;
         }
       }

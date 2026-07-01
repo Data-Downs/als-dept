@@ -762,7 +762,11 @@ export const NODES: Record<string, ServiceNode> = {
   },
   "hmrc-iht400": {
     id: "hmrc-iht400",
-    auth: { login: "government-gateway", identityVerification: false },
+    auth: {
+      login: "government-gateway",
+      accepts: ["one-login", "government-gateway"],
+      identityVerification: false,
+    },
     name: "Inheritance Tax return (IHT400)",
     dept: "HMRC",
     deptKey: "hmrc",

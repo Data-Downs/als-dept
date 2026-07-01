@@ -18,6 +18,10 @@
   "gated": true,
   "auth": {
     "login": "government-gateway",
+    "accepts": [
+      "one-login",
+      "government-gateway"
+    ],
     "identityVerification": false
   }
 }
