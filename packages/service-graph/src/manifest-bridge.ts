@@ -29,5 +29,6 @@ export function graphNodeToManifest(node: ServiceNode): CapabilityManifest {
     eligibility_summary: node.eligibility.summary,
     proactive: node.proactive,
     gated: node.gated,
+    auth: node.auth,
   };
 }

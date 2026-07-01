@@ -57,6 +57,11 @@ export interface ServiceNode {
   proactive: boolean;
   gated: boolean;
   eligibility: EligibilityInfo;
+  /** Declared login requirement for this service (read generically, not hard-coded). */
+  auth?: {
+    login: "government-gateway" | "one-login" | "none-in-person";
+    identityVerification?: boolean;
+  };
 }
 
 export interface Edge {

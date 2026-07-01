@@ -15,5 +15,9 @@
   "govuk_url": "https://www.gov.uk/dvla/forms/d27",
   "eligibility_summary": "Must notify DVLA when a driving licence holder dies. Usually handled automatically by Tell Us Once after death registration. Send the licence to DVLA if available.",
   "proactive": true,
-  "gated": true
+  "gated": true,
+  "auth": {
+    "login": "government-gateway",
+    "identityVerification": false
+  }
 }

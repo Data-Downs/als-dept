@@ -20,7 +20,12 @@ import type {
   ToastMessage,
   TaskField,
 } from "./types";
-import type { CardRequest, PipelineTrace, ConsentPreference } from "@als/schemas";
+import type {
+  CardRequest,
+  PipelineTrace,
+  ConsentPreference,
+  ServiceAuth,
+} from "@als/schemas";
 import type { JourneyOutcome } from "./outcome-types";
 import type {
   WalletCredential,
@@ -29,7 +34,6 @@ import type {
 import { OneLoginSimulator } from "@als/identity/src/one-login-simulator";
 import { getAllTerminalStateIds } from "@als/schemas";
 import { computePlanRelevance } from "./plan-relevance";
-import { loginRuleForService } from "./gov-logins";
 
 // ── One Login (2b): client-side simulator instance for the OTP sign-in UX ──
 let oneLoginSim: OneLoginSimulator | null = null;
@@ -50,6 +54,23 @@ function personaToTestUser(id: string, p: PersonaData): TestUser {
     address: (p as unknown as { address?: unknown }).address ?? {},
     primaryContact: pc,
   } as unknown as TestUser;
+}
+
+// ── Service-declared auth (generic reader) ──
+// The service declares which login it needs; this just reads that declaration,
+// falling back to One Login (the intended front door) when a service hasn't
+// declared one. No department is hard-coded anywhere.
+const DEFAULT_SERVICE_AUTH: ServiceAuth = {
+  login: "one-login",
+  identityVerification: false,
+};
+function resolveServiceAuth(
+  services: Array<{ id: string; auth?: ServiceAuth }>,
+  serviceId: string | null,
+): ServiceAuth {
+  return (
+    services.find((s) => s.id === serviceId)?.auth ?? DEFAULT_SERVICE_AUTH
+  );
 }
 
 interface AppStore {
@@ -178,6 +199,8 @@ interface AppStore {
   authMode: "off" | "one-login";
   oneLoginVerified: boolean;
   gatewayVerified: boolean;
+  identityVerified: boolean;
+  pendingIdentityCheck: boolean;
   phoneNotification: {
     title: string;
     body: string;
@@ -252,6 +275,7 @@ interface AppStore {
   setAuthMode: (mode: "off" | "one-login") => void;
   beginLogin: (loginType: "one-login" | "government-gateway") => void;
   submitLoginCode: (code: string) => boolean;
+  completeIdentityCheck: () => void;
   dismissPhoneNotification: () => void;
   markServiceInProgress: (serviceId: string, conversationId: string) => void;
   markServiceCompleted: (serviceId: string) => void;
@@ -527,6 +551,8 @@ export const useAppStore = create<AppStore>((set, get) => ({
   authMode: "one-login",
   oneLoginVerified: false,
   gatewayVerified: false,
+  identityVerified: false,
+  pendingIdentityCheck: false,
   phoneNotification: null,
   oneLoginChallenge: null,
   pendingMessage: null,
@@ -612,6 +638,9 @@ export const useAppStore = create<AppStore>((set, get) => ({
         : null,
     })),
 
+  completeIdentityCheck: () =>
+    set({ identityVerified: true, pendingIdentityCheck: false }),
+
   showToast: (text: string) => {
     if (toastTimer) clearTimeout(toastTimer);
     const id = `toast_${Date.now()}`;
@@ -652,6 +681,8 @@ export const useAppStore = create<AppStore>((set, get) => ({
       // Each persona signs in fresh
       oneLoginVerified: false,
       gatewayVerified: false,
+      identityVerified: false,
+      pendingIdentityCheck: false,
       phoneNotification: null,
       oneLoginChallenge: null,
       pendingMessage: null,
@@ -671,6 +702,7 @@ export const useAppStore = create<AppStore>((set, get) => ({
         set({
           personaData: data,
           walletCredentials: data.credentials ?? [],
+          identityVerified: data.logins?.oneLogin?.identityVerified ?? false,
         });
       }
     } catch (error) {
@@ -858,23 +890,37 @@ export const useAppStore = create<AppStore>((set, get) => ({
     // separately, so signing into one does not sign you into the other. Every
     // route in funnels through sendMessage, so this one check covers them all.
     if (state.authMode === "one-login") {
-      const rule = loginRuleForService(state.currentService);
-      const authed =
-        rule.loginType === "government-gateway"
-          ? state.gatewayVerified
-          : state.oneLoginVerified;
-      if (rule.loginType !== "none-in-person" && !authed) {
-        set({
-          pendingMessage: text,
-          oneLoginChallenge: null,
-          phoneNotification: null,
-        });
-        state.openBottomSheet(
-          rule.loginType === "government-gateway"
-            ? "government-gateway"
-            : "one-login",
-        );
-        return;
+      const loaded = [
+        ...(state.activePlan?.services ?? []),
+        ...state.lifeEvents.flatMap((le) => le.services),
+      ];
+      const auth = resolveServiceAuth(loaded, state.currentService);
+      if (auth.login !== "none-in-person") {
+        const signedIn =
+          auth.login === "government-gateway"
+            ? state.gatewayVerified
+            : state.oneLoginVerified;
+        // Identity verification is a per-service declaration too (3c): a
+        // service that needs a verified One Login identity triggers the
+        // "prove who you are" wall when the citizen hasn't yet.
+        const needsIdentity =
+          auth.login === "one-login" &&
+          auth.identityVerification === true &&
+          !state.identityVerified;
+        if (!signedIn || needsIdentity) {
+          set({
+            pendingMessage: text,
+            oneLoginChallenge: null,
+            phoneNotification: null,
+            pendingIdentityCheck: needsIdentity,
+          });
+          state.openBottomSheet(
+            auth.login === "government-gateway"
+              ? "government-gateway"
+              : "one-login",
+          );
+          return;
+        }
       }
     }
 

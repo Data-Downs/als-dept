@@ -15,5 +15,9 @@
   "govuk_url": "https://www.gov.uk/applying-for-probate",
   "eligibility_summary": "Grants legal authority to deal with the estate. Required by most banks, insurers and financial institutions for estates over £10,000. Currently experiencing 16+ week processing times. Costs £273 for estates over £5,000.",
   "proactive": true,
-  "gated": true
+  "gated": true,
+  "auth": {
+    "login": "government-gateway",
+    "identityVerification": false
+  }
 }

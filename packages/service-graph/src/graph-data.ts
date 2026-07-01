@@ -58,6 +58,7 @@ export const NODES: Record<string, ServiceNode> = {
   },
   "gro-register-death": {
     id: "gro-register-death",
+    auth: { login: "none-in-person", identityVerification: false },
     name: "Register the death",
     dept: "GRO",
     deptKey: "gro",
@@ -761,6 +762,7 @@ export const NODES: Record<string, ServiceNode> = {
   },
   "hmrc-iht400": {
     id: "hmrc-iht400",
+    auth: { login: "government-gateway", identityVerification: false },
     name: "Inheritance Tax return (IHT400)",
     dept: "HMRC",
     deptKey: "hmrc",
@@ -1259,6 +1261,7 @@ export const NODES: Record<string, ServiceNode> = {
   // DWP ──────────────────────────────────────────────────────────────────────
   "dwp-tell-us-once": {
     id: "dwp-tell-us-once",
+    auth: { login: "one-login", identityVerification: false },
     name: "Tell Us Once",
     dept: "DWP",
     deptKey: "dwp",
@@ -1296,6 +1299,7 @@ export const NODES: Record<string, ServiceNode> = {
   },
   "dwp-bereavement-support": {
     id: "dwp-bereavement-support",
+    auth: { login: "one-login", identityVerification: true },
     name: "Bereavement Support Payment",
     dept: "DWP",
     deptKey: "dwp",
@@ -1345,6 +1349,7 @@ export const NODES: Record<string, ServiceNode> = {
   },
   "dwp-funeral-payment": {
     id: "dwp-funeral-payment",
+    auth: { login: "one-login", identityVerification: true },
     name: "Funeral Expenses Payment",
     dept: "DWP",
     deptKey: "dwp",
@@ -2531,6 +2536,7 @@ export const NODES: Record<string, ServiceNode> = {
   },
   "dvla-cancel-licence": {
     id: "dvla-cancel-licence",
+    auth: { login: "government-gateway", identityVerification: false },
     name: "Cancel driving licence",
     dept: "DVLA",
     deptKey: "dvla",
@@ -2646,6 +2652,7 @@ export const NODES: Record<string, ServiceNode> = {
   // HMCTS ────────────────────────────────────────────────────────────────────
   "hmcts-probate": {
     id: "hmcts-probate",
+    auth: { login: "government-gateway", identityVerification: false },
     name: "Apply for probate",
     dept: "HMCTS",
     deptKey: "hmcts",

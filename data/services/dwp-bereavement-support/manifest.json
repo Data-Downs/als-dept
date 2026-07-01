@@ -15,5 +15,9 @@
   "govuk_url": "https://www.gov.uk/bereavement-support-payment",
   "eligibility_summary": "A lump sum (up to £3,500) plus up to 18 monthly payments (up to £350/month) if your spouse or civil partner died and you are under State Pension age. Must claim within 3 months for full amount.",
   "proactive": true,
-  "gated": false
+  "gated": false,
+  "auth": {
+    "login": "one-login",
+    "identityVerification": true
+  }
 }

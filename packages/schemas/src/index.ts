@@ -60,6 +60,25 @@ export interface CapabilityManifest {
   proactive?: boolean;
   /** Only surface after confirming a prerequisite service */
   gated?: boolean;
+
+  /**
+   * The login this service requires and whether it needs identity
+   * verification. Declared per service and read generically by the agent —
+   * never hard-coded in a central switch.
+   */
+  auth?: ServiceAuth;
+}
+
+/** Which login a service requires. */
+export type ServiceLoginType =
+  | "government-gateway"
+  | "one-login"
+  | "none-in-person";
+
+/** A service's declared authentication requirement (published metadata). */
+export interface ServiceAuth {
+  login: ServiceLoginType;
+  identityVerification?: boolean;
 }
 
 // ── Policy Ruleset ──

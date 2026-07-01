@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useAppStore } from "@/lib/store";
 
-type Phase = "signin" | "code" | "success";
+type Phase = "signin" | "code" | "idv" | "success";
 type LoginType = "one-login" | "government-gateway";
 
 const ERROR_TEXT: Record<string, string> = {
@@ -13,35 +13,44 @@ const ERROR_TEXT: Record<string, string> = {
 };
 
 /**
- * Simulated sign-in, shown when a citizen enters a government service. The
- * SAME component renders either GOV.UK One Login (email) or Government Gateway
- * (12-digit user ID) depending on which login the service demands — that
- * near-identical-but-different pairing is exactly what confuses real citizens.
+ * Simulated sign-in, shown when a citizen enters a government service. The SAME
+ * component renders GOV.UK One Login (email) or Government Gateway (12-digit user
+ * ID) depending on which login the SERVICE declared. When the service also
+ * declares that it needs a verified identity, a One Login identity check (scan
+ * ID + face) is added after sign-in — again, driven entirely by the service's
+ * declaration, not by any special-casing here.
  */
 export function LoginSheet({ loginType }: { loginType: LoginType }) {
   const personaData = useAppStore((s) => s.personaData);
   const challenge = useAppStore((s) => s.oneLoginChallenge);
   const beginLogin = useAppStore((s) => s.beginLogin);
   const submitLoginCode = useAppStore((s) => s.submitLoginCode);
-
-  const [phase, setPhase] = useState<Phase>("signin");
-  const [code, setCode] = useState("");
+  const completeIdentityCheck = useAppStore((s) => s.completeIdentityCheck);
 
   const isGateway = loginType === "government-gateway";
   const brandName = isGateway ? "Government Gateway" : "One Login";
 
-  const pc = (
-    personaData as unknown as {
-      primaryContact?: { email?: string; firstName?: string };
-      logins?: { governmentGateway?: Array<{ userId: string }> };
-    }
-  );
+  // Start straight at the identity check if the citizen is already signed in
+  // (One Login) but this service needs their identity verified.
+  const [phase, setPhase] = useState<Phase>(() => {
+    const s = useAppStore.getState();
+    return loginType === "one-login" && s.oneLoginVerified && s.pendingIdentityCheck
+      ? "idv"
+      : "signin";
+  });
+  const [code, setCode] = useState("");
+  const [verifying, setVerifying] = useState(false);
+
+  const pc = personaData as unknown as {
+    primaryContact?: { email?: string; firstName?: string };
+    logins?: { governmentGateway?: Array<{ userId: string }> };
+  };
   const email = pc?.primaryContact?.email ?? `${pc?.primaryContact?.firstName ?? "you"}@btinternet.com`;
   const gatewayId = pc?.logins?.governmentGateway?.[0]?.userId ?? "61 27 84 40 39 12";
   const username = isGateway ? gatewayId : email;
   const usernameLabel = isGateway ? "Government Gateway user ID" : "Email";
 
-  // Once signed in, resume the message the citizen was trying to send.
+  // Once fully done, resume the message the citizen was trying to send.
   useEffect(() => {
     if (phase !== "success") return;
     const t = setTimeout(() => {
@@ -68,42 +77,23 @@ export function LoginSheet({ loginType }: { loginType: LoginType }) {
     return (
       <div className="px-1 pb-2 space-y-5">
         <Brand />
-
         <p className="text-sm text-govuk-dark-grey">
           Sign in to continue to this government service.
         </p>
 
-        {/* Password-app style prefilled credential */}
         <div className="rounded-xl border border-govuk-mid-grey/50 bg-govuk-light-grey/40 p-3">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-lg bg-govuk-blue/10 flex items-center justify-center">
-              <svg
-                width="18"
-                height="18"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="#1d70b8"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1d70b8" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 11-7.778 7.778 5.5 5.5 0 017.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3" />
               </svg>
             </div>
             <div className="min-w-0 flex-1">
-              <p className="text-[10px] uppercase tracking-wide text-govuk-mid-grey">
-                {usernameLabel}
-              </p>
-              <p className="text-sm font-medium text-govuk-black truncate">
-                {username}
-              </p>
-              <p className="text-xs text-govuk-dark-grey tracking-widest">
-                ••••••••••••
-              </p>
+              <p className="text-[10px] uppercase tracking-wide text-govuk-mid-grey">{usernameLabel}</p>
+              <p className="text-sm font-medium text-govuk-black truncate">{username}</p>
+              <p className="text-xs text-govuk-dark-grey tracking-widest">••••••••••••</p>
             </div>
-            <span className="text-[10px] font-medium text-govuk-dark-grey bg-white border border-govuk-mid-grey/50 rounded px-1.5 py-0.5">
-              Passwords
-            </span>
+            <span className="text-[10px] font-medium text-govuk-dark-grey bg-white border border-govuk-mid-grey/50 rounded px-1.5 py-0.5">Passwords</span>
           </div>
         </div>
 
@@ -117,10 +107,7 @@ export function LoginSheet({ loginType }: { loginType: LoginType }) {
         >
           Sign in
         </button>
-
-        <p className="text-[11px] text-center text-govuk-mid-grey">
-          Simulated {brandName} for demonstration
-        </p>
+        <p className="text-[11px] text-center text-govuk-mid-grey">Simulated {brandName} for demonstration</p>
       </div>
     );
   }
@@ -130,15 +117,12 @@ export function LoginSheet({ loginType }: { loginType: LoginType }) {
     return (
       <div className="px-1 pb-2 space-y-5">
         <Brand />
-
         <div className="space-y-1">
           <p className="text-sm font-medium text-govuk-black">
             {isGateway ? "Enter the access code" : "Enter the security code"}
           </p>
           <p className="text-sm text-govuk-dark-grey">
-            We&rsquo;ve sent a 6-digit code to your phone{" "}
-            {challenge?.phoneHint ?? ""}. Check the notification at the top of
-            your screen.
+            We&rsquo;ve sent a 6-digit code to your phone {challenge?.phoneHint ?? ""}. Check the notification at the top of your screen.
           </p>
         </div>
 
@@ -154,17 +138,18 @@ export function LoginSheet({ loginType }: { loginType: LoginType }) {
         />
 
         {challenge?.error && (
-          <p className="text-sm text-govuk-red">
-            {ERROR_TEXT[challenge.error] ?? "Something went wrong."}
-          </p>
+          <p className="text-sm text-govuk-red">{ERROR_TEXT[challenge.error] ?? "Something went wrong."}</p>
         )}
 
         <button
           type="button"
           disabled={code.length !== 6}
           onClick={() => {
-            if (submitLoginCode(code)) setPhase("success");
-            else setCode("");
+            if (submitLoginCode(code)) {
+              setPhase(useAppStore.getState().pendingIdentityCheck ? "idv" : "success");
+            } else {
+              setCode("");
+            }
           }}
           className="w-full bg-govuk-blue text-white font-semibold text-sm py-3.5 rounded-lg hover:bg-govuk-blue/90 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
         >
@@ -174,21 +159,72 @@ export function LoginSheet({ loginType }: { loginType: LoginType }) {
     );
   }
 
+  // ── Identity-verification phase (3c) ──
+  if (phase === "idv") {
+    if (verifying) {
+      return (
+        <div className="px-1 pb-8 pt-4">
+          <div className="flex flex-col items-center gap-5">
+            <div className="relative w-20 h-20 flex items-center justify-center">
+              <div className="absolute inset-0 rounded-full bg-govuk-blue/10 animate-ping" />
+              <div className="absolute inset-2 rounded-full bg-govuk-blue/20 animate-pulse" />
+              <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#1d70b8" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="relative z-10">
+                <rect x="3" y="3" width="18" height="18" rx="4" />
+                <circle cx="9" cy="10" r="1" fill="#1d70b8" />
+                <circle cx="15" cy="10" r="1" fill="#1d70b8" />
+                <path d="M9 15c1 1 2 1.5 3 1.5s2-.5 3-1.5" />
+              </svg>
+            </div>
+            <p className="text-sm text-govuk-dark-grey">Checking your identity…</p>
+          </div>
+        </div>
+      );
+    }
+    return (
+      <div className="px-1 pb-2 space-y-5">
+        <Brand />
+        <div className="space-y-1">
+          <p className="text-sm font-medium text-govuk-black">Prove your identity</p>
+          <p className="text-sm text-govuk-dark-grey">
+            This service needs to confirm who you are. Use the GOV.UK One Login app to scan your photo ID and take a photo of yourself.
+          </p>
+        </div>
+
+        <div className="rounded-xl border border-govuk-mid-grey/50 bg-govuk-light-grey/40 p-3 space-y-2.5">
+          <div className="flex items-center gap-2.5 text-sm text-govuk-black">
+            <span className="w-6 h-6 rounded bg-govuk-blue/10 flex items-center justify-center text-govuk-blue text-[11px] font-bold">1</span>
+            Scan your passport or driving licence
+          </div>
+          <div className="flex items-center gap-2.5 text-sm text-govuk-black">
+            <span className="w-6 h-6 rounded bg-govuk-blue/10 flex items-center justify-center text-govuk-blue text-[11px] font-bold">2</span>
+            Take a photo of your face to match it
+          </div>
+        </div>
+
+        <button
+          type="button"
+          onClick={() => {
+            setVerifying(true);
+            setTimeout(() => {
+              completeIdentityCheck();
+              setPhase("success");
+            }, 1500);
+          }}
+          className="w-full bg-govuk-blue text-white font-semibold text-sm py-3.5 rounded-lg hover:bg-govuk-blue/90 transition-colors"
+        >
+          Verify with the One Login app
+        </button>
+        <p className="text-[11px] text-center text-govuk-mid-grey">Simulated identity check for demonstration</p>
+      </div>
+    );
+  }
+
   // ── Success phase ──
   return (
     <div className="px-1 pb-6 pt-2">
       <div className="flex flex-col items-center gap-3">
         <div className="w-14 h-14 rounded-full bg-govuk-green flex items-center justify-center">
-          <svg
-            width="28"
-            height="28"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="white"
-            strokeWidth="3"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
             <polyline points="20 6 9 17 4 12" />
           </svg>
         </div>

@@ -15,5 +15,9 @@
   "govuk_url": "https://www.gov.uk/after-a-death/organisations-you-need-to-contact-and-tell-us-once",
   "eligibility_summary": "Available in most of England, Wales and Scotland after a death is registered. Notifies up to 23 government organisations in a single interaction. Saves significant time and effort.",
   "proactive": true,
-  "gated": true
+  "gated": true,
+  "auth": {
+    "login": "one-login",
+    "identityVerification": false
+  }
 }

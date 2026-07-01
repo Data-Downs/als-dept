@@ -15,5 +15,9 @@
   "govuk_url": "https://www.gov.uk/funeral-payments",
   "eligibility_summary": "Helps pay for funeral costs if you or your partner receive a qualifying benefit such as Universal Credit, Pension Credit, Income Support, or Housing Benefit. Paid back from the deceased's estate if there are sufficient funds. Must claim within 6 months of the funeral.",
   "proactive": true,
-  "gated": true
+  "gated": true,
+  "auth": {
+    "login": "one-login",
+    "identityVerification": true
+  }
 }

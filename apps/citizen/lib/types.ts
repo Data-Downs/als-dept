@@ -255,6 +255,8 @@ export interface LifeEventService {
   desc: string;
   govuk_url: string;
   eligibility_summary: string;
+  /** Declared login requirement for this service (read generically, not hard-coded). */
+  auth?: import("@als/schemas").ServiceAuth;
   proactivity?: {
     mode: "suggest" | "warn" | "inform";
     framingPrefix: string;

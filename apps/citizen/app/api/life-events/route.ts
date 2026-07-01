@@ -99,6 +99,7 @@ async function resolveTemplate(
       desc: (manifest.description as string) || "",
       govuk_url: (manifest.govuk_url as string) || "",
       eligibility_summary: (manifest.eligibility_summary as string) || "",
+      auth: manifest.auth as import("@als/schemas").ServiceAuth | undefined,
       proactivity: {
         mode: proactivity.mode,
         framingPrefix: proactivity.framingPrefix,
@@ -208,6 +209,7 @@ export async function GET(request: NextRequest) {
           desc: node.desc,
           govuk_url: node.govuk_url,
           eligibility_summary: node.eligibility.summary,
+          auth: node.auth,
           // Proposal E: type-aware proactivity metadata
           proactivity: {
             mode: proactivity.mode,
