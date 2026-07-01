@@ -185,3 +185,95 @@ describe("WalletSimulator", () => {
     expect(wallet.getCredentials("user-1")[0].type).toBe("passport");
   });
 });
+
+describe("OneLoginSimulator — two-factor sign-in", () => {
+  let sim: OneLoginSimulator;
+
+  beforeEach(() => {
+    sim = new OneLoginSimulator();
+    sim.loadTestUsers([testUser]);
+  });
+
+  it("issues a challenge and delivers a 6-digit code to the phone", () => {
+    const challenge = sim.issueChallenge("user-1");
+    expect(challenge).not.toBeNull();
+    expect(challenge!.challengeId).toBeTruthy();
+    expect(challenge!.phoneHint).toMatch(/•+ \d{3}$/);
+
+    const msg = sim.otp.peekLatest("user-1");
+    expect(msg).not.toBeNull();
+    expect(msg!.code).toMatch(/^\d{6}$/);
+    expect(msg!.consumed).toBe(false);
+  });
+
+  it("returns null when issuing a challenge for an unknown user", () => {
+    expect(sim.issueChallenge("unknown")).toBeNull();
+  });
+
+  it("verifies the correct code and creates a one-login session", () => {
+    const { challengeId } = sim.issueChallenge("user-1")!;
+    const code = sim.otp.peekLatest("user-1")!.code;
+
+    const result = sim.verifyOtp(challengeId, code);
+    expect(result.ok).toBe(true);
+    if (!result.ok) throw new Error("expected success");
+
+    expect(result.sessionToken).toBeTruthy();
+    expect(result.context.authMethod).toBe("one-login");
+    expect(result.context.verificationLevel).toBe("high");
+    expect(result.context.claims.national_insurance_number).toBe("QQ123456C");
+    expect(sim.isAuthenticated(result.sessionToken)).toBe(true);
+  });
+
+  it("marks the code consumed by a human by default", () => {
+    const { challengeId } = sim.issueChallenge("user-1")!;
+    const code = sim.otp.peekLatest("user-1")!.code;
+    sim.verifyOtp(challengeId, code);
+
+    const msg = sim.otp.peekLatest("user-1")!;
+    expect(msg.consumed).toBe(true);
+    expect(msg.consumedBy).toBe("human");
+  });
+
+  it("records when an agent — not a human — reads the code", () => {
+    const { challengeId } = sim.issueChallenge("user-1")!;
+    const code = sim.otp.peekLatest("user-1")!.code;
+    sim.verifyOtp(challengeId, code, "agent");
+
+    expect(sim.otp.peekLatest("user-1")!.consumedBy).toBe("agent");
+  });
+
+  it("rejects a wrong code", () => {
+    const { challengeId } = sim.issueChallenge("user-1")!;
+    const code = sim.otp.peekLatest("user-1")!.code;
+    const wrong = code === "000000" ? "111111" : "000000";
+
+    const result = sim.verifyOtp(challengeId, wrong);
+    expect(result.ok).toBe(false);
+    if (result.ok) throw new Error("expected failure");
+    expect(result.reason).toBe("wrong-code");
+  });
+
+  it("rejects an unknown challenge", () => {
+    const result = sim.verifyOtp("chal_nope", "1234");
+    expect(result.ok).toBe(false);
+    if (result.ok) throw new Error("expected failure");
+    expect(result.reason).toBe("unknown-challenge");
+  });
+
+  it("rejects reuse of an already-verified challenge", () => {
+    const { challengeId } = sim.issueChallenge("user-1")!;
+    const code = sim.otp.peekLatest("user-1")!.code;
+    expect(sim.verifyOtp(challengeId, code).ok).toBe(true);
+
+    const second = sim.verifyOtp(challengeId, code);
+    expect(second.ok).toBe(false);
+    if (second.ok) throw new Error("expected failure");
+    expect(second.reason).toBe("already-used");
+  });
+
+  it("falls back to a fictitious number when the persona has no phone", () => {
+    sim.issueChallenge("user-1");
+    expect(sim.otp.peekLatest("user-1")!.to).toBe("07700 900000");
+  });
+});
