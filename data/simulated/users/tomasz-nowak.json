@@ -146,8 +146,18 @@
       "createdAt": "2007-06-15",
       "active": true,
       "permissions": [
-        { "scope": "view_status", "grantedBy": "tomasz-nowak", "grantedAt": "2007-06-15", "revocable": true },
-        { "scope": "receive_alerts", "grantedBy": "tomasz-nowak", "grantedAt": "2007-06-15", "revocable": true }
+        {
+          "scope": "view_status",
+          "grantedBy": "tomasz-nowak",
+          "grantedAt": "2007-06-15",
+          "revocable": true
+        },
+        {
+          "scope": "receive_alerts",
+          "grantedBy": "tomasz-nowak",
+          "grantedAt": "2007-06-15",
+          "revocable": true
+        }
       ]
     },
     {
@@ -160,9 +170,24 @@
       "createdAt": "2011-03-12",
       "active": true,
       "permissions": [
-        { "scope": "view_status", "grantedBy": "system", "grantedAt": "2011-03-12", "revocable": true },
-        { "scope": "submit_on_behalf", "grantedBy": "system", "grantedAt": "2011-03-12", "revocable": true },
-        { "scope": "receive_alerts", "grantedBy": "system", "grantedAt": "2011-03-12", "revocable": true }
+        {
+          "scope": "view_status",
+          "grantedBy": "system",
+          "grantedAt": "2011-03-12",
+          "revocable": true
+        },
+        {
+          "scope": "submit_on_behalf",
+          "grantedBy": "system",
+          "grantedAt": "2011-03-12",
+          "revocable": true
+        },
+        {
+          "scope": "receive_alerts",
+          "grantedBy": "system",
+          "grantedAt": "2011-03-12",
+          "revocable": true
+        }
       ]
     },
     {
@@ -175,7 +200,12 @@
       "createdAt": "2015-01-08",
       "active": true,
       "permissions": [
-        { "scope": "full_authority", "grantedBy": "system", "grantedAt": "2015-01-08", "revocable": false }
+        {
+          "scope": "full_authority",
+          "grantedBy": "system",
+          "grantedAt": "2015-01-08",
+          "revocable": false
+        }
       ]
     },
     {
@@ -188,15 +218,58 @@
       "createdAt": "2021-05-22",
       "active": true,
       "permissions": [
-        { "scope": "full_authority", "grantedBy": "system", "grantedAt": "2021-05-22", "revocable": false }
+        {
+          "scope": "full_authority",
+          "grantedBy": "system",
+          "grantedAt": "2021-05-22",
+          "revocable": false
+        }
       ]
     }
   ],
   "_fieldSources": {
-    "address": { "source": "Local Authority", "tier": "verified", "topic": "housing" },
-    "immigration": { "source": "Home Office", "tier": "verified", "topic": "immigration" },
-    "employment": { "source": "HMRC", "tier": "verified", "topic": "employment" },
-    "primaryContact": { "source": "User", "tier": "submitted", "topic": "identity" },
-    "communicationStyle": { "source": "Agent inference", "tier": "inferred", "topic": "general" }
+    "address": {
+      "source": "Local Authority",
+      "tier": "verified",
+      "topic": "housing"
+    },
+    "immigration": {
+      "source": "Home Office",
+      "tier": "verified",
+      "topic": "immigration"
+    },
+    "employment": {
+      "source": "HMRC",
+      "tier": "verified",
+      "topic": "employment"
+    },
+    "primaryContact": {
+      "source": "User",
+      "tier": "submitted",
+      "topic": "identity"
+    },
+    "communicationStyle": {
+      "source": "Agent inference",
+      "tier": "inferred",
+      "topic": "general"
+    }
+  },
+  "logins": {
+    "governmentGateway": [],
+    "oneLogin": {
+      "email": "tomasz.nowak@email.co.uk",
+      "password": "••••••••",
+      "identityVerified": true,
+      "verifiedVia": "app",
+      "appInstalled": true,
+      "usedFor": [
+        "home-office"
+      ]
+    },
+    "nhsLogin": {
+      "email": "tomasz.nowak@email.co.uk",
+      "linked": true
+    },
+    "notes": "Verified GOV.UK One Login created for his eVisa and EU Settled Status. No Government Gateway — PAYE only. Confused about exchanging his EU driving licence with DVLA."
   }
 }

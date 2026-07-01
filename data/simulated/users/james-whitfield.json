@@ -184,14 +184,38 @@
     "sendTribunalStatus": "not_started",
     "legalAidEligibility": true,
     "evidenceChecklist": [
-      { "item": "MS nurse specialist letter", "status": "obtained" },
-      { "item": "Neurologist report (Prof Patel)", "status": "obtained" },
-      { "item": "GP supporting letter", "status": "needed" },
-      { "item": "Physiotherapy assessment", "status": "needed" },
-      { "item": "Daily living diary (4 weeks)", "status": "submitted" },
-      { "item": "Owen's school SENCO report", "status": "obtained" },
-      { "item": "Educational psychologist assessment", "status": "needed" },
-      { "item": "CAMHS ADHD diagnosis letter", "status": "obtained" }
+      {
+        "item": "MS nurse specialist letter",
+        "status": "obtained"
+      },
+      {
+        "item": "Neurologist report (Prof Patel)",
+        "status": "obtained"
+      },
+      {
+        "item": "GP supporting letter",
+        "status": "needed"
+      },
+      {
+        "item": "Physiotherapy assessment",
+        "status": "needed"
+      },
+      {
+        "item": "Daily living diary (4 weeks)",
+        "status": "submitted"
+      },
+      {
+        "item": "Owen's school SENCO report",
+        "status": "obtained"
+      },
+      {
+        "item": "Educational psychologist assessment",
+        "status": "needed"
+      },
+      {
+        "item": "CAMHS ADHD diagnosis letter",
+        "status": "obtained"
+      }
     ]
   },
   "relationships": [
@@ -205,7 +229,12 @@
       "createdAt": "2018-04-20",
       "active": true,
       "permissions": [
-        { "scope": "full_authority", "grantedBy": "system", "grantedAt": "2018-04-20", "revocable": false }
+        {
+          "scope": "full_authority",
+          "grantedBy": "system",
+          "grantedAt": "2018-04-20",
+          "revocable": false
+        }
       ]
     },
     {
@@ -218,25 +247,119 @@
       "createdAt": "2015-08-12",
       "active": true,
       "permissions": [
-        { "scope": "view_status", "grantedBy": "james-whitfield", "grantedAt": "2015-08-12", "revocable": true },
-        { "scope": "receive_alerts", "grantedBy": "james-whitfield", "grantedAt": "2015-08-12", "revocable": true }
+        {
+          "scope": "view_status",
+          "grantedBy": "james-whitfield",
+          "grantedAt": "2015-08-12",
+          "revocable": true
+        },
+        {
+          "scope": "receive_alerts",
+          "grantedBy": "james-whitfield",
+          "grantedAt": "2015-08-12",
+          "revocable": true
+        }
       ]
     }
   ],
   "_fieldSources": {
-    "address": { "source": "DWP", "tier": "verified", "topic": "identity" },
-    "primaryContact": { "source": "DWP", "tier": "verified", "topic": "identity" },
-    "healthInfo": { "source": "NHS", "tier": "verified", "topic": "health" },
-    "healthInfo.conditions": { "source": "NHS", "tier": "verified", "topic": "disability" },
-    "healthInfo.medications": { "source": "NHS", "tier": "verified", "topic": "health" },
-    "benefits": { "source": "DWP", "tier": "verified", "topic": "finance" },
-    "appeals.pipMandatoryRecon": { "source": "DWP", "tier": "verified", "topic": "disability" },
-    "appeals.ehcpApplicationDate": { "source": "Local Authority", "tier": "verified", "topic": "education" },
-    "appeals.ehcpCurrentWeek": { "source": "Local Authority", "tier": "verified", "topic": "education" },
-    "appeals.ehcpStatutoryDeadline": { "source": "Local Authority", "tier": "verified", "topic": "education" },
-    "appeals.sendTribunalStatus": { "source": "HMCTS", "tier": "verified", "topic": "justice" },
-    "employment": { "source": "DWP", "tier": "verified", "topic": "employment" },
-    "financials": { "source": "DWP", "tier": "submitted", "topic": "finance" },
-    "children": { "source": "DWP", "tier": "verified", "topic": "parenting" }
+    "address": {
+      "source": "DWP",
+      "tier": "verified",
+      "topic": "identity"
+    },
+    "primaryContact": {
+      "source": "DWP",
+      "tier": "verified",
+      "topic": "identity"
+    },
+    "healthInfo": {
+      "source": "NHS",
+      "tier": "verified",
+      "topic": "health"
+    },
+    "healthInfo.conditions": {
+      "source": "NHS",
+      "tier": "verified",
+      "topic": "disability"
+    },
+    "healthInfo.medications": {
+      "source": "NHS",
+      "tier": "verified",
+      "topic": "health"
+    },
+    "benefits": {
+      "source": "DWP",
+      "tier": "verified",
+      "topic": "finance"
+    },
+    "appeals.pipMandatoryRecon": {
+      "source": "DWP",
+      "tier": "verified",
+      "topic": "disability"
+    },
+    "appeals.ehcpApplicationDate": {
+      "source": "Local Authority",
+      "tier": "verified",
+      "topic": "education"
+    },
+    "appeals.ehcpCurrentWeek": {
+      "source": "Local Authority",
+      "tier": "verified",
+      "topic": "education"
+    },
+    "appeals.ehcpStatutoryDeadline": {
+      "source": "Local Authority",
+      "tier": "verified",
+      "topic": "education"
+    },
+    "appeals.sendTribunalStatus": {
+      "source": "HMCTS",
+      "tier": "verified",
+      "topic": "justice"
+    },
+    "employment": {
+      "source": "DWP",
+      "tier": "verified",
+      "topic": "employment"
+    },
+    "financials": {
+      "source": "DWP",
+      "tier": "submitted",
+      "topic": "finance"
+    },
+    "children": {
+      "source": "DWP",
+      "tier": "verified",
+      "topic": "parenting"
+    }
+  },
+  "logins": {
+    "governmentGateway": [
+      {
+        "userId": "84 19 55 27 60 33",
+        "password": "••••••••",
+        "label": "Personal tax",
+        "familiarity": "hazy",
+        "usedFor": [
+          "hmrc"
+        ]
+      }
+    ],
+    "oneLogin": {
+      "email": "james.whitfield83@gmail.com",
+      "password": "••••••••",
+      "identityVerified": true,
+      "verifiedVia": "post-office",
+      "appInstalled": false,
+      "usedFor": [
+        "dwp"
+      ]
+    },
+    "nhsLogin": {
+      "email": "james.whitfield83@gmail.com",
+      "linked": true
+    },
+    "notes": "GOV.UK One Login for his PIP claim and appeal, identity proved at a Post Office because the app was hard to use with MS. Government Gateway barely touched."
   }
 }

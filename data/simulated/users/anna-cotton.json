@@ -212,18 +212,96 @@
   },
   "color": "#1d70b8",
   "_fieldSources": {
-    "primaryContact.firstName": { "source": "User", "tier": "verified", "topic": "identity" },
-    "primaryContact.dateOfBirth": { "source": "User", "tier": "verified", "topic": "identity" },
-    "primaryContact.nationalInsuranceNumber": { "source": "DWP", "tier": "verified", "topic": "finance" },
-    "primaryContact.email": { "source": "User", "tier": "submitted", "topic": "identity" },
-    "primaryContact.phone": { "source": "User", "tier": "submitted", "topic": "identity" },
-    "communicationStyle": { "source": "Agent inference", "tier": "inferred", "topic": "general" },
-    "address": { "source": "User", "tier": "submitted", "topic": "housing" },
-    "employment": { "source": "HMRC", "tier": "verified", "topic": "employment" },
-    "financials": { "source": "User", "tier": "submitted", "topic": "finance" },
-    "vehicles": { "source": "DVLA", "tier": "verified", "topic": "driving" },
-    "healthInfo": { "source": "NHS", "tier": "verified", "topic": "health" },
-    "benefits": { "source": "DWP", "tier": "verified", "topic": "finance" },
-    "family": { "source": "User", "tier": "submitted", "topic": "parenting" }
+    "primaryContact.firstName": {
+      "source": "User",
+      "tier": "verified",
+      "topic": "identity"
+    },
+    "primaryContact.dateOfBirth": {
+      "source": "User",
+      "tier": "verified",
+      "topic": "identity"
+    },
+    "primaryContact.nationalInsuranceNumber": {
+      "source": "DWP",
+      "tier": "verified",
+      "topic": "finance"
+    },
+    "primaryContact.email": {
+      "source": "User",
+      "tier": "submitted",
+      "topic": "identity"
+    },
+    "primaryContact.phone": {
+      "source": "User",
+      "tier": "submitted",
+      "topic": "identity"
+    },
+    "communicationStyle": {
+      "source": "Agent inference",
+      "tier": "inferred",
+      "topic": "general"
+    },
+    "address": {
+      "source": "User",
+      "tier": "submitted",
+      "topic": "housing"
+    },
+    "employment": {
+      "source": "HMRC",
+      "tier": "verified",
+      "topic": "employment"
+    },
+    "financials": {
+      "source": "User",
+      "tier": "submitted",
+      "topic": "finance"
+    },
+    "vehicles": {
+      "source": "DVLA",
+      "tier": "verified",
+      "topic": "driving"
+    },
+    "healthInfo": {
+      "source": "NHS",
+      "tier": "verified",
+      "topic": "health"
+    },
+    "benefits": {
+      "source": "DWP",
+      "tier": "verified",
+      "topic": "finance"
+    },
+    "family": {
+      "source": "User",
+      "tier": "submitted",
+      "topic": "parenting"
+    }
+  },
+  "logins": {
+    "governmentGateway": [
+      {
+        "userId": "48 21 96 33 07 55",
+        "password": "••••••••",
+        "label": "Personal tax",
+        "familiarity": "hazy",
+        "usedFor": [
+          "hmrc"
+        ]
+      }
+    ],
+    "oneLogin": {
+      "email": "anna.cotton@gmail.com",
+      "password": "••••••••",
+      "identityVerified": false,
+      "usedFor": [
+        "hmrc"
+      ]
+    },
+    "nhsLogin": {
+      "email": "anna.cotton@gmail.com",
+      "linked": true
+    },
+    "notes": "Has a Government Gateway from her teaching payroll and a GOV.UK One Login she set up for Tax-Free Childcare but never verified. Genuinely unsure which is which."
   }
 }

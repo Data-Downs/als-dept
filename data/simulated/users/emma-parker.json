@@ -126,12 +126,18 @@
   "healthInfo": {
     "emma": {
       "gpSurgery": "Southwark Medical Centre",
-      "conditions": ["Pregnancy - healthy, no complications"],
-      "medications": ["Prenatal vitamins"]
+      "conditions": [
+        "Pregnancy - healthy, no complications"
+      ],
+      "medications": [
+        "Prenatal vitamins"
+      ]
     },
     "liam": {
       "gpSurgery": "Southwark Medical Centre",
-      "conditions": ["None"],
+      "conditions": [
+        "None"
+      ],
       "medications": []
     }
   },
@@ -151,17 +157,84 @@
     ]
   },
   "_fieldSources": {
-    "primaryContact.firstName": { "source": "User", "tier": "verified", "topic": "identity" },
-    "primaryContact.dateOfBirth": { "source": "User", "tier": "verified", "topic": "identity" },
-    "primaryContact.nationalInsuranceNumber": { "source": "DWP", "tier": "verified", "topic": "finance" },
-    "primaryContact.email": { "source": "User", "tier": "submitted", "topic": "identity" },
-    "primaryContact.phone": { "source": "User", "tier": "submitted", "topic": "identity" },
-    "communicationStyle": { "source": "Agent inference", "tier": "inferred", "topic": "general" },
-    "address": { "source": "HMRC", "tier": "verified", "topic": "housing" },
-    "employment": { "source": "HMRC", "tier": "verified", "topic": "employment" },
-    "financials": { "source": "User", "tier": "submitted", "topic": "finance" },
-    "vehicles": { "source": "DVLA", "tier": "verified", "topic": "driving" },
-    "healthInfo": { "source": "NHS", "tier": "verified", "topic": "health" },
-    "benefits": { "source": "DWP", "tier": "verified", "topic": "finance" }
+    "primaryContact.firstName": {
+      "source": "User",
+      "tier": "verified",
+      "topic": "identity"
+    },
+    "primaryContact.dateOfBirth": {
+      "source": "User",
+      "tier": "verified",
+      "topic": "identity"
+    },
+    "primaryContact.nationalInsuranceNumber": {
+      "source": "DWP",
+      "tier": "verified",
+      "topic": "finance"
+    },
+    "primaryContact.email": {
+      "source": "User",
+      "tier": "submitted",
+      "topic": "identity"
+    },
+    "primaryContact.phone": {
+      "source": "User",
+      "tier": "submitted",
+      "topic": "identity"
+    },
+    "communicationStyle": {
+      "source": "Agent inference",
+      "tier": "inferred",
+      "topic": "general"
+    },
+    "address": {
+      "source": "HMRC",
+      "tier": "verified",
+      "topic": "housing"
+    },
+    "employment": {
+      "source": "HMRC",
+      "tier": "verified",
+      "topic": "employment"
+    },
+    "financials": {
+      "source": "User",
+      "tier": "submitted",
+      "topic": "finance"
+    },
+    "vehicles": {
+      "source": "DVLA",
+      "tier": "verified",
+      "topic": "driving"
+    },
+    "healthInfo": {
+      "source": "NHS",
+      "tier": "verified",
+      "topic": "health"
+    },
+    "benefits": {
+      "source": "DWP",
+      "tier": "verified",
+      "topic": "finance"
+    }
+  },
+  "logins": {
+    "governmentGateway": [
+      {
+        "userId": "31 47 09 82 66 14",
+        "password": "••••••••",
+        "label": "Personal tax",
+        "familiarity": "confident",
+        "usedFor": [
+          "hmrc"
+        ]
+      }
+    ],
+    "oneLogin": null,
+    "nhsLogin": {
+      "email": "emma.parker@email.com",
+      "linked": true
+    },
+    "notes": "Just a Government Gateway for tax so far. Will have to create a GOV.UK One Login for anything baby-related — hasn't yet."
   }
 }

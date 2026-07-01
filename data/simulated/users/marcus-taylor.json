@@ -204,5 +204,21 @@
       "tier": "verified",
       "topic": "driving"
     }
+  },
+  "logins": {
+    "governmentGateway": [],
+    "oneLogin": {
+      "email": "marcus.t96@gmail.com",
+      "password": "••••••••",
+      "identityVerified": false,
+      "usedFor": [
+        "dwp"
+      ]
+    },
+    "nhsLogin": {
+      "email": "marcus.t96@gmail.com",
+      "linked": true
+    },
+    "notes": "Lost access to his old Government Gateway while inside. A new GOV.UK One Login was started for Universal Credit but his identity isn't verified yet — rebuilding his whole digital identity from prison."
   }
 }

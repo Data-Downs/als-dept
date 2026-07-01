@@ -122,17 +122,93 @@
     ]
   },
   "_fieldSources": {
-    "primaryContact.firstName": { "source": "User", "tier": "verified", "topic": "identity" },
-    "primaryContact.dateOfBirth": { "source": "User", "tier": "verified", "topic": "identity" },
-    "primaryContact.nationalInsuranceNumber": { "source": "DWP", "tier": "verified", "topic": "finance" },
-    "primaryContact.email": { "source": "User", "tier": "submitted", "topic": "identity" },
-    "primaryContact.phone": { "source": "User", "tier": "submitted", "topic": "identity" },
-    "communicationStyle": { "source": "Agent inference", "tier": "inferred", "topic": "general" },
-    "address": { "source": "DWP", "tier": "submitted", "topic": "housing" },
-    "employment": { "source": "DWP", "tier": "verified", "topic": "employment" },
-    "financials": { "source": "User", "tier": "submitted", "topic": "finance" },
-    "healthInfo": { "source": "NHS", "tier": "verified", "topic": "health" },
-    "benefits": { "source": "DWP", "tier": "verified", "topic": "finance" },
-    "family": { "source": "User", "tier": "submitted", "topic": "parenting" }
+    "primaryContact.firstName": {
+      "source": "User",
+      "tier": "verified",
+      "topic": "identity"
+    },
+    "primaryContact.dateOfBirth": {
+      "source": "User",
+      "tier": "verified",
+      "topic": "identity"
+    },
+    "primaryContact.nationalInsuranceNumber": {
+      "source": "DWP",
+      "tier": "verified",
+      "topic": "finance"
+    },
+    "primaryContact.email": {
+      "source": "User",
+      "tier": "submitted",
+      "topic": "identity"
+    },
+    "primaryContact.phone": {
+      "source": "User",
+      "tier": "submitted",
+      "topic": "identity"
+    },
+    "communicationStyle": {
+      "source": "Agent inference",
+      "tier": "inferred",
+      "topic": "general"
+    },
+    "address": {
+      "source": "DWP",
+      "tier": "submitted",
+      "topic": "housing"
+    },
+    "employment": {
+      "source": "DWP",
+      "tier": "verified",
+      "topic": "employment"
+    },
+    "financials": {
+      "source": "User",
+      "tier": "submitted",
+      "topic": "finance"
+    },
+    "healthInfo": {
+      "source": "NHS",
+      "tier": "verified",
+      "topic": "health"
+    },
+    "benefits": {
+      "source": "DWP",
+      "tier": "verified",
+      "topic": "finance"
+    },
+    "family": {
+      "source": "User",
+      "tier": "submitted",
+      "topic": "parenting"
+    }
+  },
+  "logins": {
+    "governmentGateway": [
+      {
+        "userId": "55 12 88 40 21 63",
+        "password": "••••••••",
+        "label": "Old PAYE job",
+        "familiarity": "forgotten",
+        "usedFor": [
+          "hmrc"
+        ]
+      }
+    ],
+    "oneLogin": {
+      "email": "dave.evans92@gmail.com",
+      "password": "••••••••",
+      "identityVerified": true,
+      "verifiedVia": "app",
+      "appInstalled": true,
+      "usedFor": [
+        "dwp"
+      ]
+    },
+    "nhsLogin": {
+      "email": "dave.evans92@gmail.com",
+      "linked": true
+    },
+    "notes": "Universal Credit pushed him onto a GOV.UK One Login (identity verified in the app). The old Government Gateway from his warehouse job is long forgotten."
   }
 }

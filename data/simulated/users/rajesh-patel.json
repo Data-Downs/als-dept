@@ -172,7 +172,9 @@
   },
   "healthInfo": {
     "gpSurgery": "Cambridge City Medical Practice",
-    "conditions": ["None"],
+    "conditions": [
+      "None"
+    ],
     "medications": [],
     "privateHealthInsurance": "Bupa - Family plan"
   },
@@ -194,18 +196,108 @@
     ]
   },
   "_fieldSources": {
-    "primaryContact.firstName": { "source": "User", "tier": "verified", "topic": "identity" },
-    "primaryContact.dateOfBirth": { "source": "User", "tier": "verified", "topic": "identity" },
-    "primaryContact.nationalInsuranceNumber": { "source": "DWP", "tier": "verified", "topic": "finance" },
-    "primaryContact.email": { "source": "User", "tier": "submitted", "topic": "identity" },
-    "primaryContact.phone": { "source": "User", "tier": "submitted", "topic": "identity" },
-    "communicationStyle": { "source": "Agent inference", "tier": "inferred", "topic": "general" },
-    "address": { "source": "HMRC", "tier": "verified", "topic": "housing" },
-    "employment": { "source": "HMRC", "tier": "verified", "topic": "business" },
-    "financials": { "source": "User", "tier": "submitted", "topic": "finance" },
-    "vehicles": { "source": "DVLA", "tier": "verified", "topic": "driving" },
-    "healthInfo": { "source": "NHS", "tier": "verified", "topic": "health" },
-    "benefits": { "source": "DWP", "tier": "verified", "topic": "finance" },
-    "children": { "source": "User", "tier": "submitted", "topic": "parenting" }
+    "primaryContact.firstName": {
+      "source": "User",
+      "tier": "verified",
+      "topic": "identity"
+    },
+    "primaryContact.dateOfBirth": {
+      "source": "User",
+      "tier": "verified",
+      "topic": "identity"
+    },
+    "primaryContact.nationalInsuranceNumber": {
+      "source": "DWP",
+      "tier": "verified",
+      "topic": "finance"
+    },
+    "primaryContact.email": {
+      "source": "User",
+      "tier": "submitted",
+      "topic": "identity"
+    },
+    "primaryContact.phone": {
+      "source": "User",
+      "tier": "submitted",
+      "topic": "identity"
+    },
+    "communicationStyle": {
+      "source": "Agent inference",
+      "tier": "inferred",
+      "topic": "general"
+    },
+    "address": {
+      "source": "HMRC",
+      "tier": "verified",
+      "topic": "housing"
+    },
+    "employment": {
+      "source": "HMRC",
+      "tier": "verified",
+      "topic": "business"
+    },
+    "financials": {
+      "source": "User",
+      "tier": "submitted",
+      "topic": "finance"
+    },
+    "vehicles": {
+      "source": "DVLA",
+      "tier": "verified",
+      "topic": "driving"
+    },
+    "healthInfo": {
+      "source": "NHS",
+      "tier": "verified",
+      "topic": "health"
+    },
+    "benefits": {
+      "source": "DWP",
+      "tier": "verified",
+      "topic": "finance"
+    },
+    "children": {
+      "source": "User",
+      "tier": "submitted",
+      "topic": "parenting"
+    }
+  },
+  "logins": {
+    "governmentGateway": [
+      {
+        "userId": "93 12 45 60 78 21",
+        "password": "••••••••",
+        "label": "Self Assessment",
+        "familiarity": "confident",
+        "usedFor": [
+          "hmrc"
+        ]
+      },
+      {
+        "userId": "21 88 34 07 55 19",
+        "password": "••••••••",
+        "label": "Ltd company / VAT",
+        "familiarity": "confident",
+        "usedFor": [
+          "hmrc"
+        ]
+      }
+    ],
+    "oneLogin": {
+      "email": "rajesh@rkpconsulting.co.uk",
+      "password": "••••••••",
+      "identityVerified": true,
+      "verifiedVia": "app",
+      "appInstalled": true,
+      "usedFor": [
+        "companies-house",
+        "hmrc"
+      ]
+    },
+    "nhsLogin": {
+      "email": "rajesh@rkpconsulting.co.uk",
+      "linked": true
+    },
+    "notes": "Tech-savvy consultant with TWO Government Gateway logins (personal Self Assessment and his limited company/VAT) and a verified GOV.UK One Login for Companies House. Keeps them straight — most people can't."
   }
 }

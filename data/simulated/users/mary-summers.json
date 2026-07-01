@@ -272,7 +272,10 @@
         "lpaType": "Health and Welfare",
         "registrationNumber": "M-0123-4567-8901",
         "registeredDate": "2022-11-15",
-        "attorneys": ["Mary Elizabeth Summers", "Hugo Charles Summers"],
+        "attorneys": [
+          "Mary Elizabeth Summers",
+          "Hugo Charles Summers"
+        ],
         "status": "Active"
       },
       {
@@ -282,7 +285,10 @@
         "lpaType": "Property and Financial Affairs",
         "registrationNumber": "M-0123-4567-8902",
         "registeredDate": "2022-11-15",
-        "attorneys": ["Mary Elizabeth Summers", "Hugo Charles Summers"],
+        "attorneys": [
+          "Mary Elizabeth Summers",
+          "Hugo Charles Summers"
+        ],
         "status": "Active"
       }
     ],
@@ -385,18 +391,99 @@
     ]
   },
   "_fieldSources": {
-    "primaryContact.firstName": { "source": "User", "tier": "verified", "topic": "identity" },
-    "primaryContact.dateOfBirth": { "source": "User", "tier": "verified", "topic": "identity" },
-    "primaryContact.nationalInsuranceNumber": { "source": "DWP", "tier": "verified", "topic": "finance" },
-    "primaryContact.email": { "source": "User", "tier": "submitted", "topic": "identity" },
-    "primaryContact.phone": { "source": "User", "tier": "submitted", "topic": "identity" },
-    "communicationStyle": { "source": "Agent inference", "tier": "inferred", "topic": "general" },
-    "address": { "source": "HMRC", "tier": "verified", "topic": "housing" },
-    "employment": { "source": "DWP", "tier": "verified", "topic": "employment" },
-    "financials": { "source": "User", "tier": "submitted", "topic": "finance" },
-    "vehicles": { "source": "DVLA", "tier": "verified", "topic": "driving" },
-    "healthInfo": { "source": "NHS", "tier": "verified", "topic": "health" },
-    "benefits": { "source": "DWP", "tier": "verified", "topic": "finance" },
-    "family": { "source": "User", "tier": "submitted", "topic": "parenting" }
+    "primaryContact.firstName": {
+      "source": "User",
+      "tier": "verified",
+      "topic": "identity"
+    },
+    "primaryContact.dateOfBirth": {
+      "source": "User",
+      "tier": "verified",
+      "topic": "identity"
+    },
+    "primaryContact.nationalInsuranceNumber": {
+      "source": "DWP",
+      "tier": "verified",
+      "topic": "finance"
+    },
+    "primaryContact.email": {
+      "source": "User",
+      "tier": "submitted",
+      "topic": "identity"
+    },
+    "primaryContact.phone": {
+      "source": "User",
+      "tier": "submitted",
+      "topic": "identity"
+    },
+    "communicationStyle": {
+      "source": "Agent inference",
+      "tier": "inferred",
+      "topic": "general"
+    },
+    "address": {
+      "source": "HMRC",
+      "tier": "verified",
+      "topic": "housing"
+    },
+    "employment": {
+      "source": "DWP",
+      "tier": "verified",
+      "topic": "employment"
+    },
+    "financials": {
+      "source": "User",
+      "tier": "submitted",
+      "topic": "finance"
+    },
+    "vehicles": {
+      "source": "DVLA",
+      "tier": "verified",
+      "topic": "driving"
+    },
+    "healthInfo": {
+      "source": "NHS",
+      "tier": "verified",
+      "topic": "health"
+    },
+    "benefits": {
+      "source": "DWP",
+      "tier": "verified",
+      "topic": "finance"
+    },
+    "family": {
+      "source": "User",
+      "tier": "submitted",
+      "topic": "parenting"
+    }
+  },
+  "logins": {
+    "governmentGateway": [
+      {
+        "userId": "12 55 83 40 27 66",
+        "password": "••••••••",
+        "label": "Personal tax",
+        "familiarity": "confident",
+        "usedFor": [
+          "hmrc"
+        ]
+      }
+    ],
+    "oneLogin": {
+      "email": "mary.summers@btinternet.com",
+      "password": "••••••••",
+      "identityVerified": true,
+      "verifiedVia": "app",
+      "appInstalled": true,
+      "usedFor": [
+        "dwp",
+        "hmcts"
+      ]
+    },
+    "nhsLogin": {
+      "email": "mary.summers@btinternet.com",
+      "linked": true
+    },
+    "notes": "Organised and affluent: a verified GOV.UK One Login for her pension and power-of-attorney duties, plus a Government Gateway for tax. Comfortable with both."
   }
 }

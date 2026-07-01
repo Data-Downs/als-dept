@@ -201,18 +201,99 @@
     ]
   },
   "_fieldSources": {
-    "primaryContact.firstName": { "source": "User", "tier": "verified", "topic": "identity" },
-    "primaryContact.dateOfBirth": { "source": "User", "tier": "verified", "topic": "identity" },
-    "primaryContact.nationalInsuranceNumber": { "source": "DWP", "tier": "verified", "topic": "finance" },
-    "primaryContact.email": { "source": "User", "tier": "submitted", "topic": "identity" },
-    "primaryContact.phone": { "source": "User", "tier": "submitted", "topic": "identity" },
-    "communicationStyle": { "source": "Agent inference", "tier": "inferred", "topic": "general" },
-    "address": { "source": "HMRC", "tier": "verified", "topic": "housing" },
-    "employment": { "source": "HMRC", "tier": "verified", "topic": "employment" },
-    "financials": { "source": "User", "tier": "submitted", "topic": "finance" },
-    "vehicles": { "source": "DVLA", "tier": "verified", "topic": "driving" },
-    "healthInfo": { "source": "NHS", "tier": "verified", "topic": "health" },
-    "benefits": { "source": "DWP", "tier": "verified", "topic": "finance" },
-    "family": { "source": "User", "tier": "submitted", "topic": "parenting" }
+    "primaryContact.firstName": {
+      "source": "User",
+      "tier": "verified",
+      "topic": "identity"
+    },
+    "primaryContact.dateOfBirth": {
+      "source": "User",
+      "tier": "verified",
+      "topic": "identity"
+    },
+    "primaryContact.nationalInsuranceNumber": {
+      "source": "DWP",
+      "tier": "verified",
+      "topic": "finance"
+    },
+    "primaryContact.email": {
+      "source": "User",
+      "tier": "submitted",
+      "topic": "identity"
+    },
+    "primaryContact.phone": {
+      "source": "User",
+      "tier": "submitted",
+      "topic": "identity"
+    },
+    "communicationStyle": {
+      "source": "Agent inference",
+      "tier": "inferred",
+      "topic": "general"
+    },
+    "address": {
+      "source": "HMRC",
+      "tier": "verified",
+      "topic": "housing"
+    },
+    "employment": {
+      "source": "HMRC",
+      "tier": "verified",
+      "topic": "employment"
+    },
+    "financials": {
+      "source": "User",
+      "tier": "submitted",
+      "topic": "finance"
+    },
+    "vehicles": {
+      "source": "DVLA",
+      "tier": "verified",
+      "topic": "driving"
+    },
+    "healthInfo": {
+      "source": "NHS",
+      "tier": "verified",
+      "topic": "health"
+    },
+    "benefits": {
+      "source": "DWP",
+      "tier": "verified",
+      "topic": "finance"
+    },
+    "family": {
+      "source": "User",
+      "tier": "submitted",
+      "topic": "parenting"
+    }
+  },
+  "logins": {
+    "governmentGateway": [
+      {
+        "userId": "27 63 41 88 05 92",
+        "password": "••••••••",
+        "label": "Personal tax",
+        "familiarity": "confident",
+        "usedFor": [
+          "hmrc"
+        ]
+      }
+    ],
+    "oneLogin": {
+      "email": "h.pitt@fashion.arts.ac.uk",
+      "password": "••••••••",
+      "identityVerified": true,
+      "verifiedVia": "app",
+      "appInstalled": true,
+      "usedFor": [
+        "dwp",
+        "hmcts"
+      ]
+    },
+    "nhsLogin": {
+      "email": "h.pitt@fashion.arts.ac.uk",
+      "linked": true
+    },
+    "notes": "Verified GOV.UK One Login set up while sorting her late mother's affairs, plus a Government Gateway for her own tax."
   }
 }

@@ -103,7 +103,7 @@
     "currentlyReceiving": [
       {
         "type": "Child Benefit",
-        "amount": 102.40,
+        "amount": 102.4,
         "frequency": "every 4 weeks",
         "startDate": "2022-01-15",
         "reason": "Two children — Meera and Arjun"
@@ -204,7 +204,12 @@
       "createdAt": "2025-06-15",
       "active": true,
       "permissions": [
-        { "scope": "full_authority", "grantedBy": "system", "grantedAt": "2025-06-15", "revocable": false }
+        {
+          "scope": "full_authority",
+          "grantedBy": "system",
+          "grantedAt": "2025-06-15",
+          "revocable": false
+        }
       ]
     },
     {
@@ -217,7 +222,12 @@
       "createdAt": "2022-01-10",
       "active": true,
       "permissions": [
-        { "scope": "full_authority", "grantedBy": "system", "grantedAt": "2022-01-10", "revocable": false }
+        {
+          "scope": "full_authority",
+          "grantedBy": "system",
+          "grantedAt": "2022-01-10",
+          "revocable": false
+        }
       ]
     },
     {
@@ -229,8 +239,18 @@
       "createdAt": "2020-03-01",
       "active": true,
       "permissions": [
-        { "scope": "view_status", "grantedBy": "priya-anand", "grantedAt": "2020-03-01", "revocable": true },
-        { "scope": "receive_alerts", "grantedBy": "priya-anand", "grantedAt": "2020-03-01", "revocable": true }
+        {
+          "scope": "view_status",
+          "grantedBy": "priya-anand",
+          "grantedAt": "2020-03-01",
+          "revocable": true
+        },
+        {
+          "scope": "receive_alerts",
+          "grantedBy": "priya-anand",
+          "grantedAt": "2020-03-01",
+          "revocable": true
+        }
       ]
     }
   ],
@@ -290,5 +310,32 @@
       "tier": "verified",
       "topic": "finance"
     }
+  },
+  "logins": {
+    "governmentGateway": [
+      {
+        "userId": "58 31 07 62 49 15",
+        "password": "••••••••",
+        "label": "Personal tax",
+        "familiarity": "hazy",
+        "usedFor": [
+          "hmrc"
+        ]
+      }
+    ],
+    "oneLogin": {
+      "email": "priya.anand@gmail.com",
+      "password": "••••••••",
+      "identityVerified": false,
+      "usedFor": [
+        "hmrc",
+        "dwp"
+      ]
+    },
+    "nhsLogin": {
+      "email": "priya.anand@gmail.com",
+      "linked": true
+    },
+    "notes": "A Government Gateway for tax and an unverified GOV.UK One Login she made for Tax-Free Childcare — she doesn't realise the identity step is still outstanding."
   }
 }

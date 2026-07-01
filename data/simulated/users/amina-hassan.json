@@ -180,5 +180,24 @@
       "tier": "inferred",
       "topic": "identity"
     }
+  },
+  "logins": {
+    "governmentGateway": [],
+    "oneLogin": {
+      "email": "amina.hassan88@gmail.com",
+      "password": "••••••••",
+      "identityVerified": true,
+      "verifiedVia": "post-office",
+      "appInstalled": false,
+      "usedFor": [
+        "home-office",
+        "dwp"
+      ]
+    },
+    "nhsLogin": {
+      "email": "amina.hassan88@gmail.com",
+      "linked": true
+    },
+    "notes": "Created a GOV.UK One Login for her eVisa and Universal Credit, and proved her identity at a Post Office. No Government Gateway — she has never dealt with HMRC. Finds the whole thing bewildering in a second language."
   }
 }

@@ -150,7 +150,11 @@
       {
         "name": "Osteoarthritis",
         "diagnosed": "2015-03-10",
-        "affectedAreas": ["Hands", "Knees", "Hips"],
+        "affectedAreas": [
+          "Hands",
+          "Knees",
+          "Hips"
+        ],
         "severity": "Moderate",
         "impactOnDailyLife": "Difficulty with buttons, stairs, walking long distances"
       },
@@ -189,7 +193,9 @@
         "purpose": "Arthritis pain"
       }
     ],
-    "mobilityAids": ["Walking stick (used occasionally for longer walks)"],
+    "mobilityAids": [
+      "Walking stick (used occasionally for longer walks)"
+    ],
     "hospitalAppointments": [
       {
         "type": "Rheumatology review",
@@ -235,18 +241,90 @@
     "prefersStepByStep": true
   },
   "_fieldSources": {
-    "primaryContact.firstName": { "source": "User", "tier": "verified", "topic": "identity" },
-    "primaryContact.dateOfBirth": { "source": "User", "tier": "verified", "topic": "identity" },
-    "primaryContact.nationalInsuranceNumber": { "source": "DWP", "tier": "verified", "topic": "finance" },
-    "primaryContact.email": { "source": "User", "tier": "submitted", "topic": "identity" },
-    "primaryContact.phone": { "source": "User", "tier": "submitted", "topic": "identity" },
-    "communicationStyle": { "source": "Agent inference", "tier": "inferred", "topic": "general" },
-    "address": { "source": "HMRC", "tier": "verified", "topic": "housing" },
-    "employment": { "source": "DWP", "tier": "verified", "topic": "employment" },
-    "financials": { "source": "User", "tier": "submitted", "topic": "finance" },
-    "vehicles": { "source": "DVLA", "tier": "verified", "topic": "driving" },
-    "healthInfo": { "source": "NHS", "tier": "verified", "topic": "health" },
-    "benefits": { "source": "DWP", "tier": "verified", "topic": "finance" },
-    "family": { "source": "User", "tier": "submitted", "topic": "parenting" }
+    "primaryContact.firstName": {
+      "source": "User",
+      "tier": "verified",
+      "topic": "identity"
+    },
+    "primaryContact.dateOfBirth": {
+      "source": "User",
+      "tier": "verified",
+      "topic": "identity"
+    },
+    "primaryContact.nationalInsuranceNumber": {
+      "source": "DWP",
+      "tier": "verified",
+      "topic": "finance"
+    },
+    "primaryContact.email": {
+      "source": "User",
+      "tier": "submitted",
+      "topic": "identity"
+    },
+    "primaryContact.phone": {
+      "source": "User",
+      "tier": "submitted",
+      "topic": "identity"
+    },
+    "communicationStyle": {
+      "source": "Agent inference",
+      "tier": "inferred",
+      "topic": "general"
+    },
+    "address": {
+      "source": "HMRC",
+      "tier": "verified",
+      "topic": "housing"
+    },
+    "employment": {
+      "source": "DWP",
+      "tier": "verified",
+      "topic": "employment"
+    },
+    "financials": {
+      "source": "User",
+      "tier": "submitted",
+      "topic": "finance"
+    },
+    "vehicles": {
+      "source": "DVLA",
+      "tier": "verified",
+      "topic": "driving"
+    },
+    "healthInfo": {
+      "source": "NHS",
+      "tier": "verified",
+      "topic": "health"
+    },
+    "benefits": {
+      "source": "DWP",
+      "tier": "verified",
+      "topic": "finance"
+    },
+    "family": {
+      "source": "User",
+      "tier": "submitted",
+      "topic": "parenting"
+    }
+  },
+  "logins": {
+    "governmentGateway": [
+      {
+        "userId": "66 08 24 91 37 50",
+        "password": "••••••••",
+        "label": "Personal tax",
+        "setUpBy": "her late husband, years ago",
+        "familiarity": "forgotten",
+        "usedFor": [
+          "hmrc"
+        ]
+      }
+    ],
+    "oneLogin": null,
+    "nhsLogin": {
+      "email": "margaret.thompson@btinternet.com",
+      "linked": true
+    },
+    "notes": "A Government Gateway her late husband set up that she cannot remember, and no GOV.UK One Login at all. At 74 with limited tech, creating one and proving her identity is a real barrier."
   }
 }

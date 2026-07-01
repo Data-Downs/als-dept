@@ -47,7 +47,7 @@
     "jobTitle": "Customer assistant",
     "annualIncome": 3994,
     "hoursPerWeek": 12,
-    "hourlyRate": 6.40,
+    "hourlyRate": 6.4,
     "rateType": "Apprentice rate (under 19)",
     "startDate": "2026-04-01",
     "taxCode": "0T W1",
@@ -100,7 +100,9 @@
   },
   "healthInfo": {
     "gpSurgery": "Manningham Medical Centre, Bradford",
-    "conditions": ["None"],
+    "conditions": [
+      "None"
+    ],
     "medications": []
   },
   "communicationStyle": {
@@ -149,15 +151,64 @@
     "institutionalLiteracy": "low"
   },
   "_fieldSources": {
-    "address": { "source": "User", "tier": "submitted", "topic": "identity" },
-    "primaryContact": { "source": "User", "tier": "submitted", "topic": "identity" },
-    "firstTimer.educationStatus": { "source": "DfE", "tier": "verified", "topic": "education" },
-    "firstTimer.studentFinanceStatus": { "source": "SLC", "tier": "verified", "topic": "education" },
-    "firstTimer.niNumberStatus": { "source": "DWP", "tier": "verified", "topic": "identity" },
-    "firstTimer.provisionalLicence": { "source": "DVLA", "tier": "verified", "topic": "driving" },
-    "firstTimer.drivingTestBooking": { "source": "DVSA", "tier": "verified", "topic": "driving" },
-    "firstTimer.payeDetails": { "source": "HMRC", "tier": "verified", "topic": "employment" },
-    "passport": { "source": "HM Passport Office", "tier": "verified", "topic": "identity" },
-    "employment": { "source": "HMRC", "tier": "verified", "topic": "employment" }
+    "address": {
+      "source": "User",
+      "tier": "submitted",
+      "topic": "identity"
+    },
+    "primaryContact": {
+      "source": "User",
+      "tier": "submitted",
+      "topic": "identity"
+    },
+    "firstTimer.educationStatus": {
+      "source": "DfE",
+      "tier": "verified",
+      "topic": "education"
+    },
+    "firstTimer.studentFinanceStatus": {
+      "source": "SLC",
+      "tier": "verified",
+      "topic": "education"
+    },
+    "firstTimer.niNumberStatus": {
+      "source": "DWP",
+      "tier": "verified",
+      "topic": "identity"
+    },
+    "firstTimer.provisionalLicence": {
+      "source": "DVLA",
+      "tier": "verified",
+      "topic": "driving"
+    },
+    "firstTimer.drivingTestBooking": {
+      "source": "DVSA",
+      "tier": "verified",
+      "topic": "driving"
+    },
+    "firstTimer.payeDetails": {
+      "source": "HMRC",
+      "tier": "verified",
+      "topic": "employment"
+    },
+    "passport": {
+      "source": "HM Passport Office",
+      "tier": "verified",
+      "topic": "identity"
+    },
+    "employment": {
+      "source": "HMRC",
+      "tier": "verified",
+      "topic": "employment"
+    }
+  },
+  "logins": {
+    "governmentGateway": [],
+    "oneLogin": null,
+    "nhsLogin": {
+      "email": "zara.begum07@gmail.com",
+      "linked": true
+    },
+    "notes": "First-time government user at 18: no Government Gateway, no GOV.UK One Login. Everything — passport, driving test, first tax — means creating accounts and proving identity for the very first time."
   }
 }

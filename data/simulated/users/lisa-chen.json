@@ -125,7 +125,13 @@
       "postcode": "BA1 2PW"
     },
     "moveDate": "2026-05-01",
-    "departmentsToNotify": ["HMRC", "DVLA", "Electoral Register", "Council Tax", "NHS/GP"],
+    "departmentsToNotify": [
+      "HMRC",
+      "DVLA",
+      "Electoral Register",
+      "Council Tax",
+      "NHS/GP"
+    ],
     "notes": "DVLA licence expired June 2024 — needs renewal not just address change. Never renewed because she cycles everywhere in Bristol. Will need car in Bath (no cycle infrastructure on commute route)."
   },
   "communicationStyle": {
@@ -177,5 +183,33 @@
       "tier": "verified",
       "topic": "identity"
     }
+  },
+  "logins": {
+    "governmentGateway": [
+      {
+        "userId": "40 72 18 55 93 06",
+        "password": "••••••••",
+        "label": "Personal tax",
+        "familiarity": "confident",
+        "usedFor": [
+          "hmrc"
+        ]
+      }
+    ],
+    "oneLogin": {
+      "email": "lisa.chen@arup.com",
+      "password": "••••••••",
+      "identityVerified": true,
+      "verifiedVia": "app",
+      "appInstalled": true,
+      "usedFor": [
+        "hmrc"
+      ]
+    },
+    "nhsLogin": {
+      "email": "lisa.chen@arup.com",
+      "linked": true
+    },
+    "notes": "HMRC and the NHS know her (Gateway + verified One Login), but DWP and DVLA don't — her driving licence is expired and DVLA has no record of her online."
   }
 }

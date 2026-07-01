@@ -208,6 +208,7 @@ function BottomTabBar() {
 function BottomSheetLayer() {
   const bottomSheet = useAppStore((s) => s.bottomSheet);
   const closeBottomSheet = useAppStore((s) => s.closeBottomSheet);
+  const loginKey = useAppStore((s) => s.currentService);
 
   if (!bottomSheet.type) return null;
 
@@ -228,7 +229,7 @@ function BottomSheetLayer() {
       case "consent-preference":
         return <ConsentPreferenceSheet data={bottomSheet.data as Parameters<typeof ConsentPreferenceSheet>[0]["data"]} />;
       case "login":
-        return <LoginSheet />;
+        return <LoginSheet key={loginKey ?? "login"} />;
       default:
         return null;
     }
