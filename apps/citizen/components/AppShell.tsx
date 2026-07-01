@@ -24,6 +24,8 @@ import { FilingPromptSheet } from "./sheets/FilingPromptSheet";
 import { PaymentSheet } from "./sheets/PaymentSheet";
 import { WalletCredentialSheet } from "./sheets/WalletCredentialSheet";
 import { ConsentPreferenceSheet } from "./sheets/ConsentPreferenceSheet";
+import { OneLoginSheet } from "./sheets/OneLoginSheet";
+import { OneLoginNotification } from "./OneLoginNotification";
 import { getAllTerminalStateIds } from "@als/schemas";
 
 const TERMINAL_STATES = getAllTerminalStateIds();
@@ -225,6 +227,8 @@ function BottomSheetLayer() {
         return <WalletCredentialSheet data={bottomSheet.data as Parameters<typeof WalletCredentialSheet>[0]["data"]} />;
       case "consent-preference":
         return <ConsentPreferenceSheet data={bottomSheet.data as Parameters<typeof ConsentPreferenceSheet>[0]["data"]} />;
+      case "one-login":
+        return <OneLoginSheet />;
       default:
         return null;
     }
@@ -246,6 +250,8 @@ function BottomSheetLayer() {
         return "Credential details";
       case "consent-preference":
         return "Data permission";
+      case "one-login":
+        return "GOV.UK One Login";
       default:
         return undefined;
     }
@@ -288,6 +294,13 @@ export function AppShell() {
       | null;
     if (savedPlanSource) {
       useAppStore.setState({ planSource: savedPlanSource });
+    }
+    const savedAuthMode = sessionStorage.getItem("c02_authMode") as
+      | "off"
+      | "one-login"
+      | null;
+    if (savedAuthMode) {
+      useAppStore.setState({ authMode: savedAuthMode });
     }
     if (!persona) {
       const savedPersona = sessionStorage.getItem("c02_persona");
@@ -376,6 +389,9 @@ export function AppShell() {
 
       {/* Agent intro full-screen overlay */}
       {agentIntroVisible && <AgentIntroScreen />}
+
+      {/* One Login code arriving on the phone */}
+      <OneLoginNotification />
 
       {/* Toast */}
       <Toast />

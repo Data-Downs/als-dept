@@ -22,9 +22,34 @@ import type {
 } from "./types";
 import type { CardRequest, PipelineTrace, ConsentPreference } from "@als/schemas";
 import type { JourneyOutcome } from "./outcome-types";
-import type { WalletCredential } from "@als/identity/src/credential-types";
+import type {
+  WalletCredential,
+  TestUser,
+} from "@als/identity/src/credential-types";
+import { OneLoginSimulator } from "@als/identity/src/one-login-simulator";
 import { getAllTerminalStateIds } from "@als/schemas";
 import { computePlanRelevance } from "./plan-relevance";
+
+// ── One Login (2b): client-side simulator instance for the OTP sign-in UX ──
+let oneLoginSim: OneLoginSimulator | null = null;
+function getOneLoginSim(): OneLoginSimulator {
+  if (!oneLoginSim) oneLoginSim = new OneLoginSimulator();
+  return oneLoginSim;
+}
+function personaToTestUser(id: string, p: PersonaData): TestUser {
+  const pc =
+    (p as unknown as { primaryContact?: Record<string, string> })
+      .primaryContact ?? {};
+  const name = [pc.firstName, pc.lastName].filter(Boolean).join(" ") || id;
+  return {
+    id,
+    name,
+    date_of_birth: pc.dateOfBirth ?? "",
+    national_insurance_number: pc.nationalInsuranceNumber ?? "",
+    address: (p as unknown as { address?: unknown }).address ?? {},
+    primaryContact: pc,
+  } as unknown as TestUser;
+}
 
 interface AppStore {
   // Identity
@@ -147,6 +172,22 @@ interface AppStore {
   settingsPaneOpen: boolean;
   personaSelectorOpen: boolean;
   bottomSheet: BottomSheetState;
+
+  // One Login (2b) — simulated GOV.UK One Login gate
+  authMode: "off" | "one-login";
+  oneLoginVerified: boolean;
+  phoneNotification: {
+    title: string;
+    body: string;
+    code: string;
+    consumed: boolean;
+  } | null;
+  oneLoginChallenge: {
+    challengeId: string;
+    phoneHint: string;
+    error?: string;
+  } | null;
+  pendingMessage: string | null;
   toast: ToastMessage | null;
   agentIntroVisible: boolean;
   previousAgent: AgentType | null;
@@ -205,6 +246,10 @@ interface AppStore {
   startPlan: (lifeEvent: LifeEventInfo) => void;
   loadPlan: (planId: string) => void;
   startServiceFromPlan: (serviceId: string, serviceName: string) => void;
+  setAuthMode: (mode: "off" | "one-login") => void;
+  beginOneLogin: () => void;
+  submitOneLoginCode: (code: string) => boolean;
+  dismissPhoneNotification: () => void;
   markServiceInProgress: (serviceId: string, conversationId: string) => void;
   markServiceCompleted: (serviceId: string) => void;
   markServiceSkipped: (serviceId: string) => void;
@@ -476,6 +521,11 @@ export const useAppStore = create<AppStore>((set, get) => ({
   settingsPaneOpen: false,
   personaSelectorOpen: false,
   bottomSheet: { type: null },
+  authMode: "one-login",
+  oneLoginVerified: false,
+  phoneNotification: null,
+  oneLoginChallenge: null,
+  pendingMessage: null,
   toast: null,
   agentIntroVisible: false,
   previousAgent: null,
@@ -485,6 +535,71 @@ export const useAppStore = create<AppStore>((set, get) => ({
 
   openBottomSheet: (type, data) => set({ bottomSheet: { type, data } }),
   closeBottomSheet: () => set({ bottomSheet: { type: null } }),
+
+  setAuthMode: (mode) => {
+    set({ authMode: mode });
+    if (typeof window !== "undefined") {
+      sessionStorage.setItem("c02_authMode", mode);
+    }
+  },
+
+  // One Login step 1: issue a code and "send" it to the persona's phone.
+  beginOneLogin: () => {
+    const state = get();
+    const p = state.personaData;
+    if (!state.persona || !p) return;
+    const sim = getOneLoginSim();
+    sim.loadTestUsers([personaToTestUser(state.persona, p)]);
+    const challenge = sim.issueChallenge(state.persona);
+    if (!challenge) return;
+    const msg = sim.otp.peekLatest(state.persona);
+    set({
+      oneLoginChallenge: {
+        challengeId: challenge.challengeId,
+        phoneHint: challenge.phoneHint,
+      },
+      phoneNotification: msg
+        ? {
+            title: "GOV.UK One Login",
+            body: msg.body,
+            code: msg.code,
+            consumed: false,
+          }
+        : null,
+    });
+  },
+
+  // One Login step 2: verify the code. On success, the session is authenticated
+  // and the phone message is marked consumed (by a human).
+  submitOneLoginCode: (code) => {
+    const state = get();
+    const challenge = state.oneLoginChallenge;
+    if (!challenge) return false;
+    const result = getOneLoginSim().verifyOtp(
+      challenge.challengeId,
+      code,
+      "human",
+    );
+    if (result.ok) {
+      set((s) => ({
+        oneLoginVerified: true,
+        oneLoginChallenge: null,
+        phoneNotification: s.phoneNotification
+          ? { ...s.phoneNotification, consumed: true }
+          : null,
+      }));
+      return true;
+    }
+    set({ oneLoginChallenge: { ...challenge, error: result.reason } });
+    return false;
+  },
+
+  dismissPhoneNotification: () =>
+    set((s) => ({
+      phoneNotification: s.phoneNotification
+        ? { ...s.phoneNotification, consumed: true }
+        : null,
+    })),
 
   showToast: (text: string) => {
     if (toastTimer) clearTimeout(toastTimer);
@@ -523,6 +638,11 @@ export const useAppStore = create<AppStore>((set, get) => ({
       activeConversation: null,
       enrichedData: null,
       lifeEvents: [],
+      // Each persona signs in fresh
+      oneLoginVerified: false,
+      phoneNotification: null,
+      oneLoginChallenge: null,
+      pendingMessage: null,
     });
 
     if (typeof window !== "undefined") {
@@ -719,6 +839,20 @@ export const useAppStore = create<AppStore>((set, get) => ({
     const state = get();
     if (!state.persona || !state.personaData || state.isLoading) return;
     if (state.ucState && TERMINAL_STATES.has(state.ucState)) return;
+
+    // One Login gate: the citizen must sign in before interacting with any
+    // government service. Every path in — free chat, decision-gate confirms,
+    // plan cards — funnels through sendMessage, so this one check covers them
+    // all. Hold the message, open the One Login sheet, and resume on success.
+    if (state.authMode === "one-login" && !state.oneLoginVerified) {
+      set({
+        pendingMessage: text,
+        oneLoginChallenge: null,
+        phoneNotification: null,
+      });
+      state.openBottomSheet("one-login");
+      return;
+    }
 
     const service = state.currentService;
     const LEGACY_SCENARIO_MAP: Record<string, string> = {
