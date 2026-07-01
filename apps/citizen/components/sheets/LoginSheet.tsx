@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useAppStore } from "@/lib/store";
 
 type Phase = "signin" | "code" | "success";
+type LoginType = "one-login" | "government-gateway";
 
 const ERROR_TEXT: Record<string, string> = {
   "wrong-code": "That code isn't right. Check your phone and try again.",
@@ -12,29 +13,35 @@ const ERROR_TEXT: Record<string, string> = {
 };
 
 /**
- * Simulated GOV.UK One Login sign-in, shown when a citizen enters a service.
- * Three phases:
- * 1. signin  — credential pre-filled from the wallet (password-app style)
- * 2. code    — enter the 6-digit code delivered to the phone notification
- * 3. success — signed in; the held service then resumes
+ * Simulated sign-in, shown when a citizen enters a government service. The
+ * SAME component renders either GOV.UK One Login (email) or Government Gateway
+ * (12-digit user ID) depending on which login the service demands — that
+ * near-identical-but-different pairing is exactly what confuses real citizens.
  */
-export function OneLoginSheet() {
+export function LoginSheet({ loginType }: { loginType: LoginType }) {
   const personaData = useAppStore((s) => s.personaData);
   const challenge = useAppStore((s) => s.oneLoginChallenge);
-  const beginOneLogin = useAppStore((s) => s.beginOneLogin);
-  const submitOneLoginCode = useAppStore((s) => s.submitOneLoginCode);
+  const beginLogin = useAppStore((s) => s.beginLogin);
+  const submitLoginCode = useAppStore((s) => s.submitLoginCode);
 
   const [phase, setPhase] = useState<Phase>("signin");
   const [code, setCode] = useState("");
 
+  const isGateway = loginType === "government-gateway";
+  const brandName = isGateway ? "Government Gateway" : "One Login";
+
   const pc = (
     personaData as unknown as {
       primaryContact?: { email?: string; firstName?: string };
+      logins?: { governmentGateway?: Array<{ userId: string }> };
     }
-  )?.primaryContact;
-  const email = pc?.email ?? `${pc?.firstName ?? "you"}@btinternet.com`;
+  );
+  const email = pc?.primaryContact?.email ?? `${pc?.primaryContact?.firstName ?? "you"}@btinternet.com`;
+  const gatewayId = pc?.logins?.governmentGateway?.[0]?.userId ?? "61 27 84 40 39 12";
+  const username = isGateway ? gatewayId : email;
+  const usernameLabel = isGateway ? "Government Gateway user ID" : "Email";
 
-  // Once signed in, resume the service the citizen was trying to enter.
+  // Once signed in, resume the message the citizen was trying to send.
   useEffect(() => {
     if (phase !== "success") return;
     const t = setTimeout(() => {
@@ -49,14 +56,18 @@ export function OneLoginSheet() {
     return () => clearTimeout(t);
   }, [phase]);
 
+  const Brand = () => (
+    <div className="flex items-center gap-2">
+      <span className="text-base font-bold text-govuk-black">GOV.UK</span>
+      <span className="text-base text-govuk-dark-grey">{brandName}</span>
+    </div>
+  );
+
   // ── Sign-in phase ──
   if (phase === "signin") {
     return (
       <div className="px-1 pb-2 space-y-5">
-        <div className="flex items-center gap-2">
-          <span className="text-base font-bold text-govuk-black">GOV.UK</span>
-          <span className="text-base text-govuk-dark-grey">One Login</span>
-        </div>
+        <Brand />
 
         <p className="text-sm text-govuk-dark-grey">
           Sign in to continue to this government service.
@@ -80,8 +91,11 @@ export function OneLoginSheet() {
               </svg>
             </div>
             <div className="min-w-0 flex-1">
+              <p className="text-[10px] uppercase tracking-wide text-govuk-mid-grey">
+                {usernameLabel}
+              </p>
               <p className="text-sm font-medium text-govuk-black truncate">
-                {email}
+                {username}
               </p>
               <p className="text-xs text-govuk-dark-grey tracking-widest">
                 ••••••••••••
@@ -96,7 +110,7 @@ export function OneLoginSheet() {
         <button
           type="button"
           onClick={() => {
-            beginOneLogin();
+            beginLogin(loginType);
             setPhase("code");
           }}
           className="w-full bg-govuk-blue text-white font-semibold text-sm py-3.5 rounded-lg hover:bg-govuk-blue/90 transition-colors"
@@ -105,7 +119,7 @@ export function OneLoginSheet() {
         </button>
 
         <p className="text-[11px] text-center text-govuk-mid-grey">
-          Simulated One Login for demonstration
+          Simulated {brandName} for demonstration
         </p>
       </div>
     );
@@ -115,14 +129,11 @@ export function OneLoginSheet() {
   if (phase === "code") {
     return (
       <div className="px-1 pb-2 space-y-5">
-        <div className="flex items-center gap-2">
-          <span className="text-base font-bold text-govuk-black">GOV.UK</span>
-          <span className="text-base text-govuk-dark-grey">One Login</span>
-        </div>
+        <Brand />
 
         <div className="space-y-1">
           <p className="text-sm font-medium text-govuk-black">
-            Enter the security code
+            {isGateway ? "Enter the access code" : "Enter the security code"}
           </p>
           <p className="text-sm text-govuk-dark-grey">
             We&rsquo;ve sent a 6-digit code to your phone{" "}
@@ -152,7 +163,7 @@ export function OneLoginSheet() {
           type="button"
           disabled={code.length !== 6}
           onClick={() => {
-            if (submitOneLoginCode(code)) setPhase("success");
+            if (submitLoginCode(code)) setPhase("success");
             else setCode("");
           }}
           className="w-full bg-govuk-blue text-white font-semibold text-sm py-3.5 rounded-lg hover:bg-govuk-blue/90 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
@@ -181,8 +192,8 @@ export function OneLoginSheet() {
             <polyline points="20 6 9 17 4 12" />
           </svg>
         </div>
-        <p className="text-base font-semibold text-govuk-black">
-          Signed in to GOV.UK One Login
+        <p className="text-base font-semibold text-govuk-black text-center">
+          Signed in to GOV.UK {brandName}
         </p>
       </div>
     </div>

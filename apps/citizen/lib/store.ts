@@ -29,6 +29,7 @@ import type {
 import { OneLoginSimulator } from "@als/identity/src/one-login-simulator";
 import { getAllTerminalStateIds } from "@als/schemas";
 import { computePlanRelevance } from "./plan-relevance";
+import { loginRuleForService } from "./gov-logins";
 
 // ── One Login (2b): client-side simulator instance for the OTP sign-in UX ──
 let oneLoginSim: OneLoginSimulator | null = null;
@@ -176,6 +177,7 @@ interface AppStore {
   // One Login (2b) — simulated GOV.UK One Login gate
   authMode: "off" | "one-login";
   oneLoginVerified: boolean;
+  gatewayVerified: boolean;
   phoneNotification: {
     title: string;
     body: string;
@@ -185,6 +187,7 @@ interface AppStore {
   oneLoginChallenge: {
     challengeId: string;
     phoneHint: string;
+    loginType: "one-login" | "government-gateway";
     error?: string;
   } | null;
   pendingMessage: string | null;
@@ -247,8 +250,8 @@ interface AppStore {
   loadPlan: (planId: string) => void;
   startServiceFromPlan: (serviceId: string, serviceName: string) => void;
   setAuthMode: (mode: "off" | "one-login") => void;
-  beginOneLogin: () => void;
-  submitOneLoginCode: (code: string) => boolean;
+  beginLogin: (loginType: "one-login" | "government-gateway") => void;
+  submitLoginCode: (code: string) => boolean;
   dismissPhoneNotification: () => void;
   markServiceInProgress: (serviceId: string, conversationId: string) => void;
   markServiceCompleted: (serviceId: string) => void;
@@ -523,6 +526,7 @@ export const useAppStore = create<AppStore>((set, get) => ({
   bottomSheet: { type: null },
   authMode: "one-login",
   oneLoginVerified: false,
+  gatewayVerified: false,
   phoneNotification: null,
   oneLoginChallenge: null,
   pendingMessage: null,
@@ -543,8 +547,9 @@ export const useAppStore = create<AppStore>((set, get) => ({
     }
   },
 
-  // One Login step 1: issue a code and "send" it to the persona's phone.
-  beginOneLogin: () => {
+  // Login step 1: issue a code and "send" it to the persona's phone. Works for
+  // both One Login and Government Gateway — only the branding differs.
+  beginLogin: (loginType) => {
     const state = get();
     const p = state.personaData;
     if (!state.persona || !p) return;
@@ -553,15 +558,19 @@ export const useAppStore = create<AppStore>((set, get) => ({
     const challenge = sim.issueChallenge(state.persona);
     if (!challenge) return;
     const msg = sim.otp.peekLatest(state.persona);
+    const isGateway = loginType === "government-gateway";
     set({
       oneLoginChallenge: {
         challengeId: challenge.challengeId,
         phoneHint: challenge.phoneHint,
+        loginType,
       },
       phoneNotification: msg
         ? {
-            title: "GOV.UK One Login",
-            body: msg.body,
+            title: isGateway ? "Government Gateway" : "GOV.UK One Login",
+            body: isGateway
+              ? `Your Government Gateway access code is ${msg.code}. Use this to finish signing in.`
+              : `Your GOV.UK One Login security code is ${msg.code}. It expires in 10 minutes. Do not share it with anyone.`,
             code: msg.code,
             consumed: false,
           }
@@ -569,9 +578,9 @@ export const useAppStore = create<AppStore>((set, get) => ({
     });
   },
 
-  // One Login step 2: verify the code. On success, the session is authenticated
-  // and the phone message is marked consumed (by a human).
-  submitOneLoginCode: (code) => {
+  // Login step 2: verify the code. On success, mark the matching login type
+  // authenticated (they are tracked separately) and consume the phone message.
+  submitLoginCode: (code) => {
     const state = get();
     const challenge = state.oneLoginChallenge;
     if (!challenge) return false;
@@ -581,8 +590,10 @@ export const useAppStore = create<AppStore>((set, get) => ({
       "human",
     );
     if (result.ok) {
+      const isGateway = challenge.loginType === "government-gateway";
       set((s) => ({
-        oneLoginVerified: true,
+        oneLoginVerified: isGateway ? s.oneLoginVerified : true,
+        gatewayVerified: isGateway ? true : s.gatewayVerified,
         oneLoginChallenge: null,
         phoneNotification: s.phoneNotification
           ? { ...s.phoneNotification, consumed: true }
@@ -640,6 +651,7 @@ export const useAppStore = create<AppStore>((set, get) => ({
       lifeEvents: [],
       // Each persona signs in fresh
       oneLoginVerified: false,
+      gatewayVerified: false,
       phoneNotification: null,
       oneLoginChallenge: null,
       pendingMessage: null,
@@ -840,18 +852,30 @@ export const useAppStore = create<AppStore>((set, get) => ({
     if (!state.persona || !state.personaData || state.isLoading) return;
     if (state.ucState && TERMINAL_STATES.has(state.ucState)) return;
 
-    // One Login gate: the citizen must sign in before interacting with any
-    // government service. Every path in — free chat, decision-gate confirms,
-    // plan cards — funnels through sendMessage, so this one check covers them
-    // all. Hold the message, open the One Login sheet, and resume on success.
-    if (state.authMode === "one-login" && !state.oneLoginVerified) {
-      set({
-        pendingMessage: text,
-        oneLoginChallenge: null,
-        phoneNotification: null,
-      });
-      state.openBottomSheet("one-login");
-      return;
+    // Login gate: sign in before interacting with a government service. WHICH
+    // login depends on the service — HMRC/probate still use Government Gateway,
+    // most newer services use GOV.UK One Login — and the two are tracked
+    // separately, so signing into one does not sign you into the other. Every
+    // route in funnels through sendMessage, so this one check covers them all.
+    if (state.authMode === "one-login") {
+      const rule = loginRuleForService(state.currentService);
+      const authed =
+        rule.loginType === "government-gateway"
+          ? state.gatewayVerified
+          : state.oneLoginVerified;
+      if (rule.loginType !== "none-in-person" && !authed) {
+        set({
+          pendingMessage: text,
+          oneLoginChallenge: null,
+          phoneNotification: null,
+        });
+        state.openBottomSheet(
+          rule.loginType === "government-gateway"
+            ? "government-gateway"
+            : "one-login",
+        );
+        return;
+      }
     }
 
     const service = state.currentService;

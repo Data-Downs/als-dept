@@ -24,7 +24,7 @@ import { FilingPromptSheet } from "./sheets/FilingPromptSheet";
 import { PaymentSheet } from "./sheets/PaymentSheet";
 import { WalletCredentialSheet } from "./sheets/WalletCredentialSheet";
 import { ConsentPreferenceSheet } from "./sheets/ConsentPreferenceSheet";
-import { OneLoginSheet } from "./sheets/OneLoginSheet";
+import { LoginSheet } from "./sheets/LoginSheet";
 import { OneLoginNotification } from "./OneLoginNotification";
 import { getAllTerminalStateIds } from "@als/schemas";
 
@@ -228,7 +228,9 @@ function BottomSheetLayer() {
       case "consent-preference":
         return <ConsentPreferenceSheet data={bottomSheet.data as Parameters<typeof ConsentPreferenceSheet>[0]["data"]} />;
       case "one-login":
-        return <OneLoginSheet />;
+        return <LoginSheet loginType="one-login" />;
+      case "government-gateway":
+        return <LoginSheet loginType="government-gateway" />;
       default:
         return null;
     }
@@ -252,6 +254,8 @@ function BottomSheetLayer() {
         return "Data permission";
       case "one-login":
         return "GOV.UK One Login";
+      case "government-gateway":
+        return "Government Gateway";
       default:
         return undefined;
     }

@@ -329,6 +329,7 @@ export type BottomSheetType =
   | "wallet-credential"
   | "consent-preference"
   | "one-login"
+  | "government-gateway"
   | null;
 
 export interface BottomSheetState {
