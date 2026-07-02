@@ -125,6 +125,11 @@ export async function POST(req: NextRequest) {
     }
     const out = result.output as AnthropicChatOutput;
 
+    // Capture any text the model produced — it can arrive ALONGSIDE a tool
+    // call, not only on the final turn. Losing this is what made the agent go
+    // silent after recording something.
+    if (out.responseText && out.responseText.trim()) reply = out.responseText;
+
     if (out.stopReason === "tool_use") {
       loop.push({ role: "assistant", content: out.rawContent });
       const toolResults = out.toolCalls.map((tc) => {
@@ -135,7 +140,6 @@ export async function POST(req: NextRequest) {
       continue;
     }
 
-    reply = out.responseText;
     break;
   }
 
