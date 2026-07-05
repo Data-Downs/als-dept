@@ -410,7 +410,7 @@ export default function AgentPage() {
 
       <aside className="w-[320px] shrink-0 border-l border-black/5 bg-white/60 overflow-y-auto hidden md:block">
         <div className="px-5 py-4 border-b border-black/5">
-          <p className="text-sm font-semibold">What Dot knows</p>
+          <p className="text-sm font-semibold">What your agents know</p>
           <p className="text-xs text-[#8a8a8a] mt-0.5">
             {known === 0 ? "Nothing yet — say hello." : `${known} things so far`}
           </p>

@@ -477,6 +477,16 @@ export async function POST(req: NextRequest) {
     break;
   }
 
+  // Anything the agents learn from an authoritative source belongs in the
+  // profile — record the registered office deterministically, not at the LLM's
+  // discretion, so it's always visible in the panel once a company is known.
+  const office =
+    (foundCompany as { officeAddress?: string } | null)?.officeAddress ??
+    (companyContext as { officeAddress?: string } | null)?.officeAddress;
+  if (office) {
+    working = mergeProfile(working, { identity: { address: office } });
+  }
+
   return Response.json({
     reply,
     profile: working,
