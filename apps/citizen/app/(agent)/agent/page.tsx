@@ -202,7 +202,7 @@ export default function AgentPage() {
             a
           </div>
           <p className="text-sm font-semibold flex-1">Your agent</p>
-          <span className="text-[10px] font-medium uppercase tracking-wide text-[#8a8a8a] border border-black/10 rounded-full px-2 py-0.5">
+          <span className="text-[10px] font-medium tracking-wide text-[#8a8a8a] border border-black/10 rounded-full px-2 py-0.5">
             V1 · Citizen
           </span>
         </header>
@@ -326,7 +326,7 @@ function ReceiptCard({ receipt }: { receipt: Receipt }) {
               <polyline points="20 6 9 17 4 12" />
             </svg>
           </div>
-          <span className="text-[11px] font-semibold uppercase tracking-wide text-[#00703c]">
+          <span className="text-[11px] font-semibold tracking-wide text-[#00703c]">
             Receipt
           </span>
         </div>
@@ -351,7 +351,7 @@ function PanelSection({
 }) {
   return (
     <div className="px-5 py-4 border-b border-black/5">
-      <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8a8a8a] mb-2">
+      <p className="text-[11px] font-semibold tracking-wide text-[#8a8a8a] mb-2">
         {title}
       </p>
       {children}
