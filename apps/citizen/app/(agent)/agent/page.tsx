@@ -666,12 +666,20 @@ function Empty() {
 type ChipItem = { label: string; done?: boolean };
 
 function Chips({ items, accent }: { items: ChipItem[]; accent: string }) {
-  if (items.length === 0) return <Empty />;
+  // The model can record the same thing under two keys; collapse duplicate
+  // labels so the panel never shows a chip twice, preferring the resolved one.
+  const byLabel = new Map<string, ChipItem>();
+  for (const it of items) {
+    const prev = byLabel.get(it.label);
+    if (!prev || (it.done && !prev.done)) byLabel.set(it.label, it);
+  }
+  const unique = [...byLabel.values()];
+  if (unique.length === 0) return <Empty />;
   return (
     <div className="flex flex-wrap gap-1.5">
-      {items.map((it) => (
+      {unique.map((it, i) => (
         <span
-          key={it.label}
+          key={`${it.label}-${i}`}
           className="inline-flex items-center gap-1 text-xs font-medium rounded-full px-2.5 py-1"
           style={
             it.done
