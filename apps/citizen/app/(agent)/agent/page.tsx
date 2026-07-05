@@ -16,11 +16,12 @@ type Msg =
   | { role: "user" | "assistant"; content: string }
   | { role: "receipt"; content: string; receipt: Receipt };
 
+type Entry = { key: string; label: string };
 type Profile = {
   identity: Record<string, unknown>;
-  responsibilities: { key: string; label: string }[];
-  liabilities: string[];
-  eligibilities: string[];
+  responsibilities: Entry[];
+  liabilities: Entry[];
+  eligibilities: Entry[];
 };
 type ServiceAuth = {
   login: "one-login" | "government-gateway";
@@ -290,10 +291,13 @@ export default function AgentPage() {
           />
         </PanelSection>
         <PanelSection title="Liable for">
-          <Chips items={profile.liabilities} accent="#b45309" />
+          <Chips items={profile.liabilities.map((r) => r.label)} accent="#b45309" />
         </PanelSection>
         <PanelSection title="Eligible for">
-          <Chips items={profile.eligibilities} accent="#00703c" />
+          <Chips
+            items={profile.eligibilities.map((r) => r.label)}
+            accent="#00703c"
+          />
         </PanelSection>
       </aside>
 

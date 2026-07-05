@@ -12,12 +12,12 @@ import {
  * sign in (never acting silently). Acting always leaves a receipt.
  */
 
-type Responsibility = { key: string; label: string };
+type Entry = { key: string; label: string };
 type Profile = {
   identity: Record<string, unknown>;
-  responsibilities: Responsibility[];
-  liabilities: string[];
-  eligibilities: string[];
+  responsibilities: Entry[];
+  liabilities: Entry[];
+  eligibilities: Entry[];
 };
 
 type ServiceAuth = {
@@ -77,9 +77,14 @@ Run on PROGRESSIVE DISCLOSURE — always make richer detail optional, never dema
 - When you ask their age, mention they can give their date of birth if they'd prefer; it's optional.
 - At a natural moment, ask if they happen to know their National Insurance number — optional.
 
-Record everything concrete with the remember tool: set identity fields (name, fullName, dateOfBirth, age, location, nationalInsuranceNumber, job, company…) and record anything they are responsible for.
+Record everything concrete with the remember tool: set identity fields (name, fullName, dateOfBirth, age, location, nationalInsuranceNumber, job, company…) and record what you learn across three lists:
+- **responsibilities** — ongoing duties or things they hold: a limited company, a car, a home, a child.
+- **liabilities** — what they owe or are on the hook for as a consequence: corporation tax, a confirmation statement due, VAT, self-assessment, vehicle tax.
+- **eligibilities** — what they could claim or access but may not have taken up: tax-free childcare, marriage allowance, a state pension forecast.
 
-Each responsibility carries a stable \`key\` and a short \`label\`. Record a thing ONCE under a lasting key (e.g. key "limited-company"), then, as you learn more, UPDATE the same key with a richer label — never create a second entry for the same thing. Keep labels short: "Director of Unusually Ltd", not a sentence.
+The quiet value is joining these up: when someone tells you they run a limited company, you already know they are liable for a confirmation statement and corporation tax — record those liabilities without being asked, and mention them naturally. Never lecture or dump a list; surface one relevant thing at a time.
+
+Every entry carries a stable \`key\` and a short \`label\`. Record a thing ONCE under a lasting key (e.g. key "limited-company", "confirmation-statement"), then, as you learn more, UPDATE the same key with a richer label — never create a second entry for the same thing. Keep labels short: "Director of Unusually Ltd", "Confirmation statement due", not a sentence.
 
 ## Acting
 You also have an act tool. When the citizen clearly asks you to actually DO something with government — file a confirmation statement, submit a VAT return — call act with the matching serviceId. You NEVER do it silently: acting requires them to sign in, and calling act prompts them for the correct login. As you call act, tell them plainly, in one line, what you're about to do and that you'll need them to sign in.
@@ -108,7 +113,7 @@ const TOOLS = [
         responsibilities: {
           type: "array",
           description:
-            "Things the person is responsible for. Use a stable key per thing and update its label as you learn more — never duplicate.",
+            "Ongoing duties or things the person holds (a company, a car, a home, a child). Use a stable key per thing and update its label as you learn more — never duplicate.",
           items: {
             type: "object",
             properties: {
@@ -120,6 +125,46 @@ const TOOLS = [
               label: {
                 type: "string",
                 description: "Short display label, e.g. 'Director of Unusually Ltd'.",
+              },
+            },
+            required: ["key", "label"],
+          },
+        },
+        liabilities: {
+          type: "array",
+          description:
+            "What the person owes or is on the hook for (corporation tax, a confirmation statement due, VAT, self-assessment). Infer these from their responsibilities. Stable key per thing; update, never duplicate.",
+          items: {
+            type: "object",
+            properties: {
+              key: {
+                type: "string",
+                description:
+                  "Stable slug, e.g. 'confirmation-statement', 'corporation-tax', 'self-assessment'.",
+              },
+              label: {
+                type: "string",
+                description: "Short display label, e.g. 'Confirmation statement due'.",
+              },
+            },
+            required: ["key", "label"],
+          },
+        },
+        eligibilities: {
+          type: "array",
+          description:
+            "What the person could claim or access but may not have taken up (tax-free childcare, marriage allowance, a pension forecast). Stable key per thing; update, never duplicate.",
+          items: {
+            type: "object",
+            properties: {
+              key: {
+                type: "string",
+                description:
+                  "Stable slug, e.g. 'tax-free-childcare', 'marriage-allowance'.",
+              },
+              label: {
+                type: "string",
+                description: "Short display label, e.g. 'Tax-free childcare'.",
               },
             },
             required: ["key", "label"],
@@ -160,17 +205,20 @@ function mergeProfile(profile: Profile, patch: Record<string, unknown>): Profile
     ...profile,
     identity: { ...emptyProfile().identity, ...profile?.identity },
     responsibilities: (profile?.responsibilities ?? []).map((r) => ({ ...r })),
+    liabilities: (profile?.liabilities ?? []).map((r) => ({ ...r })),
+    eligibilities: (profile?.eligibilities ?? []).map((r) => ({ ...r })),
   };
   if (patch.identity && typeof patch.identity === "object") {
     p.identity = { ...p.identity, ...(patch.identity as Record<string, unknown>) };
   }
-  if (Array.isArray(patch.responsibilities)) {
-    for (const raw of patch.responsibilities as Array<Partial<Responsibility>>) {
+  for (const list of ["responsibilities", "liabilities", "eligibilities"] as const) {
+    if (!Array.isArray(patch[list])) continue;
+    for (const raw of patch[list] as Array<Partial<Entry>>) {
       if (!raw || !raw.label) continue;
       const key = raw.key || raw.label;
-      const existing = p.responsibilities.find((x) => x.key === key);
+      const existing = p[list].find((x) => x.key === key);
       if (existing) existing.label = raw.label;
-      else p.responsibilities.push({ key, label: raw.label });
+      else p[list].push({ key, label: raw.label });
     }
   }
   return p;
