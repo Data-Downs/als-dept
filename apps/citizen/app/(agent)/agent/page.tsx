@@ -227,10 +227,10 @@ export default function AgentPage() {
     <div className="h-screen w-screen flex bg-[#faf9f7] text-[#1a1a1a] overflow-hidden">
       <main className="flex-1 flex flex-col min-w-0">
         <header className="px-6 py-4 flex items-center gap-3 border-b border-black/5">
-          <div className="w-7 h-7 rounded-full bg-[#1d70b8] flex items-center justify-center text-white text-xs font-semibold">
-            a
+          <div className="w-7 h-7 rounded-full bg-[#1d70b8] flex items-center justify-center">
+            <span className="w-2 h-2 rounded-full bg-white" />
           </div>
-          <p className="text-sm font-semibold flex-1">Your agent</p>
+          <p className="text-sm font-semibold flex-1">Dot</p>
           <span className="text-[10px] font-medium tracking-wide text-[#8a8a8a] border border-black/10 rounded-full px-2 py-0.5">
             V1 · Citizen
           </span>
@@ -292,7 +292,7 @@ export default function AgentPage() {
 
       <aside className="w-[320px] shrink-0 border-l border-black/5 bg-white/60 overflow-y-auto hidden md:block">
         <div className="px-5 py-4 border-b border-black/5">
-          <p className="text-sm font-semibold">What your agent knows</p>
+          <p className="text-sm font-semibold">What Dot knows</p>
           <p className="text-xs text-[#8a8a8a] mt-0.5">
             {known === 0 ? "Nothing yet — say hello." : `${known} things so far`}
           </p>
