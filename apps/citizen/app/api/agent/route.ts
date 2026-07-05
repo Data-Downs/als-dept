@@ -4,6 +4,7 @@ import {
   type AnthropicChatInput,
   type AnthropicChatOutput,
 } from "@als/adapters";
+import { lookupCompanyByName } from "@/lib/companies-house";
 
 /**
  * The agent layer (V1 — the citizen's agent). A bare LLM agent that gets to
@@ -103,6 +104,13 @@ Available services:
 
 ## Offering to act
 When you discover a liability you can actually discharge with one of the services above — a confirmation statement (they're a company director) or a VAT return (their business is VAT-registered) — you may OFFER, ONCE and gently, to take it off their plate. Frame it as a real question that makes "I'm on top of it myself" an easy, unembarrassing answer: e.g. "Would you like me to file that for you, or are you handling it yourself?" Make at most one offer, then let it go — never chase or repeat it. Only call act once they clearly say yes. For anything you can't act on (corporation tax, an eligibility like tax-free childcare), note it plainly but do not offer to do it.
+
+## Recognising you
+The moment the citizen names or clearly refers to a company they run or own, call lookup_company with the name. It returns the real Companies House record: the company's status, incorporation date, its directors (with appointment dates), and its ACTUAL confirmation-statement and accounts due dates.
+
+Use it to RECOGNISE them, not to interrogate them. If one of the directors plausibly matches the person you're talking to (they told you they're Chris, and a "Christopher Downs" is a director), tell them warmly and specifically what you found and ask if it's them — e.g. "I can see a Christopher Downs listed as a director of Unusually Ltd, appointed March 2024 — is that you?" Do not claim their identity is verified until they confirm.
+
+Once they confirm, record the company and their directorship, and record the real liabilities from the CH data using the TRUE due dates it returned (e.g. "Confirmation statement due 14 May 2026"). Never invent a date — only ever use what lookup_company gave you.
 
 Open in two short sentences: who you are, and the promise that they'll never have to work out which department does what — that's your job. Then ask, openly, what's brought them here today. Do NOT ask their name yet. Once they've told you why they've come, warmly ask what you should call them.`;
 
@@ -207,6 +215,21 @@ const TOOLS = [
       required: ["serviceId"],
     },
   },
+  {
+    name: "lookup_company",
+    description:
+      "Look a UK limited company up on the live Companies House register by name — to recognise the citizen from its directors and read its real filing dates. Call this the moment the citizen names or clearly refers to a company they run or own.",
+    input_schema: {
+      type: "object",
+      properties: {
+        companyName: {
+          type: "string",
+          description: "The company name the citizen gave, e.g. 'Unusually Ltd'.",
+        },
+      },
+      required: ["companyName"],
+    },
+  },
 ];
 
 function mergeProfile(profile: Profile, patch: Record<string, unknown>): Profile {
@@ -234,20 +257,20 @@ function mergeProfile(profile: Profile, patch: Record<string, unknown>): Profile
   return p;
 }
 
-async function getApiKey(): Promise<string | undefined> {
-  let apiKey = process.env.ANTHROPIC_API_KEY;
-  if (!apiKey) {
+async function getEnv(name: string): Promise<string | undefined> {
+  let v = process.env[name];
+  if (!v) {
     try {
       const { getCloudflareContext } = await import("@opennextjs/cloudflare");
-      const { env } = getCloudflareContext() as {
-        env: { ANTHROPIC_API_KEY?: string };
+      const { env } = getCloudflareContext() as unknown as {
+        env: Record<string, string | undefined>;
       };
-      apiKey = env?.ANTHROPIC_API_KEY;
+      v = env?.[name];
     } catch {
       // not on Cloudflare — process.env is authoritative
     }
   }
-  return apiKey;
+  return v;
 }
 
 export async function POST(req: NextRequest) {
@@ -264,10 +287,11 @@ export async function POST(req: NextRequest) {
     ? `${SYSTEM}\n\n## Already done this session\nYou have already completed: ${doneLabels.join("; ")}. Do NOT do these again unless the citizen explicitly asks you to repeat one.`
     : SYSTEM;
 
-  const apiKey = await getApiKey();
+  const apiKey = await getEnv("ANTHROPIC_API_KEY");
   if (!apiKey) {
     return Response.json({ error: "No ANTHROPIC_API_KEY" }, { status: 500 });
   }
+  const chKey = await getEnv("COMPANIES_HOUSE_API_KEY");
 
   const adapter = new AnthropicAdapter();
   adapter.initialize({ apiKey });
@@ -298,10 +322,36 @@ export async function POST(req: NextRequest) {
 
     if (out.stopReason === "tool_use") {
       loop.push({ role: "assistant", content: out.rawContent });
-      const toolResults = out.toolCalls.map((tc) => {
+      const toolResults = await Promise.all(out.toolCalls.map(async (tc) => {
         if (tc.name === "remember") {
           working = mergeProfile(working, tc.input);
           return { type: "tool_result", tool_use_id: tc.id, content: "Saved." };
+        }
+        if (tc.name === "lookup_company") {
+          if (!chKey) {
+            return {
+              type: "tool_result",
+              tool_use_id: tc.id,
+              content: JSON.stringify({ found: false, error: "no-key" }),
+            };
+          }
+          try {
+            const company = await lookupCompanyByName(
+              chKey,
+              String(tc.input.companyName ?? ""),
+            );
+            return {
+              type: "tool_result",
+              tool_use_id: tc.id,
+              content: JSON.stringify(company ? { found: true, company } : { found: false }),
+            };
+          } catch (e) {
+            return {
+              type: "tool_result",
+              tool_use_id: tc.id,
+              content: JSON.stringify({ found: false, error: String(e) }),
+            };
+          }
         }
         if (tc.name === "act") {
           const svc = AGENT_SERVICES[String(tc.input.serviceId)];
@@ -327,7 +377,7 @@ export async function POST(req: NextRequest) {
           };
         }
         return { type: "tool_result", tool_use_id: tc.id, content: "ok" };
-      });
+      }));
       loop.push({ role: "user", content: toolResults });
       if (pendingAction) break; // pause for the citizen's sign-in
       continue;
