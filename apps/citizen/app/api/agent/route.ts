@@ -25,12 +25,14 @@ type ServiceAuth = {
   identityVerification?: boolean;
 };
 
+type Resolves = { list: "liabilities" | "eligibilities"; key: string; label: string };
 type PendingAction = {
   serviceId: string;
   label: string;
   dataShared: string[];
   auth: ServiceAuth;
   summary: string;
+  resolves?: Resolves;
 };
 
 const emptyProfile = (): Profile => ({
@@ -48,7 +50,7 @@ const emptyProfile = (): Profile => ({
  */
 const AGENT_SERVICES: Record<
   string,
-  { label: string; dataShared: string[]; auth: ServiceAuth }
+  { label: string; dataShared: string[]; auth: ServiceAuth; resolves?: Resolves }
 > = {
   "companies-house-confirmation-statement": {
     label: "file your confirmation statement with Companies House",
@@ -59,11 +61,17 @@ const AGENT_SERVICES: Record<
       "Your verified identity",
     ],
     auth: { login: "one-login", identityVerification: true },
+    resolves: {
+      list: "liabilities",
+      key: "confirmation-statement",
+      label: "Confirmation statement",
+    },
   },
   "hmrc-vat-return": {
     label: "submit your VAT return to HMRC",
     dataShared: ["VAT registration number", "Sales and purchase totals"],
     auth: { login: "government-gateway" },
+    resolves: { list: "liabilities", key: "vat-return", label: "VAT return" },
   },
 };
 
@@ -90,9 +98,11 @@ Every entry carries a stable \`key\` and a short \`label\`. Record a thing ONCE 
 You also have an act tool. When the citizen clearly asks you to actually DO something with government — file a confirmation statement, submit a VAT return — call act with the matching serviceId. You NEVER do it silently: acting requires them to sign in, and calling act prompts them for the correct login. As you call act, tell them plainly, in one line, what you're about to do and that you'll need them to sign in.
 
 Available services:
-- companies-house-confirmation-statement — file the company's confirmation statement (Companies House)
-- hmrc-vat-return — submit a VAT return (HMRC)
-Only call act when they clearly ask you to do the thing.
+- companies-house-confirmation-statement — file the company's confirmation statement (Companies House). Record the matching liability under the key "confirmation-statement".
+- hmrc-vat-return — submit a VAT return (HMRC). Record the matching liability under the key "vat-return".
+
+## Offering to act
+When you discover a liability you can actually discharge with one of the services above — a confirmation statement (they're a company director) or a VAT return (their business is VAT-registered) — you may OFFER, ONCE and gently, to take it off their plate. Frame it as a real question that makes "I'm on top of it myself" an easy, unembarrassing answer: e.g. "Would you like me to file that for you, or are you handling it yourself?" Make at most one offer, then let it go — never chase or repeat it. Only call act once they clearly say yes. For anything you can't act on (corporation tax, an eligibility like tax-free childcare), note it plainly but do not offer to do it.
 
 Open by introducing yourself in one or two warm sentences and asking their name.`;
 
@@ -302,6 +312,7 @@ export async function POST(req: NextRequest) {
               dataShared: svc.dataShared,
               auth: svc.auth,
               summary: (tc.input.summary as string) || svc.label,
+              resolves: svc.resolves,
             };
             return {
               type: "tool_result",

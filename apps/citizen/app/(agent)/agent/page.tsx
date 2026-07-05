@@ -27,12 +27,14 @@ type ServiceAuth = {
   login: "one-login" | "government-gateway";
   identityVerification?: boolean;
 };
+type Resolves = { list: "liabilities" | "eligibilities"; key: string; label: string };
 type PendingAction = {
   serviceId: string;
   label: string;
   dataShared: string[];
   auth: ServiceAuth;
   summary: string;
+  resolves?: Resolves;
 };
 
 const EMPTY: Profile = {
@@ -64,6 +66,7 @@ export default function AgentPage() {
   const [loading, setLoading] = useState(false);
   const [pendingAction, setPendingAction] = useState<PendingAction | null>(null);
   const [completed, setCompleted] = useState<string[]>([]);
+  const [resolved, setResolved] = useState<Resolves[]>([]);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   const sheetType = useAppStore((s) => s.bottomSheet.type);
@@ -144,6 +147,14 @@ export default function AgentPage() {
           ? c
           : [...c, pendingAction.serviceId],
       );
+      if (pendingAction.resolves) {
+        const r = pendingAction.resolves;
+        setResolved((prev) =>
+          prev.some((x) => x.list === r.list && x.key === r.key)
+            ? prev
+            : [...prev, r],
+        );
+      }
       setMessages((m) => [
         ...m,
         {
@@ -193,6 +204,24 @@ export default function AgentPage() {
     profile.responsibilities.length +
     profile.liabilities.length +
     profile.eligibilities.length;
+
+  // Mark discovered entries an action has discharged, and surface any
+  // resolution that was never recorded as a fact of its own.
+  const norm = (s: string) => s.toLowerCase().replace(/[^a-z0-9]/g, "");
+  function withResolved(
+    list: "liabilities" | "eligibilities",
+    entries: Entry[],
+  ): ChipItem[] {
+    const rs = resolved.filter((r) => r.list === list);
+    const matched = (r: Resolves) =>
+      entries.find((e) => norm(e.key + e.label).includes(norm(r.key)));
+    const items: ChipItem[] = entries.map((e) => ({
+      label: e.label,
+      done: rs.some((r) => matched(r) === e),
+    }));
+    for (const r of rs) if (!matched(r)) items.push({ label: r.label, done: true });
+    return items;
+  }
 
   return (
     <div className="h-screen w-screen flex bg-[#faf9f7] text-[#1a1a1a] overflow-hidden">
@@ -286,16 +315,19 @@ export default function AgentPage() {
 
         <PanelSection title="Responsible for">
           <Chips
-            items={profile.responsibilities.map((r) => r.label)}
+            items={profile.responsibilities.map((r) => ({ label: r.label }))}
             accent="#1d70b8"
           />
         </PanelSection>
         <PanelSection title="Liable for">
-          <Chips items={profile.liabilities.map((r) => r.label)} accent="#b45309" />
+          <Chips
+            items={withResolved("liabilities", profile.liabilities)}
+            accent="#b45309"
+          />
         </PanelSection>
         <PanelSection title="Eligible for">
           <Chips
-            items={profile.eligibilities.map((r) => r.label)}
+            items={withResolved("eligibilities", profile.eligibilities)}
             accent="#00703c"
           />
         </PanelSection>
@@ -363,17 +395,37 @@ function Empty() {
   return <p className="text-xs text-[#c4c4c4]">—</p>;
 }
 
-function Chips({ items, accent }: { items: string[]; accent: string }) {
+type ChipItem = { label: string; done?: boolean };
+
+function Chips({ items, accent }: { items: ChipItem[]; accent: string }) {
   if (items.length === 0) return <Empty />;
   return (
     <div className="flex flex-wrap gap-1.5">
       {items.map((it) => (
         <span
-          key={it}
-          className="text-xs font-medium rounded-full px-2.5 py-1"
-          style={{ background: `${accent}14`, color: accent }}
+          key={it.label}
+          className="inline-flex items-center gap-1 text-xs font-medium rounded-full px-2.5 py-1"
+          style={
+            it.done
+              ? { background: "#00703c14", color: "#00703c" }
+              : { background: `${accent}14`, color: accent }
+          }
         >
-          {it}
+          {it.done && (
+            <svg
+              width="10"
+              height="10"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="3"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <polyline points="20 6 9 17 4 12" />
+            </svg>
+          )}
+          {it.label}
         </span>
       ))}
     </div>
