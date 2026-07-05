@@ -7,16 +7,30 @@ import {
 
 /**
  * The agent layer (V1 — the citizen's agent). A bare LLM agent that gets to
- * know the person and builds a profile of what they're responsible for. This
- * is deliberately NOT the fake-GOV.UK app — it's a single prompt window with a
- * cohort behind it. Discovery only for now; acting on services comes next.
+ * know the person, builds a profile of what they're responsible for, and — when
+ * asked to DO something — reads the service's declared auth and prompts them to
+ * sign in (never acting silently). Acting always leaves a receipt.
  */
 
+type Responsibility = { key: string; label: string };
 type Profile = {
   identity: Record<string, unknown>;
-  responsibilities: string[];
+  responsibilities: Responsibility[];
   liabilities: string[];
   eligibilities: string[];
+};
+
+type ServiceAuth = {
+  login: "one-login" | "government-gateway";
+  identityVerification?: boolean;
+};
+
+type PendingAction = {
+  serviceId: string;
+  label: string;
+  dataShared: string[];
+  auth: ServiceAuth;
+  summary: string;
 };
 
 const emptyProfile = (): Profile => ({
@@ -26,11 +40,54 @@ const emptyProfile = (): Profile => ({
   eligibilities: [],
 });
 
+/**
+ * The business-domain services the agent can act on, each carrying its DECLARED
+ * auth — the same model as the service graph, scoped to what this demo agent
+ * handles. Companies House needs a One Login + a verified identity; HMRC still
+ * uses Government Gateway.
+ */
+const AGENT_SERVICES: Record<
+  string,
+  { label: string; dataShared: string[]; auth: ServiceAuth }
+> = {
+  "companies-house-confirmation-statement": {
+    label: "file your confirmation statement with Companies House",
+    dataShared: [
+      "Company number",
+      "Registered office",
+      "Director details",
+      "Your verified identity",
+    ],
+    auth: { login: "one-login", identityVerification: true },
+  },
+  "hmrc-vat-return": {
+    label: "submit your VAT return to HMRC",
+    dataShared: ["VAT registration number", "Sales and purchase totals"],
+    auth: { login: "government-gateway" },
+  },
+};
+
 const SYSTEM = `You are a citizen's personal government agent — a calm, brilliant assistant who deals with the entire UK state on their behalf, so they never have to touch government directly.
 
-You are in DISCOVERY. Get to know the person: their name, roughly their age, where they live, and their situation — do they run a business, own a car or a home, have children, a job, a pension. Be warm, genuinely curious, and brief. Ask ONE thing at a time. Reflect back what you understand in a sentence. Never lecture, never list government services, never mention forms or logins yet.
+## Discovery
+Get to know the person: their name, roughly their age, where they live, and their situation — business, car, home, children, job, pension. Be warm, genuinely curious, and brief. Ask ONE thing at a time. Reflect back what you understand in a sentence. Never lecture or list government services.
 
-Whenever you learn something concrete, call the remember tool: set identity fields (name, age, location, job, etc.) and add anything they are responsible for — "A limited company", "A car", "A home", "A child" — to responsibilities. You do not act on anything or ask for any logins yet; you are only building a picture.
+Run on PROGRESSIVE DISCLOSURE — always make richer detail optional, never demanded:
+- When they give a name, notice whether it's just a first name. If so, warmly offer that they can share their full legal name if they'd like — but don't insist.
+- When you ask their age, mention they can give their date of birth if they'd prefer; it's optional.
+- At a natural moment, ask if they happen to know their National Insurance number — optional.
+
+Record everything concrete with the remember tool: set identity fields (name, fullName, dateOfBirth, age, location, nationalInsuranceNumber, job, company…) and record anything they are responsible for.
+
+Each responsibility carries a stable \`key\` and a short \`label\`. Record a thing ONCE under a lasting key (e.g. key "limited-company"), then, as you learn more, UPDATE the same key with a richer label — never create a second entry for the same thing. Keep labels short: "Director of Unusually Ltd", not a sentence.
+
+## Acting
+You also have an act tool. When the citizen clearly asks you to actually DO something with government — file a confirmation statement, submit a VAT return — call act with the matching serviceId. You NEVER do it silently: acting requires them to sign in, and calling act prompts them for the correct login. As you call act, tell them plainly, in one line, what you're about to do and that you'll need them to sign in.
+
+Available services:
+- companies-house-confirmation-statement — file the company's confirmation statement (Companies House)
+- hmrc-vat-return — submit a VAT return (HMRC)
+Only call act when they clearly ask you to do the thing.
 
 Open by introducing yourself in one or two warm sentences and asking their name.`;
 
@@ -45,16 +102,54 @@ const TOOLS = [
         identity: {
           type: "object",
           description:
-            "Identity fields to merge, e.g. { name, age, location, job }.",
+            "Identity fields to merge, e.g. { name, fullName, age, dateOfBirth, location, nationalInsuranceNumber, job }.",
           additionalProperties: true,
         },
         responsibilities: {
           type: "array",
-          items: { type: "string" },
           description:
-            "Things the person is responsible for, e.g. 'A limited company', 'A car'.",
+            "Things the person is responsible for. Use a stable key per thing and update its label as you learn more — never duplicate.",
+          items: {
+            type: "object",
+            properties: {
+              key: {
+                type: "string",
+                description:
+                  "Stable slug for this responsibility, e.g. 'limited-company', 'car', 'mortgage'.",
+              },
+              label: {
+                type: "string",
+                description: "Short display label, e.g. 'Director of Unusually Ltd'.",
+              },
+            },
+            required: ["key", "label"],
+          },
         },
       },
+    },
+  },
+  {
+    name: "act",
+    description:
+      "Perform a government service on the citizen's behalf. This will prompt them to sign in — you cannot do it silently.",
+    input_schema: {
+      type: "object",
+      properties: {
+        serviceId: {
+          type: "string",
+          enum: [
+            "companies-house-confirmation-statement",
+            "hmrc-vat-return",
+          ],
+          description: "The service to perform.",
+        },
+        summary: {
+          type: "string",
+          description:
+            "One short line describing what you're about to do, e.g. 'file your confirmation statement'.",
+        },
+      },
+      required: ["serviceId"],
     },
   },
 ];
@@ -64,13 +159,18 @@ function mergeProfile(profile: Profile, patch: Record<string, unknown>): Profile
     ...emptyProfile(),
     ...profile,
     identity: { ...emptyProfile().identity, ...profile?.identity },
+    responsibilities: (profile?.responsibilities ?? []).map((r) => ({ ...r })),
   };
   if (patch.identity && typeof patch.identity === "object") {
     p.identity = { ...p.identity, ...(patch.identity as Record<string, unknown>) };
   }
   if (Array.isArray(patch.responsibilities)) {
-    for (const r of patch.responsibilities as string[]) {
-      if (r && !p.responsibilities.includes(r)) p.responsibilities.push(r);
+    for (const raw of patch.responsibilities as Array<Partial<Responsibility>>) {
+      if (!raw || !raw.label) continue;
+      const key = raw.key || raw.label;
+      const existing = p.responsibilities.find((x) => x.key === key);
+      if (existing) existing.label = raw.label;
+      else p.responsibilities.push({ key, label: raw.label });
     }
   }
   return p;
@@ -93,10 +193,18 @@ async function getApiKey(): Promise<string | undefined> {
 }
 
 export async function POST(req: NextRequest) {
-  const { messages, profile } = (await req.json()) as {
+  const { messages, profile, completed } = (await req.json()) as {
     messages: Array<{ role: string; content: unknown }>;
     profile?: Profile;
+    completed?: string[];
   };
+
+  const doneLabels = (completed ?? [])
+    .map((id) => AGENT_SERVICES[id]?.label)
+    .filter(Boolean);
+  const systemPrompt = doneLabels.length
+    ? `${SYSTEM}\n\n## Already done this session\nYou have already completed: ${doneLabels.join("; ")}. Do NOT do these again unless the citizen explicitly asks you to repeat one.`
+    : SYSTEM;
 
   const apiKey = await getApiKey();
   if (!apiKey) {
@@ -107,12 +215,13 @@ export async function POST(req: NextRequest) {
   adapter.initialize({ apiKey });
 
   let working: Profile = profile ?? emptyProfile();
+  let pendingAction: PendingAction | null = null;
   const loop = [...messages];
   let reply = "";
 
-  for (let i = 0; i < 5; i++) {
+  for (let i = 0; i < 6; i++) {
     const input: AnthropicChatInput = {
-      systemPrompt: SYSTEM,
+      systemPrompt,
       messages: loop,
       tools: TOOLS,
     };
@@ -125,23 +234,48 @@ export async function POST(req: NextRequest) {
     }
     const out = result.output as AnthropicChatOutput;
 
-    // Capture any text the model produced — it can arrive ALONGSIDE a tool
-    // call, not only on the final turn. Losing this is what made the agent go
-    // silent after recording something.
+    // Capture any text — it can arrive alongside a tool call, not only on the
+    // final turn.
     if (out.responseText && out.responseText.trim()) reply = out.responseText;
 
     if (out.stopReason === "tool_use") {
       loop.push({ role: "assistant", content: out.rawContent });
       const toolResults = out.toolCalls.map((tc) => {
-        if (tc.name === "remember") working = mergeProfile(working, tc.input);
-        return { type: "tool_result", tool_use_id: tc.id, content: "Saved." };
+        if (tc.name === "remember") {
+          working = mergeProfile(working, tc.input);
+          return { type: "tool_result", tool_use_id: tc.id, content: "Saved." };
+        }
+        if (tc.name === "act") {
+          const svc = AGENT_SERVICES[String(tc.input.serviceId)];
+          if (svc) {
+            pendingAction = {
+              serviceId: String(tc.input.serviceId),
+              label: svc.label,
+              dataShared: svc.dataShared,
+              auth: svc.auth,
+              summary: (tc.input.summary as string) || svc.label,
+            };
+            return {
+              type: "tool_result",
+              tool_use_id: tc.id,
+              content: "The citizen will now be asked to sign in.",
+            };
+          }
+          return {
+            type: "tool_result",
+            tool_use_id: tc.id,
+            content: "Unknown service.",
+          };
+        }
+        return { type: "tool_result", tool_use_id: tc.id, content: "ok" };
       });
       loop.push({ role: "user", content: toolResults });
+      if (pendingAction) break; // pause for the citizen's sign-in
       continue;
     }
 
     break;
   }
 
-  return Response.json({ reply, profile: working });
+  return Response.json({ reply, profile: working, pendingAction });
 }

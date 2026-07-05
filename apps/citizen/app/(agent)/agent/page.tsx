@@ -4,13 +4,34 @@ import { useEffect, useRef, useState } from "react";
 import { useAppStore } from "@/lib/store";
 import { BottomSheet } from "@/components/ui/BottomSheet";
 import { LoginSheet } from "@/components/sheets/LoginSheet";
+import { OneLoginNotification } from "@/components/OneLoginNotification";
 
-type Msg = { role: "user" | "assistant"; content: string };
+type Receipt = {
+  label: string;
+  dataShared: string[];
+  via: "one-login" | "government-gateway";
+  idv: boolean;
+};
+type Msg =
+  | { role: "user" | "assistant"; content: string }
+  | { role: "receipt"; content: string; receipt: Receipt };
+
 type Profile = {
   identity: Record<string, unknown>;
-  responsibilities: string[];
+  responsibilities: { key: string; label: string }[];
   liabilities: string[];
   eligibilities: string[];
+};
+type ServiceAuth = {
+  login: "one-login" | "government-gateway";
+  identityVerification?: boolean;
+};
+type PendingAction = {
+  serviceId: string;
+  label: string;
+  dataShared: string[];
+  auth: ServiceAuth;
+  summary: string;
 };
 
 const EMPTY: Profile = {
@@ -20,39 +41,130 @@ const EMPTY: Profile = {
   eligibilities: [],
 };
 
+/** A minimal citizen for the login wall, built from the discovered profile.
+ *  No logins yet — so acting on a One Login service fires the create branch. */
+function personaFromProfile(profile: Profile) {
+  const id = profile.identity;
+  const name = String(id.fullName || id.name || "You");
+  const first = String(id.name || name).split(" ")[0] || "you";
+  const email = String(id.email || `${first.toLowerCase()}@example.com`);
+  return {
+    personaId: "agent-citizen",
+    personaName: name,
+    primaryContact: { firstName: first, email },
+    logins: { governmentGateway: [], oneLogin: null, nhsLogin: null },
+  };
+}
+
 export default function AgentPage() {
   const [messages, setMessages] = useState<Msg[]>([]);
   const [profile, setProfile] = useState<Profile>(EMPTY);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
+  const [pendingAction, setPendingAction] = useState<PendingAction | null>(null);
+  const [completed, setCompleted] = useState<string[]>([]);
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  const bottomSheet = useAppStore((s) => s.bottomSheet);
+  const sheetType = useAppStore((s) => s.bottomSheet.type);
   const closeBottomSheet = useAppStore((s) => s.closeBottomSheet);
+  const oneLoginVerified = useAppStore((s) => s.oneLoginVerified);
+  const gatewayVerified = useAppStore((s) => s.gatewayVerified);
+  const identityVerified = useAppStore((s) => s.identityVerified);
+
+  function beginAuth(action: PendingAction, prof: Profile) {
+    useAppStore.setState({
+      persona: "agent-citizen",
+      personaData: personaFromProfile(prof) as never,
+      pendingAuth: action.auth,
+      oneLoginVerified: false,
+      gatewayVerified: false,
+      identityVerified: false,
+      pendingIdentityCheck: action.auth.identityVerification === true,
+      pendingMessage: null,
+      oneLoginChallenge: null,
+      phoneNotification: null,
+      bottomSheet: { type: "login" },
+    });
+  }
 
   async function send(history: Msg[], nextProfile: Profile) {
     setLoading(true);
     try {
+      const apiMessages = history
+        .filter((m) => m.role !== "receipt")
+        .map((m) => ({ role: m.role, content: m.content }));
       const res = await fetch("/api/agent", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: history, profile: nextProfile }),
+        body: JSON.stringify({
+          messages: apiMessages,
+          profile: nextProfile,
+          completed,
+        }),
       });
       const data = await res.json();
-      if (data.reply) {
-        setMessages([...history, { role: "assistant", content: data.reply }]);
-      }
+      // Never act on something already done this session, even if the model asks.
+      const willAct =
+        data.pendingAction && !completed.includes(data.pendingAction.serviceId);
+      const next: Msg[] = [...history];
+      if (data.reply) next.push({ role: "assistant", content: data.reply });
+      else if (willAct)
+        next.push({
+          role: "assistant",
+          content: `I'll take care of that — I just need you to sign in to ${data.pendingAction.label} first.`,
+        });
+      setMessages(next);
       if (data.profile) setProfile(data.profile);
+      if (willAct) {
+        setPendingAction(data.pendingAction);
+        beginAuth(data.pendingAction, data.profile ?? nextProfile);
+      }
     } finally {
       setLoading(false);
     }
   }
 
-  // Opening turn — a hidden "Hi" so the agent introduces itself per its brief.
+  // Opening turn — a hidden "Hi" so the agent introduces itself.
   useEffect(() => {
     send([{ role: "user", content: "Hi" }], EMPTY);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // When the login wall closes, decide whether the agent's action completed.
+  useEffect(() => {
+    if (!pendingAction || sheetType === "login") return;
+    const a = pendingAction.auth;
+    const signedIn =
+      a.login === "government-gateway" ? gatewayVerified : oneLoginVerified;
+    const idOk = a.identityVerification ? identityVerified : true;
+    if (signedIn && idOk) {
+      setCompleted((c) =>
+        c.includes(pendingAction.serviceId)
+          ? c
+          : [...c, pendingAction.serviceId],
+      );
+      setMessages((m) => [
+        ...m,
+        {
+          role: "receipt",
+          content: pendingAction.label,
+          receipt: {
+            label: pendingAction.label,
+            dataShared: pendingAction.dataShared,
+            via: a.login,
+            idv: !!a.identityVerification,
+          },
+        },
+        {
+          role: "assistant",
+          content:
+            "Done — you didn't have to touch government yourself. The receipt above shows exactly what I shared, and you can undo or query it any time.",
+        },
+      ]);
+    }
+    setPendingAction(null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sheetType, oneLoginVerified, gatewayVerified, identityVerified]);
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight });
@@ -62,13 +174,12 @@ export default function AgentPage() {
     e.preventDefault();
     const text = input.trim();
     if (!text || loading) return;
-    const next = [...messages, { role: "user" as const, content: text }];
+    const next: Msg[] = [...messages, { role: "user", content: text }];
     setMessages(next);
     setInput("");
     send(next, profile);
   }
 
-  // Hide the synthetic opening "Hi".
   const visible = messages.filter(
     (m, i) => !(i === 0 && m.role === "user" && m.content === "Hi"),
   );
@@ -84,15 +195,12 @@ export default function AgentPage() {
 
   return (
     <div className="h-screen w-screen flex bg-[#faf9f7] text-[#1a1a1a] overflow-hidden">
-      {/* Conversation */}
       <main className="flex-1 flex flex-col min-w-0">
         <header className="px-6 py-4 flex items-center gap-3 border-b border-black/5">
           <div className="w-7 h-7 rounded-full bg-[#1d70b8] flex items-center justify-center text-white text-xs font-semibold">
             a
           </div>
-          <div className="flex-1">
-            <p className="text-sm font-semibold">Your agent</p>
-          </div>
+          <p className="text-sm font-semibold flex-1">Your agent</p>
           <span className="text-[10px] font-medium uppercase tracking-wide text-[#8a8a8a] border border-black/10 rounded-full px-2 py-0.5">
             V1 · Citizen
           </span>
@@ -100,22 +208,26 @@ export default function AgentPage() {
 
         <div ref={scrollRef} className="flex-1 overflow-y-auto px-6 py-6">
           <div className="max-w-[640px] mx-auto space-y-5">
-            {visible.map((m, i) => (
-              <div
-                key={i}
-                className={m.role === "user" ? "flex justify-end" : "flex"}
-              >
+            {visible.map((m, i) =>
+              m.role === "receipt" ? (
+                <ReceiptCard key={i} receipt={m.receipt} />
+              ) : (
                 <div
-                  className={
-                    m.role === "user"
-                      ? "bg-[#1d70b8] text-white rounded-2xl rounded-br-md px-4 py-2.5 text-[15px] max-w-[80%]"
-                      : "text-[15px] leading-relaxed max-w-[85%] whitespace-pre-wrap"
-                  }
+                  key={i}
+                  className={m.role === "user" ? "flex justify-end" : "flex"}
                 >
-                  {m.content}
+                  <div
+                    className={
+                      m.role === "user"
+                        ? "bg-[#1d70b8] text-white rounded-2xl rounded-br-md px-4 py-2.5 text-[15px] max-w-[80%]"
+                        : "text-[15px] leading-relaxed max-w-[85%] whitespace-pre-wrap"
+                    }
+                  >
+                    {m.content}
+                  </div>
                 </div>
-              </div>
-            ))}
+              ),
+            )}
             {loading && (
               <div className="flex gap-1.5 py-1">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#c4c4c4] animate-bounce" />
@@ -148,7 +260,6 @@ export default function AgentPage() {
         </form>
       </main>
 
-      {/* Profile panel */}
       <aside className="w-[320px] shrink-0 border-l border-black/5 bg-white/60 overflow-y-auto hidden md:block">
         <div className="px-5 py-4 border-b border-black/5">
           <p className="text-sm font-semibold">What your agent knows</p>
@@ -163,7 +274,9 @@ export default function AgentPage() {
           ) : (
             identityRows.map(([k, v]) => (
               <div key={k} className="flex justify-between gap-3 py-1">
-                <span className="text-xs text-[#8a8a8a] capitalize">{k}</span>
+                <span className="text-xs text-[#8a8a8a] capitalize">
+                  {k.replace(/_/g, " ")}
+                </span>
                 <span className="text-xs font-medium text-right">{String(v)}</span>
               </div>
             ))
@@ -171,7 +284,10 @@ export default function AgentPage() {
         </PanelSection>
 
         <PanelSection title="Responsible for">
-          <Chips items={profile.responsibilities} accent="#1d70b8" />
+          <Chips
+            items={profile.responsibilities.map((r) => r.label)}
+            accent="#1d70b8"
+          />
         </PanelSection>
         <PanelSection title="Liable for">
           <Chips items={profile.liabilities} accent="#b45309" />
@@ -181,12 +297,43 @@ export default function AgentPage() {
         </PanelSection>
       </aside>
 
-      {/* Login wall — reused from the citizen app, ready for when the agent acts */}
-      {bottomSheet.type === "login" && (
+      <OneLoginNotification />
+
+      {sheetType === "login" && (
         <BottomSheet open onClose={closeBottomSheet} title="Sign in">
           <LoginSheet />
         </BottomSheet>
       )}
+    </div>
+  );
+}
+
+function ReceiptCard({ receipt }: { receipt: Receipt }) {
+  const via =
+    receipt.via === "government-gateway"
+      ? "Government Gateway"
+      : `GOV.UK One Login${receipt.idv ? " · identity verified" : ""}`;
+  return (
+    <div className="flex">
+      <div className="max-w-[85%] rounded-xl border border-[#00703c]/25 bg-[#00703c]/[0.06] px-4 py-3">
+        <div className="flex items-center gap-2 mb-1.5">
+          <div className="w-4 h-4 rounded-full bg-[#00703c] flex items-center justify-center">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="20 6 9 17 4 12" />
+            </svg>
+          </div>
+          <span className="text-[11px] font-semibold uppercase tracking-wide text-[#00703c]">
+            Receipt
+          </span>
+        </div>
+        <p className="text-sm font-medium text-[#1a1a1a] capitalize">
+          Done — {receipt.label}.
+        </p>
+        <p className="text-xs text-[#505a5f] mt-1.5">
+          Shared: {receipt.dataShared.join(", ")}
+        </p>
+        <p className="text-xs text-[#505a5f]">Signed in via: {via}</p>
+      </div>
     </div>
   );
 }
