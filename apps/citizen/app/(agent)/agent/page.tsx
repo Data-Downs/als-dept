@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import { useAppStore } from "@/lib/store";
 import { BottomSheet } from "@/components/ui/BottomSheet";
 import { LoginSheet } from "@/components/sheets/LoginSheet";
@@ -348,15 +350,17 @@ export default function AgentPage() {
                   key={i}
                   className={m.role === "user" ? "flex justify-end" : "flex"}
                 >
-                  <div
-                    className={
-                      m.role === "user"
-                        ? "bg-[#1d70b8] text-white rounded-2xl rounded-br-md px-4 py-2.5 text-[15px] max-w-[80%]"
-                        : "text-[15px] leading-relaxed max-w-[85%] whitespace-pre-wrap"
-                    }
-                  >
-                    {m.content}
-                  </div>
+                  {m.role === "user" ? (
+                    <div className="bg-[#1d70b8] text-white rounded-2xl rounded-br-md px-4 py-2.5 text-[15px] max-w-[80%]">
+                      {m.content}
+                    </div>
+                  ) : (
+                    <div className="text-[15px] leading-relaxed max-w-[85%] prose prose-sm prose-neutral max-w-none prose-p:my-2 prose-ul:my-2 prose-headings:mt-3 prose-headings:mb-1.5">
+                      <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                        {m.content}
+                      </ReactMarkdown>
+                    </div>
+                  )}
                 </div>
               ),
             )}
