@@ -112,7 +112,52 @@ Use it to RECOGNISE them, not to interrogate them. If one of the directors plaus
 
 Once they confirm, record the company and their directorship, and record the real liabilities from the CH data using the TRUE due dates it returned (e.g. "Confirmation statement due 14 May 2026"). Never invent a date — only ever use what lookup_company gave you.
 
+## Bringing in a specialist
+Once you've recognised that the citizen runs a limited company and confirmed who they are, don't try to run the whole company yourself. Companies House and HMRC provide a specialist agent for exactly this — his name is Reg, the limited company agent. Call introduce_specialist with agentId "reg" to place him in the citizen's agent tray, and in one warm line tell them Reg is there for the company side — filings, VAT, corporation tax guidance — and they can bring him in whenever they like. Introduce him ONCE. Reg picks up everything you already know, so they never have to repeat themselves. Leave the company filing work to Reg rather than doing it yourself.
+
 Open in two short sentences: who you are, and the promise that they'll never have to work out which department does what — that's your job. Then ask, openly, what's brought them here today. Do NOT ask their name yet. Once they've told you why they've come, warmly ask what you should call them.`;
+
+const REG_SYSTEM = `You are Reg — the limited company agent, provided to business owners by Companies House and HMRC. Dot, the citizen's coordinator agent, has just introduced you and handed you the file. You look after the running of their company: confirmation statements, annual accounts, VAT, and pointing them the right way on corporation tax. You are warm, plain-spoken and unflappable — a brilliant company secretary who has already read everything.
+
+You have been briefed with the citizen's details and the live Companies House record for their company (below). Do NOT ask them for anything you already know. Open by greeting them by name, showing you already understand their situation, and naming the one or two things that genuinely matter next — with the real dates. Then ask what they'd like to start with.
+
+When they ask you to file something you can handle — a confirmation statement or a VAT return — use the act tool. It asks them to sign in first; you never file silently. Record anything new you learn with the remember tool. Never invent dates or facts — only use what you've been briefed or what the citizen tells you.`;
+
+function buildRegBriefing(
+  profile: Profile,
+  companyContext: Record<string, unknown> | null,
+): string {
+  const lines: string[] = ["\n\n## Your briefing"];
+  const id = profile?.identity ?? {};
+  const who = String(id.fullName || id.name || "the citizen");
+  lines.push(`Citizen: ${who}${id.location ? `, based in ${id.location}` : ""}.`);
+  if (companyContext) {
+    const c = companyContext as {
+      name?: string;
+      number?: string;
+      status?: string;
+      incorporatedOn?: string;
+      confirmationStatementDue?: string | null;
+      accountsDue?: string | null;
+      directors?: Array<{ name: string; appointedOn?: string; active: boolean }>;
+    };
+    lines.push(
+      `Company: ${c.name} (${c.number}), ${c.status}, incorporated ${c.incorporatedOn}.`,
+    );
+    if (c.confirmationStatementDue)
+      lines.push(`Confirmation statement due: ${c.confirmationStatementDue}.`);
+    if (c.accountsDue) lines.push(`Annual accounts due: ${c.accountsDue}.`);
+    const active = (c.directors ?? []).filter((d) => d.active);
+    if (active.length)
+      lines.push(`Directors: ${active.map((d) => d.name).join(", ")}.`);
+  }
+  const list = (label: string, items: Entry[]) =>
+    items.length ? lines.push(`${label}: ${items.map((i) => i.label).join("; ")}.`) : 0;
+  list("Responsible for", profile?.responsibilities ?? []);
+  list("Liable for", profile?.liabilities ?? []);
+  list("Eligible for", profile?.eligibilities ?? []);
+  return lines.join("\n");
+}
 
 const TOOLS = [
   {
@@ -230,7 +275,30 @@ const TOOLS = [
       required: ["companyName"],
     },
   },
+  {
+    name: "introduce_specialist",
+    description:
+      "Introduce a specialist government agent to the citizen and place them in the citizen's agent tray. Call this once you've recognised the citizen runs a limited company and confirmed who they are — to bring in Reg, the limited company agent provided by Companies House and HMRC.",
+    input_schema: {
+      type: "object",
+      properties: {
+        agentId: {
+          type: "string",
+          enum: ["reg"],
+          description: "The specialist to introduce.",
+        },
+      },
+      required: ["agentId"],
+    },
+  },
 ];
+
+function toolsFor(agent: string) {
+  if (agent === "reg") {
+    return TOOLS.filter((t) => t.name === "remember" || t.name === "act");
+  }
+  return TOOLS;
+}
 
 function mergeProfile(profile: Profile, patch: Record<string, unknown>): Profile {
   const p: Profile = {
@@ -274,18 +342,30 @@ async function getEnv(name: string): Promise<string | undefined> {
 }
 
 export async function POST(req: NextRequest) {
-  const { messages, profile, completed } = (await req.json()) as {
+  const {
+    messages,
+    profile,
+    completed,
+    agent = "dot",
+    companyContext = null,
+  } = (await req.json()) as {
     messages: Array<{ role: string; content: unknown }>;
     profile?: Profile;
     completed?: string[];
+    agent?: string;
+    companyContext?: Record<string, unknown> | null;
   };
 
   const doneLabels = (completed ?? [])
     .map((id) => AGENT_SERVICES[id]?.label)
     .filter(Boolean);
-  const systemPrompt = doneLabels.length
-    ? `${SYSTEM}\n\n## Already done this session\nYou have already completed: ${doneLabels.join("; ")}. Do NOT do these again unless the citizen explicitly asks you to repeat one.`
-    : SYSTEM;
+  const doneAddendum = doneLabels.length
+    ? `\n\n## Already done this session\nYou have already completed: ${doneLabels.join("; ")}. Do NOT do these again unless the citizen explicitly asks you to repeat one.`
+    : "";
+  const systemPrompt =
+    agent === "reg"
+      ? REG_SYSTEM + buildRegBriefing(profile ?? emptyProfile(), companyContext) + doneAddendum
+      : SYSTEM + doneAddendum;
 
   const apiKey = await getEnv("ANTHROPIC_API_KEY");
   if (!apiKey) {
@@ -298,6 +378,8 @@ export async function POST(req: NextRequest) {
 
   let working: Profile = profile ?? emptyProfile();
   let pendingAction: PendingAction | null = null;
+  let introduce: { agentId: string } | null = null;
+  let foundCompany: Record<string, unknown> | null = null;
   const loop = [...messages];
   let reply = "";
 
@@ -305,7 +387,7 @@ export async function POST(req: NextRequest) {
     const input: AnthropicChatInput = {
       systemPrompt,
       messages: loop,
-      tools: TOOLS,
+      tools: toolsFor(agent),
     };
     const result = await adapter.execute({
       input,
@@ -340,6 +422,7 @@ export async function POST(req: NextRequest) {
               chKey,
               String(tc.input.companyName ?? ""),
             );
+            if (company) foundCompany = company as unknown as Record<string, unknown>;
             return {
               type: "tool_result",
               tool_use_id: tc.id,
@@ -352,6 +435,14 @@ export async function POST(req: NextRequest) {
               content: JSON.stringify({ found: false, error: String(e) }),
             };
           }
+        }
+        if (tc.name === "introduce_specialist") {
+          introduce = { agentId: String(tc.input.agentId) };
+          return {
+            type: "tool_result",
+            tool_use_id: tc.id,
+            content: "Reg has been introduced and added to the citizen's agent tray.",
+          };
         }
         if (tc.name === "act") {
           const svc = AGENT_SERVICES[String(tc.input.serviceId)];
@@ -386,5 +477,11 @@ export async function POST(req: NextRequest) {
     break;
   }
 
-  return Response.json({ reply, profile: working, pendingAction });
+  return Response.json({
+    reply,
+    profile: working,
+    pendingAction,
+    introduce,
+    companyContext: foundCompany ?? companyContext,
+  });
 }
