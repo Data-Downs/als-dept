@@ -8,7 +8,7 @@ import { BottomSheet } from "@/components/ui/BottomSheet";
 import { LoginSheet } from "@/components/sheets/LoginSheet";
 import { OneLoginNotification } from "@/components/OneLoginNotification";
 
-type AgentId = "dot" | "reg" | "grace" | "driving" | "sol" | "robin";
+type AgentId = "dot" | "reg" | "grace" | "driving" | "sol" | "robin" | "fay";
 
 const AGENT_META: Record<
   AgentId,
@@ -68,6 +68,14 @@ const AGENT_META: Record<
     temporary: true,
     mandate:
       "Looks after everything the state needs around your new baby — maternity pay, registering the birth, Child Benefit and childcare — so you can focus on the baby. Steps back once it's all in hand.",
+  },
+  fay: {
+    name: "Fay",
+    tagline: "Family & children",
+    provider: "HMRC, DfE & your council",
+    accent: "#c05746",
+    mandate:
+      "One agent for everything to do with your children — Child Benefit, childcare, school places, additional needs — so you never chase schools, councils and HMRC separately.",
   },
 };
 
@@ -276,6 +284,7 @@ export default function AgentPage() {
     driving: [],
     sol: [],
     robin: [],
+    fay: [],
   });
   const [activeAgent, setActiveAgent] = useState<AgentId>("dot");
   const [roster, setRoster] = useState<RosterEntry[]>([
@@ -377,6 +386,32 @@ export default function AgentPage() {
     };
   }
 
+  function familyContextFor() {
+    if (!personaRecord) return null;
+    const kids = Array.isArray(personaRecord.children)
+      ? (personaRecord.children as Record<string, unknown>[])
+      : [];
+    if (!kids.length) return null;
+    const now = new Date();
+    return {
+      children: kids.map((c) => {
+        const dob = c.dateOfBirth ? String(c.dateOfBirth) : undefined;
+        let age: number | undefined;
+        if (dob) {
+          const [y, m, d] = dob.split("-").map(Number);
+          age =
+            now.getFullYear() -
+            y -
+            (now.getMonth() + 1 < m ||
+            (now.getMonth() + 1 === m && now.getDate() < d)
+              ? 1
+              : 0);
+        }
+        return { name: c.firstName, age, dob };
+      }),
+    };
+  }
+
   async function send(
     agentId: AgentId,
     history: Msg[],
@@ -411,6 +446,7 @@ export default function AgentPage() {
             agentId === "grace" || agentId === "robin" ? handoverArg : null,
           drivingContext: agentId === "driving" ? drivingContextFor() : null,
           selfEmployedContext: agentId === "sol" ? selfEmployedContextFor() : null,
+          familyContext: agentId === "fay" ? familyContextFor() : null,
         }),
       });
       const data = await res.json();
@@ -730,7 +766,7 @@ export default function AgentPage() {
     setCompanyContext(null);
     setHandover(null);
     setSuggestions({ agent: "dot", items: [] });
-    setThreads({ dot: [], reg: [], grace: [], driving: [], sol: [], robin: [] });
+    setThreads({ dot: [], reg: [], grace: [], driving: [], sol: [], robin: [], fay: [] });
     if (!id) {
       setProfile(EMPTY);
       send("dot", [{ role: "user", content: "Hi" }], EMPTY);

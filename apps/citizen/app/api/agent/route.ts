@@ -88,6 +88,12 @@ const AGENT_SERVICES: Record<
     auth: { login: "one-login" },
     resolves: { list: "eligibilities", key: "child-benefit", label: "Child Benefit" },
   },
+  "hmrc-tax-free-childcare": {
+    label: "set up Tax-Free Childcare",
+    dataShared: ["Your and your partner's details", "Your child's details", "Your National Insurance number"],
+    auth: { login: "one-login" },
+    resolves: { list: "eligibilities", key: "tax-free-childcare", label: "Tax-Free Childcare" },
+  },
 };
 
 const SYSTEM = `You are Dot — the citizen's personal government agent, and their single way in to everything the UK state does. The person never has to know which department handles what, never picks a service, never fills in a form addressed to a bureaucracy. You work all of that out for them and organise government around them. You are calm, capable and quietly warm — never gushing, never sycophantic.
@@ -142,6 +148,9 @@ If the citizen is self-employed, a sole trader, a freelancer, or does gig work �
 
 ## When a baby is on the way
 If the citizen is expecting a baby or has just had one, meet it with genuine warmth — this is a happy thing. A new baby touches maternity pay, registering the birth, Child Benefit and childcare, across several parts of government. There's a new-baby agent — Robin — who carries all of that for as long as they need. Call introduce_specialist with agentId "robin", and say in one warm line that Robin will look after everything the state needs around the baby so they can focus on the baby itself. Introduce once; Robin picks up what you already know.
+
+## When they have children
+If the citizen has children — a school place to sort, childcare costs, a child with additional needs, or child-related benefits — HMRC, the Department for Education and the local council together provide one agent for all of it: Fay, the family and children agent. Call introduce_specialist with agentId "fay", and say in one warm line that Fay looks after everything to do with their children so they never chase schools, councils and HMRC separately. Introduce once; she picks up what you already know. (A brand-new baby is Robin's job; Fay is for the ongoing years of family life.)
 
 Open in two short sentences: who you are, and the promise that they'll never have to work out which department does what — that's your job. Then ask, openly, what's brought them here today. Do NOT ask their name yet. Once they've told you why they've come, warmly ask what you should call them.`;
 
@@ -423,13 +432,13 @@ const TOOLS = [
   {
     name: "introduce_specialist",
     description:
-      "Introduce a specialist government agent to the citizen and place them in the citizen's agent tray. Use 'reg' — the limited company agent (Companies House & HMRC) — once you've recognised they run a limited company. Use 'grace' — a bereavement agent — once it's clear a person close to them has died. Use 'driving' — the driving agent (DVLA & DVSA) — once it's clear they drive, have a vehicle, or need anything to do with a licence, MOT, tax or a driving test. Use 'sol' — the working-for-yourself agent (HMRC) — once it's clear they're self-employed, a sole trader, a freelancer or do gig work, and are NOT running a limited company. Use 'robin' — a new-baby agent — once it's clear a baby is on the way or newly arrived.",
+      "Introduce a specialist government agent to the citizen and place them in the citizen's agent tray. Use 'reg' — the limited company agent (Companies House & HMRC) — once you've recognised they run a limited company. Use 'grace' — a bereavement agent — once it's clear a person close to them has died. Use 'driving' — the driving agent (DVLA & DVSA) — once it's clear they drive, have a vehicle, or need anything to do with a licence, MOT, tax or a driving test. Use 'sol' — the working-for-yourself agent (HMRC) — once it's clear they're self-employed, a sole trader, a freelancer or do gig work, and are NOT running a limited company. Use 'robin' — a new-baby agent — once it's clear a baby is on the way or newly arrived. Use 'fay' — the family and children agent (HMRC, DfE & council) — once it's clear they have children (beyond a brand-new baby): school, childcare, additional needs, or child-related benefits.",
     input_schema: {
       type: "object",
       properties: {
         agentId: {
           type: "string",
-          enum: ["reg", "grace", "driving", "sol", "robin"],
+          enum: ["reg", "grace", "driving", "sol", "robin", "fay"],
           description: "The specialist to introduce.",
         },
       },
@@ -637,11 +646,46 @@ When the essentials are in hand and nothing is pressing, say so gently, tell the
 ## Opening
 Open with genuine warmth and congratulations, show you already understand where they are (still expecting, or newly arrived), name the one thing nearest on the horizon, and ask one gentle question to move it forward. Keep it short and unhurried.`;
 
+const FAY_SYSTEM = `You are Fay — the family and children agent, provided across HMRC, the Department for Education and your local council. To the citizen you are one agent for everything to do with raising their children; they never have to work out which of those bodies handles what.
+
+You've been handed what's already known about them and their children (below). Don't ask for anything you already hold.
+
+## What you look after
+- **The money that comes with children** — Child Benefit (and the High Income Child Benefit Charge where it applies — worth claiming even so, to protect a National Insurance record), Tax-Free Childcare, and any child elements of other support.
+- **Childcare** — the 15 and 30 hours of funded childcare, when each child becomes eligible, and how to claim them.
+- **School** — applying for a school place in the right window (they're strict and easy to miss), free school meals, and moving between schools.
+- **Additional needs** — Education, Health and Care plans (EHCPs) for a child who needs extra support, and the right to challenge a council's decision when it's wrong.
+- **The clock on each child** — you hold each child's age and what it unlocks or ends: a funded nursery place at two or three, a reception place the September after they turn four, Child Benefit ending at 16 (or 20 in approved education). You surface each in good time.
+
+## How you work
+Keep a live picture of the family and each child, and watch for whatever's next for each of them — a school application window opening, a childcare entitlement starting, a benefit about to change. When something's due that you can do — set up Tax-Free Childcare, apply for a place — offer it as one action and, on their yes, do it (they sign in first). For anything that must go through the council or school directly, or that isn't published for agents yet, say so plainly and point the way.
+
+## Opening
+Open by greeting them by name, showing you already know their children by name and age, and naming the one thing nearest on the horizon for the family. If nothing is pressing, say so reassuringly. Then ask what they'd like to start with.`;
+
+function buildFayBriefing(profile: Profile, familyContext: unknown): string {
+  const lines: string[] = ["\n\n## Your briefing"];
+  const id = profile?.identity ?? {};
+  lines.push(
+    `Citizen: ${id.fullName || id.name || "the citizen"}${id.location ? `, in ${id.location}` : ""}.`,
+  );
+  const c = familyContext as {
+    children?: Array<{ name?: string; age?: number; dob?: string }>;
+  } | null;
+  for (const k of c?.children ?? []) {
+    lines.push(
+      `Child: ${k.name ?? "—"}${k.age != null ? `, aged ${k.age}` : ""}${k.dob ? ` (born ${k.dob})` : ""}.`,
+    );
+  }
+  return lines.join("\n");
+}
+
 type BuildCtx = {
   companyContext: Record<string, unknown> | null;
   handover: string | null;
   drivingContext: unknown;
   selfEmployedContext: unknown;
+  familyContext: unknown;
 };
 
 /** The cohort, as definitions on the shared standard. Each specialist = the
@@ -690,6 +734,13 @@ const SPECIALISTS: Record<string, SpecialistDef> = {
     serviceKeywords: /baby|birth|child benefit|maternity|paternity|childcare|pregnan|sure start|healthy start/i,
     tools: ["remember", "track", "stand_down", "act", "suggest"],
     briefing: (p, ctx) => buildGraceBriefing(p, ctx.handover),
+  },
+  fay: {
+    kind: "domain",
+    skills: FAY_SYSTEM,
+    serviceKeywords: /child|school|childcare|ehcp|send|free.?school.?meal|tax.?free childcare|nursery|30 hours|15 hours|pupil|healthy start/i,
+    tools: ["remember", "act", "suggest"],
+    briefing: (p, ctx) => buildFayBriefing(p, ctx.familyContext),
   },
 };
 
@@ -819,6 +870,7 @@ export async function POST(req: NextRequest) {
     handover = null,
     drivingContext = null,
     selfEmployedContext = null,
+    familyContext = null,
   } = (await req.json()) as {
     messages: Array<{ role: string; content: unknown }>;
     profile?: Profile;
@@ -829,6 +881,7 @@ export async function POST(req: NextRequest) {
     handover?: string | null;
     drivingContext?: unknown;
     selfEmployedContext?: unknown;
+    familyContext?: unknown;
   };
 
   const doneLabels = (completed ?? [])
@@ -843,6 +896,7 @@ export async function POST(req: NextRequest) {
         handover,
         drivingContext,
         selfEmployedContext,
+        familyContext,
       })
     : SYSTEM + buildDotBriefing(profile ?? emptyProfile());
   const systemPrompt = base + SUGGEST_ADDENDUM + INBOUND_ADDENDUM + doneAddendum;
