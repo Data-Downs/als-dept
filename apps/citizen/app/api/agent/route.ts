@@ -76,6 +76,12 @@ const AGENT_SERVICES: Record<
     auth: { login: "government-gateway" },
     resolves: { list: "liabilities", key: "vat-return", label: "VAT return" },
   },
+  "hmrc-self-assessment": {
+    label: "file your Self Assessment tax return with HMRC",
+    dataShared: ["UTR", "Income and expenses", "National Insurance number"],
+    auth: { login: "government-gateway" },
+    resolves: { list: "liabilities", key: "self-assessment", label: "Self Assessment return" },
+  },
 };
 
 const SYSTEM = `You are Dot — the citizen's personal government agent, and their single way in to everything the UK state does. The person never has to know which department handles what, never picks a service, never fills in a form addressed to a bureaucracy. You work all of that out for them and organise government around them. You are calm, capable and quietly warm — never gushing, never sycophantic.
@@ -124,6 +130,9 @@ Once it's clear this is a bereavement, bring in **Grace** — a bereavement agen
 
 ## When it's about driving
 If the citizen drives, owns a vehicle, or needs anything to do with a licence, MOT, vehicle tax, or a driving test, DVLA and DVSA provide one agent for all of it — the driving agent. Call introduce_specialist with agentId "driving", and say in one warm line that they have one agent for their licence and their vehicles, so they never deal with DVLA and DVSA separately. Introduce it once; it picks up what you already know.
+
+## When they work for themselves
+If the citizen is self-employed, a sole trader, a freelancer, or does gig work — but is NOT running it through a limited company (a company is Reg's job) — HMRC provides an agent for exactly this: Sol, the working-for-yourself agent. Call introduce_specialist with agentId "sol", and say in one warm line that Sol keeps their tax and their books in order so they never have to become an accountant. Introduce him once; he picks up what you already know.
 
 Open in two short sentences: who you are, and the promise that they'll never have to work out which department does what — that's your job. Then ask, openly, what's brought them here today. Do NOT ask their name yet. Once they've told you why they've come, warmly ask what you should call them.`;
 
@@ -405,13 +414,13 @@ const TOOLS = [
   {
     name: "introduce_specialist",
     description:
-      "Introduce a specialist government agent to the citizen and place them in the citizen's agent tray. Use 'reg' — the limited company agent (Companies House & HMRC) — once you've recognised they run a limited company. Use 'grace' — a bereavement agent — once it's clear a person close to them has died. Use 'driving' — the driving agent (DVLA & DVSA) — once it's clear they drive, have a vehicle, or need anything to do with a licence, MOT, tax or a driving test.",
+      "Introduce a specialist government agent to the citizen and place them in the citizen's agent tray. Use 'reg' — the limited company agent (Companies House & HMRC) — once you've recognised they run a limited company. Use 'grace' — a bereavement agent — once it's clear a person close to them has died. Use 'driving' — the driving agent (DVLA & DVSA) — once it's clear they drive, have a vehicle, or need anything to do with a licence, MOT, tax or a driving test. Use 'sol' — the working-for-yourself agent (HMRC) — once it's clear they're self-employed, a sole trader, a freelancer or do gig work, and are NOT running a limited company.",
     input_schema: {
       type: "object",
       properties: {
         agentId: {
           type: "string",
-          enum: ["reg", "grace", "driving"],
+          enum: ["reg", "grace", "driving", "sol"],
           description: "The specialist to introduce.",
         },
       },
@@ -542,10 +551,61 @@ function buildDrivingBriefing(profile: Profile, drivingContext: unknown): string
   return lines.join("\n");
 }
 
+const SOL_SYSTEM = `You are Sol — the working-for-yourself agent, provided by HMRC for the self-employed and sole traders. To the citizen you are the person who keeps their tax and their books in order so they can get on with the actual work; they never have to become an accountant.
+
+You've been handed what's already known about them and their business (below). Don't ask for anything you already hold.
+
+## What you look after
+- **Self Assessment** — their tax return and the deadlines that bind it: register by 5 October, file and pay by 31 January, payments on account by 31 January and 31 July. You track where they are in the cycle.
+- **Making Tax Digital for Income Tax** — phasing in from April 2026 for the self-employed over the income threshold; you know whether and when it applies to them and keep them ready.
+- **National Insurance** — Class 2 and Class 4, settled through the return.
+- **The VAT line** — you watch their turnover against the £90,000 registration threshold and flag it before they cross it.
+- **What they're owed and owed for** — a refund sitting unclaimed, an overpayment from a wrong tax code, or money a client hasn't paid; you keep these in view so nothing is quietly lost.
+- **Their records** — allowable expenses, mileage, what to keep — so the return is a by-product of good records, not a January scramble.
+
+## The tax check
+Early on, offer a quick check of where they stand. Start from what you already know (their trade, income, any refund pending, their VAT position), tell them plainly what's in hand, then ask a FEW targeted questions ONE AT A TIME only where it matters: have they registered for Self Assessment? are they set up for MTD if it applies? are they claiming all their allowable expenses? Record anything missing as a liability, and finish with a short, calm summary and the one or two next actions.
+
+## Acting
+When they ask you to file their Self Assessment return, use the act tool — they sign in first; you never file silently. Things like chasing an unpaid invoice aren't something you can do with government, so say so plainly and point them to what would help. Record what you learn with remember; never invent a figure — use only what you've been briefed or told.
+
+## Opening
+Open by greeting them by name, showing you already understand their business, and naming the one thing that matters most right now — a refund they're owed, a deadline coming, the VAT line approaching. Then offer the tax check and ask what they'd like to start with.`;
+
+function buildSolBriefing(profile: Profile, selfEmployedContext: unknown): string {
+  const lines: string[] = ["\n\n## Your briefing"];
+  const id = profile?.identity ?? {};
+  lines.push(
+    `Citizen: ${id.fullName || id.name || "the citizen"}${id.location ? `, in ${id.location}` : ""}.`,
+  );
+  const c = selfEmployedContext as {
+    tradingName?: string;
+    businessType?: string;
+    annualRevenue?: number;
+    netIncome?: number;
+    taxRefundOwed?: number;
+    unpaidInvoices?: number;
+  } | null;
+  if (c?.tradingName || c?.businessType)
+    lines.push(`Business: ${c.tradingName ?? ""}${c.businessType ? ` — ${c.businessType}` : ""}.`);
+  if (c?.annualRevenue)
+    lines.push(`Turnover about £${c.annualRevenue}; net income about £${c.netIncome ?? "—"}.`);
+  if (c?.annualRevenue && c.annualRevenue >= 90000)
+    lines.push("Turnover is at or above the £90,000 VAT threshold — they should be VAT-registered.");
+  else if (c?.annualRevenue && c.annualRevenue >= 70000)
+    lines.push("Turnover is approaching the £90,000 VAT threshold — worth watching.");
+  if (c?.taxRefundOwed)
+    lines.push(`A tax refund of £${c.taxRefundOwed} is owed to them and still pending.`);
+  if (c?.unpaidInvoices)
+    lines.push(`£${c.unpaidInvoices} is outstanding from clients (unpaid invoices).`);
+  return lines.join("\n");
+}
+
 type BuildCtx = {
   companyContext: Record<string, unknown> | null;
   handover: string | null;
   drivingContext: unknown;
+  selfEmployedContext: unknown;
 };
 
 /** The cohort, as definitions on the shared standard. Each specialist = the
@@ -580,6 +640,13 @@ const SPECIALISTS: Record<string, SpecialistDef> = {
     serviceKeywords: /driv|licence|vehicle|mot|dvla|dvsa|sorn|provisional|theory|road tax/i,
     tools: ["remember", "act", "suggest"],
     briefing: (p, ctx) => buildDrivingBriefing(p, ctx.drivingContext),
+  },
+  sol: {
+    kind: "domain",
+    skills: SOL_SYSTEM,
+    serviceKeywords: /self.?assess|self.?employ|sole.?trader|income tax|mtd|national insurance|hmrc/i,
+    tools: ["remember", "act", "suggest"],
+    briefing: (p, ctx) => buildSolBriefing(p, ctx.selfEmployedContext),
   },
 };
 
@@ -708,6 +775,7 @@ export async function POST(req: NextRequest) {
     workingState = [],
     handover = null,
     drivingContext = null,
+    selfEmployedContext = null,
   } = (await req.json()) as {
     messages: Array<{ role: string; content: unknown }>;
     profile?: Profile;
@@ -717,6 +785,7 @@ export async function POST(req: NextRequest) {
     workingState?: WorkingItem[];
     handover?: string | null;
     drivingContext?: unknown;
+    selfEmployedContext?: unknown;
   };
 
   const doneLabels = (completed ?? [])
@@ -730,6 +799,7 @@ export async function POST(req: NextRequest) {
         companyContext,
         handover,
         drivingContext,
+        selfEmployedContext,
       })
     : SYSTEM + buildDotBriefing(profile ?? emptyProfile());
   const systemPrompt = base + SUGGEST_ADDENDUM + INBOUND_ADDENDUM + doneAddendum;

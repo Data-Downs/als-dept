@@ -8,7 +8,7 @@ import { BottomSheet } from "@/components/ui/BottomSheet";
 import { LoginSheet } from "@/components/sheets/LoginSheet";
 import { OneLoginNotification } from "@/components/OneLoginNotification";
 
-type AgentId = "dot" | "reg" | "grace" | "driving";
+type AgentId = "dot" | "reg" | "grace" | "driving" | "sol";
 
 const AGENT_META: Record<
   AgentId,
@@ -51,6 +51,14 @@ const AGENT_META: Record<
     accent: "#00703c",
     mandate:
       "One agent for your licence and your vehicles — renewals, MOT reminders, vehicle tax and booking tests — across DVLA and DVSA, so you never deal with them separately.",
+  },
+  sol: {
+    name: "Sol",
+    tagline: "Working for yourself",
+    provider: "HMRC",
+    accent: "#b45309",
+    mandate:
+      "Keeps your tax and your books in order — Self Assessment, deadlines, Making Tax Digital, the VAT line, and what you're owed — so you can get on with the work, never become an accountant.",
   },
 };
 
@@ -257,6 +265,7 @@ export default function AgentPage() {
     reg: [],
     grace: [],
     driving: [],
+    sol: [],
   });
   const [activeAgent, setActiveAgent] = useState<AgentId>("dot");
   const [roster, setRoster] = useState<RosterEntry[]>([
@@ -343,6 +352,21 @@ export default function AgentPage() {
     };
   }
 
+  function selfEmployedContextFor() {
+    if (!personaRecord) return null;
+    const emp = personaRecord.employment as Record<string, unknown> | undefined;
+    const fin = personaRecord.financials as Record<string, unknown> | undefined;
+    if (!(personaRecord.self_employed || emp?.status === "Self-employed")) return null;
+    return {
+      tradingName: emp?.tradingName,
+      businessType: emp?.businessType,
+      annualRevenue: emp?.annualRevenue,
+      netIncome: emp?.netIncome,
+      taxRefundOwed: fin?.taxRefundOwed,
+      unpaidInvoices: fin?.unpaidInvoices,
+    };
+  }
+
   async function send(
     agentId: AgentId,
     history: Msg[],
@@ -369,6 +393,7 @@ export default function AgentPage() {
           workingState,
           handover: agentId === "grace" ? handoverArg : null,
           drivingContext: agentId === "driving" ? drivingContextFor() : null,
+          selfEmployedContext: agentId === "sol" ? selfEmployedContextFor() : null,
         }),
       });
       const data = await res.json();
@@ -685,7 +710,7 @@ export default function AgentPage() {
     setCompanyContext(null);
     setHandover(null);
     setSuggestions({ agent: "dot", items: [] });
-    setThreads({ dot: [], reg: [], grace: [], driving: [] });
+    setThreads({ dot: [], reg: [], grace: [], driving: [], sol: [] });
     if (!id) {
       setProfile(EMPTY);
       send("dot", [{ role: "user", content: "Hi" }], EMPTY);
