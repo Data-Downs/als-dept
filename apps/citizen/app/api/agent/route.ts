@@ -425,15 +425,49 @@ const TOOLS = [
       "Signal that your work is essentially complete — the essential steps are in hand and there's nothing pressing left. Only call when genuinely done, never to tidy up or keep busy. The citizen keeps you in their tray and can bring you back any time.",
     input_schema: { type: "object", properties: {} },
   },
+  {
+    name: "suggest",
+    description:
+      "Offer the citizen 1–3 concrete next actions as tappable chips, so the action in your message is one tap away rather than buried in prose. Each chip has a short label (the button text) and the message it sends as them when tapped. Use for the real choices you've just offered — e.g. label 'Run a compliance check' → message 'Yes, run the compliance check.' Include a gentle decline/defer when it fits. Never suggest an action you didn't genuinely offer.",
+    input_schema: {
+      type: "object",
+      properties: {
+        actions: {
+          type: "array",
+          items: {
+            type: "object",
+            properties: {
+              label: {
+                type: "string",
+                description: "Short chip text, e.g. 'Run a compliance check'.",
+              },
+              message: {
+                type: "string",
+                description:
+                  "What gets sent as the citizen when they tap it, e.g. 'Yes, run the compliance check.'",
+              },
+            },
+            required: ["label", "message"],
+          },
+        },
+      },
+      required: ["actions"],
+    },
+  },
 ];
+
+const SUGGEST_ADDENDUM = `\n\n## Make the action tappable
+Whenever you offer the citizen a choice or a next action, ALSO call the suggest tool with 1–3 short options, so the action is one tap away and never buried in a paragraph. The chip's message is what gets sent as them when they tap it. Keep chips to genuine actions you've offered, and include a gentle "not now" when it fits. This matters: some people find it genuinely hard to pull the action out of prose.`;
 
 function toolsFor(agent: string) {
   if (agent === "reg") {
-    return TOOLS.filter((t) => t.name === "remember" || t.name === "act");
+    return TOOLS.filter((t) =>
+      ["remember", "act", "suggest"].includes(t.name),
+    );
   }
   if (agent === "grace") {
     return TOOLS.filter((t) =>
-      ["remember", "track", "stand_down", "act"].includes(t.name),
+      ["remember", "track", "stand_down", "act", "suggest"].includes(t.name),
     );
   }
   return TOOLS.filter((t) => t.name !== "track" && t.name !== "stand_down");
@@ -571,12 +605,13 @@ export async function POST(req: NextRequest) {
     ? `\n\n## Already done this session\nYou have already completed: ${doneLabels.join("; ")}. Do NOT do these again unless the citizen explicitly asks you to repeat one.`
     : "";
   const catBlock = catalogueBlock(catalogueFor(agent));
-  const systemPrompt =
+  const base =
     agent === "reg"
       ? REG_SYSTEM + buildRegBriefing(profile ?? emptyProfile(), companyContext) + catBlock + doneAddendum
       : agent === "grace"
         ? GRACE_SYSTEM + buildGraceBriefing(profile ?? emptyProfile(), handover) + catBlock + doneAddendum
         : SYSTEM + doneAddendum;
+  const systemPrompt = base + SUGGEST_ADDENDUM;
 
   const apiKey = await getEnv("ANTHROPIC_API_KEY");
   if (!apiKey) {
@@ -592,6 +627,7 @@ export async function POST(req: NextRequest) {
   let pendingAction: PendingAction | null = null;
   let introduce: { agentId: string } | null = null;
   let retire = false;
+  let suggestions: Array<{ label: string; message: string }> = [];
   let foundCompany: Record<string, unknown> | null = null;
   const loop = [...messages];
   let reply = "";
@@ -669,6 +705,14 @@ export async function POST(req: NextRequest) {
             content: "You've stood down; you remain in the citizen's tray if they need you.",
           };
         }
+        if (tc.name === "suggest") {
+          const actions = Array.isArray(tc.input.actions) ? tc.input.actions : [];
+          suggestions = (actions as Array<{ label?: string; message?: string }>)
+            .filter((a) => a?.label && a?.message)
+            .slice(0, 3)
+            .map((a) => ({ label: String(a.label), message: String(a.message) }));
+          return { type: "tool_result", tool_use_id: tc.id, content: "Shown as chips." };
+        }
         if (tc.name === "act") {
           const serviceId = String(tc.input.serviceId);
           const local = AGENT_SERVICES[serviceId];
@@ -723,5 +767,6 @@ export async function POST(req: NextRequest) {
     companyContext: foundCompany ?? companyContext,
     workingState: workingItems,
     retire,
+    suggestions,
   });
 }

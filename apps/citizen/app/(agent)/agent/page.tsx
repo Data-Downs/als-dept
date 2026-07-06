@@ -119,6 +119,10 @@ export default function AgentPage() {
   const [companyContext, setCompanyContext] = useState<unknown>(null);
   const [workingState, setWorkingState] = useState<WorkingItem[]>([]);
   const [handover, setHandover] = useState<string | null>(null);
+  const [suggestions, setSuggestions] = useState<{
+    agent: AgentId;
+    items: { label: string; message: string }[];
+  }>({ agent: "dot", items: [] });
 
   const [profile, setProfile] = useState<Profile>(EMPTY);
   const [input, setInput] = useState("");
@@ -199,6 +203,10 @@ export default function AgentPage() {
       if (data.profile) setProfile(data.profile);
       if (data.companyContext) setCompanyContext(data.companyContext);
       if (Array.isArray(data.workingState)) setWorkingState(data.workingState);
+      setSuggestions({
+        agent: agentId,
+        items: Array.isArray(data.suggestions) ? data.suggestions : [],
+      });
       if (data.introduce?.agentId) introduceSpecialist(data.introduce.agentId);
       if (data.retire) {
         setRoster((r) =>
@@ -306,14 +314,19 @@ export default function AgentPage() {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight });
   }, [messages, loading]);
 
-  function onSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    const text = input.trim();
-    if (!text || loading) return;
-    const next: Msg[] = [...messages, { role: "user", content: text }];
+  function submitText(text: string) {
+    const t = text.trim();
+    if (!t || loading) return;
+    const next: Msg[] = [...messages, { role: "user", content: t }];
     setThread(activeAgent, next);
     setInput("");
+    setSuggestions({ agent: activeAgent, items: [] });
     send(activeAgent, next, profile);
+  }
+
+  function onSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    submitText(input);
   }
 
   const visible = messages.filter(
@@ -418,6 +431,26 @@ export default function AgentPage() {
                 <span className="w-1.5 h-1.5 rounded-full bg-[#c4c4c4] animate-bounce [animation-delay:240ms]" />
               </div>
             )}
+            {!loading &&
+              suggestions.agent === activeAgent &&
+              suggestions.items.length > 0 && (
+                <div className="flex flex-wrap gap-2 pt-0.5">
+                  {suggestions.items.map((s, i) => (
+                    <button
+                      key={i}
+                      type="button"
+                      onClick={() => submitText(s.message)}
+                      className="inline-flex items-center gap-1.5 rounded-full border bg-white px-3.5 py-2 text-[13px] font-medium transition-colors hover:bg-black/[0.02]"
+                      style={{ borderColor: `${active.accent}55`, color: active.accent }}
+                    >
+                      {s.label}
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M5 12h14M13 6l6 6-6 6" />
+                      </svg>
+                    </button>
+                  ))}
+                </div>
+              )}
           </div>
         </div>
 
