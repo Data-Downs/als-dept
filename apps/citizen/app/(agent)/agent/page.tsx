@@ -8,11 +8,18 @@ import { BottomSheet } from "@/components/ui/BottomSheet";
 import { LoginSheet } from "@/components/sheets/LoginSheet";
 import { OneLoginNotification } from "@/components/OneLoginNotification";
 
-type AgentId = "dot" | "reg";
+type AgentId = "dot" | "reg" | "grace";
 
 const AGENT_META: Record<
   AgentId,
-  { name: string; tagline: string; provider: string | null; accent: string }
+  {
+    name: string;
+    tagline: string;
+    provider: string | null;
+    accent: string;
+    temporary?: boolean;
+    mandate?: string;
+  }
 > = {
   dot: {
     name: "Dot",
@@ -25,6 +32,17 @@ const AGENT_META: Record<
     tagline: "Limited company agent",
     provider: "Companies House & HMRC",
     accent: "#4c2c92",
+    mandate:
+      "Keeps your company on the right side of things — confirmation statements, VAT, and corporation tax guidance. He’ll see your company record and can act with Companies House and HMRC on your behalf.",
+  },
+  grace: {
+    name: "Grace",
+    tagline: "Bereavement agent",
+    provider: "GOV.UK · Tell Us Once",
+    accent: "#4a7a6f",
+    temporary: true,
+    mandate:
+      "Stays with you and carries the whole government and admin side after a death — registering, Tell Us Once, pensions and benefits — for as long as you need. She steps back once it’s in hand.",
   },
 };
 
@@ -59,7 +77,8 @@ type PendingAction = {
   summary: string;
   resolves?: Resolves;
 };
-type RosterEntry = { id: AgentId; state: "introduced" | "commissioned" };
+type RosterEntry = { id: AgentId; state: "introduced" | "commissioned" | "stood-down" };
+type WorkingItem = { key: string; label: string; status: "now" | "next" | "waiting" | "done" };
 
 const EMPTY: Profile = {
   identity: {},
@@ -89,6 +108,7 @@ export default function AgentPage() {
   const [threads, setThreads] = useState<Record<AgentId, Msg[]>>({
     dot: [],
     reg: [],
+    grace: [],
   });
   const [activeAgent, setActiveAgent] = useState<AgentId>("dot");
   const [roster, setRoster] = useState<RosterEntry[]>([
@@ -96,6 +116,8 @@ export default function AgentPage() {
   ]);
   const [trayOpen, setTrayOpen] = useState(false);
   const [companyContext, setCompanyContext] = useState<unknown>(null);
+  const [workingState, setWorkingState] = useState<WorkingItem[]>([]);
+  const [handover, setHandover] = useState<string | null>(null);
 
   const [profile, setProfile] = useState<Profile>(EMPTY);
   const [input, setInput] = useState("");
@@ -134,7 +156,12 @@ export default function AgentPage() {
     });
   }
 
-  async function send(agentId: AgentId, history: Msg[], nextProfile: Profile) {
+  async function send(
+    agentId: AgentId,
+    history: Msg[],
+    nextProfile: Profile,
+    handoverArg: string | null = handover,
+  ) {
     setLoading(true);
     try {
       const apiMessages = history
@@ -152,6 +179,8 @@ export default function AgentPage() {
           profile: nextProfile,
           completed,
           companyContext,
+          workingState,
+          handover: agentId === "grace" ? handoverArg : null,
         }),
       });
       const data = await res.json();
@@ -168,7 +197,13 @@ export default function AgentPage() {
       setThread(agentId, next);
       if (data.profile) setProfile(data.profile);
       if (data.companyContext) setCompanyContext(data.companyContext);
-      if (data.introduce?.agentId === "reg") introduceReg();
+      if (Array.isArray(data.workingState)) setWorkingState(data.workingState);
+      if (data.introduce?.agentId) introduceSpecialist(data.introduce.agentId);
+      if (data.retire) {
+        setRoster((r) =>
+          r.map((x) => (x.id === agentId ? { ...x, state: "stood-down" } : x)),
+        );
+      }
       if (willAct) {
         setActingAgent(agentId);
         setPendingAction(data.pendingAction);
@@ -179,26 +214,38 @@ export default function AgentPage() {
     }
   }
 
-  function introduceReg() {
+  function introduceSpecialist(agentId: AgentId) {
     setRoster((r) =>
-      r.some((x) => x.id === "reg") ? r : [...r, { id: "reg", state: "introduced" }],
+      r.some((x) => x.id === agentId) ? r : [...r, { id: agentId, state: "introduced" }],
     );
     setThread("dot", (m) =>
-      m.some((x) => x.role === "introduce") ? m : [...m, { role: "introduce", agentId: "reg" }],
+      m.some((x) => x.role === "introduce" && x.agentId === agentId)
+        ? m
+        : [...m, { role: "introduce", agentId }],
     );
   }
 
-  function commissionReg() {
+  function commission(agentId: AgentId) {
     setRoster((r) =>
-      r.map((x) => (x.id === "reg" ? { ...x, state: "commissioned" } : x)),
+      r.map((x) => (x.id === agentId ? { ...x, state: "commissioned" } : x)),
     );
-    setActiveAgent("reg");
+    setActiveAgent(agentId);
     setTrayOpen(false);
+    // Hand the specialist Dot's conversation so they arrive already briefed.
+    const dotTranscript = (threads.dot ?? [])
+      .filter(
+        (m): m is { role: "user" | "assistant"; content: string } =>
+          m.role === "user" || m.role === "assistant",
+      )
+      .filter((m) => !HIDDEN_OPENERS.has(m.content))
+      .map((m) => `${m.role === "user" ? "Citizen" : "Dot"}: ${m.content}`)
+      .join("\n");
+    setHandover(dotTranscript);
     setThreads((t) => {
-      if ((t.reg ?? []).length === 0) {
-        // Kick off Reg's briefed opening on the next tick, once state is set.
+      if ((t[agentId] ?? []).length === 0) {
         setTimeout(
-          () => send("reg", [{ role: "user", content: "[commissioned]" }], profile),
+          () =>
+            send(agentId, [{ role: "user", content: "[commissioned]" }], profile, dotTranscript),
           0,
         );
       }
@@ -272,9 +319,6 @@ export default function AgentPage() {
     (m, i) => !(i === 0 && m.role === "user" && HIDDEN_OPENERS.has(m.content)),
   );
 
-  const regCommissioned =
-    roster.find((x) => x.id === "reg")?.state === "commissioned";
-
   const identityRows = Object.entries(profile.identity).filter(
     ([, v]) => v != null && v !== "",
   );
@@ -341,8 +385,10 @@ export default function AgentPage() {
                 <CommissioningCard
                   key={i}
                   agentId={m.agentId}
-                  commissioned={regCommissioned}
-                  onCommission={commissionReg}
+                  commissioned={
+                    roster.find((x) => x.id === m.agentId)?.state !== "introduced"
+                  }
+                  onCommission={() => commission(m.agentId)}
                   onOpen={() => setActiveAgent(m.agentId)}
                 />
               ) : (
@@ -409,6 +455,10 @@ export default function AgentPage() {
       </main>
 
       <aside className="w-[320px] shrink-0 border-l border-black/5 bg-white/60 overflow-y-auto hidden md:block">
+        {activeAgent === "grace" ? (
+          <GracePanel items={workingState} />
+        ) : (
+          <>
         <div className="px-5 py-4 border-b border-black/5">
           <p className="text-sm font-semibold">What your agents know</p>
           <p className="text-xs text-[#8a8a8a] mt-0.5">
@@ -449,6 +499,8 @@ export default function AgentPage() {
             accent="#00703c"
           />
         </PanelSection>
+          </>
+        )}
       </aside>
 
       <OneLoginNotification />
@@ -475,6 +527,17 @@ function AgentAvatar({ id, className }: { id: AgentId; className?: string }) {
         <span className="text-xs font-semibold">{m.name[0]}</span>
       )}
     </div>
+  );
+}
+
+function TrayTag({ label, color }: { label: string; color: string }) {
+  return (
+    <span
+      className="text-[9px] font-semibold tracking-wide rounded-full px-1.5 py-0.5 shrink-0"
+      style={{ color, background: `${color}1a` }}
+    >
+      {label}
+    </span>
   );
 }
 
@@ -517,16 +580,20 @@ function AgentTray({
                 onClick={() => onSelect(entry)}
                 className={`w-full flex items-center gap-3 rounded-xl px-3 py-2.5 text-left transition-colors ${
                   isActive ? "bg-[#1d70b8]/[0.08]" : "hover:bg-black/[0.03]"
-                }`}
+                } ${entry.state === "stood-down" ? "opacity-60" : ""}`}
               >
                 <AgentAvatar id={entry.id} className="w-8 h-8" />
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2">
                     <p className="text-sm font-semibold truncate">{m.name}</p>
                     {entry.state === "introduced" && (
-                      <span className="text-[9px] font-semibold tracking-wide text-[#4c2c92] bg-[#4c2c92]/10 rounded-full px-1.5 py-0.5">
-                        Introduced
-                      </span>
+                      <TrayTag label="Introduced" color={m.accent} />
+                    )}
+                    {entry.state === "commissioned" && m.temporary && (
+                      <TrayTag label="Here for now" color={m.accent} />
+                    )}
+                    {entry.state === "stood-down" && (
+                      <TrayTag label="Stood down" color="#8a8a8a" />
                     )}
                   </div>
                   <p className="text-[11px] text-[#8a8a8a] truncate">{m.tagline}</p>
@@ -576,10 +643,7 @@ function CommissioningCard({
           </p>
         )}
         <p className="text-[13px] text-[#505a5f] leading-relaxed mb-3">
-          Keeps your company on the right side of things — confirmation
-          statements, VAT, and corporation tax guidance. He&rsquo;ll see your
-          company record and can act with Companies House and HMRC on your
-          behalf.
+          {m.mandate}
         </p>
         {commissioned ? (
           <button
@@ -603,9 +667,68 @@ function CommissioningCard({
               Commission {m.name}
             </button>
             <p className="text-[11px] text-center text-[#8a8a8a] mt-2">
-              You can stand him down any time.
+              You can stand them down any time.
             </p>
           </>
+        )}
+      </div>
+    </div>
+  );
+}
+
+const STATUS_LABEL: Record<WorkingItem["status"], string> = {
+  now: "Now",
+  next: "Next",
+  waiting: "Waiting",
+  done: "Done",
+};
+const STATUS_COLOR: Record<WorkingItem["status"], string> = {
+  now: "#4a7a6f",
+  next: "#8a8a8a",
+  waiting: "#b45309",
+  done: "#00703c",
+};
+const STATUS_ORDER: WorkingItem["status"][] = ["now", "next", "waiting", "done"];
+
+function GracePanel({ items }: { items: WorkingItem[] }) {
+  const sorted = [...items].sort(
+    (a, b) => STATUS_ORDER.indexOf(a.status) - STATUS_ORDER.indexOf(b.status),
+  );
+  return (
+    <div>
+      <div className="px-5 py-4 border-b border-black/5">
+        <p className="text-sm font-semibold">What Grace is looking after</p>
+        <p className="text-xs text-[#8a8a8a] mt-0.5">
+          {items.length === 0
+            ? "Nothing yet — she's just getting started."
+            : "So you don't have to hold it."}
+        </p>
+      </div>
+      <div className="px-5 py-4 space-y-3">
+        {sorted.length === 0 ? (
+          <p className="text-xs text-[#c4c4c4]">—</p>
+        ) : (
+          sorted.map((it) => (
+            <div key={it.key} className="flex items-start gap-2.5">
+              <span
+                className="mt-1.5 w-1.5 h-1.5 rounded-full shrink-0"
+                style={{ background: STATUS_COLOR[it.status] }}
+              />
+              <p
+                className={`flex-1 text-[13px] leading-snug ${
+                  it.status === "done" ? "text-[#9a9a9a]" : "text-[#1a1a1a]"
+                }`}
+              >
+                {it.label}
+              </p>
+              <span
+                className="text-[10px] font-medium tracking-wide shrink-0 mt-0.5"
+                style={{ color: STATUS_COLOR[it.status] }}
+              >
+                {STATUS_LABEL[it.status]}
+              </span>
+            </div>
+          ))
         )}
       </div>
     </div>

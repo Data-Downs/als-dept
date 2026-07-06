@@ -115,6 +115,11 @@ Once they confirm, record the company and their directorship, and record the rea
 ## Bringing in a specialist
 Once you've recognised that the citizen runs a limited company and confirmed who they are, don't try to run the whole company yourself. Companies House and HMRC provide a specialist agent for exactly this — his name is Reg, the limited company agent. Call introduce_specialist with agentId "reg" to place him in the citizen's agent tray, and in one warm line tell them Reg is there for the company side — filings, VAT, corporation tax guidance — and they can bring him in whenever they like. Introduce him ONCE. Reg picks up everything you already know, so they never have to repeat themselves. Leave the company filing work to Reg rather than doing it yourself.
 
+## When someone has died
+If the citizen tells you a person close to them has died, everything changes shape. Slow right down. Lead with genuine care — acknowledge the loss before anything practical, and make clear they don't have to work out what to do; that's yours to carry. Then, gently and only as they're ready, learn the few things that shape what's needed: did the person work or have income, a pension, or benefits (so you know who must be notified)? roughly how old were they? where did they live, and where did they die? their National Insurance number if it's to hand — all optional, never pressed.
+
+Once it's clear this is a bereavement, bring in **Grace** — a bereavement agent — with introduce_specialist, agentId "grace", and say in one warm line that Grace will stay with them and carry the whole government and admin side for as long as they need. Grace picks up everything they've told you. Don't try to run the death admin yourself.
+
 Open in two short sentences: who you are, and the promise that they'll never have to work out which department does what — that's your job. Then ask, openly, what's brought them here today. Do NOT ask their name yet. Once they've told you why they've come, warmly ask what you should call them.`;
 
 const REG_SYSTEM = `You are Reg — the limited company agent, provided to business owners by Companies House and HMRC. Dot, the citizen's coordinator agent, has just introduced you and handed you the file. You are the company's quiet right hand: warm, plain-spoken and unflappable — a brilliant company secretary who has already read everything and misses nothing.
@@ -181,6 +186,73 @@ function buildRegBriefing(
   list("Liable for", profile?.liabilities ?? []);
   list("Eligible for", profile?.eligibilities ?? []);
   return lines.join("\n");
+}
+
+type WorkingItem = { key: string; label: string; status: "now" | "next" | "waiting" | "done" };
+
+const GRACE_SYSTEM = `You are Grace — a bereavement agent. When someone loses a person close to them, you are brought in for as long as they need you, to carry the government and administrative side of a death so they don't have to hold it while they grieve. You are gentle, unhurried and quietly capable — like the kindest person at the register office, who has sat with many people on the worst day of their lives and knows exactly what comes next, but never rushes them to it.
+
+Dot has just introduced you and handed you what they already know (below). Do NOT make them repeat it.
+
+## Your goal, not a script
+You are not working through a fixed checklist. You are given ONE goal: get them through everything the state and the essential admin require after this death, in the right order, at their pace — and take as much of it off them as you can. You decide what matters next from where things actually stand.
+
+The ground truth of the order: almost everything is unlocked by **registering the death** and getting the **death certificate**. If that hasn't happened, that is gently the first thing. Then, in whatever order fits their situation:
+- **Tell Us Once** — one government service that notifies HMRC, DWP, the local council, the Passport Office and more in a single step, so they never contact each separately.
+- **The person's employer and pension scheme(s)** — notifying them, and checking for a **survivor's / spouse's pension** the citizen may be entitled to.
+- **Bereavement Support Payment** and any other support they may be eligible for.
+- **The estate** — probate, bank accounts, property — pointing them to the right help. You do not make legal or financial decisions for them.
+
+You hold real knowledge here (register within 5 days in England; a death at home needs a doctor's Medical Certificate of Cause of Death first; the register office must be in the area where the person died; USS is the main scheme for university staff). Use it plainly. Never invent a date, an office or an entitlement — if you're unsure, say so and offer to find out.
+
+## How you carry it
+Use the **track** tool to keep an honest, quiet picture of what you're looking after and where each thing stands (now / next / waiting / done). This is what you're holding for them — NOT a to-do list you push at them. Update it as things move. When you learn something enduring — a new entitlement like a survivor's pension or Bereavement Support Payment — also record it with **remember** so it stays in their profile.
+
+## How you are
+- Lead with care, always. Acknowledge the loss before anything practical. Let silences be.
+- One thing at a time. Everything is optional and can wait. Make "I don't know" and "not now" perfectly good answers — met with "you don't need to know; that's what I'm here for."
+- You take the load; you are not their companion in grief. Where real human support would help — family, their funeral director, or a bereavement service like Cruse Bereavement Support (0808 808 1677) — say so warmly. Don't try to be that yourself.
+- Be honest, including about yourself. If you don't hold a fact, say so rather than implying you do.
+- Only act on their behalf with a clear yes, and only on what can be undone. You propose; they decide.
+
+## When you're done
+When the essential steps are in hand and nothing is pressing, say so gently, tell them plainly you'll stay in their tray if anything else comes up, and call **stand_down**. Never manufacture more to do to keep going.
+
+## Opening
+Open softly: acknowledge their loss by name, reassure them they don't have to work any of this out, name the single most important next step given what you already know, and ask one gentle question to move it forward. Keep it short.`;
+
+function buildGraceBriefing(profile: Profile, handover: string | null): string {
+  const lines: string[] = ["\n\n## What you've been handed"];
+  const id = profile?.identity ?? {};
+  const who = String(id.fullName || id.name || "the person you're helping");
+  lines.push(`You are helping ${who}${id.location ? `, in ${id.location}` : ""}.`);
+  if (handover && handover.trim()) {
+    lines.push("\nWhat they told Dot before you came in:");
+    lines.push(handover.trim());
+  }
+  return lines.join("\n");
+}
+
+function mergeWorkingState(items: WorkingItem[], patch: unknown): WorkingItem[] {
+  const out = (items ?? []).map((i) => ({ ...i }));
+  if (!Array.isArray(patch)) return out;
+  for (const raw of patch as Array<Partial<WorkingItem>>) {
+    if (!raw || !raw.label) continue;
+    const key = raw.key || raw.label;
+    const status = (["now", "next", "waiting", "done"] as const).includes(
+      raw.status as WorkingItem["status"],
+    )
+      ? (raw.status as WorkingItem["status"])
+      : "next";
+    const existing = out.find((x) => x.key === key);
+    if (existing) {
+      existing.label = raw.label;
+      existing.status = status;
+    } else {
+      out.push({ key, label: raw.label, status });
+    }
+  }
+  return out;
 }
 
 const TOOLS = [
@@ -302,18 +374,57 @@ const TOOLS = [
   {
     name: "introduce_specialist",
     description:
-      "Introduce a specialist government agent to the citizen and place them in the citizen's agent tray. Call this once you've recognised the citizen runs a limited company and confirmed who they are — to bring in Reg, the limited company agent provided by Companies House and HMRC.",
+      "Introduce a specialist government agent to the citizen and place them in the citizen's agent tray. Use 'reg' — the limited company agent (Companies House & HMRC) — once you've recognised they run a limited company. Use 'grace' — a bereavement agent — once it's clear a person close to them has died.",
     input_schema: {
       type: "object",
       properties: {
         agentId: {
           type: "string",
-          enum: ["reg"],
+          enum: ["reg", "grace"],
           description: "The specialist to introduce.",
         },
       },
       required: ["agentId"],
     },
+  },
+  {
+    name: "track",
+    description:
+      "Keep a quiet, honest record of what you're looking after for the citizen and where each thing stands. Use a stable key per item and update its status as things move (now = what you're on; next = coming up; waiting = blocked on something, e.g. the death certificate; done = handled). This is what you're holding so they don't have to — never a to-do list you push at them.",
+    input_schema: {
+      type: "object",
+      properties: {
+        items: {
+          type: "array",
+          items: {
+            type: "object",
+            properties: {
+              key: {
+                type: "string",
+                description: "Stable slug, e.g. 'register-death', 'tell-us-once', 'uss-survivor-pension'.",
+              },
+              label: {
+                type: "string",
+                description: "Short human label, e.g. 'Register the death'.",
+              },
+              status: {
+                type: "string",
+                enum: ["now", "next", "waiting", "done"],
+                description: "Where this stands.",
+              },
+            },
+            required: ["key", "label", "status"],
+          },
+        },
+      },
+      required: ["items"],
+    },
+  },
+  {
+    name: "stand_down",
+    description:
+      "Signal that your work is essentially complete — the essential steps are in hand and there's nothing pressing left. Only call when genuinely done, never to tidy up or keep busy. The citizen keeps you in their tray and can bring you back any time.",
+    input_schema: { type: "object", properties: {} },
   },
 ];
 
@@ -321,7 +432,12 @@ function toolsFor(agent: string) {
   if (agent === "reg") {
     return TOOLS.filter((t) => t.name === "remember" || t.name === "act");
   }
-  return TOOLS;
+  if (agent === "grace") {
+    return TOOLS.filter(
+      (t) => t.name === "remember" || t.name === "track" || t.name === "stand_down",
+    );
+  }
+  return TOOLS.filter((t) => t.name !== "track" && t.name !== "stand_down");
 }
 
 function mergeProfile(profile: Profile, patch: Record<string, unknown>): Profile {
@@ -372,12 +488,16 @@ export async function POST(req: NextRequest) {
     completed,
     agent = "dot",
     companyContext = null,
+    workingState = [],
+    handover = null,
   } = (await req.json()) as {
     messages: Array<{ role: string; content: unknown }>;
     profile?: Profile;
     completed?: string[];
     agent?: string;
     companyContext?: Record<string, unknown> | null;
+    workingState?: WorkingItem[];
+    handover?: string | null;
   };
 
   const doneLabels = (completed ?? [])
@@ -389,7 +509,9 @@ export async function POST(req: NextRequest) {
   const systemPrompt =
     agent === "reg"
       ? REG_SYSTEM + buildRegBriefing(profile ?? emptyProfile(), companyContext) + doneAddendum
-      : SYSTEM + doneAddendum;
+      : agent === "grace"
+        ? GRACE_SYSTEM + buildGraceBriefing(profile ?? emptyProfile(), handover) + doneAddendum
+        : SYSTEM + doneAddendum;
 
   const apiKey = await getEnv("ANTHROPIC_API_KEY");
   if (!apiKey) {
@@ -401,8 +523,10 @@ export async function POST(req: NextRequest) {
   adapter.initialize({ apiKey });
 
   let working: Profile = profile ?? emptyProfile();
+  let workingItems: WorkingItem[] = workingState ?? [];
   let pendingAction: PendingAction | null = null;
   let introduce: { agentId: string } | null = null;
+  let retire = false;
   let foundCompany: Record<string, unknown> | null = null;
   const loop = [...messages];
   let reply = "";
@@ -465,7 +589,19 @@ export async function POST(req: NextRequest) {
           return {
             type: "tool_result",
             tool_use_id: tc.id,
-            content: "Reg has been introduced and added to the citizen's agent tray.",
+            content: "The specialist has been introduced and added to the citizen's agent tray.",
+          };
+        }
+        if (tc.name === "track") {
+          workingItems = mergeWorkingState(workingItems, tc.input.items);
+          return { type: "tool_result", tool_use_id: tc.id, content: "Noted." };
+        }
+        if (tc.name === "stand_down") {
+          retire = true;
+          return {
+            type: "tool_result",
+            tool_use_id: tc.id,
+            content: "You've stood down; you remain in the citizen's tray if they need you.",
           };
         }
         if (tc.name === "act") {
@@ -517,5 +653,7 @@ export async function POST(req: NextRequest) {
     pendingAction,
     introduce,
     companyContext: foundCompany ?? companyContext,
+    workingState: workingItems,
+    retire,
   });
 }
