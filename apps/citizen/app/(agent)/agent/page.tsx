@@ -414,11 +414,83 @@ export default function AgentPage() {
     });
   }
 
-  // Opening turn — a hidden "Hi" so Dot introduces itself.
+  // Restore the whole session on reload; open fresh only if there's nothing to
+  // restore. The citizen's accumulated state is the point — never lose it.
+  const [ready, setReady] = useState(false);
   useEffect(() => {
-    send("dot", [{ role: "user", content: "Hi" }], EMPTY);
+    let restored = false;
+    try {
+      const raw = localStorage.getItem("als-agent-state-v1");
+      if (raw) {
+        const s = JSON.parse(raw);
+        if (s.threads) setThreads(s.threads);
+        if (s.profile) setProfile(s.profile);
+        if (s.wallet) setWallet(s.wallet);
+        if (s.inboundLog) setInboundLog(s.inboundLog);
+        if (s.completed) setCompleted(s.completed);
+        if (s.resolved) setResolved(s.resolved);
+        if (s.workingState) setWorkingState(s.workingState);
+        if (s.roster) setRoster(s.roster);
+        if (s.activeAgent) setActiveAgent(s.activeAgent);
+        if (s.companyContext !== undefined) setCompanyContext(s.companyContext);
+        if (s.handover !== undefined) setHandover(s.handover);
+        if (s.personaRecord !== undefined) setPersonaRecord(s.personaRecord);
+        if (s.currentUser) setCurrentUser(s.currentUser);
+        if (s.personaRecord) {
+          useAppStore.setState({ persona: s.currentUser, personaData: s.personaRecord });
+        }
+        restored = !!s.threads?.dot?.length;
+      }
+    } catch {
+      /* corrupt state — start fresh */
+    }
+    if (!restored) {
+      send("dot", [{ role: "user", content: "Hi" }], EMPTY);
+    }
+    setReady(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    if (!ready) return;
+    try {
+      localStorage.setItem(
+        "als-agent-state-v1",
+        JSON.stringify({
+          threads,
+          profile,
+          wallet,
+          inboundLog,
+          completed,
+          resolved,
+          workingState,
+          roster,
+          activeAgent,
+          companyContext,
+          handover,
+          personaRecord,
+          currentUser,
+        }),
+      );
+    } catch {
+      /* storage full or unavailable — non-fatal */
+    }
+  }, [
+    ready,
+    threads,
+    profile,
+    wallet,
+    inboundLog,
+    completed,
+    resolved,
+    workingState,
+    roster,
+    activeAgent,
+    companyContext,
+    handover,
+    personaRecord,
+    currentUser,
+  ]);
 
   // When the login wall closes, decide whether the agent's action completed.
   useEffect(() => {
