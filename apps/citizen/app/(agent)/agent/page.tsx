@@ -414,33 +414,55 @@ export default function AgentPage() {
     });
   }
 
-  // Restore the whole session on reload; open fresh only if there's nothing to
-  // restore. The citizen's accumulated state is the point — never lose it.
+  // Per-persona persistence: each citizen (and "new user") keeps their own
+  // saved session under their own key. The accumulated state is the product —
+  // switching between people must never lose it.
   const [ready, setReady] = useState(false);
+
+  function hydrateFrom(s: {
+    threads?: Record<AgentId, Msg[]>;
+    profile?: Profile;
+    wallet?: WalletCard[];
+    inboundLog?: InboundEvent[];
+    completed?: string[];
+    resolved?: Resolves[];
+    workingState?: WorkingItem[];
+    roster?: RosterEntry[];
+    activeAgent?: AgentId;
+    companyContext?: unknown;
+    handover?: string | null;
+    personaRecord?: Record<string, unknown> | null;
+    currentUser?: string;
+  }): boolean {
+    if (s.threads) setThreads(s.threads);
+    if (s.profile) setProfile(s.profile);
+    if (s.wallet) setWallet(s.wallet);
+    if (s.inboundLog) setInboundLog(s.inboundLog);
+    if (s.completed) setCompleted(s.completed);
+    if (s.resolved) setResolved(s.resolved);
+    if (s.workingState) setWorkingState(s.workingState);
+    if (s.roster) setRoster(s.roster);
+    if (s.activeAgent) setActiveAgent(s.activeAgent);
+    if (s.companyContext !== undefined) setCompanyContext(s.companyContext);
+    if (s.handover !== undefined) setHandover(s.handover ?? null);
+    if (s.personaRecord !== undefined) setPersonaRecord(s.personaRecord ?? null);
+    if (s.currentUser) setCurrentUser(s.currentUser);
+    setSuggestions({ agent: s.activeAgent ?? "dot", items: [] });
+    if (s.personaRecord) {
+      useAppStore.setState({
+        persona: s.currentUser,
+        personaData: s.personaRecord as never,
+      });
+    }
+    return !!s.threads?.dot?.length;
+  }
+
   useEffect(() => {
     let restored = false;
     try {
-      const raw = localStorage.getItem("als-agent-state-v1");
-      if (raw) {
-        const s = JSON.parse(raw);
-        if (s.threads) setThreads(s.threads);
-        if (s.profile) setProfile(s.profile);
-        if (s.wallet) setWallet(s.wallet);
-        if (s.inboundLog) setInboundLog(s.inboundLog);
-        if (s.completed) setCompleted(s.completed);
-        if (s.resolved) setResolved(s.resolved);
-        if (s.workingState) setWorkingState(s.workingState);
-        if (s.roster) setRoster(s.roster);
-        if (s.activeAgent) setActiveAgent(s.activeAgent);
-        if (s.companyContext !== undefined) setCompanyContext(s.companyContext);
-        if (s.handover !== undefined) setHandover(s.handover);
-        if (s.personaRecord !== undefined) setPersonaRecord(s.personaRecord);
-        if (s.currentUser) setCurrentUser(s.currentUser);
-        if (s.personaRecord) {
-          useAppStore.setState({ persona: s.currentUser, personaData: s.personaRecord });
-        }
-        restored = !!s.threads?.dot?.length;
-      }
+      const lastUser = localStorage.getItem("als-last-user") ?? "new-user";
+      const raw = localStorage.getItem(`als-agent-state:${lastUser}`);
+      if (raw) restored = hydrateFrom(JSON.parse(raw));
     } catch {
       /* corrupt state — start fresh */
     }
@@ -455,7 +477,7 @@ export default function AgentPage() {
     if (!ready) return;
     try {
       localStorage.setItem(
-        "als-agent-state-v1",
+        `als-agent-state:${currentUser}`,
         JSON.stringify({
           threads,
           profile,
@@ -472,6 +494,7 @@ export default function AgentPage() {
           currentUser,
         }),
       );
+      localStorage.setItem("als-last-user", currentUser);
     } catch {
       /* storage full or unavailable — non-fatal */
     }
@@ -601,7 +624,26 @@ export default function AgentPage() {
   // Become a different citizen (or a fresh, unknown one). Loads their identity
   // and wallet; Dot greets whoever they now are.
   async function loadPersona(id: string | null) {
+    const userId = id ?? "new-user";
     setPersonaMenu(false);
+    if (userId === currentUser) return;
+    // Restore this citizen's own saved session, if they have one.
+    try {
+      const raw = localStorage.getItem(`als-agent-state:${userId}`);
+      if (raw) {
+        const s = JSON.parse(raw);
+        if (s.threads?.dot?.length) {
+          hydrateFrom(s);
+          return;
+        }
+      }
+    } catch {
+      /* fall through to a fresh session */
+    }
+    // No saved session — seed fresh. Set currentUser FIRST so the save effect
+    // never writes this reset into the previous persona's slot.
+    setCurrentUser(userId);
+    setPersonaRecord(null);
     setInboundLog([]);
     setWorkingState([]);
     setCompleted([]);
@@ -614,8 +656,6 @@ export default function AgentPage() {
     setSuggestions({ agent: "dot", items: [] });
     setThreads({ dot: [], reg: [], grace: [] });
     if (!id) {
-      setCurrentUser("new-user");
-      setPersonaRecord(null);
       setProfile(EMPTY);
       send("dot", [{ role: "user", content: "Hi" }], EMPTY);
       return;
@@ -624,7 +664,6 @@ export default function AgentPage() {
       const res = await fetch(`/api/personas/${id}`);
       const data = await res.json();
       const persona = data.persona as Record<string, unknown>;
-      setCurrentUser(id);
       setPersonaRecord(persona);
       const prof = personaToProfile(persona);
       setProfile(prof);
