@@ -8,7 +8,7 @@ import { BottomSheet } from "@/components/ui/BottomSheet";
 import { LoginSheet } from "@/components/sheets/LoginSheet";
 import { OneLoginNotification } from "@/components/OneLoginNotification";
 
-type AgentId = "dot" | "reg" | "grace" | "driving" | "sol";
+type AgentId = "dot" | "reg" | "grace" | "driving" | "sol" | "robin";
 
 const AGENT_META: Record<
   AgentId,
@@ -59,6 +59,15 @@ const AGENT_META: Record<
     accent: "#b45309",
     mandate:
       "Keeps your tax and your books in order — Self Assessment, deadlines, Making Tax Digital, the VAT line, and what you're owed — so you can get on with the work, never become an accountant.",
+  },
+  robin: {
+    name: "Robin",
+    tagline: "New baby",
+    provider: "GOV.UK · for new parents",
+    accent: "#a84f7a",
+    temporary: true,
+    mandate:
+      "Looks after everything the state needs around your new baby — maternity pay, registering the birth, Child Benefit and childcare — so you can focus on the baby. Steps back once it's all in hand.",
   },
 };
 
@@ -266,6 +275,7 @@ export default function AgentPage() {
     grace: [],
     driving: [],
     sol: [],
+    robin: [],
   });
   const [activeAgent, setActiveAgent] = useState<AgentId>("dot");
   const [roster, setRoster] = useState<RosterEntry[]>([
@@ -390,8 +400,15 @@ export default function AgentPage() {
           profile: nextProfile,
           completed,
           companyContext,
-          workingState,
-          handover: agentId === "grace" ? handoverArg : null,
+          // A fresh event agent (its opener) must not inherit another agent's
+          // working state — start it empty.
+          workingState:
+            history.length === 1 &&
+            (history[0] as { content?: string }).content === "[commissioned]"
+              ? []
+              : workingState,
+          handover:
+            agentId === "grace" || agentId === "robin" ? handoverArg : null,
           drivingContext: agentId === "driving" ? drivingContextFor() : null,
           selfEmployedContext: agentId === "sol" ? selfEmployedContextFor() : null,
         }),
@@ -458,6 +475,9 @@ export default function AgentPage() {
       .map((m) => `${m.role === "user" ? "Citizen" : "Dot"}: ${m.content}`)
       .join("\n");
     setHandover(dotTranscript);
+    if ((threads[agentId] ?? []).length === 0 && AGENT_META[agentId].temporary) {
+      setWorkingState([]);
+    }
     setThreads((t) => {
       if ((t[agentId] ?? []).length === 0) {
         setTimeout(
@@ -710,7 +730,7 @@ export default function AgentPage() {
     setCompanyContext(null);
     setHandover(null);
     setSuggestions({ agent: "dot", items: [] });
-    setThreads({ dot: [], reg: [], grace: [], driving: [], sol: [] });
+    setThreads({ dot: [], reg: [], grace: [], driving: [], sol: [], robin: [] });
     if (!id) {
       setProfile(EMPTY);
       send("dot", [{ role: "user", content: "Hi" }], EMPTY);
@@ -981,8 +1001,8 @@ export default function AgentPage() {
       </main>
 
       <aside className="w-[320px] shrink-0 border-l border-black/5 bg-white/60 overflow-y-auto hidden md:block">
-        {activeAgent === "grace" ? (
-          <GracePanel items={workingState} />
+        {active.temporary ? (
+          <WorkingPanel name={active.name} items={workingState} />
         ) : (
           <>
         <div className="px-5 py-4 border-b border-black/5">
@@ -1460,17 +1480,17 @@ function WalletCardView({
   );
 }
 
-function GracePanel({ items }: { items: WorkingItem[] }) {
+function WorkingPanel({ name, items }: { name: string; items: WorkingItem[] }) {
   const sorted = [...items].sort(
     (a, b) => STATUS_ORDER.indexOf(a.status) - STATUS_ORDER.indexOf(b.status),
   );
   return (
     <div>
       <div className="px-5 py-4 border-b border-black/5">
-        <p className="text-sm font-semibold">What Grace is looking after</p>
+        <p className="text-sm font-semibold">What {name} is looking after</p>
         <p className="text-xs text-[#8a8a8a] mt-0.5">
           {items.length === 0
-            ? "Nothing yet — she's just getting started."
+            ? "Nothing yet — just getting started."
             : "So you don't have to hold it."}
         </p>
       </div>
