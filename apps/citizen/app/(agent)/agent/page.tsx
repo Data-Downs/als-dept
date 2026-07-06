@@ -84,6 +84,12 @@ type Receipt = {
   dataShared: string[];
   via: "one-login" | "government-gateway";
   idv: boolean;
+  reason: string;
+  approver: string;
+  at: string;
+  serviceId: string;
+  resolves?: Resolves;
+  undone?: boolean;
 };
 type Msg =
   | { role: "user" | "assistant"; content: string }
@@ -109,6 +115,7 @@ type PendingAction = {
   dataShared: string[];
   auth: ServiceAuth;
   summary: string;
+  reason: string;
   resolves?: Resolves;
 };
 type RosterEntry = { id: AgentId; state: "introduced" | "commissioned" | "stood-down" };
@@ -647,6 +654,7 @@ export default function AgentPage() {
           prev.some((x) => x.list === r.list && x.key === r.key) ? prev : [...prev, r],
         );
       }
+      const who = String(profile.identity.fullName || profile.identity.name || "You");
       setThread(actingAgent, (m) => [
         ...m,
         {
@@ -657,12 +665,17 @@ export default function AgentPage() {
             dataShared: pendingAction.dataShared,
             via: a.login,
             idv: !!a.identityVerification,
+            reason: pendingAction.reason,
+            approver: who,
+            at: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+            serviceId: pendingAction.serviceId,
+            resolves: pendingAction.resolves,
           },
         },
         {
           role: "assistant",
           content:
-            "Done — you didn't have to touch government yourself. The receipt above shows exactly what I shared, and you can undo or query it any time.",
+            "Done — you didn't have to touch government yourself. The receipt above shows exactly what I shared. You can ask why I did it, or undo it, any time.",
         },
       ]);
     }
@@ -689,6 +702,41 @@ export default function AgentPage() {
   function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     submitText(input);
+  }
+
+  // Safe to be wrong: any action can be reversed. Undo reverts the state it
+  // changed and leaves a record of both the action and the reversal.
+  function undoAction(agent: AgentId, receipt: Receipt) {
+    setCompleted((c) => c.filter((id) => id !== receipt.serviceId));
+    if (receipt.resolves) {
+      const r = receipt.resolves;
+      setResolved((prev) =>
+        prev.filter((x) => !(x.list === r.list && x.key === r.key)),
+      );
+    }
+    setThread(agent, (m) => {
+      let flipped = false;
+      const next = m.map((msg) => {
+        if (
+          !flipped &&
+          msg.role === "receipt" &&
+          msg.receipt.serviceId === receipt.serviceId &&
+          !msg.receipt.undone
+        ) {
+          flipped = true;
+          return { ...msg, receipt: { ...msg.receipt, undone: true } };
+        }
+        return msg;
+      });
+      return [
+        ...next,
+        {
+          role: "assistant",
+          content:
+            "Undone. I've reversed that — nothing was submitted, and there's a record of both the action and the reversal.",
+        },
+      ];
+    });
   }
 
   // An inbound government message: it never becomes a mailbox item. The facts
@@ -945,7 +993,11 @@ export default function AgentPage() {
           <div className="max-w-[640px] mx-auto space-y-5">
             {visible.map((m, i) =>
               m.role === "receipt" ? (
-                <ReceiptCard key={i} receipt={m.receipt} />
+                <ReceiptCard
+                  key={i}
+                  receipt={m.receipt}
+                  onUndo={() => undoAction(activeAgent, m.receipt)}
+                />
               ) : m.role === "introduce" ? (
                 <CommissioningCard
                   key={i}
@@ -1564,11 +1616,38 @@ function WorkingPanel({ name, items }: { name: string; items: WorkingItem[] }) {
   );
 }
 
-function ReceiptCard({ receipt }: { receipt: Receipt }) {
+function ReceiptCard({
+  receipt,
+  onUndo,
+}: {
+  receipt: Receipt;
+  onUndo: () => void;
+}) {
+  const [showWhy, setShowWhy] = useState(false);
   const via =
     receipt.via === "government-gateway"
       ? "Government Gateway"
       : `GOV.UK One Login${receipt.idv ? " · identity verified" : ""}`;
+
+  if (receipt.undone) {
+    return (
+      <div className="flex">
+        <div className="max-w-[85%] rounded-xl border border-black/10 bg-black/[0.02] px-4 py-3">
+          <span className="text-[11px] font-semibold tracking-wide text-[#8a8a8a]">
+            Reversed
+          </span>
+          <p className="text-sm text-[#8a8a8a] capitalize line-through decoration-1 mt-0.5">
+            {receipt.label}
+          </p>
+          <p className="text-xs text-[#8a8a8a] mt-1">
+            Undone — nothing was submitted. The action and its reversal are on
+            the record.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex">
       <div className="max-w-[85%] rounded-xl border border-[#00703c]/25 bg-[#00703c]/[0.06] px-4 py-3">
@@ -1589,6 +1668,43 @@ function ReceiptCard({ receipt }: { receipt: Receipt }) {
           Shared: {receipt.dataShared.join(", ")}
         </p>
         <p className="text-xs text-[#505a5f]">Signed in via: {via}</p>
+
+        {showWhy && (
+          <div className="mt-2.5 text-xs text-[#505a5f] space-y-1 bg-white/70 rounded-lg p-2.5 border border-[#00703c]/10">
+            <p>
+              <span className="font-medium text-[#1a1a1a]">Why:</span>{" "}
+              {receipt.reason}
+            </p>
+            <p>
+              <span className="font-medium text-[#1a1a1a]">Approved by:</span>{" "}
+              {receipt.approver}, via {via}, at {receipt.at}
+            </p>
+            <p className="text-[#8a8a8a] pt-0.5">
+              Recorded, challengeable and reversible.
+            </p>
+          </div>
+        )}
+
+        <div className="flex items-center gap-4 mt-2.5 pt-2.5 border-t border-[#00703c]/15">
+          <button
+            type="button"
+            onClick={() => setShowWhy((v) => !v)}
+            className="text-[11px] font-medium text-[#00703c] hover:underline"
+          >
+            {showWhy ? "Hide" : "Why did this happen?"}
+          </button>
+          <button
+            type="button"
+            onClick={onUndo}
+            className="text-[11px] font-medium text-[#505a5f] hover:text-[#1a1a1a] flex items-center gap-1"
+          >
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M3 7v6h6" />
+              <path d="M3 13a9 9 0 1 0 3-7.7L3 8" />
+            </svg>
+            Undo
+          </button>
+        </div>
       </div>
     </div>
   );

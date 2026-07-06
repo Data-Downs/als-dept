@@ -35,6 +35,7 @@ type PendingAction = {
   dataShared: string[];
   auth: ServiceAuth;
   summary: string;
+  reason: string;
   resolves?: Resolves;
 };
 
@@ -407,6 +408,11 @@ const TOOLS = [
           description:
             "One short line describing what you're about to do, e.g. 'file your confirmation statement'.",
         },
+        reason: {
+          type: "string",
+          description:
+            "Why you are doing this now, in one plain sentence — the citizen can ask, and it's kept on the record. E.g. 'You asked me to file it' or 'Your confirmation statement was overdue and you confirmed you wanted it filed.'",
+        },
       },
       required: ["serviceId"],
     },
@@ -582,7 +588,7 @@ You've been handed what's already known about them and their business (below). D
 Early on, offer a quick check of where they stand. Start from what you already know (their trade, income, any refund pending, their VAT position), tell them plainly what's in hand, then ask a FEW targeted questions ONE AT A TIME only where it matters: have they registered for Self Assessment? are they set up for MTD if it applies? are they claiming all their allowable expenses? Record anything missing as a liability, and finish with a short, calm summary and the one or two next actions.
 
 ## Acting
-When they ask you to file their Self Assessment return, use the act tool — they sign in first; you never file silently. Things like chasing an unpaid invoice aren't something you can do with government, so say so plainly and point them to what would help. Record what you learn with remember; never invent a figure — use only what you've been briefed or told.
+When they ask you to file their Self Assessment return, use the act tool with serviceId "hmrc-self-assessment" — they sign in first; you never file silently. Things like chasing an unpaid invoice aren't something you can do with government, so say so plainly and point them to what would help. Record what you learn with remember; never invent a figure — use only what you've been briefed or told.
 
 ## Opening
 Open by greeting them by name, showing you already understand their business, and naming the one thing that matters most right now — a refund they're owed, a deadline coming, the VAT line approaching. Then offer the tax check and ask what they'd like to start with.`;
@@ -635,7 +641,7 @@ Use the **track** tool to keep a quiet, honest picture of what you're looking af
 - Lead with warmth. Congratulate them, genuinely. This is a happy thing, even when it's also daunting.
 - One thing at a time. Everything is optional and most of it can wait. "Not now" is a perfectly good answer.
 - You carry the admin; you are not their midwife or their health visitor. Where real support would help — their midwife, health visitor, NCT, family — say so warmly.
-- Only act with a clear yes, and only on what can be undone. You propose; they decide.
+- Only act with a clear yes, and only on what can be undone. You propose; they decide. Once the baby is here and they're ready, you can claim Child Benefit for them with the act tool (serviceId "hmrc-child-benefit").
 
 ## When you're done
 When the essentials are in hand and nothing is pressing, say so gently, tell them you'll stay in their tray for whatever comes next, and — because a new baby becomes a long chapter of family life — mention that a family agent can pick things up from here. Then call **stand_down**. Never manufacture more to do.
@@ -655,7 +661,7 @@ You've been handed what's already known about them and their children (below). D
 - **The clock on each child** — you hold each child's age and what it unlocks or ends: a funded nursery place at two or three, a reception place the September after they turn four, Child Benefit ending at 16 (or 20 in approved education). You surface each in good time.
 
 ## How you work
-Keep a live picture of the family and each child, and watch for whatever's next for each of them — a school application window opening, a childcare entitlement starting, a benefit about to change. When something's due that you can do — set up Tax-Free Childcare, apply for a place — offer it as one action and, on their yes, do it (they sign in first). For anything that must go through the council or school directly, or that isn't published for agents yet, say so plainly and point the way.
+Keep a live picture of the family and each child, and watch for whatever's next for each of them — a school application window opening, a childcare entitlement starting, a benefit about to change. When something's due that you can do — set up Tax-Free Childcare (act tool, serviceId "hmrc-tax-free-childcare") — offer it as one action and, on their yes, do it (they sign in first). For anything that must go through the council or school directly, or that isn't published for agents yet, say so plainly and point the way.
 
 ## Opening
 Open by greeting them by name, showing you already know their children by name and age, and naming the one thing nearest on the horizon for the family. If nothing is pressing, say so reassuringly. Then ask what they'd like to start with.`;
@@ -782,10 +788,33 @@ function actionableCatalogue(
     .map((n) => ({ id: n.id, name: n.name, dept: n.dept }));
 }
 
+/** Human department name inferred from a local service id's prefix. */
+function deptForLocalId(id: string): string {
+  if (id.startsWith("companies-house")) return "Companies House";
+  if (id.startsWith("hmrc")) return "HMRC";
+  if (id.startsWith("dvla")) return "DVLA";
+  if (id.startsWith("dvsa")) return "DVSA";
+  if (id.startsWith("dwp")) return "DWP";
+  return "Government";
+}
+
 function catalogueFor(agent: string): ActionableService[] {
   const def = SPECIALISTS[agent];
   if (!def) return [];
-  return actionableCatalogue((name, id) => def.serviceKeywords.test(`${name} ${id}`));
+  const published = actionableCatalogue((name, id) =>
+    def.serviceKeywords.test(`${name} ${id}`),
+  );
+  // Local fallback services the act handler can genuinely resolve but which
+  // aren't (yet) in the published graph. Merge them so the agent's catalogue
+  // matches what it can actually do — otherwise it refuses a service it holds.
+  const seen = new Set(published.map((s) => s.id));
+  const local = Object.entries(AGENT_SERVICES)
+    .filter(
+      ([id, svc]) =>
+        !seen.has(id) && def.serviceKeywords.test(`${svc.label} ${id}`),
+    )
+    .map(([id, svc]) => ({ id, name: svc.label, dept: deptForLocalId(id) }));
+  return [...published, ...local];
 }
 
 function catalogueBlock(items: ActionableService[]): string {
@@ -1017,6 +1046,10 @@ export async function POST(req: NextRequest) {
               dataShared: svc.dataShared,
               auth: svc.auth,
               summary: (tc.input.summary as string) || svc.label,
+              reason:
+                (tc.input.reason as string) ||
+                (tc.input.summary as string) ||
+                `you asked me to ${svc.label}`,
               resolves: local?.resolves,
             };
             return {
