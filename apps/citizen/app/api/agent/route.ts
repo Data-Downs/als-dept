@@ -173,7 +173,9 @@ How you behave — the government-grade standard:
 - Lean towards doing, not just telling. Reserve caution for the few steps where a mistake would be serious and hard to undo; everywhere else, act, and always leave a clean way to undo.
 - One thing at a time. Everything is optional and can wait. "I don't know" and "not now" are perfectly good answers.
 - Warm, plain-spoken, unhurried. Never lecture or dump a list — surface the one relevant thing.
-- Record what you learn with the remember tool. Never invent a date, a figure or an entitlement; use only what you've been briefed or told, and if you're unsure, say so and offer to find out.`;
+- Record what you learn with the remember tool. Never invent a date, a figure or an entitlement; use only what you've been briefed or told, and if you're unsure, say so and offer to find out.
+
+You are part of a cohort, not a lone agent. If the citizen's situation crosses into another agent's domain — a bereavement that touches a limited company, a new baby that becomes ongoing family life, a self-employed parent with childcare — bring that agent in with the introduce_specialist tool rather than trying to handle it yourself or sending the citizen away. They pick up everything the cohort already knows. Say plainly that you've brought them in and why. The citizen tells the cohort once, not each agent in turn.`;
 
 const REG_SYSTEM = `You are Reg — the limited company agent, provided to business owners by Companies House and HMRC. Dot, the citizen's coordinator agent, has just introduced you and handed you the file. You are the company's quiet right hand: warm, plain-spoken and unflappable — a brilliant company secretary who has already read everything and misses nothing.
 
@@ -263,6 +265,7 @@ The ground truth of the order: almost everything is unlocked by **registering th
 - **The person's employer and pension scheme(s)** — notifying them, and checking for a **survivor's / spouse's pension** the citizen may be entitled to.
 - **Bereavement Support Payment** and any other support they may be eligible for.
 - **The estate** — probate, bank accounts, property — pointing them to the right help. You do not make legal or financial decisions for them.
+- **A company** — if the person who died ran a limited company, or the survivor now has to deal with one, that is Reg's domain, not yours. Bring Reg in with introduce_specialist so the company side is carried too, tell them plainly you've done so, and let Reg pick it up — the citizen should never have to explain the same thing twice at the worst moment of their life.
 
 You hold real knowledge here (register within 5 days in England; a death at home needs a doctor's Medical Certificate of Cause of Death first; the register office must be in the area where the person died; USS is the main scheme for university staff). Use it plainly. Never invent a date, an office or an entitlement — if you're unsure, say so and offer to find out.
 
@@ -282,16 +285,10 @@ When the essential steps are in hand and nothing is pressing, say so gently, tel
 ## Opening
 Open softly: acknowledge their loss by name, reassure them they don't have to work any of this out, name the single most important next step given what you already know, and ask one gentle question to move it forward. Keep it short.`;
 
-function buildGraceBriefing(profile: Profile, handover: string | null): string {
-  const lines: string[] = ["\n\n## What you've been handed"];
+function buildEventBriefing(profile: Profile): string {
   const id = profile?.identity ?? {};
   const who = String(id.fullName || id.name || "the person you're helping");
-  lines.push(`You are helping ${who}${id.location ? `, in ${id.location}` : ""}.`);
-  if (handover && handover.trim()) {
-    lines.push("\nWhat they told Dot before you came in:");
-    lines.push(handover.trim());
-  }
-  return lines.join("\n");
+  return `\n\n## What you've been handed\nYou are helping ${who}${id.location ? `, in ${id.location}` : ""}.`;
 }
 
 function mergeWorkingState(items: WorkingItem[], patch: unknown): WorkingItem[] {
@@ -699,58 +696,66 @@ type SpecialistDef = {
   briefing: (profile: Profile, ctx: BuildCtx) => string;
 };
 
+const DOMAIN_TOOLS = ["remember", "act", "suggest", "introduce_specialist"];
+const EVENT_TOOLS = ["remember", "track", "stand_down", "act", "suggest", "introduce_specialist"];
+
 const SPECIALISTS: Record<string, SpecialistDef> = {
   reg: {
     kind: "domain",
     skills: REG_SYSTEM,
     serviceKeywords: /compan|vat|corporation|paye|confirmation|hmrc/i,
-    tools: ["remember", "act", "suggest"],
+    tools: DOMAIN_TOOLS,
     briefing: (p, ctx) => buildRegBriefing(p, ctx.companyContext),
   },
   grace: {
     kind: "event",
     skills: GRACE_SYSTEM,
     serviceKeywords: /death|bereave|funeral|probate|tell.?us.?once|estate/i,
-    tools: ["remember", "track", "stand_down", "act", "suggest"],
-    briefing: (p, ctx) => buildGraceBriefing(p, ctx.handover),
+    tools: EVENT_TOOLS,
+    briefing: (p) => buildEventBriefing(p),
   },
   driving: {
     kind: "domain",
     skills: DRIVING_SYSTEM,
     serviceKeywords: /driv|licence|vehicle|mot|dvla|dvsa|sorn|provisional|theory|road tax/i,
-    tools: ["remember", "act", "suggest"],
+    tools: DOMAIN_TOOLS,
     briefing: (p, ctx) => buildDrivingBriefing(p, ctx.drivingContext),
   },
   sol: {
     kind: "domain",
     skills: SOL_SYSTEM,
     serviceKeywords: /self.?assess|self.?employ|sole.?trader|income tax|mtd|national insurance|hmrc/i,
-    tools: ["remember", "act", "suggest"],
+    tools: DOMAIN_TOOLS,
     briefing: (p, ctx) => buildSolBriefing(p, ctx.selfEmployedContext),
   },
   robin: {
     kind: "event",
     skills: ROBIN_SYSTEM,
     serviceKeywords: /baby|birth|child benefit|maternity|paternity|childcare|pregnan|sure start|healthy start/i,
-    tools: ["remember", "track", "stand_down", "act", "suggest"],
-    briefing: (p, ctx) => buildGraceBriefing(p, ctx.handover),
+    tools: EVENT_TOOLS,
+    briefing: (p) => buildEventBriefing(p),
   },
   fay: {
     kind: "domain",
     skills: FAY_SYSTEM,
     serviceKeywords: /child|school|childcare|ehcp|send|free.?school.?meal|tax.?free childcare|nursery|30 hours|15 hours|pupil|healthy start/i,
-    tools: ["remember", "act", "suggest"],
+    tools: DOMAIN_TOOLS,
     briefing: (p, ctx) => buildFayBriefing(p, ctx.familyContext),
   },
 };
 
 function buildAgentSystem(agent: string, profile: Profile, ctx: BuildCtx): string {
   const def = SPECIALISTS[agent];
+  const handoverNote =
+    typeof ctx.handover === "string" && ctx.handover.trim()
+      ? `\n\n## What the cohort has already gathered\nThis is the conversation the citizen already had before you were brought in — pick up from it, and never make them repeat what they've said. If they were handed to you mid-way through something hard (a bereavement, say), acknowledge it warmly before anything practical:\n${ctx.handover.trim()}`
+      : "";
   return (
     GOV_AGENT_STANDARD +
     "\n\n" +
     def.skills +
     def.briefing(profile, ctx) +
+    handoverNote +
     catalogueBlock(catalogueFor(agent))
   );
 }

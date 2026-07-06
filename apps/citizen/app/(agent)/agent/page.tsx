@@ -442,8 +442,7 @@ export default function AgentPage() {
             (history[0] as { content?: string }).content === "[commissioned]"
               ? []
               : workingState,
-          handover:
-            agentId === "grace" || agentId === "robin" ? handoverArg : null,
+          handover: agentId !== "dot" ? handoverArg : null,
           drivingContext: agentId === "driving" ? drivingContextFor() : null,
           selfEmployedContext: agentId === "sol" ? selfEmployedContextFor() : null,
           familyContext: agentId === "fay" ? familyContextFor() : null,
@@ -468,7 +467,7 @@ export default function AgentPage() {
         agent: agentId,
         items: Array.isArray(data.suggestions) ? data.suggestions : [],
       });
-      if (data.introduce?.agentId) introduceSpecialist(data.introduce.agentId);
+      if (data.introduce?.agentId) introduceSpecialist(data.introduce.agentId, agentId);
       if (data.retire) {
         setRoster((r) =>
           r.map((x) => (x.id === agentId ? { ...x, state: "stood-down" } : x)),
@@ -484,11 +483,13 @@ export default function AgentPage() {
     }
   }
 
-  function introduceSpecialist(agentId: AgentId) {
+  function introduceSpecialist(agentId: AgentId, by: AgentId) {
     setRoster((r) =>
       r.some((x) => x.id === agentId) ? r : [...r, { id: agentId, state: "introduced" }],
     );
-    setThread("dot", (m) =>
+    // The introduction card lands in the thread of whoever made it — Dot, or a
+    // specialist coordinating on the citizen's behalf.
+    setThread(by, (m) =>
       m.some((x) => x.role === "introduce" && x.agentId === agentId)
         ? m
         : [...m, { role: "introduce", agentId }],
@@ -496,21 +497,23 @@ export default function AgentPage() {
   }
 
   function commission(agentId: AgentId) {
+    // Whoever's thread the card sits in is the one handing over — Dot, or a
+    // specialist coordinating on the citizen's behalf (e.g. Grace bringing Reg).
+    const from = activeAgent;
     setRoster((r) =>
       r.map((x) => (x.id === agentId ? { ...x, state: "commissioned" } : x)),
     );
     setActiveAgent(agentId);
     setTrayOpen(false);
-    // Hand the specialist Dot's conversation so they arrive already briefed.
-    const dotTranscript = (threads.dot ?? [])
+    const transcript = (threads[from] ?? [])
       .filter(
         (m): m is { role: "user" | "assistant"; content: string } =>
           m.role === "user" || m.role === "assistant",
       )
       .filter((m) => !HIDDEN_OPENERS.has(m.content))
-      .map((m) => `${m.role === "user" ? "Citizen" : "Dot"}: ${m.content}`)
+      .map((m) => `${m.role === "user" ? "Citizen" : AGENT_META[from].name}: ${m.content}`)
       .join("\n");
-    setHandover(dotTranscript);
+    setHandover(transcript);
     if ((threads[agentId] ?? []).length === 0 && AGENT_META[agentId].temporary) {
       setWorkingState([]);
     }
@@ -518,7 +521,7 @@ export default function AgentPage() {
       if ((t[agentId] ?? []).length === 0) {
         setTimeout(
           () =>
-            send(agentId, [{ role: "user", content: "[commissioned]" }], profile, dotTranscript),
+            send(agentId, [{ role: "user", content: "[commissioned]" }], profile, transcript),
           0,
         );
       }
