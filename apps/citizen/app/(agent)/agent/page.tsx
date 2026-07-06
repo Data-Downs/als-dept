@@ -45,7 +45,7 @@ const AGENT_META: Record<
       "Stays with you and carries the whole government and admin side after a death — registering, Tell Us Once, pensions and benefits — for as long as you need. She steps back once it’s in hand.",
   },
   driving: {
-    name: "Driving",
+    name: "Miles",
     tagline: "Licence & vehicles",
     provider: "DVLA & DVSA",
     accent: "#00703c",
