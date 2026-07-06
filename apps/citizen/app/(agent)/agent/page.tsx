@@ -81,6 +81,61 @@ type PendingAction = {
 type RosterEntry = { id: AgentId; state: "introduced" | "commissioned" | "stood-down" };
 type WorkingItem = { key: string; label: string; status: "now" | "next" | "waiting" | "done" };
 
+/** An inbound government message. In this model it never lands in a mailbox —
+ *  the durable facts become wallet credentials (known) and anything to do
+ *  becomes an action the agent offers (done); the original stays retrievable. */
+type Credential = {
+  key: string;
+  label: string;
+  value: string;
+  source: string;
+  original: string;
+};
+type InboundEvent = {
+  id: string;
+  from: string;
+  notifBody: string;
+  agentMessage: string;
+  credentials: Credential[];
+};
+
+const INBOUND_EVENTS: InboundEvent[] = [
+  {
+    id: "hmrc-tax-code",
+    from: "HMRC",
+    notifBody: "Your tax code has changed",
+    agentMessage:
+      "[Inbound from HMRC] The citizen's tax code has changed to 1257L, effective 6 April 2026, following a review of their PAYE record. The review also found an underpayment of £312 for the 2025–26 tax year, which can be settled online. The original notice is available to view.",
+    credentials: [
+      {
+        key: "tax-code",
+        label: "Tax code",
+        value: "1257L",
+        source: "HMRC",
+        original:
+          "HM Revenue & Customs\nPAYE Coding Notice\n\nDear Mr Downs,\n\nYour tax code for the 2026–27 tax year is 1257L. This replaces your previous code and takes effect from 6 April 2026.\n\nWe have also reviewed your record for 2025–26 and found an underpayment of £312.00. You can settle this online at any time.\n\nWhy your code may have changed: a change to your estimated income, benefits, or allowances.\n\nYou do not need to do anything about your code — your employer will use it automatically.\n\nHM Revenue & Customs",
+      },
+    ],
+  },
+  {
+    id: "dvla-licence",
+    from: "DVLA",
+    notifBody: "Your driving licence is due to expire",
+    agentMessage:
+      "[Inbound from DVLA] The citizen's photocard driving licence expires on 14 August 2026. It must be renewed to keep driving legally; renewal can be done online and costs £14. The original reminder is available to view.",
+    credentials: [
+      {
+        key: "driving-licence-expiry",
+        label: "Driving licence expires",
+        value: "14 Aug 2026",
+        source: "DVLA",
+        original:
+          "Driver & Vehicle Licensing Agency\nDriving Licence Renewal Reminder\n\nDear Mr Downs,\n\nYour photocard driving licence expires on 14 August 2026. You must renew it before then to continue driving legally.\n\nRenewing online takes about 5 minutes and costs £14. You'll need a valid UK passport if you want us to reuse your passport photo.\n\nYour entitlement to drive is not affected — only the photocard needs renewing.\n\nDVLA, Swansea",
+      },
+    ],
+  },
+];
+
 const EMPTY: Profile = {
   identity: {},
   responsibilities: [],
@@ -123,6 +178,10 @@ export default function AgentPage() {
     agent: AgentId;
     items: { label: string; message: string }[];
   }>({ agent: "dot", items: [] });
+  const [credentials, setCredentials] = useState<Credential[]>([]);
+  const [viewingOriginal, setViewingOriginal] = useState<Credential | null>(null);
+  const [inboundNotif, setInboundNotif] = useState<{ from: string; body: string } | null>(null);
+  const [inboundMenu, setInboundMenu] = useState(false);
 
   const [profile, setProfile] = useState<Profile>(EMPTY);
   const [input, setInput] = useState("");
@@ -329,8 +388,32 @@ export default function AgentPage() {
     submitText(input);
   }
 
+  // An inbound government message: it never becomes a mailbox item. The facts
+  // land in the wallet (known); the active agent metabolises the rest and
+  // offers any action (done). The original stays one tap away.
+  function fireInbound(ev: InboundEvent) {
+    setInboundMenu(false);
+    setInboundNotif({ from: ev.from, body: ev.notifBody });
+    setCredentials((c) => {
+      const have = new Set(c.map((x) => x.key));
+      return [...c, ...ev.credentials.filter((x) => !have.has(x.key))];
+    });
+    const next: Msg[] = [...messages, { role: "user", content: ev.agentMessage }];
+    setThread(activeAgent, next);
+    setSuggestions({ agent: activeAgent, items: [] });
+    send(activeAgent, next, profile);
+  }
+
+  useEffect(() => {
+    if (!inboundNotif) return;
+    const t = setTimeout(() => setInboundNotif(null), 5000);
+    return () => clearTimeout(t);
+  }, [inboundNotif]);
+
   const visible = messages.filter(
-    (m, i) => !(i === 0 && m.role === "user" && HIDDEN_OPENERS.has(m.content)),
+    (m, i) =>
+      !(i === 0 && m.role === "user" && HIDDEN_OPENERS.has(m.content)) &&
+      !(m.role === "user" && m.content.startsWith("[Inbound")),
   );
 
   const identityRows = Object.entries(profile.identity).filter(
@@ -383,6 +466,36 @@ export default function AgentPage() {
               <p className="text-[11px] text-[#8a8a8a] leading-tight">
                 {active.provider}
               </p>
+            )}
+          </div>
+          <div className="relative">
+            <button
+              type="button"
+              onClick={() => setInboundMenu((v) => !v)}
+              aria-label="Simulate inbound post"
+              className="text-[#8a8a8a] hover:text-[#1a1a1a] transition-colors"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+              </svg>
+            </button>
+            {inboundMenu && (
+              <div className="absolute right-0 top-9 z-50 w-64 rounded-xl border border-black/10 bg-white shadow-lg p-1">
+                <p className="px-3 py-1.5 text-[10px] tracking-wide text-[#8a8a8a]">
+                  Simulate inbound post
+                </p>
+                {INBOUND_EVENTS.map((ev) => (
+                  <button
+                    key={ev.id}
+                    type="button"
+                    onClick={() => fireInbound(ev)}
+                    className="w-full text-left rounded-lg px-3 py-2 text-sm hover:bg-black/[0.03]"
+                  >
+                    <span className="font-medium">{ev.from}</span> — {ev.notifBody}
+                  </button>
+                ))}
+              </div>
             )}
           </div>
           <span className="text-[10px] font-medium tracking-wide text-[#8a8a8a] border border-black/10 rounded-full px-2 py-0.5">
@@ -500,6 +613,30 @@ export default function AgentPage() {
           </p>
         </div>
 
+        {credentials.length > 0 && (
+          <PanelSection title="Wallet">
+            <div className="space-y-2.5">
+              {credentials.map((c) => (
+                <div key={c.key} className="flex items-center justify-between gap-2">
+                  <div className="min-w-0">
+                    <p className="text-xs font-medium truncate">
+                      {c.label}: {c.value}
+                    </p>
+                    <p className="text-[10px] text-[#8a8a8a]">from {c.source}</p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setViewingOriginal(c)}
+                    className="text-[10px] font-medium text-[#1d70b8] shrink-0 hover:underline"
+                  >
+                    View original
+                  </button>
+                </div>
+              ))}
+            </div>
+          </PanelSection>
+        )}
+
         <PanelSection title="You">
           {identityRows.length === 0 ? (
             <Empty />
@@ -539,9 +676,46 @@ export default function AgentPage() {
 
       <OneLoginNotification />
 
+      {inboundNotif && (
+        <button
+          type="button"
+          onClick={() => setInboundNotif(null)}
+          className="fixed top-3 inset-x-3 z-[9999] text-left animate-[slideDown_0.3s_ease-out] max-w-[420px] mx-auto"
+        >
+          <div className="rounded-2xl bg-white/90 backdrop-blur-xl shadow-lg border border-black/5 px-4 py-3">
+            <div className="flex items-center gap-2 mb-1">
+              <div className="w-5 h-5 rounded bg-black flex items-center justify-center">
+                <span className="text-[7px] font-bold text-white leading-none">GOV</span>
+              </div>
+              <span className="text-xs font-semibold flex-1">{inboundNotif.from}</span>
+              <span className="text-[11px] text-[#8a8a8a]">now</span>
+            </div>
+            <p className="text-sm leading-snug">{inboundNotif.body}</p>
+          </div>
+        </button>
+      )}
+
       {sheetType === "login" && (
         <BottomSheet open onClose={closeBottomSheet} title="Sign in">
           <LoginSheet />
+        </BottomSheet>
+      )}
+
+      {viewingOriginal && (
+        <BottomSheet
+          open
+          onClose={() => setViewingOriginal(null)}
+          title={`From ${viewingOriginal.source}`}
+        >
+          <div className="px-1 pb-4">
+            <p className="text-[11px] text-[#8a8a8a] mb-2">
+              The original. You never had to open this — {viewingOriginal.source}{" "}
+              sent it, your agent handled it.
+            </p>
+            <div className="whitespace-pre-wrap text-[13px] text-[#333] leading-relaxed rounded-lg border border-black/10 bg-[#faf9f7] p-3">
+              {viewingOriginal.original}
+            </div>
+          </div>
         </BottomSheet>
       )}
     </div>
