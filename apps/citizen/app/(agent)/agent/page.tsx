@@ -95,8 +95,12 @@ type InboundEvent = {
   id: string;
   from: string;
   notifBody: string;
+  original: string;
   agentMessage: string;
-  credentials: Credential[];
+  facts: { key: string; label: string; value: string }[];
+  /** Absorbed without troubling the citizen — no notification, no chat, no
+   *  credential. It exists only in "everything that came in". */
+  silent?: boolean;
 };
 
 const INBOUND_EVENTS: InboundEvent[] = [
@@ -106,16 +110,9 @@ const INBOUND_EVENTS: InboundEvent[] = [
     notifBody: "Your tax code has changed",
     agentMessage:
       "[Inbound from HMRC] The citizen's tax code has changed to 1257L, effective 6 April 2026, following a review of their PAYE record. The review also found an underpayment of £312 for the 2025–26 tax year, which can be settled online. The original notice is available to view.",
-    credentials: [
-      {
-        key: "tax-code",
-        label: "Tax code",
-        value: "1257L",
-        source: "HMRC",
-        original:
-          "HM Revenue & Customs\nPAYE Coding Notice\n\nDear Mr Downs,\n\nYour tax code for the 2026–27 tax year is 1257L. This replaces your previous code and takes effect from 6 April 2026.\n\nWe have also reviewed your record for 2025–26 and found an underpayment of £312.00. You can settle this online at any time.\n\nWhy your code may have changed: a change to your estimated income, benefits, or allowances.\n\nYou do not need to do anything about your code — your employer will use it automatically.\n\nHM Revenue & Customs",
-      },
-    ],
+    facts: [{ key: "tax-code", label: "Tax code", value: "1257L" }],
+    original:
+      "HM Revenue & Customs\nPAYE Coding Notice\n\nDear Mr Downs,\n\nYour tax code for the 2026–27 tax year is 1257L. This replaces your previous code and takes effect from 6 April 2026.\n\nWe have also reviewed your record for 2025–26 and found an underpayment of £312.00. You can settle this online at any time.\n\nWhy your code may have changed: a change to your estimated income, benefits, or allowances.\n\nYou do not need to do anything about your code — your employer will use it automatically.\n\nHM Revenue & Customs",
   },
   {
     id: "dvla-licence",
@@ -123,16 +120,21 @@ const INBOUND_EVENTS: InboundEvent[] = [
     notifBody: "Your driving licence is due to expire",
     agentMessage:
       "[Inbound from DVLA] The citizen's photocard driving licence expires on 14 August 2026. It must be renewed to keep driving legally; renewal can be done online and costs £14. The original reminder is available to view.",
-    credentials: [
-      {
-        key: "driving-licence-expiry",
-        label: "Driving licence expires",
-        value: "14 Aug 2026",
-        source: "DVLA",
-        original:
-          "Driver & Vehicle Licensing Agency\nDriving Licence Renewal Reminder\n\nDear Mr Downs,\n\nYour photocard driving licence expires on 14 August 2026. You must renew it before then to continue driving legally.\n\nRenewing online takes about 5 minutes and costs £14. You'll need a valid UK passport if you want us to reuse your passport photo.\n\nYour entitlement to drive is not affected — only the photocard needs renewing.\n\nDVLA, Swansea",
-      },
+    facts: [
+      { key: "driving-licence-expiry", label: "Driving licence expires", value: "14 Aug 2026" },
     ],
+    original:
+      "Driver & Vehicle Licensing Agency\nDriving Licence Renewal Reminder\n\nDear Mr Downs,\n\nYour photocard driving licence expires on 14 August 2026. You must renew it before then to continue driving legally.\n\nRenewing online takes about 5 minutes and costs £14. You'll need a valid UK passport if you want us to reuse your passport photo.\n\nYour entitlement to drive is not affected — only the photocard needs renewing.\n\nDVLA, Swansea",
+  },
+  {
+    id: "cabinet-office-consultation",
+    from: "Cabinet Office",
+    notifBody: "A public consultation has opened",
+    agentMessage: "",
+    silent: true,
+    facts: [],
+    original:
+      "Cabinet Office\nPublic Consultation\n\nA consultation on proposed changes to GOV.UK digital identity services has opened. Responses close 30 September 2026.\n\nThis is for your information only. No action is required, and nothing about your records has changed.\n\nYou can respond if you wish, but you do not have to.\n\nCabinet Office",
   },
 ];
 
@@ -179,9 +181,14 @@ export default function AgentPage() {
     items: { label: string; message: string }[];
   }>({ agent: "dot", items: [] });
   const [credentials, setCredentials] = useState<Credential[]>([]);
-  const [viewingOriginal, setViewingOriginal] = useState<Credential | null>(null);
+  const [inboundLog, setInboundLog] = useState<InboundEvent[]>([]);
+  const [viewingOriginal, setViewingOriginal] = useState<{
+    source: string;
+    original: string;
+  } | null>(null);
   const [inboundNotif, setInboundNotif] = useState<{ from: string; body: string } | null>(null);
   const [inboundMenu, setInboundMenu] = useState(false);
+  const [showArchive, setShowArchive] = useState(false);
 
   const [profile, setProfile] = useState<Profile>(EMPTY);
   const [input, setInput] = useState("");
@@ -393,11 +400,23 @@ export default function AgentPage() {
   // offers any action (done). The original stays one tap away.
   function fireInbound(ev: InboundEvent) {
     setInboundMenu(false);
+    // Everything that arrives is recorded, always — even the silent ones.
+    setInboundLog((l) => [...l, ev]);
+    const creds = ev.facts.map((f) => ({
+      ...f,
+      source: ev.from,
+      original: ev.original,
+    }));
+    if (creds.length) {
+      setCredentials((c) => {
+        const have = new Set(c.map((x) => x.key));
+        return [...c, ...creds.filter((x) => !have.has(x.key))];
+      });
+    }
+    // Silent: absorbed without troubling the citizen. It only shows up in the
+    // "everything that came in" archive — nothing else changes.
+    if (ev.silent) return;
     setInboundNotif({ from: ev.from, body: ev.notifBody });
-    setCredentials((c) => {
-      const have = new Set(c.map((x) => x.key));
-      return [...c, ...ev.credentials.filter((x) => !have.has(x.key))];
-    });
     const next: Msg[] = [...messages, { role: "user", content: ev.agentMessage }];
     setThread(activeAgent, next);
     setSuggestions({ agent: activeAgent, items: [] });
@@ -626,7 +645,9 @@ export default function AgentPage() {
                   </div>
                   <button
                     type="button"
-                    onClick={() => setViewingOriginal(c)}
+                    onClick={() =>
+                      setViewingOriginal({ source: c.source, original: c.original })
+                    }
                     className="text-[10px] font-medium text-[#1d70b8] shrink-0 hover:underline"
                   >
                     View original
@@ -672,6 +693,20 @@ export default function AgentPage() {
         </PanelSection>
           </>
         )}
+
+        {inboundLog.length > 0 && (
+          <button
+            type="button"
+            onClick={() => setShowArchive(true)}
+            className="w-full text-left px-5 py-4 border-t border-black/5 flex items-center gap-2 text-xs text-[#505a5f] hover:text-[#1a1a1a] transition-colors"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M22 12h-6l-2 3h-4l-2-3H2" />
+              <path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z" />
+            </svg>
+            Everything that came in ({inboundLog.length})
+          </button>
+        )}
       </aside>
 
       <OneLoginNotification />
@@ -698,6 +733,56 @@ export default function AgentPage() {
       {sheetType === "login" && (
         <BottomSheet open onClose={closeBottomSheet} title="Sign in">
           <LoginSheet />
+        </BottomSheet>
+      )}
+
+      {showArchive && (
+        <BottomSheet
+          open
+          onClose={() => setShowArchive(false)}
+          title="Everything that came in"
+        >
+          <div className="px-1 pb-4">
+            <p className="text-[11px] text-[#8a8a8a] mb-3">
+              Every message government has sent you — nothing is hidden, even the
+              ones your agents handled quietly without troubling you.
+            </p>
+            <div className="space-y-2">
+              {inboundLog.length === 0 ? (
+                <p className="text-xs text-[#c4c4c4]">Nothing yet.</p>
+              ) : (
+                inboundLog.map((ev, i) => (
+                  <div
+                    key={i}
+                    className="rounded-lg border border-black/10 p-3 flex items-center justify-between gap-2"
+                  >
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-2">
+                        <p className="text-xs font-semibold">{ev.from}</p>
+                        {ev.silent && (
+                          <span className="text-[9px] font-medium text-[#8a8a8a] bg-black/[0.04] rounded-full px-1.5 py-0.5">
+                            handled quietly
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-xs text-[#505a5f] truncate">
+                        {ev.notifBody}
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setViewingOriginal({ source: ev.from, original: ev.original })
+                      }
+                      className="text-[10px] font-medium text-[#1d70b8] shrink-0 hover:underline"
+                    >
+                      View original
+                    </button>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
         </BottomSheet>
       )}
 
