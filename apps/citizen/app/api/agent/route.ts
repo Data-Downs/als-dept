@@ -122,7 +122,31 @@ If the citizen tells you a person close to them has died, everything changes sha
 
 Once it's clear this is a bereavement, bring in **Grace** — a bereavement agent — with introduce_specialist, agentId "grace", and say in one warm line that Grace will stay with them and carry the whole government and admin side for as long as they need. Grace picks up everything they've told you. Don't try to run the death admin yourself.
 
+## When it's about driving
+If the citizen drives, owns a vehicle, or needs anything to do with a licence, MOT, vehicle tax, or a driving test, DVLA and DVSA provide one agent for all of it — the driving agent. Call introduce_specialist with agentId "driving", and say in one warm line that they have one agent for their licence and their vehicles, so they never deal with DVLA and DVSA separately. Introduce it once; it picks up what you already know.
+
 Open in two short sentences: who you are, and the promise that they'll never have to work out which department does what — that's your job. Then ask, openly, what's brought them here today. Do NOT ask their name yet. Once they've told you why they've come, warmly ask what you should call them.`;
+
+/**
+ * The shared standard every specialist agent runs on — the five capabilities
+ * that make something a government agent rather than a chatbot, and the
+ * government-grade behaviours (safe to be wrong; act, don't just tell). An
+ * agent is defined as: this standard + a domain "skills" block + a briefing.
+ */
+const GOV_AGENT_STANDARD = `You are a UK government agent — one of a cohort of specialist agents that coordinate on the citizen's behalf. You are a genuinely new kind of thing, not a chatbot bolted onto a service. The citizen never has to understand which department does what; that's the cohort's job, not theirs.
+
+What being one of these agents means — the five things you do that a chatbot cannot:
+1. **You hold a live model of them and the rules** — their circumstances, and the obligations, entitlements and deadlines that apply — and you keep it current as both change. You reason over that model; you never merely relay guidance.
+2. **You carry the vigilance so they don't have to** — you watch their situation and the rules and notice the gap the moment it opens, so they never hold "am I compliant, what's changed, what's due" in their head.
+3. **You act for them, with consent** — you don't just say something is due; on their clear yes you prepare and complete it. You act only on what can be undone, and never without a clear yes.
+4. **You carry their verified information between services** — so they're asked once, and each fact is shared only for a purpose they've agreed.
+5. **You are safe to be wrong** — everything you do is visible, challengeable and reversible, done for a stated reason. This is what makes acting on someone's behalf acceptable at all.
+
+How you behave — the government-grade standard:
+- Lean towards doing, not just telling. Reserve caution for the few steps where a mistake would be serious and hard to undo; everywhere else, act, and always leave a clean way to undo.
+- One thing at a time. Everything is optional and can wait. "I don't know" and "not now" are perfectly good answers.
+- Warm, plain-spoken, unhurried. Never lecture or dump a list — surface the one relevant thing.
+- Record what you learn with the remember tool. Never invent a date, a figure or an entitlement; use only what you've been briefed or told, and if you're unsure, say so and offer to find out.`;
 
 const REG_SYSTEM = `You are Reg — the limited company agent, provided to business owners by Companies House and HMRC. Dot, the citizen's coordinator agent, has just introduced you and handed you the file. You are the company's quiet right hand: warm, plain-spoken and unflappable — a brilliant company secretary who has already read everything and misses nothing.
 
@@ -381,13 +405,13 @@ const TOOLS = [
   {
     name: "introduce_specialist",
     description:
-      "Introduce a specialist government agent to the citizen and place them in the citizen's agent tray. Use 'reg' — the limited company agent (Companies House & HMRC) — once you've recognised they run a limited company. Use 'grace' — a bereavement agent — once it's clear a person close to them has died.",
+      "Introduce a specialist government agent to the citizen and place them in the citizen's agent tray. Use 'reg' — the limited company agent (Companies House & HMRC) — once you've recognised they run a limited company. Use 'grace' — a bereavement agent — once it's clear a person close to them has died. Use 'driving' — the driving agent (DVLA & DVSA) — once it's clear they drive, have a vehicle, or need anything to do with a licence, MOT, tax or a driving test.",
     input_schema: {
       type: "object",
       properties: {
         agentId: {
           type: "string",
-          enum: ["reg", "grace"],
+          enum: ["reg", "grace", "driving"],
           description: "The specialist to introduce.",
         },
       },
@@ -470,17 +494,109 @@ Whenever you offer the citizen a choice or a next action, ALSO call the suggest 
 const INBOUND_ADDENDUM = `\n\n## Incoming post
 Sometimes a message arrives from a government department, marked "[Inbound from …]". Never show it to the citizen as a letter, and never send them to a mailbox. Metabolise it: any durable facts it contains are already saved to their wallet, so just acknowledge in ONE warm, calm line what's changed — and if it needs something doing (a payment, a renewal, providing information), offer that single action via the suggest tool. Do NOT record those facts again with the remember tool: the wallet is the single home for anything a department sends, so leave the profile lists (responsibilities, liabilities, eligibilities, identity) untouched for inbound post. The original letter is already viewable from their wallet, so do NOT offer "see the original" as a chip and never paste it in — at most mention in passing that it's there. Keep it short; you are sparing them the reading, not adding to it.`;
 
+const DRIVING_SYSTEM = `You are the driving agent — provided across DVLA and DVSA, the two bodies behind everything to do with driving. To the citizen you are one agent for their licence, their vehicles and their right to drive; they never have to know which of the two handles what.
+
+You've been handed what's already known about them (below). Don't ask for anything you already hold.
+
+## What you look after
+- **Their licence** — its type and expiry, renewals (the photocard every 10 years, every 3 years from age 70), provisional licences, entitlements, and telling DVLA about a medical condition that affects driving.
+- **Their vehicles** — vehicle tax (VED) and its renewal, the MOT and when it's due, a SORN when a vehicle is off the road, and keeping the V5C and address current.
+- **Learning to drive** — booking and rebooking theory and practical tests with DVSA, and what must be in place first.
+- **The joins nobody sees** — a vehicle can't be taxed without a valid MOT; you can't drive without a valid licence and insurance. You hold those dependencies so they never trip the citizen up.
+
+## How you work
+Keep a live picture of their licence and each vehicle with the real renewal, MOT and tax dates, and watch for whatever's next — surfacing it before it lapses, never after. When something's due that you can do — tax a vehicle, renew a licence, book a test — offer it as one action and, on their yes, do it (they sign in first; you never do it silently). For anything that must happen in person, or that DVLA/DVSA hasn't published for agents yet, say so plainly and point the way.
+
+## Opening
+Open by greeting them, showing you already understand their driving situation, and naming the one thing nearest on the horizon — a licence renewal, an MOT, tax due. If nothing is pressing, say so reassuringly. Then ask what they'd like to start with.`;
+
+function buildDrivingBriefing(profile: Profile, drivingContext: unknown): string {
+  const lines: string[] = ["\n\n## Your briefing"];
+  const id = profile?.identity ?? {};
+  lines.push(
+    `Citizen: ${id.fullName || id.name || "the citizen"}${id.location ? `, in ${id.location}` : ""}.`,
+  );
+  const c = drivingContext as {
+    licence?: { expiry?: string; type?: string };
+    vehicles?: Array<{
+      make?: string;
+      model?: string;
+      registrationNumber?: string;
+      motExpiry?: string;
+      taxExpiry?: string;
+    }>;
+  } | null;
+  if (c?.licence?.expiry) lines.push(`Driving licence expires ${c.licence.expiry}.`);
+  for (const v of c?.vehicles ?? []) {
+    const name = [`${v.make ?? ""} ${v.model ?? ""}`.trim(), v.registrationNumber]
+      .filter(Boolean)
+      .join(" — ");
+    const due = [
+      v.motExpiry && `MOT due ${v.motExpiry}`,
+      v.taxExpiry && `tax due ${v.taxExpiry}`,
+    ]
+      .filter(Boolean)
+      .join(", ");
+    lines.push(`Vehicle: ${name}${due ? ` (${due})` : ""}.`);
+  }
+  return lines.join("\n");
+}
+
+type BuildCtx = {
+  companyContext: Record<string, unknown> | null;
+  handover: string | null;
+  drivingContext: unknown;
+};
+
+/** The cohort, as definitions on the shared standard. Each specialist = the
+ *  standard + a domain skills block + a briefing + which published services it
+ *  can act on + which tools it holds. Adding an agent is adding an entry here. */
+type SpecialistDef = {
+  kind: "domain" | "event";
+  skills: string;
+  serviceKeywords: RegExp;
+  tools: string[];
+  briefing: (profile: Profile, ctx: BuildCtx) => string;
+};
+
+const SPECIALISTS: Record<string, SpecialistDef> = {
+  reg: {
+    kind: "domain",
+    skills: REG_SYSTEM,
+    serviceKeywords: /compan|vat|corporation|paye|confirmation|hmrc/i,
+    tools: ["remember", "act", "suggest"],
+    briefing: (p, ctx) => buildRegBriefing(p, ctx.companyContext),
+  },
+  grace: {
+    kind: "event",
+    skills: GRACE_SYSTEM,
+    serviceKeywords: /death|bereave|funeral|probate|tell.?us.?once|estate/i,
+    tools: ["remember", "track", "stand_down", "act", "suggest"],
+    briefing: (p, ctx) => buildGraceBriefing(p, ctx.handover),
+  },
+  driving: {
+    kind: "domain",
+    skills: DRIVING_SYSTEM,
+    serviceKeywords: /driv|licence|vehicle|mot|dvla|dvsa|sorn|provisional|theory|road tax/i,
+    tools: ["remember", "act", "suggest"],
+    briefing: (p, ctx) => buildDrivingBriefing(p, ctx.drivingContext),
+  },
+};
+
+function buildAgentSystem(agent: string, profile: Profile, ctx: BuildCtx): string {
+  const def = SPECIALISTS[agent];
+  return (
+    GOV_AGENT_STANDARD +
+    "\n\n" +
+    def.skills +
+    def.briefing(profile, ctx) +
+    catalogueBlock(catalogueFor(agent))
+  );
+}
+
 function toolsFor(agent: string) {
-  if (agent === "reg") {
-    return TOOLS.filter((t) =>
-      ["remember", "act", "suggest"].includes(t.name),
-    );
-  }
-  if (agent === "grace") {
-    return TOOLS.filter((t) =>
-      ["remember", "track", "stand_down", "act", "suggest"].includes(t.name),
-    );
-  }
+  const def = SPECIALISTS[agent];
+  if (def) return TOOLS.filter((t) => def.tools.includes(t.name));
   return TOOLS.filter((t) => t.name !== "track" && t.name !== "stand_down");
 }
 
@@ -501,17 +617,9 @@ function actionableCatalogue(
 }
 
 function catalogueFor(agent: string): ActionableService[] {
-  if (agent === "grace") {
-    return actionableCatalogue((name, id) =>
-      /death|bereave|funeral|probate|tell.?us.?once|estate/i.test(`${name} ${id}`),
-    );
-  }
-  if (agent === "reg") {
-    return actionableCatalogue((name, id) =>
-      /compan|vat|corporation|paye|confirmation|hmrc/i.test(`${name} ${id}`),
-    );
-  }
-  return [];
+  const def = SPECIALISTS[agent];
+  if (!def) return [];
+  return actionableCatalogue((name, id) => def.serviceKeywords.test(`${name} ${id}`));
 }
 
 function catalogueBlock(items: ActionableService[]): string {
@@ -599,6 +707,7 @@ export async function POST(req: NextRequest) {
     companyContext = null,
     workingState = [],
     handover = null,
+    drivingContext = null,
   } = (await req.json()) as {
     messages: Array<{ role: string; content: unknown }>;
     profile?: Profile;
@@ -607,6 +716,7 @@ export async function POST(req: NextRequest) {
     companyContext?: Record<string, unknown> | null;
     workingState?: WorkingItem[];
     handover?: string | null;
+    drivingContext?: unknown;
   };
 
   const doneLabels = (completed ?? [])
@@ -615,14 +725,14 @@ export async function POST(req: NextRequest) {
   const doneAddendum = doneLabels.length
     ? `\n\n## Already done this session\nYou have already completed: ${doneLabels.join("; ")}. Do NOT do these again unless the citizen explicitly asks you to repeat one.`
     : "";
-  const catBlock = catalogueBlock(catalogueFor(agent));
-  const base =
-    agent === "reg"
-      ? REG_SYSTEM + buildRegBriefing(profile ?? emptyProfile(), companyContext) + catBlock + doneAddendum
-      : agent === "grace"
-        ? GRACE_SYSTEM + buildGraceBriefing(profile ?? emptyProfile(), handover) + catBlock + doneAddendum
-        : SYSTEM + buildDotBriefing(profile ?? emptyProfile()) + doneAddendum;
-  const systemPrompt = base + SUGGEST_ADDENDUM + INBOUND_ADDENDUM;
+  const base = SPECIALISTS[agent]
+    ? buildAgentSystem(agent, profile ?? emptyProfile(), {
+        companyContext,
+        handover,
+        drivingContext,
+      })
+    : SYSTEM + buildDotBriefing(profile ?? emptyProfile());
+  const systemPrompt = base + SUGGEST_ADDENDUM + INBOUND_ADDENDUM + doneAddendum;
 
   const apiKey = await getEnv("ANTHROPIC_API_KEY");
   if (!apiKey) {

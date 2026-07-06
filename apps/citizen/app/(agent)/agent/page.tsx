@@ -8,7 +8,7 @@ import { BottomSheet } from "@/components/ui/BottomSheet";
 import { LoginSheet } from "@/components/sheets/LoginSheet";
 import { OneLoginNotification } from "@/components/OneLoginNotification";
 
-type AgentId = "dot" | "reg" | "grace";
+type AgentId = "dot" | "reg" | "grace" | "driving";
 
 const AGENT_META: Record<
   AgentId,
@@ -43,6 +43,14 @@ const AGENT_META: Record<
     temporary: true,
     mandate:
       "Stays with you and carries the whole government and admin side after a death — registering, Tell Us Once, pensions and benefits — for as long as you need. She steps back once it’s in hand.",
+  },
+  driving: {
+    name: "Driving",
+    tagline: "Licence & vehicles",
+    provider: "DVLA & DVSA",
+    accent: "#00703c",
+    mandate:
+      "One agent for your licence and your vehicles — renewals, MOT reminders, vehicle tax and booking tests — across DVLA and DVSA, so you never deal with them separately.",
   },
 };
 
@@ -248,6 +256,7 @@ export default function AgentPage() {
     dot: [],
     reg: [],
     grace: [],
+    driving: [],
   });
   const [activeAgent, setActiveAgent] = useState<AgentId>("dot");
   const [roster, setRoster] = useState<RosterEntry[]>([
@@ -313,6 +322,27 @@ export default function AgentPage() {
     });
   }
 
+  function drivingContextFor() {
+    if (!personaRecord) return null;
+    const creds = Array.isArray(personaRecord.credentials)
+      ? (personaRecord.credentials as Record<string, unknown>[])
+      : [];
+    const lic = creds.find((c) => c.type === "driving-licence");
+    const vehicles = Array.isArray(personaRecord.vehicles)
+      ? (personaRecord.vehicles as Record<string, unknown>[])
+      : [];
+    return {
+      licence: lic?.expires ? { expiry: formatDate(String(lic.expires)) } : {},
+      vehicles: vehicles.map((v) => ({
+        make: v.make,
+        model: v.model,
+        registrationNumber: v.registrationNumber,
+        motExpiry: v.motExpiry ? formatDate(String(v.motExpiry)) : undefined,
+        taxExpiry: v.taxExpiry ? formatDate(String(v.taxExpiry)) : undefined,
+      })),
+    };
+  }
+
   async function send(
     agentId: AgentId,
     history: Msg[],
@@ -338,6 +368,7 @@ export default function AgentPage() {
           companyContext,
           workingState,
           handover: agentId === "grace" ? handoverArg : null,
+          drivingContext: agentId === "driving" ? drivingContextFor() : null,
         }),
       });
       const data = await res.json();
@@ -654,7 +685,7 @@ export default function AgentPage() {
     setCompanyContext(null);
     setHandover(null);
     setSuggestions({ agent: "dot", items: [] });
-    setThreads({ dot: [], reg: [], grace: [] });
+    setThreads({ dot: [], reg: [], grace: [], driving: [] });
     if (!id) {
       setProfile(EMPTY);
       send("dot", [{ role: "user", content: "Hi" }], EMPTY);
