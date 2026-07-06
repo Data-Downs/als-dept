@@ -138,6 +138,87 @@ const INBOUND_EVENTS: InboundEvent[] = [
   },
 ];
 
+/** A card in the citizen's wallet — Apple Wallet-style. Comes from a persona's
+ *  held credentials or from inbound government post. */
+type WalletCard = {
+  key: string;
+  title: string;
+  issuer: string;
+  primary: string;
+  secondary?: string;
+  status?: "valid" | "expired" | "info";
+  original?: string;
+};
+
+type PersonaSummary = { id: string; name: string; initials: string; color: string; desc: string };
+
+const ISSUER_ACCENT: Record<string, string> = {
+  HMRC: "#0b7285",
+  DVLA: "#00703c",
+  DVSA: "#00703c",
+  DWP: "#4c2c92",
+  "Cabinet Office": "#1a1a1a",
+  "GOV.UK One Login": "#1d70b8",
+  "One Login": "#1d70b8",
+  "Royal Mail": "#b3121b",
+  NHS: "#005eb8",
+  "Companies House": "#4c2c92",
+  "Home Office": "#8f3a84",
+};
+const issuerAccent = (issuer: string) => ISSUER_ACCENT[issuer] ?? "#505a5f";
+
+const CRED_TITLE: Record<string, string> = {
+  "driving-licence": "Driving licence",
+  "national-insurance": "National Insurance",
+  "proof-of-address": "Proof of address",
+  passport: "Passport",
+  "one-login": "GOV.UK One Login",
+};
+const credTitle = (type: string) =>
+  CRED_TITLE[type] ??
+  type.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+
+function formatDate(iso: string): string {
+  const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(iso);
+  if (!m) return iso;
+  const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  return `${Number(m[3])} ${months[Number(m[2]) - 1]} ${m[1]}`;
+}
+
+function personaCredToCard(c: Record<string, unknown>): WalletCard {
+  const type = String(c.type ?? "credential");
+  const issued = c.issued ? formatDate(String(c.issued)) : null;
+  const expires = c.expires ? formatDate(String(c.expires)) : null;
+  return {
+    key: `${c.issuer}-${type}`,
+    title: credTitle(type),
+    issuer: String(c.issuer ?? "GOV.UK"),
+    primary: String(c.number ?? ""),
+    secondary: expires ? `Expires ${expires}` : issued ? `Issued ${issued}` : undefined,
+    status: c.status === "expired" ? "expired" : "valid",
+  };
+}
+
+function personaToProfile(p: Record<string, unknown>): Profile {
+  const first = String(p.personaName ?? p.name ?? "").split(/\s|&/)[0] || "You";
+  const addr = (p.address ?? {}) as Record<string, unknown>;
+  const addressStr =
+    [
+      addr.line1 ?? addr.address_line_1,
+      addr.city ?? addr.locality ?? addr.town,
+      addr.postcode ?? addr.postal_code,
+    ]
+      .filter(Boolean)
+      .join(", ") || undefined;
+  const identity: Record<string, unknown> = { name: first, fullName: p.name };
+  if (p.date_of_birth) identity.dateOfBirth = p.date_of_birth;
+  if (p.age) identity.age = p.age;
+  if (addressStr) identity.address = addressStr;
+  if (p.national_insurance_number)
+    identity.nationalInsuranceNumber = p.national_insurance_number;
+  return { identity, responsibilities: [], liabilities: [], eligibilities: [] };
+}
+
 const EMPTY: Profile = {
   identity: {},
   responsibilities: [],
@@ -180,7 +261,7 @@ export default function AgentPage() {
     agent: AgentId;
     items: { label: string; message: string }[];
   }>({ agent: "dot", items: [] });
-  const [credentials, setCredentials] = useState<Credential[]>([]);
+  const [wallet, setWallet] = useState<WalletCard[]>([]);
   const [inboundLog, setInboundLog] = useState<InboundEvent[]>([]);
   const [viewingOriginal, setViewingOriginal] = useState<{
     source: string;
@@ -189,6 +270,11 @@ export default function AgentPage() {
   const [inboundNotif, setInboundNotif] = useState<{ from: string; body: string } | null>(null);
   const [inboundMenu, setInboundMenu] = useState(false);
   const [showArchive, setShowArchive] = useState(false);
+  const [showWallet, setShowWallet] = useState(false);
+  const [personas, setPersonas] = useState<PersonaSummary[]>([]);
+  const [currentUser, setCurrentUser] = useState<string>("new-user");
+  const [personaRecord, setPersonaRecord] = useState<Record<string, unknown> | null>(null);
+  const [personaMenu, setPersonaMenu] = useState(false);
 
   const [profile, setProfile] = useState<Profile>(EMPTY);
   const [input, setInput] = useState("");
@@ -213,8 +299,8 @@ export default function AgentPage() {
 
   function beginAuth(action: PendingAction, prof: Profile) {
     useAppStore.setState({
-      persona: "agent-citizen",
-      personaData: personaFromProfile(prof) as never,
+      persona: currentUser,
+      personaData: (personaRecord ?? personaFromProfile(prof)) as never,
       pendingAuth: action.auth,
       oneLoginVerified: false,
       gatewayVerified: false,
@@ -402,15 +488,19 @@ export default function AgentPage() {
     setInboundMenu(false);
     // Everything that arrives is recorded, always — even the silent ones.
     setInboundLog((l) => [...l, ev]);
-    const creds = ev.facts.map((f) => ({
-      ...f,
-      source: ev.from,
+    const cards: WalletCard[] = ev.facts.map((f) => ({
+      key: f.key,
+      title: f.label,
+      issuer: ev.from,
+      primary: f.value,
+      secondary: `Updated ${ev.from === "HMRC" ? "by HMRC" : "just now"}`,
+      status: "info",
       original: ev.original,
     }));
-    if (creds.length) {
-      setCredentials((c) => {
-        const have = new Set(c.map((x) => x.key));
-        return [...c, ...creds.filter((x) => !have.has(x.key))];
+    if (cards.length) {
+      setWallet((w) => {
+        const have = new Set(w.map((x) => x.key));
+        return [...w, ...cards.filter((x) => !have.has(x.key))];
       });
     }
     // Silent: absorbed without troubling the citizen. It only shows up in the
@@ -428,6 +518,53 @@ export default function AgentPage() {
     const t = setTimeout(() => setInboundNotif(null), 5000);
     return () => clearTimeout(t);
   }, [inboundNotif]);
+
+  useEffect(() => {
+    fetch("/api/personas")
+      .then((r) => r.json())
+      .then((d) => setPersonas(d.personas ?? []))
+      .catch(() => {});
+  }, []);
+
+  // Become a different citizen (or a fresh, unknown one). Loads their identity
+  // and wallet; Dot greets whoever they now are.
+  async function loadPersona(id: string | null) {
+    setPersonaMenu(false);
+    setInboundLog([]);
+    setWorkingState([]);
+    setCompleted([]);
+    setResolved([]);
+    setWallet([]);
+    setRoster([{ id: "dot", state: "commissioned" }]);
+    setActiveAgent("dot");
+    setCompanyContext(null);
+    setHandover(null);
+    setSuggestions({ agent: "dot", items: [] });
+    setThreads({ dot: [], reg: [], grace: [] });
+    if (!id) {
+      setCurrentUser("new-user");
+      setPersonaRecord(null);
+      setProfile(EMPTY);
+      send("dot", [{ role: "user", content: "Hi" }], EMPTY);
+      return;
+    }
+    try {
+      const res = await fetch(`/api/personas/${id}`);
+      const data = await res.json();
+      const persona = data.persona as Record<string, unknown>;
+      setCurrentUser(id);
+      setPersonaRecord(persona);
+      const prof = personaToProfile(persona);
+      setProfile(prof);
+      const creds = Array.isArray(persona.credentials)
+        ? (persona.credentials as Record<string, unknown>[])
+        : [];
+      setWallet(creds.map(personaCredToCard));
+      send("dot", [{ role: "user", content: "Hi" }], prof);
+    } catch {
+      /* ignore */
+    }
+  }
 
   const visible = messages.filter(
     (m, i) =>
@@ -487,6 +624,18 @@ export default function AgentPage() {
               </p>
             )}
           </div>
+          <button
+            type="button"
+            onClick={() => setShowWallet(true)}
+            aria-label="Wallet"
+            className="text-[#8a8a8a] hover:text-[#1a1a1a] transition-colors"
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="3" y="6" width="18" height="13" rx="2.5" />
+              <path d="M3 10h18" />
+              <circle cx="17" cy="14" r="1" fill="currentColor" stroke="none" />
+            </svg>
+          </button>
           <div className="relative">
             <button
               type="button"
@@ -517,9 +666,53 @@ export default function AgentPage() {
               </div>
             )}
           </div>
-          <span className="text-[10px] font-medium tracking-wide text-[#8a8a8a] border border-black/10 rounded-full px-2 py-0.5">
-            V1 · Citizen
-          </span>
+          <div className="relative">
+            <button
+              type="button"
+              onClick={() => setPersonaMenu((v) => !v)}
+              className="text-[10px] font-medium tracking-wide text-[#505a5f] border border-black/10 rounded-full pl-2 pr-1.5 py-0.5 hover:border-black/20 flex items-center gap-1 transition-colors"
+            >
+              {currentUser === "new-user"
+                ? "New user"
+                : personas.find((p) => p.id === currentUser)?.name ?? "Citizen"}
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M6 9l6 6 6-6" />
+              </svg>
+            </button>
+            {personaMenu && (
+              <div className="absolute right-0 top-8 z-50 w-64 rounded-xl border border-black/10 bg-white shadow-lg p-1 max-h-[70vh] overflow-y-auto">
+                <p className="px-3 py-1.5 text-[10px] tracking-wide text-[#8a8a8a]">
+                  Switch citizen
+                </p>
+                <button
+                  type="button"
+                  onClick={() => loadPersona(null)}
+                  className="w-full text-left rounded-lg px-3 py-2 text-sm hover:bg-black/[0.03] flex items-center gap-2.5"
+                >
+                  <span className="w-6 h-6 rounded-full bg-[#1d70b8]/10 text-[#1d70b8] flex items-center justify-center text-sm shrink-0">
+                    +
+                  </span>
+                  New user (start fresh)
+                </button>
+                {personas.map((p) => (
+                  <button
+                    key={p.id}
+                    type="button"
+                    onClick={() => loadPersona(p.id)}
+                    className="w-full text-left rounded-lg px-3 py-2 text-sm hover:bg-black/[0.03] flex items-center gap-2.5"
+                  >
+                    <span
+                      className="w-6 h-6 rounded-full flex items-center justify-center text-[10px] text-white shrink-0"
+                      style={{ background: p.color }}
+                    >
+                      {p.initials}
+                    </span>
+                    <span className="truncate">{p.name}</span>
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
         </header>
 
         <div ref={scrollRef} className="flex-1 overflow-y-auto px-6 py-6">
@@ -632,28 +825,35 @@ export default function AgentPage() {
           </p>
         </div>
 
-        {credentials.length > 0 && (
+        {wallet.length > 0 && (
           <PanelSection title="Wallet">
-            <div className="space-y-2.5">
-              {credentials.map((c) => (
+            <div className="space-y-2">
+              {wallet.slice(0, 4).map((c) => (
                 <div key={c.key} className="flex items-center justify-between gap-2">
                   <div className="min-w-0">
-                    <p className="text-xs font-medium truncate">
-                      {c.label}: {c.value}
-                    </p>
-                    <p className="text-[10px] text-[#8a8a8a]">from {c.source}</p>
+                    <p className="text-xs font-medium truncate">{c.title}</p>
+                    <p className="text-[10px] text-[#8a8a8a]">{c.issuer}</p>
                   </div>
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setViewingOriginal({ source: c.source, original: c.original })
-                    }
-                    className="text-[10px] font-medium text-[#1d70b8] shrink-0 hover:underline"
-                  >
-                    View original
-                  </button>
+                  {c.original && (
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setViewingOriginal({ source: c.issuer, original: c.original! })
+                      }
+                      className="text-[10px] font-medium text-[#1d70b8] shrink-0 hover:underline"
+                    >
+                      View original
+                    </button>
+                  )}
                 </div>
               ))}
+              <button
+                type="button"
+                onClick={() => setShowWallet(true)}
+                className="text-[11px] font-medium text-[#1d70b8] hover:underline pt-1"
+              >
+                Open wallet →
+              </button>
             </div>
           </PanelSection>
         )}
@@ -710,6 +910,56 @@ export default function AgentPage() {
       </aside>
 
       <OneLoginNotification />
+
+      {showWallet && (
+        <div className="fixed inset-0 z-[60] flex">
+          <div
+            className="absolute inset-0 bg-black/40"
+            onClick={() => setShowWallet(false)}
+          />
+          <div className="relative ml-auto w-full max-w-[420px] h-full bg-[#f2f2f5] shadow-xl flex flex-col">
+            <div className="px-5 py-4 flex items-center justify-between border-b border-black/5">
+              <div>
+                <p className="text-base font-semibold">Wallet</p>
+                <p className="text-xs text-[#8a8a8a]">
+                  {wallet.length} card{wallet.length === 1 ? "" : "s"}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowWallet(false)}
+                aria-label="Close"
+                className="text-[#8a8a8a] hover:text-[#1a1a1a]"
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M18 6 6 18M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            <div className="flex-1 overflow-y-auto px-4 py-4 space-y-3">
+              {wallet.length === 0 ? (
+                <p className="text-sm text-[#8a8a8a] text-center pt-16 px-6">
+                  No cards yet. Credentials appear here as government issues them
+                  — and as your agents earn them for you.
+                </p>
+              ) : (
+                wallet.map((c) => (
+                  <WalletCardView
+                    key={c.key}
+                    card={c}
+                    onViewOriginal={
+                      c.original
+                        ? () =>
+                            setViewingOriginal({ source: c.issuer, original: c.original! })
+                        : undefined
+                    }
+                  />
+                ))
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       {inboundNotif && (
         <button
@@ -982,6 +1232,66 @@ const STATUS_COLOR: Record<WorkingItem["status"], string> = {
   done: "#00703c",
 };
 const STATUS_ORDER: WorkingItem["status"][] = ["now", "next", "waiting", "done"];
+
+function WalletCardView({
+  card,
+  onViewOriginal,
+}: {
+  card: WalletCard;
+  onViewOriginal?: () => void;
+}) {
+  const accent = issuerAccent(card.issuer);
+  const statusText =
+    card.status === "expired"
+      ? "Expired"
+      : card.status === "info"
+        ? "Updated"
+        : card.status === "valid"
+          ? "Valid"
+          : "";
+  return (
+    <div
+      className="rounded-2xl p-4 text-white shadow-md relative overflow-hidden min-h-[150px] flex flex-col"
+      style={{ background: `linear-gradient(140deg, ${accent}, rgba(0,0,0,0.42))` }}
+    >
+      <div className="flex items-center justify-between">
+        <span className="text-xs font-semibold tracking-wide opacity-95">
+          {card.issuer}
+        </span>
+        {statusText && (
+          <span
+            className="text-[10px] font-medium rounded-full px-2 py-0.5"
+            style={{ background: "rgba(255,255,255,0.22)" }}
+          >
+            {statusText}
+          </span>
+        )}
+      </div>
+      <p className="text-lg font-semibold mt-auto">{card.title}</p>
+      {card.primary && (
+        <p className="text-sm font-mono tracking-wide mt-1 opacity-95 break-all">
+          {card.primary}
+        </p>
+      )}
+      <div className="flex items-end justify-between mt-2 gap-2">
+        {card.secondary ? (
+          <p className="text-xs opacity-80">{card.secondary}</p>
+        ) : (
+          <span />
+        )}
+        {onViewOriginal && (
+          <button
+            type="button"
+            onClick={onViewOriginal}
+            className="text-[11px] underline opacity-90 shrink-0"
+          >
+            View original
+          </button>
+        )}
+      </div>
+    </div>
+  );
+}
 
 function GracePanel({ items }: { items: WorkingItem[] }) {
   const sorted = [...items].sort(

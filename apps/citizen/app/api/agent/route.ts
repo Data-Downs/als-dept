@@ -154,6 +154,14 @@ Record anything new you learn with the remember tool. Never invent dates or fact
 ## Opening
 Open by greeting them by name, showing you already understand their company and naming the one thing that matters most next — with the real date. Then offer the compliance check, and mention in one line that you can also keep an eye on their HMRC post and deadlines. Ask what they'd like to start with.`;
 
+function buildDotBriefing(profile: Profile): string {
+  const id = profile?.identity ?? {};
+  const name = id.fullName || id.name;
+  if (!name) return "";
+  const where = id.address ? `, of ${id.address}` : id.location ? `, in ${id.location}` : "";
+  return `\n\n## Who you're speaking with\nYou already know this citizen: ${name}${where}. Greet them warmly by name and do NOT ask who they are — get straight to what you can do for them today.`;
+}
+
 function buildRegBriefing(
   profile: Profile,
   companyContext: Record<string, unknown> | null,
@@ -460,7 +468,7 @@ const SUGGEST_ADDENDUM = `\n\n## Make the action tappable
 Whenever you offer the citizen a choice or a next action, ALSO call the suggest tool with 1–3 short options, so the action is one tap away and never buried in a paragraph. The chip's message is what gets sent as them when they tap it. Keep chips to genuine actions you've offered, and include a gentle "not now" when it fits. This matters: some people find it genuinely hard to pull the action out of prose.`;
 
 const INBOUND_ADDENDUM = `\n\n## Incoming post
-Sometimes a message arrives from a government department, marked "[Inbound from …]". Never show it to the citizen as a letter, and never send them to a mailbox. Metabolise it: any durable facts it contains are already saved to their wallet, so just acknowledge in ONE warm, calm line what's changed — and if it needs something doing (a payment, a renewal, providing information), offer that single action via the suggest tool. The original letter is already viewable from their wallet, so do NOT offer "see the original" as a chip and never paste it in — at most mention in passing that it's there. Keep it short; you are sparing them the reading, not adding to it.`;
+Sometimes a message arrives from a government department, marked "[Inbound from …]". Never show it to the citizen as a letter, and never send them to a mailbox. Metabolise it: any durable facts it contains are already saved to their wallet, so just acknowledge in ONE warm, calm line what's changed — and if it needs something doing (a payment, a renewal, providing information), offer that single action via the suggest tool. Do NOT record those facts again with the remember tool: the wallet is the single home for anything a department sends, so leave the profile lists (responsibilities, liabilities, eligibilities, identity) untouched for inbound post. The original letter is already viewable from their wallet, so do NOT offer "see the original" as a chip and never paste it in — at most mention in passing that it's there. Keep it short; you are sparing them the reading, not adding to it.`;
 
 function toolsFor(agent: string) {
   if (agent === "reg") {
@@ -613,7 +621,7 @@ export async function POST(req: NextRequest) {
       ? REG_SYSTEM + buildRegBriefing(profile ?? emptyProfile(), companyContext) + catBlock + doneAddendum
       : agent === "grace"
         ? GRACE_SYSTEM + buildGraceBriefing(profile ?? emptyProfile(), handover) + catBlock + doneAddendum
-        : SYSTEM + doneAddendum;
+        : SYSTEM + buildDotBriefing(profile ?? emptyProfile()) + doneAddendum;
   const systemPrompt = base + SUGGEST_ADDENDUM + INBOUND_ADDENDUM;
 
   const apiKey = await getEnv("ANTHROPIC_API_KEY");
