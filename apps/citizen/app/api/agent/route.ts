@@ -5,6 +5,7 @@ import {
   type AnthropicChatOutput,
 } from "@als/adapters";
 import { lookupCompanyByName } from "@/lib/companies-house";
+import { getAnyManifest, getGraphEngine } from "@/lib/service-data";
 
 /**
  * The agent layer (V1 — the citizen's agent). A bare LLM agent that gets to
@@ -23,6 +24,7 @@ type Profile = {
 
 type ServiceAuth = {
   login: "one-login" | "government-gateway";
+  accepts?: Array<"one-login" | "government-gateway" | "none-in-person">;
   identityVerification?: boolean;
 };
 
@@ -341,11 +343,8 @@ const TOOLS = [
       properties: {
         serviceId: {
           type: "string",
-          enum: [
-            "companies-house-confirmation-statement",
-            "hmrc-vat-return",
-          ],
-          description: "The service to perform.",
+          description:
+            "The exact serviceId to perform — one of the services published to you as agent-actionable (see 'Services you can act on'), or a company filing you handle directly.",
         },
         summary: {
           type: "string",
@@ -433,11 +432,76 @@ function toolsFor(agent: string) {
     return TOOLS.filter((t) => t.name === "remember" || t.name === "act");
   }
   if (agent === "grace") {
-    return TOOLS.filter(
-      (t) => t.name === "remember" || t.name === "track" || t.name === "stand_down",
+    return TOOLS.filter((t) =>
+      ["remember", "track", "stand_down", "act"].includes(t.name),
     );
   }
   return TOOLS.filter((t) => t.name !== "track" && t.name !== "stand_down");
+}
+
+type ActionableService = { id: string; name: string; dept: string };
+
+/** The services government has published as agent-actionable (they declare a
+ *  login), filtered to a domain. This is the legibility layer — the agent can
+ *  only act on what a department has actually published. */
+function actionableCatalogue(
+  match: (name: string, id: string) => boolean,
+): ActionableService[] {
+  return getGraphEngine()
+    .getServices()
+    .filter(
+      (n) => n.auth && n.auth.login !== "none-in-person" && match(n.name, n.id),
+    )
+    .map((n) => ({ id: n.id, name: n.name, dept: n.dept }));
+}
+
+function catalogueFor(agent: string): ActionableService[] {
+  if (agent === "grace") {
+    return actionableCatalogue((name, id) =>
+      /death|bereave|funeral|probate|tell.?us.?once|estate/i.test(`${name} ${id}`),
+    );
+  }
+  if (agent === "reg") {
+    return actionableCatalogue((name, id) =>
+      /compan|vat|corporation|paye|confirmation|hmrc/i.test(`${name} ${id}`),
+    );
+  }
+  return [];
+}
+
+function catalogueBlock(items: ActionableService[]): string {
+  if (!items.length) return "";
+  const lines = items.map((s) => `- ${s.id} — ${s.name} (${s.dept})`).join("\n");
+  return `\n\n## Services you can act on\nThese are the services the relevant departments have published to you as agent-actionable. When the citizen asks you to do one, call act with its exact serviceId — the sign-in each needs is read from what the department published, you never decide it. If something a citizen needs isn't on this list, it hasn't been published for agents yet: say so plainly and point them to how to do it themselves.\n${lines}`;
+}
+
+function readableField(key: string): string {
+  return key.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
+/** Resolve a published service's action metadata from the graph / Studio. */
+async function resolvePublishedService(
+  serviceId: string,
+): Promise<{ label: string; dataShared: string[]; auth: ServiceAuth } | null> {
+  const m = await getAnyManifest(serviceId);
+  const rawAuth = (
+    m as { auth?: { login?: string; identityVerification?: boolean } } | null
+  )?.auth;
+  if (!m || !rawAuth?.login || rawAuth.login === "none-in-person") return null;
+  const props =
+    (m as { input_schema?: { properties?: Record<string, unknown> } })
+      .input_schema?.properties ?? {};
+  const fields = Object.keys(props).map(readableField);
+  const dataShared = fields.length
+    ? fields
+    : rawAuth.identityVerification
+      ? ["Your verified identity"]
+      : ["Your details"];
+  return {
+    label: String((m as { name?: string }).name ?? serviceId),
+    dataShared,
+    auth: rawAuth as ServiceAuth,
+  };
 }
 
 function mergeProfile(profile: Profile, patch: Record<string, unknown>): Profile {
@@ -506,11 +570,12 @@ export async function POST(req: NextRequest) {
   const doneAddendum = doneLabels.length
     ? `\n\n## Already done this session\nYou have already completed: ${doneLabels.join("; ")}. Do NOT do these again unless the citizen explicitly asks you to repeat one.`
     : "";
+  const catBlock = catalogueBlock(catalogueFor(agent));
   const systemPrompt =
     agent === "reg"
-      ? REG_SYSTEM + buildRegBriefing(profile ?? emptyProfile(), companyContext) + doneAddendum
+      ? REG_SYSTEM + buildRegBriefing(profile ?? emptyProfile(), companyContext) + catBlock + doneAddendum
       : agent === "grace"
-        ? GRACE_SYSTEM + buildGraceBriefing(profile ?? emptyProfile(), handover) + doneAddendum
+        ? GRACE_SYSTEM + buildGraceBriefing(profile ?? emptyProfile(), handover) + catBlock + doneAddendum
         : SYSTEM + doneAddendum;
 
   const apiKey = await getEnv("ANTHROPIC_API_KEY");
@@ -605,15 +670,17 @@ export async function POST(req: NextRequest) {
           };
         }
         if (tc.name === "act") {
-          const svc = AGENT_SERVICES[String(tc.input.serviceId)];
+          const serviceId = String(tc.input.serviceId);
+          const local = AGENT_SERVICES[serviceId];
+          const svc = local ?? (await resolvePublishedService(serviceId));
           if (svc) {
             pendingAction = {
-              serviceId: String(tc.input.serviceId),
+              serviceId,
               label: svc.label,
               dataShared: svc.dataShared,
               auth: svc.auth,
               summary: (tc.input.summary as string) || svc.label,
-              resolves: svc.resolves,
+              resolves: local?.resolves,
             };
             return {
               type: "tool_result",
@@ -624,7 +691,8 @@ export async function POST(req: NextRequest) {
           return {
             type: "tool_result",
             tool_use_id: tc.id,
-            content: "Unknown service.",
+            content:
+              "That service isn't published as agent-actionable — tell the citizen it can't be done through you yet.",
           };
         }
         return { type: "tool_result", tool_use_id: tc.id, content: "ok" };

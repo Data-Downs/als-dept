@@ -66,6 +66,7 @@ type Profile = {
 };
 type ServiceAuth = {
   login: "one-login" | "government-gateway";
+  accepts?: Array<"one-login" | "government-gateway" | "none-in-person">;
   identityVerification?: boolean;
 };
 type Resolves = { list: "liabilities" | "eligibilities"; key: string; label: string };
