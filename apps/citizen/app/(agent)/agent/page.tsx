@@ -19,13 +19,25 @@ const AGENT_META: Record<
     accent: string;
     temporary?: boolean;
     mandate?: string;
+    about: string;
+    capabilities: string[];
+    useHint: string;
   }
 > = {
   dot: {
     name: "Dot",
     tagline: "Your way in to government",
-    provider: null,
+    provider: "GOV.UK",
     accent: "#1d70b8",
+    about:
+      "Dot is your personal government agent — the single way in to everything the state does. You never have to work out which department handles what; Dot works that out and brings in the right specialist agents for you.",
+    capabilities: [
+      "Understands what you need from how you describe it",
+      "Recognises your situation and keeps a live picture of you",
+      "Brings in and coordinates specialist agents on your behalf",
+      "Carries what you've said so you never repeat yourself",
+    ],
+    useHint: "Just tell Dot what's going on, in your own words.",
   },
   reg: {
     name: "Reg",
@@ -34,6 +46,15 @@ const AGENT_META: Record<
     accent: "#4c2c92",
     mandate:
       "Keeps your company on the right side of things — confirmation statements, VAT, and corporation tax guidance. He’ll see your company record and can act with Companies House and HMRC on your behalf.",
+    about:
+      "Reg is your limited company agent, provided by Companies House and HMRC. He runs the compliance and admin of your company so you never have to hold it in your head.",
+    capabilities: [
+      "Tracks every statutory deadline from your real company record",
+      "Runs compliance checks and flags gaps before they bite",
+      "Files your confirmation statement and VAT with your sign-in",
+      "Checks any supplier's VAT number against HMRC's register",
+    ],
+    useHint: "Ask Reg anything about your company's filings, tax or deadlines.",
   },
   grace: {
     name: "Grace",
@@ -43,6 +64,15 @@ const AGENT_META: Record<
     temporary: true,
     mandate:
       "Stays with you and carries the whole government and admin side after a death — registering, Tell Us Once, pensions and benefits — for as long as you need. She steps back once it’s in hand.",
+    about:
+      "Grace is a bereavement agent who stays with you and carries the whole government and admin side after a death, for as long as you need. She's here for now, and steps back once it's in hand.",
+    capabilities: [
+      "Handles Tell Us Once across every department at once",
+      "Sorts registering the death, pensions and benefits",
+      "Guides probate and inheritance tax at your pace",
+      "Holds the whole picture so you never have to",
+    ],
+    useHint: "Tell Grace as much or as little as you feel able to.",
   },
   driving: {
     name: "Miles",
@@ -51,6 +81,15 @@ const AGENT_META: Record<
     accent: "#00703c",
     mandate:
       "One agent for your licence and your vehicles — renewals, MOT reminders, vehicle tax and booking tests — across DVLA and DVSA, so you never deal with them separately.",
+    about:
+      "Miles is your driving agent, across DVLA and DVSA. He looks after your licence and every vehicle you own, so you never deal with the two bodies separately.",
+    capabilities: [
+      "Looks any registration up — tax, MOT, recalls, the lot",
+      "Checks whether you're licensed to drive a given vehicle",
+      "Watches your licence, MOT and tax dates and flags what's next",
+      "Taxes a vehicle or books a test with your sign-in",
+    ],
+    useHint: "Give Miles a registration, or ask about your licence.",
   },
   sol: {
     name: "Sol",
@@ -59,6 +98,15 @@ const AGENT_META: Record<
     accent: "#b45309",
     mandate:
       "Keeps your tax and your books in order — Self Assessment, deadlines, Making Tax Digital, the VAT line, and what you're owed — so you can get on with the work, never become an accountant.",
+    about:
+      "Sol is your working-for-yourself agent, from HMRC. He keeps your tax and your books in order so you can get on with the work and never have to become an accountant.",
+    capabilities: [
+      "Tracks Self Assessment and Making Tax Digital deadlines",
+      "Spots what you're owed and what you owe",
+      "Files your return with your sign-in",
+      "Keeps an eye on the VAT threshold as you grow",
+    ],
+    useHint: "Ask Sol about your tax, deadlines, or what you're owed.",
   },
   robin: {
     name: "Robin",
@@ -68,6 +116,15 @@ const AGENT_META: Record<
     temporary: true,
     mandate:
       "Looks after everything the state needs around your new baby — maternity pay, registering the birth, Child Benefit and childcare — so you can focus on the baby. Steps back once it's all in hand.",
+    about:
+      "Robin is a new-baby agent who looks after everything the state needs around your baby, so you can focus on the baby itself. Here for now, and steps back once it's all in hand.",
+    capabilities: [
+      "Sorts registering the birth",
+      "Sets up maternity or paternity pay",
+      "Claims Child Benefit and arranges childcare support",
+      "Holds the whole new-baby to-do so you don't have to",
+    ],
+    useHint: "Tell Robin how things are going with the baby.",
   },
   fay: {
     name: "Fay",
@@ -76,6 +133,15 @@ const AGENT_META: Record<
     accent: "#c05746",
     mandate:
       "One agent for everything to do with your children — Child Benefit, childcare, school places, additional needs — so you never chase schools, councils and HMRC separately.",
+    about:
+      "Fay is your family and children agent, across HMRC, the Department for Education and your council. She looks after everything to do with your children so you never chase three bodies separately.",
+    capabilities: [
+      "Watches child-related benefits and deadlines (like the 16th-birthday cliff)",
+      "Sets up Tax-Free Childcare and free hours",
+      "Helps with school places and additional needs (EHCP)",
+      "Joins up HMRC, the council and the school for you",
+    ],
+    useHint: "Ask Fay about anything to do with your children.",
   },
 };
 
@@ -97,6 +163,15 @@ type Msg =
   | { role: "introduce"; agentId: AgentId };
 
 type ConvoMeta = { title?: string; updatedAt: number };
+type ArchivedConvo = {
+  id: string;
+  agentId: AgentId;
+  messages: Msg[];
+  title?: string;
+  updatedAt: number;
+};
+type AgentPermissions = { canAct: boolean; proactive: boolean };
+const DEFAULT_PERMISSIONS: AgentPermissions = { canAct: true, proactive: true };
 
 /** Compact, human relative time for the tray's conversation list. */
 function timeAgo(ts?: number): string {
@@ -327,6 +402,14 @@ export default function AgentPage() {
   const [resumeSummary, setResumeSummary] = useState<string | null>(null);
   const [resuming, setResuming] = useState(false);
   const [reveal, setReveal] = useState(0);
+  // Past conversations per agent. threads[agent] is the one currently open;
+  // starting or reopening a conversation swaps through here, so the rest of the
+  // app keeps its "one active thread per agent" invariant.
+  const [archived, setArchived] = useState<ArchivedConvo[]>([]);
+  const [agentPermissions, setAgentPermissions] = useState<
+    Partial<Record<AgentId, AgentPermissions>>
+  >({});
+  const [agentDetail, setAgentDetail] = useState<AgentId | null>(null);
   const [roster, setRoster] = useState<RosterEntry[]>([
     { id: "dot", state: "commissioned" },
   ]);
@@ -506,6 +589,7 @@ export default function AgentPage() {
           drivingContext: agentId === "driving" ? drivingContextFor() : null,
           selfEmployedContext: agentId === "sol" ? selfEmployedContextFor() : null,
           familyContext: agentId === "fay" ? familyContextFor() : null,
+          permissions: agentPermissions[agentId] ?? DEFAULT_PERMISSIONS,
         }),
       });
       const data = await res.json();
@@ -652,6 +736,103 @@ export default function AgentPage() {
     });
   }
 
+  // Snapshot the agent's currently-open thread into the archive if it holds any
+  // real exchange, so a swap or a fresh start never loses it.
+  function archiveActive(agentId: AgentId) {
+    const cur = threads[agentId] ?? [];
+    const hasReal = cur.some(
+      (m) =>
+        (m.role === "user" || m.role === "assistant") &&
+        !HIDDEN_OPENERS.has(m.content) &&
+        !m.content.startsWith("[Inbound"),
+    );
+    if (!hasReal) return;
+    setArchived((a) => [
+      ...a,
+      {
+        id: crypto.randomUUID(),
+        agentId,
+        messages: cur,
+        title: convoMeta[agentId]?.title,
+        updatedAt: convoMeta[agentId]?.updatedAt ?? Date.now(),
+      },
+    ]);
+  }
+
+  // Start a brand-new conversation with an already-commissioned agent: file the
+  // current one away, clear the slate, and let the agent greet fresh.
+  function newConversation(agentId: AgentId) {
+    archiveActive(agentId);
+    setThreads((t) => ({ ...t, [agentId]: [] }));
+    setConvoMeta((cm) => {
+      const n = { ...cm };
+      delete n[agentId];
+      return n;
+    });
+    if (AGENT_META[agentId].temporary) setWorkingState([]);
+    setActiveAgent(agentId);
+    setResumeSummary(null);
+    setResuming(false);
+    setTrayOpen(false);
+    setAgentDetail(null);
+    const opener = agentId === "dot" ? "Hi" : "[commissioned]";
+    setTimeout(
+      () => send(agentId, [{ role: "user", content: opener }], profile, ""),
+      0,
+    );
+  }
+
+  // Open a conversation from the tray. The active one is a no-op beyond
+  // focusing the agent; an archived one is swapped into the active slot.
+  function openConversation(agentId: AgentId, convoId: string) {
+    setTrayOpen(false);
+    setAgentDetail(null);
+    setResumeSummary(null);
+    setResuming(false);
+    if (convoId === `active:${agentId}`) {
+      setActiveAgent(agentId);
+      return;
+    }
+    const target = archived.find((c) => c.id === convoId);
+    if (!target) {
+      setActiveAgent(agentId);
+      return;
+    }
+    archiveActive(agentId);
+    setArchived((a) => a.filter((c) => c.id !== convoId));
+    setThreads((t) => ({ ...t, [agentId]: target.messages }));
+    setConvoMeta((cm) => ({
+      ...cm,
+      [agentId]: { title: target.title, updatedAt: target.updatedAt },
+    }));
+    setActiveAgent(agentId);
+  }
+
+  function setPermission(agentId: AgentId, patch: Partial<AgentPermissions>) {
+    setAgentPermissions((p) => ({
+      ...p,
+      [agentId]: { ...(p[agentId] ?? DEFAULT_PERMISSIONS), ...patch },
+    }));
+  }
+
+  // Decommission stands the agent down but keeps every conversation — it's
+  // recoverable, never deleted. Re-commissioning brings it straight back.
+  function decommissionAgent(agentId: AgentId) {
+    if (agentId === "dot") return;
+    setRoster((r) =>
+      r.map((x) => (x.id === agentId ? { ...x, state: "stood-down" } : x)),
+    );
+    if (activeAgent === agentId) setActiveAgent("dot");
+    setAgentDetail(null);
+    setTrayOpen(false);
+  }
+
+  function recommissionAgent(agentId: AgentId) {
+    setRoster((r) =>
+      r.map((x) => (x.id === agentId ? { ...x, state: "commissioned" } : x)),
+    );
+  }
+
   // Per-persona persistence: each citizen (and "new user") keeps their own
   // saved session under their own key. The accumulated state is the product —
   // switching between people must never lose it.
@@ -672,9 +853,13 @@ export default function AgentPage() {
     personaRecord?: Record<string, unknown> | null;
     currentUser?: string;
     convoMeta?: Partial<Record<AgentId, ConvoMeta>>;
+    archived?: ArchivedConvo[];
+    agentPermissions?: Partial<Record<AgentId, AgentPermissions>>;
   }): boolean {
     if (s.threads) setThreads(s.threads);
     setConvoMeta(s.convoMeta ?? {});
+    setArchived(Array.isArray(s.archived) ? s.archived : []);
+    setAgentPermissions(s.agentPermissions ?? {});
     if (s.profile) setProfile(s.profile);
     if (s.wallet) setWallet(s.wallet);
     if (s.inboundLog) setInboundLog(s.inboundLog);
@@ -737,6 +922,8 @@ export default function AgentPage() {
           personaRecord,
           currentUser,
           convoMeta,
+          archived,
+          agentPermissions,
         }),
       );
       localStorage.setItem("als-last-user", currentUser);
@@ -759,6 +946,8 @@ export default function AgentPage() {
     personaRecord,
     currentUser,
     convoMeta,
+    archived,
+    agentPermissions,
   ]);
 
   // When the login wall closes, decide whether the agent's action completed.
@@ -951,6 +1140,9 @@ export default function AgentPage() {
     setResumeSummary(null);
     setResuming(false);
     setConvoMeta({});
+    setArchived([]);
+    setAgentPermissions({});
+    setAgentDetail(null);
     setCurrentUser(userId);
     setPersonaRecord(null);
     setInboundLog([]);
@@ -1251,14 +1443,28 @@ export default function AgentPage() {
           <AgentTray
             roster={roster}
             activeAgent={activeAgent}
-            conversations={trayConversations(threads, convoMeta)}
+            conversations={trayConversations(threads, convoMeta, archived)}
             onClose={() => setTrayOpen(false)}
-            onOpen={(id) => {
-              setActiveAgent(id);
-              setResumeSummary(null);
-              setResuming(false);
+            onOpenConversation={openConversation}
+            onNewConversation={newConversation}
+            onOpenDetail={(id) => {
+              setAgentDetail(id);
               setTrayOpen(false);
             }}
+          />
+        )}
+
+        {agentDetail && (
+          <AgentDetailView
+            agentId={agentDetail}
+            state={roster.find((x) => x.id === agentDetail)?.state ?? "commissioned"}
+            permissions={agentPermissions[agentDetail] ?? DEFAULT_PERMISSIONS}
+            activity={agentActivity(agentDetail, threads, archived, convoMeta)}
+            onClose={() => setAgentDetail(null)}
+            onSetPermission={(patch) => setPermission(agentDetail, patch)}
+            onNewConversation={() => newConversation(agentDetail)}
+            onDecommission={() => decommissionAgent(agentDetail)}
+            onRecommission={() => recommissionAgent(agentDetail)}
           />
         )}
       </main>
@@ -1534,49 +1740,100 @@ function TrayTag({ label, color }: { label: string; color: string }) {
   );
 }
 
-type TrayConversation = { title: string; updatedAt?: number; hasHistory: boolean };
+type TrayConversation = { id: string; title: string; updatedAt?: number };
 
-/** Per-agent conversation summary for the tray: a title (generated, else the
- *  first thing the citizen said, else the tagline) and when it was last active. */
+const isRealMsg = (m: Msg): m is { role: "user" | "assistant"; content: string } =>
+  (m.role === "user" || m.role === "assistant") &&
+  !HIDDEN_OPENERS.has(m.content) &&
+  !m.content.startsWith("[Inbound");
+
+function deriveTitle(messages: Msg[], agentId: AgentId): string {
+  const firstAsk = messages.find((m) => isRealMsg(m) && m.role === "user");
+  const text = firstAsk && "content" in firstAsk ? firstAsk.content : "";
+  if (!text) return AGENT_META[agentId].tagline;
+  return text.length > 42 ? `${text.slice(0, 42).trimEnd()}…` : text;
+}
+
+/** Every conversation the citizen has with each agent — the one currently open
+ *  (id "active:<agent>") plus any archived ones — newest first. */
 function trayConversations(
   threads: Record<AgentId, Msg[]>,
   convoMeta: Partial<Record<AgentId, ConvoMeta>>,
-): Partial<Record<AgentId, TrayConversation>> {
-  const out: Partial<Record<AgentId, TrayConversation>> = {};
+  archived: ArchivedConvo[],
+): Partial<Record<AgentId, TrayConversation[]>> {
+  const out: Partial<Record<AgentId, TrayConversation[]>> = {};
   for (const id of Object.keys(threads) as AgentId[]) {
-    const real = (threads[id] ?? []).filter(
-      (m): m is { role: "user" | "assistant"; content: string } =>
-        (m.role === "user" || m.role === "assistant") &&
-        !HIDDEN_OPENERS.has(m.content) &&
-        !m.content.startsWith("[Inbound"),
-    );
-    const firstAsk = real.find((m) => m.role === "user")?.content;
-    const fallback = firstAsk
-      ? firstAsk.length > 42
-        ? `${firstAsk.slice(0, 42).trimEnd()}…`
-        : firstAsk
-      : AGENT_META[id].tagline;
-    out[id] = {
-      title: convoMeta[id]?.title || fallback,
-      updatedAt: convoMeta[id]?.updatedAt,
-      hasHistory: real.length > 0,
-    };
+    const list: TrayConversation[] = [];
+    const active = (threads[id] ?? []).filter(isRealMsg);
+    if (active.length) {
+      list.push({
+        id: `active:${id}`,
+        title: convoMeta[id]?.title || deriveTitle(threads[id] ?? [], id),
+        updatedAt: convoMeta[id]?.updatedAt,
+      });
+    }
+    for (const a of archived.filter((c) => c.agentId === id)) {
+      list.push({
+        id: a.id,
+        title: a.title || deriveTitle(a.messages, id),
+        updatedAt: a.updatedAt,
+      });
+    }
+    list.sort((x, y) => (y.updatedAt ?? 0) - (x.updatedAt ?? 0));
+    out[id] = list;
   }
   return out;
 }
+
+type AgentActivity = { conversations: number; lastActive?: number; actions: string[] };
+
+/** What an agent has actually been doing: how many conversations, when it was
+ *  last active, and every action it's completed (across active + archived). */
+function agentActivity(
+  agentId: AgentId,
+  threads: Record<AgentId, Msg[]>,
+  archived: ArchivedConvo[],
+  convoMeta: Partial<Record<AgentId, ConvoMeta>>,
+): AgentActivity {
+  const threadsForAgent: Msg[][] = [];
+  if ((threads[agentId] ?? []).some(isRealMsg)) threadsForAgent.push(threads[agentId]);
+  let lastActive = convoMeta[agentId]?.updatedAt;
+  for (const a of archived.filter((c) => c.agentId === agentId)) {
+    threadsForAgent.push(a.messages);
+    if (a.updatedAt && (!lastActive || a.updatedAt > lastActive)) lastActive = a.updatedAt;
+  }
+  const actions: string[] = [];
+  for (const t of threadsForAgent) {
+    for (const m of t) {
+      if (m.role === "receipt" && !m.receipt.undone) actions.push(m.receipt.label);
+    }
+  }
+  return { conversations: threadsForAgent.length, lastActive, actions };
+}
+
+const PenIcon = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M12 20h9" />
+    <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z" />
+  </svg>
+);
 
 function AgentTray({
   roster,
   activeAgent,
   conversations,
   onClose,
-  onOpen,
+  onOpenConversation,
+  onNewConversation,
+  onOpenDetail,
 }: {
   roster: RosterEntry[];
   activeAgent: AgentId;
-  conversations: Partial<Record<AgentId, TrayConversation>>;
+  conversations: Partial<Record<AgentId, TrayConversation[]>>;
   onClose: () => void;
-  onOpen: (id: AgentId) => void;
+  onOpenConversation: (agentId: AgentId, convoId: string) => void;
+  onNewConversation: (agentId: AgentId) => void;
+  onOpenDetail: (agentId: AgentId) => void;
 }) {
   return (
     <div className="absolute inset-0 z-40">
@@ -1598,73 +1855,348 @@ function AgentTray({
         <div className="px-2 pb-2 overflow-y-auto">
           {roster.map((entry) => {
             const m = AGENT_META[entry.id];
-            const convo = conversations[entry.id];
-            const isActive = entry.id === activeAgent;
+            const list = conversations[entry.id] ?? [];
             const openable = entry.state !== "introduced";
             return (
               <div
                 key={entry.id}
-                className={entry.state === "stood-down" ? "opacity-55" : ""}
+                className={`mt-1 ${entry.state === "stood-down" ? "opacity-55" : ""}`}
               >
-                <div className="flex items-center gap-2 px-2.5 pt-4 pb-1">
-                  <span
-                    className="w-[7px] h-[7px] rounded-full shrink-0"
-                    style={{ background: m.accent }}
-                  />
-                  <span className="text-[12px] font-medium tracking-wide text-[#8a8a8a] truncate">
-                    {m.name}
-                  </span>
-                  {entry.state === "introduced" && (
-                    <TrayTag label="Introduced" color={m.accent} />
-                  )}
-                  {entry.state === "commissioned" && m.temporary && (
-                    <TrayTag label="Here for now" color={m.accent} />
-                  )}
-                  {entry.state === "stood-down" && (
-                    <TrayTag label="Stood down" color="#8a8a8a" />
-                  )}
-                </div>
-                {openable && convo?.hasHistory ? (
+                {/* Agent — a prominent, tappable section header */}
+                <div className="group flex items-center gap-2.5 rounded-lg px-2 py-1.5 hover:bg-black/[0.025]">
                   <button
                     type="button"
-                    onClick={() => onOpen(entry.id)}
-                    className={`w-full flex items-center gap-3 rounded-lg px-2.5 py-2.5 text-left transition-colors ${
-                      isActive ? "bg-black/[0.05]" : "hover:bg-black/[0.035]"
-                    }`}
+                    onClick={() => onOpenDetail(entry.id)}
+                    className="flex items-center gap-2.5 min-w-0 flex-1 text-left"
                   >
-                    <span className="w-4 h-4 rounded-full border-[1.5px] border-[#cbcbcb] shrink-0" />
-                    <span className="min-w-0 flex-1 truncate text-[14px] text-[#1a1a1a]">
-                      {convo.title}
-                    </span>
-                    {convo.updatedAt && (
-                      <span className="shrink-0 text-[11px] text-[#b4b4b4]">
-                        {timeAgo(convo.updatedAt)}
+                    <AgentAvatar id={entry.id} className="w-7 h-7 shrink-0" />
+                    <span className="min-w-0 flex-1">
+                      <span className="flex items-center gap-2">
+                        <span className="text-[14px] font-semibold text-[#1a1a1a] truncate">
+                          {m.name}
+                        </span>
+                        {entry.state === "introduced" && (
+                          <TrayTag label="Introduced" color={m.accent} />
+                        )}
+                        {entry.state === "commissioned" && m.temporary && (
+                          <TrayTag label="Here for now" color={m.accent} />
+                        )}
+                        {entry.state === "stood-down" && (
+                          <TrayTag label="Stood down" color="#8a8a8a" />
+                        )}
                       </span>
-                    )}
+                      <span className="block text-[11px] text-[#9a9a9a] truncate">
+                        {m.tagline}
+                      </span>
+                    </span>
                   </button>
+                  {openable && (
+                    <button
+                      type="button"
+                      onClick={() => onNewConversation(entry.id)}
+                      aria-label={`New conversation with ${m.name}`}
+                      title={`New conversation with ${m.name}`}
+                      className="shrink-0 text-[#a4a4a4] hover:text-[#1a1a1a] p-1 rounded-md hover:bg-black/[0.04]"
+                    >
+                      <PenIcon />
+                    </button>
+                  )}
+                </div>
+
+                {/* Conversations under the agent */}
+                {openable && list.length > 0 ? (
+                  <div className="ml-[26px] mt-0.5">
+                    {list.map((c) => {
+                      const isActive = entry.id === activeAgent && c.id === `active:${entry.id}`;
+                      return (
+                        <button
+                          key={c.id}
+                          type="button"
+                          onClick={() => onOpenConversation(entry.id, c.id)}
+                          className={`w-full flex items-center gap-2.5 rounded-lg pl-2.5 pr-2 py-2 text-left transition-colors ${
+                            isActive ? "bg-black/[0.05]" : "hover:bg-black/[0.035]"
+                          }`}
+                        >
+                          <span className="w-3.5 h-3.5 rounded-full border-[1.5px] border-[#cbcbcb] shrink-0" />
+                          <span className="min-w-0 flex-1 truncate text-[13px] text-[#1a1a1a]">
+                            {c.title}
+                          </span>
+                          {c.updatedAt && (
+                            <span className="shrink-0 text-[10px] text-[#b4b4b4]">
+                              {timeAgo(c.updatedAt)}
+                            </span>
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
                 ) : openable ? (
                   <button
                     type="button"
-                    onClick={() => onOpen(entry.id)}
-                    className="w-full flex items-center gap-3 rounded-lg px-2.5 py-2.5 text-left text-[#a4a4a4] hover:bg-black/[0.035] transition-colors"
+                    onClick={() => onNewConversation(entry.id)}
+                    className="ml-[26px] flex items-center gap-2.5 rounded-lg pl-2.5 pr-2 py-2 text-left text-[#a4a4a4] hover:bg-black/[0.035] transition-colors"
                   >
-                    <span className="w-4 h-4 rounded-full border-[1.5px] border-dashed border-[#d4d4d4] shrink-0" />
-                    <span className="text-[14px]">Start a conversation</span>
+                    <span className="w-3.5 h-3.5 rounded-full border-[1.5px] border-dashed border-[#d4d4d4] shrink-0" />
+                    <span className="text-[13px]">Start a conversation</span>
                   </button>
                 ) : (
-                  <div className="flex items-center gap-3 px-2.5 py-2.5 text-[#c4c4c4]">
-                    <span className="w-4 h-4 rounded-full border-[1.5px] border-dashed border-[#e4e4e4] shrink-0" />
-                    <span className="text-[13px]">Not yet commissioned</span>
-                  </div>
+                  <p className="ml-[26px] pl-2.5 py-1.5 text-[12px] text-[#c4c4c4]">
+                    Introduced — commission from the chat to begin
+                  </p>
                 )}
               </div>
             );
           })}
         </div>
         <p className="mt-auto px-4 py-3 text-[11px] text-[#b4b4b4]">
-          Agents appear here once Dot introduces them and you commission them.
+          Tap an agent to see what it is and does, or start a new conversation.
         </p>
       </aside>
+    </div>
+  );
+}
+
+function Toggle({ on, onChange }: { on: boolean; onChange: (v: boolean) => void }) {
+  return (
+    <button
+      type="button"
+      role="switch"
+      aria-checked={on}
+      onClick={() => onChange(!on)}
+      className={`relative inline-flex items-center w-11 h-6 rounded-full transition-colors shrink-0 ${
+        on ? "bg-[#1d70b8]" : "bg-black/15"
+      }`}
+    >
+      <span
+        className={`inline-block w-5 h-5 rounded-full bg-white shadow transform transition-transform ${
+          on ? "translate-x-[22px]" : "translate-x-0.5"
+        }`}
+      />
+    </button>
+  );
+}
+
+function AgentDetailView({
+  agentId,
+  state,
+  permissions,
+  activity,
+  onClose,
+  onSetPermission,
+  onNewConversation,
+  onDecommission,
+  onRecommission,
+}: {
+  agentId: AgentId;
+  state: string;
+  permissions: AgentPermissions;
+  activity: AgentActivity;
+  onClose: () => void;
+  onSetPermission: (patch: Partial<AgentPermissions>) => void;
+  onNewConversation: () => void;
+  onDecommission: () => void;
+  onRecommission: () => void;
+}) {
+  const m = AGENT_META[agentId];
+  const [confirmDecom, setConfirmDecom] = useState(false);
+  const isDot = agentId === "dot";
+  const stoodDown = state === "stood-down";
+  return (
+    <div className="absolute inset-0 z-40 bg-[#faf9f7] flex flex-col">
+      <header className="px-4 py-3 flex items-center gap-2 border-b border-black/5 bg-white">
+        <button
+          type="button"
+          onClick={onClose}
+          aria-label="Back"
+          className="text-[#505a5f] hover:text-[#1a1a1a] -ml-1 p-1"
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M15 18l-6-6 6-6" />
+          </svg>
+        </button>
+        <p className="text-sm font-semibold">{m.name}</p>
+      </header>
+
+      <div className="flex-1 overflow-y-auto">
+        <div className="max-w-[640px] mx-auto px-6 py-6 space-y-7">
+          {/* Identity */}
+          <div className="flex items-center gap-4">
+            <AgentAvatar id={agentId} className="w-14 h-14" />
+            <div className="min-w-0">
+              <div className="flex items-center gap-2">
+                <h2 className="text-xl font-semibold">{m.name}</h2>
+                {m.temporary && !stoodDown && (
+                  <TrayTag label="Here for now" color={m.accent} />
+                )}
+                {stoodDown && <TrayTag label="Stood down" color="#8a8a8a" />}
+              </div>
+              <p className="text-[13px] text-[#6a6a6a]">
+                {m.tagline}
+                {m.provider ? ` · ${m.provider}` : ""}
+              </p>
+            </div>
+          </div>
+
+          {/* What it is */}
+          <section className="space-y-2">
+            <p className="text-[15px] leading-relaxed text-[#2a2a2a]">{m.about}</p>
+          </section>
+
+          {/* What it can do */}
+          <section>
+            <h3 className="text-[11px] font-semibold uppercase tracking-wide text-[#8a8a8a] mb-2">
+              What {m.name} can do
+            </h3>
+            <ul className="space-y-2">
+              {m.capabilities.map((c, i) => (
+                <li key={i} className="flex items-start gap-2.5 text-[14px] text-[#2a2a2a]">
+                  <svg
+                    width="16" height="16" viewBox="0 0 24 24" fill="none"
+                    stroke={m.accent} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+                    className="mt-0.5 shrink-0"
+                  >
+                    <path d="M20 6 9 17l-5-5" />
+                  </svg>
+                  <span>{c}</span>
+                </li>
+              ))}
+            </ul>
+          </section>
+
+          {/* How to use it */}
+          <section>
+            <h3 className="text-[11px] font-semibold uppercase tracking-wide text-[#8a8a8a] mb-2">
+              How to use {m.name}
+            </h3>
+            <p className="text-[14px] text-[#2a2a2a]">{m.useHint}</p>
+          </section>
+
+          {/* What it's been doing */}
+          <section>
+            <h3 className="text-[11px] font-semibold uppercase tracking-wide text-[#8a8a8a] mb-2">
+              What {m.name} has been doing for you
+            </h3>
+            <div className="rounded-2xl border border-black/[0.07] bg-white divide-y divide-black/5">
+              <div className="flex items-center justify-between px-4 py-3">
+                <span className="text-[13px] text-[#6a6a6a]">Conversations</span>
+                <span className="text-[14px] font-medium">{activity.conversations}</span>
+              </div>
+              <div className="flex items-center justify-between px-4 py-3">
+                <span className="text-[13px] text-[#6a6a6a]">Last active</span>
+                <span className="text-[14px] font-medium">
+                  {activity.lastActive ? timeAgo(activity.lastActive) : "—"}
+                </span>
+              </div>
+              <div className="px-4 py-3">
+                <p className="text-[13px] text-[#6a6a6a] mb-1.5">Actions taken on your behalf</p>
+                {activity.actions.length ? (
+                  <ul className="space-y-1">
+                    {activity.actions.map((a, i) => (
+                      <li key={i} className="text-[13px] text-[#2a2a2a] capitalize">
+                        · {a}
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="text-[13px] text-[#9a9a9a]">
+                    Nothing filed yet — {m.name} only ever acts with your sign-in, and always leaves a receipt.
+                  </p>
+                )}
+              </div>
+            </div>
+          </section>
+
+          {/* Permissions */}
+          {!isDot && (
+            <section>
+              <h3 className="text-[11px] font-semibold uppercase tracking-wide text-[#8a8a8a] mb-2">
+                Settings &amp; permissions
+              </h3>
+              <div className="rounded-2xl border border-black/[0.07] bg-white divide-y divide-black/5">
+                <div className="flex items-center justify-between gap-4 px-4 py-3.5">
+                  <div className="min-w-0">
+                    <p className="text-[14px] font-medium">Act on my behalf</p>
+                    <p className="text-[12px] text-[#8a8a8a]">
+                      Let {m.name} complete things for you (always with your sign-in).
+                    </p>
+                  </div>
+                  <Toggle
+                    on={permissions.canAct}
+                    onChange={(v) => onSetPermission({ canAct: v })}
+                  />
+                </div>
+                <div className="flex items-center justify-between gap-4 px-4 py-3.5">
+                  <div className="min-w-0">
+                    <p className="text-[14px] font-medium">Offer proactive suggestions</p>
+                    <p className="text-[12px] text-[#8a8a8a]">
+                      Let {m.name} surface next steps rather than only answering.
+                    </p>
+                  </div>
+                  <Toggle
+                    on={permissions.proactive}
+                    onChange={(v) => onSetPermission({ proactive: v })}
+                  />
+                </div>
+              </div>
+            </section>
+          )}
+
+          {/* Actions */}
+          <section className="space-y-2 pb-4">
+            <button
+              type="button"
+              onClick={onNewConversation}
+              className="w-full rounded-xl px-4 py-3 text-[14px] font-medium text-white"
+              style={{ background: m.accent }}
+            >
+              Start a new conversation
+            </button>
+            {isDot ? (
+              <p className="text-center text-[12px] text-[#9a9a9a] pt-1">
+                Dot is your way in to government and can't be decommissioned.
+              </p>
+            ) : stoodDown ? (
+              <button
+                type="button"
+                onClick={onRecommission}
+                className="w-full rounded-xl border border-black/10 px-4 py-3 text-[14px] font-medium text-[#1a1a1a] hover:bg-black/[0.02]"
+              >
+                Recommission {m.name}
+              </button>
+            ) : confirmDecom ? (
+              <div className="rounded-xl border border-[#d4351c]/30 bg-[#d4351c]/[0.04] p-3 space-y-2">
+                <p className="text-[13px] text-[#2a2a2a]">
+                  Decommission {m.name}? Your conversations are kept and {m.name} can be brought back any time.
+                </p>
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={onDecommission}
+                    className="flex-1 rounded-lg bg-[#d4351c] px-3 py-2 text-[13px] font-medium text-white"
+                  >
+                    Decommission
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setConfirmDecom(false)}
+                    className="flex-1 rounded-lg border border-black/10 px-3 py-2 text-[13px] font-medium"
+                  >
+                    Keep
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <button
+                type="button"
+                onClick={() => setConfirmDecom(true)}
+                className="w-full rounded-xl px-4 py-3 text-[14px] font-medium text-[#d4351c] hover:bg-[#d4351c]/[0.05]"
+              >
+                Decommission {m.name}
+              </button>
+            )}
+          </section>
+        </div>
+      </div>
     </div>
   );
 }

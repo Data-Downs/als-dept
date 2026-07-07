@@ -1025,6 +1025,7 @@ export async function POST(req: NextRequest) {
     drivingContext = null,
     selfEmployedContext = null,
     familyContext = null,
+    permissions = { canAct: true, proactive: true },
   } = body as {
     messages: Array<{ role: string; content: unknown }>;
     profile?: Profile;
@@ -1036,6 +1037,7 @@ export async function POST(req: NextRequest) {
     drivingContext?: unknown;
     selfEmployedContext?: unknown;
     familyContext?: unknown;
+    permissions?: { canAct?: boolean; proactive?: boolean };
   };
 
   const doneLabels = (completed ?? [])
@@ -1082,11 +1084,18 @@ export async function POST(req: NextRequest) {
   const loop = [...messages];
   let reply = "";
 
+  // Permissions the citizen set on this agent gate which tools it may use.
+  const permittedTools = toolsFor(agent).filter((t) => {
+    if (permissions.canAct === false && t.name === "act") return false;
+    if (permissions.proactive === false && t.name === "suggest") return false;
+    return true;
+  });
+
   for (let i = 0; i < 6; i++) {
     const input: AnthropicChatInput = {
       systemPrompt,
       messages: loop,
-      tools: toolsFor(agent),
+      tools: permittedTools,
     };
     const result = await adapter.execute({
       input,
