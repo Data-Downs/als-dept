@@ -96,6 +96,25 @@ type Msg =
   | { role: "receipt"; content: string; receipt: Receipt }
   | { role: "introduce"; agentId: AgentId };
 
+type ConvoMeta = { title?: string; updatedAt: number };
+
+/** Compact, human relative time for the tray's conversation list. */
+function timeAgo(ts?: number): string {
+  if (!ts) return "";
+  const s = Math.floor((Date.now() - ts) / 1000);
+  if (s < 60) return "just now";
+  const m = Math.floor(s / 60);
+  if (m < 60) return `${m}m ago`;
+  const h = Math.floor(m / 60);
+  if (h < 24) return `${h}h ago`;
+  const d = Math.floor(h / 24);
+  if (d === 1) return "yesterday";
+  if (d < 7) return `${d} days ago`;
+  const w = Math.floor(d / 7);
+  if (w < 5) return `${w}w ago`;
+  return new Date(ts).toLocaleDateString("en-GB", { day: "numeric", month: "short" });
+}
+
 type Entry = { key: string; label: string };
 type Profile = {
   identity: Record<string, unknown>;
@@ -294,6 +313,15 @@ export default function AgentPage() {
     fay: [],
   });
   const [activeAgent, setActiveAgent] = useState<AgentId>("dot");
+  // Per-agent conversation metadata: a generated title and the last-active
+  // time, so each agent's thread surfaces in the tray as a resumable
+  // conversation. Persisted alongside the threads.
+  const [convoMeta, setConvoMeta] = useState<Partial<Record<AgentId, ConvoMeta>>>(
+    {},
+  );
+  // Dot's "where things stand" recap, generated fresh each time a persona with
+  // history is opened. Ephemeral — never persisted, never stored in the thread.
+  const [resumeSummary, setResumeSummary] = useState<string | null>(null);
   const [roster, setRoster] = useState<RosterEntry[]>([
     { id: "dot", state: "commissioned" },
   ]);
@@ -335,11 +363,16 @@ export default function AgentPage() {
   const gatewayVerified = useAppStore((s) => s.gatewayVerified);
   const identityVerified = useAppStore((s) => s.identityVerified);
 
-  const setThread = (id: AgentId, next: Msg[] | ((prev: Msg[]) => Msg[])) =>
+  const setThread = (id: AgentId, next: Msg[] | ((prev: Msg[]) => Msg[])) => {
     setThreads((t) => ({
       ...t,
       [id]: typeof next === "function" ? next(t[id] ?? []) : next,
     }));
+    setConvoMeta((cm) => ({
+      ...cm,
+      [id]: { title: cm[id]?.title, updatedAt: Date.now() },
+    }));
+  };
 
   function beginAuth(action: PendingAction, prof: Profile) {
     useAppStore.setState({
@@ -490,6 +523,62 @@ export default function AgentPage() {
     }
   }
 
+  // On reopening a persona with history, ask Dot to generate a "where things
+  // stand" recap and a short title for each agent's conversation. One call,
+  // grounded only in what's actually happened.
+  async function runResume(
+    prof: Profile,
+    rosterArg: RosterEntry[],
+    threadsArg: Record<AgentId, Msg[]>,
+  ) {
+    const digests: Record<string, string> = {};
+    for (const entry of rosterArg) {
+      const lines = (threadsArg[entry.id] ?? [])
+        .filter(
+          (m): m is { role: "user" | "assistant"; content: string } =>
+            (m.role === "user" || m.role === "assistant") &&
+            !HIDDEN_OPENERS.has(m.content) &&
+            !m.content.startsWith("[Inbound"),
+        )
+        .slice(-6)
+        .map(
+          (m) =>
+            `${m.role === "user" ? "Citizen" : AGENT_META[entry.id].name}: ${m.content}`,
+        );
+      if (lines.length) digests[entry.id] = lines.join("\n");
+    }
+    if (!Object.keys(digests).length) {
+      setResumeSummary(null);
+      return;
+    }
+    try {
+      const res = await fetch("/api/agent", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          mode: "resume",
+          profile: prof,
+          roster: rosterArg,
+          digests,
+        }),
+      });
+      const data = await res.json();
+      setResumeSummary(typeof data.summary === "string" ? data.summary : null);
+      if (data.titles && typeof data.titles === "object") {
+        setConvoMeta((cm) => {
+          const next = { ...cm };
+          for (const [aid, title] of Object.entries(data.titles as Record<string, string>)) {
+            const id = aid as AgentId;
+            next[id] = { title, updatedAt: next[id]?.updatedAt ?? Date.now() };
+          }
+          return next;
+        });
+      }
+    } catch {
+      /* recap is a nicety — never block the app on it */
+    }
+  }
+
   function introduceSpecialist(agentId: AgentId, by: AgentId) {
     setRoster((r) =>
       r.some((x) => x.id === agentId) ? r : [...r, { id: agentId, state: "introduced" }],
@@ -555,8 +644,10 @@ export default function AgentPage() {
     handover?: string | null;
     personaRecord?: Record<string, unknown> | null;
     currentUser?: string;
+    convoMeta?: Partial<Record<AgentId, ConvoMeta>>;
   }): boolean {
     if (s.threads) setThreads(s.threads);
+    setConvoMeta(s.convoMeta ?? {});
     if (s.profile) setProfile(s.profile);
     if (s.wallet) setWallet(s.wallet);
     if (s.inboundLog) setInboundLog(s.inboundLog);
@@ -584,7 +675,11 @@ export default function AgentPage() {
     try {
       const lastUser = localStorage.getItem("als-last-user") ?? "new-user";
       const raw = localStorage.getItem(`als-agent-state:${lastUser}`);
-      if (raw) restored = hydrateFrom(JSON.parse(raw));
+      if (raw) {
+        const s = JSON.parse(raw);
+        restored = hydrateFrom(s);
+        if (restored) runResume(s.profile ?? EMPTY, s.roster ?? [], s.threads ?? {});
+      }
     } catch {
       /* corrupt state — start fresh */
     }
@@ -614,6 +709,7 @@ export default function AgentPage() {
           handover,
           personaRecord,
           currentUser,
+          convoMeta,
         }),
       );
       localStorage.setItem("als-last-user", currentUser);
@@ -635,6 +731,7 @@ export default function AgentPage() {
     handover,
     personaRecord,
     currentUser,
+    convoMeta,
   ]);
 
   // When the login wall closes, decide whether the agent's action completed.
@@ -687,7 +784,7 @@ export default function AgentPage() {
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight });
-  }, [messages, loading]);
+  }, [messages, loading, resumeSummary]);
 
   function submitText(text: string) {
     const t = text.trim();
@@ -695,6 +792,7 @@ export default function AgentPage() {
     const next: Msg[] = [...messages, { role: "user", content: t }];
     setThread(activeAgent, next);
     setInput("");
+    setResumeSummary(null);
     setSuggestions({ agent: activeAgent, items: [] });
     send(activeAgent, next, profile);
   }
@@ -797,6 +895,7 @@ export default function AgentPage() {
         const s = JSON.parse(raw);
         if (s.threads?.dot?.length) {
           hydrateFrom(s);
+          runResume(s.profile ?? EMPTY, s.roster ?? [], s.threads ?? {});
           return;
         }
       }
@@ -805,6 +904,8 @@ export default function AgentPage() {
     }
     // No saved session — seed fresh. Set currentUser FIRST so the save effect
     // never writes this reset into the previous persona's slot.
+    setResumeSummary(null);
+    setConvoMeta({});
     setCurrentUser(userId);
     setPersonaRecord(null);
     setInboundLog([]);
@@ -1027,6 +1128,18 @@ export default function AgentPage() {
                 </div>
               ),
             )}
+            {activeAgent === "dot" && resumeSummary && !loading && (
+              <div className="rounded-2xl border border-black/[0.07] bg-white px-4 py-4">
+                <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8a8a8a] mb-2">
+                  Where things stand
+                </p>
+                <div className="text-[15px] leading-relaxed prose prose-sm prose-neutral max-w-none prose-p:my-1.5 prose-ul:my-1.5">
+                  <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                    {resumeSummary}
+                  </ReactMarkdown>
+                </div>
+              </div>
+            )}
             {loading && (
               <div className="flex gap-1.5 py-1">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#c4c4c4] animate-bounce" />
@@ -1082,9 +1195,10 @@ export default function AgentPage() {
           <AgentTray
             roster={roster}
             activeAgent={activeAgent}
+            conversations={trayConversations(threads, convoMeta)}
             onClose={() => setTrayOpen(false)}
-            onSelect={(entry) => {
-              setActiveAgent(entry.state === "commissioned" ? entry.id : "dot");
+            onOpen={(id) => {
+              setActiveAgent(id);
               setTrayOpen(false);
             }}
           />
@@ -1362,21 +1476,54 @@ function TrayTag({ label, color }: { label: string; color: string }) {
   );
 }
 
+type TrayConversation = { title: string; updatedAt?: number; hasHistory: boolean };
+
+/** Per-agent conversation summary for the tray: a title (generated, else the
+ *  first thing the citizen said, else the tagline) and when it was last active. */
+function trayConversations(
+  threads: Record<AgentId, Msg[]>,
+  convoMeta: Partial<Record<AgentId, ConvoMeta>>,
+): Partial<Record<AgentId, TrayConversation>> {
+  const out: Partial<Record<AgentId, TrayConversation>> = {};
+  for (const id of Object.keys(threads) as AgentId[]) {
+    const real = (threads[id] ?? []).filter(
+      (m): m is { role: "user" | "assistant"; content: string } =>
+        (m.role === "user" || m.role === "assistant") &&
+        !HIDDEN_OPENERS.has(m.content) &&
+        !m.content.startsWith("[Inbound"),
+    );
+    const firstAsk = real.find((m) => m.role === "user")?.content;
+    const fallback = firstAsk
+      ? firstAsk.length > 42
+        ? `${firstAsk.slice(0, 42).trimEnd()}…`
+        : firstAsk
+      : AGENT_META[id].tagline;
+    out[id] = {
+      title: convoMeta[id]?.title || fallback,
+      updatedAt: convoMeta[id]?.updatedAt,
+      hasHistory: real.length > 0,
+    };
+  }
+  return out;
+}
+
 function AgentTray({
   roster,
   activeAgent,
+  conversations,
   onClose,
-  onSelect,
+  onOpen,
 }: {
   roster: RosterEntry[];
   activeAgent: AgentId;
+  conversations: Partial<Record<AgentId, TrayConversation>>;
   onClose: () => void;
-  onSelect: (entry: RosterEntry) => void;
+  onOpen: (id: AgentId) => void;
 }) {
   return (
     <div className="absolute inset-0 z-40">
       <div className="absolute inset-0 bg-black/20" onClick={onClose} />
-      <aside className="absolute left-0 top-0 bottom-0 w-[280px] bg-white border-r border-black/10 shadow-xl flex flex-col">
+      <aside className="absolute left-0 top-0 bottom-0 w-[300px] bg-white border-r border-black/10 shadow-xl flex flex-col">
         <div className="px-5 py-4 border-b border-black/5 flex items-center justify-between">
           <p className="text-sm font-semibold">Your agents</p>
           <button
@@ -1390,36 +1537,62 @@ function AgentTray({
             </svg>
           </button>
         </div>
-        <div className="p-2 space-y-1 overflow-y-auto">
+        <div className="p-2 space-y-3 overflow-y-auto">
           {roster.map((entry) => {
             const m = AGENT_META[entry.id];
+            const convo = conversations[entry.id];
             const isActive = entry.id === activeAgent;
+            const openable = entry.state !== "introduced";
             return (
-              <button
-                key={entry.id}
-                type="button"
-                onClick={() => onSelect(entry)}
-                className={`w-full flex items-center gap-3 rounded-xl px-3 py-2.5 text-left transition-colors ${
-                  isActive ? "bg-[#1d70b8]/[0.08]" : "hover:bg-black/[0.03]"
-                } ${entry.state === "stood-down" ? "opacity-60" : ""}`}
-              >
-                <AgentAvatar id={entry.id} className="w-8 h-8" />
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-2">
-                    <p className="text-sm font-semibold truncate">{m.name}</p>
-                    {entry.state === "introduced" && (
-                      <TrayTag label="Introduced" color={m.accent} />
-                    )}
-                    {entry.state === "commissioned" && m.temporary && (
-                      <TrayTag label="Here for now" color={m.accent} />
-                    )}
-                    {entry.state === "stood-down" && (
-                      <TrayTag label="Stood down" color="#8a8a8a" />
-                    )}
+              <div key={entry.id} className={entry.state === "stood-down" ? "opacity-60" : ""}>
+                <div className="flex items-center gap-3 px-3">
+                  <AgentAvatar id={entry.id} className="w-8 h-8" />
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-2">
+                      <p className="text-sm font-semibold truncate">{m.name}</p>
+                      {entry.state === "introduced" && (
+                        <TrayTag label="Introduced" color={m.accent} />
+                      )}
+                      {entry.state === "commissioned" && m.temporary && (
+                        <TrayTag label="Here for now" color={m.accent} />
+                      )}
+                      {entry.state === "stood-down" && (
+                        <TrayTag label="Stood down" color="#8a8a8a" />
+                      )}
+                    </div>
+                    <p className="text-[11px] text-[#8a8a8a] truncate">{m.tagline}</p>
                   </div>
-                  <p className="text-[11px] text-[#8a8a8a] truncate">{m.tagline}</p>
                 </div>
-              </button>
+                {openable && convo?.hasHistory ? (
+                  <button
+                    type="button"
+                    onClick={() => onOpen(entry.id)}
+                    className={`mt-1 ml-[26px] w-[calc(100%-26px)] flex items-start gap-2 rounded-xl border-l-2 pl-3 pr-2 py-2 text-left transition-colors ${
+                      isActive ? "bg-black/[0.04]" : "hover:bg-black/[0.03]"
+                    }`}
+                    style={{ borderColor: `${m.accent}66` }}
+                  >
+                    <div className="min-w-0 flex-1">
+                      <p className="text-[13px] leading-snug truncate">{convo.title}</p>
+                      {convo.updatedAt && (
+                        <p className="text-[11px] text-[#a4a4a4]">{timeAgo(convo.updatedAt)}</p>
+                      )}
+                    </div>
+                  </button>
+                ) : openable ? (
+                  <button
+                    type="button"
+                    onClick={() => onOpen(entry.id)}
+                    className="mt-1 ml-[26px] w-[calc(100%-26px)] text-left rounded-xl pl-3 pr-2 py-1.5 text-[12px] text-[#a4a4a4] hover:bg-black/[0.03] transition-colors"
+                  >
+                    Start a conversation
+                  </button>
+                ) : (
+                  <p className="mt-1 ml-[26px] pl-3 py-1.5 text-[12px] text-[#c4c4c4]">
+                    Not yet commissioned
+                  </p>
+                )}
+              </div>
             );
           })}
         </div>

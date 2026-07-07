@@ -894,7 +894,93 @@ async function getEnv(name: string): Promise<string | undefined> {
   return v;
 }
 
+const RESUME_SYSTEM = `You are Dot — the citizen's personal government coordinator agent. The citizen has just reopened the app, and you are greeting them back.
+
+Write a brief, warm "where things stand" recap: what you and the cohort of agents have been doing on their behalf, what is now in hand, and what — if anything — still needs them. Then, in one closing line, invite them to tell you what they'd like to look at or sort next.
+
+Rules:
+- Ground EVERYTHING only in the facts given below. Never invent a service, a date, an amount, an action or an agent that isn't there. If very little has happened, keep the whole recap to a sentence.
+- Calm and plain. Two to four short sentences, or a few short bullet points — not both. No greeting fluff like "Welcome back!", no exclamation marks, no urgency or guilt about time away.
+- Refer to specialist agents by name (Reg, Grace, Miles, Sol, Robin, Fay) where they've been involved.
+- Do NOT use the word "whatever".
+
+Also write a short 3–5 word title for each agent's conversation listed below — a plain label of what it was about (e.g. "Confirmation statement filed", "David's affairs", "£1,800 refund").
+
+Return ONLY a JSON object, no prose around it:
+{"summary": "<the recap, may contain \\n for line breaks or - for bullets>", "titles": {"<agentId>": "<title>", ...}}`;
+
+/** Build the compact factual digest the resume recap is grounded in. */
+function resumeFacts(
+  profile: Profile,
+  roster: Array<{ id: string; state: string }>,
+  digests: Record<string, string>,
+): string {
+  const id = profile?.identity ?? {};
+  const lines: string[] = [];
+  const who = id.fullName || id.name;
+  if (who) lines.push(`Citizen: ${who}${id.location ? `, ${id.location}` : ""}.`);
+  const list = (label: string, entries?: Array<{ label: string }>) => {
+    if (entries && entries.length) {
+      lines.push(`${label}: ${entries.map((e) => e.label).join("; ")}.`);
+    }
+  };
+  list("Responsible for", profile?.responsibilities);
+  list("Liable for", profile?.liabilities);
+  list("Eligible for", profile?.eligibilities);
+  lines.push("");
+  lines.push("Conversations so far (agentId — recent messages):");
+  for (const entry of roster) {
+    const d = digests[entry.id];
+    if (!d || !d.trim()) continue;
+    const state = entry.state === "stood-down" ? " [stood down]" : "";
+    lines.push(`\n### ${entry.id}${state}\n${d.trim()}`);
+  }
+  return lines.join("\n");
+}
+
+async function handleResume(body: {
+  profile?: Profile;
+  roster?: Array<{ id: string; state: string }>;
+  digests?: Record<string, string>;
+}): Promise<Response> {
+  const profile = body.profile ?? emptyProfile();
+  const roster = body.roster ?? [];
+  const digests = body.digests ?? {};
+  const apiKey = await getEnv("ANTHROPIC_API_KEY");
+  if (!apiKey) return Response.json({ error: "No ANTHROPIC_API_KEY" }, { status: 500 });
+
+  const adapter = new AnthropicAdapter();
+  adapter.initialize({ apiKey });
+  const result = await adapter.execute({
+    input: {
+      systemPrompt: RESUME_SYSTEM,
+      messages: [{ role: "user", content: resumeFacts(profile, roster, digests) }],
+      tools: [],
+    } as AnthropicChatInput,
+    context: { sessionId: "", traceId: "", userId: "" },
+  });
+  if (!result.success) {
+    return Response.json({ summary: null, titles: {} });
+  }
+  const text = (result.output as AnthropicChatOutput).responseText ?? "";
+  const match = text.match(/\{[\s\S]*\}/);
+  try {
+    const parsed = JSON.parse(match ? match[0] : text) as {
+      summary?: string;
+      titles?: Record<string, string>;
+    };
+    return Response.json({
+      summary: parsed.summary ?? null,
+      titles: parsed.titles ?? {},
+    });
+  } catch {
+    return Response.json({ summary: null, titles: {} });
+  }
+}
+
 export async function POST(req: NextRequest) {
+  const body = (await req.json()) as Record<string, unknown>;
+  if (body.mode === "resume") return handleResume(body);
   const {
     messages,
     profile,
@@ -906,7 +992,7 @@ export async function POST(req: NextRequest) {
     drivingContext = null,
     selfEmployedContext = null,
     familyContext = null,
-  } = (await req.json()) as {
+  } = body as {
     messages: Array<{ role: string; content: unknown }>;
     profile?: Profile;
     completed?: string[];
