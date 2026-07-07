@@ -5,6 +5,11 @@ import {
   type AnthropicChatOutput,
 } from "@als/adapters";
 import { lookupCompanyByName } from "@/lib/companies-house";
+import {
+  lookupVehicleLive,
+  simulateVehicle,
+  type KnownVehicle,
+} from "@/lib/vehicles";
 import { getAnyManifest, getGraphEngine } from "@/lib/service-data";
 
 /**
@@ -434,6 +439,21 @@ const TOOLS = [
     },
   },
   {
+    name: "lookup_vehicle",
+    description:
+      "Look a vehicle up by its registration on the live DVLA and DVSA records — its make, colour, fuel and year, its tax status and tax-due date, and its MOT status, expiry and recent test history (including advisories). Call this whenever you know or are given a registration and need the real, current picture of a car. It cannot return insurance — that isn't published to agents.",
+    input_schema: {
+      type: "object",
+      properties: {
+        registration: {
+          type: "string",
+          description: "The vehicle registration / number plate, e.g. 'GF19 FHW'.",
+        },
+      },
+      required: ["registration"],
+    },
+  },
+  {
     name: "introduce_specialist",
     description:
       "Introduce a specialist government agent to the citizen and place them in the citizen's agent tray. Use 'reg' — the limited company agent (Companies House & HMRC) — once you've recognised they run a limited company. Use 'grace' — a bereavement agent — once it's clear a person close to them has died. Use 'driving' — Miles, the driving agent (DVLA & DVSA) — once it's clear they drive, have a vehicle, or need anything to do with a licence, MOT, tax or a driving test. Use 'sol' — the working-for-yourself agent (HMRC) — once it's clear they're self-employed, a sole trader, a freelancer or do gig work, and are NOT running a limited company. Use 'robin' — a new-baby agent — once it's clear a baby is on the way or newly arrived. Use 'fay' — the family and children agent (HMRC, DfE & council) — once it's clear they have children (beyond a brand-new baby): school, childcare, additional needs, or child-related benefits.",
@@ -534,6 +554,11 @@ You've been handed what's already known about them (below). Don't ask for anythi
 - **Their vehicles** — vehicle tax (VED) and its renewal, the MOT and when it's due, a SORN when a vehicle is off the road, and keeping the V5C and address current.
 - **Learning to drive** — booking and rebooking theory and practical tests with DVSA, and what must be in place first.
 - **The joins nobody sees** — a vehicle can't be taxed without a valid MOT; you can't drive without a valid licence and insurance. You hold those dependencies so they never trip the citizen up.
+
+## Looking a vehicle up
+Whenever you know a registration — from the briefing below, or because they've just given you one — call lookup_vehicle with it to read the real, current DVLA and DVSA record: make, colour, fuel and year, the tax status and tax-due date, and the MOT status, expiry and recent test history (including advisories). Reason over exactly what it returns; never guess a date or invent an advisory. If it comes back not found, say so plainly and ask them to check the plate.
+
+One thing you genuinely cannot get: **insurance**. It's held in the Motor Insurance Database, which isn't published to agents, so lookup_vehicle can't return it. Be honest about that — it's a real gap, not something to paper over. If insurance matters, tell them the database exists and point them to askMID to check their own vehicle.
 
 ## How you work
 Keep a live picture of their licence and each vehicle with the real renewal, MOT and tax dates, and watch for whatever's next — surfacing it before it lapses, never after. When something's due that you can do — tax a vehicle, renew a licence, book a test — offer it as one action and, on their yes, do it (they sign in first; you never do it silently). For anything that must happen in person, or that DVLA/DVSA hasn't published for agents yet, say so plainly and point the way.
@@ -725,7 +750,7 @@ const SPECIALISTS: Record<string, SpecialistDef> = {
     kind: "domain",
     skills: DRIVING_SYSTEM,
     serviceKeywords: /driv|licence|vehicle|mot|dvla|dvsa|sorn|provisional|theory|road tax/i,
-    tools: DOMAIN_TOOLS,
+    tools: [...DOMAIN_TOOLS, "lookup_vehicle"],
     briefing: (p, ctx) => buildDrivingBriefing(p, ctx.drivingContext),
   },
   sol: {
@@ -1027,6 +1052,19 @@ export async function POST(req: NextRequest) {
     return Response.json({ error: "No ANTHROPIC_API_KEY" }, { status: 500 });
   }
   const chKey = await getEnv("COMPANIES_HOUSE_API_KEY");
+  const vehicleKeys = {
+    vesApiKey: await getEnv("DVLA_VES_API_KEY"),
+    motTokenUrl: await getEnv("DVSA_MOT_TOKEN_URL"),
+    motClientId: await getEnv("DVSA_MOT_CLIENT_ID"),
+    motClientSecret: await getEnv("DVSA_MOT_CLIENT_SECRET"),
+    motScope: await getEnv("DVSA_MOT_SCOPE"),
+    motApiKey: await getEnv("DVSA_MOT_API_KEY"),
+  };
+  const knownVehicles: KnownVehicle[] = Array.isArray(
+    (drivingContext as { vehicles?: unknown })?.vehicles,
+  )
+    ? ((drivingContext as { vehicles: KnownVehicle[] }).vehicles ?? [])
+    : [];
 
   const adapter = new AnthropicAdapter();
   adapter.initialize({ apiKey });
@@ -1085,6 +1123,28 @@ export async function POST(req: NextRequest) {
               type: "tool_result",
               tool_use_id: tc.id,
               content: JSON.stringify(company ? { found: true, company } : { found: false }),
+            };
+          } catch (e) {
+            return {
+              type: "tool_result",
+              tool_use_id: tc.id,
+              content: JSON.stringify({ found: false, error: String(e) }),
+            };
+          }
+        }
+        if (tc.name === "lookup_vehicle") {
+          const reg = String(tc.input.registration ?? "");
+          try {
+            const live = await lookupVehicleLive(reg, vehicleKeys).catch(
+              () => null,
+            );
+            const vehicle = live ?? simulateVehicle(reg, knownVehicles);
+            return {
+              type: "tool_result",
+              tool_use_id: tc.id,
+              content: JSON.stringify(
+                vehicle ? { found: true, vehicle } : { found: false },
+              ),
             };
           } catch (e) {
             return {
