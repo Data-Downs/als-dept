@@ -321,7 +321,12 @@ export default function AgentPage() {
   );
   // Dot's "where things stand" recap, generated fresh each time a persona with
   // history is opened. Ephemeral — never persisted, never stored in the thread.
+  // While it's on screen the prior thread is hidden; it's reachable from the
+  // tray. `resuming` covers the moment between opening and the recap arriving;
+  // `reveal` drives the type-it-out animation.
   const [resumeSummary, setResumeSummary] = useState<string | null>(null);
+  const [resuming, setResuming] = useState(false);
+  const [reveal, setReveal] = useState(0);
   const [roster, setRoster] = useState<RosterEntry[]>([
     { id: "dot", state: "commissioned" },
   ]);
@@ -549,8 +554,13 @@ export default function AgentPage() {
     }
     if (!Object.keys(digests).length) {
       setResumeSummary(null);
+      setResuming(false);
       return;
     }
+    // Land on Dot with a "catching up" state — the prior thread stays hidden
+    // behind the tray until the recap streams in (or the citizen picks one).
+    setActiveAgent("dot");
+    setResuming(true);
     try {
       const res = await fetch("/api/agent", {
         method: "POST",
@@ -564,6 +574,7 @@ export default function AgentPage() {
       });
       const data = await res.json();
       setResumeSummary(typeof data.summary === "string" ? data.summary : null);
+      setResuming(false);
       if (data.titles && typeof data.titles === "object") {
         setConvoMeta((cm) => {
           const next = { ...cm };
@@ -576,6 +587,7 @@ export default function AgentPage() {
       }
     } catch {
       /* recap is a nicety — never block the app on it */
+      setResuming(false);
     }
   }
 
@@ -784,7 +796,23 @@ export default function AgentPage() {
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight });
-  }, [messages, loading, resumeSummary]);
+  }, [messages, loading, resumeSummary, reveal]);
+
+  // Type the recap out in real time once it arrives.
+  useEffect(() => {
+    if (!resumeSummary) {
+      setReveal(0);
+      return;
+    }
+    setReveal(0);
+    let n = 0;
+    const id = setInterval(() => {
+      n += 3;
+      setReveal(n);
+      if (n >= resumeSummary.length) clearInterval(id);
+    }, 16);
+    return () => clearInterval(id);
+  }, [resumeSummary]);
 
   function submitText(text: string) {
     const t = text.trim();
@@ -793,6 +821,7 @@ export default function AgentPage() {
     setThread(activeAgent, next);
     setInput("");
     setResumeSummary(null);
+    setResuming(false);
     setSuggestions({ agent: activeAgent, items: [] });
     send(activeAgent, next, profile);
   }
@@ -905,6 +934,7 @@ export default function AgentPage() {
     // No saved session — seed fresh. Set currentUser FIRST so the save effect
     // never writes this reset into the previous persona's slot.
     setResumeSummary(null);
+    setResuming(false);
     setConvoMeta({});
     setCurrentUser(userId);
     setPersonaRecord(null);
@@ -975,6 +1005,9 @@ export default function AgentPage() {
   }
 
   const active = AGENT_META[activeAgent];
+  // The resume landing: Dot's welcome + streamed recap, shown instead of the
+  // thread. The prior conversation is a tap away in the tray.
+  const landing = activeAgent === "dot" && (resuming || !!resumeSummary);
 
   return (
     <div className="h-screen w-screen flex bg-[#faf9f7] text-[#1a1a1a] overflow-hidden">
@@ -1092,6 +1125,24 @@ export default function AgentPage() {
 
         <div ref={scrollRef} className="flex-1 overflow-y-auto px-6 py-6">
           <div className="max-w-[640px] mx-auto space-y-5">
+            {landing ? (
+              resumeSummary ? (
+                <div className="flex">
+                  <div className="text-[15px] leading-relaxed max-w-[85%] prose prose-sm prose-neutral max-w-none prose-p:my-2 prose-ul:my-2">
+                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                      {resumeSummary.slice(0, reveal)}
+                    </ReactMarkdown>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex gap-1.5 py-1">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#c4c4c4] animate-bounce" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#c4c4c4] animate-bounce [animation-delay:120ms]" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#c4c4c4] animate-bounce [animation-delay:240ms]" />
+                </div>
+              )
+            ) : (
+              <>
             {visible.map((m, i) =>
               m.role === "receipt" ? (
                 <ReceiptCard
@@ -1128,18 +1179,6 @@ export default function AgentPage() {
                 </div>
               ),
             )}
-            {activeAgent === "dot" && resumeSummary && !loading && (
-              <div className="rounded-2xl border border-black/[0.07] bg-white px-4 py-4">
-                <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8a8a8a] mb-2">
-                  Where things stand
-                </p>
-                <div className="text-[15px] leading-relaxed prose prose-sm prose-neutral max-w-none prose-p:my-1.5 prose-ul:my-1.5">
-                  <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                    {resumeSummary}
-                  </ReactMarkdown>
-                </div>
-              </div>
-            )}
             {loading && (
               <div className="flex gap-1.5 py-1">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#c4c4c4] animate-bounce" />
@@ -1167,6 +1206,8 @@ export default function AgentPage() {
                   ))}
                 </div>
               )}
+              </>
+            )}
           </div>
         </div>
 
@@ -1199,6 +1240,8 @@ export default function AgentPage() {
             onClose={() => setTrayOpen(false)}
             onOpen={(id) => {
               setActiveAgent(id);
+              setResumeSummary(null);
+              setResuming(false);
               setTrayOpen(false);
             }}
           />
