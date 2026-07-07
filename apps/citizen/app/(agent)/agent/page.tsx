@@ -404,8 +404,20 @@ export default function AgentPage() {
     const vehicles = Array.isArray(personaRecord.vehicles)
       ? (personaRecord.vehicles as Record<string, unknown>[])
       : [];
+    const issued = lic?.issued ?? lic?.issueDate ?? lic?.validFrom;
+    const issuedYear = issued
+      ? Number(String(issued).slice(0, 4)) || undefined
+      : undefined;
+    const age = personaRecord.age != null ? Number(personaRecord.age) : undefined;
     return {
-      licence: lic?.expires ? { expiry: formatDate(String(lic.expires)) } : {},
+      licence: {
+        expiry: lic?.expires ? formatDate(String(lic.expires)) : undefined,
+        categories: Array.isArray(lic?.categories)
+          ? (lic!.categories as string[])
+          : undefined,
+        issuedYear,
+        holderAge: Number.isFinite(age) ? age : undefined,
+      },
       vehicles: vehicles.map((v) => ({
         make: v.make,
         model: v.model,

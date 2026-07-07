@@ -6,9 +6,9 @@ import {
 } from "@als/adapters";
 import { lookupCompanyByName } from "@/lib/companies-house";
 import {
-  lookupVehicleLive,
-  simulateVehicle,
+  generateVehicle,
   type KnownVehicle,
+  type LicenceContext,
 } from "@/lib/vehicles";
 import { getAnyManifest, getGraphEngine } from "@/lib/service-data";
 
@@ -556,7 +556,15 @@ You've been handed what's already known about them (below). Don't ask for anythi
 - **The joins nobody sees** — a vehicle can't be taxed without a valid MOT; you can't drive without a valid licence and insurance. You hold those dependencies so they never trip the citizen up.
 
 ## Looking a vehicle up
-Whenever you know a registration — from the briefing below, or because they've just given you one — call lookup_vehicle with it to read the real, current DVLA and DVSA record: make, colour, fuel and year, the tax status and tax-due date, and the MOT status, expiry and recent test history (including advisories). Reason over exactly what it returns; never guess a date or invent an advisory. If it comes back not found, say so plainly and ask them to check the plate.
+Whenever you know or are given a registration — from the briefing below, or because they've just typed one — call lookup_vehicle with it. It returns the full DVLA/DVSA picture of that vehicle:
+- **What it is** — make, model, colour, body type, fuel and year (and engine where relevant).
+- **Tax** — status (taxed, untaxed or SORN) and the tax-due date.
+- **MOT** — status, the current expiry (or, for a car under three years old, that its first MOT isn't due yet), and recent test history with mileage and advisories.
+- **Recalls** — whether there's an open manufacturer safety recall, and what it's for.
+- **Clean-air / ULEZ** — whether it meets the emissions standard or would face a daily charge.
+- **Their licence** — the category the vehicle needs and whether their current licence actually entitles them to drive it.
+
+Reason over exactly what it returns — never guess a date, a recall or an advisory. Lead with whatever genuinely needs them (an untaxed vehicle, an expired MOT, an open recall, a vehicle they're not licensed to drive), then fill in the rest calmly. If they can't legally drive it on their licence, say so clearly and kindly — that's important.
 
 One thing you genuinely cannot get: **insurance**. It's held in the Motor Insurance Database, which isn't published to agents, so lookup_vehicle can't return it. Be honest about that — it's a real gap, not something to paper over. If insurance matters, tell them the database exists and point them to askMID to check their own vehicle.
 
@@ -1052,19 +1060,14 @@ export async function POST(req: NextRequest) {
     return Response.json({ error: "No ANTHROPIC_API_KEY" }, { status: 500 });
   }
   const chKey = await getEnv("COMPANIES_HOUSE_API_KEY");
-  const vehicleKeys = {
-    vesApiKey: await getEnv("DVLA_VES_API_KEY"),
-    motTokenUrl: await getEnv("DVSA_MOT_TOKEN_URL"),
-    motClientId: await getEnv("DVSA_MOT_CLIENT_ID"),
-    motClientSecret: await getEnv("DVSA_MOT_CLIENT_SECRET"),
-    motScope: await getEnv("DVSA_MOT_SCOPE"),
-    motApiKey: await getEnv("DVSA_MOT_API_KEY"),
+  const dc = (drivingContext ?? {}) as {
+    vehicles?: KnownVehicle[];
+    licence?: LicenceContext;
   };
-  const knownVehicles: KnownVehicle[] = Array.isArray(
-    (drivingContext as { vehicles?: unknown })?.vehicles,
-  )
-    ? ((drivingContext as { vehicles: KnownVehicle[] }).vehicles ?? [])
+  const knownVehicles: KnownVehicle[] = Array.isArray(dc.vehicles)
+    ? dc.vehicles
     : [];
+  const licenceContext: LicenceContext | undefined = dc.licence;
 
   const adapter = new AnthropicAdapter();
   adapter.initialize({ apiKey });
@@ -1134,25 +1137,12 @@ export async function POST(req: NextRequest) {
         }
         if (tc.name === "lookup_vehicle") {
           const reg = String(tc.input.registration ?? "");
-          try {
-            const live = await lookupVehicleLive(reg, vehicleKeys).catch(
-              () => null,
-            );
-            const vehicle = live ?? simulateVehicle(reg, knownVehicles);
-            return {
-              type: "tool_result",
-              tool_use_id: tc.id,
-              content: JSON.stringify(
-                vehicle ? { found: true, vehicle } : { found: false },
-              ),
-            };
-          } catch (e) {
-            return {
-              type: "tool_result",
-              tool_use_id: tc.id,
-              content: JSON.stringify({ found: false, error: String(e) }),
-            };
-          }
+          const vehicle = generateVehicle(reg, knownVehicles, licenceContext);
+          return {
+            type: "tool_result",
+            tool_use_id: tc.id,
+            content: JSON.stringify({ found: true, vehicle }),
+          };
         }
         if (tc.name === "introduce_specialist") {
           introduce = { agentId: String(tc.input.agentId) };
