@@ -1582,8 +1582,8 @@ function AgentTray({
     <div className="absolute inset-0 z-40">
       <div className="absolute inset-0 bg-black/20" onClick={onClose} />
       <aside className="absolute left-0 top-0 bottom-0 w-[300px] bg-white border-r border-black/10 shadow-xl flex flex-col">
-        <div className="px-5 py-4 border-b border-black/5 flex items-center justify-between">
-          <p className="text-sm font-semibold">Your agents</p>
+        <div className="px-4 pt-4 pb-2 flex items-center justify-between">
+          <p className="text-[13px] font-semibold text-[#1a1a1a]">Your agents</p>
           <button
             type="button"
             onClick={onClose}
@@ -1595,66 +1595,73 @@ function AgentTray({
             </svg>
           </button>
         </div>
-        <div className="p-2 space-y-3 overflow-y-auto">
+        <div className="px-2 pb-2 overflow-y-auto">
           {roster.map((entry) => {
             const m = AGENT_META[entry.id];
             const convo = conversations[entry.id];
             const isActive = entry.id === activeAgent;
             const openable = entry.state !== "introduced";
             return (
-              <div key={entry.id} className={entry.state === "stood-down" ? "opacity-60" : ""}>
-                <div className="flex items-center gap-3 px-3">
-                  <AgentAvatar id={entry.id} className="w-8 h-8" />
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-2">
-                      <p className="text-sm font-semibold truncate">{m.name}</p>
-                      {entry.state === "introduced" && (
-                        <TrayTag label="Introduced" color={m.accent} />
-                      )}
-                      {entry.state === "commissioned" && m.temporary && (
-                        <TrayTag label="Here for now" color={m.accent} />
-                      )}
-                      {entry.state === "stood-down" && (
-                        <TrayTag label="Stood down" color="#8a8a8a" />
-                      )}
-                    </div>
-                    <p className="text-[11px] text-[#8a8a8a] truncate">{m.tagline}</p>
-                  </div>
+              <div
+                key={entry.id}
+                className={entry.state === "stood-down" ? "opacity-55" : ""}
+              >
+                <div className="flex items-center gap-2 px-2.5 pt-4 pb-1">
+                  <span
+                    className="w-[7px] h-[7px] rounded-full shrink-0"
+                    style={{ background: m.accent }}
+                  />
+                  <span className="text-[12px] font-medium tracking-wide text-[#8a8a8a] truncate">
+                    {m.name}
+                  </span>
+                  {entry.state === "introduced" && (
+                    <TrayTag label="Introduced" color={m.accent} />
+                  )}
+                  {entry.state === "commissioned" && m.temporary && (
+                    <TrayTag label="Here for now" color={m.accent} />
+                  )}
+                  {entry.state === "stood-down" && (
+                    <TrayTag label="Stood down" color="#8a8a8a" />
+                  )}
                 </div>
                 {openable && convo?.hasHistory ? (
                   <button
                     type="button"
                     onClick={() => onOpen(entry.id)}
-                    className={`mt-1 ml-[26px] w-[calc(100%-26px)] flex items-start gap-2 rounded-xl border-l-2 pl-3 pr-2 py-2 text-left transition-colors ${
-                      isActive ? "bg-black/[0.04]" : "hover:bg-black/[0.03]"
+                    className={`w-full flex items-center gap-3 rounded-lg px-2.5 py-2.5 text-left transition-colors ${
+                      isActive ? "bg-black/[0.05]" : "hover:bg-black/[0.035]"
                     }`}
-                    style={{ borderColor: `${m.accent}66` }}
                   >
-                    <div className="min-w-0 flex-1">
-                      <p className="text-[13px] leading-snug truncate">{convo.title}</p>
-                      {convo.updatedAt && (
-                        <p className="text-[11px] text-[#a4a4a4]">{timeAgo(convo.updatedAt)}</p>
-                      )}
-                    </div>
+                    <span className="w-4 h-4 rounded-full border-[1.5px] border-[#cbcbcb] shrink-0" />
+                    <span className="min-w-0 flex-1 truncate text-[14px] text-[#1a1a1a]">
+                      {convo.title}
+                    </span>
+                    {convo.updatedAt && (
+                      <span className="shrink-0 text-[11px] text-[#b4b4b4]">
+                        {timeAgo(convo.updatedAt)}
+                      </span>
+                    )}
                   </button>
                 ) : openable ? (
                   <button
                     type="button"
                     onClick={() => onOpen(entry.id)}
-                    className="mt-1 ml-[26px] w-[calc(100%-26px)] text-left rounded-xl pl-3 pr-2 py-1.5 text-[12px] text-[#a4a4a4] hover:bg-black/[0.03] transition-colors"
+                    className="w-full flex items-center gap-3 rounded-lg px-2.5 py-2.5 text-left text-[#a4a4a4] hover:bg-black/[0.035] transition-colors"
                   >
-                    Start a conversation
+                    <span className="w-4 h-4 rounded-full border-[1.5px] border-dashed border-[#d4d4d4] shrink-0" />
+                    <span className="text-[14px]">Start a conversation</span>
                   </button>
                 ) : (
-                  <p className="mt-1 ml-[26px] pl-3 py-1.5 text-[12px] text-[#c4c4c4]">
-                    Not yet commissioned
-                  </p>
+                  <div className="flex items-center gap-3 px-2.5 py-2.5 text-[#c4c4c4]">
+                    <span className="w-4 h-4 rounded-full border-[1.5px] border-dashed border-[#e4e4e4] shrink-0" />
+                    <span className="text-[13px]">Not yet commissioned</span>
+                  </div>
                 )}
               </div>
             );
           })}
         </div>
-        <p className="mt-auto px-5 py-3 text-[11px] text-[#c4c4c4] border-t border-black/5">
+        <p className="mt-auto px-4 py-3 text-[11px] text-[#b4b4b4]">
           Agents appear here once Dot introduces them and you commission them.
         </p>
       </aside>
