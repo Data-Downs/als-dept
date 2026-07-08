@@ -63,14 +63,15 @@ const AGENT_META: Record<
     mandate:
       "Keeps your company on the right side of things — confirmation statements, VAT, and corporation tax guidance. He’ll see your company record and can act with Companies House and HMRC on your behalf.",
     about:
-      "Reg is your limited company agent, provided by Companies House and HMRC. He runs the compliance and admin of your company so you never have to hold it in your head.",
+      "Reg is your limited company agent, provided by Companies House and HMRC. He's your company secretary, your data-protection lead, and the hub that connects your books and your accountant — running the compliance, governance and admin so you never have to hold it in your head.",
     capabilities: [
-      "Tracks every statutory deadline from your real company record",
-      "Runs compliance checks and flags gaps before they bite",
-      "Files your confirmation statement and VAT with your sign-in",
-      "Checks any supplier's VAT number against HMRC's register",
+      "Tracks every statutory deadline and files with your sign-in",
+      "Sets up your data-protection documents — privacy notice, ROPA, retention",
+      "Runs board meetings with a prepared agenda and keeps the minutes",
+      "Connects your accounting software (Xero) and brings in your accountant",
+      "Watches HMRC and Companies House, and reads your post",
     ],
-    useHint: "Ask Reg anything about your company's filings, tax or deadlines.",
+    useHint: "Ask Reg about filings, data protection, governance, or connecting your books.",
   },
   grace: {
     name: "Grace",
