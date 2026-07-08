@@ -209,16 +209,6 @@ export default function CrusePage() {
                 <span className="w-1.5 h-1.5 rounded-full bg-[#c4c4c4] animate-bounce [animation-delay:240ms]" />
               </div>
             )}
-            {!said && !loading && messages.length > 0 && (
-              <button
-                type="button"
-                onClick={() => submit("My husband died recently and I don't know what to do.")}
-                className="text-[13px] rounded-full border px-3 py-1.5"
-                style={{ borderColor: `${IRIS}55`, color: IRIS }}
-              >
-                My husband died recently
-              </button>
-            )}
           </div>
 
           {said && !handedOver && (
