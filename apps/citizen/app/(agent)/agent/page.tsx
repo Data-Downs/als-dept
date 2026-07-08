@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { useAppStore } from "@/lib/store";
+import { dedupeEntries } from "@/lib/entry-dedupe";
 import { BottomSheet } from "@/components/ui/BottomSheet";
 import { LoginSheet } from "@/components/sheets/LoginSheet";
 import { OneLoginNotification } from "@/components/OneLoginNotification";
@@ -1187,11 +1188,16 @@ export default function AgentPage() {
   const identityRows = Object.entries(profile.identity).filter(
     ([, v]) => v != null && v !== "",
   );
+  // Rationalise the "what your agents know" frame: collapse entries that say
+  // the same thing in different words, so it reads as one clear list.
+  const responsibilities = dedupeEntries(profile.responsibilities);
+  const liabilities = dedupeEntries(profile.liabilities);
+  const eligibilities = dedupeEntries(profile.eligibilities);
   const known =
     identityRows.length +
-    profile.responsibilities.length +
-    profile.liabilities.length +
-    profile.eligibilities.length;
+    responsibilities.length +
+    liabilities.length +
+    eligibilities.length;
 
   // Mark discovered entries an action has discharged, and surface any
   // resolution that was never recorded as a fact of its own.
@@ -1531,19 +1537,19 @@ export default function AgentPage() {
 
         <PanelSection title="Responsible for">
           <Chips
-            items={profile.responsibilities.map((r) => ({ label: r.label }))}
+            items={responsibilities.map((r) => ({ label: r.label }))}
             accent="#1d70b8"
           />
         </PanelSection>
         <PanelSection title="Liable for">
           <Chips
-            items={withResolved("liabilities", profile.liabilities)}
+            items={withResolved("liabilities", liabilities)}
             accent="#b45309"
           />
         </PanelSection>
         <PanelSection title="Eligible for">
           <Chips
-            items={withResolved("eligibilities", profile.eligibilities)}
+            items={withResolved("eligibilities", eligibilities)}
             accent="#00703c"
           />
         </PanelSection>

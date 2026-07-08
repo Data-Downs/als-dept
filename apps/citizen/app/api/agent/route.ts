@@ -11,6 +11,7 @@ import {
   type LicenceContext,
 } from "@/lib/vehicles";
 import { getAnyManifest, getGraphEngine } from "@/lib/service-data";
+import { dedupeEntries } from "@/lib/entry-dedupe";
 
 /**
  * The agent layer (V1 — the citizen's agent). A bare LLM agent that gets to
@@ -119,7 +120,7 @@ Record everything concrete with the remember tool: set identity fields (name, fu
 
 The quiet value is joining these up: when someone tells you they run a limited company, you already know they are liable for a confirmation statement and corporation tax — record those liabilities without being asked, and mention them naturally. Never lecture or dump a list; surface one relevant thing at a time.
 
-Every entry carries a stable \`key\` and a short \`label\`. Record a thing ONCE under a lasting key (e.g. key "limited-company", "confirmation-statement"), then, as you learn more, UPDATE the same key with a richer label — never create a second entry for the same thing. Keep labels short: "Director of Unusually Ltd", "Confirmation statement due", not a sentence.
+Every entry carries a stable \`key\` and a short \`label\`. Record a thing ONCE under a lasting key (e.g. key "limited-company", "confirmation-statement"), then, as you learn more, UPDATE the same key with a richer label — never create a second entry for the same thing. Before recording anything, reconcile with what you already know about them (shown in your briefing): if it's the same real-world thing you've noted before — even worded differently ("Self-employed" vs "Self-employed hairdresser") — refine that single entry rather than adding a near-duplicate. One entry per thing. Keep labels short: "Director of Unusually Ltd", "Confirmation statement due", not a sentence.
 
 ## Acting
 You also have an act tool. When the citizen clearly asks you to actually DO something with government — file a confirmation statement, submit a VAT return — call act with the matching serviceId. You NEVER do it silently: acting requires them to sign in, and calling act prompts them for the correct login. As you call act, tell them plainly, in one line, what you're about to do and that you'll need them to sign in.
@@ -932,14 +933,18 @@ function mergeProfile(profile: Profile, patch: Record<string, unknown>): Profile
     p.identity = { ...p.identity, ...(patch.identity as Record<string, unknown>) };
   }
   for (const list of ["responsibilities", "liabilities", "eligibilities"] as const) {
-    if (!Array.isArray(patch[list])) continue;
-    for (const raw of patch[list] as Array<Partial<Entry>>) {
-      if (!raw || !raw.label) continue;
-      const key = raw.key || raw.label;
-      const existing = p[list].find((x) => x.key === key);
-      if (existing) existing.label = raw.label;
-      else p[list].push({ key, label: raw.label });
+    if (Array.isArray(patch[list])) {
+      for (const raw of patch[list] as Array<Partial<Entry>>) {
+        if (!raw || !raw.label) continue;
+        const key = raw.key || raw.label;
+        const existing = p[list].find((x) => x.key === key);
+        if (existing) existing.label = raw.label;
+        else p[list].push({ key, label: raw.label });
+      }
     }
+    // Collapse near-duplicate entries the LLM recorded in different words, so
+    // each list holds one clear entry per real-world thing.
+    p[list] = dedupeEntries(p[list]);
   }
   return p;
 }
