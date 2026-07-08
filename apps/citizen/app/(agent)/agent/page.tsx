@@ -976,6 +976,20 @@ export default function AgentPage() {
   }
 
   useEffect(() => {
+    // A hand-off arriving from a partner surface (Cruse → Iris) takes priority:
+    // the conversation carries over and Dot picks up where Sarah left off.
+    try {
+      const handoff = localStorage.getItem("als-cruse-handoff");
+      if (handoff) {
+        localStorage.removeItem("als-cruse-handoff");
+        const parsed = JSON.parse(handoff);
+        startFromCruse(Array.isArray(parsed.messages) ? parsed.messages : []);
+        setReady(true);
+        return;
+      }
+    } catch {
+      /* fall through to normal restore */
+    }
     let restored = false;
     try {
       const lastUser = localStorage.getItem("als-last-user") ?? "new-user";
@@ -1320,6 +1334,81 @@ export default function AgentPage() {
         : [];
       setWallet(creds.map(personaCredToCard));
       send("dot", [{ role: "user", content: "Hi" }], prof);
+    } catch {
+      /* ignore */
+    }
+  }
+
+  // Arrive from a partner surface (Cruse). The conversation Sarah had with Iris
+  // is the same persistent thing — it carries over. Iris is already commissioned
+  // and holds that thread; she's handed to Grace; and Dot opens already knowing
+  // where Sarah left off. Nothing is re-entered.
+  async function startFromCruse(irisMessages: Msg[]) {
+    const demo = DEMO_PERSONAS.find((d) => d.id === "sarah-okafor");
+    if (!demo) return;
+    setResumeSummary(null);
+    setResuming(false);
+    setArchived([]);
+    setAgentPermissions({});
+    setAgentDetail(null);
+    setCurrentUser(demo.id);
+    setInboundLog([]);
+    setWorkingState([]);
+    setCompleted([]);
+    setResolved([]);
+    setSuggestions({ agent: "dot", items: [] });
+    setCompanyContext(null);
+    const irisThread: Msg[] = [
+      ...irisMessages.filter((m) => m.role === "user" || m.role === "assistant"),
+      {
+        role: "assistant",
+        content:
+          "I've asked your government agents to pick this up so you never have to start again anywhere. Grace will carry the official side — registration, Tell Us Once, pensions and benefits — and I'm still right here for you whenever you need me.",
+      },
+      { role: "introduce", agentId: "grace" },
+    ];
+    setThreads({
+      dot: [], reg: [], grace: [], driving: [], sol: [], robin: [], fay: [], cass: [],
+      iris: irisThread,
+    });
+    setRoster([
+      { id: "dot", state: "commissioned" },
+      { id: "iris", state: "commissioned" },
+      { id: "grace", state: "introduced" },
+    ]);
+    setConsentAt({ iris: Date.now() });
+    setConvoMeta({ iris: { title: "Talking to Iris · Cruse", updatedAt: Date.now() } });
+    setActiveAgent("dot");
+    const transcript = irisMessages
+      .filter(
+        (m): m is { role: "user" | "assistant"; content: string } =>
+          (m.role === "user" || m.role === "assistant") && m.content !== "Hi",
+      )
+      .map((m) => `${m.role === "user" ? "Citizen" : "Iris (Cruse)"}: ${m.content}`)
+      .join("\n");
+    setHandover(transcript);
+    try {
+      const res = await fetch(`/api/personas/${demo.id}`);
+      const data = await res.json();
+      const persona = data.persona as Record<string, unknown>;
+      setPersonaRecord(persona);
+      const base = personaToProfile(persona);
+      const prof: Profile = {
+        ...base,
+        responsibilities: dedupeEntries([...base.responsibilities, ...demo.seed.responsibilities]),
+        liabilities: dedupeEntries([...base.liabilities, ...demo.seed.liabilities]),
+        eligibilities: dedupeEntries([...base.eligibilities, ...demo.seed.eligibilities]),
+      };
+      setProfile(prof);
+      const creds = Array.isArray(persona.credentials)
+        ? (persona.credentials as Record<string, unknown>[])
+        : [];
+      setWallet(creds.map(personaCredToCard));
+      // Dot recaps — she knows where Sarah left off, because Iris handed it over.
+      runResume(prof, [{ id: "iris", state: "commissioned" }], {
+        dot: [], reg: [], grace: [], driving: [], sol: [], robin: [], fay: [], cass: [],
+        iris: irisThread,
+      });
     } catch {
       /* ignore */
     }
