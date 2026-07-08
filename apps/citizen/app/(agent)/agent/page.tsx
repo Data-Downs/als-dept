@@ -378,6 +378,23 @@ function personaFromProfile(profile: Profile) {
 
 const HIDDEN_OPENERS = new Set(["Hi", "[commissioned]"]);
 
+// Which specialist a knowledge lozenge is about, from its wording. Specific
+// first. If none matches — or the match isn't commissioned — it goes to Dot,
+// who brings the right agent in, so a tap never dead-ends.
+const TOPIC_ROUTES: { agent: AgentId; re: RegExp }[] = [
+  { agent: "grace", re: /bereave|death|died|funeral|probate|estate|tell us once/i },
+  { agent: "reg", re: /compan|confirmation statement|corporation tax|\bvat\b|director|companies house|\bpaye\b/i },
+  { agent: "driving", re: /licence|vehicle|\bmot\b|dvla|dvsa|\bcar\b|driving|sorn|road tax/i },
+  { agent: "robin", re: /maternity|paternity|\bbaby\b|\bbirth\b|new.?born|expecting/i },
+  { agent: "sol", re: /self.?assess|self.?employ|sole trader|tax return|making tax digital|business expense|refund|freelance|national insurance|\butr\b/i },
+  { agent: "fay", re: /child benefit|childcare|tax.?free childcare|school|ehcp|\bsend\b|free.?school|nursery|30 hours|15 hours|pupil/i },
+];
+
+function topicAgent(label: string): AgentId {
+  for (const r of TOPIC_ROUTES) if (r.re.test(label)) return r.agent;
+  return "dot";
+}
+
 export default function AgentPage() {
   const [threads, setThreads] = useState<Record<AgentId, Msg[]>>({
     dot: [],
@@ -1217,6 +1234,65 @@ export default function AgentPage() {
     return items;
   }
 
+  // A done lozenge should surface the receipt that discharged it — find the
+  // conversation (active or archived) whose receipt resolves this item.
+  function findReceiptFor(label: string): { agentId: AgentId; convoId: string } | null {
+    const t = norm(label);
+    const hit = (m: Msg) =>
+      m.role === "receipt" &&
+      !!m.receipt.resolves &&
+      (norm(m.receipt.resolves.label) === t ||
+        t.includes(norm(m.receipt.resolves.key)) ||
+        norm(m.receipt.resolves.label).includes(t) ||
+        t.includes(norm(m.receipt.resolves.label)));
+    for (const id of Object.keys(threads) as AgentId[]) {
+      if ((threads[id] ?? []).some(hit)) return { agentId: id, convoId: `active:${id}` };
+    }
+    for (const a of archived) {
+      if (a.messages.some(hit)) return { agentId: a.agentId, convoId: a.id };
+    }
+    return null;
+  }
+
+  // Tapping a fact in "what your agents know" hands it to the right agent,
+  // mid-flight: an action-framed opener for live items, the receipt for done
+  // ones. Routes to the matching specialist if it's commissioned, else Dot.
+  function pickKnowledge(
+    list: "responsibilities" | "liabilities" | "eligibilities",
+    item: ChipItem,
+  ) {
+    setTrayOpen(false);
+    setAgentDetail(null);
+    if (item.done) {
+      const loc = findReceiptFor(item.label);
+      if (loc) {
+        openConversation(loc.agentId, loc.convoId);
+        return;
+      }
+    }
+    const cand = topicAgent(item.label);
+    const agent: AgentId =
+      cand !== "dot" && roster.some((r) => r.id === cand && r.state === "commissioned")
+        ? cand
+        : "dot";
+    const clean = item.label.replace(/\s*\([^)]*\)\s*$/, "").trim();
+    const text = item.done
+      ? `Can you remind me what happened with ${clean}?`
+      : list === "liabilities"
+        ? `I'd like to sort ${clean}.`
+        : list === "eligibilities"
+          ? `I think I might be entitled to ${clean} — can you help me with it?`
+          : `Can you help me with ${clean}?`;
+    setActiveAgent(agent);
+    setResumeSummary(null);
+    setResuming(false);
+    const cur = threads[agent] ?? [];
+    const next: Msg[] = [...cur, { role: "user", content: text }];
+    setThread(agent, next);
+    setSuggestions({ agent, items: [] });
+    send(agent, next, profile);
+  }
+
   const active = AGENT_META[activeAgent];
   // The resume landing: Dot's welcome + streamed recap, shown instead of the
   // thread. The prior conversation is a tap away in the tray.
@@ -1539,18 +1615,21 @@ export default function AgentPage() {
           <Chips
             items={responsibilities.map((r) => ({ label: r.label }))}
             accent="#1d70b8"
+            onPick={(it) => pickKnowledge("responsibilities", it)}
           />
         </PanelSection>
         <PanelSection title="Liable for">
           <Chips
             items={withResolved("liabilities", liabilities)}
             accent="#b45309"
+            onPick={(it) => pickKnowledge("liabilities", it)}
           />
         </PanelSection>
         <PanelSection title="Eligible for">
           <Chips
             items={withResolved("eligibilities", eligibilities)}
             accent="#00703c"
+            onPick={(it) => pickKnowledge("eligibilities", it)}
           />
         </PanelSection>
           </>
@@ -2509,7 +2588,15 @@ function Empty() {
 
 type ChipItem = { label: string; done?: boolean };
 
-function Chips({ items, accent }: { items: ChipItem[]; accent: string }) {
+function Chips({
+  items,
+  accent,
+  onPick,
+}: {
+  items: ChipItem[];
+  accent: string;
+  onPick?: (it: ChipItem) => void;
+}) {
   // The model can record the same thing under two keys; collapse duplicate
   // labels so the panel never shows a chip twice, preferring the resolved one.
   const byLabel = new Map<string, ChipItem>();
@@ -2521,33 +2608,54 @@ function Chips({ items, accent }: { items: ChipItem[]; accent: string }) {
   if (unique.length === 0) return <Empty />;
   return (
     <div className="flex flex-wrap gap-1.5">
-      {unique.map((it, i) => (
-        <span
-          key={`${it.label}-${i}`}
-          className="inline-flex items-center gap-1 text-xs font-medium rounded-full px-2.5 py-1"
-          style={
-            it.done
-              ? { background: "#00703c14", color: "#00703c" }
-              : { background: `${accent}14`, color: accent }
-          }
-        >
-          {it.done && (
-            <svg
-              width="10"
-              height="10"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="3"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <polyline points="20 6 9 17 4 12" />
-            </svg>
-          )}
-          {it.label}
-        </span>
-      ))}
+      {unique.map((it, i) => {
+        const style = it.done
+          ? { background: "#00703c14", color: "#00703c" }
+          : { background: `${accent}14`, color: accent };
+        const inner = (
+          <>
+            {it.done && (
+              <svg
+                width="10"
+                height="10"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="3"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <polyline points="20 6 9 17 4 12" />
+              </svg>
+            )}
+            {it.label}
+          </>
+        );
+        return onPick ? (
+          <button
+            key={`${it.label}-${i}`}
+            type="button"
+            onClick={() => onPick(it)}
+            title={
+              it.done
+                ? "See what was done about this"
+                : "Hand this to the right agent"
+            }
+            className="inline-flex items-center gap-1 text-xs font-medium rounded-full px-2.5 py-1 cursor-pointer transition hover:brightness-90 active:scale-[0.97]"
+            style={style}
+          >
+            {inner}
+          </button>
+        ) : (
+          <span
+            key={`${it.label}-${i}`}
+            className="inline-flex items-center gap-1 text-xs font-medium rounded-full px-2.5 py-1"
+            style={style}
+          >
+            {inner}
+          </span>
+        );
+      })}
     </div>
   );
 }
