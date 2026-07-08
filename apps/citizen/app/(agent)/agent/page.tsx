@@ -1396,7 +1396,9 @@ export default function AgentPage() {
       iris: { title: "Talking to Iris · Cruse", updatedAt: Date.now() },
       grace: { title: "David's affairs", updatedAt: Date.now() },
     });
-    setActiveAgent("dot");
+    // Land directly in Grace — the person doing the work — not on a summary
+    // one step removed. She greets already knowing.
+    setActiveAgent("grace");
     // The context Iris gathered — handed to Grace so she opens already knowing.
     const transcript = irisMessages
       .filter(
@@ -1423,28 +1425,12 @@ export default function AgentPage() {
         ? (persona.credentials as Record<string, unknown>[])
         : [];
       setWallet(creds.map(personaCredToCard));
-      // Grace opens already briefed with everything Iris gathered.
+      // Grace opens already briefed with everything Iris gathered — and we
+      // land straight on her, so the citizen is talking to Grace, not reading
+      // a recap about her.
       setTimeout(
         () => send("grace", [{ role: "user", content: "[commissioned]" }], prof, transcript),
         0,
-      );
-      // Dot recaps — she knows where Sarah left off, and that Grace is in and briefed.
-      runResume(
-        prof,
-        [
-          { id: "iris", state: "commissioned" },
-          { id: "grace", state: "commissioned" },
-        ],
-        {
-          dot: [], reg: [], grace: [
-            {
-              role: "assistant",
-              content:
-                "Grace has just been brought in to carry the official government side after the death — registration, Tell Us Once, pensions and benefits — and has been briefed with everything Sarah told Iris.",
-            },
-          ], driving: [], sol: [], robin: [], fay: [], cass: [],
-          iris: irisThread,
-        },
       );
     } catch {
       /* ignore */
