@@ -22,6 +22,8 @@ const IRREGULAR: Record<string, string> = {
   people: "person",
   women: "woman",
   men: "man",
+  bereavement: "bereav",
+  bereaved: "bereav",
 };
 
 /** Crude suffix stemming so "hairdressing" and "hairdresser" match. */

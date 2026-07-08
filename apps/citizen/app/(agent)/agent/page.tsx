@@ -790,9 +790,14 @@ export default function AgentPage() {
   }
 
   function commission(agentId: AgentId) {
-    // Whoever's thread the card sits in is the one handing over — Dot, or a
-    // specialist coordinating on the citizen's behalf (e.g. Grace bringing Reg).
-    const from = activeAgent;
+    // The context to hand over is the thread that actually introduced this
+    // agent (where its card sits) — which may not be the one on screen when you
+    // commission from the tray. Fall back to the active thread, then to any
+    // handover already carried across (e.g. from a partner surface like Cruse).
+    const introducer = (Object.keys(threads) as AgentId[]).find((id) =>
+      (threads[id] ?? []).some((m) => m.role === "introduce" && m.agentId === agentId),
+    );
+    const from = introducer ?? activeAgent;
     setRoster((r) =>
       r.map((x) => (x.id === agentId ? { ...x, state: "commissioned" } : x)),
     );
@@ -803,7 +808,7 @@ export default function AgentPage() {
     setActiveAgent(agentId);
     setAgentDetail(null);
     setTrayOpen(false);
-    const transcript = (threads[from] ?? [])
+    const fromThread = (threads[from] ?? [])
       .filter(
         (m): m is { role: "user" | "assistant"; content: string } =>
           m.role === "user" || m.role === "assistant",
@@ -811,6 +816,7 @@ export default function AgentPage() {
       .filter((m) => !HIDDEN_OPENERS.has(m.content))
       .map((m) => `${m.role === "user" ? "Citizen" : AGENT_META[from].name}: ${m.content}`)
       .join("\n");
+    const transcript = fromThread.trim() ? fromThread : handover ?? "";
     setHandover(transcript);
     if ((threads[agentId] ?? []).length === 0 && AGENT_META[agentId].temporary) {
       setWorkingState([]);
@@ -1371,14 +1377,20 @@ export default function AgentPage() {
       dot: [], reg: [], grace: [], driving: [], sol: [], robin: [], fay: [], cass: [],
       iris: irisThread,
     });
+    // Grace is brought in as part of the hand-off — not left for Sarah to find
+    // and commission. She's a government agent, so no extra consent step.
     setRoster([
       { id: "dot", state: "commissioned" },
       { id: "iris", state: "commissioned" },
-      { id: "grace", state: "introduced" },
+      { id: "grace", state: "commissioned" },
     ]);
     setConsentAt({ iris: Date.now() });
-    setConvoMeta({ iris: { title: "Talking to Iris · Cruse", updatedAt: Date.now() } });
+    setConvoMeta({
+      iris: { title: "Talking to Iris · Cruse", updatedAt: Date.now() },
+      grace: { title: "David's affairs", updatedAt: Date.now() },
+    });
     setActiveAgent("dot");
+    // The context Iris gathered — handed to Grace so she opens already knowing.
     const transcript = irisMessages
       .filter(
         (m): m is { role: "user" | "assistant"; content: string } =>
@@ -1404,11 +1416,29 @@ export default function AgentPage() {
         ? (persona.credentials as Record<string, unknown>[])
         : [];
       setWallet(creds.map(personaCredToCard));
-      // Dot recaps — she knows where Sarah left off, because Iris handed it over.
-      runResume(prof, [{ id: "iris", state: "commissioned" }], {
-        dot: [], reg: [], grace: [], driving: [], sol: [], robin: [], fay: [], cass: [],
-        iris: irisThread,
-      });
+      // Grace opens already briefed with everything Iris gathered.
+      setTimeout(
+        () => send("grace", [{ role: "user", content: "[commissioned]" }], prof, transcript),
+        0,
+      );
+      // Dot recaps — she knows where Sarah left off, and that Grace is in and briefed.
+      runResume(
+        prof,
+        [
+          { id: "iris", state: "commissioned" },
+          { id: "grace", state: "commissioned" },
+        ],
+        {
+          dot: [], reg: [], grace: [
+            {
+              role: "assistant",
+              content:
+                "Grace has just been brought in to carry the official government side after the death — registration, Tell Us Once, pensions and benefits — and has been briefed with everything Sarah told Iris.",
+            },
+          ], driving: [], sol: [], robin: [], fay: [], cass: [],
+          iris: irisThread,
+        },
+      );
     } catch {
       /* ignore */
     }
