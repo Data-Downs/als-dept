@@ -9,13 +9,12 @@ const IRIS = "#6b5b95";
 
 type Msg = { role: "user" | "assistant"; content: string };
 
-// A light picture of Sarah for Iris to open with — the rest she learns from
-// the conversation, exactly as she would on a real charity's site.
-const SARAH_PROFILE = {
-  identity: { name: "Sarah", fullName: "Sarah Okafor", location: "Chelmsford" },
-  responsibilities: [
-    { key: "bereaved", label: "Recently bereaved — her husband David" },
-  ],
+// Iris knows nothing to begin with — no name, nothing about a death. Exactly
+// as a real first contact on a charity's site would be: she learns it all from
+// the person, when and if they choose to tell her.
+const ANON_PROFILE = {
+  identity: {},
+  responsibilities: [],
   liabilities: [],
   eligibilities: [],
 };
@@ -37,7 +36,7 @@ export default function CrusePage() {
         body: JSON.stringify({
           agent: "iris",
           messages: history.map((m) => ({ role: m.role, content: m.content })),
-          profile: SARAH_PROFILE,
+          profile: ANON_PROFILE,
           permissions: { canAct: true, proactive: true },
         }),
       });
@@ -213,7 +212,7 @@ export default function CrusePage() {
             {!said && !loading && messages.length > 0 && (
               <button
                 type="button"
-                onClick={() => submit("My husband David died in February and I'm not coping very well.")}
+                onClick={() => submit("My husband died recently and I don't know what to do.")}
                 className="text-[13px] rounded-full border px-3 py-1.5"
                 style={{ borderColor: `${IRIS}55`, color: IRIS }}
               >

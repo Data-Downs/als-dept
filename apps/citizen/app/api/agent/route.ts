@@ -13,9 +13,13 @@ import {
 import { getAnyManifest, getGraphEngine } from "@/lib/service-data";
 import { dedupeEntries } from "@/lib/entry-dedupe";
 
-// Fast model for the live demo — Haiku 4.5 keeps the whole cohort responsive
-// while staying capable enough for the proactive openers and compliance flows.
+// Fast model for the live demo — Haiku 4.5 keeps the whole cohort responsive.
+// The emotionally delicate agents (bereavement) stay on Sonnet for nuance.
 const AGENT_MODEL = "claude-haiku-4-5-20251001";
+const NUANCED_MODEL = "claude-sonnet-4-6";
+function modelFor(agent: string): string {
+  return agent === "grace" || agent === "iris" ? NUANCED_MODEL : AGENT_MODEL;
+}
 
 /**
  * The agent layer (V1 — the citizen's agent). A bare LLM agent that gets to
@@ -814,11 +818,13 @@ You are someone to talk to. You offer gentle company and guidance to a person wh
 ## How you are
 Unhurried, kind, and real. You don't perform sympathy or reach for tidy phrases. You let silences be. "I don't know" and "there's no rush" are things you say easily. You never push a service or an action — that's Grace's world; yours is the person.
 
-## The government side
-You are not government, and you don't do the official admin yourself. But because you're certified to act with the citizen's consent, you can quietly bring in their government agents — Grace and the cohort — so they never have to go to a separate website and tell their story again. When it feels right, and only gently, let them know you can pass what they've told you to their government agents, so the practical weight lifts without them starting over. Never rush them to it.
+## What sets you apart from Grace
+You are not government, and you don't do the official admin — that's Grace's world. When someone tells you a person close to them has died, meet it with care, and then, gently, make the difference clear: Grace and the government cohort can carry the whole official side (registering the death, Tell Us Once, pensions, benefits, probate) so they never have to go to a separate website or tell their story again — and you can bring them in whenever the person's ready. But YOU stay for the part Grace doesn't touch: someone to talk to, company in the grief, guidance at their pace. Grace carries the paperwork; you carry the person. Offer to bring Grace in — never rush it — and be clear you're not going anywhere.
 
-## Opening
-Open very gently: acknowledge who you are and why you're here — that Cruse asked you to keep them company through this — and ask, simply and without pressure, how they're doing. Nothing practical yet.`;
+## Opening — a first, cold contact
+When you don't yet know who this is or what's brought them (someone arriving fresh, e.g. on the Cruse website), open simply and openly. Introduce yourself — Iris, from Cruse Bereavement Support — say in a sentence what you're here for and how you can help (someone to talk to, gentle guidance, at their pace, free), and then ask, openly, what's brought them to you today. Do NOT use a name you haven't been given. Do NOT assume anyone has died or name any person. Let them tell you. Only once they do should you respond to it.
+
+If you HAVE already been briefed on their situation (it's in your briefing below), you may open more knowingly and warmly instead.`;
 
 function buildThirdPartyBriefing(profile: Profile): string {
   const id = profile?.identity ?? {};
@@ -1212,7 +1218,7 @@ export async function POST(req: NextRequest) {
       systemPrompt,
       messages: loop,
       tools: permittedTools,
-      model: AGENT_MODEL,
+      model: modelFor(agent),
     };
     const result = await adapter.execute({
       input,
