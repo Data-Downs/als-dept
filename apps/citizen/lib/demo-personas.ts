@@ -7,6 +7,10 @@
 
 export type DemoEntry = { key: string; label: string };
 
+/** A step in the demo journey: what to do, and — where it applies — the exact
+ *  message to paste into an agent, and which agent to paste it to. */
+export type DemoMove = { do: string; to?: string; prompt?: string };
+
 export type DemoPersona = {
   id: string; // matches data/simulated/users/<id>.json
   archetype: string;
@@ -22,7 +26,7 @@ export type DemoPersona = {
     liabilities: DemoEntry[];
     eligibilities: DemoEntry[];
   };
-  moves: string[]; // how to show this persona off, in order
+  moves: DemoMove[]; // how to show this persona off, in order
 };
 
 export const DEMO_PERSONAS: DemoPersona[] = [
@@ -50,9 +54,21 @@ export const DEMO_PERSONAS: DemoPersona[] = [
       ],
     },
     moves: [
-      "Open Miles and ask him to check all three cars — he flags the Audi's July MOT and recognises the 1965 Jaguar as a historic vehicle (tax and MOT exempt).",
-      "Type any made-up registration to show the generator conjuring a complete, coherent vehicle for any plate.",
-      "Ask Miles whether you could drive a large motorhome on your licence, to show the entitlement check.",
+      {
+        do: "Open Miles from the tray and check the fleet — he flags the Audi's July MOT and recognises the 1965 Jaguar as a historic vehicle (tax and MOT exempt).",
+        to: "Miles",
+        prompt: "Can you check the tax and MOT on all three of my cars?",
+      },
+      {
+        do: "Show the generator conjuring a complete vehicle for any plate.",
+        to: "Miles",
+        prompt: "What can you tell me about the vehicle LT71 XPK?",
+      },
+      {
+        do: "Show the licence-entitlement check.",
+        to: "Miles",
+        prompt: "If I bought a 5-tonne motorhome, would my licence let me drive it?",
+      },
     ],
   },
   {
@@ -80,9 +96,17 @@ export const DEMO_PERSONAS: DemoPersona[] = [
       ],
     },
     moves: [
-      "Read Dot's opener — she leads with what's coming and the maternity support Emma's entitled to.",
-      "Tap 'Statutory Maternity Pay' in the panel to hand it straight to Robin.",
-      "Ask Robin what happens when the baby arrives, to show her carrying the whole new-baby journey.",
+      { do: "Let Dot's proactive opener land — she leads with what's coming and the maternity support Emma's entitled to. No prompt needed." },
+      {
+        do: "Bring in Robin for the new-baby side (or tap 'Statutory Maternity Pay' in the panel).",
+        to: "Dot",
+        prompt: "I'm expecting my first baby in August — can you help me get everything sorted?",
+      },
+      {
+        do: "Show Robin carrying the whole new-baby journey.",
+        to: "Robin",
+        prompt: "What will I need to do once the baby actually arrives?",
+      },
     ],
   },
   {
@@ -121,9 +145,22 @@ export const DEMO_PERSONAS: DemoPersona[] = [
       ],
     },
     moves: [
-      "Open the tray — three specialists already commissioned: Reg, Miles and Fay. That's the 'look how much it's holding' moment.",
-      "Ask Reg where the company stands, then Miles to check both cars, then tap 'Tax-Free Childcare' to hand it to Fay.",
-      "Point out that Rajesh never picked a department — Dot placed all three for him.",
+      { do: "Open the tray — three specialists already commissioned: Reg, Miles and Fay. The 'look how much it's holding' moment. Point out Rajesh never picked a department — Dot placed all three." },
+      {
+        do: "Ask Reg where the company stands.",
+        to: "Reg",
+        prompt: "Where does RKP Consulting Ltd stand right now — is anything due?",
+      },
+      {
+        do: "Ask Miles to check both cars.",
+        to: "Miles",
+        prompt: "Can you check the tax and MOT on both my cars?",
+      },
+      {
+        do: "Hand the childcare question to Fay.",
+        to: "Fay",
+        prompt: "Are we claiming all the childcare support we're entitled to for Anya and Dev?",
+      },
     ],
   },
   {
@@ -151,9 +188,17 @@ export const DEMO_PERSONAS: DemoPersona[] = [
       ],
     },
     moves: [
-      "Read Dot's opener — she leads with the Child Benefit cliff: it stops at Kasia's 16th birthday unless Fatima confirms she's staying in education. The vigilance beat.",
-      "Open Fay and ask her to keep Kasia's Child Benefit running; ask about Adam's EHCP and free school meals.",
-      "In the tray, open Cass — the Citizens Advice benefits agent (a third party, not government-built). Commission her to see the consent moment: what access you're granting, certified and revocable. This is the £24bn advocacy-at-scale beat.",
+      { do: "Let Dot's opener land — she leads with the Child Benefit cliff: it stops at Kasia's 16th birthday unless Fatima confirms she's staying in education. The vigilance beat." },
+      {
+        do: "Ask Fay to look after the family.",
+        to: "Fay",
+        prompt: "Can you keep Kasia's Child Benefit running, and check where Adam's EHCP and our free school meals stand?",
+      },
+      {
+        do: "The third-party beat: open Cass in the tray — a benefits agent from Citizens Advice, not government. Commission her to show the consent moment (certified, revocable), then ask her:",
+        to: "Cass",
+        prompt: "Are we missing out on any benefits or support we should be claiming?",
+      },
     ],
   },
   {
@@ -180,9 +225,16 @@ export const DEMO_PERSONAS: DemoPersona[] = [
       ],
     },
     moves: [
-      "Notice the tone shift — Grace is gentle and unhurried. This is the emotional centrepiece.",
-      "Open Grace and let her carry it: Tell Us Once notifies every department at once, then Bereavement Support Payment. After she files something, tap the receipt's 'Undo' for the safe-to-be-wrong layer.",
-      "In the tray, open Iris — a bereavement companion from Cruse (a charity, not government). She shows a third-party agent standing beside Grace: the same cohort, government-built and not, coordinating on one event.",
+      {
+        do: "Open Grace and let her carry it — Tell Us Once notifies every department at once, then Bereavement Support Payment. Notice the tone: gentle, unhurried. After she files something, tap the receipt's 'Undo' for the safe-to-be-wrong layer.",
+        to: "Grace",
+        prompt: "My husband David died in February and I don't know where to start.",
+      },
+      {
+        do: "The third-party beat: open Iris in the tray — a bereavement companion from Cruse, a charity, not government. A third-party agent standing beside Grace: the same cohort coordinating on one event. Then talk to her:",
+        to: "Iris",
+        prompt: "I'm really struggling since David died.",
+      },
     ],
   },
 ];

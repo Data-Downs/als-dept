@@ -2217,6 +2217,45 @@ function Toggle({ on, onChange }: { on: boolean; onChange: (v: boolean) => void 
   );
 }
 
+function CopyPrompt({
+  prompt,
+  to,
+  accent,
+}: {
+  prompt: string;
+  to?: string;
+  accent: string;
+}) {
+  const [copied, setCopied] = useState(false);
+  return (
+    <div className="rounded-lg border border-black/10 bg-white px-3 py-2 flex items-start gap-2">
+      <div className="min-w-0 flex-1">
+        {to && (
+          <p
+            className="text-[10px] font-semibold uppercase tracking-wide mb-0.5"
+            style={{ color: accent }}
+          >
+            Paste to {to}
+          </p>
+        )}
+        <p className="text-[13px] text-[#1a1a1a] leading-snug">&ldquo;{prompt}&rdquo;</p>
+      </div>
+      <button
+        type="button"
+        onClick={() => {
+          navigator.clipboard?.writeText(prompt);
+          setCopied(true);
+          setTimeout(() => setCopied(false), 1500);
+        }}
+        className="shrink-0 rounded-md px-2.5 py-1 text-[11px] font-semibold transition-colors"
+        style={{ background: `${accent}14`, color: accent }}
+      >
+        {copied ? "Copied ✓" : "Copy"}
+      </button>
+    </div>
+  );
+}
+
 function PersonaBriefing({
   demo,
   onStart,
@@ -2287,16 +2326,21 @@ function PersonaBriefing({
             <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8a8a8a] mb-2">
               How to show this off
             </p>
-            <ol className="space-y-2.5">
+            <ol className="space-y-3">
               {demo.moves.map((m, i) => (
-                <li key={i} className="flex gap-3 text-[14px] text-[#2a2a2a]">
+                <li key={i} className="flex gap-3">
                   <span
                     className="shrink-0 w-5 h-5 rounded-full text-white text-[11px] font-semibold flex items-center justify-center mt-0.5"
                     style={{ background: demo.accent }}
                   >
                     {i + 1}
                   </span>
-                  <span>{m}</span>
+                  <div className="min-w-0 flex-1 space-y-2">
+                    <p className="text-[14px] text-[#2a2a2a]">{m.do}</p>
+                    {m.prompt && (
+                      <CopyPrompt prompt={m.prompt} to={m.to} accent={demo.accent} />
+                    )}
+                  </div>
                 </li>
               ))}
             </ol>
