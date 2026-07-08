@@ -15,6 +15,7 @@ export type DemoPersona = {
   summary: string;
   themes: string[];
   agents: string[]; // specialists already commissioned on load
+  introduced?: string[]; // agents offered but not yet commissioned (e.g. a third-party agent awaiting consent)
   companyContext?: Record<string, unknown>;
   seed: {
     responsibilities: DemoEntry[];
@@ -134,6 +135,7 @@ export const DEMO_PERSONAS: DemoPersona[] = [
       "Fatima works part-time in school catering; Tomasz is a warehouse supervisor. Three children — Kasia (15), Adam (11, with an EHCP) and Lily (5, just starting school). A tighter budget, and the family for whom missing an entitlement or a deadline genuinely bites. The vulnerable-first story: government noticing on her behalf.",
     themes: ["Three children", "Child Benefit 16th-birthday cliff", "Adam's EHCP", "Free school meals & childcare"],
     agents: ["fay"],
+    introduced: ["cass"],
     seed: {
       responsibilities: [
         { key: "children", label: "Three children — Kasia (15), Adam (11), Lily (5)" },
@@ -150,8 +152,8 @@ export const DEMO_PERSONAS: DemoPersona[] = [
     },
     moves: [
       "Read Dot's opener — she leads with the Child Benefit cliff: it stops at Kasia's 16th birthday unless Fatima confirms she's staying in education. The vigilance beat.",
-      "Open Fay and ask her to keep Kasia's Child Benefit running.",
-      "Ask Fay about Adam's EHCP and free school meals, to show her spanning HMRC, the council and the school.",
+      "Open Fay and ask her to keep Kasia's Child Benefit running; ask about Adam's EHCP and free school meals.",
+      "In the tray, open Cass — the Citizens Advice benefits agent (a third party, not government-built). Commission her to see the consent moment: what access you're granting, certified and revocable. This is the £24bn advocacy-at-scale beat.",
     ],
   },
   {
@@ -163,6 +165,7 @@ export const DEMO_PERSONAS: DemoPersona[] = [
       "Sarah's husband David died in February. There's a will, a £645,000 estate, probate not yet started, and pensions to unwind — the mountain of admin that lands on someone at the worst possible moment. Grace is already with her, carrying the government and admin side so Sarah doesn't have to hold it while she grieves.",
     themes: ["Recent bereavement", "Tell Us Once", "Probate & inheritance tax", "Pensions & Bereavement Support"],
     agents: ["grace"],
+    introduced: ["iris"],
     seed: {
       responsibilities: [
         { key: "bereaved", label: "Bereaved — husband David died 26 February" },
@@ -178,8 +181,8 @@ export const DEMO_PERSONAS: DemoPersona[] = [
     },
     moves: [
       "Notice the tone shift — Grace is gentle and unhurried. This is the emotional centrepiece.",
-      "Open Grace and let her carry it: Tell Us Once notifies every department at once, then Bereavement Support Payment.",
-      "After she files something, tap the receipt's 'Undo' to show the safe-to-be-wrong recovery layer.",
+      "Open Grace and let her carry it: Tell Us Once notifies every department at once, then Bereavement Support Payment. After she files something, tap the receipt's 'Undo' for the safe-to-be-wrong layer.",
+      "In the tray, open Iris — a bereavement companion from Cruse (a charity, not government). She shows a third-party agent standing beside Grace: the same cohort, government-built and not, coordinating on one event.",
     ],
   },
 ];

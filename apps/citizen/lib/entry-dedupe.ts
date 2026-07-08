@@ -16,8 +16,17 @@ const STOP = new Set([
   "etc", "that", "this", "at", "by", "from", "not", "yet",
 ]);
 
+/** A few irregular plurals the suffix rules below can't reach. */
+const IRREGULAR: Record<string, string> = {
+  children: "child",
+  people: "person",
+  women: "woman",
+  men: "man",
+};
+
 /** Crude suffix stemming so "hairdressing" and "hairdresser" match. */
 function stem(t: string): string {
+  if (IRREGULAR[t]) return IRREGULAR[t];
   for (const suf of ["ing", "ers", "er", "ed", "s"]) {
     if (t.length > suf.length + 2 && t.endsWith(suf)) return t.slice(0, -suf.length);
   }

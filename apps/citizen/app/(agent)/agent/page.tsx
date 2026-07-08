@@ -10,7 +10,16 @@ import { BottomSheet } from "@/components/ui/BottomSheet";
 import { LoginSheet } from "@/components/sheets/LoginSheet";
 import { OneLoginNotification } from "@/components/OneLoginNotification";
 
-type AgentId = "dot" | "reg" | "grace" | "driving" | "sol" | "robin" | "fay";
+type AgentId =
+  | "dot"
+  | "reg"
+  | "grace"
+  | "driving"
+  | "sol"
+  | "robin"
+  | "fay"
+  | "cass"
+  | "iris";
 
 const AGENT_META: Record<
   AgentId,
@@ -19,6 +28,11 @@ const AGENT_META: Record<
     tagline: string;
     provider: string | null;
     accent: string;
+    // Third-party agents aren't built by government — they're certified to act
+    // on the citizen's behalf, and require explicit, revocable consent.
+    thirdParty?: boolean;
+    certifiedBy?: string;
+    access?: string[];
     temporary?: boolean;
     mandate?: string;
     about: string;
@@ -144,6 +158,51 @@ const AGENT_META: Record<
       "Joins up HMRC, the council and the school for you",
     ],
     useHint: "Ask Fay about anything to do with your children.",
+  },
+  cass: {
+    name: "Cass",
+    tagline: "Benefits & entitlements",
+    provider: "Citizens Advice",
+    accent: "#0b6b8f",
+    thirdParty: true,
+    certifiedBy: "GDS Agent Register",
+    access: [
+      "Your income and household circumstances",
+      "Which benefits and support you already receive",
+      "Permission to prepare and submit claims on your behalf",
+    ],
+    about:
+      "Cass is a benefits agent from Citizens Advice — not built by government, but certified by it to act for you. She checks everything you might be entitled to across the whole benefits system and helps you claim it, the way a Citizens Advice adviser would, at a scale no single caseworker ever could.",
+    capabilities: [
+      "Checks every benefit and entitlement you might be missing",
+      "Prepares and submits claims for you, with your sign-in",
+      "Speaks up for you the way a caseworker would",
+      "Keeps track of what you're owed as your circumstances change",
+    ],
+    useHint: "Tell Cass what's going on at home — she'll work out what you're owed.",
+  },
+  iris: {
+    name: "Iris",
+    tagline: "Bereavement support",
+    provider: "Cruse Bereavement Support",
+    accent: "#6b5b95",
+    thirdParty: true,
+    certifiedBy: "GDS Agent Register",
+    temporary: true,
+    access: [
+      "That you've been recently bereaved",
+      "What support you've already arranged",
+      "Nothing else is shared without asking you first",
+    ],
+    about:
+      "Iris is a bereavement companion from Cruse Bereavement Support — a charity government trusts to stand beside you. Where Grace carries the government admin, Iris is here for the harder part: someone to talk to, gentle guidance on what to expect, and a way through at your own pace.",
+    capabilities: [
+      "Someone to talk to, whenever you need",
+      "Gentle guidance on what comes next",
+      "Connects you to local Cruse support",
+      "Works alongside Grace so nothing falls between them",
+    ],
+    useHint: "Talk to Iris about how you're doing, not only the admin.",
   },
 };
 
@@ -383,6 +442,7 @@ const HIDDEN_OPENERS = new Set(["Hi", "[commissioned]"]);
 // first. If none matches — or the match isn't commissioned — it goes to Dot,
 // who brings the right agent in, so a tap never dead-ends.
 const TOPIC_ROUTES: { agent: AgentId; re: RegExp }[] = [
+  { agent: "cass", re: /universal credit|pension credit|\bpip\b|\besa\b|\buc\b|housing benefit|council tax reduction|carer'?s allowance|free school meals|benefit|entitlement/i },
   { agent: "grace", re: /bereave|death|died|funeral|probate|estate|tell us once/i },
   { agent: "reg", re: /compan|confirmation statement|corporation tax|\bvat\b|director|companies house|\bpaye\b/i },
   { agent: "driving", re: /licence|vehicle|\bmot\b|dvla|dvsa|\bcar\b|driving|sorn|road tax/i },
@@ -405,6 +465,8 @@ export default function AgentPage() {
     sol: [],
     robin: [],
     fay: [],
+    cass: [],
+    iris: [],
   });
   const [activeAgent, setActiveAgent] = useState<AgentId>("dot");
   // Per-agent conversation metadata: a generated title and the last-active
@@ -428,6 +490,8 @@ export default function AgentPage() {
   const [agentPermissions, setAgentPermissions] = useState<
     Partial<Record<AgentId, AgentPermissions>>
   >({});
+  // When the citizen granted a third-party agent access (its consent moment).
+  const [consentAt, setConsentAt] = useState<Partial<Record<AgentId, number>>>({});
   const [agentDetail, setAgentDetail] = useState<AgentId | null>(null);
   // The interstitial briefing shown after picking a demo persona, before the
   // experience loads.
@@ -732,7 +796,12 @@ export default function AgentPage() {
     setRoster((r) =>
       r.map((x) => (x.id === agentId ? { ...x, state: "commissioned" } : x)),
     );
+    // Commissioning a third-party agent IS the moment consent is granted.
+    if (AGENT_META[agentId].thirdParty) {
+      setConsentAt((c) => ({ ...c, [agentId]: Date.now() }));
+    }
     setActiveAgent(agentId);
+    setAgentDetail(null);
     setTrayOpen(false);
     const transcript = (threads[from] ?? [])
       .filter(
@@ -877,11 +946,13 @@ export default function AgentPage() {
     convoMeta?: Partial<Record<AgentId, ConvoMeta>>;
     archived?: ArchivedConvo[];
     agentPermissions?: Partial<Record<AgentId, AgentPermissions>>;
+    consentAt?: Partial<Record<AgentId, number>>;
   }): boolean {
     if (s.threads) setThreads(s.threads);
     setConvoMeta(s.convoMeta ?? {});
     setArchived(Array.isArray(s.archived) ? s.archived : []);
     setAgentPermissions(s.agentPermissions ?? {});
+    setConsentAt(s.consentAt ?? {});
     if (s.profile) setProfile(s.profile);
     if (s.wallet) setWallet(s.wallet);
     if (s.inboundLog) setInboundLog(s.inboundLog);
@@ -946,6 +1017,7 @@ export default function AgentPage() {
           convoMeta,
           archived,
           agentPermissions,
+          consentAt,
         }),
       );
       localStorage.setItem("als-last-user", currentUser);
@@ -970,6 +1042,7 @@ export default function AgentPage() {
     convoMeta,
     archived,
     agentPermissions,
+    consentAt,
   ]);
 
   // When the login wall closes, decide whether the agent's action completed.
@@ -1164,6 +1237,7 @@ export default function AgentPage() {
     setConvoMeta({});
     setArchived([]);
     setAgentPermissions({});
+    setConsentAt({});
     setAgentDetail(null);
     setCurrentUser(userId);
     setPersonaRecord(null);
@@ -1177,7 +1251,7 @@ export default function AgentPage() {
     setCompanyContext(null);
     setHandover(null);
     setSuggestions({ agent: "dot", items: [] });
-    setThreads({ dot: [], reg: [], grace: [], driving: [], sol: [], robin: [], fay: [] });
+    setThreads({ dot: [], reg: [], grace: [], driving: [], sol: [], robin: [], fay: [], cass: [], iris: [] });
     if (!id) {
       setProfile(EMPTY);
       send("dot", [{ role: "user", content: "Hi" }], EMPTY);
@@ -1211,6 +1285,7 @@ export default function AgentPage() {
     setConvoMeta({});
     setArchived([]);
     setAgentPermissions({});
+    setConsentAt({});
     setAgentDetail(null);
     setCurrentUser(demo.id);
     setInboundLog([]);
@@ -1218,10 +1293,11 @@ export default function AgentPage() {
     setCompleted([]);
     setResolved([]);
     setSuggestions({ agent: "dot", items: [] });
-    setThreads({ dot: [], reg: [], grace: [], driving: [], sol: [], robin: [], fay: [] });
+    setThreads({ dot: [], reg: [], grace: [], driving: [], sol: [], robin: [], fay: [], cass: [], iris: [] });
     setRoster([
       { id: "dot", state: "commissioned" },
       ...demo.agents.map((a) => ({ id: a as AgentId, state: "commissioned" as const })),
+      ...(demo.introduced ?? []).map((a) => ({ id: a as AgentId, state: "introduced" as const })),
     ]);
     setActiveAgent("dot");
     setHandover(null);
@@ -1612,9 +1688,11 @@ export default function AgentPage() {
             state={roster.find((x) => x.id === agentDetail)?.state ?? "commissioned"}
             permissions={agentPermissions[agentDetail] ?? DEFAULT_PERMISSIONS}
             activity={agentActivity(agentDetail, threads, archived, convoMeta)}
+            consentAt={consentAt[agentDetail]}
             onClose={() => setAgentDetail(null)}
             onSetPermission={(patch) => setPermission(agentDetail, patch)}
             onNewConversation={() => newConversation(agentDetail)}
+            onCommission={() => commission(agentDetail)}
             onDecommission={() => decommissionAgent(agentDetail)}
             onRecommission={() => recommissionAgent(agentDetail)}
           />
@@ -2243,9 +2321,11 @@ function AgentDetailView({
   state,
   permissions,
   activity,
+  consentAt,
   onClose,
   onSetPermission,
   onNewConversation,
+  onCommission,
   onDecommission,
   onRecommission,
 }: {
@@ -2253,16 +2333,21 @@ function AgentDetailView({
   state: string;
   permissions: AgentPermissions;
   activity: AgentActivity;
+  consentAt?: number;
   onClose: () => void;
   onSetPermission: (patch: Partial<AgentPermissions>) => void;
   onNewConversation: () => void;
+  onCommission: () => void;
   onDecommission: () => void;
   onRecommission: () => void;
 }) {
   const m = AGENT_META[agentId];
   const [confirmDecom, setConfirmDecom] = useState(false);
   const isDot = agentId === "dot";
+  const isThird = !!m.thirdParty;
   const stoodDown = state === "stood-down";
+  const introduced = state === "introduced";
+  const commissioned = !introduced && !stoodDown;
   return (
     <div className="absolute inset-0 z-40 bg-[#faf9f7] flex flex-col">
       <header className="px-4 py-3 flex items-center gap-2 border-b border-black/5 bg-white">
@@ -2299,6 +2384,22 @@ function AgentDetailView({
             </div>
           </div>
 
+          {/* Third-party provenance */}
+          {isThird && (
+            <div
+              className="flex items-start gap-3 rounded-2xl border px-4 py-3"
+              style={{ borderColor: `${m.accent}33`, background: `${m.accent}0a` }}
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={m.accent} strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" className="mt-0.5 shrink-0">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z" />
+                <path d="m9 12 2 2 4-4" />
+              </svg>
+              <p className="text-[13px] leading-relaxed text-[#2a2a2a]">
+                Not a government agent — provided by <strong>{m.provider}</strong> and certified to act on your behalf by the <strong>{m.certifiedBy}</strong>. Government doesn't build it; it trusts it, with your consent.
+              </p>
+            </div>
+          )}
+
           {/* What it is */}
           <section className="space-y-2">
             <p className="text-[15px] leading-relaxed text-[#2a2a2a]">{m.about}</p>
@@ -2333,7 +2434,37 @@ function AgentDetailView({
             <p className="text-[14px] text-[#2a2a2a]">{m.useHint}</p>
           </section>
 
+          {/* Access & consent — third-party agents only */}
+          {isThird && m.access && (
+            <section>
+              <h3 className="text-[11px] font-semibold uppercase tracking-wide text-[#8a8a8a] mb-2">
+                {commissioned
+                  ? consentAt
+                    ? `Access you granted ${timeAgo(consentAt)}`
+                    : "Access you've granted"
+                  : `What you'd be granting ${m.name}`}
+              </h3>
+              <div className="rounded-2xl border border-black/[0.07] bg-white px-4 py-3.5">
+                <ul className="space-y-2">
+                  {m.access.map((a, i) => (
+                    <li key={i} className="flex items-start gap-2.5 text-[14px] text-[#2a2a2a]">
+                      <span
+                        className="mt-1.5 w-1.5 h-1.5 rounded-full shrink-0"
+                        style={{ background: m.accent }}
+                      />
+                      <span>{a}</span>
+                    </li>
+                  ))}
+                </ul>
+                <p className="mt-3 pt-3 border-t border-black/5 text-[12px] text-[#8a8a8a]">
+                  Certified, consented and revocable — you can withdraw {m.name}'s access at any time, and everything she does is recorded and reversible.
+                </p>
+              </div>
+            </section>
+          )}
+
           {/* What it's been doing */}
+          {commissioned && (
           <section>
             <h3 className="text-[11px] font-semibold uppercase tracking-wide text-[#8a8a8a] mb-2">
               What {m.name} has been doing for you
@@ -2367,9 +2498,10 @@ function AgentDetailView({
               </div>
             </div>
           </section>
+          )}
 
           {/* Permissions */}
-          {!isDot && (
+          {commissioned && !isDot && (
             <section>
               <h3 className="text-[11px] font-semibold uppercase tracking-wide text-[#8a8a8a] mb-2">
                 Settings &amp; permissions
@@ -2405,56 +2537,78 @@ function AgentDetailView({
 
           {/* Actions */}
           <section className="space-y-2 pb-4">
-            <button
-              type="button"
-              onClick={onNewConversation}
-              className="w-full rounded-xl px-4 py-3 text-[14px] font-medium text-white"
-              style={{ background: m.accent }}
-            >
-              Start a new conversation
-            </button>
-            {isDot ? (
-              <p className="text-center text-[12px] text-[#9a9a9a] pt-1">
-                Dot is your way in to government and can't be decommissioned.
-              </p>
-            ) : stoodDown ? (
-              <button
-                type="button"
-                onClick={onRecommission}
-                className="w-full rounded-xl border border-black/10 px-4 py-3 text-[14px] font-medium text-[#1a1a1a] hover:bg-black/[0.02]"
-              >
-                Recommission {m.name}
-              </button>
-            ) : confirmDecom ? (
-              <div className="rounded-xl border border-[#d4351c]/30 bg-[#d4351c]/[0.04] p-3 space-y-2">
-                <p className="text-[13px] text-[#2a2a2a]">
-                  Decommission {m.name}? Your conversations are kept and {m.name} can be brought back any time.
+            {introduced ? (
+              <>
+                <button
+                  type="button"
+                  onClick={onCommission}
+                  className="w-full rounded-xl px-4 py-3.5 text-[15px] font-semibold text-white"
+                  style={{ background: m.accent }}
+                >
+                  {isThird ? `Grant access & commission ${m.name}` : `Commission ${m.name}`}
+                </button>
+                <p className="text-center text-[12px] text-[#9a9a9a] pt-1">
+                  {isThird
+                    ? `${m.name} can't see or do anything until you grant access — and you can withdraw it any time.`
+                    : `${m.name} is provisioned by government and ready when you are.`}
                 </p>
-                <div className="flex gap-2">
-                  <button
-                    type="button"
-                    onClick={onDecommission}
-                    className="flex-1 rounded-lg bg-[#d4351c] px-3 py-2 text-[13px] font-medium text-white"
-                  >
-                    Decommission
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setConfirmDecom(false)}
-                    className="flex-1 rounded-lg border border-black/10 px-3 py-2 text-[13px] font-medium"
-                  >
-                    Keep
-                  </button>
-                </div>
-              </div>
+              </>
             ) : (
-              <button
-                type="button"
-                onClick={() => setConfirmDecom(true)}
-                className="w-full rounded-xl px-4 py-3 text-[14px] font-medium text-[#d4351c] hover:bg-[#d4351c]/[0.05]"
-              >
-                Decommission {m.name}
-              </button>
+              <>
+                <button
+                  type="button"
+                  onClick={onNewConversation}
+                  className="w-full rounded-xl px-4 py-3 text-[14px] font-medium text-white"
+                  style={{ background: m.accent }}
+                >
+                  Start a new conversation
+                </button>
+                {isDot ? (
+                  <p className="text-center text-[12px] text-[#9a9a9a] pt-1">
+                    Dot is your way in to government and can't be decommissioned.
+                  </p>
+                ) : stoodDown ? (
+                  <button
+                    type="button"
+                    onClick={onRecommission}
+                    className="w-full rounded-xl border border-black/10 px-4 py-3 text-[14px] font-medium text-[#1a1a1a] hover:bg-black/[0.02]"
+                  >
+                    {isThird ? `Grant ${m.name} access again` : `Recommission ${m.name}`}
+                  </button>
+                ) : confirmDecom ? (
+                  <div className="rounded-xl border border-[#d4351c]/30 bg-[#d4351c]/[0.04] p-3 space-y-2">
+                    <p className="text-[13px] text-[#2a2a2a]">
+                      {isThird
+                        ? `Withdraw ${m.name}'s access? She'll no longer be able to see your information or act for you. Your conversations are kept, and you can grant access again any time.`
+                        : `Decommission ${m.name}? Your conversations are kept and ${m.name} can be brought back any time.`}
+                    </p>
+                    <div className="flex gap-2">
+                      <button
+                        type="button"
+                        onClick={onDecommission}
+                        className="flex-1 rounded-lg bg-[#d4351c] px-3 py-2 text-[13px] font-medium text-white"
+                      >
+                        {isThird ? "Withdraw access" : "Decommission"}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setConfirmDecom(false)}
+                        className="flex-1 rounded-lg border border-black/10 px-3 py-2 text-[13px] font-medium"
+                      >
+                        Keep
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => setConfirmDecom(true)}
+                    className="w-full rounded-xl px-4 py-3 text-[14px] font-medium text-[#d4351c] hover:bg-[#d4351c]/[0.05]"
+                  >
+                    {isThird ? `Withdraw ${m.name}'s access` : `Decommission ${m.name}`}
+                  </button>
+                )}
+              </>
             )}
           </section>
         </div>
@@ -2493,10 +2647,13 @@ function CommissioningCard({
         {m.provider && (
           <p className="text-xs text-[#505a5f] mb-2">
             Provided by <span className="font-medium">{m.provider}</span>
+            {m.thirdParty && m.certifiedBy && (
+              <> · certified by {m.certifiedBy}</>
+            )}
           </p>
         )}
         <p className="text-[13px] text-[#505a5f] leading-relaxed mb-3">
-          {m.mandate}
+          {m.mandate ?? m.about}
         </p>
         {commissioned ? (
           <button
@@ -2507,7 +2664,7 @@ function CommissioningCard({
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#00703c" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
               <polyline points="20 6 9 17 4 12" />
             </svg>
-            Commissioned — open {m.name}
+            {m.thirdParty ? `Access granted — open ${m.name}` : `Commissioned — open ${m.name}`}
           </button>
         ) : (
           <>
@@ -2517,10 +2674,12 @@ function CommissioningCard({
               className="w-full rounded-lg text-white font-semibold text-sm py-2.5 transition-opacity hover:opacity-90"
               style={{ background: m.accent }}
             >
-              Commission {m.name}
+              {m.thirdParty ? `Grant access & commission ${m.name}` : `Commission ${m.name}`}
             </button>
             <p className="text-[11px] text-center text-[#8a8a8a] mt-2">
-              You can stand them down any time.
+              {m.thirdParty
+                ? "Certified, consented and revocable — withdraw any time."
+                : "You can stand them down any time."}
             </p>
           </>
         )}
