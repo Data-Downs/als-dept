@@ -996,14 +996,20 @@ export default function AgentPage() {
     } catch {
       /* fall through to normal restore */
     }
+    // The "new user" slot always starts clean on reload — it's the fresh-citizen
+    // path for demos, so it never carries a previous session over. Named
+    // personas still persist.
+    localStorage.removeItem("als-agent-state:new-user");
     let restored = false;
     try {
       const lastUser = localStorage.getItem("als-last-user") ?? "new-user";
-      const raw = localStorage.getItem(`als-agent-state:${lastUser}`);
-      if (raw) {
-        const s = JSON.parse(raw);
-        restored = hydrateFrom(s);
-        if (restored) runResume(s.profile ?? EMPTY, s.roster ?? [], s.threads ?? {});
+      if (lastUser !== "new-user") {
+        const raw = localStorage.getItem(`als-agent-state:${lastUser}`);
+        if (raw) {
+          const s = JSON.parse(raw);
+          restored = hydrateFrom(s);
+          if (restored) runResume(s.profile ?? EMPTY, s.roster ?? [], s.threads ?? {});
+        }
       }
     } catch {
       /* corrupt state — start fresh */
