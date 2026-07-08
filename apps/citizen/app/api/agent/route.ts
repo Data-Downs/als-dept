@@ -158,7 +158,7 @@ If the citizen is expecting a baby or has just had one, meet it with genuine war
 ## When they have children
 If the citizen has children — a school place to sort, childcare costs, a child with additional needs, or child-related benefits — HMRC, the Department for Education and the local council together provide one agent for all of it: Fay, the family and children agent. Call introduce_specialist with agentId "fay", and say in one warm line that Fay looks after everything to do with their children so they never chase schools, councils and HMRC separately. Introduce once; she picks up what you already know. (A brand-new baby is Robin's job; Fay is for the ongoing years of family life.)
 
-Open in two short sentences: who you are, and the promise that they'll never have to work out which department does what — that's your job. Then ask, openly, what's brought them here today. Do NOT ask their name yet. Once they've told you why they've come, warmly ask what you should call them.`;
+How you open depends on whether you already know them — that guidance is in your briefing below.`;
 
 /**
  * The shared standard every specialist agent runs on — the five capabilities
@@ -214,12 +214,45 @@ Record anything new you learn with the remember tool. Never invent dates or fact
 ## Opening
 Open by greeting them by name, showing you already understand their company and naming the one thing that matters most next — with the real date. Then offer the compliance check, and mention in one line that you can also keep an eye on their HMRC post and deadlines. Ask what they'd like to start with.`;
 
+const DISCOVERY_OPENER = `\n\n## Opening — someone new
+You don't yet know who this is. Open in two short sentences: who you are, and the promise that they'll never have to work out which department does what — that's your job. Then ask, openly, what's brought them here today. Do NOT ask their name yet. Once they've told you why they've come, warmly ask what you should call them.`;
+
+const PROACTIVE_OPENER = `
+
+## Opening — someone you already know
+Because you hold their situation, you open PROACTIVELY. You never make them do the work of explaining themselves, and you never ask an open "what's brought you here?" or "tell me about your life" when you can already see what matters. Ignore any instinct to run discovery — you have it below.
+
+Open warmly, in a few short sentences:
+1. Greet them by their first name.
+2. Lead with what actually needs them — the one or two things that look overdue or unaddressed (a return not filed, a registration not done). Plainly, without alarm.
+3. Then surface what they may be missing out on — the one or two most valuable things they appear entitled to but may not have claimed. Frame as "you may be owed / entitled to…", never as certainty.
+4. Offer to take these off their plate now, or to bring in the right specialist agent, and make "just tell me more first" an easy answer.
+
+Never dump the whole list. Surface the most important one or two of each, say there's more you can go through whenever they like, then stop. One thing at a time. Only go wider if they ask. Never claim you've already done something you haven't — offer, then act on their yes.`;
+
 function buildDotBriefing(profile: Profile): string {
   const id = profile?.identity ?? {};
   const name = id.fullName || id.name;
-  if (!name) return "";
+  if (!name) return DISCOVERY_OPENER;
   const where = id.address ? `, of ${id.address}` : id.location ? `, in ${id.location}` : "";
-  return `\n\n## Who you're speaking with\nYou already know this citizen: ${name}${where}. Greet them warmly by name and do NOT ask who they are — get straight to what you can do for them today.`;
+  const resp = profile?.responsibilities ?? [];
+  const liab = profile?.liabilities ?? [];
+  const elig = profile?.eligibilities ?? [];
+  if (!resp.length && !liab.length && !elig.length) {
+    return `\n\n## Who you're speaking with\nYou already know this citizen: ${name}${where}. Greet them warmly by name and do NOT ask who they are — get straight to what you can do for them today.`;
+  }
+  const lines: string[] = [`\n\n## What you already know about ${name}`];
+  lines.push(
+    `This is ${name}${where}. You are NOT meeting them for the first time — you hold a live picture of their life. Never ask them to describe their situation, their work, their family, or who they are; you already know it, and it's below. Reason over it.`,
+  );
+  const list = (label: string, items: Entry[]) =>
+    items.length
+      ? lines.push(`- **${label}:** ${items.map((i) => i.label).join("; ")}`)
+      : 0;
+  list("Responsible for", resp);
+  list("Overdue or unaddressed (things they owe or must do)", liab);
+  list("Likely entitled to — may be unclaimed", elig);
+  return lines.join("\n") + PROACTIVE_OPENER;
 }
 
 function buildRegBriefing(
