@@ -337,7 +337,18 @@ export function generateVehicle(
     }
   }
 
-  const recallActive = rng() > 0.8;
+  // A vehicle built 40+ years ago is a historic vehicle: exempt from both
+  // vehicle tax and the MOT, and out of scope for clean-air charges.
+  const historic = age >= 40;
+  if (historic) {
+    taxStatus = "Exempt — historic vehicle";
+    taxDue = undefined;
+    motStatus = "Exempt — historic vehicle";
+    motDate = undefined;
+    motTests.length = 0;
+  }
+
+  const recallActive = !historic && rng() > 0.8;
   const recall = recallActive
     ? {
         active: true,
@@ -361,7 +372,9 @@ export function generateVehicle(
     motDueOrExpiry: motDate ? fmt(motDate) : undefined,
     motTests,
     recall,
-    cleanAir: cleanAirNote(v.fuel, year),
+    cleanAir: historic
+      ? { compliant: true, note: "Historic vehicles are outside the ULEZ / clean-air-zone scheme — no charge." }
+      : cleanAirNote(v.fuel, year),
     licence: assessLicence(v.category, licence),
     insurance: { available: false, note: INSURANCE_NOTE },
     source: "simulated",

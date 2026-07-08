@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Citizen experience — demo guide</title>
+<style>
+  :root { --ink:#1a1a1a; --muted:#6a6a6a; --faint:#9a9a9a; --bg:#faf9f7; --line:rgba(0,0,0,.08); }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink);
+    font:16px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased; }
+  .wrap { max-width:820px; margin:0 auto; padding:56px 24px 96px; }
+  header p.kicker { text-transform:uppercase; letter-spacing:.08em; font-size:12px; font-weight:600; color:var(--faint); margin:0 0 6px; }
+  h1 { font-size:34px; line-height:1.15; margin:0 0 12px; letter-spacing:-.01em; }
+  .lede { font-size:18px; color:var(--muted); margin:0 0 8px; max-width:60ch; }
+  .how { background:#fff; border:1px solid var(--line); border-radius:16px; padding:20px 22px; margin:28px 0 8px; }
+  .how h2 { font-size:13px; text-transform:uppercase; letter-spacing:.06em; color:var(--faint); margin:0 0 10px; }
+  .how ol { margin:0; padding-left:20px; } .how li { margin:4px 0; }
+  section.persona { background:#fff; border:1px solid var(--line); border-radius:16px; padding:0; margin:22px 0; overflow:hidden; }
+  .bar { height:6px; }
+  .body { padding:24px 26px; }
+  .arch { text-transform:uppercase; letter-spacing:.06em; font-size:11px; font-weight:700; margin:0 0 4px; }
+  h3 { font-size:22px; margin:0 0 10px; letter-spacing:-.01em; }
+  .summary { color:var(--muted); margin:0 0 16px; }
+  .tags { display:flex; flex-wrap:wrap; gap:6px; margin:0 0 18px; }
+  .tag { font-size:12px; font-weight:600; border-radius:999px; padding:4px 10px; }
+  .row { display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin:0 0 16px; }
+  .agents-label { font-size:12px; color:var(--faint); font-weight:600; text-transform:uppercase; letter-spacing:.05em; }
+  .agent { font-size:13px; font-weight:600; background:rgba(0,0,0,.04); border-radius:999px; padding:3px 10px; }
+  .moves-label { font-size:12px; color:var(--faint); font-weight:600; text-transform:uppercase; letter-spacing:.05em; margin:0 0 8px; }
+  ol.moves { margin:0; padding:0; list-style:none; counter-reset:m; }
+  ol.moves li { position:relative; padding:0 0 10px 34px; counter-increment:m; }
+  ol.moves li::before { content:counter(m); position:absolute; left:0; top:1px; width:22px; height:22px; border-radius:999px;
+    background:var(--c,#1d70b8); color:#fff; font-size:12px; font-weight:700; display:flex; align-items:center; justify-content:center; }
+  .foot { margin-top:36px; border-top:1px solid var(--line); padding-top:20px; color:var(--muted); font-size:15px; }
+  .foot strong { color:var(--ink); }
+  code { background:rgba(0,0,0,.05); border-radius:5px; padding:1px 6px; font-size:.9em; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <p class="kicker">GOV.UK · agentic citizen experience</p>
+    <h1>Demo guide</h1>
+    <p class="lede">Five curated citizens, each chosen for how much of the cohort they exercise. Pick one to show a different corner of everyday life with government.</p>
+  </header>
+
+  <div class="how">
+    <h2>How the demo runs</h2>
+    <ol>
+      <li>Open the citizen switcher (top right) and choose a person.</li>
+      <li>Read their <strong>briefing</strong> — who they are, which agents they already have, and the best way to show them off.</li>
+      <li>Press <strong>Start the demo</strong>. Their situation loads and Dot opens proactively — leading with what's overdue and what they're owed.</li>
+      <li>Follow the numbered moves below (or the same list on the briefing card).</li>
+    </ol>
+  </div>
+
+  <!-- Personas -->
+  <section class="persona">
+    <div class="bar" style="background:#00703c"></div>
+    <div class="body">
+      <p class="arch" style="color:#00703c">The affluent couple and their fleet</p>
+      <h3>Mary &amp; Hugo Summers · 64 · London</h3>
+      <p class="summary">A comfortable retired couple at the estate-planning stage of life. Between them they run a three-car household — a 2023 BMW, a 2022 Audi Q5 and a cherished 1965 Jaguar E-Type — exactly the household with quiet admin slipping through the cracks.</p>
+      <div class="tags">
+        <span class="tag" style="background:#00703c14;color:#00703c">Three-car household</span>
+        <span class="tag" style="background:#00703c14;color:#00703c">A 1965 classic car</span>
+        <span class="tag" style="background:#00703c14;color:#00703c">Approaching retirement</span>
+        <span class="tag" style="background:#00703c14;color:#00703c">Estate &amp; power of attorney</span>
+      </div>
+      <div class="row"><span class="agents-label">Agents:</span><span class="agent">Dot</span><span class="agent">Miles</span></div>
+      <p class="moves-label">How to show it off</p>
+      <ol class="moves" style="--c:#00703c">
+        <li>Open Miles and ask him to check all three cars — he flags the Audi's July MOT and recognises the 1965 Jaguar as a historic vehicle (tax and MOT exempt).</li>
+        <li>Type any made-up registration to show the generator conjuring a complete, coherent vehicle for any plate.</li>
+        <li>Ask Miles whether you could drive a large motorhome on your licence, to show the entitlement check.</li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="persona">
+    <div class="bar" style="background:#a84f7a"></div>
+    <div class="body">
+      <p class="arch" style="color:#a84f7a">The young couple starting a family</p>
+      <h3>Emma &amp; Liam Parker · 29 · London</h3>
+      <p class="summary">Emma is a maternity-ward nurse at Guy's &amp; St Thomas', expecting her first baby with Liam. The moment a lot of government quietly kicks in at once: maternity pay, registering the birth, Child Benefit, childcare.</p>
+      <div class="tags">
+        <span class="tag" style="background:#a84f7a14;color:#a84f7a">First baby on the way</span>
+        <span class="tag" style="background:#a84f7a14;color:#a84f7a">Statutory Maternity Pay</span>
+        <span class="tag" style="background:#a84f7a14;color:#a84f7a">Child Benefit &amp; childcare</span>
+        <span class="tag" style="background:#a84f7a14;color:#a84f7a">Registering a birth</span>
+      </div>
+      <div class="row"><span class="agents-label">Agents:</span><span class="agent">Dot</span><span class="agent">Robin</span></div>
+      <p class="moves-label">How to show it off</p>
+      <ol class="moves" style="--c:#a84f7a">
+        <li>Read Dot's opener — she leads with what's coming and the maternity support Emma's entitled to.</li>
+        <li>Tap "Statutory Maternity Pay" in the panel to hand it straight to Robin.</li>
+        <li>Ask Robin what happens when the baby arrives, to show her carrying the whole new-baby journey.</li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="persona">
+    <div class="bar" style="background:#4c2c92"></div>
+    <div class="body">
+      <p class="arch" style="color:#4c2c92">The professional family — company, cars and kids</p>
+      <h3>Rajesh &amp; Priya Patel · 43 · Cambridge</h3>
+      <p class="summary">Rajesh runs RKP Consulting Ltd; Priya teaches secondary school. Two young children, two cars including a Tesla, a healthy income — and three corners of government pulling at once. The persona that shows the cohort handling real breadth.</p>
+      <div class="tags">
+        <span class="tag" style="background:#4c2c9214;color:#4c2c92">Limited company</span>
+        <span class="tag" style="background:#4c2c9214;color:#4c2c92">VAT &amp; corporation tax</span>
+        <span class="tag" style="background:#4c2c9214;color:#4c2c92">Two cars incl. an EV</span>
+        <span class="tag" style="background:#4c2c9214;color:#4c2c92">Two young children</span>
+      </div>
+      <div class="row"><span class="agents-label">Agents:</span><span class="agent">Dot</span><span class="agent">Reg</span><span class="agent">Miles</span><span class="agent">Fay</span></div>
+      <p class="moves-label">How to show it off</p>
+      <ol class="moves" style="--c:#4c2c92">
+        <li>Open the tray — three specialists already commissioned: Reg, Miles and Fay. The "look how much it's holding" moment.</li>
+        <li>Ask Reg where the company stands, then Miles to check both cars, then tap "Tax-Free Childcare" to hand it to Fay.</li>
+        <li>Point out that Rajesh never picked a department — Dot placed all three for him.</li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="persona">
+    <div class="bar" style="background:#c05746"></div>
+    <div class="body">
+      <p class="arch" style="color:#c05746">The family leaning on support</p>
+      <h3>Fatima Nowak · 43 · Luton</h3>
+      <p class="summary">Fatima works part-time in school catering; Tomasz is a warehouse supervisor. Three children — Kasia (15), Adam (11, with an EHCP), Lily (5). The family for whom a missed entitlement or deadline genuinely bites: the vulnerable-first story.</p>
+      <div class="tags">
+        <span class="tag" style="background:#c0574614;color:#c05746">Three children</span>
+        <span class="tag" style="background:#c0574614;color:#c05746">Child Benefit 16th-birthday cliff</span>
+        <span class="tag" style="background:#c0574614;color:#c05746">Adam's EHCP</span>
+        <span class="tag" style="background:#c0574614;color:#c05746">Free school meals &amp; childcare</span>
+      </div>
+      <div class="row"><span class="agents-label">Agents:</span><span class="agent">Dot</span><span class="agent">Fay</span></div>
+      <p class="moves-label">How to show it off</p>
+      <ol class="moves" style="--c:#c05746">
+        <li>Read Dot's opener — she leads with the Child Benefit cliff: it stops at Kasia's 16th birthday unless Fatima confirms she's staying in education. The vigilance beat.</li>
+        <li>Open Fay and ask her to keep Kasia's Child Benefit running.</li>
+        <li>Ask Fay about Adam's EHCP and free school meals, to show her spanning HMRC, the council and the school.</li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="persona">
+    <div class="bar" style="background:#4a7a6f"></div>
+    <div class="body">
+      <p class="arch" style="color:#4a7a6f">Bereavement — the hardest week, carried</p>
+      <h3>Sarah Okafor · 58 · Chelmsford</h3>
+      <p class="summary">Sarah's husband David died in February. A will, a £645,000 estate, probate not yet started, pensions to unwind — the admin that lands at the worst moment. Grace is already with her, carrying it so Sarah doesn't have to hold it while she grieves.</p>
+      <div class="tags">
+        <span class="tag" style="background:#4a7a6f14;color:#4a7a6f">Recent bereavement</span>
+        <span class="tag" style="background:#4a7a6f14;color:#4a7a6f">Tell Us Once</span>
+        <span class="tag" style="background:#4a7a6f14;color:#4a7a6f">Probate &amp; inheritance tax</span>
+        <span class="tag" style="background:#4a7a6f14;color:#4a7a6f">Pensions &amp; Bereavement Support</span>
+      </div>
+      <div class="row"><span class="agents-label">Agents:</span><span class="agent">Dot</span><span class="agent">Grace</span></div>
+      <p class="moves-label">How to show it off</p>
+      <ol class="moves" style="--c:#4a7a6f">
+        <li>Notice the tone shift — Grace is gentle and unhurried. The emotional centrepiece.</li>
+        <li>Open Grace and let her carry it: Tell Us Once notifies every department at once, then Bereavement Support Payment.</li>
+        <li>After she files something, tap the receipt's "Undo" to show the safe-to-be-wrong recovery layer.</li>
+      </ol>
+    </div>
+  </section>
+
+  <div class="foot">
+    <p><strong>Two things best shown as a new user.</strong> Choose <code>New user (start fresh)</code> to demonstrate:</p>
+    <p><strong>Reg &amp; live Companies House.</strong> Say you run a company and give a <em>real</em> company name — Reg recognises you from the live register (real directors and filing dates), then files with a One Login sign-in.</p>
+    <p><strong>Sol &amp; the money you're owed.</strong> Say you're a self-employed sole trader — Sol picks up the tax side, and this is where the "you're owed £1,800 you didn't know about" beat lands.</p>
+  </div>
+</div>
+</body>
+</html>

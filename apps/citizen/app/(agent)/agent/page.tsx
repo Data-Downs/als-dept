@@ -5,6 +5,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { useAppStore } from "@/lib/store";
 import { dedupeEntries } from "@/lib/entry-dedupe";
+import { DEMO_PERSONAS, type DemoPersona } from "@/lib/demo-personas";
 import { BottomSheet } from "@/components/ui/BottomSheet";
 import { LoginSheet } from "@/components/sheets/LoginSheet";
 import { OneLoginNotification } from "@/components/OneLoginNotification";
@@ -428,6 +429,9 @@ export default function AgentPage() {
     Partial<Record<AgentId, AgentPermissions>>
   >({});
   const [agentDetail, setAgentDetail] = useState<AgentId | null>(null);
+  // The interstitial briefing shown after picking a demo persona, before the
+  // experience loads.
+  const [pendingDemo, setPendingDemo] = useState<DemoPersona | null>(null);
   const [roster, setRoster] = useState<RosterEntry[]>([
     { id: "dot", state: "commissioned" },
   ]);
@@ -1196,6 +1200,55 @@ export default function AgentPage() {
     }
   }
 
+  // Load a curated demo persona: their identity and wallet, their situation
+  // pre-seeded so Dot opens proactively, and the relevant agents already
+  // commissioned. Lands on Dot's proactive opener.
+  async function startDemo(demo: DemoPersona) {
+    setPendingDemo(null);
+    if (demo.id === currentUser) return;
+    setResumeSummary(null);
+    setResuming(false);
+    setConvoMeta({});
+    setArchived([]);
+    setAgentPermissions({});
+    setAgentDetail(null);
+    setCurrentUser(demo.id);
+    setInboundLog([]);
+    setWorkingState([]);
+    setCompleted([]);
+    setResolved([]);
+    setSuggestions({ agent: "dot", items: [] });
+    setThreads({ dot: [], reg: [], grace: [], driving: [], sol: [], robin: [], fay: [] });
+    setRoster([
+      { id: "dot", state: "commissioned" },
+      ...demo.agents.map((a) => ({ id: a as AgentId, state: "commissioned" as const })),
+    ]);
+    setActiveAgent("dot");
+    setHandover(null);
+    setCompanyContext(demo.companyContext ?? null);
+    try {
+      const res = await fetch(`/api/personas/${demo.id}`);
+      const data = await res.json();
+      const persona = data.persona as Record<string, unknown>;
+      setPersonaRecord(persona);
+      const base = personaToProfile(persona);
+      const prof: Profile = {
+        ...base,
+        responsibilities: dedupeEntries([...base.responsibilities, ...demo.seed.responsibilities]),
+        liabilities: dedupeEntries([...base.liabilities, ...demo.seed.liabilities]),
+        eligibilities: dedupeEntries([...base.eligibilities, ...demo.seed.eligibilities]),
+      };
+      setProfile(prof);
+      const creds = Array.isArray(persona.credentials)
+        ? (persona.credentials as Record<string, unknown>[])
+        : [];
+      setWallet(creds.map(personaCredToCard));
+      send("dot", [{ role: "user", content: "Hi" }], prof);
+    } catch {
+      /* ignore */
+    }
+  }
+
   const visible = messages.filter(
     (m, i) =>
       !(i === 0 && m.role === "user" && HIDDEN_OPENERS.has(m.content)) &&
@@ -1391,20 +1444,37 @@ export default function AgentPage() {
                   </span>
                   New user (start fresh)
                 </button>
-                {personas.map((p) => (
+                {DEMO_PERSONAS.map((d) => (
                   <button
-                    key={p.id}
+                    key={d.id}
                     type="button"
-                    onClick={() => loadPersona(p.id)}
-                    className="w-full text-left rounded-lg px-3 py-2 text-sm hover:bg-black/[0.03] flex items-center gap-2.5"
+                    onClick={() => {
+                      setPersonaMenu(false);
+                      setPendingDemo(d);
+                    }}
+                    className="w-full text-left rounded-lg px-3 py-2 hover:bg-black/[0.03] flex items-center gap-2.5"
                   >
                     <span
                       className="w-6 h-6 rounded-full flex items-center justify-center text-[10px] text-white shrink-0"
-                      style={{ background: p.color }}
+                      style={{ background: d.accent }}
                     >
-                      {p.initials}
+                      {d.headline
+                        .split("·")[0]
+                        .trim()
+                        .split(/\s|&/)
+                        .filter(Boolean)
+                        .slice(0, 2)
+                        .map((w) => w[0])
+                        .join("")}
                     </span>
-                    <span className="truncate">{p.name}</span>
+                    <span className="min-w-0">
+                      <span className="block text-sm truncate">
+                        {d.headline.split("·")[0].trim()}
+                      </span>
+                      <span className="block text-[11px] text-[#8a8a8a] truncate">
+                        {d.archetype}
+                      </span>
+                    </span>
                   </button>
                 ))}
               </div>
@@ -1651,6 +1721,14 @@ export default function AgentPage() {
       </aside>
 
       <OneLoginNotification />
+
+      {pendingDemo && (
+        <PersonaBriefing
+          demo={pendingDemo}
+          onStart={() => startDemo(pendingDemo)}
+          onClose={() => setPendingDemo(null)}
+        />
+      )}
 
       {showWallet && (
         <div className="fixed inset-0 z-[60] flex">
@@ -2058,6 +2136,105 @@ function Toggle({ on, onChange }: { on: boolean; onChange: (v: boolean) => void 
         }`}
       />
     </button>
+  );
+}
+
+function PersonaBriefing({
+  demo,
+  onStart,
+  onClose,
+}: {
+  demo: DemoPersona;
+  onStart: () => void;
+  onClose: () => void;
+}) {
+  return (
+    <div className="fixed inset-0 z-[70] bg-black/40 flex items-center justify-center p-4">
+      <div className="relative w-full max-w-[560px] max-h-[90vh] overflow-y-auto rounded-2xl bg-[#faf9f7] shadow-2xl">
+        <div
+          className="h-1.5 w-full rounded-t-2xl"
+          style={{ background: demo.accent }}
+        />
+        <div className="p-7">
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Close"
+            className="absolute right-4 top-4 text-[#8a8a8a] hover:text-[#1a1a1a]"
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M18 6 6 18M6 6l12 12" />
+            </svg>
+          </button>
+
+          <p
+            className="text-[11px] font-semibold uppercase tracking-wide"
+            style={{ color: demo.accent }}
+          >
+            {demo.archetype}
+          </p>
+          <h2 className="text-2xl font-semibold mt-1">{demo.headline}</h2>
+
+          <p className="mt-4 text-[15px] leading-relaxed text-[#2a2a2a]">
+            {demo.summary}
+          </p>
+
+          <div className="mt-5 flex flex-wrap gap-1.5">
+            {demo.themes.map((t) => (
+              <span
+                key={t}
+                className="text-xs font-medium rounded-full px-2.5 py-1"
+                style={{ background: `${demo.accent}14`, color: demo.accent }}
+              >
+                {t}
+              </span>
+            ))}
+          </div>
+
+          <div className="mt-6">
+            <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8a8a8a] mb-2">
+              Agents already commissioned
+            </p>
+            <div className="flex items-center gap-3 flex-wrap">
+              {(["dot", ...demo.agents] as AgentId[]).map((id) => (
+                <div key={id} className="flex items-center gap-2">
+                  <AgentAvatar id={id} className="w-7 h-7" />
+                  <span className="text-[13px] font-medium">{AGENT_META[id].name}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="mt-6">
+            <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8a8a8a] mb-2">
+              How to show this off
+            </p>
+            <ol className="space-y-2.5">
+              {demo.moves.map((m, i) => (
+                <li key={i} className="flex gap-3 text-[14px] text-[#2a2a2a]">
+                  <span
+                    className="shrink-0 w-5 h-5 rounded-full text-white text-[11px] font-semibold flex items-center justify-center mt-0.5"
+                    style={{ background: demo.accent }}
+                  >
+                    {i + 1}
+                  </span>
+                  <span>{m}</span>
+                </li>
+              ))}
+            </ol>
+          </div>
+
+          <button
+            type="button"
+            onClick={onStart}
+            className="mt-7 w-full rounded-xl px-4 py-3.5 text-[15px] font-semibold text-white"
+            style={{ background: demo.accent }}
+          >
+            Start the demo →
+          </button>
+        </div>
+      </div>
+    </div>
   );
 }
 
