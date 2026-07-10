@@ -1,0 +1,347 @@
+/* ============================================================
+   Agentic Government — showcase report
+   Civic-essay system. GOV.UK-evolved palette, cohort accents.
+   ============================================================ */
+
+:root {
+  /* ink & paper */
+  --ink: #0b0c0c;
+  --ink-soft: #4a4d4f;
+  --ink-faint: #6f7376;
+  --paper: #fbfaf7;
+  --paper-2: #f4f1ea;
+  --panel: #ffffff;
+  --line: rgba(11, 12, 12, 0.12);
+  --line-soft: rgba(11, 12, 12, 0.07);
+
+  /* civic through-line + accessibility signature */
+  --civic: #1d70b8;
+  --focus: #ffdd00;
+
+  /* the cohort — real agent accents */
+  --dot: #1d70b8;
+  --reg: #4c2c92;
+  --miles: #00703c;
+  --grace: #4a7a6f;
+  --sol: #b45309;
+  --robin: #a84f7a;
+  --fay: #c05746;
+  --cass: #0b6b8f;
+  --iris: #6b5b95;
+
+  /* type */
+  --display: "Hanken Grotesk", system-ui, sans-serif;
+  --serif: "Newsreader", Georgia, serif;
+  --mono: "JetBrains Mono", ui-monospace, monospace;
+
+  /* measure */
+  --measure: 40rem;
+  --wide: 76rem;
+
+  --accent: var(--civic); /* per-section override */
+}
+
+/* ---- reset-ish ---- */
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+}
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: 1.125rem;
+  line-height: 1.62;
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+img { max-width: 100%; height: auto; display: block; }
+a { color: inherit; }
+::selection { background: var(--focus); color: var(--ink); }
+:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 5px var(--ink);
+}
+
+/* ============================================================
+   Type scale
+   ============================================================ */
+.display, h1, h2, h3, .eyebrow, .label, .nav, .kicker, .stat-num, .agent-name {
+  font-family: var(--display);
+}
+h1 {
+  font-weight: 800;
+  font-size: clamp(2.6rem, 6.5vw, 5rem);
+  line-height: 0.98;
+  letter-spacing: -0.03em;
+  margin: 0;
+}
+h2 {
+  font-weight: 800;
+  font-size: clamp(1.9rem, 4vw, 2.9rem);
+  line-height: 1.02;
+  letter-spacing: -0.025em;
+  margin: 0 0 0.6em;
+}
+h3 {
+  font-weight: 700;
+  font-size: 1.32rem;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  margin: 2.2em 0 0.5em;
+}
+p { margin: 0 0 1.15em; }
+.lead {
+  font-family: var(--serif);
+  font-size: clamp(1.3rem, 2.4vw, 1.65rem);
+  line-height: 1.42;
+  color: var(--ink);
+}
+strong { font-weight: 600; }
+em { font-style: italic; }
+
+.eyebrow, .label, .kicker {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+/* ============================================================
+   Layout
+   ============================================================ */
+.wrap { width: 100%; max-width: var(--wide); margin-inline: auto; padding-inline: clamp(1.25rem, 5vw, 3rem); }
+.measure { max-width: var(--measure); }
+.measure-wide { max-width: 52rem; }
+
+section {
+  padding-block: clamp(4rem, 9vw, 8rem);
+  border-top: 1px solid var(--line);
+  position: relative;
+  scroll-margin-top: 4.5rem;
+}
+section:first-of-type { border-top: 0; }
+
+/* ============================================================
+   Top bar — a GOV.UK-evolved phase banner
+   ============================================================ */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 60;
+  background: color-mix(in srgb, var(--paper) 88%, transparent);
+  backdrop-filter: saturate(1.4) blur(10px);
+  border-bottom: 1px solid var(--line);
+}
+.topbar-inner {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  min-height: 3.25rem;
+}
+.brand { display: flex; align-items: center; gap: 0.6rem; font-family: var(--display); font-weight: 700; font-size: 0.95rem; letter-spacing: -0.01em; }
+.brand .glyph { width: 1.05rem; height: 1.05rem; border-radius: 50%; background: var(--civic); box-shadow: 0 0 0 3px color-mix(in srgb, var(--civic) 22%, transparent); }
+.phase {
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink);
+  background: var(--focus);
+  padding: 0.18rem 0.5rem;
+  border-radius: 3px;
+  font-weight: 600;
+}
+.topbar .spacer { flex: 1; }
+.toc-toggle {
+  font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase;
+  border: 1px solid var(--line); background: none; color: var(--ink-soft);
+  padding: 0.35rem 0.7rem; border-radius: 999px; cursor: pointer;
+}
+.toc-toggle:hover { border-color: var(--ink); color: var(--ink); }
+
+/* progress hairline */
+.progress { position: absolute; left: 0; bottom: -1px; height: 2px; width: 0; background: var(--accent); transition: width 0.15s linear; }
+
+/* ============================================================
+   Section index (the cohort spine) — left rail on desktop
+   ============================================================ */
+.spine {
+  position: fixed;
+  top: 50%;
+  left: max(1rem, calc((100vw - var(--wide)) / 2 - 1.5rem));
+  transform: translateY(-50%);
+  z-index: 40;
+  display: flex; flex-direction: column; gap: 0.85rem;
+}
+.spine a {
+  display: flex; align-items: center; gap: 0.6rem;
+  text-decoration: none; color: var(--ink-faint);
+  font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.06em; text-transform: uppercase;
+}
+.spine .dot {
+  width: 9px; height: 9px; border-radius: 50%;
+  background: var(--paper); border: 1.5px solid currentColor;
+  transition: transform 0.2s, background 0.2s;
+  flex: none;
+}
+.spine a .txt { opacity: 0; transform: translateX(-4px); transition: opacity 0.2s, transform 0.2s; white-space: nowrap; }
+.spine a:hover .txt, .spine:hover a .txt { opacity: 1; transform: none; }
+.spine a.active { color: var(--sec-accent, var(--civic)); }
+.spine a.active .dot { background: currentColor; transform: scale(1.35); }
+@media (max-width: 1180px) { .spine { display: none; } }
+
+/* ============================================================
+   Section header device — coloured dot + eyebrow
+   ============================================================ */
+.sec-head { display: flex; align-items: center; gap: 0.7rem; margin-bottom: 1.6rem; }
+.sec-head .mark {
+  width: 0.7rem; height: 0.7rem; border-radius: 50%;
+  background: var(--accent); flex: none;
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 16%, transparent);
+}
+.sec-head .num { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.12em; color: var(--ink-faint); }
+.sec-head .name { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); font-weight: 600; }
+
+/* ============================================================
+   HERO
+   ============================================================ */
+.hero { border-top: 0; padding-block: clamp(3.5rem, 9vw, 7rem) clamp(3rem, 7vw, 6rem); }
+.hero .kicker { display: inline-flex; align-items: center; gap: 0.55rem; margin-bottom: 1.6rem; }
+.hero .kicker .dots { display: inline-flex; }
+.hero .kicker .dots i { width: 0.5rem; height: 0.5rem; border-radius: 50%; display: inline-block; margin-left: -0.14rem; border: 1.5px solid var(--paper); }
+.hero h1 { max-width: 15ch; }
+.hero h1 .civic { color: var(--civic); }
+.hero .sub { margin-top: 1.8rem; max-width: 34rem; font-size: clamp(1.2rem, 2.2vw, 1.5rem); line-height: 1.45; color: var(--ink); }
+.hero .meta { margin-top: 2.4rem; display: flex; flex-wrap: wrap; gap: 1.5rem 2.4rem; }
+.hero .meta div { }
+.hero .meta dt { font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-faint); margin-bottom: 0.2rem; }
+.hero .meta dd { margin: 0; font-family: var(--display); font-weight: 600; font-size: 0.98rem; }
+
+/* the binary-choice device */
+.choice { margin-top: 3rem; display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; max-width: 40rem; }
+.choice > div { background: var(--paper); padding: 1.4rem 1.5rem; }
+.choice .governed { background: color-mix(in srgb, var(--civic) 7%, var(--paper)); }
+.choice h4 { font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; margin: 0 0 0.5rem; color: var(--ink-faint); }
+.choice .governed h4 { color: var(--civic); }
+.choice p { font-family: var(--serif); font-size: 1rem; line-height: 1.4; margin: 0; color: var(--ink-soft); }
+.choice .governed p { color: var(--ink); }
+@media (max-width: 560px) { .choice { grid-template-columns: 1fr; } }
+
+/* ============================================================
+   Figures — device screenshots
+   ============================================================ */
+figure { margin: 2.4rem 0; }
+figure.bleed { margin-inline: calc(50% - 50vw); margin-block: 3rem; padding-inline: clamp(1.25rem, 5vw, 3rem); }
+figure.bleed .frame { max-width: var(--wide); margin-inline: auto; }
+.frame {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--panel);
+  box-shadow: 0 1px 0 rgba(11,12,12,0.02), 0 22px 48px -30px rgba(11,12,12,0.4);
+}
+.frame img { width: 100%; height: auto; }
+.frame.crop { overflow: hidden; }
+.frame.crop img { width: 100%; height: 600px; object-fit: cover; object-position: top left; }
+figcaption { margin-top: 0.85rem; font-family: var(--mono); font-size: 0.74rem; letter-spacing: 0.02em; color: var(--ink-faint); line-height: 1.5; max-width: 40rem; }
+figcaption b { color: var(--ink); font-weight: 600; }
+.fig-grid { display: grid; gap: 1.25rem; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+
+/* ============================================================
+   Capability list (six capabilities)
+   ============================================================ */
+.caps { display: grid; gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; margin: 2rem 0; }
+.cap { background: var(--paper); padding: 1.3rem 1.5rem; display: grid; grid-template-columns: auto 1fr; gap: 1rem; align-items: start; }
+.cap .k { font-family: var(--display); font-weight: 800; font-size: 1.05rem; color: var(--accent); min-width: 6.5rem; }
+.cap p { margin: 0; font-size: 1.02rem; line-height: 1.45; }
+.cap .evd { display: block; margin-top: 0.4rem; font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.03em; color: var(--ink-faint); }
+
+/* ============================================================
+   Cone of control
+   ============================================================ */
+.cone { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; margin: 2rem 0; }
+.cone > div { padding: 1.3rem 1.4rem; background: var(--paper); }
+.cone .agents { background: color-mix(in srgb, var(--reg) 8%, var(--paper)); }
+.cone h4 { font-family: var(--display); font-weight: 700; font-size: 1.05rem; margin: 0 0 0.35rem; }
+.cone .tag { font-family: var(--mono); font-size: 0.64rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-faint); display: block; margin-bottom: 0.6rem; }
+.cone p { margin: 0; font-size: 0.95rem; line-height: 1.4; color: var(--ink-soft); }
+@media (max-width: 720px) { .cone { grid-template-columns: 1fr; } }
+
+/* ============================================================
+   Agent roster cards
+   ============================================================ */
+.roster { display: grid; gap: 1.25rem; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); margin: 2rem 0; }
+.agent-card {
+  border: 1px solid var(--line); border-radius: 12px; padding: 1.4rem; background: var(--panel);
+  border-top: 3px solid var(--a, var(--civic));
+  display: flex; flex-direction: column;
+}
+.agent-card .top { display: flex; align-items: center; gap: 0.75rem; }
+.agent-card .av { width: 2.1rem; height: 2.1rem; border-radius: 50%; background: var(--a); color: #fff; display: flex; align-items: center; justify-content: center; font-family: var(--display); font-weight: 700; font-size: 0.9rem; flex: none; }
+.agent-card .av.dotmark { position: relative; }
+.agent-card .av.dotmark::after { content: ""; width: 0.5rem; height: 0.5rem; border-radius: 50%; background: #fff; }
+.agent-card .top > span:last-child { display: flex; flex-direction: column; min-width: 0; }
+.agent-name { display: block; font-weight: 700; font-size: 1.1rem; line-height: 1.1; }
+.agent-card .tagline { display: block; font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.04em; color: var(--ink-faint); margin-top: 0.3rem; line-height: 1.2; }
+.agent-card .prov { display: block; font-family: var(--mono); font-size: 0.64rem; color: var(--a); margin-top: 0.7rem; letter-spacing: 0.02em; }
+.agent-card p { font-size: 0.96rem; line-height: 1.45; margin: 0.8rem 0 0; color: var(--ink-soft); }
+.agent-card .kind { margin-top: auto; padding-top: 0.9rem; }
+.kindtag { font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.09em; text-transform: uppercase; padding: 0.2rem 0.5rem; border-radius: 999px; border: 1px solid var(--line); color: var(--ink-faint); }
+.kindtag.third { border-color: color-mix(in srgb, var(--a) 40%, transparent); color: var(--a); }
+
+/* ============================================================
+   Pull quote
+   ============================================================ */
+blockquote {
+  margin: 2.5rem 0; padding-left: 1.4rem; border-left: 3px solid var(--accent);
+  font-family: var(--serif); font-size: clamp(1.4rem, 2.6vw, 1.9rem); line-height: 1.32; font-style: italic; letter-spacing: -0.01em;
+}
+blockquote cite { display: block; margin-top: 0.8rem; font-family: var(--mono); font-size: 0.72rem; font-style: normal; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-faint); }
+
+/* ============================================================
+   Scenario steps
+   ============================================================ */
+.scenario { margin: 2.5rem 0; }
+.scenario .head { display: flex; align-items: baseline; gap: 0.8rem; margin-bottom: 0.4rem; }
+.scenario .chip { font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.08em; text-transform: uppercase; color: #fff; background: var(--accent); padding: 0.22rem 0.55rem; border-radius: 4px; }
+
+/* ============================================================
+   Protocol promises
+   ============================================================ */
+.promises { margin: 2rem 0; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+.promises .grp-h { font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-faint); padding: 1rem 1.4rem 0.4rem; }
+.promise { display: grid; grid-template-columns: auto 1fr; gap: 0.9rem; padding: 0.8rem 1.4rem; border-top: 1px solid var(--line-soft); align-items: start; }
+.promise .n { font-family: var(--mono); font-size: 0.8rem; color: var(--accent); }
+.promise p { margin: 0; font-size: 1rem; line-height: 1.45; }
+.redline { display: grid; grid-template-columns: auto 1fr; gap: 0.9rem; padding: 1rem 1.4rem; background: color-mix(in srgb, var(--fay) 6%, var(--paper)); border-top: 1px solid var(--line); }
+.redline .mk { color: var(--fay); font-family: var(--mono); font-weight: 600; }
+
+/* ============================================================
+   Ask / footer
+   ============================================================ */
+.ask-items { display: grid; gap: 1.25rem; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); margin: 2rem 0; }
+.ask-item { border: 1px solid var(--line); border-radius: 12px; padding: 1.4rem; background: var(--panel); }
+.ask-item .n { font-family: var(--display); font-weight: 800; font-size: 2rem; color: var(--civic); line-height: 1; }
+.ask-item h4 { font-family: var(--display); font-weight: 700; font-size: 1.1rem; margin: 0.6rem 0 0.4rem; }
+.ask-item p { margin: 0; font-size: 0.98rem; color: var(--ink-soft); }
+
+footer.site {
+  border-top: 1px solid var(--line);
+  padding-block: 3.5rem;
+  font-family: var(--mono); font-size: 0.74rem; color: var(--ink-faint); letter-spacing: 0.02em;
+}
+footer.site .cohort-dots { display: flex; gap: 0.4rem; margin-bottom: 1.2rem; }
+footer.site .cohort-dots i { width: 0.6rem; height: 0.6rem; border-radius: 50%; }
+
+/* utilities */
+.note { font-family: var(--mono); font-size: 0.72rem; color: var(--ink-faint); letter-spacing: 0.02em; border: 1px dashed var(--line); border-radius: 8px; padding: 0.7rem 0.9rem; background: color-mix(in srgb, var(--paper-2) 50%, var(--paper)); }
+.reveal { opacity: 0; transform: translateY(14px); transition: opacity 0.7s ease, transform 0.7s ease; }
+.reveal.in { opacity: 1; transform: none; }

@@ -1,0 +1,406 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Agentic Government — a working prototype of a public-sector agent cohort</title>
+<meta name="description" content="A working prototype of a UK government agent cohort: Dot and a set of specialist agents that coordinate on a citizen's behalf. How it works, the citizen experience, the agents, the protocol, and the case for leaning in." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<!-- ===================== TOP BAR ===================== -->
+<header class="topbar">
+  <div class="wrap topbar-inner">
+    <span class="brand"><span class="glyph" aria-hidden="true"></span> Agentic&nbsp;Government</span>
+    <span class="phase">Prototype · for discussion</span>
+    <span class="spacer"></span>
+    <button class="toc-toggle" id="tocToggle" aria-label="Contents">Contents</button>
+    <div class="progress" id="progress" aria-hidden="true"></div>
+  </div>
+</header>
+
+<!-- ===================== SPINE (section index) ===================== -->
+<nav class="spine" aria-label="Sections">
+  <a href="#thesis"      style="--sec-accent:var(--civic)"><span class="dot" style="color:var(--civic)"></span><span class="txt">Thesis</span></a>
+  <a href="#how"         style="--sec-accent:var(--miles)"><span class="dot" style="color:var(--miles)"></span><span class="txt">How it works</span></a>
+  <a href="#experience"  style="--sec-accent:var(--dot)"><span class="dot" style="color:var(--dot)"></span><span class="txt">Citizen experience</span></a>
+  <a href="#agents"      style="--sec-accent:var(--fay)"><span class="dot" style="color:var(--fay)"></span><span class="txt">The agents</span></a>
+  <a href="#cohort"      style="--sec-accent:var(--grace)"><span class="dot" style="color:var(--grace)"></span><span class="txt">How they interrelate</span></a>
+  <a href="#scenarios"   style="--sec-accent:var(--sol)"><span class="dot" style="color:var(--sol)"></span><span class="txt">Scenarios</span></a>
+  <a href="#architecture" style="--sec-accent:var(--cass)"><span class="dot" style="color:var(--cass)"></span><span class="txt">Architecture</span></a>
+  <a href="#protocol"    style="--sec-accent:var(--iris)"><span class="dot" style="color:var(--iris)"></span><span class="txt">The protocol</span></a>
+  <a href="#ask"         style="--sec-accent:var(--reg)"><span class="dot" style="color:var(--reg)"></span><span class="txt">The ask</span></a>
+</nav>
+
+<main class="wrap">
+
+<!-- ===================== 1 · THESIS ===================== -->
+<section class="hero" id="thesis" style="--accent:var(--civic)">
+  <span class="kicker">
+    <span class="dots" aria-hidden="true">
+      <i style="background:var(--dot)"></i><i style="background:var(--reg)"></i><i style="background:var(--miles)"></i><i style="background:var(--fay)"></i><i style="background:var(--grace)"></i><i style="background:var(--sol)"></i><i style="background:var(--cass)"></i><i style="background:var(--iris)"></i>
+    </span>
+    A concept for discussion · Chris Downs · July 2026
+  </span>
+
+  <h1>Government you don't have to face <span class="civic">alone</span>.</h1>
+
+  <p class="sub">A working prototype of a public-sector <strong>agent cohort</strong> — Dot and a set of specialist agents that identify themselves, act on a citizen's behalf, and coordinate with one another. Not one master agent. Not a hundred disconnected ones. An ecosystem, running on shared rules.</p>
+
+  <div class="choice" role="group" aria-label="The choice">
+    <div class="governed">
+      <h4>Governed</h4>
+      <p>A front door. Agents identified, consented, and revocable — acting in daylight, on rails government sets.</p>
+    </div>
+    <div>
+      <h4>Ungoverned</h4>
+      <p>The windows. Scraping, auto-filling, screen-puppeteering at the margins — because citizens will use agents whether or not we build for them.</p>
+    </div>
+  </div>
+
+  <dl class="meta">
+    <div><dt>What this is</dt><dd>A running prototype, not mockups</dd></div>
+    <div><dt>For</dt><dd>Leanne · Kuba — Products &amp; Services, GDS</dd></div>
+    <div><dt>The cohort</dt><dd>Dot + 8 specialist agents</dd></div>
+  </dl>
+</section>
+
+<!-- ===================== 2 · HOW IT WORKS ===================== -->
+<section id="how" style="--accent:var(--miles)">
+  <div class="sec-head"><span class="mark"></span><span class="num">01</span><span class="name">How it works</span></div>
+  <div class="measure">
+    <h2>An agent is a new kind of thing — not a chatbot bolted onto a service.</h2>
+    <p class="lead">A chatbot answers. An agent <em>holds a live model</em> of a person and the rules of government — their circumstances, and the obligations, entitlements and deadlines that apply — and keeps both current as they change. Everything else follows from that.</p>
+    <p>The prototype makes the model visible. On the right of every conversation sits <b>“What your agents know”</b>: who you are, what you're <em>responsible for</em>, what you're <em>liable for</em>, and what you're <em>eligible for</em> — assembled from what you say and from real records the cohort looks up on your behalf. It is the difference between relaying guidance and reasoning over a situation.</p>
+  </div>
+
+  <figure class="bleed reveal">
+    <div class="frame"><img src="public/screenshots/opener-rajesh.png" alt="Dot's proactive opening for a returning citizen, with a rich model of their company, vehicles and children in the right-hand panel." width="2720" height="2000" /></div>
+    <figcaption><b>Aware &amp; Vigilant.</b> Dot opens by leading with what's overdue and what the citizen may be owed — a VAT return worked through and reversed, a driving licence lapsed, a confirmation statement outstanding. The panel is the live model, kept current.</figcaption>
+  </figure>
+
+  <div class="measure">
+    <h3>Six capabilities fall out of holding the model</h3>
+  </div>
+  <div class="caps measure-wide">
+    <div class="cap"><span class="k">Aware</span><p>Holds a live model of the citizen and the rules that bind them — kept current as both change.<span class="evd">Shown: the “what your agents know” panel; real Companies House &amp; vehicle look-ups.</span></p></div>
+    <div class="cap"><span class="k">Vigilant</span><p>Carries the watching, so the citizen never has to hold “am I compliant, what's due” in their head.<span class="evd">Shown: proactive openers that surface the gap the moment it opens.</span></p></div>
+    <div class="cap"><span class="k">Active</span><p>Acts with consent — not just telling you a return is due, but preparing and completing it on your approval.<span class="evd">Shown: the act step — always behind a sign-in, always reversible.</span></p></div>
+    <div class="cap"><span class="k">Joined-up</span><p>Carries verified information between services, so a citizen is asked once and each fact is shared for a consented purpose.<span class="evd">Shown: “tell the cohort once”; one agent brings in the next.</span></p></div>
+    <div class="cap"><span class="k">Accountable</span><p>Safe to be wrong: every action visible, challengeable and reversible, with a reason and a named approver.<span class="evd">Shown: receipts on every action; an append-only evidence trail.</span></p></div>
+    <div class="cap"><span class="k">Present</span><p>Reachable however suits — app, browser, email, message, command line, or through another agent entirely.<span class="evd">Prototype shows the app; headless multi-surface is designed-for.</span></p></div>
+  </div>
+
+  <div class="measure">
+    <h3>The posture: optimise for getting it right, not for never being wrong</h3>
+    <p>Faced with a technology that reasons rather than follows rules, the reflex is to constrain it until it feels safe — a guardrail here, a fixed path there, approved content only. Each constraint buys certainty and spends range, value and agency. Enough of them turn an agent into a lookup tool.</p>
+  </div>
+  <div class="cone measure-wide reveal">
+    <div class="agents"><span class="tag">Lean left</span><h4>Agents &amp; agency</h4><p>Goal-directed, open-ended. Handles the long tail of real life — the millions of situations no one wrote a form for.</p></div>
+    <div><span class="tag">The middle</span><h4>AI workflows</h4><p>The model works, but inside a fixed sequence. Efficient on the cases we anticipated and rubber-stamped.</p></div>
+    <div><span class="tag">Reach for rarely</span><h4>Features</h4><p>A single bounded call from approved content. A smarter search — never wrong, but right far less than it could be.</p></div>
+  </div>
+  <div class="measure">
+    <p>The safest possible system is also the least useful. So the prototype leans left by default and reserves hard constraint for the few steps where a mistake would be serious and irreversible — made acceptable by <strong>designing honestly for error</strong>: everything recorded, explained, and put right before it hardens into harm.</p>
+    <h3>Decision gates — where the probabilistic meets the deterministic</h3>
+    <p>At the boundary where an answer must be exact — a legally binding calculation, an irreversible submission — the cohort hands off to a <b>decision gate</b>: a structured, deterministic step the agent cannot improvise around. This is the “hard edge”: lean left everywhere, lock down only the moments that genuinely cannot bear a mistake.</p>
+  </div>
+</section>
+
+<!-- ===================== 3 · CITIZEN EXPERIENCE ===================== -->
+<section id="experience" style="--accent:var(--dot)">
+  <div class="sec-head"><span class="mark"></span><span class="num">02</span><span class="name">The citizen experience</span></div>
+  <div class="measure">
+    <h2>You never have to work out which department does what.</h2>
+    <p class="lead">The citizen meets <b>Dot</b> — their way in to everything the state does. Dot leads with the situation, never the org chart, and never asks the citizen to become an expert in government to use it.</p>
+  </div>
+
+  <figure class="bleed reveal">
+    <div class="frame"><img src="public/screenshots/coldopen-newuser.png" alt="Dot's first-contact screen: a warm greeting and an open question, with an empty 'what your agents know' panel." width="2720" height="2000" /></div>
+    <figcaption><b>First contact.</b> No form, no menu of services. “Whatever you need from the state, I'll work out which department handles it.” The panel is empty — the model is built from the conversation, on the citizen's side of the line.</figcaption>
+  </figure>
+
+  <div class="measure">
+    <h3>Progressive disclosure, not interrogation</h3>
+    <p>Dot asks what to <em>call</em> you — a first name is plenty — not your legal name. Richer detail is always optional and arrives only when a service genuinely needs it. Where the cohort can recognise you from a real record, it does, and asks you to confirm rather than re-enter: “I can see a Christopher Downs listed as a director of Unusually Ltd, appointed January 2025 — is that you?”</p>
+
+    <h3 style="color:var(--dot)">Attentive, not attention-taking</h3>
+    <p>This is a design stance, and the prototype holds to it deliberately. One agent, one thing, per turn. “I don't know” and “not right now” are first-class answers. There are no streaks, no nudges engineered to pull you back, no hooks. A public-service agent absorbs the work of keeping up with government; it never becomes one more thing demanding your time.</p>
+  </div>
+
+  <figure class="bleed reveal">
+    <div class="frame"><img src="public/screenshots/opener-sarah.png" alt="Dot supporting a recently bereaved citizen: gentle tone, flagging probate and unclaimed support, offering to let Grace take it from here, with 'not right now' as an option." width="2720" height="2000" /></div>
+    <figcaption><b>Care before admin.</b> At the hardest moment, the tone slows right down — two things gently flagged (probate; money owed but unclaimed), then a hand to a specialist. Notice the third option: <b>“Not right now.”</b> A clean way to leave the conversation is part of the design.</figcaption>
+  </figure>
+
+  <div class="measure">
+    <h3>It acts — with consent, and a receipt</h3>
+    <p>When the citizen asks the cohort to actually do something — file a confirmation statement, submit a VAT return, claim Child Benefit — it never happens silently. Acting requires the citizen to sign in, and every completed action leaves a receipt that can be read, questioned and undone. Reaching the state and holding your credentials happens once, and travels with you.</p>
+  </div>
+  <figure class="reveal">
+    <div class="frame crop"><img src="public/screenshots/wallet.png" alt="The citizen's wallet: a National Insurance credential from HMRC and a proof-of-address credential from Royal Mail." width="2720" height="2000" style="object-position:top right" /></div>
+    <figcaption><b>Carried once.</b> Verified credentials live with the citizen and are shared only for a purpose they've agreed — asked once, not re-entered at every service.</figcaption>
+  </figure>
+</section>
+
+<!-- ===================== 4 · THE AGENTS ===================== -->
+<section id="agents" style="--accent:var(--fay)">
+  <div class="sec-head"><span class="mark"></span><span class="num">03</span><span class="name">Who are the agents</span></div>
+  <div class="measure">
+    <h2>A cohort, carved by the shape of a life — not by department.</h2>
+    <p class="lead">Each agent owns a domain, holds what it needs to know, and can act within it. Some are built by government; some are certified third parties, trusted to act with consent. Colour tells you whose world you're in.</p>
+  </div>
+
+  <div class="roster">
+    <div class="agent-card" style="--a:var(--dot)"><div class="top"><span class="av dotmark"></span><span><span class="agent-name">Dot</span><span class="tagline">Your way in to government</span></span></div><span class="prov">GOV.UK</span><p>The relationship you start with, the coordinator when a need spans many agents. Part of the cohort — not its centre.</p><div class="kind"><span class="kindtag">Coordinator</span></div></div>
+
+    <div class="agent-card" style="--a:var(--reg)"><div class="top"><span class="av">R</span><span><span class="agent-name">Reg</span><span class="tagline">Limited company agent</span></span></div><span class="prov">Companies House &amp; HMRC</span><p>Company secretary and data-protection lead: filings, VAT, governance, and the documents most firms don't know they're missing.</p><div class="kind"><span class="kindtag">Domain</span></div></div>
+
+    <div class="agent-card" style="--a:var(--miles)"><div class="top"><span class="av">M</span><span><span class="agent-name">Miles</span><span class="tagline">Licence &amp; vehicles</span></span></div><span class="prov">DVLA &amp; DVSA</span><p>One agent for licence and vehicles — MOT, tax, renewals, tests — so a citizen never deals with two bodies separately.</p><div class="kind"><span class="kindtag">Domain</span></div></div>
+
+    <div class="agent-card" style="--a:var(--sol)"><div class="top"><span class="av">S</span><span><span class="agent-name">Sol</span><span class="tagline">Working for yourself</span></span></div><span class="prov">HMRC</span><p>Keeps a sole trader's tax and books in order, so they never have to become an accountant to stay legal.</p><div class="kind"><span class="kindtag">Domain</span></div></div>
+
+    <div class="agent-card" style="--a:var(--fay)"><div class="top"><span class="av">F</span><span><span class="agent-name">Fay</span><span class="tagline">Family &amp; children</span></span></div><span class="prov">HMRC, DfE &amp; council</span><p>Everything to do with the children — school places, childcare, additional needs, child-related benefits — across three parts of government at once.</p><div class="kind"><span class="kindtag">Domain</span></div></div>
+
+    <div class="agent-card" style="--a:var(--grace)"><div class="top"><span class="av">G</span><span><span class="agent-name">Grace</span><span class="tagline">Bereavement agent</span></span></div><span class="prov">GOV.UK · Tell Us Once</span><p>Carries the whole government and admin side of a death for as long as it's needed — then dissolves. An event agent.</p><div class="kind"><span class="kindtag">Event · here for now</span></div></div>
+
+    <div class="agent-card" style="--a:var(--robin)"><div class="top"><span class="av">R</span><span><span class="agent-name">Robin</span><span class="tagline">New baby</span></span></div><span class="prov">GOV.UK · for new parents</span><p>Maternity pay, registering the birth, Child Benefit, childcare — carried through the arrival, then graduates into family life with Fay.</p><div class="kind"><span class="kindtag">Event · here for now</span></div></div>
+
+    <div class="agent-card" style="--a:var(--cass)"><div class="top"><span class="av">C</span><span><span class="agent-name">Cass</span><span class="tagline">Benefits &amp; entitlements</span></span></div><span class="prov">Citizens Advice</span><p>Not government's — certified to act for a citizen. Checks everything they might be owed and helps them claim it, at a scale no caseworker could.</p><div class="kind"><span class="kindtag third">Third party · certified</span></div></div>
+
+    <div class="agent-card" style="--a:var(--iris)"><div class="top"><span class="av">I</span><span><span class="agent-name">Iris</span><span class="tagline">Bereavement support</span></span></div><span class="prov">Cruse Bereavement Support</span><p>A charity's companion who stands beside Grace — someone to talk to, at your own pace. Trusted by government, built by Cruse.</p><div class="kind"><span class="kindtag third">Third party · certified</span></div></div>
+  </div>
+
+  <div class="measure">
+    <h3>Four kinds of agent</h3>
+    <p><b>Domain agents</b> are the persistent areas of a life, always on — Reg, Miles, Sol, Fay. <b>Event agents</b> flare up around a transition and then dissolve or graduate — Grace for a bereavement, Robin for a new baby. <b>Capability agents</b> are the cross-cutting skills the others draw on: filing, comms, eligibility, consent and identity, records and audit. And <b>copilot agents</b> — the one kind that works <em>with</em> you rather than <em>for</em> you, co-authoring compliance into a new venture as it's built. Reg's drafting of a privacy notice and records-of-processing is the seed of this; full copilots are designed-for.</p>
+    <p class="note">Sol appears here as a defined member of the cohort; the prototype's live demo persona set exercises the other eight. Copilots and headless, multi-surface presence are designed-for and shown in sketch, not claimed as built.</p>
+  </div>
+
+  <figure class="fig-grid reveal" style="margin-top:2.5rem">
+    <div><div class="frame crop"><img src="public/screenshots/agent-reg.png" alt="Reg's agent page: what he can do, a consent panel with 'act on my behalf' toggles, and a decommission option." width="2720" height="2000" /></div><figcaption>Every agent has a page: capabilities, and the <b>permissions you control</b> — “act on my behalf”, “proactive suggestions”, and “decommission”.</figcaption></div>
+    <div><div class="frame crop"><img src="public/screenshots/agent-cass.png" alt="Cass's agent page: a banner explaining she is from Citizens Advice, certified by the GDS Agent Register, and what access she would be granted." width="2720" height="2000" /></div><figcaption>A third-party agent is explicit about it: <b>whose it is, that it's certified, and that access is granted and revocable</b>.</figcaption></div>
+  </figure>
+</section>
+
+<!-- ===================== 5 · HOW THEY INTERRELATE ===================== -->
+<section id="cohort" style="--accent:var(--grace)">
+  <div class="sec-head"><span class="mark"></span><span class="num">04</span><span class="name">How they interrelate</span></div>
+  <div class="measure">
+    <h2>The cohort, not the conductor.</h2>
+    <p class="lead">What made the single-agent dream valuable was never that it was one piece of software — it was <em>coherence</em>: one experience, and a citizen who never has to understand the org chart. Coherence can come from many agents, if they interoperate.</p>
+    <p>Dot keeps a real role — a relationship to hold, a place to start, a coordinator when a request spans many agents. But it is a part of the cohort, not a tier above it. Agents are directly addressable: a citizen, or another agent, can go straight to the tax agent without passing through Dot. Coordination happens when it's needed, not as a toll gate on every interaction.</p>
+    <h3>Tell the cohort once</h3>
+    <p>When a need is recognised, one agent brings in the next with a warm hand-off and passes on everything already known. The citizen never repeats themselves and is never passed from desk to desk. In the prototype this is deliberately paced: one specialist introduced at a time, most-pressing first.</p>
+  </div>
+
+  <figure class="bleed reveal">
+    <div class="frame"><img src="public/screenshots/tray-rajesh.png" alt="The agent tray showing Dot, Reg, Miles and Fay, each with recent conversation threads." width="2720" height="2000" /></div>
+    <figcaption><b>The tray.</b> A citizen who described their life once now holds a cohort — Dot placed each specialist; they never picked a department. Each carries its own thread and its own memory of where things stand.</figcaption>
+  </figure>
+
+  <div class="measure">
+    <h3>Event agents coordinate, then dissolve</h3>
+    <p>A bereavement or a new baby touches many domains at once. An event agent — Grace, Robin — coordinates the domain agents behind the scenes, then dissolves or graduates when the transition is over (Robin hands the long chapter of family life to Fay). The tray shows their state plainly: <b>“here for now.”</b></p>
+
+    <h3>The citizen arrives with the agent they already trust</h3>
+    <p>An agent need not be government's. A bereaved person might first reach <b>Cruse</b>, whose companion <b>Iris</b> then hands off into the government cohort — the same event, carried by a charity's agent and the state's, working as one. Government should be agent-agnostic, but not ambivalent: actively, unashamedly pro-agent, welcoming any agent that is certified, consented and revocable.</p>
+  </div>
+
+  <figure class="fig-grid reveal">
+    <div><div class="frame crop"><img src="public/screenshots/tray-sarah.png" alt="A bereaved citizen's tray: Grace commissioned and 'here for now', Iris from Cruse introduced and awaiting consent." width="2720" height="2000" /></div><figcaption>Grace (government) and Iris (Cruse) on the same event — one commissioned, one introduced and awaiting consent.</figcaption></div>
+    <div><div class="frame crop"><img src="public/screenshots/agent-iris.png" alt="Iris's page: not a government agent, provided by Cruse, certified by the GDS Agent Register, acting only with consent." width="2720" height="2000" /></div><figcaption>“Government doesn't build it; it trusts it, with your consent.” Certified, consented, revocable — the whole trust framework in one screen.</figcaption></div>
+  </figure>
+</section>
+
+<!-- ===================== 6 · SCENARIOS ===================== -->
+<section id="scenarios" style="--accent:var(--sol)">
+  <div class="sec-head"><span class="mark"></span><span class="num">05</span><span class="name">Scenarios</span></div>
+  <div class="measure">
+    <h2>Four lives, carried.</h2>
+    <p class="lead">Each of these runs end-to-end in the prototype today, against realistic personas on one side and simulated government services on the other.</p>
+  </div>
+
+  <div class="scenario measure" style="--accent:var(--miles)">
+    <div class="head"><span class="chip">Overwhelmed</span></div>
+    <h3>A parent, a company, a fleet — all at once</h3>
+    <p>“Two kids, one starting school and one moving to secondary; sole director of a limited company; VAT I'm not sure about; two cars I've lost track of.” Dot doesn't panic or list services. It recognises the company on the live Companies House register, confirms who they are, then brings in <em>one</em> specialist — Miles, for the illegal-to-drive MOT that's most pressing — and says the rest will follow. One thing at a time.</p>
+  </div>
+  <figure class="reveal measure-wide">
+    <div class="frame crop"><img src="public/screenshots/opener-rajesh.png" alt="A richly populated model panel: director of a limited company, two vehicles with statuses, two children, and the resulting liabilities and eligibilities." width="2720" height="2000" style="object-position:top right" /></div>
+    <figcaption>The model the cohort assembled from one description — everything it now watches on the citizen's behalf, on their side of the line.</figcaption>
+  </figure>
+
+  <div class="scenario measure" style="--accent:var(--grace)">
+    <div class="head"><span class="chip">Bereavement</span></div>
+    <h3>The hardest week, carried</h3>
+    <p>A husband has died. One event touches registration and Tell Us Once, bereavement support, the survivor's changing entitlements, the deceased's final tax position, a pension. The news is given once; Grace coordinates behind the scenes, checks each entitlement against live rules, and keeps the citizen informed. Alongside her, Iris from Cruse offers human support. And when something is filed wrong, the same design that let the cohort act lets it recover — the mistake is visible, challengeable, and reversible before it hardens into harm.</p>
+  </div>
+  <figure class="reveal measure-wide">
+    <div class="frame crop"><img src="public/screenshots/agent-grace.png" alt="Grace's page: carrying Tell Us Once, bereavement support and probate, acting only with sign-in and leaving a receipt." width="2720" height="2000" /></div>
+    <figcaption>Grace carries the government side so the citizen doesn't have to hold it while they grieve.</figcaption>
+  </figure>
+
+  <div class="scenario measure" style="--accent:var(--reg)">
+    <div class="head"><span class="chip">Company</span></div>
+    <h3>Vincent, in government</h3>
+    <p>Staying legal is a second, unpaid job. Reg is the company's quiet right hand: he holds every deadline, watches HMRC and Companies House for changes, drafts the data-protection documents most firms don't know they need, and — on a clear yes, behind a sign-in — files. This is the agent the paper's author already built for himself, running in the shadows because there was no front door. Here it is, with one.</p>
+  </div>
+
+  <div class="scenario measure" style="--accent:var(--cass)">
+    <div class="head"><span class="chip">Advocacy at scale</span></div>
+    <h3>The £24bn nobody claims</h3>
+    <p>The people who miss out are not people like us. They are tired, unwell, grieving, overwhelmed, or simply unaware — the least able to keep up with a system too complex to keep up with. An estimated <b>£24.1bn a year</b> of income-related support goes unclaimed in Great Britain; Pension Credit take-up has fallen to 62%, with around <b>910,000 families</b> missing roughly <b>£2,600 each</b>, every year.</p>
+    <p>They are not alone: they have advocates — Citizens Advice, Age UK, Macmillan, the welfare-rights team in every council — who already fight for them, one exhausting case at a time, and can never scale to the size of the need. Give those organisations the right to build agents, and a benefits agent like <b>Cass</b> can reach thousands where a caseworker reaches dozens. The debate fixates on the risk an agent might occasionally get something wrong. The status quo already fails millions, silently, every year — and its failures are invisible and permanent, while an agent's are visible and can be put right.</p>
+  </div>
+  <figure class="reveal measure-wide">
+    <div class="frame crop"><img src="public/screenshots/opener-fatima.png" alt="Dot flagging a Child Benefit cliff at a child's 16th birthday and an un-applied-for EHCP for a family on a tighter budget." width="2720" height="2000" /></div>
+    <figcaption>Vigilance where it matters most: a Child Benefit cliff caught before it drops, and support the family didn't know to ask for.</figcaption>
+  </figure>
+
+  <blockquote>
+    A few correctable mistakes against millions of unowned ones is a trade worth making.
+  </blockquote>
+</section>
+
+<!-- ===================== 7 · ARCHITECTURE ===================== -->
+<section id="architecture" style="--accent:var(--cass)">
+  <div class="sec-head"><span class="mark"></span><span class="num">06</span><span class="name">Technical architecture</span></div>
+  <div class="measure">
+    <h2>Set the rails. Let anyone build the trains.</h2>
+    <p class="lead">GDS's first role is small but decisive: not to build a large platform, but to set the protocol and standards by which any agent can identify itself, act for a citizen, and work with the others. The stack has three parts.</p>
+  </div>
+
+  <div class="cone measure-wide reveal">
+    <div class="agents"><span class="tag">Load-bearing</span><h4>Shared rules — the protocol</h4><p>How agents identify themselves, trust one another, act on a citizen's behalf, and declare what they may do. A protocol scales like nothing else; it has to come first.</p></div>
+    <div><span class="tag">Deterministic where it must be</span><h4>Hard edges</h4><p>A way to lock down the few steps that genuinely have to be fixed and exact — a legal calculation, an irreversible submission — while leaving everything else to the agent.</p></div>
+    <div><span class="tag">Provided once</span><h4>Reusable building blocks</h4><p>Proving who a citizen is, holding their credentials, messaging them, taking payment, and keeping a tamper-evident record. Most already exist.</p></div>
+  </div>
+
+  <div class="measure">
+    <h3>What's actually built underneath the prototype</h3>
+    <p>The prototype is not a mock. Every service call routes through a single choke point; every LLM call goes through one adapter. Real records — a company's Companies House filing dates, a vehicle's tax and MOT status — are looked up live. And every action an agent takes is written to an <b>append-only evidence store</b> as a typed, replayable trace: this is what makes “safe to be wrong” real rather than rhetorical.</p>
+  </div>
+  <figure class="reveal measure-wide">
+    <div class="frame crop"><img src="public/screenshots/studio-trace.png" alt="The evidence plane: a session's typed event trace — llm.response, capability.invoked, state.transition, capability.result — with a replay tab." width="2720" height="2000" /></div>
+    <figcaption><b>The accountable substrate.</b> Every interaction decomposes into typed events — <span style="font-family:var(--mono);font-size:0.9em">capability.invoked → state.transition → capability.result</span> — recorded, queryable, and replayable. Being wrong is survivable because everything is visible.</figcaption>
+  </figure>
+
+  <div class="measure">
+    <h3>The department's side of the contract</h3>
+    <p>For an agent to act on a service, the service has to be <em>legible</em> to it — its states, its rules, its capabilities published in a form an agent can read. The prototype's Legibility Studio is where a department does that work, and sees the gap: of 1,656 services catalogued, only a fraction carry the full artefacts an agent needs. Legibility is the work; the protocol is what makes it worth doing once.</p>
+  </div>
+  <figure class="bleed reveal">
+    <div class="frame"><img src="public/screenshots/studio-dashboard.png" alt="The Legibility Studio dashboard: services catalogued, artefact coverage at 7%, and recent cases matching the citizen-side personas." width="2720" height="2000" /></div>
+    <figcaption><b>Two sides of one contract.</b> The same citizens whose lives the cohort carries appear here as departmental cases — the bereavement, the driving renewal — with a plain measure of how far there is to go.</figcaption>
+  </figure>
+</section>
+
+<!-- ===================== 8 · PROTOCOL ===================== -->
+<section id="protocol" style="--accent:var(--iris)">
+  <div class="sec-head"><span class="mark"></span><span class="num">07</span><span class="name">The protocol</span></div>
+  <div class="measure">
+    <h2>A short list of promises.</h2>
+    <p class="lead">The real specification is for engineers to write. But in plain terms, this is what the protocol would have to guarantee — the load-bearing part of the whole idea, and the thing a protocol is uniquely able to scale.</p>
+  </div>
+
+  <div class="promises measure-wide">
+    <div class="grp-h">To the citizen, it promises</div>
+    <div class="promise"><span class="n">01</span><p>Any agent that acts for me can prove who it is and who built it. No one is acted upon by an anonymous agent.</p></div>
+    <div class="promise"><span class="n">02</span><p>No agent can act for me without my permission — given for a specific purpose, narrowable, and withdrawable at any moment.</p></div>
+    <div class="promise"><span class="n">03</span><p>An agent only ever sees the data it needs, for the purpose I agreed, and nothing more.</p></div>
+    <div class="promise"><span class="n">04</span><p>Everything done in my name is recorded and explained in plain language. I can see its reasoning, question it, and have what it did undone — and no agent claims to know more than it can show.</p></div>
+    <div class="promise"><span class="n">05</span><p>Agents can work together on my behalf without my having to marshal them — one asks, the others help.</p></div>
+    <div class="promise"><span class="n">06</span><p>An agent that breaks these rules loses its right to act. Trust is granted, and it can be taken away.</p></div>
+
+    <div class="grp-h" style="border-top:1px solid var(--line)">To the builder — department, charity, company, or citizen — it promises</div>
+    <div class="promise"><span class="n">A</span><p>Build to these rules and government will deal with your agent, on a citizen's behalf, whoever you are.</p></div>
+    <div class="promise"><span class="n">B</span><p>You declare what your agent is, what it may do, and where it must stop — and you answer for it.</p></div>
+    <div class="promise"><span class="n">C</span><p>You don't have to invent identity, consent, or hand-off. The protocol gives you those, so you can build the part only you can.</p></div>
+
+    <div class="redline"><span class="mk">Line 1</span><p><b>The model of the citizen belongs to the citizen — not to government.</b> The live picture of your circumstances lives with the agent you chose, on your side of the line, inspectable and editable by you. Government keeps the rails; it does not keep the story of you.</p></div>
+    <div class="redline"><span class="mk">Line 2</span><p><b>A government agent may not optimise for engagement.</b> No streaks, no hooks, no nudges designed to pull you back. Every message it sends is a cost drawn on your attention, and it has to justify it.</p></div>
+  </div>
+
+  <div class="measure">
+    <p>A working reference for exactly this kind of protocol already runs across the author's own agents — a validated envelope for how one agent identifies itself, proves whose behalf it acts on, and hands work to another. It is a sketch, not a standard. But it is proof that the load-bearing part is writable today.</p>
+  </div>
+</section>
+
+<!-- ===================== 9 · THE ASK ===================== -->
+<section id="ask" style="--accent:var(--reg)">
+  <div class="sec-head"><span class="mark"></span><span class="num">08</span><span class="name">The ask</span></div>
+  <div class="measure">
+    <h2>Two small things, and one that costs nothing.</h2>
+    <p class="lead">This isn't a request to build all of it. It was never the centre's job to build everything. But a deliberate, resourced decision to make government agent-ready starts here.</p>
+  </div>
+
+  <div class="ask-items">
+    <div class="ask-item"><span class="n">1</span><h4>A sandbox</h4><p>A safe place to build and test agents — open to people inside government and out — with realistic citizen personas on one side and simulated services on the other. Without it, no one can build a government agent, or learn how it fails before it touches a real person. This prototype is a first sketch of exactly that.</p></div>
+    <div class="ask-item"><span class="n">2</span><h4>The start of a trust framework</h4><p>Even just the question, taken seriously: what would an agent have to prove for government to let it act on a citizen's behalf? Start with one accredited agent doing one real thing, and the rest can follow.</p></div>
+    <div class="ask-item"><span class="n">3</span><h4>A different question</h4><p>Stop asking how far we can constrain this until we're comfortable. Start asking how much good we could do if we were brave enough to let it act — and careful enough to let it be wrong.</p></div>
+  </div>
+
+  <blockquote style="--accent:var(--civic)">
+    Not a system. A different relationship between a citizen and the state — one where you are no longer left to face the whole of government alone.
+  </blockquote>
+</section>
+
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <div class="cohort-dots" aria-hidden="true">
+      <i style="background:var(--dot)"></i><i style="background:var(--reg)"></i><i style="background:var(--miles)"></i><i style="background:var(--sol)"></i><i style="background:var(--fay)"></i><i style="background:var(--grace)"></i><i style="background:var(--robin)"></i><i style="background:var(--cass)"></i><i style="background:var(--iris)"></i>
+    </div>
+    Agentic Government — a concept for discussion. Prototype and paper by Chris Downs, July 2026.<br />
+    Every screenshot on this page is a real grab from the running prototype. Nothing here is a mockup.
+  </div>
+</footer>
+
+<script>
+  // Reveal on scroll (respects reduced motion via CSS transition override)
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((e) => { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } });
+  }, { rootMargin: "0px 0px -8% 0px" });
+  document.querySelectorAll(".reveal").forEach((el) => io.observe(el));
+
+  // Spine active state + progress hairline
+  const sections = [...document.querySelectorAll("main section")];
+  const links = new Map([...document.querySelectorAll(".spine a")].map((a) => [a.getAttribute("href").slice(1), a]));
+  const progress = document.getElementById("progress");
+  const spy = new IntersectionObserver((entries) => {
+    entries.forEach((e) => {
+      if (e.isIntersecting) {
+        links.forEach((a) => a.classList.remove("active"));
+        links.get(e.target.id)?.classList.add("active");
+        const accent = getComputedStyle(e.target).getPropertyValue("--accent");
+        if (progress) progress.style.background = accent;
+      }
+    });
+  }, { rootMargin: "-45% 0px -45% 0px" });
+  sections.forEach((s) => spy.observe(s));
+
+  addEventListener("scroll", () => {
+    const h = document.documentElement;
+    const pct = h.scrollTop / (h.scrollHeight - h.clientHeight);
+    if (progress) progress.style.width = (pct * 100) + "%";
+  }, { passive: true });
+
+  document.getElementById("tocToggle")?.addEventListener("click", () => {
+    document.getElementById("thesis")?.scrollIntoView({ behavior: "smooth" });
+  });
+
+  // Deep-links can mis-land while webfonts reflow the page; re-correct once fonts settle.
+  if (location.hash && document.fonts?.ready) {
+    document.fonts.ready.then(() =>
+      setTimeout(() => document.querySelector(location.hash)?.scrollIntoView(), 60)
+    );
+  }
+</script>
+</body>
+</html>

@@ -7,7 +7,14 @@ compatibility_flags = ["nodejs_compat"]
 
 assets = { directory = ".open-next/assets", binding = "ASSETS" }
 
-# Note: ANTHROPIC_API_KEY should be set via `wrangler secret put ANTHROPIC_API_KEY`
+# Public demo domain (auto-provisions DNS + cert on the datadowns.com zone).
+routes = [
+  { pattern = "agenticgov.datadowns.com", custom_domain = true }
+]
+
+# Secrets (set with `wrangler secret put <NAME> --name als-citizen-dept`):
+#   ANTHROPIC_API_KEY — the per-project Anthropic key (the cohort runs on Sonnet)
+#   DEMO_PASSWORD     — the shared password gating the hosted demo
 
 [vars]
 STUDIO_API_URL = "https://als-studio.chris-8ab.workers.dev"

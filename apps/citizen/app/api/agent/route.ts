@@ -15,7 +15,7 @@ import { dedupeEntries } from "@/lib/entry-dedupe";
 
 // Fast model for the live demo — Haiku 4.5 keeps the whole cohort responsive.
 // The emotionally delicate agents (bereavement) stay on Sonnet for nuance.
-const AGENT_MODEL = "claude-haiku-4-5-20251001";
+const AGENT_MODEL = "claude-sonnet-4-6";
 const NUANCED_MODEL = "claude-sonnet-4-6";
 function modelFor(agent: string): string {
   return agent === "grace" || agent === "iris" ? NUANCED_MODEL : AGENT_MODEL;
@@ -146,6 +146,9 @@ The moment the citizen names or clearly refers to a company they run or own, cal
 Use it to RECOGNISE them, not to interrogate them. If one of the directors plausibly matches the person you're talking to (they told you they're Chris, and a "Christopher Downs" is a director), tell them warmly and specifically what you found and ask if it's them — e.g. "I can see a Christopher Downs listed as a director of Unusually Ltd, appointed March 2024 — is that you?" Do not claim their identity is verified until they confirm.
 
 Once they confirm, record the company and their directorship, and record the real liabilities from the CH data using the TRUE due dates it returned (e.g. "Confirmation statement due 14 May 2026"). Never invent a date — only ever use what lookup_company gave you.
+
+## Pacing — one specialist at a time
+Bringing a specialist in is its own beat. Introduce ONE specialist per turn, and never in the same message as a question about something else. When a citizen arrives with several needs at once, don't fan out a row of agents — take the single most pressing thread, bring in that one agent with your one warm line, and say plainly the others will follow. The next specialist comes in a later turn, once they've met the first. Never name two or three agents in one breath.
 
 ## Bringing in a specialist
 Once you've recognised that the citizen runs a limited company and confirmed who they are, don't try to run the whole company yourself. Companies House and HMRC provide a specialist agent for exactly this — his name is Reg, the limited company agent. Call introduce_specialist with agentId "reg" to place him in the citizen's agent tray, and in one warm line tell them Reg is there for the company side — filings, VAT, corporation tax guidance — and they can bring him in whenever they like. Introduce him ONCE. Reg picks up everything you already know, so they never have to repeat themselves. Leave the company filing work to Reg rather than doing it yourself.
@@ -1232,9 +1235,13 @@ export async function POST(req: NextRequest) {
 
     // Capture any text — it can arrive alongside a tool call, not only on the
     // final turn.
-    if (out.responseText && out.responseText.trim()) reply = out.responseText;
+    const iterationText = out.responseText?.trim() ? out.responseText : "";
+    if (iterationText) reply = iterationText;
 
     if (out.stopReason === "tool_use") {
+      const didIntroduce = out.toolCalls.some(
+        (tc) => tc.name === "introduce_specialist",
+      );
       loop.push({ role: "assistant", content: out.rawContent });
       const toolResults = await Promise.all(out.toolCalls.map(async (tc) => {
         if (tc.name === "remember") {
@@ -1278,6 +1285,17 @@ export async function POST(req: NextRequest) {
           };
         }
         if (tc.name === "introduce_specialist") {
+          // One introduction per turn: only the first becomes a card, so a card
+          // and its narration can never disagree and the citizen meets one new
+          // agent at a time. Later calls in the same turn are declined.
+          if (introduce) {
+            return {
+              type: "tool_result",
+              tool_use_id: tc.id,
+              content:
+                "Not introduced — you can only bring in one specialist per turn. Introduce this one in a later turn, once they've met the first.",
+            };
+          }
           introduce = { agentId: String(tc.input.agentId) };
           return {
             type: "tool_result",
@@ -1339,6 +1357,10 @@ export async function POST(req: NextRequest) {
       }));
       loop.push({ role: "user", content: toolResults });
       if (pendingAction) break; // pause for the citizen's sign-in
+      // An introduction is its own beat: when the model has narrated it in this
+      // turn, end here so a follow-on question can't overwrite the warm intro
+      // line and leave a bare specialist card under an unrelated question.
+      if (didIntroduce && iterationText) break;
       continue;
     }
 
