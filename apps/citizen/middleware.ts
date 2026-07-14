@@ -16,6 +16,7 @@ export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
   // Send the bare domain straight to the cohort demo the report describes.
+  // The mobile (app) view lives at /mobile.
   if (pathname === "/") {
     const url = req.nextUrl.clone();
     url.pathname = "/agent";
